@@ -15,14 +15,14 @@ if game.PlaceId == 6884319169 then
 function loadGUI()
 repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name, IntroText = "Welcome, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MicUp"})
+local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name, IntroText = "Welcome Back, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MicUp"})
 local Tab1 = Window:MakeTab({
-	Name = "Utilities",
+	Name = "Home",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 local Section1 = Tab1:AddSection({
-	Name = "Tools 1"
+	Name = "Main Tools"
 })
 local Tab2 = Window:MakeTab({
 	Name = "Character Tools",
@@ -49,12 +49,12 @@ local Section5 = Tab5:AddSection({
 	Name = "Extra Tools"
 })
 local Tab6 = Window:MakeTab({
-	Name = "Info README",
+	Name = "Information",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 local Section6 = Tab6:AddSection({
-	Name = "Information/Notices"
+	Name = "Information/Quotes"
 })
 wait()
 local Whitelisted = {game.Players.LocalPlayer.Name, "Roblox"}
@@ -245,7 +245,7 @@ Name = "18+ Image ID Bypass",
 Default = "Text You Want",
 TextDisappear = true,
 Callback = function(TextHereForBooth)
-    function getStall()
+    local function getStall()
         for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
             if v.Player.Value == game:GetService("Players").LocalPlayer then
                 return v
@@ -255,13 +255,14 @@ Callback = function(TextHereForBooth)
 end
 
 local LocalStall = getStall()
-if LocalStall:FindFirstChild("Edit") or LocalStall:WaitForChild("Edit", 1) and tostring(TextHereForBooth) then
+if LocalStall ~= nil and LocalStall:FindFirstChild("Edit") or LocalStall:WaitForChild("Edit", 1) then
+    local TheStall = LocalStall
     local args = {
         [1] = TextHereForBooth,
         [2] = "5888213893"
     }
 
-    workspace:WaitForChild("Stalls"):WaitForChild("Stall4"):WaitForChild("Edit"):FireServer(unpack(args))
+    TheStall:FindFirstChild("Edit"):FireServer(unpack(args))
 else
     return OrionLib:MakeNotification({
         Name = "Error",
