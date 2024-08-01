@@ -12,10 +12,16 @@ if game.PlaceId == 6884319169 then
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 
+    getgenv().gethui = function()
+        return game:GetService("CoreGui")
+    end
+
 function loadGUI()
 repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+local currentTime = os.time()
+local formattedTime = os.date("%I:%M %p", currentTime)
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name, IntroText = "Welcome Back, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MicUp"})
+local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MICUp"})
 local Tab1 = Window:MakeTab({
 	Name = "Home",
 	Icon = "rbxassetid://4483345998",
@@ -56,6 +62,17 @@ local Tab6 = Window:MakeTab({
 local Section6 = Tab6:AddSection({
 	Name = "Information/Quotes"
 })
+wait()
+local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
+
+for _,v in pairs(Button:GetDescendants()) do
+    if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
+        for i,Signal in pairs(Signals) do
+            firesignal(v[Signal])
+        end
+    end
+end
 wait()
 local Whitelisted = {game.Players.LocalPlayer.Name, "Roblox"}
 wait()
@@ -255,7 +272,7 @@ Callback = function(TextHereForBooth)
 end
 
 local LocalStall = getStall()
-if LocalStall ~= nil and LocalStall:FindFirstChild("Edit") or LocalStall:WaitForChild("Edit", 1) then
+if LocalStall ~= nil and LocalStall:FindFirstChild("Edit") then
     local TheStall = LocalStall
     local args = {
         [1] = TextHereForBooth,
@@ -264,17 +281,93 @@ if LocalStall ~= nil and LocalStall:FindFirstChild("Edit") or LocalStall:WaitFor
 
     TheStall:FindFirstChild("Edit"):FireServer(unpack(args))
 else
-    return OrionLib:MakeNotification({
-        Name = "Error",
-        Content = "You either do not have a booth, or did not enter text!",
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
+    local function getStall()
+            for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+                if v.Player.Value == game:GetService("Players").LocalPlayer then
+                    return v
+                end
+            end
+        return nil
+    end
+        local dawg = game:GetService("Workspace"):WaitForChild("Stalls"):FindFirstChild("Stall1")
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart", 1).CFrame = CFrame.new(dawg.ProxPart.Position)
+        wait(0.5)
+        local lol = game:GetService("Workspace"):WaitForChild("Stalls"):FindFirstChild("Stall1"):WaitForChild("ProxPart", 1).ProximityPrompt
+        lol.MaxActivationDistance = 65
+        wait()
+        fireproximityprompt(lol)
+        wait(1)
+        local args = {
+            [1] = TextHereForBooth,
+            [2] = "5888213893"
+        }
+
+        getStall()["Edit"]:FireServer(unpack(args))
+        wait()
+        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+        local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
+
+        for _,v in pairs(Button:GetDescendants()) do
+            if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
+                for i,Signal in pairs(Signals) do
+                    firesignal(v[Signal])
+                end
+            end
+        end
+    end
+end})
+
+Tab1:AddTextbox({
+Name = "UnClaim Someones Booth",
+Default = "Username or Display",
+TextDisappear = true,
+Callback = function(LolUnClaim)
+local OldestCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame
+local LolBigDawg = findplr(LolUnClaim) or game.Players[LolUnClaim]
+    local function getStallFunc()
+        local LolBigDawg = findplr(LolUnClaim) or game.Players[LolUnClaim]
+        for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+            if v.Player.Value == LolBigDawg then
+                return v
+            end
+        end
+    return nil
 end
+
+local function getStallSelf()
+    local LolBigDawg = findplr(LolUnClaim) or game.Players[LolUnClaim]
+    for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+        if v.Player.Value == game:GetService("Players").LocalPlayer then
+            return v
+        end
+    end
+return nil
+end
+wait()
+print(getStallFunc())
+local Proximity1 = getStallFunc():FindFirstChild("ProxPart").ProximityPrompt
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(getStallFunc():FindFirstChild("ProxPart").Position)
+wait(0.3)
+fireproximityprompt(Proximity1, 10)
+wait(0.5)
+getStallSelf():WaitForChild("CloseStall", 3):FireServer()
+wait(0.1)
+local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
+
+for _,v in pairs(Button:GetDescendants()) do
+    if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
+        for i,Signal in pairs(Signals) do
+            firesignal(v[Signal])
+        end
+    end
+end
+wait(0.3)
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldestCF
 end})
 
 Tab1:AddButton({
-Name = "Unclaim Booths",
+Name = "Unclaim ALL Booths",
 Callback = function()
 local Folder = workspace:WaitForChild("Stalls")
 local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart", 1).CFrame
@@ -378,6 +471,17 @@ local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"
     print("Finished Unclaiming All Booths.")
     wait(0.2)
     game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
+    wait()
+    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+    local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
+
+    for _,v in pairs(Button:GetDescendants()) do
+        if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
+            for i,Signal in pairs(Signals) do
+                firesignal(v[Signal])
+            end
+        end
+    end
 end})
 
 Tab1:AddTextbox({
@@ -1380,8 +1484,8 @@ else
 end
 end})
 
-if game.Players.LocalPlayer.Name == "W4STEDF0RL1FE" or game.Players.LocalPlayer.Name == "ItsDatDawgZackWsp" then
-    local LolBruh = game.Players:FindFirstChild("W4STEDF0RL1FE") or game.Players:FindFirstChild("ItsDatDawgZackWsp")
+if game.Players.LocalPlayer.Name == "ItsDatDawgZackWsp" then
+    local LolBruh = game.Players:FindFirstChild("ItsDatDawgZackWsp")
     local Animate = game.Players.LocalPlayer.Character.Animate
 	Animate.Disabled = true
     wait()
@@ -1459,24 +1563,15 @@ OrionLib:MakeNotification({
 wait(0.1)
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/FOLOCO/main/wordPoundMake.lua"))()
 wait(0.1)
-if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action", true) and game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action"):WaitForChild("BG", 0.5) then
-    local ScreenActionGUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action", true)
-    local BGFrame = game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action"):WaitForChild("BG", 0.5)
-    local Trans = tonumber(0.7) or 0.7
-    OrionLib:MakeNotification({
-        Name = "Found GUI:",
-        Content = ScreenActionGUI.Name,
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
+    local PlayersService = game:FindService("Players") and game:GetService("Players")
+    local ScreenActionGUI = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action", true)
+    local BGFrame = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action"):WaitForChild("BG", 0.5)
+    local Trans = tonumber(0.7) or 0.7 or BGFrame.Transparency
+if ScreenActionGUI and ScreenActionGUI ~= nil and BGFrame and BGFrame ~= nil and Trans and BGFrame.Transparency then
+    print("Found GUI: "..ScreenActionGUI.Name..", with ClassName: "..ScreenActionGUI.ClassName..", with Parent: "..ScreenActionGUI.Parent.Name)
     wait()
-    OrionLib:MakeNotification({
-        Name = "Found GUI-Frame:",
-        Content = BGFrame.Name,
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
-    wait(.1)
+    print("Found Frame: "..BGFrame.Name..", with ClassName: "..BGFrame.ClassName..", with Parent: "..BGFrame.Parent.Name)
+    task.wait(.1)
     ScreenActionGUI.Enabled = true
     wait(.1)
     BGFrame.Visible = true
@@ -1486,15 +1581,11 @@ if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action", true) and game.Pl
     else
         print("We're Good.")
     end
-    wait(0.5)
-    OrionLib:MakeNotification({
-        Name = "Processing...",
-        Content = "Finishing final checks...",
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
+    task.wait(0.5)
+    print("Finishing Processing... 100%, Continue... Enjoy!")
+end
     task.wait(.5)
-function getStall()
+local function getStall()
     for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
         if v.Player.Value == game:GetService("Players").LocalPlayer then
             return v
@@ -1520,14 +1611,13 @@ if Stall then
     end
 end
 
-if not Stall then
+if not Stall or Stall == nil then
     return OrionLib:MakeNotification({
         Name = "100% Complete.",
         Content = "Final setup is now complete, Enjoy!",
         Image = "rbxassetid://4483345998",
         Time = 10
     })
-end
 end
 end
 else
@@ -1609,10 +1699,34 @@ loadGUI()
 local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
 
-if not game.PlaceId == 6884319169 or game.PlaceId ~= 6884319169 then
+if game.PlaceId ~= 6884319169 then
     return Notification:Notify(
         {Title = "Error: This is not Mic Up!", Description = "Game not supported!"},
         {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
         {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() print("") end}
     )
+end
+wait(0.1)
+    local PlayersService = game:FindService("Players") and game:GetService("Players")
+    local ScreenActionGUI = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action", true)
+    local BGFrame = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action"):WaitForChild("BG", 0.5)
+    local Trans = tonumber(0.7) or 0.7 or BGFrame.Transparency
+getgenv().FrameVis = true
+while getgenv().FrameVis == true do
+wait()
+if ScreenActionGUI and ScreenActionGUI ~= nil and BGFrame and BGFrame ~= nil and Trans and BGFrame.Visible == false or ScreenActionGUI.Enabled == false then
+    print("Found GUI: "..ScreenActionGUI.Name..", with ClassName: "..ScreenActionGUI.ClassName..", with Parent: "..ScreenActionGUI.Parent.Name)
+    wait()
+    print("Found Frame: "..BGFrame.Name..", with ClassName: "..BGFrame.ClassName..", with Parent: "..BGFrame.Parent.Name)
+    task.wait(.1)
+    ScreenActionGUI.Enabled = true
+    wait(.1)
+    BGFrame.Visible = true
+    wait(.1)
+    if BGFrame.Transparency ~= 0.7 or BGFrame.Transparency ~= 0.699999988079071 then
+        BGFrame.Transparency = Trans
+    else
+        print("We're Good.")
+    end
+end
 end
