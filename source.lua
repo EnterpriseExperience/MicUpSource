@@ -24,7 +24,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Ent
 local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MICUp"})
 local Tab1 = Window:MakeTab({
 	Name = "__HOME_PAGE__",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://7733960981",
 	PremiumOnly = false
 })
 local Section1 = Tab1:AddSection({
@@ -32,7 +32,7 @@ local Section1 = Tab1:AddSection({
 })
 local Tab2 = Window:MakeTab({
 	Name = "__CHARACTER_UTILS__",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://7743871002",
 	PremiumOnly = false
 })
 local Section2 = Tab2:AddSection({
@@ -40,7 +40,7 @@ local Section2 = Tab2:AddSection({
 })
 local Tab4 = Window:MakeTab({
 	Name = "__COMMUNICATION_TOOLS__",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://7734021300",
 	PremiumOnly = false
 })
 local Section4 = Tab4:AddSection({
@@ -48,7 +48,7 @@ local Section4 = Tab4:AddSection({
 })
 local Tab5 = Window:MakeTab({
 	Name = "__EXTRA_UTILITIES__",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://7733954760",
 	PremiumOnly = false
 })
 local Section5 = Tab5:AddSection({
@@ -56,7 +56,7 @@ local Section5 = Tab5:AddSection({
 })
 local Tab6 = Window:MakeTab({
 	Name = "__CONTEXT/INFO__",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://7734022107",
 	PremiumOnly = false
 })
 local Section6 = Tab6:AddSection({
