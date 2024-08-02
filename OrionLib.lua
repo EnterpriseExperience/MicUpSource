@@ -22,7 +22,7 @@ local OrionLib = {
 			TextDark = Color3.fromRGB(150, 150, 150)
 		}
 	},
-	SelectedTheme = Default.TextDark,
+	SelectedTheme = Themes.Default.TextDark,
 	Folder = nil,
 	SaveCfg = false
 }
