@@ -22,7 +22,7 @@ local OrionLib = {
 			TextDark = Color3.fromRGB(150, 150, 150)
 		}
 	},
-	SelectedTheme = Themes.Default.TextDark,
+	SelectedTheme = "Default",
 	Folder = nil,
 	SaveCfg = false
 }
@@ -195,7 +195,7 @@ local function AddThemeObject(Object, Type)
 	table.insert(OrionLib.ThemeObjects[Type], Object)
 	Object[ReturnProperty(Object)] = OrionLib.Themes[OrionLib.SelectedTheme][Type]
 	return Object
-end    
+end
 
 local function SetTheme()
 	for Name, Type in pairs(OrionLib.ThemeObjects) do
