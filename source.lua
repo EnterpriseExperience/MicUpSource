@@ -44,7 +44,7 @@ local Tab4 = Window:MakeTab({
 	PremiumOnly = false
 })
 local Section4 = Tab4:AddSection({
-	Name = "__UTILITIES_FOR_CHAT_BYPASSING__"
+	Name = "__UTILITIES_FOR_CHAT_BYPASSING_AND_COMMUNICATION__"
 })
 local Tab5 = Window:MakeTab({
 	Name = "__EXTRA_UTILITIES__",
