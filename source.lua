@@ -23,44 +23,44 @@ local formattedTime = os.date("%I:%M %p", currentTime)
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MICUp"})
 local Tab1 = Window:MakeTab({
-	Name = "Home",
+	Name = "__HOME_PAGE__",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 local Section1 = Tab1:AddSection({
-	Name = "Main Tools"
+	Name = "__MODIFICATIONS_TO_BOOTHS_MAIN__"
 })
 local Tab2 = Window:MakeTab({
-	Name = "Character Tools",
+	Name = "__CHARACTER_UTILS__",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 local Section2 = Tab2:AddSection({
-	Name = "Character Tools"
+	Name = "__UTILITIES_FOR_CHARACTER_MODIFICATION__"
 })
 local Tab4 = Window:MakeTab({
-	Name = "Communication",
+	Name = "__COMMUNICATION_TOOLS__",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 local Section4 = Tab4:AddSection({
-	Name = "Chat Tools"
+	Name = "__UTILITIES_FOR_CHAT_BYPASSING__"
 })
 local Tab5 = Window:MakeTab({
-	Name = "Extra",
+	Name = "__EXTRA_UTILITIES__",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 local Section5 = Tab5:AddSection({
-	Name = "Extra Tools"
+	Name = "__PROVIDED_BY_ZACKS_EASY_HUB__ -- EXTRAS"
 })
 local Tab6 = Window:MakeTab({
-	Name = "Information",
+	Name = "__CONTEXT/INFO__",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 local Section6 = Tab6:AddSection({
-	Name = "Information/Quotes"
+	Name = "_INFORMATION_AND_SUCCESSFUL_QUOTES_PAGE__"
 })
 wait()
 local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
