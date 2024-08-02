@@ -383,15 +383,6 @@ local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall1:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity1, 10)
-    else
-        if table.find(Whitelisted, Stall1.Player.Value) then
-            OrionLib:MakeNotification({
-                Name = "Skipping...",
-                Content = "Player Name found in Whitelist table.",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        end
     end
     wait(0.1)
     workspace:WaitForChild("Stalls"):WaitForChild("Stall1"):WaitForChild("CloseStall"):FireServer()
@@ -401,15 +392,6 @@ local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall2:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity2, 10)
-    else
-        if table.find(Whitelisted, Stall2.Player.Value) then
-            OrionLib:MakeNotification({
-                Name = "Skipping...",
-                Content = "Player Name found in Whitelist table.",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        end
     end
     wait(0.1)
     workspace:WaitForChild("Stalls"):WaitForChild("Stall2"):WaitForChild("CloseStall"):FireServer()
@@ -419,15 +401,6 @@ local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall3:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity3, 10)
-    else
-        if table.find(Whitelisted, Stall3.Player.Value) then
-            OrionLib:MakeNotification({
-                Name = "Skipping...",
-                Content = "Player Name found in Whitelist table.",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        end
     end
     wait(0.1)
     workspace:WaitForChild("Stalls"):WaitForChild("Stall3"):WaitForChild("CloseStall"):FireServer()
@@ -437,15 +410,6 @@ local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall4:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity4, 10)
-    else
-        if table.find(Whitelisted, Stall4.Player.Value) then
-            OrionLib:MakeNotification({
-                Name = "Skipping...",
-                Content = "Player Name found in Whitelist table.",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        end
     end
     wait(0.1)
     workspace:WaitForChild("Stalls"):WaitForChild("Stall4"):WaitForChild("CloseStall"):FireServer()
@@ -455,15 +419,6 @@ local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall5:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity5, 10)
-    else
-        if table.find(Whitelisted, Stall5.Player.Value) then
-            OrionLib:MakeNotification({
-                Name = "Skipping...",
-                Content = "Player Name found in Whitelist table.",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        end
     end
     wait(0.1)
     workspace:WaitForChild("Stalls"):WaitForChild("Stall5"):WaitForChild("CloseStall"):FireServer()
@@ -699,6 +654,7 @@ Part.Anchored = true
 Part.Size = Vector3.new(200, 1, 200)
 Part.CFrame = CFrame.new(0, -500, 0) --Set this to whatever you want, just far away from the map.
 Part.CanCollide = true
+Part.Name = "TheBaseplate"
 FakeCharacter.Parent = workspace
 FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
 
@@ -734,6 +690,7 @@ function RealCharacterDied()
   Part.Size = Vector3.new(200, 1, 200)
   Part.CFrame = CFrame.new(9999, 9999, 9999)
   Part.CanCollide = true
+  Part.Name = "ThePartMaxCFrame"
   FakeCharacter.Parent = workspace
   FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
 
@@ -827,6 +784,183 @@ Sound.SoundId = "rbxassetid://232127604"
 Sound:Play()
 game:GetService("StarterGui"):SetCore("SendNotification",{["Title"] = "Invisible Toggle Loaded",["Text"] = "Press "..Settings.Keybind.." to change visibility.",["Duration"] = 20,["Button1"] = "Okay."})
 end})
+
+--[[Tab2:AddToggle({
+Name = "Flicker Character (FE, Invis Method)",
+Default = false,
+Callback = function(InvisMethod)
+if InvisMethod then
+    local ScriptStarted = false
+    local Transparency = true
+    local Keybind = Settings.Keybind
+    local NoClip = false
+    
+    local Player = game:GetService("Players").LocalPlayer
+    local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
+    local PartsFolder = Instance.new("Folder")
+    PartsFolder.Parent = workspace
+    PartsFolder.Name = "Objects"
+    
+    local IsInvisible = false
+    
+    RealCharacter.Archivable = true
+    local FakeCharacter = RealCharacter:Clone()
+    local Part
+    Part = Instance.new("Part", workspace)
+    Part.Anchored = true
+    Part.Size = Vector3.new(200, 1, 200)
+    Part.Parent = PartsFolder
+    Part.CFrame = CFrame.new(0, -500, 0)
+    Part.CanCollide = true
+    Part.Name = "TheBaseplate"
+    FakeCharacter.Parent = workspace
+    FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+    FakeCharacter.Name = game.Players.LocalPlayer.Name.."'sCharacter"
+    
+    for i, v in pairs(RealCharacter:GetChildren()) do
+      if v:IsA("LocalScript") then
+          local clone = v:Clone()
+          clone.Disabled = true
+          clone.Parent = FakeCharacter
+      end
+    end
+    if Transparency then
+      for i, v in pairs(FakeCharacter:GetDescendants()) do
+          if v:IsA("BasePart") then
+              v.Transparency = 0.5
+          end
+      end
+    end
+    local CanInvis = true
+    function RealCharacterDied()
+      CanInvis = false
+      RealCharacter:Destroy()
+      RealCharacter = Player.Character
+      CanInvis = true
+      isinvisible = false
+      FakeCharacter:Destroy()
+      workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+    
+      RealCharacter.Archivable = true
+      FakeCharacter = RealCharacter:Clone()
+      Part:Destroy()
+      Part = Instance.new("Part", workspace)
+      Part.Anchored = true
+      Part.Size = Vector3.new(200, 1, 200)
+      Part.CFrame = CFrame.new(9999, 9999, 9999)
+      Part.CanCollide = true
+      Part.Name = "ThePartMaxCFrame"
+      FakeCharacter.Parent = workspace
+      FakeCharacter.Name = game.Players.LocalPlayer.Name.."'sCharacter"
+      FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+    
+      for i, v in pairs(RealCharacter:GetChildren()) do
+          if v:IsA("LocalScript") then
+              local clone = v:Clone()
+              clone.Disabled = true
+              clone.Parent = FakeCharacter
+          end
+      end
+      if Transparency then
+          for i, v in pairs(FakeCharacter:GetDescendants()) do
+              if v:IsA("BasePart") then
+                  v.Transparency = 0.5
+              end
+          end
+      end
+     RealCharacter.Humanoid.Died:Connect(function()
+     RealCharacter:Destroy()
+     FakeCharacter:Destroy()
+     end)
+     Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
+    end
+    RealCharacter.Humanoid.Died:Connect(function()
+     RealCharacter:Destroy()
+     FakeCharacter:Destroy()
+     end)
+    Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
+    local PseudoAnchor
+    game:GetService("RunService").RenderStepped:Connect(
+      function()
+          if PseudoAnchor ~= nil then
+              PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+          end
+           if NoClip then
+               FakeCharacter.Humanoid:ChangeState(11)
+           end
+      end
+    )
+    
+    PseudoAnchor = FakeCharacter.HumanoidRootPart
+    local function Invisible()
+      if IsInvisible == false then
+          local StoredCF = RealCharacter.HumanoidRootPart.CFrame
+          RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
+          FakeCharacter.HumanoidRootPart.CFrame = StoredCF
+          RealCharacter.Humanoid:UnequipTools()
+          Player.Character = FakeCharacter
+          workspace.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
+          PseudoAnchor = RealCharacter.HumanoidRootPart
+          for i, v in pairs(FakeCharacter:GetChildren()) do
+              if v:IsA("LocalScript") then
+                  v.Disabled = false
+              end
+          end
+    
+          IsInvisible = true
+      else
+          local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
+          FakeCharacter.HumanoidRootPart.CFrame = RealCharacter.HumanoidRootPart.CFrame
+         
+          RealCharacter.HumanoidRootPart.CFrame = StoredCF
+         
+          FakeCharacter.Humanoid:UnequipTools()
+          Player.Character = RealCharacter
+          workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+          PseudoAnchor = FakeCharacter.HumanoidRootPart
+          for i, v in pairs(FakeCharacter:GetChildren()) do
+              if v:IsA("LocalScript") then
+                  v.Disabled = true
+              end
+          end
+          IsInvisible = false
+      end
+    end
+    local Sound = Instance.new("Sound",game:GetService("SoundService"))
+    Sound.SoundId = "rbxassetid://232127604"
+    Sound:Play()
+    game:GetService("StarterGui"):SetCore("SendNotification",{["Title"] = "Invisible Loaded",["Text"] = "Press "..Settings.Keybind.." to change visibility.",["Duration"] = 20,["Button1"] = "Okay."})
+if game:GetService("Workspace"):FindFirstChild(game.Players.LocalPlayer.Name.."'sCharacter", true) and not game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name) then
+getgenv().UsingInvisYes = true
+while getgenv().UsingInvisYes == true do
+wait()
+Invisible()
+wait()
+Invisible()
+end
+end
+else
+if game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name.."'sCharacter", true) and game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name.."'sCharacter"):FindFirstChild("Animate").Disabled == true then
+    game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid", true).Health = 0
+    wait()
+    getgenv().UsingInvisYes = false
+else
+    if game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name.."'sCharacter") then
+    game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name.."'sCharacter", true):Destroy()
+    wait()
+    game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid", true).Health = 0
+    wait()
+    getgenv().UsingInvisYes = false
+    else
+        warn("...")
+        wait()
+        getgenv().UsingInvisYes = false
+        wait()
+        return nil
+    end
+end
+end
+end})--]]
 
 Tab2:AddTextbox({
 Name = "Invis Keybind (if already ran = respawn)",
@@ -1563,9 +1697,10 @@ OrionLib:MakeNotification({
 wait(0.1)
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/FOLOCO/main/wordPoundMake.lua"))()
 wait(0.1)
+if game:FindService("Players").LocalPlayer.PlayerGui:FindFirstChild("Action", true) and game:FindService("Players").LocalPlayer.PlayerGui:FindFirstChild("Action"):FindFirstChild("BG") then
     local PlayersService = game:FindService("Players") and game:GetService("Players")
     local ScreenActionGUI = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action", true)
-    local BGFrame = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action"):WaitForChild("BG", 0.5)
+    local BGFrame = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action"):FindFirstChild("BG")
     local Trans = tonumber(0.7) or 0.7 or BGFrame.Transparency
 if ScreenActionGUI and ScreenActionGUI ~= nil and BGFrame and BGFrame ~= nil and Trans and BGFrame.Transparency then
     print("Found GUI: "..ScreenActionGUI.Name..", with ClassName: "..ScreenActionGUI.ClassName..", with Parent: "..ScreenActionGUI.Parent.Name)
@@ -1583,6 +1718,9 @@ if ScreenActionGUI and ScreenActionGUI ~= nil and BGFrame and BGFrame ~= nil and
     end
     task.wait(0.5)
     print("Finishing Processing... 100%, Continue... Enjoy!")
+else
+    return 
+end
 end
     task.wait(.5)
 local function getStall()
@@ -1705,28 +1843,4 @@ if game.PlaceId ~= 6884319169 then
         {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
         {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() print("") end}
     )
-end
-wait(0.1)
-    local PlayersService = game:FindService("Players") and game:GetService("Players")
-    local ScreenActionGUI = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action", true)
-    local BGFrame = PlayersService.LocalPlayer.PlayerGui:FindFirstChild("Action"):WaitForChild("BG", 0.5)
-    local Trans = tonumber(0.7) or 0.7 or BGFrame.Transparency
-getgenv().FrameVis = true
-while getgenv().FrameVis == true do
-wait()
-if ScreenActionGUI and ScreenActionGUI ~= nil and BGFrame and BGFrame ~= nil and Trans and BGFrame.Visible == false or ScreenActionGUI.Enabled == false then
-    print("Found GUI: "..ScreenActionGUI.Name..", with ClassName: "..ScreenActionGUI.ClassName..", with Parent: "..ScreenActionGUI.Parent.Name)
-    wait()
-    print("Found Frame: "..BGFrame.Name..", with ClassName: "..BGFrame.ClassName..", with Parent: "..BGFrame.Parent.Name)
-    task.wait(.1)
-    ScreenActionGUI.Enabled = true
-    wait(.1)
-    BGFrame.Visible = true
-    wait(.1)
-    if BGFrame.Transparency ~= 0.7 or BGFrame.Transparency ~= 0.699999988079071 then
-        BGFrame.Transparency = Trans
-    else
-        print("We're Good.")
-    end
-end
 end
