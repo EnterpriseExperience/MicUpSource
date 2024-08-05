@@ -334,6 +334,319 @@ Callback = function()
     end
 end})
 
+Tab1:AddDropdown({
+Name = "Booth Text Bypasser (Not Bannable + Working)",
+Default = "",
+Options = {"ӻȕㄈҟ 冂׀ɠɠȇŗȿ", "kill all ǰȇώȿ", "ҟ׀ȴȴ ƴόȕŗȿȇȴӻ", "ҟƴȿ", "ώȟ׀丅ȇ ɓ׀丅ㄈȟ", "ҟҟҟ", "׀ ȴόѵȇ 丅ȟȇ 冂ẳȥ׀ȿ", "heil ȟ׀丅ȴȇŗ", "ҟ׀ȴȴ ẳȴȴ ɓȴẳㄈҟȿ", "you have ẳȕ丅׀ȿɱ", "ώẳ冂冂ẳ ɠȇ丅 ŗẳᵽȇȡ?", "ώẳ冂冂ẳ ɓȇ ȿȇẍȕẳȴȴƴ ẳɓȕȿȇȡ?", "ӻẳ丅 冂׀ɠɠȇŗ", "ҟȴȕ ҟȴȕẍ ҟȴẳ冂", "lemme ȿȕㄈҟ on that ᵽȕȿȿƴ", "ӻȕㄈҟ׀冂ɠ ẳȿȿȟόȴȇ", "ŗȇ丅ẳŗȡ", "ŗȇ丅ẳŗȡ", "ŗȇ丅ẳŗȡȿ", "ȡ׀ㄈҟȟȇẳȡ", "i <3 ɓόόɓȿ", "i love 丅׀丅丅׀ȇȿ", "gimme that ᵽȕȿȿƴ", "my 冂׀ɠɠẳ", "ȴ׀ㄈҟ these ɓẳȴȴȿ", "ㄈȟόҟȇ on a ȟόŗȿȇㄈόㄈҟ", "ȿ丅ȕᵽ׀ȡ ㄈȕㄈҟ", "ȡȕɱɓ ẳȿȿ", "ӻȕㄈҟ׀冂ɠ ㄈȕㄈҟόȴȡ", "ŗȇ丅ẳŗȡȇȡ ɓȴẳㄈҟ ᵽȇŗȿό冂", "im gonna ŗẳᵽȇ you", "ẳ冂ẳȴ", "ӻ׀冂ɠȇŗ ƴόȕŗȿȇȴӻ"},
+Callback = function(Selection)
+local words = {
+    [1] = "ӻȕㄈҟ",
+    [2] = "ȿȟ׀丅",
+    [3] = "ㄈȕ冂丅",
+    [4] = "ㄈȕɱ",
+    [5] = "ɓ׀丅ㄈȟ",
+    [6] = "冂׀ɠɠẳ",
+    [7] = "冂׀ɠɠȇŗ",
+    [8] = "ŗȇ丅ẳŗȡ",
+    [9] = "ẳȿȿ",
+    [10] = "ȿȴȕ丅",
+    [11] = "ώȟόŗȇ",
+    [12] = "ẳȿȿȟόȴȇ",
+    [13] = "ẳȕ丅׀ȿɱ",
+    [14] = "ȟ׀丅ȴȇŗ",
+    [15] = "冂ẳȥ׀",
+    [16] = "ɓȕȴȴȿȟ׀丅",
+    [17] = "ɓȕȴȴ ȿȟ׀丅",
+    [18] = "ẳȿȿ ȟόȴȇ",
+    [19] = "ȿȴȕ丅丅ƴ ɓ׀丅ㄈȟ",
+    [20] = "ȿȴȕ丅丅ƴɓ׀丅ㄈȟ",
+    [21] = "ẳȕ丅׀ȿɱ ŗȇ丅ẳŗȡ",
+    [22] = "ŗȇ丅ẳŗȡȇȡ ẳȕ丅׀ȿɱ",
+    [23] = "ǰȇώȿ",
+    [24] = "冂׀ɠɠȇŗȿ 冂ȇȇȡ 丅ό ȡ׀ȇ",
+    [25] = "ҟ׀ȴȴ ẳȴȴ 冂׀ɠɠȇŗȿ",
+    [26] = "ҟҟҟ",
+    [27] = "ҟȴȕ ҟȴȕẍ ҟȴẳ冂",
+    [28] = "ȡ׀ㄈҟ",
+    [29] = "ᵽȇ冂׀ȿ",
+    [30] = "ᵽȕȿȿƴ",
+    [31] = "ㄈόόㄈȟ׀ȇ",
+    [32] = "ӻẳ丅 ᵽȕȿȿƴ",
+    [33] = "ɓ׀ɠ ȡ׀ㄈҟ",
+    [34] = "ㄈόό丅׀ȇ ㄈẳ丅",
+    [35] = "ȡ׀ㄈҟӻẳㄈȇ",
+    [36] = "ȡ׀ㄈҟȟȇẳȡ",
+    [37] = "ȡ׀ㄈҟ ȟȇẳȡ",
+    [38] = "ȡ׀ㄈҟ ɓẳɠ",
+    [39] = "ŗȇ丅ẳŗȡȇȡ ώȟόŗȇ",
+    [40] = "ŗȇ丅ẳŗȡȇȡ",
+    [41] = "冂׀ɠ",
+    [42] = "ŗẳᵽȇ",
+    [43] = "ɓẳȴȴȿẳㄈҟ",
+    [44] = "ɓẳȴȴ ȿẳㄈҟ",
+    [45] = "ɓẳȿ丅ẳŗȡ",
+    [46] = "ɓȴόώǰόɓ",
+    [47] = "ɓόόɓ",
+    [48] = "ɓόόɓȿ",
+    [49] = "ㄈόㄈҟ",
+    [50] = "ㄈȕㄈҟ",
+    [51] = "ㄈȕㄈҟόȴȡ",
+    [52] = "ɓȕ丅丅ᵽȴȕɠ",
+    [53] = "ȟόŗȿȇㄈόㄈҟ",
+    [54] = "ẳ冂ẳȴ",
+    [55] = "ȡ׀ȴȡό",
+    [56] = "ȡẳɱ冂",
+    [57] = "ㄈόό冂",
+    [58] = "ӻẳɠ",
+    [59] = "ӻẳɠɠό丅",
+    [60] = "ȡƴҟȇ",
+    [61] = "ɠόȡȡẳɱ冂",
+    [62] = "ᵽ׀ȿȿ",
+    [63] = "丅׀丅丅ƴ",
+    [64] = "丅׀丅",
+    [65] = "ȿȇẍ",
+    [66] = "ӻόό丅ǰόɓ",
+    [67] = "丅׀丅ǰόɓ",
+    [68] = "ᵽȕɓȇ",
+    [69] = "丅ώẳ丅",
+    [70] = "ȿɱȇɠɱẳ",
+    [71] = "ȴȇȿɓ׀ẳ冂",
+    [72] = "ɠẳƴ",
+    [73] = "丅ŗẳ冂ȿɠȇ冂ȡȇŗ",
+    [74] = "ȴɠɓ丅ԛ",
+    [75] = "ώẳ冂ҟ",
+    [76] = "ώẳ冂ҟȇŗ",
+}
+
+local function getStall()
+    for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+        if v.Player.Value == game:GetService("Players").LocalPlayer then
+            return v
+        end
+    end
+return nil
+end
+
+if Selection == "ӻȕㄈҟ 冂׀ɠɠȇŗȿ" then
+    local args = {
+        [1] = "ӻȕㄈҟ 冂׀ɠɠȇŗȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "kill all ǰȇώȿ" then
+    local args = {
+        [1] = "kill all ǰȇώȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ҟ׀ȴȴ ƴόȕŗȿȇȴӻ" then
+    local args = {
+        [1] = "ҟ׀ȴȴ ƴόȕŗȿȇȴӻ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ҟƴȿ" then
+    local args = {
+        [1] = "ҟƴȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ώȟ׀丅ȇ ɓ׀丅ㄈȟ" then
+    local args = {
+        [1] = "ώȟ׀丅ȇ ɓ׀丅ㄈȟ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ҟҟҟ" then
+    local args = {
+        [1] = "ҟҟҟ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "׀ ȴόѵȇ 丅ȟȇ 冂ẳȥ׀ȿ" then
+    local args = {
+        [1] = "i <3 冂ẳȥ׀ȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "heil ȟ׀丅ȴȇŗ" then
+    local args = {
+        [1] = "heil ȟ׀丅ȴȇŗ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ҟ׀ȴȴ ẳȴȴ ɓȴẳㄈҟȿ" then
+    local args = {
+        [1] = "kill all ɓȴẳㄈҟȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "you have ẳȕ丅׀ȿɱ" then
+    local args = {
+        [1] = "you have ẳȕ丅׀ȿɱ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ώẳ冂冂ẳ ɓȇ ȿȇẍȕẳȴȴƴ ẳɓȕȿȇȡ?" then
+    local args = {
+        [1] = "wanna be ŗẳᵽȇȡ?",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ώẳ冂冂ẳ ɓȇ ȿȇẍȕẳȴȴƴ ẳɓȕȿȇȡ?" then
+    local args = {
+        [1] = "wanna be ȿȇẍȕẳȴȴƴ ẳɓȕȿȇȡ?",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ӻẳ丅 冂׀ɠɠȇŗ" then
+    local args = {
+        [1] = "ӻẳ丅 冂׀ɠɠȇŗ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ҟȴȕ ҟȴȕẍ ҟȴẳ冂" then
+    local args = {
+        [1] = "ҟȴȕ ҟȴȕẍ ҟȴẳ冂",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "lemme ȿȕㄈҟ on that ᵽȕȿȿƴ" then
+    local args = {
+        [1] = "lemme ȿȕㄈҟ on that ᵽȕȿȿƴ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ӻȕㄈҟ׀冂ɠ ẳȿȿȟόȴȇ" then
+    local args = {
+        [1] = "ӻȕㄈҟ׀冂ɠ ẳȿȿȟόȴȇ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ŗȇ丅ẳŗȡ" then
+    local args = {
+        [1] = "ŗȇ丅ẳŗȡ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ȡ׀ㄈҟȟȇẳȡ" then
+    local args = {
+        [1] = "ȡ׀ㄈҟȟȇẳȡ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "i <3 ɓόόɓȿ" then
+    local args = {
+        [1] = "i <3 ɓόόɓȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "i love 丅׀丅丅׀ȇȿ" then
+    local args = {
+        [1] = "i love 丅׀丅丅׀ȇȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "gimme that ᵽȕȿȿƴ" then
+    local args = {
+        [1] = "gimme that soaking ᵽȕȿȿƴ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "my 冂׀ɠɠẳ" then
+    local args = {
+        [1] = "my 冂׀ɠɠẳ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ȴ׀ㄈҟ these ɓẳȴȴȿ" then
+    local args = {
+        [1] = "ȴ׀ㄈҟ these ɓẳȴȴȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ㄈȟόҟȇ on a ȟόŗȿȇㄈόㄈҟ" then
+    local args = {
+        [1] = "ㄈȟόҟȇ on a ȟόŗȿȇㄈόㄈҟ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ȿ丅ȕᵽ׀ȡ ㄈȕㄈҟ" then
+    local args = {
+        [1] = "ȿ丅ȕᵽ׀ȡ ㄈȕㄈҟ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ȡȕɱɓ ẳȿȿ" then
+    local args = {
+        [1] = "ȡȕɱɓ ẳȿȿ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ӻȕㄈҟ׀冂ɠ ㄈȕㄈҟόȴȡ" then
+    local args = {
+        [1] = "ӻȕㄈҟ׀冂ɠ ㄈȕㄈҟόȴȡ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ŗȇ丅ẳŗȡȇȡ ɓȴẳㄈҟ ᵽȇŗȿό冂" then
+    local args = {
+        [1] = "ŗȇ丅ẳŗȡȇȡ ɓȴẳㄈҟ ᵽȇŗȿό冂",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "im gonna ŗẳᵽȇ you" then
+    local args = {
+        [1] = "im gonna ŗẳᵽȇ you",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ẳ冂ẳȴ" then
+    local args = {
+        [1] = "ẳ冂ẳȴ",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+elseif Selection == "ӻ׀冂ɠȇŗ ƴόȕŗȿȇȴӻ" then
+    local args = {
+        [1] = "ӻ׀冂ɠȇŗ ƴόȕŗȿȇȴӻ for me",
+        [2] = "5888213893"
+    }
+
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+end
+end})
+
 Tab1:AddTextbox({
 Name = "18+ Image ID Bypass",
 Default = "Text You Want",
