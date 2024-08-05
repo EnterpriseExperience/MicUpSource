@@ -12,10 +12,6 @@ if game.PlaceId == 6884319169 then
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 
-    getgenv().gethui = function()
-        return game:GetService("CoreGui")
-    end
-
 function loadGUI()
 repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 local currentTime = os.time()
@@ -62,17 +58,6 @@ local Tab6 = Window:MakeTab({
 local Section6 = Tab6:AddSection({
 	Name = "_INFORMATION_AND_SUCCESSFUL_QUOTES_PAGE__"
 })
-wait()
-local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
-
-for _,v in pairs(Button:GetDescendants()) do
-    if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
-        for i,Signal in pairs(Signals) do
-            firesignal(v[Signal])
-        end
-    end
-end
 wait()
 local Whitelisted = {game.Players.LocalPlayer.Name, "Roblox"}
 wait()
@@ -255,6 +240,98 @@ if Stall5:FindFirstChild("ProxPart") then
     wait()
     Proximity5.HoldDuration = 0
 end
+end})
+
+Tab1:AddToggle({
+Name = "Auto Claim Stand (for hackers?)",
+Default = false,
+Callback = function(AutoClaimStand)
+if AutoClaimStand then
+getgenv().ClaimTheStand = true
+while getgenv().ClaimTheStand == true do
+wait()
+local Folder = workspace:WaitForChild("Stalls")
+---
+local Stall1 = Folder:FindFirstChild("Stall1")
+
+if Stall1:FindFirstChild("ProxPart") and fireproximityprompt then
+    local Proximity1 = Stall1:FindFirstChild("ProxPart").ProximityPrompt
+    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall1:FindFirstChild("ProxPart").Position)
+    wait(0.3)
+    fireproximityprompt(Proximity1, 15)
+    wait()
+    local TheStall = LocalStall
+    local args = {
+        [1] = "Stolen By: "..game.Players.LocalPlayer.Name,
+        [2] = "5888213893"
+    }
+
+    Stall1:FindFirstChild("Edit"):FireServer(unpack(args))
+    wait()
+    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+    local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
+
+    for _,v in pairs(Button:GetDescendants()) do
+        if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
+            for i,Signal in pairs(Signals) do
+                firesignal(v[Signal])
+            end
+        end
+    end
+else
+    return 
+end
+wait(0.1)
+workspace:WaitForChild("Stalls"):WaitForChild("Stall1"):WaitForChild("CloseStall"):FireServer()
+end
+else
+getgenv().ClaimTheStand = false
+wait()
+workspace:WaitForChild("Stalls"):WaitForChild("Stall1"):WaitForChild("CloseStall"):FireServer()
+end
+end})
+
+Tab1:AddButton({
+Name = "Anti Stand Stealer (for hackers)",
+Callback = function()
+    local LmaoCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame
+    local oldBooth = game:GetService("Workspace"):WaitForChild("Stalls"):WaitForChild("Stall1")
+    local Proximity1 = game:GetService("Workspace"):WaitForChild("Stalls"):WaitForChild("Stall1"):FindFirstChild("ProxPart").ProximityPrompt
+    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(game:GetService("Workspace"):WaitForChild("Stalls"):WaitForChild("Stall1"):FindFirstChild("ProxPart").Position)
+    wait(0.3)
+    fireproximityprompt(Proximity1, 15)
+    wait(0.2)
+    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = LmaoCF
+
+    if oldBooth:FindFirstChild("ProxPart") and fireproximityprompt then
+        oldBooth:FindFirstChild("Icon"):FindFirstChild("Decal").Changed:Connect(function(newVal)
+            print("Detected Change/Stealer: "..newVal)
+            wait()
+            local Proximity1 = oldBooth:FindFirstChild("ProxPart").ProximityPrompt
+            game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(oldBooth:FindFirstChild("ProxPart").Position)
+            wait(0.3)
+            fireproximityprompt(Proximity1, 15)
+            wait()
+            local TheStall = oldBooth
+            local args = {
+                [1] = "Stolen By: "..game.Players.LocalPlayer.Name,
+                [2] = "5888213893"
+            }
+        
+            oldBooth:FindFirstChild("Edit"):FireServer(unpack(args))
+            wait()
+            local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+            local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
+        
+            for _,v in pairs(Button:GetDescendants()) do
+                if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
+                    for i,Signal in pairs(Signals) do
+                        firesignal(v[Signal])
+                    end
+                end
+            end
+        end)
+    end
 end})
 
 Tab1:AddTextbox({
