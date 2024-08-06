@@ -641,10 +641,50 @@ else
 end
 end})
 
+Tab1:AddButton({
+Name = "Players Invisible Fix",
+Callback = function()
+    local function makeCharacterVisible(character)
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 0
+                part.CanCollide = true
+            end
+        end
+    end
+    
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character then
+            makeCharacterVisible(player.Character)
+        end
+    end
+    wait()
+    local function makePartInvisible(part)
+        part.Transparency = 1
+        part.CanCollide = false
+    end
+    
+    local function makeHumanoidRootPartInvisible(character)
+        local player = game.Players:GetPlayerFromCharacter(character)
+        if player and player ~= game.Players.LocalPlayer then
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                makePartInvisible(humanoidRootPart)
+            end
+        end
+    end
+    
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character then
+            makeHumanoidRootPartInvisible(player.Character)
+        end
+    end
+end})
+
 Tab1:AddDropdown({
 Name = "Booth Text Bypasser (Not Bannable + Working)",
 Default = "",
-Options = {"fuck ni**ers", "kill all jews", "kill yourself", "kys", "white bitch", "kkk", "i love nazis", "heil hitler", "kill the blacks", "you have autism", "wanna get raped?", "wanna be sexually abused?", "fat ni**er", "klu klux klan", "lemme suck on that pussy", "fucking asshole", "retard", "retards", "dickhead", "i <3 boobs", "i love titties", "gimme that pussy", "my ni**a", "lick these balls", "choke on a horsecock", "stupid cuck", "dumb ass", "fucking cuckold", "retarded black person", "im gonna rape you", "take it anally", "finger fuck yourself"},
+Options = {"fuck ni**ers", "kill all jews", "kill yourself", "kys", "white bitch", "kkk", "i love nazis", "heil hitler", "kill the blacks", "you have autism", "wanna get raped?", "wanna be sexually abused?", "fat ni**er", "klu klux klan", "lemme suck on that pussy", "fucking asshole", "retard", "you retards", "dickhead", "i <3 boobs", "i love titties", "gimme that pussy", "my ni**a", "lick these balls", "choke on a horsecock", "stupid cuck", "dumb ass", "fucking cuckold", "retarded black person", "im gonna rape you", "take it anally", "finger fuck yourself"},
 Callback = function(Selection)
 local function getStall()
     for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
@@ -867,12 +907,12 @@ elseif Selection == "take it anally" then
     getStall():FindFirstChild("Edit"):FireServer(unpack(args))
 elseif Selection == "finger fuck yourself" then
     local args = {
-        [1] = "ӻ׀冂ɠȇŗ ƴόȕŗȿȇȴӻ for me",
+        [1] = "finger ӻȕㄈҟ ƴόȕŗȿȇȴӻ for me",
         [2] = "5888213893"
     }
 
     getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "retards" then
+elseif Selection == "you retards" then
     local args = {
         [1] = "you ӻȕㄈҟ׀冂ɠ ŗȇ丅ẳŗȡȿ",
         [2] = "5888213893"
