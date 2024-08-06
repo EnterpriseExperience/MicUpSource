@@ -12,10 +12,6 @@ if game.PlaceId == 6884319169 then
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 
-    if readfile and writefile and readfile("booth.txt") then
-        writefile("booth.txt", "")
-    end
-
 function loadGUI()
 repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 local currentTime = os.time()
@@ -921,29 +917,6 @@ else
         local dawg = game:GetService("Workspace"):WaitForChild("Stalls"):FindFirstChild("Stall1")
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart", 1).CFrame = CFrame.new(dawg.ProxPart.Position)
         wait(0.5)
-        local Players = game:GetService("Players")
-
-        local function makeInvisible(character)
-            if character then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
-                        part.Transparency = 1
-                        if part:IsA("BasePart") then
-                            part.Transparency = 1
-                        end
-                    end
-                end
-            end
-        end
-        
-        local localPlayer = Players.LocalPlayer
-        
-        for _, player in pairs(Players:GetPlayers()) do
-            if player ~= localPlayer and player.Character then
-                makeInvisible(player.Character)
-            end
-        end
-        wait()
         local lol = game:GetService("Workspace"):WaitForChild("Stalls"):FindFirstChild("Stall1"):WaitForChild("ProxPart", 1).ProximityPrompt
         lol.MaxActivationDistance = 65
         wait()
@@ -964,49 +937,6 @@ else
                 for i,Signal in pairs(Signals) do
                     firesignal(v[Signal])
                 end
-            end
-        end
-        wait()
-        local Players = game:GetService("Players")
-
-        local function makeInvisible(character)
-            if character then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
-                        part.Transparency = 1
-                        if part:IsA("BasePart") then
-                            part.Transparency = 0
-                        end
-                    end
-                end
-            end
-        end
-        
-        local localPlayer = Players.LocalPlayer
-        
-        for _, player in pairs(Players:GetPlayers()) do
-            if player ~= localPlayer and player.Character then
-                makeInvisible(player.Character)
-            end
-        end
-        wait()
-        local Players = game:GetService("Players")
-
-        local function makeInvisible(character)
-            if character then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:FindFirstChild("HumanoidRootPart") then
-                        part.Transparency = 1
-                    end
-                end
-            end
-        end
-        
-        local localPlayer = Players.LocalPlayer
-        
-        for _, player in pairs(Players:GetPlayers()) do
-            if player ~= localPlayer and player.Character then
-                makeInvisible(player.Character)
             end
         end
     end
