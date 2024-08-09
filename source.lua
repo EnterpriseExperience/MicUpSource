@@ -997,7 +997,7 @@ Tab1:AddTextbox({
 Name = "Chat Bypass Input (Working)",
 Default = "Bypass Text",
 TextDisappear = true,
-Callback = function(ChatBypass)
+Callback = function(Bypass)
     local letters = {
         ["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
     }
@@ -1015,12 +1015,12 @@ Callback = function(ChatBypass)
     end
     
     local function SendMSG(msg)
-        local TextChatService = game:GetService("TextChatService")
+        local TextChat = game:GetService("TextChatService"):WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
 
-        TextChatService:SendAsync(filter(msg))
+        TextChat:SendAsync(filter(msg))
     end
 
-    SendMSG(ChatBypass)
+    SendMSG(Bypass)
 end})
 
 Tab1:AddTextbox({
