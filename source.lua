@@ -1014,7 +1014,7 @@ Callback = function(ChatBypass)
         return message
     end
     
-    local function sendMSG(msg)
+    local function SendMSG(msg)
         local TextChatService = game:GetService("TextChatService")
 
         TextChatService:SendAsync(filter(msg))
