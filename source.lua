@@ -59,7 +59,137 @@ local Section6 = Tab6:AddSection({
 	Name = "_INFORMATION_AND_SUCCESSFUL_QUOTES_PAGE__"
 })
 wait()
-local Whitelisted = {game.Players.LocalPlayer.Name, "Roblox"}
+local Players = game:GetService("Players")
+local whitelist = {}
+local player = Players.LocalPlayer
+
+local function addToWhitelist(username)
+    local foundPlayer = Players:FindFirstChild(username)
+    
+    if foundPlayer then
+        whitelist[foundPlayer.UserId] = true
+        wait()
+        return OrionLib:MakeNotification({
+            Name = "Success!: Whitelisted",
+            Content = "Player was successfully whitelisted into table!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    else
+        return print("Player not found: " .. username)
+    end
+end
+
+local function removeFromWhitelist(username)
+    local foundPlayer = Players:FindFirstChild(username)
+    
+    if foundPlayer then
+        if whitelist[foundPlayer.UserId] then
+            whitelist[foundPlayer.UserId] = nil
+            wait()
+            return OrionLib:MakeNotification({
+                Name = "Success!: Removed",
+                Content = "Player was successfully removed from whitelist!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        else
+            return 
+        end
+    else
+        return 
+    end
+end
+wait()
+function ClaimStall1()
+    local Folder = workspace:WaitForChild("Stalls")
+    ---
+    local Stall1 = Folder:FindFirstChild("Stall1")
+    local Stall2 = Folder:FindFirstChild("Stall2")
+    local Stall3 = Folder:FindFirstChild("Stall3")
+    local Stall4 = Folder:FindFirstChild("Stall4")
+    local Stall5 = Folder:FindFirstChild("Stall5")
+    if Stall1:FindFirstChild("ProxPart") and fireproximityprompt and Stall1.Player.Value ~= whitelist[game.Players[Stall3:FindFirstChild("Player").Value].UserId] then
+        local Proximity1 = Stall1:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall1:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity1, 10)
+        wait(0.5)
+        Stall1:WaitForChild("CloseStall"):FireServer()
+    end
+end
+
+function ClaimStall2()
+    local Folder = workspace:WaitForChild("Stalls")
+    ---
+    local Stall1 = Folder:FindFirstChild("Stall1")
+    local Stall2 = Folder:FindFirstChild("Stall2")
+    local Stall3 = Folder:FindFirstChild("Stall3")
+    local Stall4 = Folder:FindFirstChild("Stall4")
+    local Stall5 = Folder:FindFirstChild("Stall5")
+    if Stall2:FindFirstChild("ProxPart") and fireproximityprompt and Stall2.Player.Value ~= whitelist[game.Players[Stall2:FindFirstChild("Player").Value].UserId] then
+        local Proximity2 = Stall2:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall2:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity2, 10)
+        wait(0.5)
+        Stall2:WaitForChild("CloseStall"):FireServer()
+    end
+end
+
+function ClaimStall3()
+    local Folder = workspace:WaitForChild("Stalls")
+    ---
+    local Stall1 = Folder:FindFirstChild("Stall1")
+    local Stall2 = Folder:FindFirstChild("Stall2")
+    local Stall3 = Folder:FindFirstChild("Stall3")
+    local Stall4 = Folder:FindFirstChild("Stall4")
+    local Stall5 = Folder:FindFirstChild("Stall5")
+    if Stall3:FindFirstChild("ProxPart") and fireproximityprompt and Stall3.Player.Value ~= whitelist[game.Players[Stall3:FindFirstChild("Player").Value].UserId] then
+        local Proximity3 = Stall3:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall3:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity3, 10)
+        wait(0.5)
+        Stall3:WaitForChild("CloseStall"):FireServer()
+    end
+end
+
+function ClaimStall4()
+    local Folder = workspace:WaitForChild("Stalls")
+    ---
+    local Stall1 = Folder:FindFirstChild("Stall1")
+    local Stall2 = Folder:FindFirstChild("Stall2")
+    local Stall3 = Folder:FindFirstChild("Stall3")
+    local Stall4 = Folder:FindFirstChild("Stall4")
+    local Stall5 = Folder:FindFirstChild("Stall5")
+    if Stall4:FindFirstChild("ProxPart") and fireproximityprompt and Stall4.Player.Value ~= whitelist[game.Players[Stall4:FindFirstChild("Player").Value].UserId] then
+        local Proximity4 = Stall4:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall4:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity4, 10)
+        wait(0.5)
+        Stall4:WaitForChild("CloseStall"):FireServer()
+    end
+end
+
+function ClaimStall5()
+    local Folder = workspace:WaitForChild("Stalls")
+    ---
+    local Stall1 = Folder:FindFirstChild("Stall1")
+    local Stall2 = Folder:FindFirstChild("Stall2")
+    local Stall3 = Folder:FindFirstChild("Stall3")
+    local Stall4 = Folder:FindFirstChild("Stall4")
+    local Stall5 = Folder:FindFirstChild("Stall5")
+    if Stall5:FindFirstChild("ProxPart") and fireproximityprompt and Stall5.Player.Value ~= whitelist[game.Players[Stall5:FindFirstChild("Player").Value].UserId] then
+        local Proximity5 = Stall5:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall5:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity5, 10)
+        wait(0.5)
+        Stall5:WaitForChild("CloseStall"):FireServer()
+    end
+end
 wait()
 	local Players = cloneref(game:GetService("Players"))
 	-- Functions --
@@ -681,23 +811,178 @@ Callback = function()
     end
 end})
 
-Tab1:AddDropdown({
-Name = "Booth Text Bypasser (Not Bannable + Working)",
-Default = "",
-Options = {"fuck ni**ers", "kill all jews", "kill yourself", "kys", "white bitch", "kkk", "i love nazis", "heil hitler", "kill the blacks", "you have autism", "wanna get raped?", "wanna be sexually abused?", "fat ni**er", "klu klux klan", "lemme suck on that pussy", "fucking asshole", "retard", "you retards", "dickhead", "i <3 boobs", "i love titties", "gimme that pussy", "my ni**a", "lick these balls", "choke on a horsecock", "stupid cuck", "dumb ass", "fucking cuckold", "retarded black person", "im gonna rape you", "take it anally", "finger fuck yourself"},
-Callback = function(Selection)
+Tab1:AddToggle({
+Name = "Bad Words Cycle (Booths)",
+Default = false,
+Callback = function(Cussing)
+if Cussing then
+getgenv().Cuss = true
+while getgenv().Cuss == true do
+wait(1)
 local function getStall()
     for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
         if v.Player.Value == game:GetService("Players").LocalPlayer then
             return v
         end
     end
-return nil
+    return nil
 end
 
-if Selection == "fuck ni**ers" then
+local letters = {
+    ["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
+}
+
+local function replace(str, find_str, replace_str) 
+    local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0") 
+    return str:gsub(escaped_find_str, replace_str) 
+end
+
+local function filter(message)
+    for search, replacement in pairs(letters) do
+        message = replace(message, search, replacement)
+    end
+    return message
+end
+
+local function sendChat(msg)
+    local filteredMessage = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
+if tagged then
+    OrionLib:MakeNotification({
+        Name = "Failure!",
+        Content = msg..", was not be bypassed, trying again...",
+        Image = "rbxassetid://4483345998",
+        Time = 5
+    })
+    wait()
+else
     local args = {
-        [1] = "ӻȕㄈҟ 冂׀ɠɠȇŗȿ",
+        [1] = filter(msg),
+        [2] = "5888213893"
+    }
+        
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+end
+end
+sendChat("Fuck")
+wait(1)
+sendChat("Bitch")
+wait(1)
+sendChat("Retard")
+wait(1)
+sendChat("Asshole")
+wait(1)
+sendChat("Autism")
+wait(1)
+sendChat("Black")
+wait(1)
+sendChat("Nigga")
+wait(1)
+sendChat("Nigger")
+wait(1)
+sendChat("Cunt")
+wait(1)
+sendChat("Asswipe")
+wait(1)
+sendChat("Butt")
+wait(1)
+sendChat("Pussy")
+wait(1)
+sendChat("Coochie")
+wait(1)
+sendChat("Sex")
+wait(1)
+sendChat("Cuck")
+wait(1)
+sendChat("Cuckold")
+wait(1)
+sendChat("Porn")
+wait(1)
+sendChat("Hentai")
+wait(1)
+sendChat("Suck Dick")
+wait(1)
+sendChat("Kill Yourself")
+wait(1)
+sendChat("Rape")
+wait(1)
+sendChat("sexual abuse")
+wait(1)
+sendChat("Anal")
+wait(1)
+sendChat("Tight Pussy")
+wait(1)
+sendChat("Petite Asian Bitch")
+wait(1)
+sendChat("Raped before 12")
+wait(1)
+sendChat("Choke on a cock")
+wait(1)
+sendChat("Big Ballsack")
+wait(1)
+sendChat("Klu Klux Klan")
+wait(1)
+sendChat("Lick my nuts")
+end
+else
+getgenv().Cuss = false
+end
+end})
+
+Tab1:AddTextbox({
+Name = "Booth Text Bypasser (Not Bannable + Working)",
+Default = "Text To Bypass",
+TextDisappear = true,
+Callback = function(TextToBypass)
+local function getStall()
+    for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+        if v.Player.Value == game:GetService("Players").LocalPlayer then
+            return v
+        end
+    end
+    return nil
+end
+
+local letters = {
+    ["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
+}
+
+local filteredMessage = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
+
+local function replace(str, find_str, replace_str) 
+    local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0") 
+    return str:gsub(escaped_find_str, replace_str) 
+end
+
+local function filter(message)
+    for search, replacement in pairs(letters) do
+        message = replace(message, search, replacement)
+    end
+    return message
+end
+
+local function sendChat(msg)
+if tagged then
+    return OrionLib:MakeNotification({
+        Name = "Failure!",
+        Content = msg..", could not be bypassed, try again!",
+        Image = "rbxassetid://4483345998",
+        Time = 5
+    })
+else
+    local args = {
+        [1] = filter(msg),
+        [2] = "5888213893"
+    }
+        
+    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
+end
+end
+
+sendChat(TextToBypass)
+
+--[[if Selection == "fuck ni**ers" then
+    local args = {
+        [1] = "🅵🆄🅲🅺 ",
         [2] = "5888213893"
     }
 
@@ -919,7 +1204,7 @@ elseif Selection == "you retards" then
     }
 
     getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-end
+end--]]
 end})
 
 Tab1:AddTextbox({
@@ -1011,6 +1296,7 @@ end
 wait()
 print(getStallFunc())
 wait()
+if fireproximityprompt and getStallFunc() ~= nil and getStallFunc() ~= whitelist[game.Players[LolUnClaim.Player.Value].UserId] then
 local Players = game:GetService("Players")
 
 local function makeInvisible(character)
@@ -1033,13 +1319,12 @@ for _, player in pairs(Players:GetPlayers()) do
         makeInvisible(player.Character)
     end
 end
-wait()
 local Proximity1 = getStallFunc():FindFirstChild("ProxPart").ProximityPrompt
 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(getStallFunc():FindFirstChild("ProxPart").Position)
 wait(0.3)
 fireproximityprompt(Proximity1, 10)
 wait(0.5)
-getStallSelf():WaitForChild("CloseStall", 3):FireServer()
+getStallSelf():WaitForChild("CloseStall", 2):FireServer()
 wait(0.1)
 local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
 local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
@@ -1096,7 +1381,34 @@ for _, player in pairs(Players:GetPlayers()) do
 end
 wait(0.3)
 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldestCF
+else
+    return 
+end
 end})
+
+--[[Tab1:AddTextbox({
+Name = "Whitelist Player(s)",
+Default = "Whitelist from script",
+TextDisappear = true,
+Callback = function(ThePlr)
+if game.Players[ThePlr].Character:FindFirstChildWhichIsA("Humanoid") ~= nil then
+    addToWhitelist(ThePlr)
+else
+    return 
+end
+end})
+
+Tab1:AddTextbox({
+Name = "Remove Whitelist Player(s)",
+Default = "Remove from Script",
+TextDisappear = true,
+Callback = function(PlayerUsername)
+    if game.Players[PlayerUsername].Character:FindFirstChildWhichIsA("Humanoid") ~= nil then
+        removeFromWhitelist(PlayerUsername)
+    else
+        return 
+    end
+end})--]]
 
 Tab1:AddButton({
 Name = "Unclaim ALL Booths",
@@ -1132,54 +1444,101 @@ local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart"
         end
     end
     wait()
-    if Stall1:FindFirstChild("ProxPart") and fireproximityprompt and Stall1.Player.Value ~= Whitelisted.Name then
-        local Proximity1 = Stall1:FindFirstChild("ProxPart").ProximityPrompt
-        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall1:FindFirstChild("ProxPart").Position)
-        wait(0.3)
-        fireproximityprompt(Proximity1, 10)
+    if Stall1:FindFirstChild("ProxPart") and fireproximityprompt and Stall1.Player.Value ~= whitelist[game.Players[Stall1.Player.Value].UserId] then
+        claimStall1()
+    else
+        if Stall1.Player.Value == whitelist[game.Players[Stall.Player.Value].UserId] then
+            claimStall2()
+        end
     end
-    wait(0.1)
-    workspace:WaitForChild("Stalls"):WaitForChild("Stall1"):WaitForChild("CloseStall"):FireServer()
+    wait()
+    if Stall2:FindFirstChild("ProxPart") and fireproximityprompt and Stall2.Player.Value ~= whitelist[game.Players[Stall2.Player.Value].UserId] then
+        claimStall2()
+    else
+        if Stall2.Player.Value == whitelisted[game.Players[Stall2.Player.Value].UserId] then
+            claimStall3()
+        end
+    end
+    wait()
+    if Stall3:FindFirstChild("ProxPart") and fireproximityprompt and Stall3.Player.Value ~= whitelisted[game.Players[Stall3.Player.Value].UserId] then
+        claimStall3()
+    else
+        if Stall3.Player.Value == whitelisted[game.Players[Stall3.Player.Value].UserId] then
+            claimStall4()
+        end
+    end
+    wait()
+    if Stall4:FindFirstChild("ProxPart") and fireproximityprompt and Stall4.Player.Value ~= whitelisted[game.Players[Stall4.Player.Value].UserId] then
+        claimStall4()
+    else
+        if Stall4.Player.Value == whitelisted[game.Players[Stall4.Player.Value].UserId] then
+            claimStall5()
+        end
+    end
+    wait()
+    if Stall5:FindFirstChild("ProxPart") and fireproximityprompt and Stall5.Player.Value ~= whitelisted[game.Players[Stall5.Player.Value].UserId] then
+        claimStall3()
+    else
+        if Stall5.Player.Value == whitelisted[game.Players[Stall5.Player.Value].UserId] then
+            return 
+        end
+    end
     wait(0.3)
-    if Stall2:FindFirstChild("ProxPart") and fireproximityprompt and Stall2.Player.Value ~= Whitelisted.Name then
+    if Stall2:FindFirstChild("ProxPart") and fireproximityprompt and Stall2.Player.Value ~= whitelist[game.Players[Stall2.Player.Value].UserId] then
         local Proximity2 = Stall2:FindFirstChild("ProxPart").ProximityPrompt
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall2:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity2, 10)
+        wait(0.5)
+        workspace:WaitForChild("Stalls"):WaitForChild("Stall2"):WaitForChild("CloseStall"):FireServer()
+    else
+        if Stall2:FindFirstChild("Player").Value == whitelist[game.Players[Stall2:FindFirstChild("Player").Value].UserId] then
+            return 
+        end
     end
-    wait(0.1)
-    workspace:WaitForChild("Stalls"):WaitForChild("Stall2"):WaitForChild("CloseStall"):FireServer()
     wait(0.3)
-    if Stall3:FindFirstChild("ProxPart") and fireproximityprompt and Stall3.Player.Value ~= Whitelisted.Name then
+    if Stall3:FindFirstChild("ProxPart") and fireproximityprompt and Stall3.Player.Value ~= whitelist[game.Players[Stall3:FindFirstChild("Player").Value].UserId] then
         local Proximity3 = Stall3:FindFirstChild("ProxPart").ProximityPrompt
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall3:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity3, 10)
+        wait(0.5)
+        workspace:WaitForChild("Stalls"):WaitForChild("Stall3"):WaitForChild("CloseStall"):FireServer()
+    else
+        if Stall3:FindFirstChild("Player").Value == whitelist[game.Players[Stall3:FindFirstChild("Player").Value].UserId] then
+            return 
+        end
     end
-    wait(0.1)
-    workspace:WaitForChild("Stalls"):WaitForChild("Stall3"):WaitForChild("CloseStall"):FireServer()
     wait(0.3)
-    if Stall4:FindFirstChild("ProxPart") and fireproximityprompt and Stall4.Player.Value ~= Whitelisted.Name then
+    if Stall4:FindFirstChild("ProxPart") and fireproximityprompt and Stall4.Player.Value ~= whitelist[game.Players[Stall4:FindFirstChild("Player").Value].UserId] then
         local Proximity4 = Stall4:FindFirstChild("ProxPart").ProximityPrompt
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall4:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity4, 10)
+        wait(0.5)
+        workspace:WaitForChild("Stalls"):WaitForChild("Stall4"):WaitForChild("CloseStall"):FireServer()
+    else
+        if Stall4:FindFirstChild("Player").Value == whitelist[game.Players[Stall4:FindFirstChild("Player").Value].UserId] then
+            return 
+        end
     end
-    wait(0.1)
-    workspace:WaitForChild("Stalls"):WaitForChild("Stall4"):WaitForChild("CloseStall"):FireServer()
     wait(0.3)
-    if Stall5:FindFirstChild("ProxPart") and fireproximityprompt and Stall5.Player.Value ~= Whitelisted.Name then
+    if Stall5:FindFirstChild("ProxPart") and fireproximityprompt and Stall5.Player.Value ~= whitelist[game.Players[Stall5:FindFirstChild("Player").Value].UserId] then
         local Proximity5 = Stall5:FindFirstChild("ProxPart").ProximityPrompt
         game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall5:FindFirstChild("ProxPart").Position)
         wait(0.3)
         fireproximityprompt(Proximity5, 10)
+        wait(0.5)
+        workspace:WaitForChild("Stalls"):WaitForChild("Stall5"):WaitForChild("CloseStall"):FireServer()
+    else
+        if Stall5:FindFirstChild("Player").Value == whitelist[game.Players[Stall5:FindFirstChild("Player").Value].UserId] then
+            return 
+        end
     end
-    wait(0.1)
-    workspace:WaitForChild("Stalls"):WaitForChild("Stall5"):WaitForChild("CloseStall"):FireServer()
     wait(0.3)
     print("Finished Unclaiming All Booths.")
     wait(0.2)
-    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
+    game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
     wait()
     local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
     local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
@@ -1357,20 +1716,35 @@ local args = {
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 end
 else
-getgenv().Auto = false
+    getgenv().Auto = false
 end
 end})
 
 Tab4:AddButton({
 Name = "Chat Bypass (kinda works, can break chat)",
 Callback = function()
-    loadstring(game:HttpGet(('https://gitlab.com/the-epic-group/lmaoerhufehr/-/raw/main/crazyCool.lua')))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-BYPASS/main/kawaii-bypass",true))()
 end})
 
 Tab4:AddButton({
 Name = "Fake Chat GUI",
 Callback = function()
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
+end})
+
+Tab4:AddToggle({
+Name = "(FE) Character Flicker",
+Default = false,
+Callback = function(Flick)
+if Flick and game:GetService("MarketplaceService"):UserOwnsGamePassAsync(tonumber(game.Players.LocalPlayer.UserId), tonumber(28828491)) then
+getgenv().Flicker = true
+while getgenv().Flicker == true do
+wait()
+
+end
+else
+getgenv().Flicker = false
+end
 end})
 
 local Settings = {
