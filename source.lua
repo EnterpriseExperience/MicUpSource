@@ -59,6 +59,28 @@ local Section6 = Tab6:AddSection({
 	Name = "_INFORMATION_AND_SUCCESSFUL_QUOTES_PAGE__"
 })
 wait()
+local List = {""}
+wait()
+local Versions = {
+    -- list is wayyy bigger, but im gonna leave this here for now :)
+    v1a0 = "v1-a-0.0.0",
+    v2a1 = "v1-a-1.0.0",
+    v2b0 = "v2-b-0",
+    v2b1 = "v2-b-1.0.0",
+    v3 = "v3-c-1.0.0"
+}
+
+local CorrectVersion = Versions.v3
+
+local statuses = {
+    Update1 = "Chat Bypass (90-95% WORKS!)",
+    Update2 = "Stand Bypassing is officially working!",
+    Update3 = "TO-DO: [Add Whitelist System] !SOON!",
+    Bug1 = "Invisible does not work on Celery",
+    Bug2 = "Free Emotes located in SystemBroken might not load correctly (fix soon).",
+}
+
+if CorrectVersion == "v3-c-1.0.0" then
 local Players = game:GetService("Players")
 local whitelist = {}
 local player = Players.LocalPlayer
@@ -845,15 +867,15 @@ local function filter(message)
 end
 
 local function sendChat(msg)
-    local filteredMessage = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
+    local tagged = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
 if tagged then
     OrionLib:MakeNotification({
         Name = "Failure!",
-        Content = msg..", was not be bypassed, trying again...",
+        Content = msg..", was not be bypassed, WAIT!, cooling down...",
         Image = "rbxassetid://4483345998",
         Time = 5
     })
-    wait()
+    wait(5)
 else
     local args = {
         [1] = filter(msg),
@@ -863,6 +885,7 @@ else
     getStall():FindFirstChild("Edit"):FireServer(unpack(args))
 end
 end
+wait()
 sendChat("Fuck")
 wait(1)
 sendChat("Bitch")
@@ -946,8 +969,6 @@ local letters = {
     ["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
 }
 
-local filteredMessage = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
-
 local function replace(str, find_str, replace_str) 
     local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0") 
     return str:gsub(escaped_find_str, replace_str) 
@@ -961,14 +982,6 @@ local function filter(message)
 end
 
 local function sendChat(msg)
-if tagged then
-    return OrionLib:MakeNotification({
-        Name = "Failure!",
-        Content = msg..", could not be bypassed, try again!",
-        Image = "rbxassetid://4483345998",
-        Time = 5
-    })
-else
     local args = {
         [1] = filter(msg),
         [2] = "5888213893"
@@ -976,235 +989,38 @@ else
         
     getStall():FindFirstChild("Edit"):FireServer(unpack(args))
 end
-end
 
 sendChat(TextToBypass)
+end})
 
---[[if Selection == "fuck ni**ers" then
-    local args = {
-        [1] = "🅵🆄🅲🅺 ",
-        [2] = "5888213893"
+Tab1:AddTextbox({
+Name = "Chat Bypass Input (Working)",
+Default = "Bypass Text",
+TextDisappear = true,
+Callback = function(ChatBypass)
+    local letters = {
+        ["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
     }
+    
+    local function replace(str, find_str, replace_str) 
+        local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0") 
+        return str:gsub(escaped_find_str, replace_str) 
+    end
+    
+    local function filter(message)
+        for search, replacement in pairs(letters) do
+            message = replace(message, search, replacement)
+        end
+        return message
+    end
+    
+    local function sendMSG(msg)
+        local TextChatService = game:GetService("TextChatService")
 
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "kill all jews" then
-    local args = {
-        [1] = "kill all ǰȇώȿ",
-        [2] = "5888213893"
-    }
+        TextChatService:SendAsync(filter(msg))
+    end
 
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "kill yourself" then
-    local args = {
-        [1] = "ҟ׀ȴȴ ƴόȕŗȿȇȴӻ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "kys" then
-    local args = {
-        [1] = "ҟƴȿ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "white bitch" then
-    local args = {
-        [1] = "ώȟ׀丅ȇ ɓ׀丅ㄈȟ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "kkk" then
-    local args = {
-        [1] = "ҟҟҟ on top!",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "i love nazis" then
-    local args = {
-        [1] = "i <3 冂ẳȥ׀ȿ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "heil hitler" then
-    local args = {
-        [1] = "heil ȟ׀丅ȴȇŗ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "kill the blacks" then
-    local args = {
-        [1] = "kill all ɓȴẳㄈҟȿ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "you have autism" then
-    local args = {
-        [1] = "you have     ẳȕ丅׀ȿɱ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "wanna get raped?" then
-    local args = {
-        [1] = "wanna be ŗẳᵽȇȡ?",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "wanna be sexually abused?" then
-    local args = {
-        [1] = "wanna be ȿȇẍȕẳȴȴƴ ẳɓȕȿȇȡ?",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "fat ni**er" then
-    local args = {
-        [1] = "ӻẳ丅 冂׀ɠɠȇŗ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "klu klux klan" then
-    local args = {
-        [1] = "ҟȴȕ ҟȴȕẍ ҟȴẳ冂",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "lemme suck on that pussy" then
-    local args = {
-        [1] = "lemme ȿȕㄈҟ on that ᵽȕȿȿƴ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "fucking asshole" then
-    local args = {
-        [1] = "ӻȕㄈҟ׀冂ɠ ẳȿȿȟόȴȇ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "retard" then
-    local args = {
-        [1] = "ŗȇ丅ẳŗȡ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "dickhead" then
-    local args = {
-        [1] = "ȡ׀ㄈҟȟȇẳȡ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "i <3 boobs" then
-    local args = {
-        [1] = "i <3 ɓόόɓȿ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "i love titties" then
-    local args = {
-        [1] = "i love 丅׀丅丅׀ȇȿ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "gimme that pussy" then
-    local args = {
-        [1] = "gimme that soaking ᵽȕȿȿƴ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "my ni**a" then
-    local args = {
-        [1] = "my 冂׀ɠɠẳ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "lick these balls" then
-    local args = {
-        [1] = "ȴ׀ㄈҟ these ɓẳȴȴȿ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "choke on a horsecock" then
-    local args = {
-        [1] = "ㄈȟόҟȇ on a ȟόŗȿȇㄈόㄈҟ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "stupid cuck" then
-    local args = {
-        [1] = "ȿ丅ȕᵽ׀ȡ ㄈȕㄈҟ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "dumb ass" then
-    local args = {
-        [1] = "your a ȡȕɱɓ ẳȿȿ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "fucking cuckold" then
-    local args = {
-        [1] = "ӻȕㄈҟ׀冂ɠ ㄈȕㄈҟόȴȡ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "retarded black person" then
-    local args = {
-        [1] = "ŗȇ丅ẳŗȡȇȡ ɓȴẳㄈҟ ᵽȇŗȿό冂",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "im gonna rape you" then
-    local args = {
-        [1] = "im gonna ŗẳᵽȇ you",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "take it anally" then
-    local args = {
-        [1] = "take it up ƴόȕŗ ẳȿȿ ẳ冂ẳȴȴƴ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "finger fuck yourself" then
-    local args = {
-        [1] = "finger ӻȕㄈҟ ƴόȕŗȿȇȴӻ for me",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-elseif Selection == "you retards" then
-    local args = {
-        [1] = "you ӻȕㄈҟ׀冂ɠ ŗȇ丅ẳŗȡȿ",
-        [2] = "5888213893"
-    }
-
-    getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-end--]]
+    SendMSG(ChatBypass)
 end})
 
 Tab1:AddTextbox({
@@ -2719,6 +2535,25 @@ elseif SelectAnim == "Zombie (FE)" then
 end
 end})
 
+--[[local function kickPlayersInTable()
+    local Levels = {
+        Level1 = 1 or tostring(1),
+        Level2 = 2 or tostring(2),
+        Level3 = 3 or tostring(3),
+        Level4 = 4 or tostring(4),
+        Level5 = 5 or tostring(5),
+        Level6 = 6 or tostring(6)
+    }
+
+    if List[game.Players.LocalPlayer.UserId] and Levels.Level4 then
+        game.Players.LocalPlayer:Kick("You have been permanently removed from script, Reason: Bypassing.")
+    else
+	    return game.Players.LocalPlayer:Kick("You have been permanently removed from script, Reason: Unknown")
+    end
+end
+
+kickPlayersInTable()--]]
+
 Tab5:AddButton({
 Name = "System Broken",
 Callback = function()
@@ -2733,8 +2568,11 @@ else
     })
     wait(1)
     game.Players.LocalPlayer:Kick("Stop trying to bypass, fucking skid.")
+    wait(1)
+    table.insert(List, game.Players.LocalPlayer.UserId)
 end
 end})
+end
 
 if game.Players.LocalPlayer.Name == "ItsDatDawgZackWsp" then
     local LolBruh = game.Players:FindFirstChild("ItsDatDawgZackWsp")
