@@ -18,45 +18,61 @@ local currentTime = os.time()
 local formattedTime = os.date("%I:%M %p", currentTime)
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/OrionCrazyLib.lua')))()
 local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MICUp"})
+local Tab0 = Window:MakeTab({
+	Name = "Live_Time",
+	Icon = "rbxassetid://8997383694",
+	PremiumOnly = false
+})
+local Section0 = Tab0:AddSection({
+	Name = "Updated And Live Time Zone"
+})
 local Tab1 = Window:MakeTab({
-	Name = "__HOME_PAGE__",
+	Name = "Home",
 	Icon = "rbxassetid://7733960981",
 	PremiumOnly = false
 })
 local Section1 = Tab1:AddSection({
-	Name = "__MODIFICATIONS_TO_BOOTHS_MAIN__"
+	Name = "Booths"
 })
 local Tab2 = Window:MakeTab({
-	Name = "__CHARACTER_UTILS__",
+	Name = "Character",
 	Icon = "rbxassetid://7743871002",
 	PremiumOnly = false
 })
 local Section2 = Tab2:AddSection({
-	Name = "__UTILITIES_FOR_CHARACTER_MODIFICATION__"
+	Name = "Character Tools"
 })
 local Tab4 = Window:MakeTab({
-	Name = "__COMMUNICATION_TOOLS__",
+	Name = "Chat Tools",
 	Icon = "rbxassetid://7734021300",
 	PremiumOnly = false
 })
 local Section4 = Tab4:AddSection({
-	Name = "__UTILITIES_FOR_CHAT_BYPASSING_AND_COMMUNICATION__"
+	Name = "Tools For Modifying/Manipulating Chat"
 })
 local Tab5 = Window:MakeTab({
-	Name = "__EXTRA_UTILITIES__",
+	Name = "Fun Tools",
 	Icon = "rbxassetid://7733954760",
 	PremiumOnly = false
 })
 local Section5 = Tab5:AddSection({
-	Name = "__PROVIDED_BY_ZACKS_EASY_HUB__ -- EXTRAS"
+	Name = "Extra Fun Tools"
+})
+local Tab7 = Window:MakeTab({
+	Name = "Bypassers",
+	Icon = "rbxassetid://7733771472",
+	PremiumOnly = false
+})
+local Section8 = Tab7:AddSection({
+	Name = "Bypassing Filters"
 })
 local Tab6 = Window:MakeTab({
-	Name = "__CONTEXT/INFO__",
+	Name = "Information",
 	Icon = "rbxassetid://7734022107",
 	PremiumOnly = false
 })
 local Section6 = Tab6:AddSection({
-	Name = "_INFORMATION_AND_SUCCESSFUL_QUOTES_PAGE__"
+	Name = "Successful Quotes And Info"
 })
 wait()
 local List = {""}
@@ -351,6 +367,35 @@ function isNumber(str)
 	end
 end
 wait()
+function doTime()
+local function formatTime()
+    local currentTime = os.date("*t")
+    local hours = currentTime.hour
+    local minutes = currentTime.min
+    local ampm = hours >= 12 and "PM" or "AM"
+
+    if hours > 12 then
+        hours = hours - 12
+    elseif hours == 0 then
+        hours = 12
+    end
+    
+    return string.format("%02d:%02d %s", hours, minutes, ampm)
+end
+
+local TimeLabel = Tab0:AddLabel("Current Time: "..formatTime())
+
+function setTime()
+    TimeLabel:Set("Current Time: "..formatTime())
+end
+
+getgenv().TimeLoop = true
+while getgenv().TimeLoop == true do
+    setTime()
+    wait(1)
+end
+end
+wait()
 Tab1:AddButton({
 Name = "Steal Booths",
 Callback = function()
@@ -394,7 +439,7 @@ if Stall5:FindFirstChild("ProxPart") then
 end
 end})
 
-Tab1:AddToggle({
+Tab7:AddToggle({
 Name = "Auto Claim Stand (for hackers?)",
 Default = false,
 Callback = function(AutoClaimStand)
@@ -477,7 +522,7 @@ getgenv().ClaimTheStand = false
 end
 end})
 
-Tab1:AddButton({
+Tab7:AddButton({
 Name = "Anti Stand Stealer (for hackers)",
 Callback = function()
     local function getStall()
@@ -793,7 +838,7 @@ else
 end
 end})
 
-Tab1:AddButton({
+Tab5:AddButton({
 Name = "Players Invisible Fix",
 Callback = function()
     local function makeCharacterVisible(character)
@@ -833,7 +878,7 @@ Callback = function()
     end
 end})
 
-Tab1:AddToggle({
+local BadWordsToggle = Tab7:AddToggle({
 Name = "Bad Words Cycle (Booths)",
 Default = false,
 Callback = function(Cussing)
@@ -848,6 +893,19 @@ local function getStall()
         end
     end
     return nil
+end
+
+if getStall() == nil then
+    if BadWordsToggle.Default then
+        BadWordsToggle.Default = false
+        wait(0.5)
+        OrionLib:MakeNotification({
+            Name = "Error: No Booth!",
+            Content = "You do not have a Booth, claim a Booth first!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
 end
 
 local letters = {
@@ -951,7 +1009,7 @@ getgenv().Cuss = false
 end
 end})
 
-Tab1:AddTextbox({
+local TextboxBoothBypass = Tab7:AddTextbox({
 Name = "Booth Text Bypasser (Not Bannable + Working)",
 Default = "Text To Bypass",
 TextDisappear = true,
@@ -991,9 +1049,24 @@ local function sendChat(msg)
 end
 
 sendChat(TextToBypass)
+
+if getStall() ==  nil then
+    if TextboxBoothBypass.Default then
+        OrionLib:MakeNotification({
+            Name = "Error: No Booth",
+            Content = "You do not have a booth, Please claim a booth before toggling this!",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+        task.wait(0.5)
+        print(TextboxBoothBypass.Default)
+        task.wait(0.3)
+        TextboxBoothBypass.Default = "No Booth!"
+    end
+end
 end})
 
-Tab1:AddTextbox({
+Tab4:AddTextbox({
 Name = "Chat Bypass Input (Working)",
 Default = "Bypass Text",
 TextDisappear = true,
@@ -1023,7 +1096,7 @@ Callback = function(Bypass)
     SendMSG(Bypass)
 end})
 
-Tab1:AddTextbox({
+Tab7:AddTextbox({
 Name = "18+ Image ID Bypass",
 Default = "Text You Want",
 TextDisappear = true,
@@ -1441,7 +1514,7 @@ getgenv().Auto = true
 while getgenv().Auto == true do
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." is the best person",
+    [1] = game.Players.LocalPlayer.Name.." is a nice person",
     [2] = ""
 }
 
@@ -1462,14 +1535,14 @@ local args = {
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." has a lot of bands",
+    [1] = game.Players.LocalPlayer.Name.." has a ton of cash",
     [2] = ""
 }
 
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." is beyond all",
+    [1] = game.Players.LocalPlayer.Name.." is on top",
     [2] = ""
 }
 
@@ -1483,35 +1556,35 @@ local args = {
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." got racks",
+    [1] = game.Players.LocalPlayer.Name.." got diamonds",
     [2] = ""
 }
 
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." has bands",
+    [1] = game.Players.LocalPlayer.Name.." has stacks",
     [2] = ""
 }
 
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." is the goat",
+    [1] = game.Players.LocalPlayer.Name.." is the king",
     [2] = ""
 }
 
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." likes them fresh",
+    [1] = game.Players.LocalPlayer.Name.." likes the paper",
     [2] = ""
 }
 
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." is counting bands",
+    [1] = game.Players.LocalPlayer.Name.." is counting cash",
     [2] = ""
 }
 
@@ -1525,7 +1598,7 @@ local args = {
 Stall:WaitForChild("Edit"):FireServer(unpack(args))
 wait()
 local args = {
-    [1] = game.Players.LocalPlayer.Name.." has hella bands",
+    [1] = game.Players.LocalPlayer.Name.." has cash",
     [2] = ""
 }
 
@@ -1548,7 +1621,9 @@ Callback = function()
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
 end})
 
-Tab4:AddToggle({
+-- Does not do anything for now until i find a decompiler for Wave or something, so i can grab the remotes to go big and small and all that, or probably buy the GamePass, but not now, big updates soon ;)
+
+--[[Tab4:AddToggle({
 Name = "(FE) Character Flicker",
 Default = false,
 Callback = function(Flick)
@@ -1561,7 +1636,7 @@ end
 else
 getgenv().Flicker = false
 end
-end})
+end})--]]
 
 local Settings = {
     Keybind = "E"
@@ -1718,6 +1793,8 @@ Sound.SoundId = "rbxassetid://232127604"
 Sound:Play()
 game:GetService("StarterGui"):SetCore("SendNotification",{["Title"] = "Invisible Toggle Loaded",["Text"] = "Press "..Settings.Keybind.." to change visibility.",["Duration"] = 20,["Button1"] = "Okay."})
 end})
+
+-- This method down below here, is fucking garbage, usually wouldn't work, unless I am able to find 2-3 hours to modify the Invisible script to always be able to scope out the FakeCharacter variable, and even if I did, i'd have to edit it more to make sure it doesn't break mid-loop, it's just plain shit, but I will most likely try to anyway.
 
 --[[Tab2:AddToggle({
 Name = "Flicker Character (FE, Invis Method)",
@@ -1904,16 +1981,15 @@ Callback = function(TheBind)
     Settings.Keybind = tostring(TheBind)
 end})
 
-Tab2:AddToggle({
+Tab2:AddButton({
 Name = "Spawn Location",
-Default = false,
 Callback = function()
     local player = game.Players.LocalPlayer
-    player.Character:FindFirstChildOfClass("Humanoid").Died:Connect(function()
-        local old = player.Character:WaitForChild("HumanoidRootPart").CFrame
+    player.Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(function()
+        local old = player.Character:FindFirstChild("HumanoidRootPart").CFrame
         player.CharacterAdded:wait()
         repeat wait() until player.Character:FindFirstChild("HumanoidRootPart")
-        player.Character:WaitForChild("HumanoidRootPart").CFrame = old
+        player.Character:FindFirstChild("HumanoidRootPart").CFrame = old
     end)
 end})
 
@@ -1926,7 +2002,16 @@ end})
 Tab5:AddButton({
 Name = "FE Admin (Press ; )",
 Callback = function()
-loadstring(game:HttpGet("https://pastebin.com/raw/MQ3wc7Zq", true))()
+if hookfunction and fireproximityprompt and cloneref and getconnections then
+    loadstring(game:HttpGet("https://pastebin.com/raw/MQ3wc7Zq", true))()
+else
+    return OrionLib:MakeNotification({
+        Name = "Error: Not Capable",
+        Content = "Your exploit cannot run this script, hence errors",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
 end})
 
 Tab2:AddSlider({
@@ -2681,6 +2766,8 @@ for _, player in pairs(game.Players:GetPlayers()) do
 end
 wait(1)
 print("Successfully ran!")
+wait(1)
+doTime()
 
 local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
