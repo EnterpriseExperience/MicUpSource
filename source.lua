@@ -62,7 +62,7 @@ wait()
 local List = {""}
 wait()
 local Versions = {
-    -- list is wayyy bigger, but im gonna leave this here for now :)
+    -- list is wayyy bigger, but im gonna leave this here for now
     v1a0 = "v1-a-0.0.0",
     v2a1 = "v1-a-1.0.0",
     v2b0 = "v2-b-0",
