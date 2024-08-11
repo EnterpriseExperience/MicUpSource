@@ -75,6 +75,14 @@ local Section6 = Tab6:AddSection({
 	Name = "Successful Quotes And Info"
 })
 wait()
+for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+    if v:FindFirstChild("Kill") then
+        v:Destroy()
+    else
+        print("Destroyed.")
+    end
+end
+wait()
 local List = {""}
 wait()
 local Versions = {
@@ -1933,16 +1941,53 @@ Callback = function(TheBind)
     Settings.Keybind = tostring(TheBind)
 end})
 
-Tab2:AddButton({
-Name = "Spawn Location",
+Tab5:AddButton({
+Name = "Solve All TicTacToe Boards",
 Callback = function()
-    local player = game.Players.LocalPlayer
-    player.Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(function()
-        local old = player.Character:FindFirstChild("HumanoidRootPart").CFrame
-        player.CharacterAdded:wait()
-        repeat wait() until player.Character:FindFirstChild("HumanoidRootPart")
-        player.Character:FindFirstChild("HumanoidRootPart").CFrame = old
-    end)
+local OldCF = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
+local function interactWithClickDetectorInAllBoards(detectorNumber)
+    for _, board in pairs(workspace:GetChildren()) do
+        if board:IsA("Model") and board.Name == "Tic Tac Toe" then
+            local partName = "Detector" .. tostring(detectorNumber)
+            local part = board:FindFirstChild(partName)
+            if part and part:IsA("BasePart") then
+                local clickDetector = part:FindFirstChildOfClass("ClickDetector")
+                if clickDetector then
+                    game.Players.LocalPlayer.Character:PivotTo(clickDetector.Parent:GetPivot())
+                    wait()
+                    print("ClickDetector in Part: " .. partName .. ", in board: " .. board.Name)
+                    wait()
+                    fireclickdetector(clickDetector, 10)
+                    wait()
+                else
+                    print("ClickDetector not found in part " .. partName .. " in board " .. board.Name)
+                end
+            else
+                print("Part " .. partName .. " not found in board " .. board.Name)
+            end
+        end
+    end
+end
+
+interactWithClickDetectorInAllBoards(1)
+wait()
+interactWithClickDetectorInAllBoards(2)
+wait()
+interactWithClickDetectorInAllBoards(3)
+wait()
+interactWithClickDetectorInAllBoards(4)
+wait()
+interactWithClickDetectorInAllBoards(5)
+wait()
+interactWithClickDetectorInAllBoards(6)
+wait()
+interactWithClickDetectorInAllBoards(7)
+wait()
+interactWithClickDetectorInAllBoards(8)
+wait()
+interactWithClickDetectorInAllBoards(9)
+wait(1)
+game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
 end})
 
 Tab5:AddButton({
@@ -2006,7 +2051,7 @@ Tab5:AddButton({
     Name = "Grab VIP Tools (Needs VIP)",
     Callback = function()
     if fireproximityprompt and game:GetService("MarketplaceService"):UserOwnsGamePassAsync(tonumber(game.Players.LocalPlayer.UserId), tonumber(28828491)) then
-        for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+        for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
             if v:IsA("ProximityPrompt") then
                 v.HoldDuration = 0
             end
@@ -2590,8 +2635,6 @@ else
     table.insert(List, game.Players.LocalPlayer.UserId)
 end
 end})
-
--- Do not un-mark this session because I'm not finished with it, so it won't work
 
 --[[Tab2:AddToggle({
 Name = "Set Waypoint Here",
