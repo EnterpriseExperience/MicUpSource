@@ -335,32 +335,6 @@ wait()
 		end
 	end
 wait()
--- Do not remove these lines unless you can fix this part directly under this line (this will break the script in Solara, so it is pointless for now) --
-
---[[local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character:WaitForChild("Humanoid")
-    local userInputService = game:GetService("UserInputService")
-
-    local function onKeyPress(input)
-        if input.KeyCode == Enum.KeyCode.RightControl then
-            if game:GetService("CoreGui"):FindFirstChild("Orion") then
-                game.CoreGui:FindFirstChild("Orion").Enabled = not game.CoreGui:FindFirstChild("Orion").Enabled
-            end
-        end
-    end
-    
-    local function onKeyRelease(input)
-        if input.KeyCode == Enum.KeyCode.RightControl then
-            if game:GetService("CoreGui"):FindFirstChild("Orion") then
-                game.CoreGui:FindFirstChild("Orion").Enabled = not game.CoreGui:FindFirstChild("Orion").Enabled
-            end
-        end
-    end
-    
-    userInputService.InputBegan:Connect(onKeyPress)
-    userInputService.InputEnded:Connect(onKeyRelease)
-wait()--]]
 function isNumber(str)
 	if tonumber(str) ~= nil then
 		return true
@@ -896,15 +870,18 @@ local function getStall()
 end
 
 if getStall() == nil then
-    if BadWordsToggle.Default then
-        BadWordsToggle.Default = false
-        wait(0.5)
-        OrionLib:MakeNotification({
-            Name = "Error: No Booth!",
-            Content = "You do not have a Booth, claim a Booth first!",
-            Image = "rbxassetid://4483345998",
-            Time = 10
-        })
+    getgenv().Cuss = false
+    wait()
+    OrionLib:MakeNotification({
+        Name = "Error: No Booth!",
+        Content = "Claim a Booth, Waiting...",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+    wait(0.2)
+    repeat wait() until getStall() ~= nil and game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+    if getStall() ~= nil and game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
+        getgenv().Cuss = true
     end
 end
 
@@ -925,7 +902,7 @@ local function filter(message)
 end
 
 local function sendChat(msg)
-    local tagged = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
+local tagged = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
 if tagged then
     OrionLib:MakeNotification({
         Name = "Failure!",
@@ -1051,17 +1028,16 @@ end
 sendChat(TextToBypass)
 
 if getStall() ==  nil then
-    if TextboxBoothBypass.Default then
-        OrionLib:MakeNotification({
-            Name = "Error: No Booth",
-            Content = "You do not have a booth, Please claim a booth before toggling this!",
-            Image = "rbxassetid://4483345998",
-            Time = 5
-        })
-        task.wait(0.5)
-        print(TextboxBoothBypass.Default)
-        task.wait(0.3)
-        TextboxBoothBypass.Default = "No Booth!"
+    OrionLib:MakeNotification({
+        Name = "Error: No Booth",
+        Content = "You do not have a booth, Claim a booth, Waiting...",
+        Image = "rbxassetid://4483345998",
+        Time = 5
+    })
+    wait(0.5)
+    repeat wait() until getStall() ~= nil and game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if getStall() ~= nil then
+        sendChat(TextToBypass)
     end
 end
 end})
@@ -1274,30 +1250,6 @@ else
     return 
 end
 end})
-
---[[Tab1:AddTextbox({
-Name = "Whitelist Player(s)",
-Default = "Whitelist from script",
-TextDisappear = true,
-Callback = function(ThePlr)
-if game.Players[ThePlr].Character:FindFirstChildWhichIsA("Humanoid") ~= nil then
-    addToWhitelist(ThePlr)
-else
-    return 
-end
-end})
-
-Tab1:AddTextbox({
-Name = "Remove Whitelist Player(s)",
-Default = "Remove from Script",
-TextDisappear = true,
-Callback = function(PlayerUsername)
-    if game.Players[PlayerUsername].Character:FindFirstChildWhichIsA("Humanoid") ~= nil then
-        removeFromWhitelist(PlayerUsername)
-    else
-        return 
-    end
-end})--]]
 
 Tab1:AddButton({
 Name = "Unclaim ALL Booths",
@@ -1610,13 +1562,13 @@ end
 end})
 
 Tab4:AddButton({
-Name = "Chat Bypass (kinda works, can break chat)",
+Name = "Chat Bypass (Working!, Non-Bannable!)",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-BYPASS/main/kawaii-bypass",true))()
 end})
 
 Tab4:AddButton({
-Name = "Fake Chat GUI",
+Name = "Fake Chat GUI (Working!)",
 Callback = function()
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
 end})
@@ -2620,25 +2572,6 @@ elseif SelectAnim == "Zombie (FE)" then
 end
 end})
 
---[[local function kickPlayersInTable()
-    local Levels = {
-        Level1 = 1 or tostring(1),
-        Level2 = 2 or tostring(2),
-        Level3 = 3 or tostring(3),
-        Level4 = 4 or tostring(4),
-        Level5 = 5 or tostring(5),
-        Level6 = 6 or tostring(6)
-    }
-
-    if List[game.Players.LocalPlayer.UserId] and Levels.Level4 then
-        game.Players.LocalPlayer:Kick("You have been permanently removed from script, Reason: Bypassing.")
-    else
-	    return game.Players.LocalPlayer:Kick("You have been permanently removed from script, Reason: Unknown")
-    end
-end
-
-kickPlayersInTable()--]]
-
 Tab5:AddButton({
 Name = "System Broken",
 Callback = function()
@@ -2657,6 +2590,35 @@ else
     table.insert(List, game.Players.LocalPlayer.UserId)
 end
 end})
+
+-- Do not un-mark this session because I'm not finished with it, so it won't work
+
+--[[Tab2:AddToggle({
+Name = "Set Waypoint Here",
+Default = false,
+Callback = function(setWayPoint)
+if setWayPoint then
+    getgenv().WPName = true
+    if getgenv().WPName == true then
+        local NewInfYielding = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+        wait(0.5)
+        NewInfYielding.execCmd("setwaypoint ZACKS_EASY_HUB_CONFIG")
+        wait(0.5)
+        NewInfYielding.execCmd("spawn")
+    end
+else
+getgenv().WPName = false
+wait()
+local NewInf = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+wait(0.5)
+NewInf.execCmd("dwp ZACKS_EASY_HUB_CONFIG")
+wait(0.1)
+NewInf.execCmd("nospawn")
+wait(0.1)
+NewInf.execCmd("nospawnpoint")
+end
+end})--]]
+task.wait()
 end
 
 if game.Players.LocalPlayer.Name == "ItsDatDawgZackWsp" then
