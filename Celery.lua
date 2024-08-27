@@ -2016,8 +2016,8 @@ end})
 Tab5:AddButton({
 Name = "FE Admin (Press ; )",
 Callback = function()
-if hookfunction and fireproximityprompt and cloneref and getconnections then
-    loadstring(game:HttpGet("https://pastebin.com/raw/MQ3wc7Zq", true))()
+if fireproximityprompt and cloneref then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/main/AdminFE.lua", true))()
 else
     return OrionLib:MakeNotification({
         Name = "Error: Not Capable",
