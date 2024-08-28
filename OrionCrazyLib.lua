@@ -24,6 +24,7 @@ local OrionLib = {
 	Folder = nil,
 	SaveCfg = false
 }
+print("1")
 
 --Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
 local Icons = {}
@@ -42,7 +43,8 @@ local function GetIcon(IconName)
 	else
 		return nil
 	end
-end   
+end
+print("2")
 
 local Orion = Instance.new("ScreenGui")
 Orion.Name = "Orion"
@@ -66,6 +68,7 @@ else
 		end
 	end
 end
+print("3")
 
 function OrionLib:IsRunning()
 	if gethui then
@@ -84,6 +87,7 @@ local function AddConnection(Signal, Function)
 	table.insert(OrionLib.Connections, SignalConnect)
 	return SignalConnect
 end
+print("4")
 
 task.spawn(function()
 	while (OrionLib:IsRunning()) do
