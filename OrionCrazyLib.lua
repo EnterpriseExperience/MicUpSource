@@ -48,12 +48,7 @@ print("2")
 
 local Orion = Instance.new("ScreenGui")
 Orion.Name = "Orion"
-if syn then
-	syn.protect_gui(Orion)
-	Orion.Parent = game.CoreGui
-else
-	Orion.Parent = gethui() or game.CoreGui
-end
+Orion.Parent = game.CoreGui
 
 if gethui then
 	for _, Interface in ipairs(gethui():GetChildren()) do
