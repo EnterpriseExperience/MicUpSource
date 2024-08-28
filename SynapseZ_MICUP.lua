@@ -75,14 +75,9 @@ local Section6 = Tab6:AddSection({
 	Name = "Successful Quotes And Info"
 })
 wait()
-getgenv().gethui = function()
-    return game:GetService("CoreGui")
-end
-wait()
 local List = {""}
 wait()
 local Versions = {
-    -- list is wayyy bigger, but im gonna leave this here for now
     v1a0 = "v1-a-0.0.0",
     v2a1 = "v1-a-1.0.0",
     v2b0 = "v2-b-0",
@@ -363,7 +358,7 @@ end
 
 local TimeLabel = Tab0:AddLabel("Current Time: "..formatTime())
 
-function setTime()
+--[[function setTime()
     TimeLabel:Set("Current Time: "..formatTime())
 end
 
@@ -371,7 +366,7 @@ getgenv().TimeLoop = true
 while getgenv().TimeLoop == true do
     setTime()
     wait(1)
-end
+end--]]
 end
 wait()
 Tab1:AddButton({
@@ -2624,61 +2619,6 @@ end
 end})--]]
 task.wait()
 end
-
-if game.Players.LocalPlayer.Name == "ItsDatDawgZackWsp" then
-    local LolBruh = game.Players:FindFirstChild("ItsDatDawgZackWsp")
-    local Animate = game.Players.LocalPlayer.Character.Animate
-	Animate.Disabled = true
-    wait()
-	Animate.Disabled = false
-    local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
-    for i, track in pairs (animtrack) do
-        track:Stop()
-    end
-    wait()
-	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
-	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
-	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
-	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
-	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
-	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
-	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
-	wait()
-    game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
-	wait()
-    Animate.Disabled = false
-
-    if LolBruh and LolBruh.Character and LolBruh.Character:FindFirstChildOfClass("Humanoid") then
-        LolBruh.Character:FindFirstChildOfClass("Humanoid").Died:Connect(function()
-            print("Waiting for Humanoid...")
-            repeat wait() until LolBruh.Character:findFirstChild("Humanoid")
-        if LolBruh.Character and LolBruh.Character:WaitForChild("Humanoid", 1) and LolBruh.Character:FindFirstChildOfClass("Humanoid") ~= nil and LolBruh.Character:FindFirstChild("HumanoidRootPart", true) then
-            print("Finished!")
-            local Animate = LolBruh.Character.Animate
-	        Animate.Disabled = true
-            wait()
-	        Animate.Disabled = false
-            local animtrack = LolBruh.Character:WaitForChild("Humanoid", 1):GetPlayingAnimationTracks()
-            for i, track in pairs (animtrack) do
-                track:Stop()
-            end
-            wait()
-	        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
-	        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
-	        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
-	        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
-	        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
-	        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
-	        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
-	        wait()
-            LolBruh.Character:WaitForChild("Humanoid", 1):ChangeState(3)
-	        wait()
-            Animate.Disabled = false
-        end
-        end)
-    end
-end
-
 Tab6:AddParagraph("Zacks Easy Hub | Scripting Made Easy")
 Tab6:AddLabel("https://www.youtube.com/@AnonymousExploiting")
 Tab6:AddLabel("Subscribe for more content fuckwatts.")
