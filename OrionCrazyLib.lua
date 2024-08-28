@@ -35,6 +35,8 @@ end)
 
 if not Success then
 	warn("\nOrion Library - Failed to load Feather Icons. Error code: " .. Response .. "\n")
+else
+	print("OK")
 end
 
 local function GetIcon(IconName)
@@ -49,20 +51,6 @@ print("2")
 local Orion = Instance.new("ScreenGui")
 Orion.Name = "Orion"
 Orion.Parent = game.CoreGui
-
-if gethui then
-	for _, Interface in ipairs(gethui():GetChildren()) do
-		if Interface.Name == Orion.Name and Interface ~= Orion then
-			Interface:Destroy()
-		end
-	end
-else
-	for _, Interface in ipairs(game.CoreGui:GetChildren()) do
-		if Interface.Name == Orion.Name and Interface ~= Orion then
-			Interface:Destroy()
-		end
-	end
-end
 print("3")
 
 function OrionLib:IsRunning()
