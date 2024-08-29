@@ -910,23 +910,12 @@ local function filter(message)
 end
 
 local function sendChat(msg)
-local tagged = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
-if tagged then
-    OrionLib:MakeNotification({
-        Name = "Failure!",
-        Content = msg..", was not be bypassed, WAIT!, cooling down...",
-        Image = "rbxassetid://4483345998",
-        Time = 5
-    })
-    wait(5)
-else
     local args = {
         [1] = filter(msg),
         [2] = "5888213893"
     }
-        
+
     getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-end
 end
 wait()
 sendChat("Fuck")
