@@ -18,6 +18,9 @@ local currentTime = os.time()
 local formattedTime = os.date("%I:%M %p", currentTime)
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MICUp"})
+getgenv().gethui = function()
+    return game:GetService("CoreGui")
+end
 local Tab0 = Window:MakeTab({
 	Name = "Live_Time",
 	Icon = "rbxassetid://8997383694",
