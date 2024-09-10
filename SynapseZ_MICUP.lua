@@ -75,9 +75,18 @@ local Section6 = Tab6:AddSection({
 	Name = "Successful Quotes And Info"
 })
 wait()
+for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+    if v:FindFirstChild("Kill") then
+        v:Destroy()
+    else
+        print("Destroyed.")
+    end
+end
+wait()
 local List = {""}
 wait()
 local Versions = {
+    -- list is wayyy bigger, but im gonna leave this here for now
     v1a0 = "v1-a-0.0.0",
     v2a1 = "v1-a-1.0.0",
     v2b0 = "v2-b-0",
@@ -358,7 +367,7 @@ end
 
 local TimeLabel = Tab0:AddLabel("Current Time: "..formatTime())
 
---[[function setTime()
+function setTime()
     TimeLabel:Set("Current Time: "..formatTime())
 end
 
@@ -366,7 +375,7 @@ getgenv().TimeLoop = true
 while getgenv().TimeLoop == true do
     setTime()
     wait(1)
-end--]]
+end
 end
 wait()
 Tab1:AddButton({
@@ -811,6 +820,25 @@ else
 end
 end})
 
+Tab1:AddToggle({
+Name = "Crazy Set Note Bypass (may not work)",
+Default = false,
+Callback = function(CrazyAhText)
+if CrazyAhText then
+getgenv().AighDawg = true
+while getgenv().AighDawg == true do
+wait()
+local args = {
+    [1] = "\211\187\200\149\227\132\136\210\159 \200\159\200\135\197\151"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
+end
+else
+getgenv().AighDawg = false
+end
+end})
+
 Tab5:AddButton({
 Name = "Players Invisible Fix",
 Callback = function()
@@ -901,23 +929,12 @@ local function filter(message)
 end
 
 local function sendChat(msg)
-local tagged = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
-if tagged then
-    OrionLib:MakeNotification({
-        Name = "Failure!",
-        Content = msg..", was not be bypassed, WAIT!, cooling down...",
-        Image = "rbxassetid://4483345998",
-        Time = 5
-    })
-    wait(5)
-else
     local args = {
         [1] = filter(msg),
         [2] = "5888213893"
     }
-        
+
     getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-end
 end
 wait()
 sendChat("Fuck")
@@ -1589,6 +1606,8 @@ getgenv().Flicker = false
 end
 end})--]]
 
+
+
 local Settings = {
     Keybind = "E"
 }
@@ -1932,16 +1951,53 @@ Callback = function(TheBind)
     Settings.Keybind = tostring(TheBind)
 end})
 
-Tab2:AddButton({
-Name = "Spawn Location",
+Tab5:AddButton({
+Name = "Solve All TicTacToe Boards",
 Callback = function()
-    local player = game.Players.LocalPlayer
-    player.Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(function()
-        local old = player.Character:FindFirstChild("HumanoidRootPart").CFrame
-        player.CharacterAdded:wait()
-        repeat wait() until player.Character:FindFirstChild("HumanoidRootPart")
-        player.Character:FindFirstChild("HumanoidRootPart").CFrame = old
-    end)
+local OldCF = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
+local function interactWithClickDetectorInAllBoards(detectorNumber)
+    for _, board in pairs(workspace:GetChildren()) do
+        if board:IsA("Model") and board.Name == "Tic Tac Toe" then
+            local partName = "Detector" .. tostring(detectorNumber)
+            local part = board:FindFirstChild(partName)
+            if part and part:IsA("BasePart") then
+                local clickDetector = part:FindFirstChildOfClass("ClickDetector")
+                if clickDetector then
+                    game.Players.LocalPlayer.Character:PivotTo(clickDetector.Parent:GetPivot())
+                    wait()
+                    print("ClickDetector in Part: " .. partName .. ", in board: " .. board.Name)
+                    wait()
+                    fireclickdetector(clickDetector, 10)
+                    wait()
+                else
+                    print("ClickDetector not found in part " .. partName .. " in board " .. board.Name)
+                end
+            else
+                print("Part " .. partName .. " not found in board " .. board.Name)
+            end
+        end
+    end
+end
+
+interactWithClickDetectorInAllBoards(1)
+wait()
+interactWithClickDetectorInAllBoards(2)
+wait()
+interactWithClickDetectorInAllBoards(3)
+wait()
+interactWithClickDetectorInAllBoards(4)
+wait()
+interactWithClickDetectorInAllBoards(5)
+wait()
+interactWithClickDetectorInAllBoards(6)
+wait()
+interactWithClickDetectorInAllBoards(7)
+wait()
+interactWithClickDetectorInAllBoards(8)
+wait()
+interactWithClickDetectorInAllBoards(9)
+wait(1)
+game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
 end})
 
 Tab5:AddButton({
@@ -2005,7 +2061,7 @@ Tab5:AddButton({
     Name = "Grab VIP Tools (Needs VIP)",
     Callback = function()
     if fireproximityprompt and game:GetService("MarketplaceService"):UserOwnsGamePassAsync(tonumber(game.Players.LocalPlayer.UserId), tonumber(28828491)) then
-        for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+        for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
             if v:IsA("ProximityPrompt") then
                 v.HoldDuration = 0
             end
@@ -2590,8 +2646,6 @@ else
 end
 end})
 
--- Do not un-mark this session because I'm not finished with it, so it won't work
-
 --[[Tab2:AddToggle({
 Name = "Set Waypoint Here",
 Default = false,
@@ -2619,6 +2673,61 @@ end
 end})--]]
 task.wait()
 end
+
+if game.Players.LocalPlayer.Name == "ItsDatDawgZackWsp" then
+    local LolBruh = game.Players:FindFirstChild("ItsDatDawgZackWsp")
+    local Animate = game.Players.LocalPlayer.Character.Animate
+	Animate.Disabled = true
+    wait()
+	Animate.Disabled = false
+    local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+    for i, track in pairs (animtrack) do
+        track:Stop()
+    end
+    wait()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
+	wait()
+    game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
+	wait()
+    Animate.Disabled = false
+
+    if LolBruh and LolBruh.Character and LolBruh.Character:FindFirstChildOfClass("Humanoid") then
+        LolBruh.Character:FindFirstChildOfClass("Humanoid").Died:Connect(function()
+            print("Waiting for Humanoid...")
+            repeat wait() until LolBruh.Character:findFirstChild("Humanoid")
+        if LolBruh.Character and LolBruh.Character:WaitForChild("Humanoid", 1) and LolBruh.Character:FindFirstChildOfClass("Humanoid") ~= nil and LolBruh.Character:FindFirstChild("HumanoidRootPart", true) then
+            print("Finished!")
+            local Animate = LolBruh.Character.Animate
+	        Animate.Disabled = true
+            wait()
+	        Animate.Disabled = false
+            local animtrack = LolBruh.Character:WaitForChild("Humanoid", 1):GetPlayingAnimationTracks()
+            for i, track in pairs (animtrack) do
+                track:Stop()
+            end
+            wait()
+	        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
+	        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
+	        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
+	        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
+	        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
+	        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
+	        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
+	        wait()
+            LolBruh.Character:WaitForChild("Humanoid", 1):ChangeState(3)
+	        wait()
+            Animate.Disabled = false
+        end
+        end)
+    end
+end
+
 Tab6:AddParagraph("Zacks Easy Hub | Scripting Made Easy")
 Tab6:AddLabel("https://www.youtube.com/@AnonymousExploiting")
 Tab6:AddLabel("Subscribe for more content fuckwatts.")
