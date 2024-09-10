@@ -11,8 +11,6 @@ if game.PlaceId == 6884319169 then
         )
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
-    wait()
-    print("Executed.")
 
 function loadGUI()
 repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -20,8 +18,6 @@ local currentTime = os.time()
 local formattedTime = os.date("%I:%M %p", currentTime)
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/OrionCrazyLib.lua')))()
 local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MICUp"})
-print("Window Is Running...")
-wait()
 local Tab0 = Window:MakeTab({
 	Name = "Live_Time",
 	Icon = "rbxassetid://8997383694",
@@ -78,17 +74,14 @@ local Tab6 = Window:MakeTab({
 local Section6 = Tab6:AddSection({
 	Name = "Successful Quotes And Info"
 })
-print("Main Tabs Loaded.")
 wait()
---[[for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
     if v:FindFirstChild("Kill") then
         v:Destroy()
     else
-        return 
+        print("Destroyed.")
     end
 end
-wait()
-print("Kill Scripts Deleted.")
 wait()
 local List = {""}
 wait()
@@ -110,8 +103,6 @@ local statuses = {
     Bug1 = "Invisible does not work on Celery",
     Bug2 = "Free Emotes located in SystemBroken might not load correctly (fix soon).",
 }
-wait()
-print("Updated Versions")
 
 if CorrectVersion == "v3-c-1.0.0" then
 local Players = game:GetService("Players")
@@ -155,8 +146,6 @@ local function removeFromWhitelist(username)
         return 
     end
 end
-wait()
-print("Whitelist Functions Work.")--]]
 wait()
 function ClaimStall1()
     local Folder = workspace:WaitForChild("Stalls")
@@ -247,8 +236,6 @@ function ClaimStall5()
         Stall5:WaitForChild("CloseStall"):FireServer()
     end
 end
-wait()
-print("Claim Stall Functions Are Running...")
 wait()
 	local Players = cloneref(game:GetService("Players"))
 	-- Functions --
@@ -362,8 +349,6 @@ function isNumber(str)
 	end
 end
 wait()
-print("Loaded Extra Functions.")
-wait()
 function doTime()
 local function formatTime()
     local currentTime = os.date("*t")
@@ -392,8 +377,6 @@ while getgenv().TimeLoop == true do
     wait(1)
 end
 end
-wait()
-print("Set Time Loop is going...")
 wait()
 Tab1:AddButton({
 Name = "Steal Booths",
@@ -837,6 +820,25 @@ else
 end
 end})
 
+Tab1:AddToggle({
+Name = "Crazy Set Note Bypass (may not work)",
+Default = false,
+Callback = function(CrazyAhText)
+if CrazyAhText then
+getgenv().AighDawg = true
+while getgenv().AighDawg == true do
+wait()
+local args = {
+    [1] = "\211\187\200\149\227\132\136\210\159 \200\159\200\135\197\151"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
+end
+else
+getgenv().AighDawg = false
+end
+end})
+
 Tab5:AddButton({
 Name = "Players Invisible Fix",
 Callback = function()
@@ -927,23 +929,12 @@ local function filter(message)
 end
 
 local function sendChat(msg)
-local tagged = game:GetService("Chat"):FilterStringForBroadcast(msg, game.Players.LocalPlayer)
-if tagged then
-    OrionLib:MakeNotification({
-        Name = "Failure!",
-        Content = msg..", was not be bypassed, WAIT!, cooling down...",
-        Image = "rbxassetid://4483345998",
-        Time = 5
-    })
-    wait(5)
-else
     local args = {
         [1] = filter(msg),
         [2] = "5888213893"
     }
-        
+
     getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-end
 end
 wait()
 sendChat("Fuck")
@@ -1614,6 +1605,8 @@ else
 getgenv().Flicker = false
 end
 end})--]]
+
+
 
 local Settings = {
     Keybind = "E"
@@ -2735,7 +2728,7 @@ if game.Players.LocalPlayer.Name == "ItsDatDawgZackWsp" then
     end
 end
 
---[[Tab6:AddParagraph("Zacks Easy Hub | Scripting Made Easy")
+Tab6:AddParagraph("Zacks Easy Hub | Scripting Made Easy")
 Tab6:AddLabel("https://www.youtube.com/@AnonymousExploiting")
 Tab6:AddLabel("Subscribe for more content fuckwatts.")
 Tab6:AddLabel("Quotes:")
@@ -2744,7 +2737,7 @@ Tab6:AddParagraph("Lose interest in a task? That 1 task could impact your life."
 Tab6:AddParagraph("If you feel your not doing enough, Do less, take a break.")
 Tab6:AddParagraph("Need REAL advice? Ask yourself, others can't truly help you.")
 Tab6:AddParagraph("To scared to work? Remember, You need money to live.")
-Tab6:AddParagraph("Life not being fair? Remember, YOU are part of what makes life a word.")--]]
+Tab6:AddParagraph("Life not being fair? Remember, YOU are part of what makes life a word.")
 end
 wait(1)
 loadGUI()
@@ -2800,4 +2793,5 @@ if game.PlaceId ~= 6884319169 then
         {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
         {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() print("") end}
     )
+end
 end
