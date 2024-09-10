@@ -16,11 +16,11 @@ function loadGUI()
 repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 local currentTime = os.time()
 local formattedTime = os.date("%I:%M %p", currentTime)
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MICUp"})
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/OrionCrazyLib.lua')))()
 getgenv().gethui = function()
     return game:GetService("CoreGui")
 end
+local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = true, SaveConfig = true, ConfigFolder = "MICUp"})
 local Tab0 = Window:MakeTab({
 	Name = "Live_Time",
 	Icon = "rbxassetid://8997383694",
@@ -77,6 +77,8 @@ local Tab6 = Window:MakeTab({
 local Section6 = Tab6:AddSection({
 	Name = "Successful Quotes And Info"
 })
+wait()
+
 wait()
 for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
     if v:FindFirstChild("Kill") then
