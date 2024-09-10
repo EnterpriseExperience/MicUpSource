@@ -820,6 +820,25 @@ else
 end
 end})
 
+Tab1:AddToggle({
+Name = "Crazy Set Note Bypass (may not work)",
+Default = false,
+Callback = function(CrazyAhText)
+if CrazyAhText then
+getgenv().AighDawg = true
+while getgenv().AighDawg == true do
+wait()
+local args = {
+    [1] = "\211\187\200\149\227\132\136\210\159 \200\159\200\135\197\151"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
+end
+else
+getgenv().AighDawg = false
+end
+end})
+
 Tab5:AddButton({
 Name = "Players Invisible Fix",
 Callback = function()
@@ -1586,6 +1605,8 @@ else
 getgenv().Flicker = false
 end
 end})--]]
+
+
 
 local Settings = {
     Keybind = "E"
