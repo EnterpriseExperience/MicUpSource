@@ -1,3 +1,9 @@
+## Get the Loadstring here retard:
+https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/loadstring.lua
+
+## [Or See]:
+https://github.com/EnterpriseExperience/MicUpSource/wiki
+
 ## UPDATE <-> [v2] [LIVE]:
 
 ## V2 New Features:
