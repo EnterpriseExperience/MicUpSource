@@ -1,8 +1,24 @@
-## UPDATE <-> [v1.1]:
-## Hopefully fixed Anti Stand Stealer + Some Bugs (Still working on Celery, but should work kinda fine)
-## TODO: Fix functions with Synapse Z version (when i purchase Synapse Z again) + Add a auto stealer that automatically steals a stand and unclaims it without interruptions by characters, objects, etc (collision stupid shit)
+## UPDATE <-> [v2] [LIVE]:
 
-## ROBLOX EXPLOITING IS DEAD, AND I WILL BE WAITING UNTIL EXECUTORS START ACTUALLY BYPASSING, BECAUSE I DON'T HAVE ANY MORE VOICE CHAT ACCOUNTS TO MAINTAIN THIS PROJECT!, IF NO EXPLOITS SUCCEED IN BYPASSING ROBLOX IN THE NEXT 6-9 MONTHS, I WILL BE SHUTTING DOWN THIS PROJECT! AND IT WILL BE AN ARCHIVE!
+## V2 Includes:
+`Ability to reload the script (re-execute automatically) [In Beta Feature]`
+`Solve All TicTacToe Boards (All Of Them)`
+`Unload the script (destroy)`
+## [BRAND NEW! CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub | MIC UP 🔊]:
+`Mute Player (Works With DisplayNames, Short Names, and Usernames)`
+`Unmute Player (Works With DisplayNames, Short Names, and Usernames)`
+`[INFO]: Just type their user and they will be muted/unmuted!`
+`[FE] Auto Like Players`
+`[FE] Auto Dislike Players`
+`[INFO]: Just toggle the button and every user that comes up will be auto disliked/liked.`
+`[FE] Spam Hoverboard`
+`[FE] Spam Tools`
+`[Client] Mute All`
+`[FE] Mute Yourself`
+`[FE] Shuffle Voice Changer Voices (sounds like static/robotic shit lol)`
+`[FE] Put Bypassed Note(s)`
+
+## Did some reworking and I have released a LIVE version of the script so no more picking and choosing for your stupid ass executor!
 
 `[OPEN SOURCE]`
 
@@ -10,6 +26,10 @@
 
 `[LOTS OF FEATURES!]`
 
-`[WORKING BYPASSES, 90% CHECKED!]`
+`[BYPASSES ARE PATCHED! :(]`
 
-`[SUPPORTED ON SOLARA, CELERY, ETC!]`
+`[SUPPORTS EVERY EXECUTOR!]`
+
+`[FE FEATURES AND CLIENT FEATURES (FUN FOR ALL!)]`
+
+`[RELEASING INFINITE YIELD RIZZ/EMOTE CONFIG SOON! (idk when tho)]`
