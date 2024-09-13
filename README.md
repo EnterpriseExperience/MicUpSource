@@ -1,15 +1,18 @@
 ## UPDATE <-> [v2] [LIVE]:
 
-## V2 Includes:
+## V2 New Features:
 `Ability to reload the script (re-execute automatically) [In Beta Feature]`
+
 `Solve All TicTacToe Boards (All Of Them)`
-`Unload the script (destroy)`
+
+`Unload the script (destroy script)`
+
 ## [BRAND NEW! CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub | MIC UP 🔊]:
 `Mute Player (Works With DisplayNames, Short Names, and Usernames)`
 
 `Unmute Player (Works With DisplayNames, Short Names, and Usernames)`
 
-`[INFO]: Just type their user and they will be muted/unmuted!`
+`[INFO]: Just type their user and they will be muted/unmuted for you so you don't have to listen to them!`
 
 `[FE] Auto Like Players`
 
