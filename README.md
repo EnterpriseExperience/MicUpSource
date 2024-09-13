@@ -1,5 +1,5 @@
 ## Get the Loadstring here retard:
-https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/loadstring.lua
+https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/getloadstring.lua
 
 ## [Or See]:
 https://github.com/EnterpriseExperience/MicUpSource/wiki
