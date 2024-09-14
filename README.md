@@ -20,6 +20,8 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 `[INFO]: Just type their user and they will be muted/unmuted for you so you don't have to listen to them!`
 
+`[Client] Lighting Features (Shadows, Graphics, etc)`
+
 `[FE] Auto Like Players`
 
 `[FE] Auto Dislike Players`
@@ -30,9 +32,9 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 `[FE] Spam Tools`
 
-`[Client] Mute All`
+`[Client] Mute All/Unmute All`
 
-`[FE] Mute Yourself`
+`[FE] Mute Yourself/Unmute Yourself`
 
 `[FE] Shuffle Voice Changer Voices (sounds like static/robotic shit lol)`
 
