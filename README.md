@@ -1,6 +1,8 @@
 ## Get the Loadstring here retard:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoadstring
 
+## Make Sure To Star This Repo!
+
 ## [Or See]:
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 
