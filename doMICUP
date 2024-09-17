@@ -130,19 +130,19 @@ wait(0.2)
 lighting.ClockTime = 8
 repeat wait() until lighting.ClockTime == 8
 if lighting.ClockTime == 8 then
-OrionLib:MakeNotification({
-    Name = "Success!",
-    Content = "We have configured Lighting (for the script)",
-    Image = "rbxassetid://4483345998",
-    Time = 5
-})
+    OrionLib:MakeNotification({
+        Name = "Success!",
+        Content = "We have configured Lighting (for the script)",
+        Image = "rbxassetid://4483345998",
+        Time = 5
+    })
 else
-OrionLib:MakeNotification({
-    Name = "Failed!",
-    Content = "An error has occurred, we're sorry.",
-    Image = "rbxassetid://4483345998",
-    Time = 5
-})
+    OrionLib:MakeNotification({
+        Name = "Failed!",
+        Content = "An error has occurred, we're sorry.",
+        Image = "rbxassetid://4483345998",
+        Time = 5
+    })
 end
 wait()
 
@@ -1661,12 +1661,16 @@ if Transparency then
   end
 end
 RealCharacter.Humanoid.Died:Connect(function()
+getgenv().InvisStarted = false
+wait()
 RealCharacter:Destroy()
 FakeCharacter:Destroy()
 end)
 Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
 end
 RealCharacter.Humanoid.Died:Connect(function()
+getgenv().InvisStarted = false
+wait()
 RealCharacter:Destroy()
 FakeCharacter:Destroy()
 end)
