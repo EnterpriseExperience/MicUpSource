@@ -1894,13 +1894,13 @@ Callback = function()
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
     local EggChair = Workspace:FindFirstChild("#NBK || Egg Chair") or Workspace:WaitForChild("#NBK || Egg Chair")
-    wait(.3)
+    wait(0.3)
     Character:PivotTo(EggChair:GetPivot())
-    wait()
+    wait(0.4)
     Character:FindFirstChildWhichIsA("Humanoid").Jump = true
-    wait(.2)
+    wait(1)
     local OldCF = Players.Character:WaitForChild("HumanoidRootPart").CFrame
-    wait(.3)
+    wait(1)
     HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
     wait(0.7)
     Character:PivotTo(EggChair:GetPivot())
