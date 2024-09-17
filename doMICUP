@@ -82,31 +82,65 @@ wait()
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+OrionLib:MakeNotification({
+    Name = "Modifying Scripts...",
+    Content = "We are modifying game scripts, hold on...",
+    Image = "rbxassetid://4483345998",
+    Time = 10
+})
+wait(0.5)
 local room = workspace.Room
 for _, descendant in pairs(room:GetDescendants()) do
     if descendant:IsA("BasePart") and descendant.Name == "Part" then
         local killScript = descendant:FindFirstChild("Kill")
         if killScript and killScript:IsA("Script") then
+            print(tostring(killScript.Name)..", is going to be destroyed.")
+            wait(.1)
             killScript:Destroy()
         end
     end
 end
-wait()
+wait(.2)
 local room = workspace.Room
 for _, descendant in pairs(room:GetDescendants()) do
     if descendant:IsA("BasePart") and descendant.Name == "Part" then
         local touchInterest = descendant:FindFirstChild("TouchInterest")
         if touchInterest then
+            print(tostring(touchInterest.Name)..", is going to be destroyed.")
+            wait(.1)
             touchInterest:Destroy()
         end
     end
 end
 wait(0.5)
+local room = workspace.Room
+for _, descendant in pairs(room:GetDescendants()) do
+    if descendant:IsA("BasePart") and descendant.Name == "Part" then
+        local killScript = descendant:FindFirstChild("Kill")
+        local touchInterest = descendant:FindFirstChild("TouchInterest")
+        if not killScript or killScript == nil and killScript:IsA("Script") == nil or not touchInterest or touchInterest == nil then
+            OrionLib:MakeNotification({
+                Name = "Success!",
+                Content = "Successfully applied modifications.",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        else
+            OrionLib:MakeNotification({
+                Name = "Failed!",
+                Content = "Could not apply modifications.",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end
+    end
+end
+wait(0.5)
 OrionLib:MakeNotification({
-Name = "Hold On.",
-Content = "We are modifying Lighting...",
-Image = "rbxassetid://4483345998",
-Time = 10
+    Name = "Hold On.",
+    Content = "We are modifying Lighting...",
+    Image = "rbxassetid://4483345998",
+    Time = 10
 })
 wait()
 local lighting = game:GetService("Lighting")
@@ -383,44 +417,44 @@ function findplr(args, tbl)
 end
 wait()
 function isNumber(str)
-if tonumber(str) ~= nil then
-    return true
-end
+    if tonumber(str) ~= nil then
+        return true
+    end
 end
 wait()
 Tab1:AddButton({
-Name = "Steal Any Booth (Go To It)",
+Name = "Claim Any Booth (Go To A Booth)",
 Callback = function()
-local Folder = workspace:WaitForChild("Stalls")
+    local Folder = workspace:WaitForChild("Stalls")
 
-local function setupProximityPrompt(stall)
-    if stall:FindFirstChild("ProxPart") then
-        local ProximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
-        ProximityPrompt.Enabled = true
-        wait()
-        ProximityPrompt.HoldDuration = 0
+    local function setupProximityPrompt(stall)
+        if stall:FindFirstChild("ProxPart") then
+            local ProximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
+            ProximityPrompt.Enabled = true
+            wait()
+            ProximityPrompt.HoldDuration = 0
 
-        ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(function()
-            if not ProximityPrompt.Enabled then
-                ProximityPrompt.Enabled = true
-            end
-        end)
+            ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(function()
+                if not ProximityPrompt.Enabled then
+                    ProximityPrompt.Enabled = true
+                end
+            end)
+        end
     end
-end
 
-local stalls = {
-    Folder:FindFirstChild("Stall1"),
-    Folder:FindFirstChild("Stall2"),
-    Folder:FindFirstChild("Stall3"),
-    Folder:FindFirstChild("Stall4"),
-    Folder:FindFirstChild("Stall5")
-}
+    local stalls = {
+        Folder:FindFirstChild("Stall1"),
+        Folder:FindFirstChild("Stall2"),
+        Folder:FindFirstChild("Stall3"),
+        Folder:FindFirstChild("Stall4"),
+        Folder:FindFirstChild("Stall5")
+    }
 
-for _, stall in ipairs(stalls) do
-    if stall then
-        setupProximityPrompt(stall)
+    for _, stall in ipairs(stalls) do
+        if stall then
+            setupProximityPrompt(stall)
+        end
     end
-end    
 end})
 
 Tab7:AddToggle({
