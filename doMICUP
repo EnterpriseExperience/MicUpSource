@@ -1950,6 +1950,7 @@ if doAntiTP then
         while getgenv().doTeleport == true do
         wait()
             HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
+        end
         else
             warn("HumanoidRootPart was destroyed or is nil!")
             wait()
