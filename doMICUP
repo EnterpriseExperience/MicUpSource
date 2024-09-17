@@ -100,29 +100,6 @@ for _, descendant in pairs(workspace:GetDescendants()) do
     end
 end
 wait(0.5)
-local room = workspace.Room
-for _, descendant in pairs(room:GetDescendants()) do
-    if descendant:IsA("BasePart") and descendant.Name == "Part" then
-        local killScript = descendant:FindFirstChild("Kill")
-        local touchInterest = descendant:FindFirstChild("TouchInterest")
-        if not killScript or killScript == nil and killScript:IsA("Script") == nil or not touchInterest or touchInterest == nil then
-            OrionLib:MakeNotification({
-                Name = "Success!",
-                Content = "Successfully applied modifications.",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        else
-            OrionLib:MakeNotification({
-                Name = "Failed!",
-                Content = "Could not apply modifications.",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        end
-    end
-end
-wait(0.5)
 OrionLib:MakeNotification({
     Name = "Hold On.",
     Content = "We are modifying Lighting...",
@@ -1951,13 +1928,19 @@ if doAntiTP then
         wait()
             HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
         end
-        else
-            warn("HumanoidRootPart was destroyed or is nil!")
-            wait()
-            getgenv().doTeleport = false
-        end
+    else
+        warn("HumanoidRootPart was destroyed or is nil!")
+        wait()
+        getgenv().doTeleport = false
     end
 else
+    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
+    local SafeSpot = Workspace:FindFirstChild("#NBK || Egg Chair") or Workspace:WaitForChild("#NBK || Egg Chair")
+    wait()
     getgenv().doTeleport = false
     wait()
     for i = 1, 5 do
