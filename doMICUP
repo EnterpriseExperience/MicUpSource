@@ -30,6 +30,14 @@ local Tab1 = Window:MakeTab({
 local Section1 = Tab1:AddSection({
     Name = "Home Page"
 })
+local Tab11 = Window:MakeTab({
+    Name = "Booths",
+    Icon = "rbxassetid://7733914390",
+    PremiumOnly = false
+})
+local Section11 = Tab11:AddSection({
+    Name = "Booth Tools/Stand Tools"
+})
 local Tab2 = Window:MakeTab({
     Name = "Character",
     Icon = "rbxassetid://7743871002",
@@ -55,7 +63,7 @@ local Section4 = Tab4:AddSection({
     Name = "Tools For Modifying/Manipulating Chat"
 })
 local Tab5 = Window:MakeTab({
-    Name = "Fun Tools",
+    Name = "Extra Tools",
     Icon = "rbxassetid://7733954760",
     PremiumOnly = false
 })
@@ -86,6 +94,100 @@ local Tab6 = Window:MakeTab({
 local Section6 = Tab6:AddSection({
     Name = "Successful Quotes And Info"
 })
+wait(0.5)
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld')))()
+wait()
+local Players = game:GetService("Players") or game.Players
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.3).CFrame
+wait()
+Players.RespawnTime = 0
+wait()
+if getgenv().CompletedIntro == false then
+local Players = game:GetService("Players") or game.Players
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.3).CFrame
+
+wait()
+local GC = getconnections or get_signal_cons
+if GC then
+    for i,v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
+        OrionLib:MakeNotification({
+            Name = "Idled!",
+            Content = "Stopping connection...",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+        wait()
+        if v["Disable"] then
+            v["Disable"](v)
+        elseif v["Disconnect"] then
+            v["Disconnect"](v)
+        end
+    end
+    wait(0.3)
+    getgenv().AntiAfkScript = true
+    repeat wait() until getgenv().AntiAfkScript == true
+    wait()
+    if getgenv().AntiAfkScript == true then
+        OrionLib:MakeNotification({
+            Name = "Success!",
+            Content = "We have enabled anti-afk",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    else
+        getgenv().AntiAfkScript = false
+        wait(0.2)
+        OrionLib:MakeNotification({
+            Name = "Failed!",
+            Content = "This method will not work for you.",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
+else
+    OrionLib:MakeNotification({
+        Name = "Starting...",
+        Content = "AntiAFK (2) is loading...",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+    wait()
+    local VirtualUser = cloneref(game:GetService("VirtualUser")) or game:GetService("VirtualUser")
+    game:GetService("Players").LocalPlayer.Idled:Connect(function()
+        OrionLib:MakeNotification({
+            Name = "Idled!",
+            Content = "Clicking button...",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new())
+    end)
+    wait()
+    wait(0.3)
+    getgenv().OtherAntiAfk = true
+    repeat wait() until getgenv().OtherAntiAfk == true
+    wait()
+    if getgenv().OtherAntiAfk == true then
+        OrionLib:MakeNotification({
+            Name = "Sucess!",
+            Content = "AntiAFK (2) has loaded!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    else
+        OrionLib:MakeNotification({
+            Name = "Failed!",
+            Content = "AntiAFK (2) could not load.",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
+end
 wait()
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -143,6 +245,9 @@ else
         Image = "rbxassetid://4483345998",
         Time = 5
     })
+end
+else
+    warn("OK (1)")
 end
 wait()
 
@@ -394,7 +499,7 @@ function isNumber(str)
     end
 end
 wait()
-Tab1:AddButton({
+Tab11:AddButton({
 Name = "Claim Any Booth (Go To A Booth)",
 Callback = function()
     local Folder = workspace:WaitForChild("Stalls")
@@ -429,97 +534,122 @@ Callback = function()
     end
 end})
 
-Tab7:AddToggle({
+Tab11:AddToggle({
 Name = "Auto Claim/Steal Booth (for hackers?)",
 Default = false,
 Callback = function(AutoClaimStand)
 if AutoClaimStand then
-getgenv().ClaimTheStand = true
-while getgenv().ClaimTheStand == true do
-wait()
-local Folder = workspace:WaitForChild("Stalls")
----
-local Stall1 = Folder:FindFirstChild("Stall1")
-local Stall2 = Folder:FindFirstChild("Stall2")
-local Stall3 = Folder:FindFirstChild("Stall3")
-local Stall4 = Folder:FindFirstChild("Stall4")
-local Stall5 = Folder:FindFirstChild("Stall5")
+    getgenv().ClaimTheStand = true
 
-if Stall1:FindFirstChild("Icon"):FindFirstChild("Decal").Texture ~= "rbxthumb://type=Asset&id=5888213893&w=420&h=420" then
-local Proximity1 = Stall1:FindFirstChild("ProxPart").ProximityPrompt
-game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall1:FindFirstChild("ProxPart").Position)
-wait(0.3)
-fireproximityprompt(Proximity1, 15)
-wait()
-local TheStall = LocalStall
-local args = {
-    [1] = "Stolen By: "..game.Players.LocalPlayer.Name,
-    [2] = "5888213893"
-}
-
-Stall1:FindFirstChild("Edit"):FireServer(unpack(args))
-wait()
-local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
-
-for _,v in pairs(Button:GetDescendants()) do
-    if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
-        for i,Signal in pairs(Signals) do
-            firesignal(v[Signal])
+    local function getStall()
+        for _, stall in pairs(workspace:WaitForChild("Stalls"):GetChildren()) do
+            if stall:FindFirstChild("Player") and stall.Player.Value == game:GetService("Players").LocalPlayer then
+                return stall
+            end
+        end
+        return nil
+    end
+    
+    local function makePlayersInvisible()
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.Transparency = 1
+                    end
+                end
+            end
         end
     end
-end
-else
-print("Somebody bypassed the image with a script, claiming a different one...")
-wait()
-local Proximity2 = Stall2:FindFirstChild("ProxPart").ProximityPrompt
-game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall2:FindFirstChild("ProxPart").Position)
-wait(0.3)
-fireproximityprompt(Proximity2, 15)
-wait()
-for i, v in pairs(game.Players:GetPlayers()) do
-    v.Character:FindFirstChild("HumanoidRootPart").Transparency = 1
-end
-wait()
-local TheStall = Stall2
-local args = {
-    [1] = "Stolen By: "..game.Players.LocalPlayer.Name,
-    [2] = "5888213893"
-}
-
-Stall2:FindFirstChild("Edit"):FireServer(unpack(args))
-wait()
-for i, v in pairs(game.Players:GetPlayers()) do
-    v.Character:FindFirstChild("HumanoidRootPart").Transparency = 1
-end
-wait()
-local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
-
-for _,v in pairs(Button:GetDescendants()) do
-    if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
-        for i,Signal in pairs(Signals) do
-            firesignal(v[Signal])
+    
+    makePlayersInvisible()
+    wait(0.2)
+    
+    while getgenv().ClaimTheStand == true do
+        wait()
+    
+        local ClaimTexture = "rbxthumb://type=Asset&id=5888213893&w=420&h=420"
+        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+        local LocalPlayer = game.Players.LocalPlayer
+        local stall = getStall()
+    
+        if stall and stall:FindFirstChild("Icon") and stall.Icon:FindFirstChild("Decal") and stall:FindFirstChild("ProxPart") then
+            local decal = stall.Icon.Decal
+    
+            if decal.Texture ~= ClaimTexture then
+                local ProximityPrompt = stall.ProxPart:FindFirstChild("ProximityPrompt")
+    
+                LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(stall.ProxPart.Position)
+                wait(0.3)
+                fireproximityprompt(ProximityPrompt, 15)
+                wait()
+    
+                local args = {
+                    [1] = "Stolen By: " .. LocalPlayer.Name,
+                    [2] = "5888213893"
+                }
+                stall:FindFirstChild("Edit"):FireServer(unpack(args))
+                wait()
+    
+                local Button = LocalPlayer.PlayerGui.StallLocal.StallFrame
+                for _, v in pairs(Button:GetDescendants()) do
+                    if (v:IsA("ImageButton") or v:IsA("TextButton")) and v.Name == "CancelButton" then
+                        for _, signal in pairs(Signals) do
+                            firesignal(v[signal])
+                        end
+                    end
+                end
+    
+                wait(0.1)
+    
+                stall:WaitForChild("CloseStall"):FireServer()
+            end
         end
-    end
-end
-end
-wait(0.1)
-workspace:WaitForChild("Stalls"):WaitForChild("Stall2"):WaitForChild("CloseStall"):FireServer()
-end
+    end      
 else
-getgenv().ClaimTheStand = false
+    getgenv().ClaimTheStand = false
+    wait()
+    getgenv().ClaimTheStand = false
+    wait()
+    getgenv().ClaimTheStand = false
+    wait(0.2)
+    local function makePlayersVisible()
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.Transparency = 0
+                    end
+                end
+            end
+        end
+    end    
+    
+    local function makeHumanoidRootPartsInvisible()
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.Transparency = 1
+                end
+            end
+        end
+    end    
+    
+    makePlayersVisible()
+    wait(0.3)
+    makeHumanoidRootPartsInvisible()
 end
 end})
 
-Tab7:AddButton({
-Name = "Anti Stand Stealer (for hackers)",
+Tab11:AddButton({
+Name = "Anti Booth Stealer (for hackers)",
 Callback = function()
 local player = game.Players.LocalPlayer
 
 local function getStall()
     for i, v in pairs(workspace.Stalls:GetChildren()) do
-        if v:FindFirstChild("Player") and v.Player.Value == player then
+        if v.Player.Value == game:GetService("Players").LocalPlayer then
             return v
         end
     end
@@ -643,187 +773,116 @@ for _, player in pairs(game.Players:GetPlayers()) do
 end
 end})
 
-local BadWordsToggle = Tab7:AddToggle({
-Name = "Bad Words Cycle (Patched!)",
+Tab11:AddToggle({
+Name = "Bad Words Cycle (Working!)",
 Default = false,
 Callback = function(Cussing)
 if Cussing then
 getgenv().Cuss = true
 while getgenv().Cuss == true do
-wait(1)
-local function getStall()
-for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
-    if v.Player.Value == game:GetService("Players").LocalPlayer then
-        return v
+wait(0.5)
+    local function getStall()
+        for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+            if v.Player.Value == game:GetService("Players").LocalPlayer then
+                return v
+            end
+        end
+        return nil
     end
-end
-return nil
+
+local MyStall = getStall()
+
+if not MyStall or MyStall == nil then
+    getgenv().Cuss = false
+    return OrionLib:MakeNotification({
+        Name = "Error: No Booth",
+        Content = "You do not have a booth!",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
 end
 
-if getStall() == nil then
-getgenv().Cuss = false
-wait()
-OrionLib:MakeNotification({
-    Name = "Error: No Booth!",
-    Content = "Claim a Booth, Waiting...",
-    Image = "rbxassetid://4483345998",
-    Time = 10
-})
-wait(0.2)
-repeat wait() until getStall() ~= nil and game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
-if getStall() ~= nil and game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
-    getgenv().Cuss = true
-end
-end
-
-local letters = {
-    ["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
-}
-
-local function replace(str, find_str, replace_str) 
-local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0") 
-    return str:gsub(escaped_find_str, replace_str) 
-end
-
-local function filter(message)
-for search, replacement in pairs(letters) do
-    message = replace(message, search, replacement)
-end
-return message
-end
-
-local function sendChat(msg)
 local args = {
-    [1] = filter(msg),
+    [1] = "ɓ׀丅ㄈȟ",
     [2] = "5888213893"
 }
 
-getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-end
-wait()
-sendChat("Fuck")
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Bitch")
+local args = {
+    [1] = "ӻȕㄈҟ",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Retard")
+local args = {
+    [1] = "ㄈȕ冂丅",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Asshole")
+local args = {
+    [1] = "ȿȴȕ丅",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Autism")
+local args = {
+    [1] = "ҟҟҟ",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Black")
+local args = {
+    [1] = "ŗȇ丅ẳŗȡ",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Nigga")
+local args = {
+    [1] = "ώȇȇȡ",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Nigger")
+local args = {
+    [1] = "ώȟόŗȇ",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Cunt")
+local args = {
+    [1] = "ㄈȕɱ",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
-sendChat("Asswipe")
-wait(1)
-sendChat("Butt")
-wait(1)
-sendChat("Pussy")
-wait(1)
-sendChat("Coochie")
-wait(1)
-sendChat("Sex")
-wait(1)
-sendChat("Cuck")
-wait(1)
-sendChat("Cuckold")
-wait(1)
-sendChat("Porn")
-wait(1)
-sendChat("Hentai")
-wait(1)
-sendChat("Suck Dick")
-wait(1)
-sendChat("Kill Yourself")
-wait(1)
-sendChat("Rape")
-wait(1)
-sendChat("sexual abuse")
-wait(1)
-sendChat("Anal")
-wait(1)
-sendChat("Tight Pussy")
-wait(1)
-sendChat("Petite Asian Bitch")
-wait(1)
-sendChat("Raped before 12")
-wait(1)
-sendChat("Choke on a cock")
-wait(1)
-sendChat("Big Ballsack")
-wait(1)
-sendChat("Klu Klux Klan")
-wait(1)
-sendChat("Lick my nuts")
+local args = {
+    [1] = "ɓ׀ɠ ẳȿȿ",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 end
 else
 getgenv().Cuss = false
-end
-end})
-
-local TextboxBoothBypass = Tab7:AddTextbox({
-Name = "Booth Bypasser (Patched! Reworking)",
-Default = "Text Here",
-TextDisappear = true,
-Callback = function(TextToBypass)
-local function getStall()
-for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
-    if v.Player.Value == game:GetService("Players").LocalPlayer then
-        return v
-    end
-end
-return nil
-end
-
-local letters = {
-["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
-}
-
-local function replace(str, find_str, replace_str) 
-local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0") 
-return str:gsub(escaped_find_str, replace_str) 
-end
-
-local function filter(message)
-for search, replacement in pairs(letters) do
-    message = replace(message, search, replacement)
-end
-return message
-end
-
-local function sendChat(msg)
-local args = {
-    [1] = filter(msg),
-    [2] = "5888213893"
-}
-    
-getStall():FindFirstChild("Edit"):FireServer(unpack(args))
-end
-
-sendChat(TextToBypass)
-
-if getStall() ==  nil then
-OrionLib:MakeNotification({
-    Name = "Error: No Booth",
-    Content = "You do not have a booth, Claim a booth, Waiting...",
-    Image = "rbxassetid://4483345998",
-    Time = 5
-})
-wait(0.5)
-repeat wait() until getStall() ~= nil and game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-if getStall() ~= nil then
-    sendChat(TextToBypass)
-end
+wait()
+getgenv().Cuss = false
+wait()
+getgenv().Cuss = false
 end
 end})
 
 Tab4:AddButton({
-Name = "Chat Bypass 2",
+Name = "Chat Bypass 2 (Better Bypasser)",
 Callback = function()
     loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Synergy-Networks/products/main/BetterBypasser/loader.lua"))({
         Settings = {
@@ -835,14 +894,14 @@ Callback = function()
 end})
 
 Tab4:AddButton({
-Name = "Chat Bypass 3",
+Name = "Chat Bypass 3 (Devils Bypasser)",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/hassanxzayn-lua/devilschatbypasser/main/MAIN"))();
 end})
 
 Tab7:AddTextbox({
-Name = "18+ Booth Bypass",
-Default = "Booth Text",
+Name = "18+ Booth Image",
+Default = "Text For Booth",
 TextDisappear = true,
 Callback = function(TextHereForBooth)
 local function getStall()
@@ -872,151 +931,155 @@ local function getStall()
         end
     return nil
 end
-    local dawg = game:GetService("Workspace"):WaitForChild("Stalls"):FindFirstChild("Stall1")
-    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart", 1).CFrame = CFrame.new(dawg.ProxPart.Position)
-    wait(0.5)
-    local lol = game:GetService("Workspace"):WaitForChild("Stalls"):FindFirstChild("Stall1"):WaitForChild("ProxPart", 1).ProximityPrompt
-    lol.MaxActivationDistance = 65
-    wait()
-    fireproximityprompt(lol)
-    wait(1)
-    local args = {
-        [1] = TextHereForBooth,
-        [2] = "5888213893"
-    }
-
-    getStall()["Edit"]:FireServer(unpack(args))
-    wait()
-    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-    local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
-
-    for _,v in pairs(Button:GetDescendants()) do
-        if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
-            for i,Signal in pairs(Signals) do
-                firesignal(v[Signal])
+    for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+        if v and v ~= nil then
+            game:GetService("Players").LocalPlayer.Character:PivotTo(v:GetPivot())
+            wait(0.2)
+            repeat wait() until v.Player.Value == game:GetService("Players").LocalPlayer
+            wait()
+            if v.Player.Value == game:GetService("Players").LocalPlayer then
+                local ProximityPrompt = v:FindFirstChild("ProxPart"):FindFirstChild("ProximityPrompt")
+                wait(0.2)
+                fireproximityprompt(ProximityPrompt, 10)
+                wait(1)
+                local args = {
+                    [1] = tostring(TextHereForBooth),
+                    [2] = "5888213893"
+                }
+            
+                getStall()["Edit"]:FireServer(unpack(args))
+                wait()
+                local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+                local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
+            
+                for _,v in pairs(Button:GetDescendants()) do
+                    if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
+                        for i,Signal in pairs(Signals) do
+                            firesignal(v[Signal])
+                        end
+                    end
+                end
             end
         end
     end
 end
 end})
 
-Tab1:AddTextbox({
+Tab11:AddTextbox({
 Name = "UnClaim A Booth",
 Default = "UserName or Display",
 TextDisappear = true,
 Callback = function(LolUnClaim)
-local OldestCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame
-local LolBigDawg = findplr(LolUnClaim) or game.Players[LolUnClaim]
-local function getStallFunc()
-    local LolBigDawg = findplr(LolUnClaim) or game.Players[LolUnClaim]
-    for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
-        if v.Player.Value == LolBigDawg then
-            return v
-        end
-    end
-return nil
-end
+    local Players = game:GetService("Players")
+    local Workspace = game:GetService("Workspace")
+    local LocalPlayer = Players.LocalPlayer
+    local Stalls = Workspace:WaitForChild("Stalls")
+    
+    local OldestCF = LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame
+    local LolBigDawg = findplr(LolUnClaim)
+    local whitelist = {"M1RD3RCAUGHT", "STK_kets4eki"}
 
-local function getStallSelf()
-local LolBigDawg = findplr(LolUnClaim) or game.Players[LolUnClaim]
-for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
-    if v.Player.Value == game:GetService("Players").LocalPlayer then
-        return v
-    end
-end
-return nil
-end
-wait()
-print(getStallFunc())
-wait()
-if fireproximityprompt and getStallFunc() ~= nil and getStallFunc() ~= whitelist[game.Players[LolUnClaim.Player.Value].UserId] then
-local Players = game:GetService("Players")
-
-local function makeInvisible(character)
-if character then
-    for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
-            part.Transparency = 1
-            if part:IsA("BasePart") then
-                part.Transparency = 1
+    local function getStallFunc()
+        local LolBigDawg = findplr(LolUnClaim)
+        for _, v in pairs(Stalls:GetChildren()) do
+            if v.Player.Value == LolBigDawg then
+                return v
             end
         end
+        return nil
     end
-end
-end
 
-local localPlayer = Players.LocalPlayer
-
-for _, player in pairs(Players:GetPlayers()) do
-    if player ~= localPlayer and player.Character then
-        makeInvisible(player.Character)
-    end
-end
-local Proximity1 = getStallFunc():FindFirstChild("ProxPart").ProximityPrompt
-game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(getStallFunc():FindFirstChild("ProxPart").Position)
-wait(0.3)
-fireproximityprompt(Proximity1, 10)
-wait(0.5)
-getStallSelf():WaitForChild("CloseStall", 2):FireServer()
-wait(0.1)
-local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-local Button = game:GetService("Players").LocalPlayer.PlayerGui.StallLocal.StallFrame
-
-for _,v in pairs(Button:GetDescendants()) do
-if v:IsA("ImageButton") or v:IsA("TextButton") and v.Name == "CancelButton" then
-    for i,Signal in pairs(Signals) do
-        firesignal(v[Signal])
-    end
-end
-end
-wait()
-local Players = game:GetService("Players")
-
-local function makeInvisible(character)
-if character then
-    for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
-            part.Transparency = 1
-            if part:IsA("BasePart") then
-                part.Transparency = 0
+    local function getStallSelf()
+        for _, v in pairs(Stalls:GetChildren()) do
+            if v.Player.Value == LocalPlayer then
+                return v
             end
         end
+        return nil
     end
-end
-end
+    
+    wait()
+    
+    local stall = getStallFunc()
+    
+    if stall and stall ~= nil and fireproximityprompt then
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+        local LolBigDawg = findplr(LolUnClaim)
 
-local localPlayer = Players.LocalPlayer
-
-for _, player in pairs(Players:GetPlayers()) do
-if player ~= localPlayer and player.Character then
-    makeInvisible(player.Character)
-end
-end
-wait()
-local Players = game:GetService("Players")
-
-local function makeInvisible(character)
-if character then
-    for _, part in pairs(character:GetDescendants()) do
-        if part:FindFirstChild("HumanoidRootPart") then
-            part.Transparency = 1
+        if not LolBigDawg then
+            return OrionLib:MakeNotification({
+                Name = "Error: Not Found",
+                Content = "Player was not found!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
         end
-    end
-end
-end
+        
+        if not Players[LolBigDawg.Name] then
+            return OrionLib:MakeNotification({
+                Name = "Error: Not Found",
+                Content = "Player was not found!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end        
 
-local localPlayer = Players.LocalPlayer
+        for _, v in pairs(Stalls:GetChildren()) do
+            if v.Player.Value == whitelist[LolBigDawg.Name] then
+                return OrionLib:MakeNotification({
+                    Name = "Error: Owner",
+                    Content = "Owner of script owns this booth!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
+        end
 
-for _, player in pairs(Players:GetPlayers()) do
-if player ~= localPlayer and player.Character then
-    makeInvisible(player.Character)
-end
-end
-wait(0.3)
-game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldestCF
-else
-return 
-end
+        local function makeInvisible(character)
+            if character then
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
+                        part.Transparency = 1
+                    end
+                end
+            end
+        end
+
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character then
+                makeInvisible(player.Character)
+            end
+        end
+    
+        local Proximity1 = stall:FindFirstChild("ProxPart").ProximityPrompt
+        LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(stall:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity1, 10)
+        
+        wait(0.5)
+        getStallSelf():WaitForChild("CloseStall", 2):FireServer()
+
+        local Button = LocalPlayer.PlayerGui.StallLocal.StallFrame
+        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+        
+        for _, v in pairs(Button:GetDescendants()) do
+            if (v:IsA("ImageButton") or v:IsA("TextButton")) and v.Name == "CancelButton" then
+                for _, Signal in pairs(Signals) do
+                    firesignal(v[Signal])
+                end
+            end
+        end
+    
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
+                        part.Transparency = 0
+                    end
+                end
+            end
+        end
+    end    
 end})
 
 Tab1:AddToggle({
@@ -1042,7 +1105,7 @@ getgenv().crazyNote = false
 end
 end})
 
-Tab1:AddButton({
+Tab11:AddButton({
 Name = "Unclaim ALL Booths",
 Callback = function()
 local Folder = workspace:WaitForChild("Stalls")
@@ -1116,7 +1179,7 @@ wait(0.3)
 print("Finished Unclaiming All Booths.")
 end})
 
-Tab1:AddToggle({
+Tab11:AddToggle({
 Name = "Auto Change Booth Text",
 Default = false,
 Callback = function(crazy)
@@ -1845,9 +1908,8 @@ Tab10:AddButton({
 Name = "TP To Room Next To Bathrooms (?)",
 Callback = function()
     local Character = game:GetService("Players").LocalPlayer.Character
-    local EggChair = game:GetService("Workspace"):FindFirstChild("#NBK || Egg Chair")
     local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
-    Character:PivotTo(EggChair:GetPivot())
+    HumanoidRootPart.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
 end})
 
 Tab10:AddButton({
@@ -2064,20 +2126,18 @@ Callback = function()
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
-    local EggChair = Workspace:FindFirstChild("#NBK || Egg Chair") or Workspace:WaitForChild("#NBK || Egg Chair")
-    wait(0.3)
-    Character:PivotTo(EggChair:GetPivot())
+    HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
     wait(0.4)
     Character:FindFirstChildWhichIsA("Humanoid").Jump = true
     wait(1)
-    local OldCF = Players.Character:WaitForChild("HumanoidRootPart").CFrame
+    local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
     wait(1)
     HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
     wait(0.7)
-    Character:PivotTo(EggChair:GetPivot())
+    HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
     wait(0.4)
     HumanoidRP.CFrame = OldCF
-    wait(0.2)
+    wait(0.3)
     print("Successfully Executed | Method 1 | 0")
 end})
 
@@ -2085,13 +2145,14 @@ Tab2:AddToggle({
 Name = "Anti-Bang/TP (Loop Method)",
 Default = false,
 Callback = function(doAntiTP)
+getgenv().doTeleport = false
+wait(0.5)
 if doAntiTP then
     local Workspace = game:GetService("Workspace") or game.Workspace or workspace
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
-    local SafeSpot = Workspace:FindFirstChild("#NBK || Egg Chair") or Workspace:WaitForChild("#NBK || Egg Chair")
 
     if HumanoidRP and HumanoidRP ~= nil then
         getgenv().doTeleport = true
@@ -2103,23 +2164,20 @@ if doAntiTP then
         warn("HumanoidRootPart was destroyed or is nil!")
         wait()
         getgenv().doTeleport = false
+        wait(0.3)
+        game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Health = 0
     end
 else
-    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
-    local SafeSpot = Workspace:FindFirstChild("#NBK || Egg Chair") or Workspace:WaitForChild("#NBK || Egg Chair")
-    wait()
     getgenv().doTeleport = false
     wait()
-    for i = 1, 5 do
-        Character:PivotTo(SafeSpot:GetPivot())
-        task.wait(0.4)
+    repeat wait() until getgenv().doTeleport == false
+    if getgenv().doTeleport == false then
+        game:GetService("Players").LocalPlayer.Character:WaitForChild("Head", 0.2):Destroy()
+        wait(0.2)
+        game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Health = 0
+        wait(0.2)
+        game:GetService("Players").LocalPlayer.Character:Destroy()
     end
-    wait(0.5)
-    Character:FindFirstChildWhichIsA("Humanoid").Jump = true
 end
 end})
 
@@ -3000,10 +3058,8 @@ else
         Image = "rbxassetid://4483345998",
         Time = 10
     })
-wait(1)
-game.Players.LocalPlayer:Kick("Stop trying to bypass, fucking skid.")
-wait(1)
-table.insert(List, game.Players.LocalPlayer.UserId)
+    wait(1)
+    game.Players.LocalPlayer:Kick("Stop trying to bypass, fucking skid.")
 end
 end})
 
@@ -3037,17 +3093,33 @@ end})--]]
 
 Tab6:AddParagraph("Zacks Easy Hub | Scripting Made Easy")
 Tab6:AddLabel("https://www.youtube.com/@AnonymousExploiting")
-Tab6:AddLabel("Subscribe for more content fuckwatts.")
-Tab6:AddLabel("Quotes:")
+Tab6:AddLabel("Subscribe for more content retards.")
+Tab6:AddLabel("Dumb ass Quotes:")
 Tab6:AddParagraph("You don't HAVE to do something, you NEED to.")
 Tab6:AddParagraph("Lose interest in a task? That 1 task could impact your life.")
 Tab6:AddParagraph("If you feel your not doing enough, Do less, take a break.")
 Tab6:AddParagraph("Need REAL advice? Ask yourself, others can't truly help you.")
 Tab6:AddParagraph("To scared to work? Remember, You need money to live.")
-Tab6:AddParagraph("Life not being fair? Remember, YOU are part of what makes life a word.")
-end
+Tab6:AddParagraph("Life not being fair? Remember, YOU are part of what makes life.")
+wait(0.5)
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local LocalPlayer = Players.LocalPlayer or game.Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HRPBase = Character:WaitForChild("HumanoidRootPart", 3) or Character:FindFirstChild("HumanoidRootPart")
+LocalPlayer.CameraMaxZoomDistance = 800000
 wait(1)
+print(tostring(LocalPlayer.CameraMaxZoomDistance))
+end
+wait(0.5)
 loadGUI()
+wait(0.1)
+getgenv().CompletedIntro = true
+wait(0.3)
+if getgenv().CompletedIntro == true then
+    return 
+else
+    print("OK (3)")
+end
 wait(0.3)
 print("Running...")
 wait()
@@ -3087,12 +3159,9 @@ if player.Character then
 end
 end
 wait(1)
-local player = game:GetService("Players").LocalPlayer
-player.CameraMaxZoomDistance = 800000
-wait(1)
-print(tostring(player.CameraMaxZoomDistance))
-wait()
 print("Successfully ran!")
+wait(0.3)
+getgenv().CompletedIntro = true
 
 local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
