@@ -79,7 +79,28 @@ local Section6 = Tab6:AddSection({
     Name = "Successful Quotes And Info"
 })
 wait()
--- Removed due to massive lag/crashes/crashing.
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local room = workspace.Room
+for _, descendant in pairs(room:GetDescendants()) do
+    if descendant:IsA("BasePart") and descendant.Name == "Part" then
+        local killScript = descendant:FindFirstChild("Kill")
+        if killScript and killScript:IsA("Script") then
+            killScript:Destroy()
+        end
+    end
+end
+wait()
+local room = workspace.Room
+for _, descendant in pairs(room:GetDescendants()) do
+    if descendant:IsA("BasePart") and descendant.Name == "Part" then
+        local touchInterest = descendant:FindFirstChild("TouchInterest")
+        if touchInterest then
+            touchInterest:Destroy()
+        end
+    end
+end
 wait(0.5)
 OrionLib:MakeNotification({
 Name = "Hold On.",
@@ -560,25 +581,6 @@ local function monitorPlayerStall()
 end
 
 monitorPlayerStall()    
-end})
-
-Tab1:AddToggle({
-Name = "Note Bypass (not working!?)",
-Default = false,
-Callback = function(CrazyAhText)
-if CrazyAhText then
-getgenv().AighDawg = true
-while getgenv().AighDawg == true do
-wait()
-local args = {
-[1] = "yooo"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
-end
-else
-getgenv().AighDawg = false
-end
 end})
 
 Tab2:AddToggle({
@@ -1350,59 +1352,6 @@ local args = {
 
 game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
 end
-end})
-
-Tab1:AddButton({
-Name = "Send Everyone Fake Note",
-Callback = function()
-for i, v in pairs(game.Players:GetChildren()) do
-    if v ~= game.Players.LocalPlayer then
-        local args = {
-            [1] = "ȿ丅ӻȕ ɓ׀丅ㄈȟ",
-            [2] = tostring(v.Name)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("SendNote"):FireServer(unpack(args))
-    end
-end
-end})
-
-Tab1:AddToggle({
-Name = "Loop Send All Notes",
-Default = false,
-Callback = function(SendNotes)
-if SendNotes then
-getgenv().NoteSending = true
-while getgenv().NoteSending == true do
-    wait()
-    for i, v in pairs(game.Players:GetChildren()) do
-        if v ~= game.Players.LocalPlayer then
-            local args = {
-                [1] = "ȿ丅ӻȕ ɓ׀丅ㄈȟ",
-                [2] = tostring(v.Name)
-            }
-        
-            game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("SendNote"):FireServer(unpack(args))
-        end
-    end
-end
-else
-getgenv().NoteSending = false
-end
-end})
-
-Tab1:AddTextbox({
-Name = "Send Someone Fake Notes",
-Default = "User Or Display",
-TextDisappear = true,
-Callback = function(dawgsUser)
-local bruhDawg = findplr(dawgsUser)
-local args = {
-    [1] = "ȿ丅ӻȕ ɓ׀丅ㄈȟ",
-    [2] = tostring(dawgsUser.Name)
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("SendNote"):FireServer(unpack(args))
 end})
 
 Tab1:AddButton({
@@ -2311,7 +2260,7 @@ removeSmokeFromEverything()
 end})
 
 Tab1:AddButton({
-Name = "Submit Note Bypass (not working)",
+Name = "Submit Note Bypass (working)",
 Callback = function()
 local PartToTp = workspace:FindFirstChild("SubmitNote")
 local Character = game:GetService("Players").LocalPlayer.Character
