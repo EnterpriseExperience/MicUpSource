@@ -1025,7 +1025,7 @@ Callback = function(LolUnClaim)
         end        
 
         for _, v in pairs(Stalls:GetChildren()) do
-            if v.Player.Value == whitelist[LolBigDawg.Name] then
+            if v.Player.Value == "M1RD3RCAUGHT" or v.Player.Value == "STK_kets4eki" then
                 return OrionLib:MakeNotification({
                     Name = "Error: Owner",
                     Content = "Owner of script owns this booth!",
@@ -1079,6 +1079,33 @@ Callback = function(LolUnClaim)
                 end
             end
         end
+        wait(0.5)
+        local function makePlayersVisible()
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    for _, part in pairs(player.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.Transparency = 0
+                        end
+                    end
+                end
+            end
+        end    
+        
+        local function makeHumanoidRootPartsInvisible()
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        hrp.Transparency = 1
+                    end
+                end
+            end
+        end    
+        
+        makePlayersVisible()
+        wait(0.1)
+        makeHumanoidRootPartsInvisible()
     end    
 end})
 
@@ -1148,7 +1175,7 @@ end
 
 local function unclaimStalls()
     for _, stall in pairs(Folder:GetChildren()) do
-        if stall:FindFirstChild("ProxPart") and stall:FindFirstChild("Player") then
+        if stall:FindFirstChild("ProxPart") and stall:FindFirstChild("Player") and stall.Player.Value ~= "M1RD3RCAUGHT" and stall.Player.Value ~= "STK_kets4eki" then
             local owner = stall.Player.Value
             fireAndUnclaimStall(stall)
         end
@@ -1170,6 +1197,7 @@ local function cancelAllButtons()
 end
 
 makeAllPlayersInvisible()
+wait(0.1)
 unclaimStalls()
 wait(0.1)
 localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
@@ -1631,15 +1659,14 @@ Keybind = "E"
 Tab2:AddButton({
 Name = "Invisible (Keybind Toggle)",
 Callback = function()
-
-if INVIS_LOADED and not _G.INVIS_LOADED == true then
+if DEBUG_INVIS and not _G.DEBUG_INVIS == true then
     return Notification:Notify(
         {Title = "Error: ", Description = "Invisible is already started!"},
         {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
         {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() warn("") end}
     )
 end
-pcall(function() getgenv().InvisStarted = true end)
+pcall(function() getgenv().InvisBruh = true end)
 
 local ScriptStarted = false
 local Transparency = true
@@ -1660,15 +1687,6 @@ Part.Size = Vector3.new(200, 1, 200)
 Part.CFrame = CFrame.new(999, 999, 999) -- Works now, as intended
 Part.CanCollide = true
 Part.Name = "TheBaseplate"
-
-if Part and getgenv().InvisStarted == true then
-    OrionLib:MakeNotification({
-        Name = "Success!",
-        Content = "Invisible Script is now started.",
-        Image = "rbxassetid://4483345998",
-        Time = 5
-    })
-end
 
 FakeCharacter.Parent = workspace
 FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
@@ -1802,15 +1820,6 @@ local Sound = Instance.new("Sound",game:GetService("SoundService"))
 Sound.SoundId = "rbxassetid://232127604"
 Sound:Play()
 game:GetService("StarterGui"):SetCore("SendNotification",{["Title"] = "Invisible Toggle Loaded",["Text"] = "Press "..Settings.Keybind.." to change visibility.",["Duration"] = 10,["Button1"] = "Okay."})
-
-if getgenv().InvisStarted == true then
-    OrionLib:MakeNotification({
-        Name = "Success!",
-        Content = "Invisible has loaded successfully.",
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
-end
 end})
 
 --[[Tab2:AddToggle({
@@ -2164,19 +2173,13 @@ if doAntiTP then
         warn("HumanoidRootPart was destroyed or is nil!")
         wait()
         getgenv().doTeleport = false
-        wait(0.3)
-        game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Health = 0
     end
 else
     getgenv().doTeleport = false
     wait()
     repeat wait() until getgenv().doTeleport == false
     if getgenv().doTeleport == false then
-        game:GetService("Players").LocalPlayer.Character:WaitForChild("Head", 0.2):Destroy()
-        wait(0.2)
         game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Health = 0
-        wait(0.2)
-        game:GetService("Players").LocalPlayer.Character:Destroy()
     end
 end
 end})
