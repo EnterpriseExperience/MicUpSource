@@ -104,7 +104,6 @@ local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.3).CFra
 wait()
 Players.RespawnTime = 0
 wait()
-if getgenv().CompletedIntro == false then
 local Players = game:GetService("Players") or game.Players
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -148,7 +147,7 @@ if GC then
             Time = 10
         })
     end
-else
+    wait()
     OrionLib:MakeNotification({
         Name = "Starting...",
         Content = "AntiAFK (2) is loading...",
@@ -245,9 +244,6 @@ else
         Image = "rbxassetid://4483345998",
         Time = 5
     })
-end
-else
-    warn("OK (1)")
 end
 wait()
 
@@ -2136,7 +2132,7 @@ Callback = function()
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
     HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
-    wait(0.4)
+    wait(0.5)
     Character:FindFirstChildWhichIsA("Humanoid").Jump = true
     wait(1)
     local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
@@ -2144,9 +2140,9 @@ Callback = function()
     HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
     wait(0.7)
     HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
-    wait(0.4)
+    wait(0.7)
     HumanoidRP.CFrame = OldCF
-    wait(0.3)
+    wait(0.7)
     print("Successfully Executed | Method 1 | 0")
 end})
 
