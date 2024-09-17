@@ -89,27 +89,14 @@ OrionLib:MakeNotification({
     Time = 10
 })
 wait(0.5)
-local room = workspace.Room
-for _, descendant in pairs(room:GetDescendants()) do
-    if descendant:IsA("BasePart") and descendant.Name == "Part" then
-        local killScript = descendant:FindFirstChild("Kill")
-        if killScript and killScript:IsA("Script") then
-            print(tostring(killScript.Name)..", is going to be destroyed.")
-            wait(.1)
-            killScript:Destroy()
-        end
-    end
-end
-wait(.2)
-local room = workspace.Room
-for _, descendant in pairs(room:GetDescendants()) do
-    if descendant:IsA("BasePart") and descendant.Name == "Part" then
-        local touchInterest = descendant:FindFirstChild("TouchInterest")
+for _, descendant in pairs(workspace:GetDescendants()) do
+    if descendant:IsA("Script") and descendant.Name == "Kill" then
+        local parent = descendant.Parent
+        local touchInterest = parent:FindFirstChild("TouchInterest")
         if touchInterest then
-            print(tostring(touchInterest.Name)..", is going to be destroyed.")
-            wait(.1)
             touchInterest:Destroy()
         end
+        descendant:Destroy()
     end
 end
 wait(0.5)
@@ -1919,6 +1906,79 @@ Increment = 1,
 ValueName = "",
 Callback = function(gravVal)
 game.Workspace.Gravity = gravVal
+end})
+
+Tab2:AddButton({
+Name = "Anti-Bang/TP (Method 1)",
+Callback = function()
+    local Players = game:GetService("Players")
+    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
+    local EggChair = Workspace:FindFirstChild("#NBK || Egg Chair") or Workspace:WaitForChild("#NBK || Egg Chair")
+    wait(.3)
+    Character:PivotTo(EggChair:GetPivot())
+    wait()
+    Character:FindFirstChildWhichIsA("Humanoid").Jump = true
+    wait(.2)
+    local OldCF = Players.Character:WaitForChild("HumanoidRootPart").CFrame
+    wait(.3)
+    HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
+    wait(0.7)
+    Character:PivotTo(EggChair:GetPivot())
+    wait(0.4)
+    HumanoidRP.CFrame = OldCF
+    wait(0.2)
+    print("Successfully Executed | Method 1 | 0")
+end})
+
+Tab2:AddToggle({
+Name = "Anti-Bang/TP (Loop Method)",
+Default = false,
+Callback = function(doAntiTP)
+if doAntiTP then
+    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
+    local SafeSpot = Workspace:FindFirstChild("#NBK || Egg Chair") or Workspace:WaitForChild("#NBK || Egg Chair")
+
+    if HumanoidRP and HumanoidRP ~= nil then
+        getgenv().doTeleport = true
+        while getgenv().doTeleport == true do
+        wait()
+            HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
+        else
+            warn("HumanoidRootPart was destroyed or is nil!")
+            wait()
+            getgenv().doTeleport = false
+        end
+    end
+else
+    getgenv().doTeleport = false
+    wait()
+    for i = 1, 5 do
+        Character:PivotTo(SafeSpot:GetPivot())
+        task.wait(0.4)
+    end
+    wait(0.5)
+    Character:FindFirstChildWhichIsA("Humanoid").Jump = true
+end
+end})
+
+Tab2:AddButton({
+Name = "Anti-Bang/TP (Method 3, You Die To)",
+Callback = function()
+    local voidPosition = Vector3.new(-499, -499, -499)
+    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
+    
+    HumanoidRP.CFrame = CFrame.new(voidPosition)
 end})
 
 Tab5:AddButton({
