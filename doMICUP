@@ -38,6 +38,14 @@ local Tab2 = Window:MakeTab({
 local Section2 = Tab2:AddSection({
     Name = "Character Tools"
 })
+local Tab10 = Window:MakeTab({
+    Name = "Teleports",
+    Icon = "rbxassetid://7733764327",
+    PremiumOnly = false
+})
+local Section10 = Tab10:AddSection({
+    Name = "Teleport Tools"
+})
 local Tab4 = Window:MakeTab({
     Name = "Chat Tools",
     Icon = "rbxassetid://7734021300",
@@ -56,7 +64,7 @@ local Section5 = Tab5:AddSection({
 })
 local Tab9 = Window:MakeTab({
     Name = "Lighting",
-    Icon = "rbxassetid://8997384977",
+    Icon = "rbxassetid://7734068495",
     PremiumOnly = false
 })
 local Section9 = Tab9:AddSection({
@@ -578,7 +586,7 @@ local function monitorPlayerStall()
     end
 end
 
-monitorPlayerStall()    
+monitorPlayerStall()
 end})
 
 Tab2:AddToggle({
@@ -669,12 +677,12 @@ end
 end
 
 local letters = {
-["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
+    ["A"] = "🅰", ["a"] = "🅰", ["B"] = "🅱", ["b"] = "🅱", ["C"] = "🅲", ["c"] = "🅲", ["D"] = "🅳", ["d"] = "🅳", ["E"] = "🅴", ["e"] = "🅴", ["F"] = "🅵", ["f"] = "🅵", ["G"] = "🅶", ["g"] = "🅶", ["H"] = "🅷", ["h"] = "🅷", ["I"] = "🅸", ["i"] = "🅸", ["J"] = "🅹", ["j"] = "🅹", ["K"] = "🅺", ["k"] = "🅺", ["L"] = "🅻", ["l"] = "🅻", ["M"] = "🅼", ["m"] = "🅼", ["N"] = "🅽", ["n"] = "🅽", ["O"] = "🅾", ["o"] = "🅾", ["P"] = "🅿", ["p"] = "🅿", ["Q"] = "🆀", ["q"] = "🆀", ["R"] = "🆁", ["r"] = "🆁", ["S"] = "🆂", ["s"] = "🆂", ["T"] = "🆃", ["t"] = "🆃", ["U"] = "🆄", ["u"] = "🆄", ["V"] = "🆅", ["v"] = "🆅", ["W"] = "🆆", ["w"] = "🆆", ["X"] = "🆇", ["x"] = "🆇", ["Y"] = "🆈", ["y"] = "🆈", ["Z"] = "🆉", ["z"] = "🆉", [" "] = " "
 }
 
 local function replace(str, find_str, replace_str) 
 local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0") 
-return str:gsub(escaped_find_str, replace_str) 
+    return str:gsub(escaped_find_str, replace_str) 
 end
 
 local function filter(message)
@@ -1366,27 +1374,31 @@ end})
 Tab1:AddButton({
 Name = "Send Fake Warnings (FREE! + BYPASS!)",
 Callback = function()
-for i, v in pairs(game.Players:GetChildren()) do
-    if v ~= game.Players.LocalPlayer then
-        local args = {
-            [1] = tostring(v.Name)
-        }
+    local whitelist = { "M1RD3RCAUGHT" }
     
-        game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
-    end
-end
+    for i, v in pairs(game.Players:GetPlayers()) do
+        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) then
+            local args = {
+                [1] = tostring(v.Name)
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
+        end
+    end    
 end})
 
 Tab1:AddToggle({
 Name = "Loop Send All Warnings",
 Default = false,
 Callback = function(loopWarn)
+local whitelist = { "M1RD3RCAUGHT" }
+
 if loopWarn then
     getgenv().WarnLoop = true
     while getgenv().WarnLoop == true do
     wait()
     for i, v in pairs(game.Players:GetChildren()) do
-        if v ~= game.Players.LocalPlayer then
+        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) then
             local args = {
                 [1] = tostring(v.Name)
             }
@@ -1405,12 +1417,29 @@ Name = "Send Someone A Warning",
 Default = "User Or Display",
 TextDisappear = true,
 Callback = function(warnPlr)
+local whitelist = { "M1RD3RCAUGHT" }
+
+local function isWhitelisted(username)
+    return table.find(whitelist, username) ~= nil
+end
+
 local thisPlrWarned = findplr(warnPlr)
+if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) then
     local args = {
         [1] = tostring(thisPlrWarned.Name)
     }
 
     game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
+end
+
+if thisPlrWarned == isWhitelisted("M1RD3RCAUGHT") then
+    return OrionLib:MakeNotification({
+        Name = "Cancelled!",
+        Content = "Player is an owner!",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
 end})
 
 Tab2:AddToggle({
@@ -1504,7 +1533,7 @@ end
 end})
 
 Tab4:AddButton({
-Name = "Chat Bypass (Patched!)",
+Name = "Chat Bypass (Method 1)",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/1price/usercreation/main/UserCreation.lua", true))()
 end})
@@ -1539,6 +1568,16 @@ Keybind = "E"
 Tab2:AddButton({
 Name = "Invisible (Keybind Toggle)",
 Callback = function()
+
+if INVIS_LOADED and not _G.INVIS_LOADED == true then
+    return Notification:Notify(
+        {Title = "Error: ", Description = "Invisible is already started!"},
+        {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
+        {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() warn("") end}
+    )
+end
+pcall(function() getgenv().InvisStarted = true end)
+
 local ScriptStarted = false
 local Transparency = true
 local Keybind = Settings.Keybind
@@ -1555,9 +1594,19 @@ local Part
 Part = Instance.new("Part", workspace)
 Part.Anchored = true
 Part.Size = Vector3.new(200, 1, 200)
-Part.CFrame = CFrame.new(999, 999, 999) -- I don't understand why the fucking BasePlate keeps spawning on the old CFrame, despite me updating the CFrame constantly, but it never goes anywhere else.
+Part.CFrame = CFrame.new(999, 999, 999) -- Works now, as intended
 Part.CanCollide = true
 Part.Name = "TheBaseplate"
+
+if Part and getgenv().InvisStarted == true then
+    OrionLib:MakeNotification({
+        Name = "Success!",
+        Content = "Invisible Script is now started.",
+        Image = "rbxassetid://4483345998",
+        Time = 5
+    })
+end
+
 FakeCharacter.Parent = workspace
 FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
 
@@ -1686,6 +1735,15 @@ local Sound = Instance.new("Sound",game:GetService("SoundService"))
 Sound.SoundId = "rbxassetid://232127604"
 Sound:Play()
 game:GetService("StarterGui"):SetCore("SendNotification",{["Title"] = "Invisible Toggle Loaded",["Text"] = "Press "..Settings.Keybind.." to change visibility.",["Duration"] = 10,["Button1"] = "Okay."})
+
+if getgenv().InvisStarted == true then
+    OrionLib:MakeNotification({
+        Name = "Success!",
+        Content = "Invisible has loaded successfully.",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
 end})
 
 --[[Tab2:AddToggle({
@@ -1771,12 +1829,93 @@ getgenv().UseInvisMethod = false
 end
 end})--]]
 
+Tab10:AddButton({
+Name = "TP To Private Room (Ground)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(4220.82275, 2.76511836, 60.7681046)
+end})
+
+Tab10:AddButton({
+Name = "TP To Room Next To Bathrooms (?)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local EggChair = game:GetService("Workspace"):FindFirstChild("#NBK || Egg Chair")
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    Character:PivotTo(EggChair:GetPivot())
+end})
+
+Tab10:AddButton({
+Name = "TP To Bathrooms",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-72.3955917, 5.09832525, 93.0914459)
+end})
+
+Tab10:AddButton({
+Name = "TP To Chill Spot",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(228.970184, 5.75081444, -21.5613441)
+end})
+
+Tab10:AddButton({
+Name = "TP To Picnic (1)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(85.846756, 3.61196709, -29.8345909)
+end})
+
+Tab10:AddButton({
+Name = "TP To Picnic (2)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(76.6581955, 3.61196709, -29.8332996)
+end})
+
+Tab10:AddButton({
+Name = "TP To Stage Mic (1)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(39.2528572, 7.80023623, -67.7634125)
+end})
+
+Tab10:AddButton({
+Name = "TP To Stage Mic (2)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(14.8289356, 7.80023623, -67.7656097)
+end})
+
+Tab10:AddButton({
+Name = "TP To Middle Room (Center)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(70.9464493, 5.62692404, 24.2968006)
+end})
+
+Tab10:AddButton({
+Name = "TP To Booth Rows (Center, Table)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(26.7397423, 7.81395245, 86.7164536)
+end})
+
 Tab2:AddTextbox({
-Name = "Invis Keybind (if already ran = respawn)",
+Name = "Invisible Keybind",
 Default = "E",
 TextDisappear = false,
 Callback = function(TheBind)
-Settings.Keybind = tostring(TheBind)
+    Settings.Keybind = tostring(TheBind)
 end})
 
 Tab5:AddButton({
@@ -1838,14 +1977,14 @@ Tab5:AddButton({
 Name = "FE Admin (Press ; )",
 Callback = function()
 if fireproximityprompt and cloneref then
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/main/AdminFE.lua", true))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/main/AdminFE.lua", true))()
 else
-return OrionLib:MakeNotification({
-    Name = "Error: Not Capable",
-    Content = "Your exploit cannot run this script, hence errors",
-    Image = "rbxassetid://4483345998",
-    Time = 10
-})
+    return OrionLib:MakeNotification({
+        Name = "Error: Not Compatible",
+        Content = "Your exploit cannot run this script.",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
 end
 end})
 
@@ -1858,20 +1997,48 @@ Color = Color3.fromRGB(0,0,0),
 Increment = 1,
 ValueName = "",
 Callback = function(wsVal)
-game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = wsVal
+    game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = wsVal
 end})
 
-Tab2:AddSlider({
-Name = "JumpPower (Default): 7",
-Min = 7,
-Max = 400,
-Default = 7,
-Color = Color3.fromRGB(0,0,0),
-Increment = 1,
-ValueName = "",
-Callback = function(jpVal)
-game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpHeight = jpVal
-end})
+if game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == true then
+    OrionLib:MakeNotification({
+        Name = "Success!",
+        Content = "JumpPower is enabled, continuing...",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+    wait()
+    Tab2:AddSlider({
+    Name = "JumpPower (Default): 50",
+    Min = 50,
+    Max = 400,
+    Default = 50,
+    Color = Color3.fromRGB(0,0,0),
+    Increment = 1,
+    ValueName = "",
+    Callback = function(jpVal)
+        game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").JumpPower = jpVal
+    end})
+elseif game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == false then
+    OrionLib:MakeNotification({
+        Name = "Detection!",
+        Content = "UseJumpPower is disabled, switching...",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+    wait(.2)
+    Tab2:AddSlider({
+    Name = "JumpHeight (Default): 7",
+    Min = 7,
+    Max = 300,
+    Default = 7,
+    Color = Color3.fromRGB(0,0,0),
+    Increment = 1,
+    ValueName = "",
+    Callback = function(jumpHeight)
+        game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").JumpHeight = jumpHeight
+    end})
+end
 
 Tab2:AddSlider({
 Name = "Gravity (Default): 196.2",
@@ -1882,7 +2049,7 @@ Color = Color3.fromRGB(0,0,0),
 Increment = 1,
 ValueName = "",
 Callback = function(gravVal)
-game.Workspace.Gravity = gravVal
+    game:GetService("Workspace").Gravity = gravVal
 end})
 
 Tab2:AddButton({
@@ -2025,223 +2192,93 @@ else
 end
 end})
 
-local lighting = game:GetService("Lighting")
-local savedSettings
-local settings = {}
-
-local function saveSettings()
-if savedSettings then
-    return 
-end
-
-savedSettings = {
-    SunRays = lighting:FindFirstChildOfClass("SunRaysEffect"),
-    Sky = lighting:FindFirstChildOfClass("Sky"),
-    Bloom = lighting:FindFirstChildOfClass("BloomEffect"),
-    DepthOfField = lighting:FindFirstChildOfClass("DepthOfFieldEffect"),
-    Atmosphere = lighting:FindFirstChildOfClass("Atmosphere")
-}
-
-settings = {
-    SunRays = {
-        Intensity = savedSettings.SunRays.Intensity,
-        Spread = savedSettings.SunRays.Spread,
-        Enabled = savedSettings.SunRays.Enabled
-    },
-    Sky = {
-        CelestialBodiesShown = savedSettings.Sky.CelestialBodiesShown,
-        MoonAngularSize = savedSettings.Sky.MoonAngularSize,
-        SunAngularSize = savedSettings.Sky.SunAngularSize,
-        SkyboxBk = savedSettings.Sky.SkyboxBk,
-        SkyboxDn = savedSettings.Sky.SkyboxDn,
-        SkyboxFt = savedSettings.Sky.SkyboxFt,
-        SkyboxLf = savedSettings.Sky.SkyboxLf,
-        SkyboxRt = savedSettings.Sky.SkyboxRt,
-        SkyboxUp = savedSettings.Sky.SkyboxUp,
-        StarCount = savedSettings.Sky.StarCount
-    },
-    Bloom = {
-        Intensity = savedSettings.Bloom.Intensity,
-        Size = savedSettings.Bloom.Size,
-        Threshold = savedSettings.Bloom.Threshold,
-        Enabled = savedSettings.Bloom.Enabled
-    },
-    DepthOfField = {
-        FarIntensity = savedSettings.DepthOfField.FarIntensity,
-        FocusDistance = savedSettings.DepthOfField.FocusDistance,
-        InFocusRadius = savedSettings.DepthOfField.InFocusRadius,
-        NearIntensity = savedSettings.DepthOfField.NearIntensity,
-        Enabled = savedSettings.DepthOfField.Enabled
-    },
-    Atmosphere = {
-        Color = savedSettings.Atmosphere.Color,
-        Decay = savedSettings.Atmosphere.Decay,
-        Density = savedSettings.Atmosphere.Density,
-        Glare = savedSettings.Atmosphere.Glare,
-        Haze = savedSettings.Atmosphere.Haze,
-        Offset = savedSettings.Atmosphere.Offset,
-    }
-}
-end
-
--- Function to reset settings to the saved state
-local function resetSettings()
-if not savedSettings then
-    return 
-end
-
-local lighting = game:GetService("Lighting")
-
-if lighting:FindFirstChildOfClass("SunRaysEffect") then
-    local sunRays = lighting:FindFirstChildOfClass("SunRaysEffect")
-    sunRays.Intensity = settings.SunRays.Intensity
-    sunRays.Spread = settings.SunRays.Spread
-    sunRays.Enabled = settings.SunRays.Enabled
-end
-
-if lighting:FindFirstChildOfClass("Sky") then
-    local sky = lighting:FindFirstChildOfClass("Sky")
-    sky.CelestialBodiesShown = settings.Sky.CelestialBodiesShown
-    sky.MoonAngularSize = settings.Sky.MoonAngularSize
-    sky.SunAngularSize = settings.Sky.SunAngularSize
-    sky.SkyboxBk = settings.Sky.SkyboxBk
-    sky.SkyboxDn = settings.Sky.SkyboxDn
-    sky.SkyboxFt = settings.Sky.SkyboxFt
-    sky.SkyboxLf = settings.Sky.SkyboxLf
-    sky.SkyboxRt = settings.Sky.SkyboxRt
-    sky.SkyboxUp = settings.Sky.SkyboxUp
-    sky.StarCount = settings.Sky.StarCount
-end
-
-if lighting:FindFirstChildOfClass("BloomEffect") then
-    local bloom = lighting:FindFirstChildOfClass("BloomEffect")
-    bloom.Intensity = settings.Bloom.Intensity
-    bloom.Size = settings.Bloom.Size
-    bloom.Threshold = settings.Bloom.Threshold
-    bloom.Enabled = settings.Bloom.Enabled
-end
-
-if lighting:FindFirstChildOfClass("DepthOfFieldEffect") then
-    local depthOfField = lighting:FindFirstChildOfClass("DepthOfFieldEffect")
-    depthOfField.FarIntensity = settings.DepthOfField.FarIntensity
-    depthOfField.FocusDistance = settings.DepthOfField.FocusDistance
-    depthOfField.InFocusRadius = settings.DepthOfField.InFocusRadius
-    depthOfField.NearIntensity = settings.DepthOfField.NearIntensity
-    depthOfField.Enabled = settings.DepthOfField.Enabled
-end
-
-if lighting:FindFirstChildOfClass("Atmosphere") then
-    local atmosphere = lighting:FindFirstChildOfClass("Atmosphere")
-    atmosphere.Color = settings.Atmosphere.Color
-    atmosphere.Decay = settings.Atmosphere.Decay
-    atmosphere.Density = settings.Atmosphere.Density
-    atmosphere.Glare = settings.Atmosphere.Glare
-    atmosphere.Haze = settings.Atmosphere.Haze
-    atmosphere.Offset = settings.Atmosphere.Offset
-end
-end
-wait()
-saveSettings()
-wait()
-if saveSettings() then
-print("Saved Settings Successfully!")
-else
-warn("Failure! Could not successfully save Lighting settings.")
-end
-wait()
-local function resetSettings()
-local lighting = game:GetService("Lighting")
-
--- Reset SunRays
-if lighting:FindFirstChildOfClass("SunRaysEffect") then
-    local sunRays = lighting:FindFirstChildOfClass("SunRaysEffect")
-    sunRays.Intensity = settings.SunRays.Intensity
-    sunRays.Spread = settings.SunRays.Spread
-    sunRays.Enabled = settings.SunRays.Enabled
-end
-
--- Reset Sky
-if lighting:FindFirstChildOfClass("Sky") then
-    local sky = lighting:FindFirstChildOfClass("Sky")
-    sky.CelestialBodiesShown = settings.Sky.CelestialBodiesShown
-    sky.MoonAngularSize = settings.Sky.MoonAngularSize
-    sky.SunAngularSize = settings.Sky.SunAngularSize
-    sky.SkyboxBk = settings.Sky.SkyboxBk
-    sky.SkyboxDn = settings.Sky.SkyboxDn
-    sky.SkyboxFt = settings.Sky.SkyboxFt
-    sky.SkyboxLf = settings.Sky.SkyboxLf
-    sky.SkyboxRt = settings.Sky.SkyboxRt
-    sky.SkyboxUp = settings.Sky.SkyboxUp
-    sky.StarCount = settings.Sky.StarCount
-end
-
--- Reset Bloom
-if lighting:FindFirstChildOfClass("BloomEffect") then
-    local bloom = lighting:FindFirstChildOfClass("BloomEffect")
-    bloom.Intensity = settings.Bloom.Intensity
-    bloom.Size = settings.Bloom.Size
-    bloom.Threshold = settings.Bloom.Threshold
-    bloom.Enabled = settings.Bloom.Enabled
-end
-
--- Reset DepthOfField
-if lighting:FindFirstChildOfClass("DepthOfFieldEffect") then
-    local depthOfField = lighting:FindFirstChildOfClass("DepthOfFieldEffect")
-    depthOfField.FarIntensity = settings.DepthOfField.FarIntensity
-    depthOfField.FocusDistance = settings.DepthOfField.FocusDistance
-    depthOfField.InFocusRadius = settings.DepthOfField.InFocusRadius
-    depthOfField.NearIntensity = settings.DepthOfField.NearIntensity
-    depthOfField.Enabled = settings.DepthOfField.Enabled
-end
-
--- Reset Atmosphere
-if lighting:FindFirstChildOfClass("Atmosphere") then
-    local atmosphere = lighting:FindFirstChildOfClass("Atmosphere")
-    atmosphere.Color = settings.Atmosphere.Color
-    atmosphere.Decay = settings.Atmosphere.Decay
-    atmosphere.Density = settings.Atmosphere.Density
-    atmosphere.Glare = settings.Atmosphere.Glare
-    atmosphere.Haze = settings.Atmosphere.Haze
-    atmosphere.Offset = settings.Atmosphere.Offset
-end
-end
-
 Tab9:AddButton({
 Name = "Reset Lighting",
 Callback = function()
-resetSettings()
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
+
+Lighting.ClockTime = 14.5
+wait()
+Lighting.Brightness = 3
+wait()
+Lighting.Atmosphere.Density = 0.3
+wait()
+Lighting.Atmosphere.Offset = 0.25
+wait()
+Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
+wait()
+Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
+wait()
+Lighting.Atmosphere.Glare = 0
+wait()
+Lighting.Atmosphere.Haze = 0
+wait()
+Lighting.Sky.MoonAngularSize = 11
+wait()
+Lighting.Sky.StarCount = 3000
+wait()
+Lighting.Sky.SunAngularSize = 11
+wait()
+Lighting.Bloom.Intensity = 1
+wait()
+Lighting.Bloom.Enabled = true
+wait()
+Lighting.Bloom.Size = 24
+wait()
+Lighting.Bloom.Threshold = 2
+wait()
+Lighting.DepthOfField.Enabled = false
+wait()
+Lighting.DepthOfField.FarIntensity = 0.1
+wait()
+Lighting.DepthOfField.FocusDistance = 0.05
+wait()
+Lighting.DepthOfField.InFocusRadius = 30
+wait()
+Lughting.DepthOfField.NearIntensity = 0.75
+wait()
+Lighting.SunRays.Enabled = true
+wait()
+Lighting.SunRays.Intensity = 0.01
+wait()
+Lighting.SunRays.Spread = 0.1
 end})
 
 Tab9:AddButton({
 Name = "NightTime",
 Callback = function()
-game:GetService("Lighting").ClockTime = 0
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+Lighting.ClockTime = 0
 wait()
-game:GetService("Lighting").Brightness = 0
+Lighting.Brightness = 0
 end})
 
 Tab9:AddButton({
 Name = "NightTime (With Night-Light)",
 Callback = function()
-game:GetService("Lighting").ClockTime = 1
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+Lighting.ClockTime = 1
 wait()
-game:GetService("Lighting").Brightness = 2
+Lighting.Brightness = 2
 end})
 
 Tab9:AddButton({
 Name = "DayTime",
 Callback = function()
-game:GetService("Lighting").ClockTime = 14
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+Lighting.ClockTime = 14
 wait()
-game:GetService("Lighting").Brightness = 3
+Lighting.Brightness = 3
 end})
 
 Tab9:AddButton({
-Name = "Spooky DayTime (smoke, broken)",
+Name = "Spooky DayTime (smoke, laggy?)",
 Callback = function()
-game:GetService("Lighting").ClockTime = 8
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+Lighting.ClockTime = 8
 wait()
-game:GetService("Lighting").Brightness = 0
+Lighting.Brightness = 0
 
 local function addSmokeToPart(part)
 local Players = game:GetService("Players"):GetChildren()
@@ -2274,9 +2311,10 @@ Tab9:AddToggle({
 Name = "Spooky Moon",
 Default = false,
 Callback = function(moonCrazy)
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
 if moonCrazy then
     getgenv().SpookyMoon = true
-    local sky = game:GetService("Lighting"):FindFirstChildOfClass("Sky")
+    local sky = Lighting:FindFirstChildOfClass("Sky")
 
     local function smoothTransition()
         for i = 1, 60, 0.5 do
@@ -2295,6 +2333,34 @@ if moonCrazy then
     end
 else
     getgenv().SpookyMoon = false
+end
+end})
+
+Tab9:AddToggle({
+Name = "Spooky Sun (WTF?)",
+Default = false,
+Callback = function(sunSpooky)
+if sunSpooky then
+    getgenv().SpookSun = true
+    local sky = Lighting:FindFirstChildOfClass("Sky")
+
+    local function smoothTransition()
+        for i = 1, 60, 0.5 do
+            sky.SunAngularSize = i
+            wait(0.05)
+        end
+        for i = 60, 1, -0.5 do
+            sky.SunAngularSize = i
+            wait(0.05)
+        end
+    end
+    
+    while getgenv().SpookSun == true do
+        wait()
+        smoothTransition()
+    end
+else
+    getgenv().SpookSun = false 
 end
 end})
 
@@ -2327,6 +2393,8 @@ end})
 Tab9:AddButton({
 Name = "Remove Spooky DayTime",
 Callback = function()
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+
 local function removeSmokeFromPart(part)
 local smoke = part:FindFirstChild("SpookySmoke")
 if smoke then
@@ -2418,6 +2486,10 @@ Name = "Destroy Script",
 Callback = function()
 getgenv().SCRIPT_EXECUTED = false
 wait()
+getgenv().SCRIPT_EXECUTED = false
+wait()
+getgenv().SCRIPT_EXECUTED = false
+wait()
 game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
 end})
 
@@ -2434,12 +2506,11 @@ end
 end})
 
 Tab2:AddButton({
-Name = "Shift To Run (Like Speed Coil)",
+Name = "Shift To Run (Speed Coil Alt)",
 Callback = function()
-if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:WaitForChild("Humanoid", 0.5) then
 local player = game.Players.LocalPlayer
 local character = player.Character
-local humanoid = character:WaitForChild("Humanoid", 0.5)
+local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid") or character:FindFirstChild("Humanoid") or character:FindFirstChildOfClass("Humanoid") or character.Humanoid
 local userInputService = game:GetService("UserInputService")
  
 local isSprinting = false
@@ -2462,48 +2533,6 @@ end
  
 userInputService.InputBegan:Connect(onKeyPress)
 userInputService.InputEnded:Connect(onKeyRelease)
-else
-OrionLib:MakeNotification({
-    Name = "Error:",
-    Content = "Humanoid might be nil, Waiting...",
-    Image = "rbxassetid://4483345998",
-    Time = 10
-})
-repeat wait() until game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") ~= nil
-if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") ~= nil then
-    OrionLib:MakeNotification({
-        Name = "Success!",
-        Content = "Found Humanoid, Continuing...",
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character:WaitForChild("Humanoid", 0.5)
-    local userInputService = game:GetService("UserInputService")
-     
-    local isSprinting = false
-    local walkSpeed = humanoid.WalkSpeed
-    local sprintSpeed = 400
-     
-    local function onKeyPress(input)
-        if input.KeyCode == Enum.KeyCode.LeftShift then
-            isSprinting = true
-            humanoid.WalkSpeed = sprintSpeed
-        end
-    end
-     
-    local function onKeyRelease(input)
-        if input.KeyCode == Enum.KeyCode.LeftShift then
-            isSprinting = false
-            humanoid.WalkSpeed = walkSpeed
-        end
-    end
-     
-    userInputService.InputBegan:Connect(onKeyPress)
-    userInputService.InputEnded:Connect(onKeyRelease)
-end
-end
 end})
 
 Tab5:AddDropdown({
@@ -2959,20 +2988,22 @@ Tab5:AddButton({
 Name = "System Broken",
 Callback = function()
 if game.PlaceId == 6884319169 then
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
 else
-OrionLib:MakeNotification({
-    Name = "Error!",
-    Content = "This is NOT Mic Up, Exiting...",
-    Image = "rbxassetid://4483345998",
-    Time = 5
-})
+    OrionLib:MakeNotification({
+        Name = "Error!",
+        Content = "This is NOT Mic Up, Exiting...",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
 wait(1)
 game.Players.LocalPlayer:Kick("Stop trying to bypass, fucking skid.")
 wait(1)
 table.insert(List, game.Players.LocalPlayer.UserId)
 end
 end})
+
+-- Don't fuck with this shit, im gonna be fixing it, but soon. (different method coming.)
 
 --[[Tab2:AddToggle({
 Name = "Set Waypoint Here",
