@@ -246,51 +246,62 @@ else
     })
 end
 wait()
-
 -- Replaced This retarded version list shit with the GitHub, so go check that you fucking pussy.
 
 local Players = game:GetService("Players")
 local whitelist = {}
 local player = Players.LocalPlayer
 
--- Don't mess with these as I am not to sure on them working correctly.
-
 local function addToWhitelist(username)
-local foundPlayer = Players:FindFirstChild(username)
-
-if foundPlayer then
-    whitelist[foundPlayer.UserId] = true
-    wait()
-    return OrionLib:MakeNotification({
-        Name = "Success!: Whitelisted",
-        Content = "Player was successfully whitelisted into table!",
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
-else
-    return print("Player not found: " .. username)
-end
-end
-
-local function removeFromWhitelist(username)
-local foundPlayer = Players:FindFirstChild(username)
-
-if foundPlayer then
-    if whitelist[foundPlayer.UserId] then
-        whitelist[foundPlayer.UserId] = nil
-        wait()
+    local foundPlayer = Players:FindFirstChild(username)
+    if not foundPlayer then
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr.Name == username or plr.DisplayName == username then
+                foundPlayer = plr
+                break
+            end
+        end
+    end
+    
+    if foundPlayer then
+        whitelist[foundPlayer.UserId] = true
         return OrionLib:MakeNotification({
-            Name = "Success!: Removed",
-            Content = "Player was successfully removed from whitelist!",
+            Name = "Success!: Whitelisted",
+            Content = "Player was successfully whitelisted into table!",
             Image = "rbxassetid://4483345998",
             Time = 10
         })
     else
-        return 
+        return print("Player not found: " .. username)
     end
-else
-    return 
 end
+
+local function removeFromWhitelist(username)
+    local foundPlayer = Players:FindFirstChild(username)
+    if not foundPlayer then
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr.Name == username or plr.DisplayName == username then
+                foundPlayer = plr
+                break
+            end
+        end
+    end
+    
+    if foundPlayer then
+        if whitelist[foundPlayer.UserId] then
+            whitelist[foundPlayer.UserId] = nil
+            return OrionLib:MakeNotification({
+                Name = "Success!: Removed",
+                Content = "Player was successfully removed from whitelist!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        else
+            return print("Player is not in the whitelist: " .. username)
+        end
+    else
+        return print("Player not found: " .. username)
+    end
 end
 wait()
 function ClaimStall1()
@@ -498,6 +509,8 @@ wait()
 Tab11:AddButton({
 Name = "Claim Any Booth (Go To A Booth)",
 Callback = function()
+    addToWhitelist(username)
+
     local Folder = workspace:WaitForChild("Stalls")
 
     local function setupProximityPrompt(stall)
@@ -1529,6 +1542,64 @@ if thisPlrWarned == isWhitelisted("M1RD3RCAUGHT") then
 end
 end})
 
+Tab5:AddButton({
+Name = "Free Tools",
+Callback = function()
+    if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Additional"):FindFirstChild("Frame") then
+        game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Additional"):FindFirstChild("Frame").Visible = false
+    else
+        warn("OK")
+    end
+    wait(0.3)
+    local args = {
+        [1] = "Fit"
+    }
+        
+    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+    wait()
+    local args = {
+        [1] = "Wand"
+    }
+        
+    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+    wait()
+    local args = {
+        [1] = "Horrible"
+    }
+        
+    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+    wait()
+    local args = {
+        [1] = "Doll"
+    }
+        
+    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+    wait()
+    local args = {
+        [1] = "Burrito"
+    }
+        
+    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+    wait()
+    local args = {
+        [1] = "Bloxy"
+    }
+        
+    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+    wait()
+    local args = {
+        [1] = "Bloxilicious"
+    }
+        
+    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+    wait()
+    local args = {
+        [1] = "Sauce"
+    }
+        
+    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+end})
+
 Tab2:AddToggle({
 Name = "Spam All Tools (FE)",
 Default = false,
@@ -2197,15 +2268,15 @@ Tab5:AddButton({
 Name = "Grab VIP Tools (Needs VIP)",
 Callback = function()
 if fireproximityprompt and game:GetService("MarketplaceService"):UserOwnsGamePassAsync(tonumber(game.Players.LocalPlayer.UserId), tonumber(28828491)) then
-    local HoldDuration = {}
+local HoldDuration = {}
 
-    for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
-        if v:IsA("ProximityPrompt") then
-            local OldHoldDuration = v.HoldDuration
-            table.insert(HoldDuration, OldHoldDuration)
-            v.HoldDuration = 0
-        end
+for i, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+    if v:IsA("ProximityPrompt") then
+        local OldHoldDuration = v.HoldDuration
+        table.insert(HoldDuration, OldHoldDuration)
+        v.HoldDuration = 0
     end
+end
 wait(0.2)
 repeat wait() until game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true) and game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart", 0.5)
 local OldCF = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame
@@ -2227,6 +2298,22 @@ wait()
     end
     wait(0.2)
     game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(-111.245827, 4.39263916, -79.7041626)
+    wait(0.2)
+    for _, descendant in ipairs(workspace:GetDescendants()) do
+        if descendant:IsA("ProximityPrompt") then
+            fireproximityprompt(descendant)
+        end
+    end
+    wait(0.2)
+    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(-59.8597755, 9.13132954, -51.5244942)
+    wait(0.2)
+    for _, descendant in ipairs(workspace:GetDescendants()) do
+        if descendant:IsA("ProximityPrompt") then
+            fireproximityprompt(descendant)
+        end
+    end
+    wait(0.2)
+    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(-44.4954338, 9.03142071, -67.657814)
     wait(0.2)
     for _, descendant in ipairs(workspace:GetDescendants()) do
         if descendant:IsA("ProximityPrompt") then
