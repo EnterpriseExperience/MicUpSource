@@ -23,12 +23,12 @@ end
 local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = false, SaveConfig = true, ConfigFolder = "MICUP"})
 -- IF YOU ARE READING THIS, THIS HUB WILL UNDERGO MASSIVE CHANGES SOON!, UI ALSO SHOULD CHANGE TO! SO YOU HAVE FOUND THIS HINT EARLY!
 local Tab1 = Window:MakeTab({
-    Name = "Home",
+    Name = "Landing",
     Icon = "rbxassetid://7733960981",
     PremiumOnly = false
 })
 local Section1 = Tab1:AddSection({
-    Name = "Home Page"
+    Name = "Home Section"
 })
 local Tab11 = Window:MakeTab({
     Name = "Booths",
@@ -36,10 +36,10 @@ local Tab11 = Window:MakeTab({
     PremiumOnly = false
 })
 local Section11 = Tab11:AddSection({
-    Name = "Booth Tools/Stand Tools"
+    Name = "Booth Tools/Stand/Stall Tools"
 })
 local Tab2 = Window:MakeTab({
-    Name = "Character",
+    Name = "LocalPlayer",
     Icon = "rbxassetid://7743871002",
     PremiumOnly = false
 })
@@ -47,7 +47,7 @@ local Section2 = Tab2:AddSection({
     Name = "Character Tools"
 })
 local Tab10 = Window:MakeTab({
-    Name = "Teleports",
+    Name = "Teleporting",
     Icon = "rbxassetid://7733764327",
     PremiumOnly = false
 })
@@ -55,7 +55,7 @@ local Section10 = Tab10:AddSection({
     Name = "Teleport Tools"
 })
 local Tab4 = Window:MakeTab({
-    Name = "Chat Tools",
+    Name = "Chat Funcs",
     Icon = "rbxassetid://7734021300",
     PremiumOnly = false
 })
@@ -63,12 +63,12 @@ local Section4 = Tab4:AddSection({
     Name = "Tools For Modifying/Manipulating Chat"
 })
 local Tab5 = Window:MakeTab({
-    Name = "Extra Tools",
+    Name = "Extra Utilities",
     Icon = "rbxassetid://7733954760",
     PremiumOnly = false
 })
 local Section5 = Tab5:AddSection({
-    Name = "Extra Fun Tools"
+    Name = "Extra Tools"
 })
 local Tab9 = Window:MakeTab({
     Name = "Lighting",
@@ -79,36 +79,28 @@ local Section9 = Tab9:AddSection({
     Name = "Lighting And Sky Stuff?"
 })
 local Tab7 = Window:MakeTab({
-    Name = "Bypassers",
+    Name = "WorkArounds",
     Icon = "rbxassetid://7733771472",
     PremiumOnly = false
 })
-    local Section8 = Tab7:AddSection({
-    Name = "Bypassing Filters"
+local Section8 = Tab7:AddSection({
+    Name = "Bypasses And Shit"
 })
 local Tab6 = Window:MakeTab({
-    Name = "Information",
+    Name = "README",
     Icon = "rbxassetid://7734022107",
     PremiumOnly = false
 })
 local Section6 = Tab6:AddSection({
-    Name = "Successful Quotes And Info"
+    Name = "Current Information."
 })
-wait(0.5)
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld')))()
 wait()
-local Players = game:GetService("Players") or game.Players
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.3).CFrame
-wait()
+local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
+wait(0.1)
 Players.RespawnTime = 0
-wait()
-local Players = game:GetService("Players") or game.Players
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.3).CFrame
-
 wait()
 local GC = getconnections or get_signal_cons
 if GC then
@@ -122,8 +114,22 @@ if GC then
         wait()
         if v["Disable"] then
             v["Disable"](v)
+            wait()
+            OrionLib:MakeNotification({
+                Name = "Success!",
+                Content = "Disabled Connection: "..tostring(v),
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
         elseif v["Disconnect"] then
             v["Disconnect"](v)
+            wait()
+            OrionLib:MakeNotification({
+                Name = "Success!",
+                Content = "Disconnected Connection: "..tostring(v),
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
         end
     end
     wait(0.3)
@@ -155,7 +161,7 @@ if GC then
         Time = 10
     })
     wait()
-    local VirtualUser = cloneref(game:GetService("VirtualUser")) or game:GetService("VirtualUser")
+    local VirtualUser = cloneref(game:GetService("VirtualUser")) or game:GetService("VirtualUser") or game.VirtualUser
     game:GetService("Players").LocalPlayer.Idled:Connect(function()
         OrionLib:MakeNotification({
             Name = "Idled!",
@@ -165,6 +171,13 @@ if GC then
         })
         VirtualUser:CaptureController()
         VirtualUser:ClickButton2(Vector2.new())
+        wait(0.1)
+        OrionLib:MakeNotification({
+            Name = "Success!",
+            Content = "Clicked Button (Anti-Idle)",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
     end)
     wait()
     wait(0.3)
@@ -188,8 +201,8 @@ if GC then
     end
 end
 wait()
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage") or game.ReplicatedStorage
 
 OrionLib:MakeNotification({
     Name = "Modifying Scripts...",
@@ -247,13 +260,13 @@ else
 end
 wait()
 -- Replaced This retarded version list shit with the GitHub, so go check that you fucking pussy.
-
 local Players = game:GetService("Players")
 local whitelist = {}
 local player = Players.LocalPlayer
 
 local function addToWhitelist(username)
     local foundPlayer = Players:FindFirstChild(username)
+    
     if not foundPlayer then
         for _, plr in pairs(Players:GetPlayers()) do
             if plr.Name == username or plr.DisplayName == username then
@@ -264,10 +277,10 @@ local function addToWhitelist(username)
     end
     
     if foundPlayer then
-        whitelist[foundPlayer.UserId] = true
+        whitelist[foundPlayer.Name] = true
         return OrionLib:MakeNotification({
             Name = "Success!: Whitelisted",
-            Content = "Player was successfully whitelisted into table!",
+            Content = tostring(foundPlayer.Name).." was successfully whitelisted into table!",
             Image = "rbxassetid://4483345998",
             Time = 10
         })
@@ -278,6 +291,7 @@ end
 
 local function removeFromWhitelist(username)
     local foundPlayer = Players:FindFirstChild(username)
+    
     if not foundPlayer then
         for _, plr in pairs(Players:GetPlayers()) do
             if plr.Name == username or plr.DisplayName == username then
@@ -288,11 +302,11 @@ local function removeFromWhitelist(username)
     end
     
     if foundPlayer then
-        if whitelist[foundPlayer.UserId] then
-            whitelist[foundPlayer.UserId] = nil
+        if whitelist[foundPlayer.Name] then
+            whitelist[foundPlayer.Name] = nil
             return OrionLib:MakeNotification({
                 Name = "Success!: Removed",
-                Content = "Player was successfully removed from whitelist!",
+                Content = tostring(foundPlayer.Name).." was successfully removed from whitelist!",
                 Image = "rbxassetid://4483345998",
                 Time = 10
             })
@@ -509,8 +523,6 @@ wait()
 Tab11:AddButton({
 Name = "Claim Any Booth (Go To A Booth)",
 Callback = function()
-    addToWhitelist(username)
-
     local Folder = workspace:WaitForChild("Stalls")
 
     local function setupProximityPrompt(stall)
@@ -539,6 +551,14 @@ Callback = function()
     for _, stall in ipairs(stalls) do
         if stall then
             setupProximityPrompt(stall)
+        end
+    end
+
+    for _, v in ipairs(stalls) do
+        if table.find(whitelist, v.Player.Value) then
+            v:FindFirstChild("ProxPart").ProximityPrompt.Enabled = false
+        else
+            v:FindFirstChild("ProxPart").ProximityPrompt.Enabled = true
         end
     end
 end})
@@ -944,6 +964,8 @@ end
         if v and v ~= nil then
             game:GetService("Players").LocalPlayer.Character:PivotTo(v:GetPivot())
             wait(0.2)
+            fireproximityprompt(v:FindFirstChild("ProxPart").ProximityPrompt)
+            wait(0.2)
             repeat wait() until v.Player.Value == game:GetService("Players").LocalPlayer
             wait()
             if v.Player.Value == game:GetService("Players").LocalPlayer then
@@ -974,6 +996,80 @@ end
 end
 end})
 
+Tab7:AddTextbox({
+Name = "Whitelist User",
+Default = "User Here",
+TextDisappear = true,
+Callback = function(enterUser)
+local getTheirUser = findplr(enterUser)
+
+if not game:GetService("Players")[getTheirUser.Name] then
+    return OrionLib:MakeNotification({
+        Name = "Error: Not Found",
+        Content = "Player was not found!",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
+
+if getTheirUser and getTheirUser ~= nil then
+addToWhitelist(tostring(getTheirUser.Name))
+repeat wait() until table.find(whitelist, getTheirUser.Name)
+if table.find(whitelist, getTheirUser.Name) then
+    return OrionLib:MakeNotification({
+        Name = "Success!",
+        Content = "Player was added to whitelist table.",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+else
+    return OrionLib:MakeNotification({
+        Name = "Error:",
+        Content = "Player must not exist, or not added correctly.",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
+else
+    return 
+end
+end})
+
+Tab7:AddTextbox({
+Name = "Remove Whitelist User",
+Default = "User Here",
+TextDisappear = true,
+Callback = function(enterUser)
+    local getTheirUser = findplr(enterUser)
+    removeFromWhitelist(tostring(getTheirUser.Name))
+
+    if not findplr(enterUser) then
+        return OrionLib:MakeNotification({
+            Name = "Error: Not Found",
+            Content = tostring(enterUser).." was not found!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
+
+    repeat wait() until table.find(whitelist, getTheirUser.Name)
+    if not table.find(whitelist, getTheirUser.Name) then
+        return OrionLib:MakeNotification({
+            Name = "Success!",
+            Content = tostring(getTheirUser.Name).." was removed whitelist",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    elseif not table.find(whitelist, getTheirUser.Name) then
+        return OrionLib:MakeNotification({
+            Name = "Error:",
+            Content = "Player does not exist in table!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
+end})
+
 Tab11:AddTextbox({
 Name = "UnClaim A Booth",
 Default = "UserName or Display",
@@ -991,8 +1087,15 @@ Callback = function(LolUnClaim)
     local function getStallFunc()
         local LolBigDawg = findplr(LolUnClaim)
         for _, v in pairs(Stalls:GetChildren()) do
-            if v.Player.Value == LolBigDawg then
+            if v.Player.Value == LolBigDawg and v.Player.Value ~= "M1RD3RCAUGHT" and v.Player.Value ~= "STK_kets4eki" then
                 return v
+            else
+                return OrionLib:MakeNotification({
+                    Name = "Error: Owner",
+                    Content = "Owner of script owns this booth!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
             end
         end
         return nil
@@ -1014,6 +1117,15 @@ Callback = function(LolUnClaim)
     if stall and stall ~= nil and fireproximityprompt then
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
         local LolBigDawg = findplr(LolUnClaim)
+
+        if LolBigDawg == "M1RD3RCAUGHT" or LolBigDawg == "STK_kets4eki" then
+            return OrionLib:MakeNotification({
+                Name = "Error: Owner",
+                Content = "Owner of script owns this booth!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end
 
         if not LolBigDawg then
             return OrionLib:MakeNotification({
@@ -1066,7 +1178,7 @@ Callback = function(LolUnClaim)
         fireproximityprompt(Proximity1, 10)
         
         wait(0.5)
-        getStallSelf():WaitForChild("CloseStall", 2):FireServer()
+        getStallSelf():WaitForChild("CloseStall", 1):FireServer()
 
         local Button = LocalPlayer.PlayerGui.StallLocal.StallFrame
         local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
@@ -1144,76 +1256,83 @@ end})
 Tab11:AddButton({
 Name = "Unclaim ALL Booths",
 Callback = function()
-local Folder = workspace:WaitForChild("Stalls")
-local Players = game:GetService("Players")
-local localPlayer = Players.LocalPlayer
-local OldCF = localPlayer.Character:WaitForChild("HumanoidRootPart", 1).CFrame
-local whitelist = {}
-
-local function makeInvisible(character)
-    if character then
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
-                part.Transparency = 1
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
+    local Folder = workspace:WaitForChild("Stalls")
+    local Players = game:GetService("Players")
+    local localPlayer = Players.LocalPlayer
+    local OldCF = localPlayer.Character:WaitForChild("HumanoidRootPart", 1).CFrame
+    
+    local function isWhitelisted(playerName)
+        return whitelist[playerName] ~= nil
+    end
+    
+    local function makeInvisible(character)
+        if character then
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
+                    part.Transparency = 1
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
                 end
             end
         end
     end
-end
-
-local function makeAllPlayersInvisible()
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= localPlayer and player.Character then
-            makeInvisible(player.Character)
-        end
-    end
-end
-
-local function fireAndUnclaimStall(stall)
-    local proximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
-    if proximityPrompt then
-        localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(stall:FindFirstChild("ProxPart").Position)
-        wait(0.3)
-        fireproximityprompt(proximityPrompt, 10)
-        wait(0.5)
-        stall:WaitForChild("CloseStall"):FireServer()
-    end
-end
-
-local function unclaimStalls()
-    for _, stall in pairs(Folder:GetChildren()) do
-        if stall:FindFirstChild("ProxPart") and stall:FindFirstChild("Player") and stall.Player.Value ~= "M1RD3RCAUGHT" and stall.Player.Value ~= "STK_kets4eki" then
-            local owner = stall.Player.Value
-            fireAndUnclaimStall(stall)
-        end
-    end
-    wait(0.3)
-end
-
-local function cancelAllButtons()
-    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-    local StallFrame = localPlayer.PlayerGui:FindFirstChild("StallLocal"):FindFirstChild("StallFrame")
-
-    for _, v in pairs(StallFrame:GetDescendants()) do
-        if (v:IsA("ImageButton") or v:IsA("TextButton")) and v.Name == "CancelButton" then
-            for _, signal in pairs(Signals) do
-                firesignal(v[signal])
+    
+    local function makeAllPlayersInvisible()
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= localPlayer and player.Character then
+                makeInvisible(player.Character)
             end
         end
     end
-end
-
-makeAllPlayersInvisible()
-wait(0.1)
-unclaimStalls()
-wait(0.1)
-localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
-wait(0.5)
-cancelAllButtons()
-wait(0.3)
-print("Finished Unclaiming All Booths.")
+    
+    local function fireAndUnclaimStall(stall)
+        local proximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
+        if proximityPrompt then
+            localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(stall:FindFirstChild("ProxPart").Position)
+            wait(0.3)
+            fireproximityprompt(proximityPrompt, 10)
+            wait(0.5)
+            stall:WaitForChild("CloseStall"):FireServer()
+        end
+    end
+    
+    local function unclaimStalls()
+        for _, stall in pairs(Folder:GetChildren()) do
+            if stall:FindFirstChild("ProxPart") and stall:FindFirstChild("Player") then
+                if stall.Player.Value ~= "M1RD3RCAUGHT" and stall.Player.Value ~= "STK_kets4eki" and not isWhitelisted(stall.Player.Value) then
+                    wait(0.3)
+                    fireAndUnclaimStall(stall)
+                elseif isWhitelisted(stall.Player.Value) then
+                    return print("Skipping stall for: " .. stall.Player.Value)
+                end
+            end
+        end
+        wait(0.3)
+    end
+    
+    local function cancelAllButtons()
+        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+        local StallFrame = localPlayer.PlayerGui:FindFirstChild("StallLocal"):FindFirstChild("StallFrame")
+    
+        for _, v in pairs(StallFrame:GetDescendants()) do
+            if (v:IsA("ImageButton") or v:IsA("TextButton")) and v.Name == "CancelButton" then
+                for _, signal in pairs(Signals) do
+                    firesignal(v[signal])
+                end
+            end
+        end
+    end
+    
+    makeAllPlayersInvisible()
+    wait(0.1)
+    unclaimStalls()
+    wait(0.1)
+    localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
+    wait(0.5)
+    cancelAllButtons()
+    wait(0.3)
+    print("Finished Unclaiming All Booths.")    
 end})
 
 Tab11:AddToggle({
@@ -2376,7 +2495,7 @@ Lighting.DepthOfField.FocusDistance = 0.05
 wait()
 Lighting.DepthOfField.InFocusRadius = 30
 wait()
-Lughting.DepthOfField.NearIntensity = 0.75
+Lighting.DepthOfField.NearIntensity = 0.75
 wait()
 Lighting.SunRays.Enabled = true
 wait()
@@ -2632,7 +2751,7 @@ getgenv().SCRIPT_EXECUTED = false
 wait()
 game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
 end})
-
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld')))()
 Tab1:AddTextbox({
 Name = "Unmute Player",
 Default = "UserName Or DisplayName",
@@ -3193,13 +3312,63 @@ loadGUI()
 wait(0.1)
 getgenv().CompletedIntro = true
 wait(0.3)
-if getgenv().CompletedIntro == true then
-    return 
-else
-    print("OK (3)")
-end
-wait(0.3)
 print("Running...")
+wait(0.2)
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "Resetting Lighting...",
+	Text = "We are going to reset Lighting settings.",
+	Icon = "rbxassetid://1234567890",
+    Duration = 10
+})
+wait(0.6)
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
+
+Lighting.ClockTime = 14.5
+wait()
+Lighting.Brightness = 3
+wait()
+Lighting.Atmosphere.Density = 0.3
+wait()
+Lighting.Atmosphere.Offset = 0.25
+wait()
+Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
+wait()
+Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
+wait()
+Lighting.Atmosphere.Glare = 0
+wait()
+Lighting.Atmosphere.Haze = 0
+wait()
+Lighting.Sky.MoonAngularSize = 11
+wait()
+Lighting.Sky.StarCount = 3000
+wait()
+Lighting.Sky.SunAngularSize = 11
+wait()
+Lighting.Bloom.Intensity = 1
+wait()
+Lighting.Bloom.Enabled = true
+wait()
+Lighting.Bloom.Size = 24
+wait()
+Lighting.Bloom.Threshold = 2
+wait()
+Lighting.DepthOfField.Enabled = false
+wait()
+Lighting.DepthOfField.FarIntensity = 0.1
+wait()
+Lighting.DepthOfField.FocusDistance = 0.05
+wait()
+Lighting.DepthOfField.InFocusRadius = 30
+wait()
+Lighting.DepthOfField.NearIntensity = 0.75
+wait()
+Lighting.SunRays.Enabled = true
+wait()
+Lighting.SunRays.Intensity = 0.01
+wait()
+Lighting.SunRays.Spread = 0.1
 wait()
 local function makeCharacterVisible(character)
 for _, part in pairs(character:GetDescendants()) do
@@ -3237,6 +3406,14 @@ if player.Character then
 end
 end
 wait(1)
+wait(0.2)
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "Success!",
+	Text = "Have fun! "..tostring(game.Players.LocalPlayer.Name),
+	Icon = "rbxassetid://1234567890",
+    Duration = 10
+})
+wait(0.1)
 print("Successfully ran!")
 wait(0.3)
 getgenv().CompletedIntro = true
