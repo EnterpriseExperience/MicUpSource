@@ -149,8 +149,13 @@ local function promptForConfig()
     end
 
     local optionPicked = nil
+    local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService") or game.UserInputService
 
-    local function writeToFile()
+    local function isPC()
+        return UserInputService.TouchEnabled == false
+    end
+
+    local function selectOption1()
         optionPicked = 1
         wait()
         runConfigChoice()
@@ -160,6 +165,12 @@ local function promptForConfig()
         optionPicked = 2
         wait()
         warn("false | CONFIG_WRITE_DENIED | 3")
+    end
+
+    if not isPC() then
+        print("Skipping GUI for mobile players.")
+        wait(0.1)
+        optionPicked = 2
     end
 
     local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
@@ -206,7 +217,7 @@ local function promptForConfig()
     ScreenGui:Destroy()
 
     if optionPicked == 1 then
-        writeToFile()
+        selectOption1()
     end
     if optionPicked == 2 then
         selectOption2()
