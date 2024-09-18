@@ -94,7 +94,123 @@ local Tab6 = Window:MakeTab({
 local Section6 = Tab6:AddSection({
     Name = "Current Information."
 })
-wait()
+wait(0.5)
+local function promptForConfig()
+    function runConfigChoice()
+        writefile("IY_FE.iy", [[
+            {
+                "currentShade2":[0.6666666865348816,0.3333333432674408,0],
+                "StayOpen":false,
+                "logsEnabled":false,
+                "aliases":[],
+                "PluginsTable":[],
+                "prefix":";",
+                "binds":[
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.One","COMMAND":"emote 13071993910"},
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Two","COMMAND":"emote 14901371589"},
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Five","COMMAND":"emote 5104377791"},
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Six","COMMAND":"emote 13694139364"},
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Seven","COMMAND":"emote 7466047578"},
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Eight","COMMAND":"emote 13823339506"},
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.E","COMMAND":"animspeed 4"},
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Q","COMMAND":"animspeed 0.1"},
+                    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Nine","COMMAND":"emote 3576823880"},
+                    {"KEY":"Enum.KeyCode.Four","ISKEYUP":false,"COMMAND":"emote 5230615437"},
+                    {"KEY":"Enum.KeyCode.V","ISKEYUP":false,"COMMAND":"freezeanims"},
+                    {"KEY":"Enum.KeyCode.R","ISKEYUP":false,"COMMAND":"emote 15694504637"},
+                    {"KEY":"Enum.KeyCode.T","ISKEYUP":false,"COMMAND":"emote 10214418283"},
+                    {"KEY":"Enum.KeyCode.Z","ISKEYUP":false,"COMMAND":"emote 3994130516"},
+                    {"KEY":"Enum.KeyCode.X","ISKEYUP":false,"COMMAND":"animspeed 1"},
+                    {"KEY":"Enum.KeyCode.Y","ISKEYUP":false,"COMMAND":"emote 11394056822"},
+                    {"KEY":"Enum.KeyCode.N","ISKEYUP":false,"COMMAND":"emote 3823158750"},
+                    {"KEY":"Enum.KeyCode.U","ISKEYUP":false,"COMMAND":"emote 14900153406"},
+                    {"KEY":"Enum.KeyCode.Zero","ISKEYUP":false,"COMMAND":"emote 15506503658"},
+                    {"KEY":"Enum.KeyCode.P","ISKEYUP":false,"COMMAND":"emote 10275057230"},
+                    {"KEY":"Enum.KeyCode.Three","ISKEYUP":false,"COMMAND":"emote 3716633898"},
+                    {"KEY":"Enum.KeyCode.F","ISKEYUP":false,"TOGGLE":"animspeed -1","COMMAND":"animspeed 1"}
+                ],
+                "currentShade3":[0.6666666865348816,0.3333333432674408,0],
+                "WayPoints":[
+                ],
+                "jLogsEnabled":false,
+                "currentScroll":[0.6666666865348816,0.3333333432674408,0],
+                "keepIY":true,
+                "eventBinds":"{\"OnSpawn\":[],\"OnDied\":[],\"OnExecute\":[],\"OnKilled\":[],\"OnJoin\":[],\"OnLeave\":[],\"OnDamage\":[],\"OnChatted\":[]}",
+                "espTransparency":0.3,
+                "currentShade1":[0.6666666865348816,0.3333333432674408,0],
+                "currentText2":[0,0,0],
+                "currentText1":[0,0,0]
+            }
+            ]], true)
+    end
+
+    local optionPicked = nil
+
+    local function writeToFile()
+        optionPicked = 1
+        wait()
+        runConfigChoice()
+    end
+
+    local function selectOption2()
+        optionPicked = 2
+        wait()
+        warn("false | CONFIG_WRITE_DENIED | 3")
+    end
+
+    local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
+    local Frame = Instance.new("Frame", ScreenGui)
+    Frame.Size = UDim2.new(0, 350, 0, 150)
+    Frame.Position = UDim2.new(0.5, -175, 0, 20)
+    Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Frame.BorderSizePixel = 0
+    Frame.BackgroundTransparency = 0.3
+
+    local QuestionLabel = Instance.new("TextLabel", Frame)
+    QuestionLabel.Text = "Do you want an Infinite Yield rizz config?"
+    QuestionLabel.Size = UDim2.new(0, 350, 0, 50)
+    QuestionLabel.Position = UDim2.new(0, 0, 0, 0)
+    QuestionLabel.BackgroundTransparency = 1
+    QuestionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    QuestionLabel.Font = Enum.Font.GothamBold
+    QuestionLabel.TextScaled = true
+
+    local Option1Button = Instance.new("TextButton", Frame)
+    Option1Button.Text = "Write File"
+    Option1Button.Size = UDim2.new(0, 160, 0, 40)
+    Option1Button.Position = UDim2.new(0, 10, 0, 100)
+    Option1Button.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
+    Option1Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Option1Button.Font = Enum.Font.GothamBold
+    Option1Button.TextScaled = true
+    Option1Button.MouseButton1Click:Connect(selectOption1)
+
+    local Option2Button = Instance.new("TextButton", Frame)
+    Option2Button.Text = "Cancel"
+    Option2Button.Size = UDim2.new(0, 160, 0, 40)
+    Option2Button.Position = UDim2.new(0, 180, 0, 100)
+    Option2Button.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
+    Option2Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Option2Button.Font = Enum.Font.GothamBold
+    Option2Button.TextScaled = true
+    Option2Button.MouseButton1Click:Connect(selectOption2)
+
+    while not optionPicked do
+        wait()
+    end
+
+    ScreenGui:Destroy()
+
+    if optionPicked == 1 then
+        writeToFile()
+    end
+    if optionPicked == 2 then
+        selectOption2()
+    end
+end
+wait(0.3)
+promptForConfig()
+wait(0.3)
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
