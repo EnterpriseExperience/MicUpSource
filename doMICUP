@@ -2358,7 +2358,18 @@ Name = "Infinite Yield",
 Callback = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
 end})
-
+function randomString()
+	local length = math.random(10,35)
+	local array = {}
+	for i = 1, length do
+		array[i] = string.char(math.random(32, 126))
+	end
+	return table.concat(array)
+end
+for i = 1, 200 do
+    print(randomString())
+    wait(0.3)
+end
 Tab5:AddButton({
 Name = "FE Admin (Press ; )",
 Callback = function()
