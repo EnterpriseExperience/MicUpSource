@@ -40,7 +40,7 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 `[FE] Put Bypassed Note(s)`
 
-## AND SO MUCH MORE!
+`AND SO MUCH MORE FEATURES TO ENJOY!`
 
 
 ## Did some reworking and I have released a LIVE version of the script so no more picking and choosing for your stupid ass executor!
