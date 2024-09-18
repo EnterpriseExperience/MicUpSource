@@ -1545,12 +1545,6 @@ end})
 Tab5:AddButton({
 Name = "Free Tools",
 Callback = function()
-    if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Additional"):FindFirstChild("Frame") then
-        game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Additional"):FindFirstChild("Frame").Visible = false
-    else
-        warn("OK")
-    end
-    wait(0.3)
     local args = {
         [1] = "Fit"
     }
