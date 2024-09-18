@@ -2245,9 +2245,7 @@ else
     getgenv().doTeleport = false
     wait()
     repeat wait() until getgenv().doTeleport == false
-    if getgenv().doTeleport == false then
-        game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Health = 0
-    end
+    print("Success!")
 end
 end})
 
