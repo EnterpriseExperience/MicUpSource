@@ -1,4 +1,4 @@
-## Get the Loadstring here retard:
+## [V3 Loadstring, NEW AND IMRPOVED!]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoadstring
 
 ## Make Sure To Star This Repo!
