@@ -6,16 +6,12 @@ https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoad
 ## [Or See]:
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 
-## UPDATE <-> [v2] [LIVE]:
+## UPDATE <-> [V3] [UPDATE!]:
 
-## V2 New Features:
-`Ability to reload the script (re-execute automatically) [In Beta Feature]`
+## V3 New Features:
+`SO MANY MORE NEW FEATURES NOW!, CHECK THEM OUT BY RUNNING THIS SCRIPT, IN-GAME.`
 
-`Solve All TicTacToe Boards (All Of Them)`
-
-`Unload the script (destroy script)`
-
-## [BRAND NEW! CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub | MIC UP 🔊]:
+## [CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub | MIC UP 🔊]:
 `Mute Player (Works With DisplayNames, Short Names, and Usernames)`
 
 `Unmute Player (Works With DisplayNames, Short Names, and Usernames)`
