@@ -1,6 +1,6 @@
 ## [V3 Loadstring, NEW AND IMRPOVED!]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoadstring
-## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!]
+## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Not supported for Mobile, and will skip if mobile is detected.]
 
 ## Make Sure To Star This Repo!
 
