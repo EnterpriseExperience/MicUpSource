@@ -1,5 +1,6 @@
 ## [V3 Loadstring, NEW AND IMRPOVED!]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoadstring
+## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!]
 
 ## Make Sure To Star This Repo!
 
