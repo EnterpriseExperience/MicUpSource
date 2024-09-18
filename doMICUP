@@ -97,6 +97,7 @@ local Section6 = Tab6:AddSection({
 wait(0.5)
 local function promptForConfig()
     function runConfigChoice()
+        if writefile then
         writefile("IY_FE.iy", [[
             {
                 "currentShade2":[0.6666666865348816,0.3333333432674408,0],
@@ -142,6 +143,9 @@ local function promptForConfig()
                 "currentText1":[0,0,0]
             }
             ]], true)
+        else
+            warn("Your exploit does not support 'writefile' [You will not be able to use custom config for Infinite Yield, sorry!]")
+        end
     end
 
     local optionPicked = nil
