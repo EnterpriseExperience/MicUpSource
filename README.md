@@ -59,4 +59,6 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 `[FE FEATURES AND CLIENT FEATURES (FUN FOR ALL!)]`
 
+`[NOW HAS AN AUTOMATIC SYSTEM FOR CONFIGURATING SCRIPTING ABILITIES! (and for compatibility to!)]`
+
 `[RELEASING INFINITE YIELD RIZZ/EMOTE CONFIG SOON! (now very soon ;)]`
