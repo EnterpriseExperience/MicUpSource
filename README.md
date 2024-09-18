@@ -3,6 +3,8 @@ https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoad
 
 ## Make Sure To Star This Repo!
 
+## If you steal my code, leave me some credit as this project has been in the works for 6-7 months.
+
 ## [Or See]:
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 
@@ -49,10 +51,12 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 `[LOTS OF FEATURES!]`
 
-`[BYPASSES ARE PATCHED! :(]`
+`[NOW HAS OP ABUSE FEATURES!]`
+
+`[BYPASSES ARE WORKING, AND NEW BYPASSES ARE NOW IN THE SCRIPT TO!]`
 
 `[SUPPORTS EVERY EXECUTOR!]`
 
 `[FE FEATURES AND CLIENT FEATURES (FUN FOR ALL!)]`
 
-`[RELEASING INFINITE YIELD RIZZ/EMOTE CONFIG SOON! (idk when tho)]`
+`[RELEASING INFINITE YIELD RIZZ/EMOTE CONFIG SOON! (now very soon ;)]`
