@@ -1726,7 +1726,7 @@ Callback = function()
 end})
 
 Tab1:AddToggle({
-Name = "Loop Send All Warnings",
+Name = "Loop Send All Warnings (LAGGY)",
 Default = false,
 Callback = function(loopWarn)
 local whitelist = { "M1RD3RCAUGHT" }
@@ -1747,6 +1747,14 @@ if loopWarn then
 end
 else
 getgenv().WarnLoop = false
+wait()
+getgenv().WarnLoop = false
+wait()
+getgenv().WarnLoop = false
+wait()
+for i = 1, 35 do
+    getgenv().WarnLoop = false
+end
 end
 end})
 
@@ -2829,6 +2837,7 @@ Default = false,
 Callback = function(sunSpooky)
 if sunSpooky then
     getgenv().SpookSun = true
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
     local sky = Lighting:FindFirstChildOfClass("Sky")
 
     local function smoothTransition()
