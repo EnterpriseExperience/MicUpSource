@@ -1860,14 +1860,12 @@ smoothFOV()
 end
 else
 getgenv().FOVZoomSliding = false
-repeat wait() until getgenv().FOVZoomSliding == false
 wait()
-if getgenv().FOVZoomSliding == false then
-    wait(0.2)
-    game:GetService("Workspace").CurrentCamera.FieldOfView = 70
-else
-    warn("Cannot reset FieldOfView | error.")
-end
+game:GetService("Workspace").CurrentCamera.FieldOfView = 70
+wait()
+game:GetService("Workspace").CurrentCamera.FieldOfView = 70
+wait()
+game:GetService("Workspace").CurrentCamera.FieldOfView = 70
 end
 end})
 
