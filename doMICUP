@@ -1837,25 +1837,23 @@ Name = "Weird FOV Zoom",
 Default = false,
 Callback = function(weirdFOV)
 if weirdFOV then
+getgenv().FOVZoomSliding = true
+while getgenv().FOVZoomSliding == true do
+wait()
 local player = game.Players.LocalPlayer
 local camera = game.Workspace.CurrentCamera
-
-getgenv().FOVZoomSliding = true
-
 local startFOV = 70
 local endFOV = 120
 local duration = 3
 local smoothness = 0.02
 
 local function smoothFOV()
-    while getgenv().FOVZoomSliding do
-        for elapsedTime = 0, duration, smoothness do
-            local alpha = math.clamp(elapsedTime / duration, 0, 1)
-            camera.FieldOfView = startFOV + (endFOV - startFOV) * alpha
-            wait(smoothness)
-        end
-        startFOV, endFOV = endFOV, startFOV
+    for elapsedTime = 0, duration, smoothness do
+        local alpha = math.clamp(elapsedTime / duration, 0, 1)
+        camera.FieldOfView = startFOV + (endFOV - startFOV) * alpha
+        wait(smoothness)
     end
+    startFOV, endFOV = endFOV, startFOV
 end
 
 smoothFOV()
@@ -2669,14 +2667,15 @@ Name = "FireWorks (Sky)",
 Default = false,
 Callback = function(FireWorksCrazy)
 if FireWorksCrazy then
-    local player = game.Players.LocalPlayer
-    local Lighting = game:GetService("Lighting")
-    
     Lighting.ClockTime = 1
     wait()
     Lighting.Brightness = 2
-    
+    wait()
     getgenv().setFireWorksOn = true
+    while getgenv().setFireWorksOn == true do
+    wait()
+    local player = game.Players.LocalPlayer
+    local Lighting = game:GetService("Lighting")
     
     local function createFirework(position)
         local firework = Instance.new("Part")
@@ -2719,15 +2718,13 @@ if FireWorksCrazy then
     end
     
     local function launchFireworks()
-        while getgenv().setFireWorksOn do
-            local xOffset = math.random(-50, 50)
-            local yOffset = math.random(50, 100)
-            local zOffset = math.random(-50, 50)
-            local position = Vector3.new(xOffset, 50 + yOffset, zOffset)
+        local xOffset = math.random(-50, 50)
+        local yOffset = math.random(50, 100)
+        local zOffset = math.random(-50, 50)
+        local position = Vector3.new(xOffset, 50 + yOffset, zOffset)
     
-            createFirework(position)
-            wait(math.random(1, 2))
-        end
+        createFirework(position)
+        wait(math.random(1, 2))
     end
     
     launchFireworks()
