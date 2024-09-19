@@ -1213,7 +1213,6 @@ Callback = function(LolUnClaim)
     
     local OldestCF = LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame
     local LolBigDawg = findplr(LolUnClaim)
-    local whitelist = {"M1RD3RCAUGHT", "STK_kets4eki"}
 
     local function getStallFunc()
         local LolBigDawg = findplr(LolUnClaim)
@@ -1274,17 +1273,6 @@ Callback = function(LolUnClaim)
                 Image = "rbxassetid://4483345998",
                 Time = 10
             })
-        end        
-
-        for _, v in pairs(Stalls:GetChildren()) do
-            if v.Player.Value == "M1RD3RCAUGHT" or v.Player.Value == "STK_kets4eki" then
-                return OrionLib:MakeNotification({
-                    Name = "Error: Owner",
-                    Content = "Owner of script owns this booth!",
-                    Image = "rbxassetid://4483345998",
-                    Time = 10
-                })
-            end
         end
 
         local function makeInvisible(character)
@@ -1727,7 +1715,7 @@ Callback = function()
     local whitelist = { "M1RD3RCAUGHT" }
     
     for i, v in pairs(game.Players:GetPlayers()) do
-        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) then
+        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not game.Players["M1RD3RCAUGHT"] and v ~= game.Players["M1RD3RCAUGHT"] then
             local args = {
                 [1] = tostring(v.Name)
             }
@@ -1842,6 +1830,47 @@ Callback = function()
     }
         
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+end})
+
+Tab2:AddToggle({
+Name = "Weird FOV Zoom",
+Default = false,
+Callback = function(weirdFOV)
+if weirdFOV then
+local player = game.Players.LocalPlayer
+local camera = game.Workspace.CurrentCamera
+
+getgenv().FOVZoomSliding = true
+
+local startFOV = 70
+local endFOV = 120
+local duration = 3
+local smoothness = 0.02
+
+local function smoothFOV()
+    while getgenv().FOVZoomSliding do
+        for elapsedTime = 0, duration, smoothness do
+            local alpha = math.clamp(elapsedTime / duration, 0, 1)
+            camera.FieldOfView = startFOV + (endFOV - startFOV) * alpha
+            wait(smoothness)
+        end
+        startFOV, endFOV = endFOV, startFOV
+    end
+end
+
+smoothFOV()
+end
+else
+getgenv().FOVZoomSliding = false
+repeat wait() until getgenv().FOVZoomSliding == false
+wait()
+if getgenv().FOVZoomSliding == false then
+    wait(0.2)
+    game:GetService("Workspace").CurrentCamera.FieldOfView = 70
+else
+    warn("Cannot reset FieldOfView | error.")
+end
+end
 end})
 
 Tab2:AddToggle({
@@ -2633,6 +2662,79 @@ wait()
 Lighting.SunRays.Intensity = 0.01
 wait()
 Lighting.SunRays.Spread = 0.1
+end})
+
+Tab9:AddToggle({
+Name = "FireWorks (Sky)",
+Default = false,
+Callback = function(FireWorksCrazy)
+if FireWorksCrazy then
+    local player = game.Players.LocalPlayer
+    local Lighting = game:GetService("Lighting")
+    
+    Lighting.ClockTime = 1
+    wait()
+    Lighting.Brightness = 2
+    
+    getgenv().setFireWorksOn = true
+    
+    local function createFirework(position)
+        local firework = Instance.new("Part")
+        firework.Size = Vector3.new(1, 1, 1)
+        firework.Position = position
+        firework.Anchored = true
+        firework.CanCollide = false
+        firework.Material = Enum.Material.Neon
+        firework.Parent = workspace
+    
+        local explosion = Instance.new("ParticleEmitter")
+        explosion.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.new(math.random(), math.random(), math.random())),
+            ColorSequenceKeypoint.new(0.5, Color3.new(math.random(), math.random(), math.random())),
+            ColorSequenceKeypoint.new(1, Color3.new(0, 0, 0))
+        })
+        explosion.Size = NumberSequence.new(2, 0)
+        explosion.Lifetime = NumberRange.new(0.5, 1)
+        explosion.Rate = 150
+        explosion.Speed = NumberRange.new(75, 150)
+        explosion.SpreadAngle = Vector2.new(180, 180)
+        explosion.Parent = firework
+    
+        local light = Instance.new("PointLight")
+        light.Brightness = 300
+        light.Range = 200
+        light.Color = Color3.new(1, 1, 1)
+        light.Parent = firework
+    
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://272537961"
+        sound.Volume = 2.5
+        sound.Parent = firework
+        sound:Play()
+    
+        wait(0.1)
+        explosion:Emit(200)
+        wait(1)
+        firework:Destroy()
+    end
+    
+    local function launchFireworks()
+        while getgenv().setFireWorksOn do
+            local xOffset = math.random(-50, 50)
+            local yOffset = math.random(50, 100)
+            local zOffset = math.random(-50, 50)
+            local position = Vector3.new(xOffset, 50 + yOffset, zOffset)
+    
+            createFirework(position)
+            wait(math.random(1, 2))
+        end
+    end
+    
+    launchFireworks()
+end
+else
+getgenv().setFireWorksOn = false
+end
 end})
 
 Tab9:AddButton({
