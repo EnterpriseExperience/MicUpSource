@@ -1874,6 +1874,10 @@ wait()
 game:GetService("Workspace").CurrentCamera.FieldOfView = 70
 wait()
 game:GetService("Workspace").CurrentCamera.FieldOfView = 70
+wait(0.3)
+for i = 1, 5 do
+    game:GetService("Workspace").CurrentCamera.FieldOfView = 70
+end
 end
 end})
 
@@ -2673,6 +2677,7 @@ Name = "FireWorks (Sky)",
 Default = false,
 Callback = function(FireWorksCrazy)
 if FireWorksCrazy then
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
     Lighting.ClockTime = 1
     wait()
     Lighting.Brightness = 2
