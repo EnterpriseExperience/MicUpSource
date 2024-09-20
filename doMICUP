@@ -805,78 +805,91 @@ end})
 Tab11:AddButton({
 Name = "Anti Booth Stealer (for hackers)",
 Callback = function()
-local player = game.Players.LocalPlayer
+    local player = game.Players.LocalPlayer
 
-local function getStall()
-    for i, v in pairs(workspace.Stalls:GetChildren()) do
-        if v.Player.Value == game:GetService("Players").LocalPlayer then
-            return v
+    local function getStall()
+        for i, v in pairs(workspace.Stalls:GetChildren()) do
+            if v:FindFirstChild("Player") and v.Player.Value == player then
+                return v
+            end
+        end
+        return nil
+    end
+    
+    local function fireProximityPrompt(prompt)
+        if prompt then
+            fireproximityprompt(prompt)
         end
     end
-    return nil
-end
-
-local function fireProximityPrompt(prompt)
-    if prompt then
-        fireproximityprompt(prompt)
-    end
-end
-
-local function makeCharacterInvisible(character)
-    for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.Transparency = 1
-            part.CanCollide = false
+    
+    local function makeCharacterInvisible(character)
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 1
+                part.CanCollide = false
+            end
         end
     end
-end
-
-local function makeCharacterVisible(character)
-    for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.Transparency = 0
-            part.CanCollide = true
+    
+    local function makeCharacterVisible(character)
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 0
+                part.CanCollide = true
+            end
         end
     end
-end
-
-local function makeAllPlayersInvisible()
-    for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-        if otherPlayer ~= player and otherPlayer.Character then
-            makeCharacterInvisible(otherPlayer.Character)
+    
+    local function makeAllPlayersInvisible()
+        for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+            if otherPlayer ~= player and otherPlayer.Character then
+                makeCharacterInvisible(otherPlayer.Character)
+            end
         end
     end
-end
-
-local function makeAllPlayersVisible()
-    for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-        if otherPlayer ~= player and otherPlayer.Character then
-            makeCharacterVisible(otherPlayer.Character)
+    
+    local function makeAllPlayersVisible()
+        for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+            if otherPlayer ~= player and otherPlayer.Character then
+                makeCharacterVisible(otherPlayer.Character)
+            end
         end
     end
-end
+    
+    local function monitorPlayerStall()
+        local ownedStall = getStall()
 
-local function monitorPlayerStall()
-    local ownedStall = getStall()
-
-    if ownedStall then
+        if not ownedStall then
+            return OrionLib:MakeNotification({
+                Name = "Error: No Booth",
+                Content = "You don't own a booth!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end
+    
         local icon = ownedStall:FindFirstChild("Icon")
         if icon and icon:FindFirstChild("Decal") then
             local decal = icon.Decal
-
+    
             decal:GetPropertyChangedSignal("Texture"):Connect(function()
                 makeAllPlayersInvisible()
                 wait(0.3)
-                local proximityPrompt = ownedStall:FindFirstChild("ProxPart").ProximityPrompt
-                fireProximityPrompt(proximityPrompt)
+
+                local proxPart = ownedStall:FindFirstChild("ProxPart")
+                if proxPart and proxPart:FindFirstChild("ProximityPrompt") then
+                    fireProximityPrompt(proxPart.ProximityPrompt)
+                else
+                    warn("ProximityPrompt not found in the stall")
+                end
+    
                 wait(0.3)
                 makeAllPlayersVisible()
             end)
         end
     end
-end
-
-monitorPlayerStall()
+    
+    monitorPlayerStall()    
 end})
 
 Tab2:AddToggle({
@@ -1132,38 +1145,34 @@ Name = "Whitelist User",
 Default = "User Here",
 TextDisappear = true,
 Callback = function(enterUser)
-local getTheirUser = findplr(enterUser)
+    local getTheirUser = findplr(enterUser)
 
-if not game:GetService("Players")[getTheirUser.Name] then
-    return OrionLib:MakeNotification({
-        Name = "Error: Not Found",
-        Content = "Player was not found!",
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
-end
+    if not getTheirUser then
+        return OrionLib:MakeNotification({
+            Name = "Error: Not Found",
+            Content = "Player was not found!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
 
-if getTheirUser and getTheirUser ~= nil then
-addToWhitelist(tostring(getTheirUser.Name))
-repeat wait() until table.find(whitelist, getTheirUser.Name)
-if table.find(whitelist, getTheirUser.Name) then
-    return OrionLib:MakeNotification({
-        Name = "Success!",
-        Content = "Player was added to whitelist table.",
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
-else
-    return OrionLib:MakeNotification({
-        Name = "Error:",
-        Content = "Player must not exist, or not added correctly.",
-        Image = "rbxassetid://4483345998",
-        Time = 10
-    })
-end
-else
-    return 
-end
+    addToWhitelist(tostring(getTheirUser.Name))
+
+    if table.find(whitelist, getTheirUser.Name) then
+        return OrionLib:MakeNotification({
+            Name = "Success!",
+            Content = "Player was added to the whitelist.",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    else
+        return OrionLib:MakeNotification({
+            Name = "Error:",
+            Content = "Player was not added correctly to the whitelist.",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end    
 end})
 
 Tab7:AddTextbox({
@@ -1172,9 +1181,8 @@ Default = "User Here",
 TextDisappear = true,
 Callback = function(enterUser)
     local getTheirUser = findplr(enterUser)
-    removeFromWhitelist(tostring(getTheirUser.Name))
 
-    if not findplr(enterUser) then
+    if not getTheirUser then
         return OrionLib:MakeNotification({
             Name = "Error: Not Found",
             Content = tostring(enterUser).." was not found!",
@@ -1182,23 +1190,24 @@ Callback = function(enterUser)
             Time = 10
         })
     end
-
-    repeat wait() until table.find(whitelist, getTheirUser.Name)
+    
     if not table.find(whitelist, getTheirUser.Name) then
         return OrionLib:MakeNotification({
-            Name = "Success!",
-            Content = tostring(getTheirUser.Name).." was removed whitelist",
-            Image = "rbxassetid://4483345998",
-            Time = 10
-        })
-    elseif not table.find(whitelist, getTheirUser.Name) then
-        return OrionLib:MakeNotification({
             Name = "Error:",
-            Content = "Player does not exist in table!",
+            Content = tostring(getTheirUser.Name).." does not exist in the whitelist!",
             Image = "rbxassetid://4483345998",
             Time = 10
         })
     end
+
+    removeFromWhitelist(tostring(getTheirUser.Name))
+    
+    return OrionLib:MakeNotification({
+        Name = "Success!",
+        Content = tostring(getTheirUser.Name).." was removed from the whitelist",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })    
 end})
 
 Tab11:AddTextbox({
@@ -1378,7 +1387,7 @@ Callback = function()
     local Folder = workspace:WaitForChild("Stalls")
     local Players = game:GetService("Players")
     local localPlayer = Players.LocalPlayer
-    local OldCF = localPlayer.Character:WaitForChild("HumanoidRootPart", 1).CFrame
+    local OldCF = localPlayer.Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
     
     local function isWhitelisted(playerName)
         return whitelist[playerName] ~= nil
@@ -1448,7 +1457,7 @@ Callback = function()
     unclaimStalls()
     wait(0.1)
     localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
-    wait(0.5)
+    wait(0.3)
     cancelAllButtons()
     wait(0.3)
     print("Finished Unclaiming All Booths.")    
@@ -1722,11 +1731,11 @@ Callback = function()
             
             game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
         end
-    end    
+    end
 end})
 
 Tab1:AddToggle({
-Name = "Loop Send All Warnings (LAGGY)",
+Name = "Loop Send All Warnings (CAN BE SUPER LAGGY)",
 Default = false,
 Callback = function(loopWarn)
 local whitelist = { "M1RD3RCAUGHT" }
@@ -1752,7 +1761,7 @@ getgenv().WarnLoop = false
 wait()
 getgenv().WarnLoop = false
 wait()
-for i = 1, 35 do
+for i = 1, 999999 do -- Did this because of indulging lag spikes up to 100K ping and over when spamming the entire server with this stupid thing
     getgenv().WarnLoop = false
 end
 end
@@ -1763,14 +1772,12 @@ Name = "Send Someone A Warning",
 Default = "User Or Display",
 TextDisappear = true,
 Callback = function(warnPlr)
-local whitelist = { "M1RD3RCAUGHT" }
-
 local function isWhitelisted(username)
     return table.find(whitelist, username) ~= nil
 end
 
 local thisPlrWarned = findplr(warnPlr)
-if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) then
+if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, thisPlrWarned.Name) then
     local args = {
         [1] = tostring(thisPlrWarned.Name)
     }
@@ -1778,7 +1785,7 @@ if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, v.Nam
     game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
 end
 
-if thisPlrWarned == isWhitelisted("M1RD3RCAUGHT") then
+if thisPlrWarned == "M1RD3RCAUGHT" or thisPlrWarned == "STK_kets4eki" then
     return OrionLib:MakeNotification({
         Name = "Cancelled!",
         Content = "Player is an owner!",
@@ -1796,43 +1803,36 @@ Callback = function()
     }
         
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
-    wait()
     local args = {
         [1] = "Wand"
     }
         
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
-    wait()
     local args = {
         [1] = "Horrible"
     }
         
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
-    wait()
     local args = {
         [1] = "Doll"
     }
         
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
-    wait()
     local args = {
         [1] = "Burrito"
     }
         
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
-    wait()
     local args = {
         [1] = "Bloxy"
     }
         
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
-    wait()
     local args = {
         [1] = "Bloxilicious"
     }
         
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
-    wait()
     local args = {
         [1] = "Sauce"
     }
@@ -1875,7 +1875,7 @@ game:GetService("Workspace").CurrentCamera.FieldOfView = 70
 wait()
 game:GetService("Workspace").CurrentCamera.FieldOfView = 70
 wait(0.3)
-for i = 1, 5 do
+for i = 1, 7 do
     game:GetService("Workspace").CurrentCamera.FieldOfView = 70
 end
 end
@@ -1956,6 +1956,428 @@ getgenv().ToolSpam = false
 end
 end})
 
+Tab2:AddToggle({
+Name = "Spam All Tools (VIP Needed, FE)",
+Default = false,
+Callback = function(VIPSpamTools)
+if VIPSpamTools then
+getgenv().RunVIPSpam = true
+while getgenv().RunVIPSpam == true do
+wait()
+local args = {
+    [1] = "XVip"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("VipAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "XVipV"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("VipAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "XVipW"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("VipAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "XVipX"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("VipAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "XVipY"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("VipAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "XVipZ"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("VipAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+end
+else
+getgenv().RunVIPSpam = false
+end
+end})
+
+Tab2:AddToggle({
+Name = "Flicker Animations (FE)",
+Default = false,
+Callback = function(AnimFlick)
+if AnimFlick then
+getgenv().EmoteFlickering = true
+while getgenv().EmoteFlickering == true do
+wait()
+local args = {
+    [1] = "DPunchingZ"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "DPunchingY"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "DPunchingX"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "DPunchingW"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "DPunchingV"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "DPunchingU"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "AYeet"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "AYClap"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ATap"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "AStomp"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ASplits"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ASitZ"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ASitY"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ASitX"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ASitW"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ASit"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ARun"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ALog"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ALaughZ"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ALaugh"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "AJumpscareZ"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "AJumpscare"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "AHandstandZ"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "AHandstand"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ADie"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ADetachZ"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ADetach"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+end
+else
+getgenv().EmoteFlickering = false
+end
+end})
+
 Tab1:AddToggle({
 Name = "Auto Dislike Player",
 Default = false,
@@ -1983,38 +2405,106 @@ Callback = function()
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
 end})
 
--- You cannot bypass the current system, but reworking soon for people that own the GamePass and want to mess with the system. (Soon!)
+-- The NEW 'Character Flicker' is here! People that own the 500 Robux 'thi' (Admin GamePass) will now be able to spam in-game admin functions!
 
---[[Tab4:AddToggle({
+Tab4:AddToggle({
 Name = "(FE) Character Flicker",
 Default = false,
 Callback = function(Flick)
-if Flick and game:GetService("MarketplaceService"):UserOwnsGamePassAsync(tonumber(game.Players.LocalPlayer.UserId), tonumber(28828491)) then
-getgenv().Flicker = true
-while getgenv().Flicker == true do
-wait()
+if game:GetService("MarketplaceService"):UserOwnsGamePassAsync(game.Players.LocalPlayer.UserId, tonumber(28828491)) then
+    print("Player owns GamePass, continue.")
+else
+    getgenv().CharFlick = false
+    return OrionLib:MakeNotification({
+        Name = "Error: Not Owned",
+        Content = "You do not own the Admin GamePass!",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
 
+if Flick then
+getgenv().CharFlick = true
+while getgenv().CharFlick == true do
+wait()
+local args = {
+    [1] = "ARegular",
+    [2] = "Regular"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "Flat",
+    [2] = "Flat"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "Huge",
+    [2] = "Huge"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "Jump",
+    [2] = "Jump"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "Mini",
+    [2] = "Mini"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "Squash",
+    [2] = "Squash"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "Tall",
+    [2] = "Tall"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "Wide",
+    [2] = "Wide"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
 end
 else
-getgenv().Flicker = false
+getgenv().CharFlick = false
 end
-end})--]]
+end})
 
 local Settings = {
-Keybind = "E"
+    Keybind = "E"
 }
 
 Tab2:AddButton({
 Name = "Invisible (Keybind Toggle)",
 Callback = function()
-if DEBUG_INVIS and not _G.DEBUG_INVIS == true then
-    return Notification:Notify(
-        {Title = "Error: ", Description = "Invisible is already started!"},
-        {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
-        {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() warn("") end}
-    )
+if Invis_Loaded and not _G.INVIS_DEBUG == true then
+    return OrionLib:MakeNotification({
+        Name = "Error: Already Loaded",
+        Content = "You have already loaded Invisible.",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
 end
-pcall(function() getgenv().InvisBruh = true end)
+
+pcall(function() getgenv().Invis_Loaded = true end)
 
 local ScriptStarted = false
 local Transparency = true
@@ -2169,6 +2659,8 @@ Sound.SoundId = "rbxassetid://232127604"
 Sound:Play()
 game:GetService("StarterGui"):SetCore("SendNotification",{["Title"] = "Invisible Toggle Loaded",["Text"] = "Press "..Settings.Keybind.." to change visibility.",["Duration"] = 10,["Button1"] = "Okay."})
 end})
+
+-- Do not fuck with this part, this is still a WIP, as it does not work currently, i'll fix it after securing the other functions as working, (some people would lag really hard, so im not to sure on adding this at all.)
 
 --[[Tab2:AddToggle({
 Name = "Flicker Character (FE, Invis Method)",
@@ -2331,6 +2823,102 @@ Callback = function()
     local Character = game:GetService("Players").LocalPlayer.Character
     local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
     HumanoidRootPart.CFrame = CFrame.new(26.7397423, 7.81395245, 86.7164536)
+end})
+
+Tab10:AddButton({
+Name = "TP To Tower (Float Up Part)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(61.3288841, 72.0192184, 215.731613)
+end})
+
+Tab10:AddButton({
+Name = "TP To Tower (Top)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(63.2298126, 284.407227, 193.529007)
+end})
+
+Tab10:AddButton({
+Name = "TP To Tower (The Very Top)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(58.0468788, 313.312622, 225.215027)
+end})
+
+Tab10:AddButton({
+Name = "TP To Donut Shop",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-80.8301239, 3.1662631, -82.6656799)
+end})
+
+Tab10:AddButton({
+Name = "TP To Donut Shop (Chair 1)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-98.4535675, 4.04168415, -96.7826004)
+end})
+
+Tab10:AddButton({
+Name = "TP To Donut Shop (Chair 2)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-91.7390671, 4.04168415, -90.0620728)
+end})
+
+Tab10:AddButton({
+Name = "TP To Donut Shop (Table, Seat 1)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-102.440971, 4.51146317, -66.6184387)
+end})
+
+Tab10:AddButton({
+Name = "TP To Donut Shop (Table, Seat 2)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-94.6592941, 4.51146317, -74.3931046)
+end})
+
+Tab10:AddButton({
+Name = "TP To Donut Shop (Behind Counter)",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-122.382172, 3.22726321, -83.5359192)
+end})
+
+Tab10:AddButton({
+Name = "TP Above Relaxing Room",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-97.4412308, 24.4840164, 121.394676)
+end})
+
+Tab10:AddButton({
+Name = "TP To Submit Note Board",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(58.6107864, 4.99999857, 245.690369)
+end})
+
+Tab10:AddButton({
+Name = "TP To Stage Mic",
+Callback = function()
+    local Character = game:GetService("Players").LocalPlayer.Character
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.CFrame = CFrame.new(-61.6848221, 10.0853853, 229.676834)
 end})
 
 Tab2:AddTextbox({
@@ -2742,6 +3330,9 @@ if FireWorksCrazy then
 end
 else
 getgenv().setFireWorksOn = false
+wait(0.5)
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+
 end
 end})
 
