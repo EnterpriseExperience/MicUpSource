@@ -3651,6 +3651,7 @@ if freezeToggle then
 	for _, v in pairs(ActiveTracks) do
 		v:AdjustSpeed(0)
 	end
+end
 else
     getgenv().doFreezeToggle = false
     wait(1)
