@@ -2682,7 +2682,11 @@ if Transparency then
   end
 end
 RealCharacter.Humanoid.Died:Connect(function()
-getgenv().InvisStarted = false
+getgenv().Invis_Loaded = false
+wait()
+getgenv().Invis_Loaded = false
+wait()
+getgenv().Invis_Loaded = false
 wait()
 RealCharacter:Destroy()
 FakeCharacter:Destroy()
@@ -2690,7 +2694,11 @@ end)
 Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
 end
 RealCharacter.Humanoid.Died:Connect(function()
-getgenv().InvisStarted = false
+getgenv().Invis_Loaded = false
+wait()
+getgenv().Invis_Loaded = false
+wait()
+getgenv().Invis_Loaded = false
 wait()
 RealCharacter:Destroy()
 FakeCharacter:Destroy()
