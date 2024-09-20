@@ -1957,9 +1957,21 @@ end
 end})
 
 Tab2:AddToggle({
-Name = "Spam All Tools (VIP Needed, FE)",
+Name = "Spam All Tools (VIP Dances, FE)",
 Default = false,
 Callback = function(VIPSpamTools)
+if game:GetService("MarketplaceService"):UserOwnsGamePassAsync(game.Players.LocalPlayer.UserId, tonumber(26610878)) then
+    print("User Owns GamePass, Continue.")
+else
+    getgenv().RunVIPSpam = false
+    return OrionLib:MakeNotification({
+        Name = "Error: Not Owned",
+        Content = "You do not own the VIP Dance GamePass.",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
+
 if VIPSpamTools then
 getgenv().RunVIPSpam = true
 while getgenv().RunVIPSpam == true do
