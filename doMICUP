@@ -3472,41 +3472,6 @@ wait()
 Lighting.Brightness = 3
 end})
 
-Tab9:AddButton({
-Name = "Spooky DayTime (smoke, laggy?)",
-Callback = function()
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
-Lighting.ClockTime = 8
-wait()
-Lighting.Brightness = 0
-
-local function addSmokeToPart(part)
-local Players = game:GetService("Players"):GetChildren()
-
-if part:IsA("BasePart") and part.Parent ~= Players.Character then
-    local smoke = Instance.new("Smoke")
-    smoke.Name = "SpookySmoke"
-    smoke.Opacity = 0.5
-    smoke.RiseVelocity = 2
-    smoke.Size = 6
-    smoke.Color = Color3.fromRGB(161, 165, 162)
-    smoke.Parent = part
-end
-end
-
-local function addSmokeToEverything()
-local Players = game:GetService("Players"):GetChildren()
-
-for _, obj in pairs(workspace:GetDescendants()) do
-    if obj.Parent ~= Players.Character then
-        addSmokeToPart(obj)
-    end
-end
-end 
-
-addSmokeToEverything()
-end})
-
 Tab9:AddToggle({
 Name = "Spooky Moon",
 Default = false,
