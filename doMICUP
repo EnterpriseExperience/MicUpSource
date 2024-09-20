@@ -1868,13 +1868,13 @@ smoothFOV()
 end
 else
 getgenv().FOVZoomSliding = false
-wait()
+wait(1)
 game:GetService("Workspace").CurrentCamera.FieldOfView = 70
-wait()
+wait(1)
 game:GetService("Workspace").CurrentCamera.FieldOfView = 70
-wait()
+wait(1)
 game:GetService("Workspace").CurrentCamera.FieldOfView = 70
-wait(0.3)
+wait(2)
 for i = 1, 7 do
     game:GetService("Workspace").CurrentCamera.FieldOfView = 70
 end
