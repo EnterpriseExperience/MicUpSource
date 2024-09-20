@@ -2419,7 +2419,7 @@ end})
 
 -- The NEW 'Character Flicker' is here! People that own the 500 Robux 'thi' (Admin GamePass) will now be able to spam in-game admin functions!
 
-Tab4:AddToggle({
+Tab2:AddToggle({
 Name = "(FE) Character Flicker",
 Default = false,
 Callback = function(Flick)
