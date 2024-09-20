@@ -1769,11 +1769,29 @@ game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpac
 end
 else
 getgenv().HoverboardRide = false
-wait()
+wait(1)
 local args = {
 [1] = tonumber(game.Players.LocalPlayer.UserId)
 }
 
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+    
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+    
+game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
+}
+    
 game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
 end
 end})
