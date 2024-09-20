@@ -86,6 +86,14 @@ local Tab7 = Window:MakeTab({
 local Section8 = Tab7:AddSection({
     Name = "Bypasses And Shit"
 })
+local Tab12 = Window:MakeTab({
+    Name = "Emote Stuff",
+    Icon = "rbxassetid://7743871002",
+    PremiumOnly = false
+})
+local Section12 = Tab12:AddSection({
+    Name = "Emote Speed/Freezing/etc"
+})
 local Tab6 = Window:MakeTab({
     Name = "README",
     Icon = "rbxassetid://7734022107",
@@ -332,6 +340,57 @@ if GC then
     end
 end
 wait()
+function resetLightingSettings()
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+    local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
+    
+    Lighting.ClockTime = 14.5
+    wait()
+    Lighting.Brightness = 3
+    wait()
+    Lighting.Atmosphere.Density = 0.3
+    wait()
+    Lighting.Atmosphere.Offset = 0.25
+    wait()
+    Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
+    wait()
+    Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
+    wait()
+    Lighting.Atmosphere.Glare = 0
+    wait()
+    Lighting.Atmosphere.Haze = 0
+    wait()
+    Lighting.Sky.MoonAngularSize = 11
+    wait()
+    Lighting.Sky.StarCount = 3000
+    wait()
+    Lighting.Sky.SunAngularSize = 11
+    wait()
+    Lighting.Bloom.Intensity = 1
+    wait()
+    Lighting.Bloom.Enabled = true
+    wait()
+    Lighting.Bloom.Size = 24
+    wait()
+    Lighting.Bloom.Threshold = 2
+    wait()
+    Lighting.DepthOfField.Enabled = false
+    wait()
+    Lighting.DepthOfField.FarIntensity = 0.1
+    wait()
+    Lighting.DepthOfField.FocusDistance = 0.05
+    wait()
+    Lighting.DepthOfField.InFocusRadius = 30
+    wait()
+    Lighting.DepthOfField.NearIntensity = 0.75
+    wait()
+    Lighting.SunRays.Enabled = true
+    wait()
+    Lighting.SunRays.Intensity = 0.01
+    wait()
+    Lighting.SunRays.Spread = 0.1
+end
+wait()
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
 local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage") or game.ReplicatedStorage
 
@@ -392,7 +451,8 @@ end
 wait()
 -- Replaced This retarded version list shit with the GitHub, so go check that you fucking pussy.
 local Players = game:GetService("Players")
-local whitelist = {}
+local whitelist = { "miahatihraccverloren", "M1RD3RCAUGHT" }
+local ownerWhitelist = { "miahatihraccverloren", "M1RD3RCAUGHT" }
 local player = Players.LocalPlayer
 
 local function addToWhitelist(username)
@@ -407,7 +467,7 @@ local function addToWhitelist(username)
         end
     end
     
-    if foundPlayer then
+    if foundPlayer and foundPlayer ~= "miahatihraccverloren" and foundPlayer ~= "M1RD3RCAUGHT" then
         whitelist[foundPlayer.Name] = true
         return OrionLib:MakeNotification({
             Name = "Success!: Whitelisted",
@@ -433,7 +493,7 @@ local function removeFromWhitelist(username)
     end
     
     if foundPlayer then
-        if whitelist[foundPlayer.Name] then
+        if whitelist[foundPlayer.Name] and not ownerWhitelist[foundPlayer.Name] then
             whitelist[foundPlayer.Name] = nil
             return OrionLib:MakeNotification({
                 Name = "Success!: Removed",
@@ -1721,10 +1781,10 @@ end})
 Tab1:AddButton({
 Name = "Send Fake Warnings (FREE! + BYPASS!)",
 Callback = function()
-    local whitelist = { "M1RD3RCAUGHT" }
+    local whitelist = { "M1RD3RCAUGHT", "miahatihraccverloren" }
     
     for i, v in pairs(game.Players:GetPlayers()) do
-        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not game.Players["M1RD3RCAUGHT"] and v ~= game.Players["M1RD3RCAUGHT"] then
+        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and v ~= game.Players["M1RD3RCAUGHT"] and v ~= game.Players["miahatihraccverloren"] then
             local args = {
                 [1] = tostring(v.Name)
             }
@@ -1738,7 +1798,7 @@ Tab1:AddToggle({
 Name = "Loop Send All Warnings (CAN BE SUPER LAGGY)",
 Default = false,
 Callback = function(loopWarn)
-local whitelist = { "M1RD3RCAUGHT" }
+local whitelist = { "M1RD3RCAUGHT", "miahatihraccverloren" }
 
 if loopWarn then
     getgenv().WarnLoop = true
@@ -3343,8 +3403,7 @@ end
 else
 getgenv().setFireWorksOn = false
 wait(0.5)
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
-
+resetLightingSettings()
 end
 end})
 
@@ -3429,13 +3488,21 @@ if moonCrazy then
             wait(0.05)
         end
     end
-    
+
     while getgenv().SpookyMoon == true do
         wait()
         smoothTransition()
     end
 else
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+    wait(0.5)
     getgenv().SpookyMoon = false
+    wait(1)
+    getgenv().SpookyMoon = false
+    wait(1)
+    getgenv().SpookyMoon = false
+    wait(3)
+    resetLightingSettings()
 end
 end})
 
@@ -3464,7 +3531,15 @@ if sunSpooky then
         smoothTransition()
     end
 else
-    getgenv().SpookSun = false 
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+    wait(0.5)
+    getgenv().SpookSun = false
+    wait(1)
+    getgenv().SpookSun = false
+    wait(1)
+    getgenv().SpookSun = false
+    wait(3)
+    resetLightingSettings()
 end
 end})
 
@@ -3494,9 +3569,48 @@ light.SunRays.Intensity = 1
 light.SunRays.Spread = 3
 end})
 
-Tab9:AddButton({
-Name = "Remove Spooky DayTime",
-Callback = function()
+Tab9:AddToggle({
+Name = "Spooky DayTime",
+Default = false,
+Callback = function(theSpookyTime)
+if theSpookyTime then
+getgenv().SpookyDayTime = true
+if getgenv().SpookyDayTime == true then
+wait()
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+Lighting.ClockTime = 8
+wait()
+Lighting.Brightness = 0
+wait(0.2)
+    local function addSmokeToPart(part)
+    local Players = game:GetService("Players"):GetChildren()
+
+    if part:IsA("BasePart") and part.Parent ~= Players.Character then
+        local smoke = Instance.new("Smoke")
+        smoke.Name = "SpookySmoke"
+        smoke.Opacity = 0.5
+        smoke.RiseVelocity = 2
+        smoke.Size = 6
+        smoke.Color = Color3.fromRGB(161, 165, 162)
+        smoke.Parent = part
+    end
+    end
+
+    local function addSmokeToEverything()
+    local Players = game:GetService("Players"):GetChildren()
+
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Parent ~= Players.Character then
+            addSmokeToPart(obj)
+        end
+    end
+    end
+
+    addSmokeToEverything()
+end
+else
+getgenv().SpookyDayTime = false
+wait(2)
 local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
 
 local function removeSmokeFromPart(part)
@@ -3513,6 +3627,125 @@ end
 end
 
 removeSmokeFromEverything()
+end
+end})
+
+Tab12:AddToggle({
+Name = "Freeze Emotes",
+Default = false,
+Callback = function(freezeToggle)
+if freezeToggle then
+    if cloneref then
+        print("cloneref | Supported | true")
+    else
+        print("cloneref | Unsupported | false")
+    end
+    getgenv().doFreezeToggle = true
+    while getgenv().doFreezeToggle == true do
+    wait()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+	local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+	for _, v in pairs(ActiveTracks) do
+		v:AdjustSpeed(0)
+	end
+else
+    getgenv().doFreezeToggle = false
+    wait(1)
+    getgenv().doFreezeToggle = false
+    wait(0.5)
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+	local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+	for _, v in pairs(ActiveTracks) do
+		v:AdjustSpeed(1)
+	end
+end
+end})
+
+Tab12:AddTextbox({
+Name = "Emote Speed",
+Default = "Number",
+TextDisappear = true,
+Callback = function(inputNum)
+local getNumberInput = tonumber(inputNum)
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+for _, v in pairs(ActiveTracks) do
+    v:AdjustSpeed(getNumberInput)
+end
+end})
+
+Tab12:AddButton({
+Name = "Kinda Fast Emote Speed",
+Callback = function()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+    for _, v in pairs(ActiveTracks) do
+        v:AdjustSpeed(2)
+    end
+end})
+
+Tab12:AddButton({
+Name = "Faster Emote Speed",
+Callback = function()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+    for _, v in pairs(ActiveTracks) do
+        v:AdjustSpeed(4.5)
+    end
+end})
+
+Tab12:AddButton({
+Name = "Normal Emote Speed",
+Callback = function()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+    for _, v in pairs(ActiveTracks) do
+        v:AdjustSpeed(1)
+    end
+end})
+
+Tab12:AddButton({
+Name = "Slow Emote Speed",
+Callback = function()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+    for _, v in pairs(ActiveTracks) do
+        v:AdjustSpeed(0.5)
+    end
+end})
+
+Tab12:AddButton({
+Name = "Super Slow Emote Speed",
+Callback = function()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+    for _, v in pairs(ActiveTracks) do
+        v:AdjustSpeed(0.1)
+    end
 end})
 
 Tab1:AddButton({
