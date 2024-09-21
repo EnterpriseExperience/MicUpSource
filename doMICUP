@@ -108,7 +108,7 @@ local function promptForConfig()
         if writefile and readfile then
         writefile("IY_FE.iy", [[
             {
-                "currentShade2":[0.6666666865348816,0.3333333432674408,0],
+                "currentShade2":[0.18039216101169587,0.18039216101169587,0.18431372940540315],
                 "StayOpen":false,
                 "logsEnabled":false,
                 "aliases":[],
@@ -138,19 +138,18 @@ local function promptForConfig()
                     {"KEY":"Enum.KeyCode.Three","ISKEYUP":false,"COMMAND":"emote 3716633898"},
                     {"KEY":"Enum.KeyCode.F","ISKEYUP":false,"TOGGLE":"animspeed -1","COMMAND":"animspeed 1"}
                 ],
-                "currentShade3":[0.6666666865348816,0.3333333432674408,0],
-                "WayPoints":[
-                ],
+                "currentShade3":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
+                "WayPoints":[],
                 "jLogsEnabled":false,
-                "currentScroll":[0.6666666865348816,0.3333333432674408,0],
+                "currentScroll":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
                 "keepIY":true,
                 "eventBinds":"{\"OnSpawn\":[],\"OnDied\":[],\"OnExecute\":[],\"OnKilled\":[],\"OnJoin\":[],\"OnLeave\":[],\"OnDamage\":[],\"OnChatted\":[]}",
                 "espTransparency":0.3,
-                "currentShade1":[0.6666666865348816,0.3333333432674408,0],
+                "currentShade1":[0.1411764770746231,0.1411764770746231,0.14509804546833039],
                 "currentText2":[0,0,0],
-                "currentText1":[0,0,0]
+                "currentText1":[1,1,1]
             }
-            ]], true)
+        ]], true)
         else
             warn("Your exploit does not support 'writefile' [You will not be able to use custom config for Infinite Yield, sorry!]")
         end
