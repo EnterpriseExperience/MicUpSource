@@ -23,7 +23,7 @@ end
 local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = false, SaveConfig = true, ConfigFolder = "MICUP"})
 -- IF YOU ARE READING THIS, THIS HUB WILL UNDERGO MASSIVE CHANGES SOON!, UI ALSO SHOULD CHANGE TO! SO YOU HAVE FOUND THIS HINT EARLY!
 local Tab1 = Window:MakeTab({
-    Name = "Landing",
+    Name = "Home",
     Icon = "rbxassetid://7733960981",
     PremiumOnly = false
 })
@@ -39,7 +39,7 @@ local Section11 = Tab11:AddSection({
     Name = "Booth Tools/Stand/Stall Tools"
 })
 local Tab2 = Window:MakeTab({
-    Name = "LocalPlayer",
+    Name = "Character",
     Icon = "rbxassetid://7743871002",
     PremiumOnly = false
 })
@@ -47,7 +47,7 @@ local Section2 = Tab2:AddSection({
     Name = "Character Tools"
 })
 local Tab10 = Window:MakeTab({
-    Name = "Teleporting",
+    Name = "Teleports",
     Icon = "rbxassetid://7733764327",
     PremiumOnly = false
 })
@@ -55,7 +55,7 @@ local Section10 = Tab10:AddSection({
     Name = "Teleport Tools"
 })
 local Tab4 = Window:MakeTab({
-    Name = "Chat Funcs",
+    Name = "Chat Mods",
     Icon = "rbxassetid://7734021300",
     PremiumOnly = false
 })
@@ -63,7 +63,7 @@ local Section4 = Tab4:AddSection({
     Name = "Tools For Modifying/Manipulating Chat"
 })
 local Tab5 = Window:MakeTab({
-    Name = "Extra Utilities",
+    Name = "Extra Tools",
     Icon = "rbxassetid://7733954760",
     PremiumOnly = false
 })
@@ -79,7 +79,7 @@ local Section9 = Tab9:AddSection({
     Name = "Lighting And Sky Stuff?"
 })
 local Tab7 = Window:MakeTab({
-    Name = "WorkArounds",
+    Name = "Whitelist",
     Icon = "rbxassetid://7733771472",
     PremiumOnly = false
 })
@@ -87,7 +87,7 @@ local Section8 = Tab7:AddSection({
     Name = "Bypasses And Shit"
 })
 local Tab12 = Window:MakeTab({
-    Name = "Emote Stuff",
+    Name = "Emoting Tools",
     Icon = "rbxassetid://7743871002",
     PremiumOnly = false
 })
@@ -105,7 +105,7 @@ local Section6 = Tab6:AddSection({
 wait(0.5)
 local function promptForConfig()
     function runConfigChoice()
-        if writefile then
+        if writefile and readfile then
         writefile("IY_FE.iy", [[
             {
                 "currentShade2":[0.6666666865348816,0.3333333432674408,0],
@@ -165,6 +165,8 @@ local function promptForConfig()
 
     local function selectOption1()
         optionPicked = 1
+        wait()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
         wait()
         runConfigChoice()
     end
@@ -231,8 +233,6 @@ local function promptForConfig()
         selectOption2()
     end
 end
-wait(0.3)
-promptForConfig()
 wait(0.3)
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
 local LocalPlayer = Players.LocalPlayer
@@ -3573,7 +3573,7 @@ light.SunRays.Spread = 3
 end})
 
 Tab9:AddToggle({
-Name = "Spooky DayTime",
+Name = "Spooky DayTime (CAN be laggy?)",
 Default = false,
 Callback = function(theSpookyTime)
 if theSpookyTime then
