@@ -232,6 +232,8 @@ local function promptForConfig()
         selectOption2()
     end
 end
+wait(0.5)
+promptForConfig()
 wait(0.3)
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
 local LocalPlayer = Players.LocalPlayer
