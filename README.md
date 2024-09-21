@@ -62,4 +62,4 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 `[NOW HAS AN AUTOMATIC SYSTEM FOR CONFIGURATING SCRIPTING ABILITIES! (and for compatibility to!)]`
 
-`[RELEASING INFINITE YIELD RIZZ/EMOTE CONFIG SOON! (now very soon ;)]`
+`[RELEASED INFINITE YIELD RIZZ CONFIG! (BETA FEATURE)]`
