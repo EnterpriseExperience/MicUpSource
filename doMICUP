@@ -354,33 +354,24 @@ if GC then
 end
 wait()
 function getGUIEnabled()
-    getgenv().EnabledGUIsInGame = false
-    wait()
     getgenv().getCheckedGUIs = false
-
-    if getgenv().EnabledGUIsInGame == false then
-        getgenv().EnabledGUIsInGame = true
-        while getgenv().EnabledGUIsInGame == true do
-        wait()
-            game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("Action").Enabled = true
-            wait()
-            game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("VEffect").Enabled = true
-        end
-    end
-    wait(0.1)
-    repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("Action").Enabled == true and game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("VEffect").Enabled == true
     wait()
-    game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("Action"):GetPropertyChangedSignal("Enabled"):Connect(function(bool)
-        if bool == false then
-            bool = true
-            wait()
-            getgenv().getCheckedGUIs = true
-            wait()
-            print("Checked GUIs Enabled | Enabled Looping | GUIs Fixed! | true")
-        else
-            warn("We we're not able to properly fix GUIs | false | 1")
-        end
-    end)
+    if game:GetService("StarterGui"):FindFirstChild("Action") and game:GetService("StarterGui"):FindFirstChild("VEffect") then
+        local ActionGUI = game:GetService("StarterGui"):FindFirstChild("Action")
+        local VEffectGUI = game:GetService("StarterGui"):FindFirstChild("VEffect")
+        local getClone = ActionGUI:Clone()
+        getClone.Parent = game.Players.LocalPlayer.PlayerGui
+        local getSecondClone = VEffectGUI:Clone()
+        getSecondClone.Parent = game.Players.LocalPlayer.PlayerGui
+        wait()
+        getgenv().getCheckedGUIs = true
+    else
+        warn("Could not locate GUIs")
+    end
+
+    if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action") and game.Players.LocalPlayer.PlayerGui:FindFirstChild("VEffect") and getgenv().getCheckedGUIs == true then
+        return print("Checked OK !")
+    end
 end
 wait()
 function resetLightingSettings()
@@ -2775,9 +2766,7 @@ if IsInvisible == false then
       end
   end
   wait(0.1)
-  game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui", 0.2):FindFirstChild("Action", true).Enabled = true
-  wait()
-  game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui", 0.2):FindFirstChild("VEffect", true).Enabled = true
+  getGUIEnabled()
   wait(0.1)
   IsInvisible = true
 else
