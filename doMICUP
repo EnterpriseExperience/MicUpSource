@@ -356,20 +356,23 @@ wait()
 function getGUIEnabled()
     getgenv().getCheckedGUIs = false
     wait()
-    if game:GetService("StarterGui"):FindFirstChild("Action") and game:GetService("StarterGui"):FindFirstChild("VEffect") then
+    if game:GetService("StarterGui"):FindFirstChild("Action") and game:GetService("StarterGui"):FindFirstChild("VEffect") and game:GetService("StarterGui"):FindFirstChild("Menu") then
         local ActionGUI = game:GetService("StarterGui"):FindFirstChild("Action")
         local VEffectGUI = game:GetService("StarterGui"):FindFirstChild("VEffect")
+        local MenuGUI = game:GetService("StarterGui"):FindFirstChild("Menu")
         local getClone = ActionGUI:Clone()
         getClone.Parent = game.Players.LocalPlayer.PlayerGui
         local getSecondClone = VEffectGUI:Clone()
         getSecondClone.Parent = game.Players.LocalPlayer.PlayerGui
+        local getThirdClone = MenuGUI:Clone()
+        getThirdClone.Parent = game.Players.LocalPlayer.PlayerGui
         wait()
         getgenv().getCheckedGUIs = true
     else
         warn("Could not locate GUIs")
     end
 
-    if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action") and game.Players.LocalPlayer.PlayerGui:FindFirstChild("VEffect") and getgenv().getCheckedGUIs == true then
+    if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action") and game.Players.LocalPlayer.PlayerGui:FindFirstChild("VEffect") and game.Players.LocalPlayer.PlayerGui:FindFirstChild("Menu") and getgenv().getCheckedGUIs == true then
         return print("Checked OK !")
     end
 end
