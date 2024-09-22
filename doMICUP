@@ -179,7 +179,13 @@ local function promptForConfig()
     local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService") or game.UserInputService
 
     local function isPC()
-        return UserInputService.TouchEnabled == false
+        if UserInputService.TouchEnabled == true and writefile and readfile then
+            print("User is on mobile, but has access to writefile and readfile!")
+        else
+            if UserInputService.TouchEnabled == true and not writefile and not readfile then
+                warn("User is on mobile, but support for writefile and readfile does not exist.")
+            end
+        end
     end
 
     local function selectOption1()
@@ -196,10 +202,17 @@ local function promptForConfig()
         warn("false | CONFIG_WRITE_DENIED | 3")
     end
 
-    if not isPC() then
-        print("Skipping GUI for mobile players.")
-        wait(0.1)
-        optionPicked = 2
+    local function selectOption3()
+        local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService") or game.UserInputService
+        if isPC() then
+            optionPicked = 1
+            wait(0.1)
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+            wait(0.4)
+            runConfigChoice()
+        else
+            selectOption2()
+        end
     end
 
     local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
@@ -250,6 +263,9 @@ local function promptForConfig()
     end
     if optionPicked == 2 then
         selectOption2()
+    end
+    if optionPicked == 3 and isPC() then
+        selectOption3()
     end
 end
 wait(0.5)
