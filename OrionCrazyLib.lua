@@ -641,25 +641,29 @@ function OrionLib:MakeWindow(WindowConfig)
         wait()
 		WindowConfig.CloseCallback()
 	end)
+	wait(1)
+	local ScreenCreateGui = Instance.new("ScreenGui")
+	ScreenCreateGui.Name = "GetOrionGUI"
+	ScreenCreateGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+	wait(1)
+	local buttonSize = UDim2.new(0, 50, 0, 50)
+    local ui = MainWindow
 
-	        local buttonSize = UDim2.new(0, 50, 0, 50)
-        local ui = MainWindow
+    local toggleButton = Instance.new("TextButton")
+    toggleButton.Name = "ToggleOpenButtonOrion"
+    toggleButton.Size = buttonSize
+    toggleButton.Position = UDim2.new(0, 10, 0.5, -25)
+    toggleButton.Text = "Toggle"
+    toggleButton.TextScaled = true
+    toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ScreenGui", 1)
 
-        local toggleButton = Instance.new("TextButton")
-        toggleButton.Name = "ToggleOpenButtonOrion"
-        toggleButton.Size = buttonSize
-        toggleButton.Position = UDim2.new(0, 10, 0.5, -25)
-        toggleButton.Text = "Toggle"
-        toggleButton.TextScaled = true
-        toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
+    ui.Visible = false
 
-        ui.Visible = false
-
-        local isUIVisible = false
-        toggleButton.MouseButton1Click:Connect(function()
-            isUIVisible = not isUIVisible
-            ui.Visible = isUIVisible
-        end)
+    local isUIVisible = false
+    toggleButton.MouseButton1Click:Connect(function()
+        isUIVisible = not isUIVisible
+        ui.Visible = isUIVisible
+    end)
 	wait(1)
 	repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("ToggleOpenButtonOrion")
 	if game.Players.LocalPlayer.PlayerGui:FindFirstChild("ToggleOpenButtonOrion") then
