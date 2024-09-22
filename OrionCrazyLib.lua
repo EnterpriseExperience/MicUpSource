@@ -644,7 +644,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	wait(0.7)
 	local ScreenCreateGui = Instance.new("ScreenGui")
 	ScreenCreateGui.Name = "GetOrionGUI"
-	ScreenCreateGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+	ScreenCreateGui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
 	wait(0.7)
 	local buttonSize = UDim2.new(0, 50, 0, 50)
     local ui = MainWindow
@@ -655,7 +655,7 @@ function OrionLib:MakeWindow(WindowConfig)
     toggleButton.Position = UDim2.new(0, 10, 0.5, -25)
     toggleButton.Text = "Toggle"
     toggleButton.TextScaled = true
-    toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("GetOrionGUI", 0.5)
+    toggleButton.Parent = game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI")
 
     ui.Visible = false
 
@@ -664,12 +664,24 @@ function OrionLib:MakeWindow(WindowConfig)
         isUIVisible = not isUIVisible
         ui.Visible = isUIVisible
     end)
-	wait()
-	AddConnection(toggleButton.MouseButton1Click, function()
-		if UIHidden then
-			MainWindow.Visible = true
+	wait(1)
+	if toggleButton then
+		AddConnection(toggleButton.MouseButton1Click, function()
+			if UIHidden then
+				MainWindow.Visible = true
+			end
+		end)
+	else
+		repeat wait() until toggleButton or game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI"):FindFirstChild("ToggleOpenButtonOrion")
+		if game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI"):FindFirstChild("ToggleOpenButtonOrion") then
+			local toggleButton = game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI").ToggleOpenButtonOrion
+			AddConnection(toggleButton.MouseButton1Click, function()
+				if UIHidden then
+					MainWindow.Visible = true
+				end
+			end)
 		end
-	end)
+	end
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
 		if Minimized then
@@ -781,6 +793,8 @@ function OrionLib:MakeWindow(WindowConfig)
 			TabFrame.Title.Font = Enum.Font.GothamBlack
 			Container.Visible = true
 		end
+		wait()
+		UIHidden = false
 		wait()
 		MainWindow.Visible = true
 		wait()
