@@ -645,6 +645,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	local ScreenCreateGui = Instance.new("ScreenGui")
 	ScreenCreateGui.Name = "GetOrionGUI"
 	ScreenCreateGui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
+	ScreenCreateGui.ResetOnSpawn = false
 	wait(0.7)
 	local buttonSize = UDim2.new(0, 50, 0, 50)
     local ui = MainWindow
