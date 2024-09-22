@@ -639,7 +639,10 @@ function OrionLib:MakeWindow(WindowConfig)
 			Time = 10
 		})
         wait()
-        local buttonSize = UDim2.new(0, 50, 0, 50)
+		WindowConfig.CloseCallback()
+	end)
+
+	        local buttonSize = UDim2.new(0, 50, 0, 50)
         local ui = MainWindow
 
         local toggleButton = Instance.new("TextButton")
@@ -657,11 +660,14 @@ function OrionLib:MakeWindow(WindowConfig)
             isUIVisible = not isUIVisible
             ui.Visible = isUIVisible
         end)
-        wait()
-		WindowConfig.CloseCallback()
-	end)
-
-	local ToggleButtonUI = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("ToggleOpenButtonOrion")
+	wait(1)
+	repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("ToggleOpenButtonOrion")
+	if game.Players.LocalPlayer.PlayerGui:FindFirstChild("ToggleOpenButtonOrion") then
+		local ToggleButtonUI = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("ToggleOpenButtonOrion")
+	else
+		warn("Could not find UI - Shutting Down")
+		return game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
+	end
 
 	AddConnection(ToggleButtonUI.MouseButton1Click, function(Input)
 		if UIHidden then
