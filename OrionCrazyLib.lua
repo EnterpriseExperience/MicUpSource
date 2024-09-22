@@ -24,7 +24,6 @@ local OrionLib = {
 	Folder = nil,
 	SaveCfg = false
 }
-print("1")
 
 --Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
 local Icons = {}
@@ -48,12 +47,10 @@ local function GetIcon(IconName)
 		return nil
 	end
 end
-print("2")
 
 local Orion = Instance.new("ScreenGui")
 Orion.Name = "Orion"
 Orion.Parent = game.CoreGui
-print("3")
 
 function OrionLib:IsRunning()
 	if gethui then
@@ -72,7 +69,6 @@ local function AddConnection(Signal, Function)
 	table.insert(OrionLib.Connections, SignalConnect)
 	return SignalConnect
 end
-print("4")
 
 task.spawn(function()
 	while (OrionLib:IsRunning()) do
@@ -640,13 +636,35 @@ function OrionLib:MakeWindow(WindowConfig)
 		OrionLib:MakeNotification({
 			Name = "Interface Hidden",
 			Content = "Tap RightShift to reopen the interface",
-			Time = 5
+			Time = 10
 		})
+        wait()
+        local buttonSize = UDim2.new(0, 50, 0, 50)
+        local ui = MainWindow
+
+        local toggleButton = Instance.new("TextButton")
+        toggleButton.Name = "ToggleOpenButtonOrion"
+        toggleButton.Size = buttonSize
+        toggleButton.Position = UDim2.new(0, 10, 0.5, -25)
+        toggleButton.Text = "Toggle"
+        toggleButton.TextScaled = true
+        toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
+
+        ui.Visible = false
+
+        local isUIVisible = false
+        toggleButton.MouseButton1Click:Connect(function()
+            isUIVisible = not isUIVisible
+            ui.Visible = isUIVisible
+        end)
+        wait()
 		WindowConfig.CloseCallback()
 	end)
 
-	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
+	local ToggleButtonUI = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("ToggleOpenButtonOrion")
+
+	AddConnection(ToggleButtonUI.MouseButton1Click, function(Input)
+		if UIHidden then
 			MainWindow.Visible = true
 		end
 	end)
