@@ -653,7 +653,10 @@ function OrionLib:MakeWindow(WindowConfig)
     toggleButton.Name = "ToggleOpenButtonOrion"
     toggleButton.Size = buttonSize
     toggleButton.Position = UDim2.new(0, 10, 0.5, -25)
-    toggleButton.Text = "Toggle"
+	toggleButton.BackgroundColor3 = Color3.new(226, 0, 0)
+	toggleButton.TextColor3 = Color3.new(0, 0, 0)
+	toggleButton.FontFace = 'Font { Family = rbxasset://fonts/families/Roboto.json, Weight = Bold, Style = Normal }'
+    toggleButton.Text = "Toggle UI"
     toggleButton.TextScaled = true
     toggleButton.Parent = game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI")
 
