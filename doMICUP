@@ -3883,8 +3883,6 @@ getgenv().SCRIPT_EXECUTED = false
 wait()
 getgenv().SCRIPT_EXECUTED = false
 wait()
-game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
-wait()
 game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
 end})
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld')))()
