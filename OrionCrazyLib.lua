@@ -655,7 +655,7 @@ function OrionLib:MakeWindow(WindowConfig)
     toggleButton.Position = UDim2.new(0, 10, 0.5, -25)
     toggleButton.Text = "Toggle"
     toggleButton.TextScaled = true
-    toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("ScreenGui", 1)
+    toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("GetOrionGUI", 1)
 
     ui.Visible = false
 
