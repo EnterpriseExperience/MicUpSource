@@ -664,15 +664,7 @@ function OrionLib:MakeWindow(WindowConfig)
         isUIVisible = not isUIVisible
         ui.Visible = isUIVisible
     end)
-	wait(1)
-	repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI")
-	if game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI") then
-		local ToggleButtonUI = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("GetOrionGUI")
-	else
-		warn("Could not find UI - Shutting Down")
-		return game:GetService("CoreGui"):WaitForChild("Orion", 0.5):Destroy()
-	end
-
+	wait()
 	AddConnection(ToggleButtonUI.MouseButton1Click, function(Input)
 		if UIHidden then
 			MainWindow.Visible = true
