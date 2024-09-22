@@ -665,7 +665,7 @@ function OrionLib:MakeWindow(WindowConfig)
         ui.Visible = isUIVisible
     end)
 	wait()
-	AddConnection(ToggleButtonUI.MouseButton1Click, function(Input)
+	AddConnection(game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):FindFirstChild("ToggleOpenButtonOrion").MouseButton1Click, function(Input)
 		if UIHidden then
 			MainWindow.Visible = true
 		end
@@ -780,8 +780,10 @@ function OrionLib:MakeWindow(WindowConfig)
 			TabFrame.Title.TextTransparency = 0
 			TabFrame.Title.Font = Enum.Font.GothamBlack
 			Container.Visible = true
-		end    
-
+		end
+		wait()
+		MainWindow.Visible = true
+		wait()
 		AddConnection(TabFrame.MouseButton1Click, function()
 			for _, Tab in next, TabHolder:GetChildren() do
 				if Tab:IsA("TextButton") then
