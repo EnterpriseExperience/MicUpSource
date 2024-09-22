@@ -665,7 +665,7 @@ function OrionLib:MakeWindow(WindowConfig)
         ui.Visible = isUIVisible
     end)
 	wait()
-	AddConnection(game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):FindFirstChild("ToggleOpenButtonOrion").MouseButton1Click, function(Input)
+	AddConnection(toggleButton.MouseButton1Click, function()
 		if UIHidden then
 			MainWindow.Visible = true
 		end
