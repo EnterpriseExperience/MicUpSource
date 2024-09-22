@@ -641,11 +641,11 @@ function OrionLib:MakeWindow(WindowConfig)
         wait()
 		WindowConfig.CloseCallback()
 	end)
-	wait(1)
+	wait(0.7)
 	local ScreenCreateGui = Instance.new("ScreenGui")
 	ScreenCreateGui.Name = "GetOrionGUI"
 	ScreenCreateGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-	wait(1)
+	wait(0.7)
 	local buttonSize = UDim2.new(0, 50, 0, 50)
     local ui = MainWindow
 
@@ -655,7 +655,7 @@ function OrionLib:MakeWindow(WindowConfig)
     toggleButton.Position = UDim2.new(0, 10, 0.5, -25)
     toggleButton.Text = "Toggle"
     toggleButton.TextScaled = true
-    toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("GetOrionGUI", 1)
+    toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("GetOrionGUI", 0.5)
 
     ui.Visible = false
 
@@ -670,7 +670,7 @@ function OrionLib:MakeWindow(WindowConfig)
 		local ToggleButtonUI = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("GetOrionGUI")
 	else
 		warn("Could not find UI - Shutting Down")
-		return game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
+		return game:GetService("CoreGui"):WaitForChild("Orion", 0.5):Destroy()
 	end
 
 	AddConnection(ToggleButtonUI.MouseButton1Click, function(Input)
