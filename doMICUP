@@ -3870,8 +3870,6 @@ wait()
 getgenv().SCRIPT_EXECUTED = false
 wait()
 game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
-wait()
-game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
 wait(1)
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/doMICUP')))()
 wait(0.5)
