@@ -3858,6 +3858,12 @@ end})
 Tab5:AddButton({
 Name = "Reload Script",
 Callback = function()
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+getgenv().Invis_Loaded = false
+wait()
 getgenv().SCRIPT_EXECUTED = false
 wait()
 game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
@@ -3865,6 +3871,8 @@ wait()
 game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
 wait(1)
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/doMICUP')))()
+wait(0.5)
+Humanoid.Health = 0
 end})
 
 Tab5:AddButton({
