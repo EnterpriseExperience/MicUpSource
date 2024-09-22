@@ -115,6 +115,14 @@ local Section6 = Tab6:AddSection({
     Name = "Current Information."
 })
 wait(0.5)
+if writefile and readfile then
+    print("writefile function (unpacked data): "..tostring(writefile).." | readfile function (unpacked data): "..tostring(readfile))
+    wait(0.1)
+    print("Your executor DOES support writefile and readfile! AWESOME!")
+else
+    warn("Your executor does not support writefile | readfile | false | SORRY! | There CAN/WILL be errors")
+end
+wait(0.5)
 local function promptForConfig()
     function runConfigChoice()
         if writefile and readfile then
@@ -3718,8 +3726,6 @@ if freezeToggle then
 	end
 end
 else
-    getgenv().doFreezeToggle = false
-    wait(1)
     getgenv().doFreezeToggle = false
     wait(0.5)
     local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
