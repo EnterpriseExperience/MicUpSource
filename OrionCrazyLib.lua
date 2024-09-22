@@ -665,9 +665,9 @@ function OrionLib:MakeWindow(WindowConfig)
         ui.Visible = isUIVisible
     end)
 	wait(1)
-	repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("ToggleOpenButtonOrion")
-	if game.Players.LocalPlayer.PlayerGui:FindFirstChild("ToggleOpenButtonOrion") then
-		local ToggleButtonUI = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("ToggleOpenButtonOrion")
+	repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI")
+	if game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI") then
+		local ToggleButtonUI = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("GetOrionGUI")
 	else
 		warn("Could not find UI - Shutting Down")
 		return game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
