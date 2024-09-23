@@ -1213,7 +1213,7 @@ end
 end})
 
 Tab4:AddButton({
-Name = "Chat Bypass 3 (Devils Bypasser)",
+Name = "Chat Bypass 1 (Devils Bypasser)",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/hassanxzayn-lua/devilschatbypasser/main/MAIN"))();
 end})
@@ -1899,7 +1899,7 @@ if loopWarn then
     while getgenv().WarnLoop == true do
     wait()
     for i, v in pairs(game.Players:GetChildren()) do
-        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) then
+        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v) then
             local args = {
                 [1] = tostring(v.Name)
             }
@@ -1911,14 +1911,12 @@ end
 else
 getgenv().WarnLoop = false
 wait()
-getgenv().WarnLoop = false
-wait()
-getgenv().WarnLoop = false
-wait()
-for i = 1, 999999 do -- Did a rethinking for the method, and so im going to turn the loop OFF, then 'break' it as well.
-    getgenv().WarnLoop = false
-    break
-end
+repeat wait() until getgenv().WarnLoop == false
+-- Did a rethinking for the method, and so im going to turn the loop OFF, then 'break' it as well.
+    for i = 1, 25000 do
+        getgenv().WarnLoop = false
+        break
+    end
 end
 end})
 
@@ -1932,7 +1930,7 @@ local function isWhitelisted(username)
 end
 
 local thisPlrWarned = findplr(warnPlr)
-if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, thisPlrWarned.Name) then
+if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, thisPlrWarned) then
     local args = {
         [1] = tostring(thisPlrWarned.Name)
     }
