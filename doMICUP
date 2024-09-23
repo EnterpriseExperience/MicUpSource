@@ -525,8 +525,8 @@ else
 end
 wait()
 local Players = game:GetService("Players")
-local whitelist = { "miahatihraccverloren", "M1RD3RCAUGHT" }
-local ownerWhitelist = { "miahatihraccverloren", "M1RD3RCAUGHT" }
+local whitelist = { "miahatihraccverloren", "M1RD3RCAUGHT", "STK_kets4eki" }
+local ownerWhitelist = { "miahatihraccverloren", "M1RD3RCAUGHT", "STK_kets4eki" }
 local player = Players.LocalPlayer
 
 local function addToWhitelist(username)
