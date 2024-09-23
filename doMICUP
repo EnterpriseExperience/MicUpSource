@@ -115,6 +115,20 @@ local Section6 = Tab6:AddSection({
     Name = "Current Information."
 })
 wait(0.5)
+getgenv().GetStartIntro = false
+if getgenv().GetStartIntro == false then
+    getgenv().GetStartIntro = true
+    wait(0.1)
+    loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/startIntroFadeScreen')))()
+    wait(1)
+    repeat wait() until getgenv().GetStartIntro == true
+    if getgenv().GetStartIntro == true then
+        print("Set Intro Data | Success | true")
+    else
+        warn("Unable to retrieve Intro Data | failed | false")
+    end
+end
+wait(0.5)
 if writefile and readfile then
     print("writefile function (unpacked data): "..tostring(writefile).." | readfile function (unpacked data): "..tostring(readfile))
     wait(0.1)
