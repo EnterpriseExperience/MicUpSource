@@ -1213,18 +1213,6 @@ end
 end})
 
 Tab4:AddButton({
-Name = "Chat Bypass 2 (Better Bypasser)",
-Callback = function()
-    loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Synergy-Networks/products/main/BetterBypasser/loader.lua"))({
-        Settings = {
-            Mode = "Normal",
-            Keybind = "RightControl",
-            CustomBypasses = {}
-        }
-    })
-end})
-
-Tab4:AddButton({
 Name = "Chat Bypass 3 (Devils Bypasser)",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/hassanxzayn-lua/devilschatbypasser/main/MAIN"))();
