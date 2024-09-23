@@ -1,0 +1,143 @@
+local player = game.Players.LocalPlayer
+local playerName = player.Name
+local TweenService = game:GetService("TweenService")
+
+local scrambleTime = 5
+local scrambleSpeed = 0.05
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "FullScreenScrambleGUI"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.IgnoreGuiInset = true
+screenGui.ResetOnSpawn = false
+
+local backgroundFrame = Instance.new("Frame")
+backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
+backgroundFrame.Position = UDim2.new(0, 0, 0, 0)
+backgroundFrame.BackgroundTransparency = 1
+backgroundFrame.Parent = screenGui
+
+local uiGradient = Instance.new("UIGradient")
+uiGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 50)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 0, 100)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 200))
+}
+uiGradient.Rotation = 45
+uiGradient.Parent = backgroundFrame
+
+local fadeInBackgroundInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+
+local welcomeLabel = Instance.new("TextLabel")
+welcomeLabel.Size = UDim2.new(1, 0, 0.1, 0)
+welcomeLabel.Position = UDim2.new(0, 0, 0.35, 0)
+welcomeLabel.BackgroundTransparency = 1
+welcomeLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+welcomeLabel.Font = Enum.Font.Garamond
+welcomeLabel.TextSize = 50
+welcomeLabel.TextScaled = true
+welcomeLabel.Text = "Welcome, " .. playerName
+welcomeLabel.Parent = screenGui
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 0.2, 0)
+textLabel.Position = UDim2.new(0, 0, 0.5, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.Font = Enum.Font.SourceSansBold
+textLabel.TextSize = 100
+textLabel.TextScaled = true
+textLabel.TextTransparency = 1
+textLabel.Parent = screenGui
+
+local copyrightLabel = Instance.new("TextLabel")
+copyrightLabel.Size = UDim2.new(1, 0, 0.1, 0)
+copyrightLabel.Position = UDim2.new(0, 0, 0.8, 0)
+copyrightLabel.BackgroundTransparency = 1
+copyrightLabel.TextColor3 = Color3.fromRGB(50, 50, 50)
+copyrightLabel.Font = Enum.Font.SourceSans
+copyrightLabel.TextSize = 30
+copyrightLabel.TextScaled = true
+copyrightLabel.Text = "© Zacks Easy Hub | 2024 | Easier Scripting | Easier Access"
+copyrightLabel.Parent = screenGui
+
+TweenService:Create(backgroundFrame, fadeInBackgroundInfo, {BackgroundTransparency = 0}):Play()
+
+local function scrambleText(text)
+    local scrambled = ""
+    for i = 1, #text do
+        local randChar = string.char(math.random(48, 122))
+        while not (randChar:match("%a") or randChar:match("%d")) do
+            randChar = string.char(math.random(48, 122))
+        end
+        scrambled = scrambled .. randChar
+    end
+    return scrambled
+end
+
+local function revealTextOverTime(scrambleTime, mainText, label)
+    local elapsedTime = 0
+    local totalLength = #mainText
+
+    while elapsedTime < scrambleTime do
+        local revealAmount = math.floor((elapsedTime / scrambleTime) * totalLength)
+        local scrambledText = scrambleText(mainText)
+        label.Text = scrambledText
+        label.TextTransparency = 0
+        elapsedTime = elapsedTime + scrambleSpeed
+        wait(scrambleSpeed)
+    end
+
+    label.Text = mainText
+end
+
+local function fadeOutText(label)
+    TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
+end
+
+local function moveOutText()
+    TweenService:Create(textLabel, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0, 0)}):Play()
+end
+
+local function applyRainbowEffect(label)
+    local rainbowTime = 0.5
+    local colors = {
+        Color3.fromRGB(255, 0, 0),
+        Color3.fromRGB(255, 165, 0),
+        Color3.fromRGB(255, 255, 0),
+        Color3.fromRGB(0, 255, 0),
+        Color3.fromRGB(0, 255, 255),
+        Color3.fromRGB(0, 0, 255),
+        Color3.fromRGB(255, 0, 255)
+    }
+
+    while true do
+        for _, color in ipairs(colors) do
+            TweenService:Create(label, TweenInfo.new(rainbowTime, Enum.EasingStyle.Linear), {TextColor3 = color}):Play()
+            wait(rainbowTime)
+        end
+    end
+end
+
+spawn(function()
+    revealTextOverTime(scrambleTime, welcomeLabel.Text, welcomeLabel)
+    applyRainbowEffect(welcomeLabel)
+end)
+
+spawn(function()
+    revealTextOverTime(scrambleTime, "You are now tuning into 'Zacks Easy Scripting Utilities', Enjoy!", textLabel)
+    applyRainbowEffect(textLabel)
+end)
+
+wait(scrambleTime + 1)
+
+fadeOutText(welcomeLabel)
+fadeOutText(textLabel)
+fadeOutText(copyrightLabel)
+moveOutText()
+
+local fadeOutBackground = TweenService:Create(backgroundFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1})
+fadeOutBackground:Play()
+
+wait(1)
+screenGui:Destroy()
