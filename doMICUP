@@ -2571,7 +2571,7 @@ end
 end})
 
 Tab4:AddButton({
-Name = "Chat Bypass (UserCreation Bypasser)",
+Name = "Chat Bypass (UserCreation, key = booths)",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/1price/usercreation/main/UserCreation.lua", true))()
 end})
