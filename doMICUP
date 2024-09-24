@@ -117,7 +117,7 @@ if getSupportedFunctions(httprequest) then
     local yesButton = Instance.new("TextButton")
     yesButton.Size = UDim2.new(0.8, 0, 0.3, 0)
     yesButton.Position = UDim2.new(0.1, 0, 0.1, 0)
-    yesButton.Text = "Yes I Would"
+    yesButton.Text = "Copy Invite Link"
     yesButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
     yesButton.TextScaled = true
     yesButton.Parent = frame
