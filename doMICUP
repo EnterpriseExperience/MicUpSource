@@ -134,6 +134,8 @@ if getSupportedFunctions(httprequest) then
         local AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 
         AllClipboards("https://discord.gg/VJh3kkYzBn")
+        wait(0.5)
+        screenGui:Destroy()
     end)
 
     noButton.MouseButton1Click:Connect(function()
