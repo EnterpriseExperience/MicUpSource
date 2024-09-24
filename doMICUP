@@ -6,13 +6,85 @@ local ScriptProcess = ProcessStartName
 wait()
 local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
+local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService") or game.TeleportService
+local AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+
+function getSupportedFunctions(funcSupported)
+    if funcSupported then
+        return funcSupported
+    else
+        warn(tostring(funcSupported).. ", is either not a supported function, or does not exist!")
+    end
+end
+
+if getSupportedFunctions(cloneref) then
+    local result = tostring(getSupportedFunctions(cloneref))
+    if result then
+        print(result..", Is Supported!")
+    else
+        warn("Not Supported! | "..result)
+    end
+else
+    warn("Unsupported Function!")
+end
+wait()
+if getSupportedFunctions(writefile) then
+    local result = tostring(getSupportedFunctions(writefile))
+    if result then
+        print(result..", Is Supported!")
+    else
+        warn("Not Supported! | "..result)
+    end
+else
+    warn("Unsupported Function!")
+end
+wait()
+if getSupportedFunctions(readfile) then
+    local result = tostring(getSupportedFunctions(readfile))
+    if result then
+        print(result..", Is Supported!")
+    else
+        warn("Not Supported! | "..result)
+    end
+else
+    warn("Unsupported Function!")
+end
+wait()
+if getSupportedFunctions(AllClipboards) then
+    local result = tostring(getSupportedFunctions(AllClipboards))
+    if result then
+        print(result..", Is Supported!")
+    else
+        warn("Not Supported!")
+    end
+else
+    warn("Unsupported Function!")
+end
+wait()
+if getSupportedFunctions(httprequest) then
+    local result = tostring(getSupportedFunctions(httprequest))
+    if result then
+        print(result..", Is Supported!")
+    else
+        warn("Not Supported!")
+    end
+else
+    warn("Unsupported Function!")
+end
 
 if game.PlaceId ~= 6884319169 then
-    return Notification:Notify(
-        {Title = "Error: This is not Mic Up!", Description = "Game not supported!"},
-        {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
-        {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() print("Process Exited Because MIC UP was not detected.") end}
-    )
+    local MICUPPlaceID = tonumber(6884319169) or 6884319169
+    local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService") or game.TeleportService
+    if tonumber(MICUPPlaceID) then
+        print("true")
+        wait()
+        TeleportService:Teleport(MICUPPlaceID)
+    else
+        print("false")
+        wait()
+        TeleportService:Teleport(MICUPPlaceID)
+    end
 end
 
 if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
@@ -23,6 +95,55 @@ if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     )
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
+
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local player = Players.LocalPlayer
+local Character = player.Character or player.CharacterAdded:Wait()
+local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui") or player:WaitForChild("PlayerGui", 1)
+local HttpService = cloneref(game:GetService("HttpService")) or game:GetService("HttpService") or game.HttpService
+repeat wait() until player and Character and Character:FindFirstChild("HumanoidRootPart", true) and Character:FindFirstChildWhichIsA("Humanoid", true)
+
+if getSupportedFunctions(httprequest) then
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "InviteGui"
+    screenGui.Parent = playerGui
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.3, 0, 0.3, 0)
+    frame.Position = UDim2.new(0.35, 0, 0.35, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    frame.Parent = screenGui
+
+    local yesButton = Instance.new("TextButton")
+    yesButton.Size = UDim2.new(0.8, 0, 0.3, 0)
+    yesButton.Position = UDim2.new(0.1, 0, 0.1, 0)
+    yesButton.Text = "Yes I Would"
+    yesButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+    yesButton.TextScaled = true
+    yesButton.Parent = frame
+
+    local noButton = Instance.new("TextButton")
+    noButton.Size = UDim2.new(0.8, 0, 0.3, 0)
+    noButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+    noButton.Text = "No Thanks"
+    noButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    noButton.TextScaled = true
+    noButton.Parent = frame
+
+    yesButton.MouseButton1Click:Connect(function()
+        local AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+
+        AllClipboards("https://discord.gg/VJh3kkYzBn")
+    end)
+
+    noButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+else
+    print("Function "..tostring(getSupportedFunctions(httprequest)).." is not supported!")
+    wait()
+    print("...")
+end
 
 function loadGUI()
 repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -410,7 +531,7 @@ function getGUIEnabled()
         warn("Could not locate GUIs")
     end
 
-    if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Action") and game.Players.LocalPlayer.PlayerGui:FindFirstChild("VEffect") and game.Players.LocalPlayer.PlayerGui:FindFirstChild("Menu") and getgenv().getCheckedGUIs == true then
+    if getgenv().getCheckedGUIs == true then
         return print("Checked OK !")
     end
 end
@@ -4730,7 +4851,16 @@ local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
 wait(0.5)
-Humanoid.Health = 0
+if Humanoid.Health == 0 then
+    repeat wait() until Humanoid and Humanoid.Health >= 50
+    if Humanoid and Humanoid.Health >= 45 then
+        Humanoid.Health = 0
+    else
+        warn("...")
+    end
+else
+    print("---")
+end
 wait(0.1)
 print("Successfully ran!")
 wait(1)
