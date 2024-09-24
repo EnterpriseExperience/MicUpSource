@@ -2031,11 +2031,8 @@ if loopWarn then
     end
 end
 else
-getgenv().WarnLoop = false
-wait()
-repeat wait() until getgenv().WarnLoop == false
--- Did a rethinking for the method, and so im going to turn the loop OFF, then 'break' it as well.
-    for i = 1, 30000 do
+-- Did a rethinking for the method, instead of just setting a 'getgenv()' loop, i'll just break the loop instead, by setting it's state to broken around 20K times (because this shit spams hard)
+    for i = 1, 20000 do
         break
     end
 end
