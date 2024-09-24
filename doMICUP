@@ -648,8 +648,8 @@ else
 end
 wait()
 local Players = game:GetService("Players")
-local whitelist = { "miahatihraccverloren", "M1RD3RCAUGHT", "STK_kets4eki" }
-local ownerWhitelist = { "miahatihraccverloren", "M1RD3RCAUGHT", "STK_kets4eki" }
+local whitelist = {  }
+local ownerWhitelist = { "miahatihraccverloren", "M1RD3RCAUGHT" }
 local player = Players.LocalPlayer
 
 local function addToWhitelist(username)
@@ -2001,7 +2001,7 @@ Callback = function()
     local whitelist = { "M1RD3RCAUGHT", "miahatihraccverloren" }
     
     for i, v in pairs(game.Players:GetPlayers()) do
-        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and v ~= game.Players["M1RD3RCAUGHT"] and v ~= game.Players["miahatihraccverloren"] then
+        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not table.find(ownerWhitelist, v.Name) and v ~= game.Players["M1RD3RCAUGHT"] and v ~= game.Players["miahatihraccverloren"] then
             local args = {
                 [1] = tostring(v.Name)
             }
@@ -2018,11 +2018,10 @@ Callback = function(loopWarn)
 local whitelist = { "M1RD3RCAUGHT", "miahatihraccverloren", "STK_kets4eki" }
 
 if loopWarn then
-    getgenv().WarnLoop = true
-    while getgenv().WarnLoop == true do
+    while true do
     wait()
     for i, v in pairs(game.Players:GetChildren()) do
-        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v) then
+        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not table.find(ownerWhitelist, v.Name) then
             local args = {
                 [1] = tostring(v.Name)
             }
@@ -2036,8 +2035,7 @@ getgenv().WarnLoop = false
 wait()
 repeat wait() until getgenv().WarnLoop == false
 -- Did a rethinking for the method, and so im going to turn the loop OFF, then 'break' it as well.
-    for i = 1, 25000 do
-        getgenv().WarnLoop = false
+    for i = 1, 30000 do
         break
     end
 end
@@ -2053,7 +2051,7 @@ local function isWhitelisted(username)
 end
 
 local thisPlrWarned = findplr(warnPlr)
-if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, thisPlrWarned) then
+if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, thisPlrWarned.Name) and not table.find(ownerWhitelist, thisPlrWarned.Name) then
     local args = {
         [1] = tostring(thisPlrWarned.Name)
     }
@@ -2061,7 +2059,7 @@ if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, thisP
     game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
 end
 
-if thisPlrWarned == "M1RD3RCAUGHT" or thisPlrWarned == "STK_kets4eki" then
+if thisPlrWarned.Name == "M1RD3RCAUGHT" or thisPlrWarned.Name == "STK_kets4eki" or thisPlrWarned.Name == "miahatihraccverloren" then
     return OrionLib:MakeNotification({
         Name = "Cancelled!",
         Content = "Player is an owner!",
