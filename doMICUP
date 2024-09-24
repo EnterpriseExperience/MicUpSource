@@ -4853,16 +4853,9 @@ local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
 wait(0.5)
-if Humanoid.Health == 0 then
-    repeat wait() until Humanoid and Humanoid.Health >= 50
-    if Humanoid and Humanoid.Health >= 45 then
-        Humanoid.Health = 0
-    else
-        warn("...")
-    end
-else
-    print("---")
-end
+repeat wait() until Humanoid
+wait()
+Humanoid.Health = 0
 wait(0.1)
 print("Successfully ran!")
 wait(1)
