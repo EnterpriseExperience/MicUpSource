@@ -11,40 +11,49 @@ local AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard
 local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
 function getRoot(char)
-	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-	return rootPart
+    local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+    return rootPart
 end
 
---[[local spawnpos = {}
+local player = game.Players.LocalPlayer
 
-spDelay = 0.1
-game.Players.LocalPlayer.CharacterAdded:Connect(function()
-	repeat wait() until getRoot(game.Players.LocalPlayer.Character)
+--[[local savedSpawnPos = nil
+local spDelay = 0.1
 
-	pcall(function()
-		if spawnpoint and not refreshCmd and not table.find(spawnpos, ) then
-			wait(spDelay)
-			getRoot(game.Players.LocalPlayer.Character).CFrame = spawnpos
-		end
-	end)
+local player = game.Players.LocalPlayer
 
-	onDied()
-end)
+local function onCharacterAdded(character)
+    repeat wait() until getRoot(character)
 
-function onDied()
-	task.spawn(function()
-		if pcall(function() game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') end) and game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
-			game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
-				if getRoot(game.Players.LocalPlayer.Character) then
-					lastDeath = getRoot(game.Players.LocalPlayer.Character).CFrame
-				end
-			end)
-		else
-			wait(2)
-			onDied()
-		end
-	end)
-end--]]
+    if savedSpawnPos then
+        wait(spDelay)
+        getRoot(character).CFrame = savedSpawnPos
+        savedSpawnPos = nil
+    end
+
+    local humanoid = character:FindFirstChildOfClass('Humanoid')
+    if humanoid then
+        humanoid.Died:Connect(function()
+            savedSpawnPos = nil
+            wait()
+            print("Humanoid.Died Function Called | true")
+        end)
+    end
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+
+function saveSpawnPosition()
+    local character = player.Character
+    if character then
+        local rootPart = getRoot(character)
+        if rootPart then
+            savedSpawnPos = rootPart.CFrame
+        end
+    end
+end
+
+saveSpawnPosition()--]]
 
 function getSupportedFunctions(funcSupported)
     if funcSupported then
@@ -139,7 +148,7 @@ local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("Pla
 local HttpService = cloneref(game:GetService("HttpService")) or game:GetService("HttpService") or game.HttpService
 repeat wait() until player and Character and Character:FindFirstChild("HumanoidRootPart", true) and Character:FindFirstChildWhichIsA("Humanoid", true)
 
-if getSupportedFunctions(httprequest) then
+if getSupportedFunctions(AllClipboards) then
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "InviteGui"
     screenGui.Parent = playerGui
@@ -319,7 +328,7 @@ local function promptForConfig()
                     {"ISKEYUP":false,"KEY":"Enum.KeyCode.Nine","COMMAND":"emote 3576823880"},
                     {"KEY":"Enum.KeyCode.Four","ISKEYUP":false,"COMMAND":"emote 5230615437"},
                     {"KEY":"Enum.KeyCode.V","ISKEYUP":false,"COMMAND":"freezeanims"},
-                    {"KEY":"Enum.KeyCode.R","ISKEYUP":false,"COMMAND":"emote 15694504637"},
+                    {"KEY":"Enum.KeyCode.R","ISKEYUP":false,"COMMAND":"emote 16371235025"},
                     {"KEY":"Enum.KeyCode.T","ISKEYUP":false,"COMMAND":"emote 10214418283"},
                     {"KEY":"Enum.KeyCode.Z","ISKEYUP":false,"COMMAND":"emote 3994130516"},
                     {"KEY":"Enum.KeyCode.X","ISKEYUP":false,"COMMAND":"animspeed 1"},
@@ -385,6 +394,8 @@ local function promptForConfig()
             runConfigChoice()
         else
             selectOption2()
+            wait()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
         end
     end
 
@@ -437,7 +448,7 @@ local function promptForConfig()
     if optionPicked == 2 then
         selectOption2()
     end
-    if optionPicked == 3 and isPC() then
+    if optionPicked == 1 and isPC() then
         selectOption3()
     end
 end
