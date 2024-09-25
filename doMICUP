@@ -142,11 +142,13 @@ end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 
 local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace") or game:FindService("Workspace") or game.Workspace
-local GameFolder = Workspace:FindFirstChild("Game") or Workspace:WaitForChild("Game") or nil
-local GetTeleportPart = GameFolder:FindFirstChild("Teleport") or GameFolder:WaitForChild("Teleport") or nil
+local GameFolder = Workspace:FindFirstChild("Game") or Workspace:WaitForChild("Game")
+local GetTeleportPart = GameFolder:FindFirstChild("Teleport") or GameFolder:WaitForChild("Teleport")
 if GetTeleportPart then
-    if GetTeleportPart:IsA("TouchTransmitter") then
+    if GetTeleportPart then
         GetTeleportPart.Parent = game:GetService("AssetService")
+        wait()
+        print(tostring(GetTeleportPart.Name)..", is now in Parent: "..tostring(GetTeleportPart.Parent))
     else
         warn("Part: Teleport = nil | false | null")
     end
