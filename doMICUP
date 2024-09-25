@@ -141,17 +141,16 @@ if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 
-local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace") or game:FindService("Workspace") or game.Workspace
-local GameFolder = Workspace:FindFirstChild("Game") or Workspace:WaitForChild("Game")
-local GetTeleportPart = GameFolder:FindFirstChild("Teleport") or GameFolder:WaitForChild("Teleport")
+local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local GameFolder = Workspace:FindFirstChild("Game")
+local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
+
 if GetTeleportPart then
-    if GetTeleportPart then
-        GetTeleportPart.Parent = game:GetService("AssetService")
-        wait()
-        print(tostring(GetTeleportPart.Name)..", is now in Parent: "..tostring(GetTeleportPart.Parent))
-    else
-        warn("Part: Teleport = nil | false | null")
-    end
+    GetTeleportPart.Parent = game:GetService("AssetService")
+    wait()
+    print(GetTeleportPart.Name .. " is now in Parent: " .. tostring(GetTeleportPart.Parent))
+else
+    warn("Part: Teleport = nil | false | null")
 end
 
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
