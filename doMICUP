@@ -10,6 +10,42 @@ local TeleportService = cloneref(game:GetService("TeleportService")) or game:Get
 local AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
+function getRoot(char)
+	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+	return rootPart
+end
+
+--[[local spawnpos = {}
+
+spDelay = 0.1
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+	repeat wait() until getRoot(game.Players.LocalPlayer.Character)
+
+	pcall(function()
+		if spawnpoint and not refreshCmd and not table.find(spawnpos, ) then
+			wait(spDelay)
+			getRoot(game.Players.LocalPlayer.Character).CFrame = spawnpos
+		end
+	end)
+
+	onDied()
+end)
+
+function onDied()
+	task.spawn(function()
+		if pcall(function() game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') end) and game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+			game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
+				if getRoot(game.Players.LocalPlayer.Character) then
+					lastDeath = getRoot(game.Players.LocalPlayer.Character).CFrame
+				end
+			end)
+		else
+			wait(2)
+			onDied()
+		end
+	end)
+end--]]
+
 function getSupportedFunctions(funcSupported)
     if funcSupported then
         return funcSupported
@@ -2018,7 +2054,8 @@ Callback = function(loopWarn)
 local whitelist = { "M1RD3RCAUGHT", "miahatihraccverloren", "STK_kets4eki" }
 
 if loopWarn then
-    while true do
+    getgenv().getSendAllWarningsConnection = true
+    while getgenv().getSendAllWarningsConnection == true do
     wait()
     for i, v in pairs(game.Players:GetChildren()) do
         if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not table.find(ownerWhitelist, v.Name) then
@@ -2032,8 +2069,8 @@ if loopWarn then
 end
 else
 -- Did a rethinking for the method, instead of just setting a 'getgenv()' loop, i'll just break the loop instead, by setting it's state to broken around 20K times (because this shit spams hard)
-    for i = 1, 20000 do
-        break
+    for i = 1, 100000 do
+        getgenv().getSendAllWarningsConnection = false
     end
 end
 end})
