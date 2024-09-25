@@ -1530,7 +1530,7 @@ Callback = function(LolUnClaim)
 
     local function getStallFunc()
         local LolBigDawg = findplr(LolUnClaim)
-        for _, stall in pairs(Folder:GetChildren()) do
+        for _, stall in pairs(stalls:GetChildren()) do
             if stall:FindFirstChild("ProxPart") and stall:FindFirstChild("Player") then
                 if stall.Player.Value ~= "M1RD3RCAUGHT" and stall.Player.Value ~= "STK_kets4eki" and stall.Player.Value ~= "miahatihraccverloren" then
                     return stall
@@ -2814,9 +2814,23 @@ local args = {
 }
 
 game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+wait()
+local args = {
+    [1] = "ARegular",
+    [2] = "Regular"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
 end
 else
 getgenv().CharFlick = false
+wait(1)
+local args = {
+    [1] = "ARegular",
+    [2] = "Regular"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
 end
 end})
 
