@@ -4,6 +4,10 @@ local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/
 local ProcessStartName = tostring("8.54773254E-2")
 local ScriptProcess = ProcessStartName
 wait()
+print("")
+print("")
+print("")
+wait()
 local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
 local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
