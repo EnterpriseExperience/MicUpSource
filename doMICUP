@@ -4818,7 +4818,7 @@ Tab6:AddParagraph("To scared to work? Remember, You need money to live.")
 Tab6:AddParagraph("Life not being fair? Remember, YOU are part of what makes life.")
 wait(0.5)
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
-local LocalPlayer = Players.LocalPlayer .LocalPlayer
+local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HRPBase = Character:WaitForChild("HumanoidRootPart", 3) or Character:FindFirstChild("HumanoidRootPart")
 LocalPlayer.CameraMaxZoomDistance = 800000
