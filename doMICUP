@@ -6,7 +6,7 @@ local ScriptProcess = ProcessStartName
 wait()
 local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
-local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService") or game.TeleportService
+local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
 local AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
@@ -120,7 +120,7 @@ end
 
 if game.PlaceId ~= 6884319169 then
     local MICUPPlaceID = tonumber(6884319169) or 6884319169
-    local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService") or game.TeleportService
+    local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
     if tonumber(MICUPPlaceID) then
         print("true")
         wait()
@@ -134,9 +134,23 @@ end
 
 if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     return Notification:Notify(
-        {Title = "Error: ", Description = "Process "..ProcessStartName..", is already running!"},
-        {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
-        {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() print("Process Exited Because Process Is Already Running.") end}
+        {Title = "Error: ", Description = "Already running! Reload Script instead!"},
+        {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "default"},
+        {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function() 
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+            getgenv().Invis_Loaded = false
+            wait()
+            getgenv().SCRIPT_EXECUTED = false
+            wait()
+            game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
+            wait(1)
+            loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/doMICUP')))()
+            wait(0.5)
+            Humanoid.Health = 0
+        end}
     )
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
@@ -153,11 +167,11 @@ else
     warn("Part: Teleport = nil | false | null")
 end
 
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
 local player = Players.LocalPlayer
 local Character = player.Character or player.CharacterAdded:Wait()
 local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui") or player:WaitForChild("PlayerGui", 1)
-local HttpService = cloneref(game:GetService("HttpService")) or game:GetService("HttpService") or game.HttpService
+local HttpService = cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 repeat wait() until player and Character and Character:FindFirstChild("HumanoidRootPart", true) and Character:FindFirstChildWhichIsA("Humanoid", true)
 
 if getSupportedFunctions(AllClipboards) then
@@ -370,7 +384,7 @@ local function promptForConfig()
     end
 
     local optionPicked = nil
-    local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService") or game.UserInputService
+    local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
 
     local function isPC()
         if UserInputService.TouchEnabled == true and writefile and readfile then
@@ -397,7 +411,7 @@ local function promptForConfig()
     end
 
     local function selectOption3()
-        local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService") or game.UserInputService
+        local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
         if isPC() then
             optionPicked = 1
             wait(0.1)
@@ -467,7 +481,7 @@ end
 wait(0.5)
 promptForConfig()
 wait(0.3)
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
@@ -598,7 +612,7 @@ function getGUIEnabled()
 end
 wait()
 function resetLightingSettings()
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
     local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
     
     Lighting.ClockTime = 14.5
@@ -648,8 +662,8 @@ function resetLightingSettings()
     Lighting.SunRays.Spread = 0.1
 end
 wait()
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
-local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage") or game.ReplicatedStorage
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 
 OrionLib:MakeNotification({
     Name = "Modifying Scripts...",
@@ -1541,7 +1555,7 @@ Name = "UnClaim A Booth",
 Default = "UserName or Display",
 TextDisappear = true,
 Callback = function(LolUnClaim)
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
     local Workspace = game:GetService("Workspace")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -1584,7 +1598,7 @@ Callback = function(LolUnClaim)
     local stall = getStallFunc()
     
     if stall and stall ~= nil and fireproximityprompt then
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local LolBigDawg = findplr(LolUnClaim)
 
         if not LolBigDawg then
@@ -3449,7 +3463,7 @@ Tab2:AddButton({
 Name = "Anti-Bang/TP (Method 1)",
 Callback = function()
     local Players = game:GetService("Players")
-    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
+    local Workspace = game:GetService("Workspace") or workspace
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
@@ -3475,7 +3489,7 @@ Callback = function(doAntiTP)
 getgenv().doTeleport = false
 wait(0.5)
 if doAntiTP then
-    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
+    local Workspace = game:GetService("Workspace") or workspace
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -3499,7 +3513,7 @@ else
     print("Success!")
     wait(2)
     local Players = game:GetService("Players")
-    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
+    local Workspace = game:GetService("Workspace") or workspace
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
@@ -3511,7 +3525,7 @@ Tab2:AddButton({
 Name = "Anti-Bang/TP (Method 3, You Die To)",
 Callback = function()
     local voidPosition = Vector3.new(-499, -499, -499)
-    local Workspace = game:GetService("Workspace") or game.Workspace or workspace
+    local Workspace = game:GetService("Workspace") or workspace
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -3599,7 +3613,7 @@ end})
 Tab9:AddButton({
 Name = "Reset Lighting",
 Callback = function()
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
 
 Lighting.ClockTime = 14.5
@@ -3654,7 +3668,7 @@ Name = "FireWorks (Sky)",
 Default = false,
 Callback = function(FireWorksCrazy)
 if FireWorksCrazy then
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
     Lighting.ClockTime = 1
     wait()
     Lighting.Brightness = 2
@@ -3727,7 +3741,7 @@ end})
 Tab9:AddButton({
 Name = "NightTime",
 Callback = function()
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 Lighting.ClockTime = 0
 wait()
 Lighting.Brightness = 0
@@ -3736,7 +3750,7 @@ end})
 Tab9:AddButton({
 Name = "NightTime (With Night-Light)",
 Callback = function()
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 Lighting.ClockTime = 1
 wait()
 Lighting.Brightness = 2
@@ -3745,7 +3759,7 @@ end})
 Tab9:AddButton({
 Name = "DayTime",
 Callback = function()
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 Lighting.ClockTime = 14
 wait()
 Lighting.Brightness = 3
@@ -3755,7 +3769,7 @@ Tab9:AddToggle({
 Name = "Spooky Moon",
 Default = false,
 Callback = function(moonCrazy)
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 if moonCrazy then
     getgenv().SpookyMoon = true
     local sky = Lighting:FindFirstChildOfClass("Sky")
@@ -3776,7 +3790,7 @@ if moonCrazy then
         smoothTransition()
     end
 else
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
     wait(0.5)
     getgenv().SpookyMoon = false
     wait(1)
@@ -3794,7 +3808,7 @@ Default = false,
 Callback = function(sunSpooky)
 if sunSpooky then
     getgenv().SpookSun = true
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
     local sky = Lighting:FindFirstChildOfClass("Sky")
 
     local function smoothTransition()
@@ -3813,7 +3827,7 @@ if sunSpooky then
         smoothTransition()
     end
 else
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
     wait(0.5)
     getgenv().SpookSun = false
     wait(1)
@@ -3859,7 +3873,7 @@ if theSpookyTime then
 getgenv().SpookyDayTime = true
 if getgenv().SpookyDayTime == true then
 wait()
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 Lighting.ClockTime = 8
 wait()
 Lighting.Brightness = 0
@@ -3893,7 +3907,7 @@ end
 else
 getgenv().SpookyDayTime = false
 wait(2)
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 
 local function removeSmokeFromPart(part)
 local smoke = part:FindFirstChild("SpookySmoke")
@@ -3925,7 +3939,7 @@ if freezeToggle then
     getgenv().doFreezeToggle = true
     while getgenv().doFreezeToggle == true do
     wait()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 	local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -3937,7 +3951,7 @@ end
 else
     getgenv().doFreezeToggle = false
     wait(0.5)
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 	local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -3954,7 +3968,7 @@ Default = "Number",
 TextDisappear = true,
 Callback = function(inputNum)
 local getNumberInput = tonumber(inputNum)
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -3967,7 +3981,7 @@ end})
 Tab12:AddButton({
 Name = "Kinda Fast Emote Speed",
 Callback = function()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -3980,7 +3994,7 @@ end})
 Tab12:AddButton({
 Name = "Faster Emote Speed",
 Callback = function()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -3993,7 +4007,7 @@ end})
 Tab12:AddButton({
 Name = "Normal Emote Speed",
 Callback = function()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -4006,7 +4020,7 @@ end})
 Tab12:AddButton({
 Name = "Slow Emote Speed",
 Callback = function()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -4019,7 +4033,7 @@ end})
 Tab12:AddButton({
 Name = "Super Slow Emote Speed",
 Callback = function()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -4032,7 +4046,7 @@ end})
 Tab12:AddButton({
 Name = "Reverse Emote Speed",
 Callback = function()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
@@ -4070,7 +4084,7 @@ function sFLY(vfly)
 	repeat wait() until Mouse
 	if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
 
-	local T = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+	local T = game.Players.LocalPlayer.Character .LocalPlayer.CharacterAdded:Wait()
 	local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
 	local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
 	local SPEED = 0
@@ -4231,7 +4245,7 @@ end})
 Tab6:AddButton({
 Name = "Reload Script",
 Callback = function()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
@@ -4803,8 +4817,8 @@ Tab6:AddParagraph("Need REAL advice? Ask yourself, others can't truly help you."
 Tab6:AddParagraph("To scared to work? Remember, You need money to live.")
 Tab6:AddParagraph("Life not being fair? Remember, YOU are part of what makes life.")
 wait(0.5)
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
-local LocalPlayer = Players.LocalPlayer or game.Players.LocalPlayer
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
+local LocalPlayer = Players.LocalPlayer .LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HRPBase = Character:WaitForChild("HumanoidRootPart", 3) or Character:FindFirstChild("HumanoidRootPart")
 LocalPlayer.CameraMaxZoomDistance = 800000
@@ -4825,7 +4839,7 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
     Duration = 10
 })
 wait(0.6)
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") or game.Lighting
+local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
 
 Lighting.ClockTime = 14.5
@@ -4917,7 +4931,7 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
     Duration = 10
 })
 wait(1)
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
