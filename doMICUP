@@ -122,18 +122,12 @@ else
     warn("Unsupported Function!")
 end
 
-if game.PlaceId ~= 6884319169 or game.PlaceId ~= 15546218972 then
-    local MICUPPlaceID = tonumber(6884319169) or 6884319169 or tonumber(15546218972) or 15546218972
+if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    warn("OK !!!")
+else
+    local MICUPPlaceID = 6884319169
     local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
-    if tonumber(MICUPPlaceID) then
-        print("true")
-        wait()
-        TeleportService:Teleport(MICUPPlaceID)
-    else
-        print("false")
-        wait()
-        TeleportService:Teleport(MICUPPlaceID)
-    end
+    TeleportService:Teleport(MICUPPlaceID)
 end
 
 if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
