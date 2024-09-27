@@ -122,7 +122,7 @@ else
     warn("Unsupported Function!")
 end
 
-if game.PlaceId ~= 6884319169 then
+if game.PlaceId ~= 6884319169 or game.PlaceId ~= 15546218972 then
     local MICUPPlaceID = tonumber(6884319169) or 6884319169
     local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
     if tonumber(MICUPPlaceID) then
