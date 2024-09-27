@@ -123,7 +123,7 @@ else
 end
 
 if game.PlaceId ~= 6884319169 or game.PlaceId ~= 15546218972 then
-    local MICUPPlaceID = tonumber(6884319169) or 6884319169
+    local MICUPPlaceID = tonumber(6884319169) or 6884319169 or tonumber(15546218972) or 15546218972
     local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
     if tonumber(MICUPPlaceID) then
         print("true")
