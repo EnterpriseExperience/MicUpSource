@@ -2903,7 +2903,7 @@ local Part
 Part = Instance.new("Part", workspace)
 Part.Anchored = true
 Part.Size = Vector3.new(200, 1, 200)
-Part.CFrame = CFrame.new(999, 999, 999) -- Works now, as intended
+Part.CFrame = CFrame.new(450, 10, 500) -- Works now, as intended
 Part.CanCollide = true
 Part.Name = "TheBaseplate"
 
@@ -2940,7 +2940,7 @@ Part:Destroy()
 Part = Instance.new("Part", workspace)
 Part.Anchored = true
 Part.Size = Vector3.new(200, 1, 200)
-Part.CFrame = CFrame.new(999, 999, 999)
+Part.CFrame = CFrame.new(450, 10, 500)
 Part.CanCollide = true
 Part.Name = "Secondary BasePlate"
 FakeCharacter.Parent = workspace
