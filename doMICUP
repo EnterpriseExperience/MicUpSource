@@ -1038,6 +1038,10 @@ Callback = function()
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local hum = Character:FindFirstChildOfClass("Humanoid")
     local root = getRoot(Character)
+    hum.Jump = true
+    wait()
+    hum.Jump = true
+    wait(0.1)
     hum:ChangeState(0)
     root.Velocity = root.CFrame.LookVector * 30
     wait(0.3)
