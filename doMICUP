@@ -1025,6 +1025,25 @@ Callback = function()
     end
 end})
 
+Tab2:AddButton({
+Name = "Trip And Die (FE)",
+Callback = function()
+    function getRoot(char)
+        local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+        return rootPart
+    end
+
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local hum = Character:FindFirstChildOfClass("Humanoid")
+    local root = getRoot(Character)
+    hum:ChangeState(0)
+    root.Velocity = root.CFrame.LookVector * 30
+    wait(0.3)
+    hum.Health = 0
+end})
+
 Tab11:AddToggle({
 Name = "Auto Claim/Steal Booth (for hackers?)",
 Default = false,
