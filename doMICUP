@@ -2895,7 +2895,8 @@ local Transparency = true
 local Keybind = Settings.Keybind
 local NoClip = false
 
-local Player = game:GetService("Players").LocalPlayer
+local GetPlayers = cloneref(game:GetService("Players")) or game:GetService("Players")
+local Player = GetPlayers.LocalPlayer
 local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
 
 local IsInvisible = false
@@ -2966,20 +2967,12 @@ end
 RealCharacter.Humanoid.Died:Connect(function()
 getgenv().Invis_Loaded = false
 wait()
-getgenv().Invis_Loaded = false
-wait()
-getgenv().Invis_Loaded = false
-wait()
 RealCharacter:Destroy()
 FakeCharacter:Destroy()
 end)
 Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
 end
 RealCharacter.Humanoid.Died:Connect(function()
-getgenv().Invis_Loaded = false
-wait()
-getgenv().Invis_Loaded = false
-wait()
 getgenv().Invis_Loaded = false
 wait()
 RealCharacter:Destroy()
@@ -3014,8 +3007,6 @@ if IsInvisible == false then
       end
   end
   wait(0.1)
-  getGUIEnabled()
-  wait(0.1)
   IsInvisible = true
 else
   local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
@@ -3032,8 +3023,6 @@ else
           v.Disabled = true
       end
   end
-  wait(0.1)
-  getGUIEnabled()
   wait(0.1)
   IsInvisible = false
 end
