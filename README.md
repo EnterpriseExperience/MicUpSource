@@ -1,4 +1,4 @@
-## [V3 Loadstring, NEW AND IMRPOVED!]:
+## [V3 Loadstring, NEW AND IMPROVED!]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoadstring
 ## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Not supported for Mobile, and will skip if mobile is detected.]
 
