@@ -395,11 +395,14 @@ local function promptForConfig()
     end
 
     local function selectOption1()
+        local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
         optionPicked = 1
         wait()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
         wait(0.4)
         runConfigChoice()
+        wait(1)
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
     end
 
     local function selectOption2()
@@ -5007,3 +5010,17 @@ wait(1)
 print("...")
 wait()
 warn("...")
+wait(1)
+local optionPicked = nil
+local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+
+getgenv().GetLoopRunning = true
+while getgenv().GetLoopRunning == true do
+wait(0.1)
+    if getgenv().IY_LOADED == true and not _G.IY_DEBUG == true and UserInputService.TouchEnabled == false then
+        getgenv().GetLoopRunning = false
+        return game.Players.LocalPlayer:Kick("Detected MisMatched Infinite Yield Version, rejoin, and run my Infinite Yield! (sorry)")
+    else
+        warn("MEMORY_ADDRESS_ALLOCATOR | WATCH | Setting Data... | true | x000 | math.huge/inf * Vector3.new(math.huge, 0, math.huge) --> cmp (TO DATA BASE ADDRESS >func SetCommaLimit(READ[...])<")
+    end
+end
