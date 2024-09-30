@@ -4220,13 +4220,13 @@ Tab1:AddToggle({
 Name = "Mute All",
 Default = false,
 Callback = function(TheMuteAll)
-if TheMuteall then
+if TheMuteAll then
     for i, v in pairs(game:GetService("Players"):GetChildren()) do
         if v ~= game.Players.LocalPlayer then
             getgenv().LmaoGetMuted = true
             while getgenv().LmaoGetMuted == true do
             wait()
-                v:FindFirstChild("AudioDeviceInput").Muted = true
+                v:FindFirstChildOfClass("AudioDeviceInput").Muted = true
             end
         end
     end
@@ -4234,8 +4234,8 @@ else
     getgenv().LmaoGetMuted = false
     repeat wait() until getgenv().LmaoGetMuted == false
     for i, v in pairs(game:GetService("Players"):GetChildren()) do
-        if v ~= game.Players.LocalPlayer then
-            v:FindFirstChild("AudioDeviceInput").Muted = false
+        if v and v ~= game.Players.LocalPlayer then
+            v:FindFirstChildOfClass("AudioDeviceInput").Muted = false
         end
     end
 end
