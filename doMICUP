@@ -4213,22 +4213,27 @@ wait(0.3)
 HRP.Anchored = false
 end})
 
-Tab1:AddButton({
+Tab1:AddToggle({
 Name = "Mute All",
-Callback = function()
-for i, v in pairs(game:GetService("Players"):GetChildren()) do
-    if v:FindFirstChild("AudioDeviceInput") and v ~= game.Players.LocalPlayer then
-        v:FindFirstChild("AudioDeviceInput").Muted = true
+Default = false,
+Callback = function(TheMuteAll)
+if TheMuteall then
+    for i, v in pairs(game:GetService("Players"):GetChildren()) do
+        if v ~= game.Players.LocalPlayer then
+            getgenv().LmaoGetMuted = true
+            while getgenv().LmaoGetMuted == true do
+            wait()
+                v:FindFirstChild("AudioDeviceInput").Muted = true
+            end
+        end
     end
-end
-end})
-
-Tab1:AddButton({
-Name = "UnMute All",
-Callback = function()
-for i, v in pairs(game:GetService("Players"):GetChildren()) do
-    if v:FindFirstChild("AudioDeviceInput") and v ~= game.Players.LocalPlayer then
-        v:FindFirstChild("AudioDeviceInput").Muted = false
+else
+    getgenv().LmaoGetMuted = false
+    repeat wait() until getgenv().LmaoGetMuted == false
+    for i, v in pairs(game:GetService("Players"):GetChildren()) do
+        if v ~= game.Players.LocalPlayer then
+            v:FindFirstChild("AudioDeviceInput").Muted = false
+        end
     end
 end
 end})
@@ -4237,11 +4242,30 @@ Tab1:AddTextbox({
 Name = "Mute Player",
 Default = "UserName Or DisplayName",
 TextDisappear = true,
-Callback = function(thisUser)
-local derUser = findplr(thisUser)
+Callback = function(getAUser)
+local derUser = findplr(getAUser)
 
 if derUser then
-    derUser:FindFirstChild("AudioDeviceInput").Muted = true
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+
+    getgenv().shouldMute = true
+
+    local function monitorPlayerAudio(player)
+        local audioDevice = player:FindFirstChild("AudioDeviceInput")
+        if audioDevice then
+            if getgenv().shouldMute == true then
+                audioDevice.Muted = true
+            end
+
+            audioDevice.Changed:Connect(function(property)
+                if property == "Muted" and getgenv().shouldMute == true and not audioDevice.Muted then
+                    audioDevice.Muted = true
+                end
+            end)
+        end
+    end
+
+    monitorPlayerAudio(derUser)
 else
     return OrionLib:MakeNotification({
         Name = "Error: Not Found",
@@ -4284,12 +4308,38 @@ Tab1:AddTextbox({
 Name = "Unmute Player",
 Default = "UserName Or DisplayName",
 TextDisappear = true,
-Callback = function(duhUser)
-local duhDuhUser = findplr(duhUser)
+Callback = function(LolPUser)
+    local thisUser = findplr(LolPUser)
 
-if duhDuhUser then
-    duhDuhUser:FindFirstChild("AudioDeviceInput").Muted = false
-end
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    
+    if thisUser then
+        getgenv().shouldMute = false
+    
+        local function monitorPlayerAudio(player)
+            local audioDevice = thisUser:FindFirstChild("AudioDeviceInput")
+            if audioDevice then
+                if getgenv().shouldMute == false then
+                    audioDevice.Muted = false
+                end
+    
+                audioDevice.Changed:Connect(function(property)
+                    if property == "Muted" and getgenv().shouldMute == false and audioDevice.Muted then
+                        audioDevice.Muted = false
+                    end
+                end)
+            end
+        end
+    
+        monitorPlayerAudio(thisUser)    
+    else
+        return OrionLib:MakeNotification({
+            Name = "Error: Not Found",
+            Content = "Player was not found!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
 end})
 
 Tab2:AddButton({
