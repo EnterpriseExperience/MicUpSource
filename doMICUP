@@ -1798,13 +1798,27 @@ Callback = function()
     local function cancelAllButtons()
         local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
         local StallFrame = localPlayer.PlayerGui:FindFirstChild("StallLocal"):FindFirstChild("StallFrame")
-    
-        for _, v in pairs(StallFrame:GetDescendants()) do
-            if (v:IsA("ImageButton") or v:IsA("TextButton")) and v.Name == "CancelButton" then
-                for _, signal in pairs(Signals) do
-                    firesignal(v[signal])
+        
+        if firesignal then
+            for _, v in pairs(StallFrame:GetDescendants()) do
+                if (v:IsA("ImageButton") or v:IsA("TextButton")) and v.Name == "CancelButton" then
+                    for _, signal in pairs(Signals) do
+                        firesignal(v[signal])
+                    end
                 end
             end
+        else
+            warn("firesignal is not supported on this executor! | Error - Unsupported. | Skipping...")
+            wait()
+            makeAllPlayersInvisible()
+            wait(0.1)
+            unclaimStalls()
+            wait(0.1)
+            localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
+            wait(0.3)
+            cancelAllButtons()
+            wait(0.3)
+            print("Finished Unclaiming All Booths.")
         end
     end
     
@@ -1816,7 +1830,7 @@ Callback = function()
     wait(0.3)
     cancelAllButtons()
     wait(0.3)
-    print("Finished Unclaiming All Booths.")    
+    print("Finished Unclaiming All Booths.")
 end})
 
 Tab11:AddToggle({
