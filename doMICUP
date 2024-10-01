@@ -2098,7 +2098,7 @@ Callback = function()
     local whitelist = { "M1RD3RCAUGHT", "miahatihraccverloren" }
     
     for i, v in pairs(game.Players:GetPlayers()) do
-        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not table.find(ownerWhitelist, v.Name) and v ~= game.Players["M1RD3RCAUGHT"] and v ~= game.Players["miahatihraccverloren"] then
+        if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not table.find(ownerWhitelist, v.Name) then
             local args = {
                 [1] = tostring(v.Name)
             }
