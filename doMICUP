@@ -1795,6 +1795,27 @@ Callback = function()
         wait(0.3)
     end
     
+    local function makeVisible(character)
+        if character then
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
+                    part.Transparency = 0
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end
+    end
+    
+    local function makeAllPlayersVisible()
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= localPlayer and player.Character then
+                makeVisible(player.Character)
+            end
+        end
+    end
+
     local function cancelAllButtons()
         local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
         local StallFrame = localPlayer.PlayerGui:FindFirstChild("StallLocal"):FindFirstChild("StallFrame")
@@ -1809,16 +1830,6 @@ Callback = function()
             end
         else
             warn("firesignal is not supported on this executor! | Error - Unsupported. | Skipping...")
-            wait()
-            makeAllPlayersInvisible()
-            wait(0.1)
-            unclaimStalls()
-            wait(0.1)
-            localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
-            wait(0.3)
-            cancelAllButtons()
-            wait(0.3)
-            print("Finished Unclaiming All Booths.")
         end
     end
     
@@ -1828,10 +1839,141 @@ Callback = function()
     wait(0.1)
     localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
     wait(0.3)
-    cancelAllButtons()
-    wait(0.3)
-    print("Finished Unclaiming All Booths.")
+    if firesignal then
+        cancelAllButtons()
+        wait(0.3)
+        print("Finished Unclaiming All Booths.")
+    else
+        makeAllPlayersVisible()
+    end
 end})
+
+--[[Tab12:AddTextbox({
+Name = "Add CopyAnim Whitelist",
+Default = "User Here",
+TextDisappear = true,
+Callback = function(thisUserGet)
+local bruhUser = findplr(thisUserGet)
+local singlePlayerTable = {}
+
+local function addPlayerToTable(player)
+    if next(singlePlayerTable) then
+        return OrionLib:MakeNotification({
+            Name = "Error: Player Limit Exceeded",
+            Content = "Only one player can be added at a time!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    else
+        singlePlayerTable[player.Name] = player
+    end
+end
+
+addPlayerToTable(bruhUser)
+end})
+
+Tab12:AddTextbox({
+Name = "Remove Whitelist",
+Default = "User Here",
+TextDisappear = true,
+Callback = function(CopyAnimPlr)
+    local dawgUser = findplr(CopyAnimPlr)
+    local singlePlayerTable = {}
+
+    local function removePlayerFromTable(player)
+        if singlePlayerTable[player.Name] then
+            singlePlayerTable[player.Name] = nil
+            OrionLib:MakeNotification({
+                Name = "[OUTPUT]: Success!",
+                Content = "Player was removed from the table!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        else
+            return OrionLib:MakeNotification({
+                Name = "[ERROR]: Player nil!",
+                Content = "Player was not found in emote whitelist!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end
+    end
+
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+
+    removePlayerFromTable(dawgUser)
+end})
+
+Tab12:AddToggle({
+Name = "Loop CopyAnim (FE)",
+Default = false,
+Callback = function(getToggleLoop)
+if getToggleLoop then
+    local thePlayer = table.find(singlePlayerTable)
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+
+    if thePlayer then
+        print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+    else
+        return OrionLib:MakeNotification({
+            Name = "Error: Player nil!",
+            Content = "Player was not found!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
+
+    for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+        animTrack:Stop()
+    end
+    getgenv().doLoopAnim = true
+    local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+    local theirHumanoid = getTheirChar:FindFirstChildOfClass('Humanoid')
+
+    local function copyAnimations()
+        for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+            animTrack:Stop()
+        end
+    
+        for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+            if not string.find(animTrack.Animation.AnimationId, "507768375") then
+                local copiedAnim = Humanoid:LoadAnimation(animTrack.Animation)
+                copiedAnim:Play(0.1, 1, animTrack.Speed)
+                copiedAnim.TimePosition = animTrack.TimePosition
+
+                task.spawn(function()
+                    animTrack.Stopped:Wait()
+                    copiedAnim:Stop()
+                    copiedAnim:Destroy()
+                end)
+            end
+        end
+    end
+
+    theirHumanoid.AnimationPlayed:Connect(function(animTrack)
+        copyAnimations()
+    end)
+
+    while getgenv().doLoopAnim do
+        wait(1)
+        copyAnimations()
+    end
+else
+    getgenv().doLoopAnim = false
+    repeat wait() until not getgenv().doLoopAnim and getgenv().doLoopAnim == false
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+    for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+        animTrack:Stop()
+    end
+end
+end})--]]
 
 Tab11:AddToggle({
 Name = "Auto Change Booth Text",
@@ -4329,6 +4471,10 @@ Callback = function()
     getgenv().SCRIPT_EXECUTED = false
     wait()
     getgenv().SCRIPT_EXECUTED = false
+    wait()
+    getgenv().GetLoopRunning = false
+    wait()
+    getgenv().GetLoopRunning = false
     wait()
     game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
 end})
