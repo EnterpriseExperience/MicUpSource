@@ -396,6 +396,7 @@ local function promptForConfig()
 
     local function selectOption1()
         local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+        queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
         optionPicked = 1
         wait()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
@@ -403,6 +404,14 @@ local function promptForConfig()
         runConfigChoice()
         wait(1)
         TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+        wait()
+        local TeleportCheck = false
+        game.Players.LocalPlayer.OnTeleport:Connect(function(State)
+	        if not TeleportCheck and queueteleport then
+		        TeleportCheck = true
+		        queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/getQueTPScript'))()")
+	        end
+        end)
     end
 
     local function selectOption2()
