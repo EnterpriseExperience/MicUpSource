@@ -4331,8 +4331,8 @@ Callback = function()
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 	local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
 	local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-	for _, v in pairs(ActiveTracks) do
-		v:AdjustSpeed(1)
+	for i,v in next, Humanoid:GetPlayingAnimationTracks() do
+		v:Stop()
 	end
 end})
 
