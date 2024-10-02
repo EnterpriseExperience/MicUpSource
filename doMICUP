@@ -1456,12 +1456,6 @@ getgenv().Cuss = false
 end
 end})
 
-Tab4:AddButton({
-Name = "Chat Bypass 1 (Devils Bypasser)",
-Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hassanxzayn-lua/devilschatbypasser/main/MAIN"))();
-end})
-
 Tab7:AddTextbox({
 Name = "18+ Booth Image",
 Default = "Text For Booth",
