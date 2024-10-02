@@ -250,6 +250,14 @@ local Tab2 = Window:MakeTab({
 local Section2 = Tab2:AddSection({
     Name = "Character Tools"
 })
+local Tab13 = Window:MakeTab({
+    Name = "Character 2",
+    Icon = "rbxassetid://7743871002",
+    PremiumOnly = false
+})
+local Section13 = Tab13:AddSection({
+    Name = "Other Character Utilities"
+})
 local Tab10 = Window:MakeTab({
     Name = "Teleports",
     Icon = "rbxassetid://7733764327",
@@ -298,8 +306,24 @@ local Tab12 = Window:MakeTab({
 local Section12 = Tab12:AddSection({
     Name = "Emote Speed/Freezing/etc"
 })
+local Tab14 = Window:MakeTab({
+    Name = "Emoting 2",
+    Icon = "rbxassetid://7743871002",
+    PremiumOnly = false
+})
+local Section14 = Tab14:AddSection({
+    Name = "Other Emote Utilities"
+})
+local Tab15 = Window:MakeTab({
+    Name = "UI",
+    Icon = "rbxassetid://7734022107",
+    PremiumOnly = false
+})
+local Section15 = Tab15:AddSection({
+    Name = "UI Tools"
+})
 local Tab6 = Window:MakeTab({
-    Name = "UI/Info",
+    Name = "Info",
     Icon = "rbxassetid://7734022107",
     PremiumOnly = false
 })
@@ -1049,7 +1073,7 @@ Callback = function()
     end
 end})
 
-Tab2:AddButton({
+Tab13:AddButton({
 Name = "Trip And Die (FE)",
 Callback = function()
     function getRoot(char)
@@ -1294,7 +1318,7 @@ Callback = function()
     monitorPlayerStall()    
 end})
 
-Tab2:AddToggle({
+Tab13:AddToggle({
 Name = "Freeze YOUR Character (FE)",
 Default = false,
 Callback = function(freezeChar)
@@ -1456,7 +1480,7 @@ getgenv().Cuss = false
 end
 end})
 
-Tab7:AddTextbox({
+Tab11:AddTextbox({
 Name = "18+ Booth Image",
 Default = "Text For Booth",
 TextDisappear = true,
@@ -1870,7 +1894,7 @@ end})
 
 local singlePlayerTable = {}
 
-Tab12:AddTextbox({
+Tab14:AddTextbox({
 Name = "Add CopyAnim Whitelist",
 Default = "User Here",
 TextDisappear = true,
@@ -1911,7 +1935,7 @@ end
 addPlayerToGlobalTable(bruhUser)
 end})
 
-Tab12:AddTextbox({
+Tab14:AddTextbox({
 Name = "Remove Whitelist",
 Default = "User Here",
 TextDisappear = true,
@@ -1952,7 +1976,7 @@ end
 removePlayerFromGlobalTable(dawgUser)
 end})
 
-Tab12:AddButton({
+Tab14:AddButton({
 Name = "CopyAnim Whitelisted Plr",
 Callback = function()
     getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
@@ -2028,7 +2052,7 @@ Callback = function()
     copyAnimations()    
 end})
 
-Tab12:AddButton({
+Tab14:AddButton({
 Name = "Stop All Emotes",
 Callback = function()
     getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
@@ -2088,6 +2112,34 @@ Callback = function()
     end
     
     stopAnimations()    
+end})
+
+Tab12:AddTextbox({
+Name = "Play Emote (Needs ID)",
+Default = "ID Here",
+TextDisappear = true,
+Callback = function(getTheIDForEmote)
+local getNumberID = tonumber(getTheIDForEmote) or getTheIDForEmote
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+
+local succ, err = pcall(function()
+    Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
+end)
+
+if succ then
+    Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
+else
+    return OrionLib:MakeNotification({
+        Name = "Error:",
+        Content = tostring(err),
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
 end})
 
 Tab11:AddToggle({
@@ -2313,7 +2365,7 @@ game:GetService("Players").LocalPlayer.AudioDeviceInput.Muted = false
 end
 end})
 
-Tab2:AddToggle({
+Tab13:AddToggle({
 Name = "Hoverboard Spam (FE)",
 Default = false,
 Callback = function(hoverBoard)
@@ -2480,7 +2532,7 @@ Callback = function()
     game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
 end})
 
-Tab2:AddToggle({
+Tab13:AddToggle({
 Name = "Weird FOV Zoom",
 Default = false,
 Callback = function(weirdFOV)
@@ -2521,7 +2573,7 @@ end
 end
 end})
 
-Tab2:AddToggle({
+Tab13:AddToggle({
 Name = "Spam All Tools (FE)",
 Default = false,
 Callback = function(spamTools)
@@ -2608,7 +2660,7 @@ game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpac
 end
 end})
 
-Tab2:AddToggle({
+Tab13:AddToggle({
 Name = "Spam All Tools (VIP Dances, FE)",
 Default = false,
 Callback = function(VIPSpamTools)
@@ -2705,7 +2757,7 @@ getgenv().RunVIPSpam = false
 end
 end})
 
-Tab2:AddToggle({
+Tab13:AddToggle({
 Name = "Flicker Animations (FE)",
 Default = false,
 Callback = function(AnimFlick)
@@ -3743,7 +3795,7 @@ Callback = function(gravVal)
     game:GetService("Workspace").Gravity = gravVal
 end})
 
-Tab2:AddButton({
+Tab13:AddButton({
 Name = "Anti-Bang/TP (Method 1)",
 Callback = function()
     local Players = game:GetService("Players")
@@ -4271,6 +4323,19 @@ else
 end
 end})
 
+Tab12:AddButton({
+Name = "Stop Playing Emotes",
+Callback = function()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+	local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+	for _, v in pairs(ActiveTracks) do
+		v:AdjustSpeed(1)
+	end
+end})
+
 Tab12:AddTextbox({
 Name = "Emote Speed",
 Default = "Number",
@@ -4365,7 +4430,7 @@ Callback = function()
     end
 end})
 
-Tab12:AddButton({
+Tab14:AddButton({
 Name = "Free Emotes GUI",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/AllEmotes"))()
@@ -4562,8 +4627,8 @@ else
 end
 end})
 
-Tab6:AddButton({
-Name = "Reload Script",
+Tab15:AddButton({
+Name = "Re-Execute GUI",
 Callback = function()
     local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
     local LocalPlayer = Players.LocalPlayer
@@ -4573,6 +4638,8 @@ Callback = function()
     wait()
     getgenv().SCRIPT_EXECUTED = false
     wait()
+    getgenv().GetLoopRunning = false
+    wait()
     game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
     wait(1)
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/doMICUP')))()
@@ -4580,12 +4647,14 @@ Callback = function()
     Humanoid.Health = 0
 end})
     
-Tab6:AddButton({
-Name = "Destroy Script",
+Tab15:AddButton({
+Name = "Destroy GUI/Script",
 Callback = function()
     getgenv().SCRIPT_EXECUTED = false
     wait()
     getgenv().SCRIPT_EXECUTED = false
+    wait()
+    getgenv().Invis_Loaded = false
     wait()
     getgenv().GetLoopRunning = false
     wait()
@@ -5239,39 +5308,39 @@ wait()
 Lighting.SunRays.Spread = 0.1
 wait()
 local function makeCharacterVisible(character)
-for _, part in pairs(character:GetDescendants()) do
-    if part:IsA("BasePart") then
-        part.Transparency = 0
-        part.CanCollide = false
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Transparency = 0
+            part.CanCollide = false
+        end
     end
-end
 end
 
 for _, player in pairs(game.Players:GetPlayers()) do
-if player ~= game.Players.LocalPlayer and player.Character then
-    makeCharacterVisible(player.Character)
-end
+    if player ~= game.Players.LocalPlayer and player.Character then
+        makeCharacterVisible(player.Character)
+    end
 end
 wait()
 local function makePartInvisible(part)
-part.Transparency = 1
-part.CanCollide = false
+    part.Transparency = 1
+    part.CanCollide = false
 end
 
 local function makeHumanoidRootPartInvisible(character)
-local player = game.Players:GetPlayerFromCharacter(character)
-if player and player ~= game.Players.LocalPlayer then
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    if humanoidRootPart then
-        makePartInvisible(humanoidRootPart)
+    local player = game.Players:GetPlayerFromCharacter(character)
+    if player and player ~= game.Players.LocalPlayer then
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            makePartInvisible(humanoidRootPart)
+        end
     end
-end
 end
 
 for _, player in pairs(game.Players:GetPlayers()) do
-if player.Character then
-    makeHumanoidRootPartInvisible(player.Character)
-end
+    if player.Character then
+        makeHumanoidRootPartInvisible(player.Character)
+    end
 end
 wait(1)
 game:GetService("StarterGui"):SetCore("SendNotification",{
