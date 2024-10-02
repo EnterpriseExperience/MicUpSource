@@ -4266,24 +4266,24 @@ wait(0.2)
     addSmokeToEverything()
 end
 else
-getgenv().SpookyDayTime = false
-wait(2)
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+    getgenv().SpookyDayTime = false
+    wait(2)
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 
-local function removeSmokeFromPart(part)
-local smoke = part:FindFirstChild("SpookySmoke")
-if smoke then
-    smoke:Destroy()
-end
-end
+    local function removeSmokeFromPart(part)
+    local smoke = part:FindFirstChild("SpookySmoke")
+        if smoke then
+            smoke:Destroy()
+        end
+    end
 
-local function removeSmokeFromEverything()
-for _, obj in pairs(workspace:GetDescendants()) do
-    removeSmokeFromPart(obj)
-end
-end
+    local function removeSmokeFromEverything()
+        for _, obj in pairs(workspace:GetDescendants()) do
+            removeSmokeFromPart(obj)
+        end
+    end
 
-removeSmokeFromEverything()
+    removeSmokeFromEverything()
 end
 end})
 
@@ -4319,6 +4319,10 @@ else
 	local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
 	for _, v in pairs(ActiveTracks) do
 		v:AdjustSpeed(1)
+	end
+    wait()
+    for i,v in next, Humanoid:GetPlayingAnimationTracks() do
+		v:Stop()
 	end
 end
 end})
