@@ -27,7 +27,7 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 `[FE] Auto Dislike Players`
 
-`[INFO]: Just toggle the button and every user that comes up will be auto disliked/liked.`
+`[INFO]: Just toggle the button and every avatar that comes up will be auto disliked/liked. (behind the bathrooms)`
 
 `[FE] Spam Hoverboard`
 
