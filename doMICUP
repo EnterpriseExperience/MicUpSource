@@ -299,25 +299,26 @@ local Section12 = Tab12:AddSection({
     Name = "Emote Speed/Freezing/etc"
 })
 local Tab6 = Window:MakeTab({
-    Name = "README",
+    Name = "UI/Info",
     Icon = "rbxassetid://7734022107",
     PremiumOnly = false
 })
 local Section6 = Tab6:AddSection({
-    Name = "Current Information."
+    Name = "Other Shit"
 })
 wait(0.5)
-getgenv().GetStartIntro = false
-if getgenv().GetStartIntro == false then
-    getgenv().GetStartIntro = true
-    wait(0.1)
+if getgenv().GetStartIntro == true then
+    print("Intro Data is already 'True'. Skipping intro...")
+else
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/startIntroFadeScreen')))()
+    wait(0.5)
+    getgenv().GetStartIntro = true
     wait(1)
     repeat wait() until getgenv().GetStartIntro == true
     if getgenv().GetStartIntro == true then
-        print("Set Intro Data | Success | true")
+        print("Set Intro Data | Success | True")
     else
-        warn("Unable to retrieve Intro Data | failed | false")
+        warn("Unable to retrieve Intro Data | failed | False")
     end
 end
 wait(0.5)
@@ -381,6 +382,7 @@ local function promptForConfig()
         end
     end
 
+    getgenv().RizzConfig = false
     local optionPicked = nil
     local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
 
@@ -402,16 +404,6 @@ local function promptForConfig()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
         wait(0.4)
         runConfigChoice()
-        wait(1)
-        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
-        wait()
-        local TeleportCheck = false
-        game.Players.LocalPlayer.OnTeleport:Connect(function(State)
-	        if not TeleportCheck and queueteleport then
-		        TeleportCheck = true
-		        queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/getQueTPScript'))()")
-	        end
-        end)
     end
 
     local function selectOption2()
@@ -476,6 +468,13 @@ local function promptForConfig()
         wait()
     end
 
+    if getgenv().RizzConfig == true then
+        print("Selected Option =|= True")
+        selectOption2()
+    else
+        print("False?True | getgenv().RizzConfig = bool >>> getgenv().RizzConfig == bool <???>")
+    end
+
     ScreenGui:Destroy()
 
     if optionPicked == 1 then
@@ -496,6 +495,12 @@ local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
 wait(0.1)
+if getgenv().AntiAfkScript == true or getgenv().OtherAntiAfk == true then
+    print("AntiAFK Scripts have already been pre-loaded from last script session | exiting...")
+    wait(0.2)
+    warn("000 >>> 000 >>> nil")
+end
+wait(0.2)
 Players.RespawnTime = 0
 wait()
 local GC = getconnections or get_signal_cons
@@ -700,6 +705,14 @@ OrionLib:MakeNotification({
     Time = 10
 })
 wait()
+getgenv().GetDataResetLighting = false
+wait(0.3)
+if getgenv().GetDataResetLighting == true then
+    print("We have already reset lighting, skipping...")
+    wait(0.2)
+    warn("getNumberOver(tonumber, GET_ID, PID) /// nil >= ???")
+end
+wait()
 local lighting = game:GetService("Lighting")
 
 lighting.ClockTime = 0
@@ -719,14 +732,16 @@ if lighting.ClockTime == 8 then
         Name = "Success!",
         Content = "We have configured Lighting (for the script)",
         Image = "rbxassetid://4483345998",
-        Time = 5
+        Time = 7
     })
+    wait(0.2)
+    getgenv().GetDataResetLighting = true
 else
     OrionLib:MakeNotification({
         Name = "Failed!",
         Content = "An error has occurred, we're sorry.",
         Image = "rbxassetid://4483345998",
-        Time = 5
+        Time = 7
     })
 end
 wait()
@@ -1531,15 +1546,7 @@ Callback = function(enterUser)
         })
     end
 
-    if not table.find(whitelist, getTheirUser.Name) then
-        addToWhitelist(tostring(getTheirUser.Name))
-        return OrionLib:MakeNotification({
-            Name = "Success!",
-            Content = "Player was added to the whitelist.",
-            Image = "rbxassetid://4483345998",
-            Time = 10
-        })
-    elseif table.find(whitelist, getTheirUser.Name) then
+    if table.find(whitelist, getTheirUser.Name) then
         return OrionLib:MakeNotification({
             Name = "Error:",
             Content = "Player is already on the whitelist.",
@@ -1547,6 +1554,14 @@ Callback = function(enterUser)
             Time = 10
         })
     end
+
+    addToWhitelist(getTheirUser.Name)
+    return OrionLib:MakeNotification({
+        Name = "Success!",
+        Content = tostring(getTheirUser.Name).." was added to the whitelist.",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })    
 end})
 
 Tab7:AddTextbox({
@@ -1559,25 +1574,27 @@ Callback = function(enterUser)
     if not getTheirUser then
         return OrionLib:MakeNotification({
             Name = "Error: Not Found",
-            Content = tostring(enterUser).." was not found!",
+            Content = "Player was not found!",
             Image = "rbxassetid://4483345998",
             Time = 10
         })
     end
 
-    if not table.find(whitelist, getTheirUser.Name) then
+    local playerName = getTheirUser.Name:lower()
+
+    if not table.find(whitelist, playerName) then
         return OrionLib:MakeNotification({
             Name = "Error:",
-            Content = tostring(getTheirUser.Name).." does not exist in the whitelist!",
+            Content = "Player is not in the whitelist.",
             Image = "rbxassetid://4483345998",
             Time = 10
         })
     end
 
-    removeFromWhitelist(tostring(getTheirUser.Name))
+    removeFromWhitelist(playerName)
     return OrionLib:MakeNotification({
         Name = "Success!",
-        Content = tostring(getTheirUser.Name).." was removed from the whitelist",
+        Content = tostring(getTheirUser.Name).." was removed from the whitelist.",
         Image = "rbxassetid://4483345998",
         Time = 10
     })    
@@ -1857,16 +1874,19 @@ Callback = function()
     end
 end})
 
---[[Tab12:AddTextbox({
+local singlePlayerTable = {}
+
+Tab12:AddTextbox({
 Name = "Add CopyAnim Whitelist",
 Default = "User Here",
 TextDisappear = true,
 Callback = function(thisUserGet)
-local bruhUser = findplr(thisUserGet)
-local singlePlayerTable = {}
+getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
-local function addPlayerToTable(player)
-    if next(singlePlayerTable) then
+local bruhUser = findplr(thisUserGet)
+
+local function addPlayerToGlobalTable(player)
+    if next(getgenv().singlePlayerTable) then
         return OrionLib:MakeNotification({
             Name = "Error: Player Limit Exceeded",
             Content = "Only one player can be added at a time!",
@@ -1874,11 +1894,27 @@ local function addPlayerToTable(player)
             Time = 10
         })
     else
-        singlePlayerTable[player.Name] = player
+        getgenv().singlePlayerTable[player.Name] = player
+        repeat wait() until getgenv().singlePlayerTable[player.Name]
+        if getgenv().singlePlayerTable[player.Name] then
+            OrionLib:MakeNotification({
+                Name = "Success!",
+                Content = tostring(player.Name)..", was added to Whitelist!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        else
+            return OrionLib:MakeNotification({
+                Name = "Error!",
+                Content = "Something went wrong when adding: "..tostring(player),
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end
     end
 end
 
-addPlayerToTable(bruhUser)
+addPlayerToGlobalTable(bruhUser)
 end})
 
 Tab12:AddTextbox({
@@ -1886,63 +1922,95 @@ Name = "Remove Whitelist",
 Default = "User Here",
 TextDisappear = true,
 Callback = function(CopyAnimPlr)
-    local dawgUser = findplr(CopyAnimPlr)
-    local singlePlayerTable = {}
+getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
-    local function removePlayerFromTable(player)
-        if singlePlayerTable[player.Name] then
-            singlePlayerTable[player.Name] = nil
+local dawgUser = findplr(CopyAnimPlr)
+
+local function removePlayerFromGlobalTable(player)
+    if getgenv().singlePlayerTable[player.Name] then
+        getgenv().singlePlayerTable[player.Name] = nil
+        repeat wait() until getgenv().singlePlayerTable[player.Name] == nil
+        if getgenv().singlePlayerTable[player.Name] == nil then
             OrionLib:MakeNotification({
-                Name = "[OUTPUT]: Success!",
-                Content = "Player was removed from the table!",
+                Name = "Success!",
+                Content = tostring(player.Name)..", was removed from the whitelist!",
                 Image = "rbxassetid://4483345998",
                 Time = 10
             })
         else
             return OrionLib:MakeNotification({
-                Name = "[ERROR]: Player nil!",
-                Content = "Player was not found in emote whitelist!",
+                Name = "Error!",
+                Content = "Something went wrong when removing: "..tostring(player),
                 Image = "rbxassetid://4483345998",
                 Time = 10
             })
         end
+    else
+        return OrionLib:MakeNotification({
+            Name = "[ERROR]: Player nil!",
+            Content = tostring(player.Name)..", was not found in the whitelist!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
     end
+end
 
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-
-    removePlayerFromTable(dawgUser)
+removePlayerFromGlobalTable(dawgUser)
 end})
 
-Tab12:AddToggle({
-Name = "Loop CopyAnim (FE)",
-Default = false,
-Callback = function(getToggleLoop)
-if getToggleLoop then
-    local thePlayer = table.find(singlePlayerTable)
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+Tab12:AddButton({
+Name = "CopyAnim Whitelisted Plr",
+Callback = function()
+    getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
+    function getThatPlr()
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        for i, v in pairs(Players:GetChildren()) do
+            if getgenv().singlePlayerTable[v.Name] then
+                return v
+            end
+        end
+        return nil
+    end
+    
+    local thePlayer = getThatPlr()
+    
     if thePlayer then
         print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
     else
         return OrionLib:MakeNotification({
-            Name = "Error: Player nil!",
+            Name = "Error: Player nil",
             Content = "Player was not found!",
             Image = "rbxassetid://4483345998",
             Time = 10
         })
     end
-
+    
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+    local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+    local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
+    
+    if thePlayer then
+        print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+    else
+        return OrionLib:MakeNotification({
+            Name = "Error: Player nil",
+            Content = "Player was not found!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
+    
     for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
         animTrack:Stop()
     end
-    getgenv().doLoopAnim = true
+    
     local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
-    local theirHumanoid = getTheirChar:FindFirstChildOfClass('Humanoid')
-
+    local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
+    
     local function copyAnimations()
         for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
             animTrack:Stop()
@@ -1953,7 +2021,7 @@ if getToggleLoop then
                 local copiedAnim = Humanoid:LoadAnimation(animTrack.Animation)
                 copiedAnim:Play(0.1, 1, animTrack.Speed)
                 copiedAnim.TimePosition = animTrack.TimePosition
-
+    
                 task.spawn(function()
                     animTrack.Stopped:Wait()
                     copiedAnim:Stop()
@@ -1962,27 +2030,71 @@ if getToggleLoop then
             end
         end
     end
+    
+    copyAnimations()    
+end})
 
-    theirHumanoid.AnimationPlayed:Connect(function(animTrack)
-        copyAnimations()
-    end)
+Tab12:AddButton({
+Name = "Stop All Emotes",
+Callback = function()
+    getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
-    while getgenv().doLoopAnim do
-        wait(1)
-        copyAnimations()
+    function getThatPlr()
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        for i, v in pairs(Players:GetChildren()) do
+            if getgenv().singlePlayerTable[v.Name] then
+                return v
+            end
+        end
+        return nil
     end
-else
-    getgenv().doLoopAnim = false
-    repeat wait() until not getgenv().doLoopAnim and getgenv().doLoopAnim == false
+
+    local thePlayer = getThatPlr()
+    
+    if thePlayer then
+        print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+    else
+        return OrionLib:MakeNotification({
+            Name = "Error: Player nil",
+            Content = "Player was not found!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
+    
     local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+    local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+    local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
+    
+    if thePlayer then
+        print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+    else
+        return OrionLib:MakeNotification({
+            Name = "Error: Player nil",
+            Content = "Player was not found!",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
+    
     for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
         animTrack:Stop()
     end
-end
-end})--]]
+    
+    local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+    local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
+    
+    local function stopAnimations()
+        for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+            animTrack:Stop()
+        end
+    end
+    
+    stopAnimations()    
+end})
 
 Tab11:AddToggle({
 Name = "Auto Change Booth Text",
