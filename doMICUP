@@ -141,7 +141,19 @@ if VEffect and FindLocalScript and getgenv().LocalScriptOff == false then
     wait(.2)
     print("Found LocalScript Disabled Value (boolean) | "..tostring(FindLocalScript.Enabled))
     wait(.3)
-    FindLocalScript.Disabled = true
+    local scriptToDisable = FindLocalScript
+
+    local function disableScript()
+        if not scriptToDisable.Disabled then
+            scriptToDisable.Disabled = true
+        end
+    end
+
+    scriptToDisable.Changed:Connect(function(property)
+        if property == "Disabled" then
+            disableScript()
+        end
+    end)
     wait()
     repeat wait() until FindLocalScript.Disabled == true
     wait()
