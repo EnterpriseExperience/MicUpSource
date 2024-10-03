@@ -132,9 +132,10 @@ end
 wait()
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChildOfClass("PlayerGui")
-local VEffect = PlayerGui:FindFirstChild("VEffect") or PlayerGui:WaitForChild("VEffect")
+local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui")
+local VEffect = PlayerGui:FindFirstChild("VEffect")
 local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
+getgenv().LocalScriptOff = false
 if VEffect and FindLocalScript and getgenv().LocalScriptOff == false then
     getgenv().LocalScriptOff = false
     wait(.2)
@@ -477,6 +478,8 @@ local function promptForConfig()
         wait()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
         wait(0.4)
+        getgenv().RizzConfig = true
+        wait(.2)
         runConfigChoice()
     end
 
@@ -493,9 +496,13 @@ local function promptForConfig()
             wait(0.1)
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
             wait(0.4)
+            getgenv().RizzConfig = true
+            wait(.2)
             runConfigChoice()
         else
             selectOption2()
+            wait()
+            getgenv().RizzConfig = true
             wait()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
         end
@@ -780,13 +787,8 @@ OrionLib:MakeNotification({
 })
 wait()
 getgenv().GetDataResetLighting = false
-wait(0.3)
-if getgenv().GetDataResetLighting == true then
-    print("We have already reset lighting, skipping...")
-    wait(0.2)
-    warn("getNumberOver(tonumber, GET_ID, PID) /// nil >= ???")
-end
 wait()
+if getgenv().GetDataResetLighting == false then
 local lighting = game:GetService("Lighting")
 
 lighting.ClockTime = 0
@@ -818,10 +820,15 @@ else
         Time = 7
     })
 end
+else
+    print("We have already reset lighting, skipping...")
+    wait(0.2)
+    warn("getNumberOver(tonumber, GET_ID, PID) /// nil >= ???")
+end
 wait()
 local Players = game:GetService("Players")
 local whitelist = {  }
-local ownerWhitelist = { "miahatihraccverloren", "M1RD3RCAUGHT" }
+local ownerWhitelist = { "M1RD3RCAUGHT" }
 local player = Players.LocalPlayer
 
 local function addToWhitelist(username)
@@ -836,7 +843,7 @@ local function addToWhitelist(username)
         end
     end
     
-    if foundPlayer and foundPlayer ~= "miahatihraccverloren" and foundPlayer ~= "M1RD3RCAUGHT" then
+    if foundPlayer and foundPlayer ~= "M1RD3RCAUGHT" then
         whitelist[foundPlayer.Name] = true
         return OrionLib:MakeNotification({
             Name = "Success!: Whitelisted",
@@ -862,7 +869,7 @@ local function removeFromWhitelist(username)
     end
 
     if foundPlayer then
-        if whitelist[foundPlayer.Name] and not ownerWhitelist[foundPlayer.Name] and foundPlayer ~= "miahatihraccverloren" and foundPlayer ~= "M1RD3RCAUGHT" then
+        if whitelist[foundPlayer.Name] and not ownerWhitelist[foundPlayer.Name] and foundPlayer ~= "M1RD3RCAUGHT" then
             whitelist[foundPlayer.Name] = nil
             return OrionLib:MakeNotification({
                 Name = "Success!: Removed",
@@ -1773,7 +1780,7 @@ Callback = function(LolUnClaim)
         local LolBigDawg = findplr(LolUnClaim)
         for _, stall in pairs(stalls:GetChildren()) do
             if stall:FindFirstChild("ProxPart") and stall:FindFirstChild("Player") then
-                if stall.Player.Value ~= "M1RD3RCAUGHT" and stall.Player.Value ~= "STK_kets4eki" and stall.Player.Value ~= "miahatihraccverloren" then
+                if stall.Player.Value ~= "M1RD3RCAUGHT" and stall.Player.Value ~= "STK_kets4eki" then
                     return stall
                 else
                     return OrionLib:MakeNotification({
@@ -1964,7 +1971,7 @@ Callback = function()
     local function unclaimStalls()
         for _, stall in pairs(Folder:GetChildren()) do
             if stall:FindFirstChild("ProxPart") and stall:FindFirstChild("Player") then
-                if stall.Player.Value ~= "M1RD3RCAUGHT" and stall.Player.Value ~= "STK_kets4eki" and stall.Player.Value ~= "miahatihraccverloren" and not isWhitelisted(stall.Player.Value) then
+                if stall.Player.Value ~= "M1RD3RCAUGHT" and stall.Player.Value ~= "STK_kets4eki" and not isWhitelisted(stall.Player.Value) then
                     wait(0.3)
                     fireAndUnclaimStall(stall)
                 elseif isWhitelisted(stall.Player.Value) then
@@ -2554,7 +2561,7 @@ end})
 Tab1:AddButton({
 Name = "Send Fake Warnings (FREE! + BYPASS!)",
 Callback = function()
-    local whitelist = { "M1RD3RCAUGHT", "miahatihraccverloren" }
+    local whitelist = { "M1RD3RCAUGHT" }
     
     for i, v in pairs(game.Players:GetPlayers()) do
         if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not table.find(ownerWhitelist, v.Name) then
@@ -2571,7 +2578,7 @@ Tab1:AddToggle({
 Name = "Loop Send All Warnings (CAN BE SUPER LAGGY)",
 Default = false,
 Callback = function(loopWarn)
-local whitelist = { "M1RD3RCAUGHT", "miahatihraccverloren", "STK_kets4eki" }
+local whitelist = { "M1RD3RCAUGHT", "STK_kets4eki" }
 
 if loopWarn then
     getgenv().getSendAllWarningsConnection = true
@@ -2613,7 +2620,7 @@ if thisPlrWarned ~= game.Players.LocalPlayer and not table.find(whitelist, thisP
     game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
 end
 
-if thisPlrWarned.Name == "M1RD3RCAUGHT" or thisPlrWarned.Name == "STK_kets4eki" or thisPlrWarned.Name == "miahatihraccverloren" then
+if thisPlrWarned.Name == "M1RD3RCAUGHT" or thisPlrWarned.Name == "STK_kets4eki" then
     return OrionLib:MakeNotification({
         Name = "Cancelled!",
         Content = "Player is an owner!",
