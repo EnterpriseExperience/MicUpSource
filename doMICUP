@@ -4657,7 +4657,7 @@ ctrl.l = -1
 elseif key:lower() == "d" then 
 ctrl.r = 1 
 end 
-end) 
+end)
 mouse.KeyUp:connect(function(key) 
 if key:lower() == "w" then 
 ctrl.f = 0 
@@ -4809,7 +4809,7 @@ Callback = function()
     wait()
     game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
 end})
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld')))()
+
 Tab1:AddTextbox({
 Name = "Unmute Player",
 Default = "UserName Or DisplayName",
