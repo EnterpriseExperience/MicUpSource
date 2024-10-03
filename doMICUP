@@ -2575,7 +2575,7 @@ Callback = function()
 end})
 
 Tab1:AddToggle({
-Name = "Loop Send All Warnings (CAN BE SUPER LAGGY)",
+Name = "Loop Send All Warnings (Kinda Laggy?)",
 Default = false,
 Callback = function(loopWarn)
 local whitelist = { "M1RD3RCAUGHT", "STK_kets4eki" }
@@ -2583,7 +2583,7 @@ local whitelist = { "M1RD3RCAUGHT", "STK_kets4eki" }
 if loopWarn then
     getgenv().getSendAllWarningsConnection = true
     while getgenv().getSendAllWarningsConnection == true do
-    wait()
+    wait(1.5)
     for i, v in pairs(game.Players:GetChildren()) do
         if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not table.find(ownerWhitelist, v.Name) then
             local args = {
@@ -2595,8 +2595,11 @@ if loopWarn then
     end
 end
 else
--- Did a rethinking for the method, instead of just setting a 'getgenv()' loop, i'll just break the loop instead, by setting it's state to broken around 20K times (because this shit spams hard)
-    for i = 1, 100000 do
+    getgenv().getSendAllWarningsConnection = false
+    wait()
+    repeat wait() until getgenv().getSendAllWarningsConnection == false
+    wait()
+    for i = 1, 75 do
         getgenv().getSendAllWarningsConnection = false
     end
 end
