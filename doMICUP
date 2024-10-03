@@ -1547,7 +1547,7 @@ if getRainbowBaseplate then
     local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
     repeat wait() until getFolder and getpart
 if getpart and getFolder then
-    getpart.Transparency = 1
+    getpart.Transparency = 0
     print(tostring(getpart))
     wait(.1)
     print("Setting Loop: "..tostring(getgenv().StartRainbowPart))
