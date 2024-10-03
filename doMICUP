@@ -4624,7 +4624,7 @@ if derUser then
 else
     return OrionLib:MakeNotification({
         Name = "Error: Not Found",
-        Content = "Player was not found!",
+        Content = tostring(getAUser).." was not found!",
         Image = "rbxassetid://4483345998",
         Time = 10
     })
@@ -4698,7 +4698,7 @@ Callback = function(LolPUser)
     else
         return OrionLib:MakeNotification({
             Name = "Error: Not Found",
-            Content = "Player was not found!",
+            Content = tostring(LolPUser).." was not found!",
             Image = "rbxassetid://4483345998",
             Time = 10
         })
