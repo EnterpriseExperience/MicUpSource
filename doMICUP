@@ -129,6 +129,29 @@ else
     local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
     TeleportService:Teleport(MICUPPlaceID)
 end
+wait()
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChildOfClass("PlayerGui")
+local VEffect = PlayerGui:FindFirstChild("VEffect") or PlayerGui:WaitForChild("VEffect")
+local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
+if VEffect and FindLocalScript and getgenv().LocalScriptOff == false then
+    getgenv().LocalScriptOff = false
+    wait(.2)
+    print("Found LocalScript Disabled Value (boolean) | "..tostring(FindLocalScript.Enabled))
+    wait(.3)
+    FindLocalScript.Disabled = true
+    wait()
+    repeat wait() until FindLocalScript.Disabled == true
+    wait()
+    getgenv().LocalScriptOff = true
+    wait()
+    print("Set LocalScript Disabled: "..tostring(FindLocalScript.Disabled))
+else
+    warn("LocalScript 'Mute', Seems to be nil! | Skipping This Portion...")
+    wait()
+    getgenv().LocalScriptOff = false
+end
 
 if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     return Notification:Notify(
@@ -343,6 +366,33 @@ else
         print("Set Intro Data | Success | True")
     else
         warn("Unable to retrieve Intro Data | failed | False")
+    end
+end
+wait(0.5)
+local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local FindBaseplate = Workspace:FindFirstChild("Baseplate") or Workspace:WaitForChild("Baseplate")
+
+if getgenv().HasCreatedFolder == false or Workspace:FindFirstChild("PartStorage") and Workspace:FindFirstChild("PartStorage"):FindFirstChildOfClass("Part") then
+    print("Already Found | PartStorage / Anti-Void Part | Folder | True | Skipping...")
+else
+    getgenv().HasCreatedFolder = false
+    local NewFolder = Instance.new("Folder")
+    NewFolder.Name = "PartStorage"
+    NewFolder.Parent = Workspace
+    repeat wait() until NewFolder and FindBaseplate
+    if FindBaseplate and NewFolder then
+        local GetClone = FindBaseplate:Clone()
+        GetClone.Name = "BASEPLATE_CLONE_ANTI_VOID"
+        GetClone.Parent = NewFolder
+        GetClone.CFrame = CFrame.new(FindBaseplate.Position)
+        GetClone.BrickColor = BrickColor.new("Maroon")
+        GetClone.Color = Color3.new(117, 0, 0)
+        GetClone.Size = Vector3.new(2048, 11, 2048)
+        GetClone.CanCollide = true
+        GetClone.CanQuery = true
+        GetClone.CanTouch = true
+        wait()
+        getgenv().HasCreatedFolder = true
     end
 end
 wait(0.5)
@@ -1477,6 +1527,92 @@ wait()
 getgenv().Cuss = false
 wait()
 getgenv().Cuss = false
+end
+end})
+
+Tab1:AddToggle({
+Name = "Rainbow Baseplate (NOT! FE)",
+Default = false,
+Callback = function(getRainbowBaseplate)
+if getRainbowBaseplate then
+    local ws = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+    local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
+    local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
+    repeat wait() until getFolder and getpart
+if getpart and getFolder then
+    getpart.Transparency = 1
+    print(tostring(getpart))
+    wait(.1)
+    print("Setting Loop: "..tostring(getgenv().StartRainbowPart))
+    getgenv().StartRainbowPart = true
+    repeat wait() until getgenv().StartRainbowPart == true
+    print("Set Loop: "..tostring(getgenv().StartRainbowPart))
+    while getgenv().StartRainbowPart == true do
+    wait()
+        getpart.BrickColor = BrickColor.new("White")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("Bright red")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("Bright blue")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("Hot pink")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("New Yeller")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("Teal")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("Camo")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("Royal purple")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("Magenta")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("Pink")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+        wait()
+        getpart.BrickColor = BrickColor.new("CGA brown")
+        wait()
+        print("BrickColor Updated: "..tostring(getpart.BrickColor))
+    end
+    else
+        getgenv().StartRainbowPart = false
+        return warn("nil")
+    end
+else
+    print("Changing Loop: "..tostring(getgenv().StartRainbowPart))
+    wait(.2)
+    getgenv().StartRainbowPart = false
+    wait()
+    local ws = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+    local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
+    local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
+    repeat wait() until getFolder and getpart
+    getpart.Transparency = 1
+    wait(.1)
+    getpart.BrickColor = BrickColor.new("Medium stone grey")
+    wait()
+    repeat wait() until getgenv().StartRainbowPart == false and getpart.Transparency == 1
+    wait()
+    print("Toggle Loop Set To: "..tostring(getgenv().StartRainbowPart))
 end
 end})
 
