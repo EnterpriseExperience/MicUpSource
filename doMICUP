@@ -141,21 +141,9 @@ if VEffect and FindLocalScript and getgenv().LocalScriptOff == false then
     wait(.2)
     print("Found LocalScript Disabled Value (boolean) | "..tostring(FindLocalScript.Enabled))
     wait(.3)
-    local scriptToDisable = FindLocalScript
-
-    local function disableScript()
-        if not scriptToDisable.Disabled then
-            scriptToDisable.Disabled = true
-        end
+    function getDisableScript()
+        FindLocalScript.Disabled = true
     end
-
-    scriptToDisable.Changed:Connect(function(property)
-        if property == "Disabled" then
-            disableScript()
-        end
-    end)
-    wait()
-    repeat wait() until FindLocalScript.Disabled == true
     wait()
     getgenv().LocalScriptOff = true
     wait()
@@ -5532,11 +5520,12 @@ local UserInputService = cloneref(game:GetService("UserInputService")) or game:G
 
 getgenv().GetLoopRunning = true
 while getgenv().GetLoopRunning == true do
+getDisableScript()
 wait(0.1)
     if getgenv().IY_LOADED == true and not _G.IY_DEBUG == true and UserInputService.TouchEnabled == false then
         getgenv().GetLoopRunning = false
         return game.Players.LocalPlayer:Kick("Detected MisMatched Infinite Yield Version, rejoin, and run my Infinite Yield! (sorry)")
     else
-        -- warn("MEMORY_ADDRESS_ALLOCATOR | WATCH | Setting Data... | true | x000 | math.huge/inf * Vector3.new(math.huge, 0, math.huge) --> cmp (TO DATA BASE ADDRESS >func SetCommaLimit(READ[...])<")
+        -- warn("--> WAITING FOR INFINITE YIELD EXECUTIO HERE <--")
     end
 end
