@@ -130,11 +130,6 @@ else
     TeleportService:Teleport(MICUPPlaceID)
 end
 wait()
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui")
-local VEffect = PlayerGui:FindFirstChild("VEffect")
-local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
 getgenv().LocalScriptOff = false
 if VEffect and FindLocalScript and getgenv().LocalScriptOff == false then
     getgenv().LocalScriptOff = false
@@ -142,6 +137,11 @@ if VEffect and FindLocalScript and getgenv().LocalScriptOff == false then
     print("Found LocalScript Disabled Value (boolean) | "..tostring(FindLocalScript.Enabled))
     wait(.3)
     function getDisableScript()
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui")
+        local VEffect = PlayerGui:FindFirstChild("VEffect")
+        local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
         FindLocalScript.Disabled = true
     end
     wait()
@@ -5520,12 +5520,12 @@ local UserInputService = cloneref(game:GetService("UserInputService")) or game:G
 
 getgenv().GetLoopRunning = true
 while getgenv().GetLoopRunning == true do
-getDisableScript()
 wait(0.1)
     if getgenv().IY_LOADED == true and not _G.IY_DEBUG == true and UserInputService.TouchEnabled == false then
         getgenv().GetLoopRunning = false
         return game.Players.LocalPlayer:Kick("Detected MisMatched Infinite Yield Version, rejoin, and run my Infinite Yield! (sorry)")
     else
+        getDisableScript()
         -- warn("--> WAITING FOR INFINITE YIELD EXECUTIO HERE <--")
     end
 end
