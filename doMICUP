@@ -5524,6 +5524,6 @@ wait(0.1)
         getgenv().GetLoopRunning = false
         return game.Players.LocalPlayer:Kick("Detected MisMatched Infinite Yield Version, rejoin, and run my Infinite Yield! (sorry)")
     else
-        warn("MEMORY_ADDRESS_ALLOCATOR | WATCH | Setting Data... | true | x000 | math.huge/inf * Vector3.new(math.huge, 0, math.huge) --> cmp (TO DATA BASE ADDRESS >func SetCommaLimit(READ[...])<")
+        -- warn("MEMORY_ADDRESS_ALLOCATOR | WATCH | Setting Data... | true | x000 | math.huge/inf * Vector3.new(math.huge, 0, math.huge) --> cmp (TO DATA BASE ADDRESS >func SetCommaLimit(READ[...])<")
     end
 end
