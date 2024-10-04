@@ -249,7 +249,20 @@ getgenv().gethui = function()
     return game:GetService("CoreGui")
 end
 local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | "..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = false, SaveConfig = true, ConfigFolder = "MICUP"})
--- IF YOU ARE READING THIS, THIS HUB WILL UNDERGO MASSIVE CHANGES SOON!, UI ALSO SHOULD CHANGE TO! SO YOU HAVE FOUND THIS HINT EARLY!
+wait()
+getgenv().executedPlayers = getgenv().executedPlayers or {}
+
+local function trackPlayerExecution(player)
+    if not getgenv().executedPlayers[player.Name] then
+        getgenv().executedPlayers[player.Name] = true
+        print(player.Name .. " has executed the script.")
+    else
+        print(tostring(player.Name).." has already executed the script!")
+    end
+end
+
+trackPlayerExecution(game.Players.LocalPlayer)
+wait()
 local Tab1 = Window:MakeTab({
     Name = "Home",
     Icon = "rbxassetid://7733960981",
@@ -893,14 +906,14 @@ local Stall2 = Folder:FindFirstChild("Stall2")
 local Stall3 = Folder:FindFirstChild("Stall3")
 local Stall4 = Folder:FindFirstChild("Stall4")
 local Stall5 = Folder:FindFirstChild("Stall5")
-if Stall1:FindFirstChild("ProxPart") and fireproximityprompt and Stall1.Player.Value ~= whitelist[game.Players[Stall3:FindFirstChild("Player").Value].UserId] then
-    local Proximity1 = Stall1:FindFirstChild("ProxPart").ProximityPrompt
-    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall1:FindFirstChild("ProxPart").Position)
-    wait(0.3)
-    fireproximityprompt(Proximity1, 10)
-    wait(0.5)
-    Stall1:WaitForChild("CloseStall"):FireServer()
-end
+    if Stall1:FindFirstChild("ProxPart") and fireproximityprompt and Stall1.Player.Value ~= whitelist[game.Players[Stall3:FindFirstChild("Player").Value].UserId] then
+        local Proximity1 = Stall1:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall1:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity1, 10)
+        wait(0.5)
+        Stall1:WaitForChild("CloseStall"):FireServer()
+    end
 end
 
 function ClaimStall2()
@@ -911,14 +924,14 @@ local Stall2 = Folder:FindFirstChild("Stall2")
 local Stall3 = Folder:FindFirstChild("Stall3")
 local Stall4 = Folder:FindFirstChild("Stall4")
 local Stall5 = Folder:FindFirstChild("Stall5")
-if Stall2:FindFirstChild("ProxPart") and fireproximityprompt and Stall2.Player.Value ~= whitelist[game.Players[Stall2:FindFirstChild("Player").Value].UserId] then
-    local Proximity2 = Stall2:FindFirstChild("ProxPart").ProximityPrompt
-    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall2:FindFirstChild("ProxPart").Position)
-    wait(0.3)
-    fireproximityprompt(Proximity2, 10)
-    wait(0.5)
-    Stall2:WaitForChild("CloseStall"):FireServer()
-end
+    if Stall2:FindFirstChild("ProxPart") and fireproximityprompt and Stall2.Player.Value ~= whitelist[game.Players[Stall2:FindFirstChild("Player").Value].UserId] then
+        local Proximity2 = Stall2:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall2:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity2, 10)
+        wait(0.5)
+        Stall2:WaitForChild("CloseStall"):FireServer()
+    end
 end
 
 function ClaimStall3()
@@ -929,14 +942,14 @@ local Stall2 = Folder:FindFirstChild("Stall2")
 local Stall3 = Folder:FindFirstChild("Stall3")
 local Stall4 = Folder:FindFirstChild("Stall4")
 local Stall5 = Folder:FindFirstChild("Stall5")
-if Stall3:FindFirstChild("ProxPart") and fireproximityprompt and Stall3.Player.Value ~= whitelist[game.Players[Stall3:FindFirstChild("Player").Value].UserId] then
-    local Proximity3 = Stall3:FindFirstChild("ProxPart").ProximityPrompt
-    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall3:FindFirstChild("ProxPart").Position)
-    wait(0.3)
-    fireproximityprompt(Proximity3, 10)
-    wait(0.5)
-    Stall3:WaitForChild("CloseStall"):FireServer()
-end
+    if Stall3:FindFirstChild("ProxPart") and fireproximityprompt and Stall3.Player.Value ~= whitelist[game.Players[Stall3:FindFirstChild("Player").Value].UserId] then
+        local Proximity3 = Stall3:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall3:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity3, 10)
+        wait(0.5)
+        Stall3:WaitForChild("CloseStall"):FireServer()
+    end
 end
 
 function ClaimStall4()
@@ -947,14 +960,14 @@ local Stall2 = Folder:FindFirstChild("Stall2")
 local Stall3 = Folder:FindFirstChild("Stall3")
 local Stall4 = Folder:FindFirstChild("Stall4")
 local Stall5 = Folder:FindFirstChild("Stall5")
-if Stall4:FindFirstChild("ProxPart") and fireproximityprompt and Stall4.Player.Value ~= whitelist[game.Players[Stall4:FindFirstChild("Player").Value].UserId] then
-    local Proximity4 = Stall4:FindFirstChild("ProxPart").ProximityPrompt
-    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall4:FindFirstChild("ProxPart").Position)
-    wait(0.3)
-    fireproximityprompt(Proximity4, 10)
-    wait(0.5)
-    Stall4:WaitForChild("CloseStall"):FireServer()
-end
+    if Stall4:FindFirstChild("ProxPart") and fireproximityprompt and Stall4.Player.Value ~= whitelist[game.Players[Stall4:FindFirstChild("Player").Value].UserId] then
+        local Proximity4 = Stall4:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall4:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity4, 10)
+        wait(0.5)
+        Stall4:WaitForChild("CloseStall"):FireServer()
+    end
 end
 
 function ClaimStall5()
@@ -965,14 +978,14 @@ local Stall2 = Folder:FindFirstChild("Stall2")
 local Stall3 = Folder:FindFirstChild("Stall3")
 local Stall4 = Folder:FindFirstChild("Stall4")
 local Stall5 = Folder:FindFirstChild("Stall5")
-if Stall5:FindFirstChild("ProxPart") and fireproximityprompt and Stall5.Player.Value ~= whitelist[game.Players[Stall5:FindFirstChild("Player").Value].UserId] then
-    local Proximity5 = Stall5:FindFirstChild("ProxPart").ProximityPrompt
-    game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall5:FindFirstChild("ProxPart").Position)
-    wait(0.3)
-    fireproximityprompt(Proximity5, 10)
-    wait(0.5)
-    Stall5:WaitForChild("CloseStall"):FireServer()
-end
+    if Stall5:FindFirstChild("ProxPart") and fireproximityprompt and Stall5.Player.Value ~= whitelist[game.Players[Stall5:FindFirstChild("Player").Value].UserId] then
+        local Proximity5 = Stall5:FindFirstChild("ProxPart").ProximityPrompt
+        game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Stall5:FindFirstChild("ProxPart").Position)
+        wait(0.3)
+        fireproximityprompt(Proximity5, 10)
+        wait(0.5)
+        Stall5:WaitForChild("CloseStall"):FireServer()
+    end
 end
 wait()
 local Players = cloneref(game:GetService("Players"))
