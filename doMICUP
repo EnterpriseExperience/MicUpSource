@@ -130,7 +130,7 @@ else
     TeleportService:Teleport(MICUPPlaceID)
 end
 wait()
-getgenv().LocalScriptOff = false
+--[[getgenv().LocalScriptOff = false
 if VEffect and FindLocalScript and getgenv().LocalScriptOff == false then
     getgenv().LocalScriptOff = false
     wait(.2)
@@ -152,7 +152,7 @@ else
     warn("LocalScript 'Mute', Seems to be nil! | Skipping This Portion...")
     wait()
     getgenv().LocalScriptOff = false
-end
+end--]]
 
 if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     return Notification:Notify(
@@ -988,7 +988,7 @@ local Stall5 = Folder:FindFirstChild("Stall5")
     end
 end
 wait()
-local Players = cloneref(game:GetService("Players"))
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
 -- Functions --
 local cmdp = Players
 local cmdlp = cmdp.LocalPlayer
@@ -1774,6 +1774,29 @@ Callback = function(enterUser)
     })    
 end})
 
+Tab12:AddButton({
+Name = "Spin Then Normal",
+Callback = function()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+	local spinSpeed = tonumber(7) or 7
+	for i,v in pairs(HumanoidRootPart:GetChildren()) do
+		if v.Name == "Spinning" then
+			v:Destroy()
+        else
+            warn("nil | Spinning = nil")
+		end
+	end
+	local Spin = Instance.new("BodyAngularVelocity")
+	Spin.Name = "Spinning"
+	Spin.Parent = HumanoidRootPart
+	Spin.MaxTorque = Vector3.new(0, math.huge, 0)
+	Spin.AngularVelocity = Vector3.new(0,spinSpeed,0)
+end})
+
 Tab11:AddTextbox({
 Name = "UnClaim A Booth",
 Default = "UserName or Display",
@@ -2423,6 +2446,187 @@ getgenv().Auto = false
 end
 end})
 
+Tab13:AddParagraph("Type 'stop' (without quotes), to stop flying")
+wait()
+Tab13:AddTextbox({
+Name = "Hoverboard Fly (FE, BROKEN!)",
+Default = "Speed Here",
+TextDisappear = true,
+Callback = function(GetSpeed)
+    if tonumber(GetSpeed) then
+        local args = {
+            [1] = "XHoverboard",
+            [2] = "Hoverboard"
+        }
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("Hoverboard"):FireServer(unpack(args))
+        wait(0.5)
+        local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
+        local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid")
+        local speed = tonumber(GetSpeed) or GetSpeed
+        local RunService = cloneref(game:GetService("RunService")) or game:GetService("RunService")
+        local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local camera = Workspace:FindFirstChildOfClass("Camera") or Workspace:FindFirstChild("Camera") or Workspace.CurrentCamera
+        lib = {}
+        lib.wrap = function(f)
+	        return coroutine.wrap(f)()
+        end
+        wrap = lib.wrap
+
+        local connections = {}
+
+        lib.connect = function(name, connection)
+	        connections[name .. tostring(math.random(1000000, 9999999))] = connection
+	        return connection
+        end
+
+        lib.disconnect = function(name)
+	        for title, connection in pairs(connections) do
+		        if title:find(name) == 1 then
+			        connection:Disconnect()
+		        end
+	        end
+        end
+
+    local flyPart
+    if not speed then speed = 5 end
+	if connections["fly"] then lib.disconnect("fly") humanoid.PlatformStand = false end
+    local MakeDirectory = Instance.new("Folder")
+    MakeDirectory.Parent = Workspace
+    MakeDirectory.Name = "Maximum_Storage_Parts"
+    repeat wait() until MakeDirectory
+    wait()
+	local dir = {w = false, a = false, s = false, d = false}
+	local cf = Instance.new("CFrameValue")
+	
+	flyPart = Instance.new("Part")
+    flyPart.Name = "GET_FLOAT_PART_SYNC"
+    flyPart.Parent = MakeDirectory
+    flyPart.Transparency = 1
+    flyPart.BrickColor = BrickColor.new("Maroon")
+    flyPart.CanCollide = false
+	flyPart.Anchored = true
+    repeat wait() until flyPart
+	pcall(function()
+		flyPart.CFrame = HumanoidRootPart.CFrame
+	end)
+	
+	RunService.RenderStepped:Connect(function()
+		if not HumanoidRootPart then return end
+		local primaryPart = HumanoidRootPart
+		local humanoid = humanoid
+		
+		local x, y, z = 0, 0, 0
+		if dir.w then z = -1 * speed end
+		if dir.a then x = -1 * speed end
+		if dir.s then z = 1 * speed end
+		if dir.d then x = 1 * speed end
+		if dir.q then y = 1 * speed end
+		if dir.e then y = -1 * speed end
+		
+		for i, v in pairs(character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.Velocity = Vector3.new(0, 0, 0)
+				v.RotVelocity = Vector3.new(0, 0, 0)
+			end
+		end
+		flyPart.CFrame = CFrame.new(
+			flyPart.CFrame.p,
+			(camera.CFrame * CFrame.new(0, 0, -100)).p
+		)
+		
+		local moveDir = CFrame.new(x,y,z)
+		cf.Value = cf.Value:lerp(moveDir, 0.2)
+		flyPart.CFrame = flyPart.CFrame:lerp(flyPart.CFrame * cf.Value, 0.2)
+		primaryPart.CFrame = flyPart.CFrame
+		humanoid.PlatformStand = true
+	end)
+	UserInputService.InputBegan:Connect(function(input, event)
+		if event then return end
+		local code, codes = input.KeyCode, Enum.KeyCode
+		if code == codes.W then
+			    dir.w = true
+		    elseif code == codes.A then
+			    dir.a = true
+		    elseif code == codes.S then
+			    dir.s = true
+		    elseif code == codes.D then
+			    dir.d = true
+		    elseif code == codes.Q then
+			    dir.q = true
+		    elseif code == codes.E then
+			    dir.e = true
+		    elseif code == codes.Space then
+			    dir.q = true
+		end
+	end)
+	    UserInputService.InputEnded:Connect(function(input, event)
+		if event then return end
+		local code, codes = input.KeyCode, Enum.KeyCode
+		if code == codes.W then
+			dir.w = false
+		    elseif code == codes.A then
+			    dir.a = false
+		    elseif code == codes.S then
+			    dir.s = false
+		    elseif code == codes.D then
+			    dir.d = false
+		    elseif code == codes.Q then
+			    dir.q = false
+		    elseif code == codes.E then
+			    dir.e = false
+		    elseif code == codes.Space then
+			    dir.q = false
+		    end
+	    end)
+    elseif tostring(GetSpeed) or GetSpeed == "stop" then
+        local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
+        local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid")
+        local RunService = cloneref(game:GetService("RunService")) or game:GetService("RunService")
+        local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local camera = Workspace:FindFirstChildOfClass("Camera") or Workspace:FindFirstChild("Camera") or Workspace.CurrentCamera
+
+        lib = {}
+        lib.wrap = function(f)
+	        return coroutine.wrap(f)()
+        end
+        wrap = lib.wrap
+
+        local connections = {}
+
+        lib.connect = function(name, connection)
+	        connections[name .. tostring(math.random(1000000, 9999999))] = connection
+	        return connection
+        end
+
+        lib.disconnect = function(name)
+	        for title, connection in pairs(connections) do
+		        if title:find(name) == 1 then
+			        connection:Disconnect()
+		        end
+	        end
+        end
+
+        lib.disconnect("fly")
+        wait()
+        humanoid.PlatformStand = false
+        wait(0.5)
+        if Workspace:FindFirstChild("Maximum_Storage_Parts") then
+            Workspace:FindFirstChild("Maximum_Storage_Parts"):Destroy()
+        else
+            return warn("nil | flyPart | False")
+        end
+    end
+end})
+
 Tab1:AddToggle({
 Name = "Auto Like Player",
 Default = false,
@@ -2530,14 +2734,14 @@ getgenv().HoverboardRide = true
 while getgenv().HoverboardRide == true do
 wait()
 local args = {
-[1] = "XHoverboard",
-[2] = "Hoverboard"
+    [1] = "XHoverboard",
+    [2] = "Hoverboard"
 }
 
 game:GetService("ReplicatedStorage"):WaitForChild("Hoverboard"):FireServer(unpack(args))
 wait()
 local args = {
-[1] = tonumber(game.Players.LocalPlayer.UserId)
+    [1] = tonumber(game.Players.LocalPlayer.UserId)
 }
 
 game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
@@ -5534,6 +5738,15 @@ wait(1)
 local optionPicked = nil
 local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
 
+function getDisableScript()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui")
+    local VEffect = PlayerGui:FindFirstChild("VEffect")
+    local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
+    FindLocalScript.Disabled = true
+end
+
 getgenv().GetLoopRunning = true
 while getgenv().GetLoopRunning == true do
 wait(0.1)
@@ -5542,6 +5755,6 @@ wait(0.1)
         return game.Players.LocalPlayer:Kick("Detected MisMatched Infinite Yield Version, rejoin, and run my Infinite Yield! (sorry)")
     else
         getDisableScript()
-        -- warn("--> WAITING FOR INFINITE YIELD EXECUTIO HERE <--")
+        -- warn("--> WAITING FOR INFINITE YIELD TO BE EXECUTED HERE <--")
     end
 end
