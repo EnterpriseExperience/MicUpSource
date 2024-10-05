@@ -2454,176 +2454,135 @@ Default = "Speed Here",
 TextDisappear = true,
 Callback = function(GetSpeed)
     if tonumber(GetSpeed) then
-        local args = {
-            [1] = "XHoverboard",
-            [2] = "Hoverboard"
-        }
-        
-        game:GetService("ReplicatedStorage"):WaitForChild("Hoverboard"):FireServer(unpack(args))
-        wait(0.5)
-        local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
-        local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid")
-        local speed = tonumber(GetSpeed) or GetSpeed
-        local RunService = cloneref(game:GetService("RunService")) or game:GetService("RunService")
-        local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-        local camera = Workspace:FindFirstChildOfClass("Camera") or Workspace:FindFirstChild("Camera") or Workspace.CurrentCamera
-        lib = {}
-        lib.wrap = function(f)
-	        return coroutine.wrap(f)()
+    local args = {
+        [1] = "XHoverboard",
+        [2] = "Hoverboard"
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("Hoverboard"):FireServer(unpack(args))
+    wait(0.5)
+    local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local localplayer = Players.LocalPlayer
+    local character = localplayer.Character or localplayer.CharacterAdded:Wait()
+    local torso = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
+    local hum = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid")
+    local speed = tonumber(GetSpeed) or GetSpeed
+    local RunService = cloneref(game:GetService("RunService")) or game:GetService("RunService")
+    local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+    local camera = Workspace:FindFirstChildOfClass("Camera") or Workspace:FindFirstChild("Camera") or Workspace.CurrentCamera
+    local players = game:GetService("Players")
+    local mouse = localplayer:GetMouse()
+    local enabled = true
+    local running = true
+    local dir = {w = 0, s = 0, a = 0, d = 0}
+    local spd = tonumber(GetSpeed)
+    
+    getgenv().moos = mouse.KeyDown:connect(function(key)
+    if key:lower() == "w" then
+            dir.w = 1
+        elseif key:lower() == "s" then
+            dir.s = 1
+        elseif key:lower() == "a" then
+            dir.a = 1
+        elseif key:lower() == "d" then 
+            dir.d = 1 
+        elseif key:lower() == "t" then
+            spd = spd + 1
+        elseif key:lower() == "y" then
+            spd = spd - 1
+        elseif key:lower() == "z" then
+            running = false
         end
-        wrap = lib.wrap
-
-        local connections = {}
-
-        lib.connect = function(name, connection)
-	        connections[name .. tostring(math.random(1000000, 9999999))] = connection
-	        return connection
-        end
-
-        lib.disconnect = function(name)
-	        for title, connection in pairs(connections) do
-		        if title:find(name) == 1 then
-			        connection:Disconnect()
-		        end
-	        end
-        end
-
-    local flyPart
-    if not speed then speed = 5 end
-	if connections["fly"] then lib.disconnect("fly") humanoid.PlatformStand = false end
-    local MakeDirectory = Instance.new("Folder")
-    MakeDirectory.Parent = Workspace
-    MakeDirectory.Name = "Maximum_Storage_Parts"
-    repeat wait() until MakeDirectory
-    wait()
-	local dir = {w = false, a = false, s = false, d = false}
-	local cf = Instance.new("CFrameValue")
-	
-	flyPart = Instance.new("Part")
-    flyPart.Name = "GET_FLOAT_PART_SYNC"
-    flyPart.Parent = MakeDirectory
-    flyPart.Transparency = 1
-    flyPart.BrickColor = BrickColor.new("Maroon")
-    flyPart.CanCollide = false
-	flyPart.Anchored = true
-    repeat wait() until flyPart
-	pcall(function()
-		flyPart.CFrame = HumanoidRootPart.CFrame
-	end)
-	
-	RunService.RenderStepped:Connect(function()
-		if not HumanoidRootPart then return end
-		local primaryPart = HumanoidRootPart
-		local humanoid = humanoid
-		
-		local x, y, z = 0, 0, 0
-		if dir.w then z = -1 * speed end
-		if dir.a then x = -1 * speed end
-		if dir.s then z = 1 * speed end
-		if dir.d then x = 1 * speed end
-		if dir.q then y = 1 * speed end
-		if dir.e then y = -1 * speed end
-		
-		for i, v in pairs(character:GetDescendants()) do
-			if v:IsA("BasePart") then
-				v.Velocity = Vector3.new(0, 0, 0)
-				v.RotVelocity = Vector3.new(0, 0, 0)
-			end
-		end
-		flyPart.CFrame = CFrame.new(
-			flyPart.CFrame.p,
-			(camera.CFrame * CFrame.new(0, 0, -100)).p
-		)
-		
-		local moveDir = CFrame.new(x,y,z)
-		cf.Value = cf.Value:lerp(moveDir, 0.2)
-		flyPart.CFrame = flyPart.CFrame:lerp(flyPart.CFrame * cf.Value, 0.2)
-		primaryPart.CFrame = flyPart.CFrame
-		humanoid.PlatformStand = true
-	end)
-	UserInputService.InputBegan:Connect(function(input, event)
-		if event then return end
-		local code, codes = input.KeyCode, Enum.KeyCode
-		if code == codes.W then
-			    dir.w = true
-		    elseif code == codes.A then
-			    dir.a = true
-		    elseif code == codes.S then
-			    dir.s = true
-		    elseif code == codes.D then
-			    dir.d = true
-		    elseif code == codes.Q then
-			    dir.q = true
-		    elseif code == codes.E then
-			    dir.e = true
-		    elseif code == codes.Space then
-			    dir.q = true
-		end
-	end)
-	    UserInputService.InputEnded:Connect(function(input, event)
-		if event then return end
-		local code, codes = input.KeyCode, Enum.KeyCode
-		if code == codes.W then
-			dir.w = false
-		    elseif code == codes.A then
-			    dir.a = false
-		    elseif code == codes.S then
-			    dir.s = false
-		    elseif code == codes.D then
-			    dir.d = false
-		    elseif code == codes.Q then
-			    dir.q = false
-		    elseif code == codes.E then
-			    dir.e = false
-		    elseif code == codes.Space then
-			    dir.q = false
-		    end
-	    end)
+    end)
+ 
+    getgenv().moos1 = mouse.KeyUp:connect(function(key)
+        if key:lower() == "w" then 
+            dir.w = 0 
+        elseif key:lower() == "s" then 
+            dir.s = 0 
+        elseif key:lower() == "a" then 
+            dir.a = 0 
+        elseif key:lower() == "d" then 
+            dir.d = 0 
+        end 
+    end)
+                    
+    torso.Anchored = true 
+    hum.PlatformStand = true 
+    getgenv().macka = hum.Changed:connect(function() 
+        hum.PlatformStand = true 
+    end)
+ 
+    repeat 
+    if enabled == false then
+        running = false
+        break
+    end
+    wait(1/60)
+    torso.CFrame = CFrame.new(torso.Position, workspace.CurrentCamera.CoordinateFrame.p) * CFrame.Angles(0,math.rad(180),0) * CFrame.new((dir.d-dir.a)*spd,0,(dir.s-dir.w)*spd) 
+    until not running or hum.Parent == nil or torso.Parent == nil or not enabled
     elseif tostring(GetSpeed) or GetSpeed == "stop" then
         local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
-        local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid")
+        local torso = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
+        local hum = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid")
         local RunService = cloneref(game:GetService("RunService")) or game:GetService("RunService")
         local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
         local camera = Workspace:FindFirstChildOfClass("Camera") or Workspace:FindFirstChild("Camera") or Workspace.CurrentCamera
 
-        lib = {}
-        lib.wrap = function(f)
-	        return coroutine.wrap(f)()
-        end
-        wrap = lib.wrap
-
-        local connections = {}
-
-        lib.connect = function(name, connection)
-	        connections[name .. tostring(math.random(1000000, 9999999))] = connection
-	        return connection
-        end
-
-        lib.disconnect = function(name)
-	        for title, connection in pairs(connections) do
-		        if title:find(name) == 1 then
-			        connection:Disconnect()
-		        end
-	        end
-        end
-
-        lib.disconnect("fly")
-        wait()
-        humanoid.PlatformStand = false
-        wait(0.5)
-        if Workspace:FindFirstChild("Maximum_Storage_Parts") then
-            Workspace:FindFirstChild("Maximum_Storage_Parts"):Destroy()
+        if getgenv().moos then
+            getgenv().moos:Disconnect()
+            wait()
+            getgenv().moos = nil
+            repeat wait() until getgenv().moos == nil
+            wait()
+            print("Connection Disabled: "..tostring(getgenv().moos))
         else
-            return warn("nil | flyPart | False")
+            warn("Connection not disabled: "..tostring(getgenv().moos))
         end
+        
+        if getgenv().moos1 then
+            getgenv().moos1:Disconnect()
+            wait()
+            getgenv().moos1 = nil
+            wait()
+            repeat wait() until getgenv().moos1 == nil
+            wait()
+            print("Connection Disabled: "..tostring(getgenv().moos1))
+        else
+            warn("Connection not disabled: "..tostring(getgenv().moos1))
+        end
+        
+        if getgenv().macka then
+            getgenv().macka:Disconnect()
+            wait()
+            getgenv().macka = nil
+            wait()
+            repeat wait() until getgenv().macka == nil
+            wait()
+            print("Connection Disabled: "..tostring(getgenv().macka))
+        else
+            warn("Connection not disabled: "..tostring(getgenv().macka))
+        end
+        wait(.3)
+        local args = {
+            [1] = tonumber(LocalPlayer.UserId)
+        }
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))        
+        wait(.1)
+        torso.Anchored = false
+        repeat wait() until torso.Anchored == false
+        wait()
+        print("Torso Anchored = "..tostring(torso.Anchored))
+        wait()
+        hum.PlatformStand = false
+        repeat wait() until hum.PlatformStand == false
+        wait()
+        print("Humanoid's PlatformStand Property: "..tostring(hum.PlatformStand))
     end
 end})
 
@@ -5717,6 +5676,14 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 	Icon = "rbxassetid://1234567890",
     Duration = 10
 })
+wait(.3)
+print("Zacks Easy Hub [OUTPUT]: | Unmuting All...")
+wait(.5)
+for i, v in pairs(game:GetService("Players"):GetChildren()) do
+    if v and v ~= game.Players.LocalPlayer then
+        v:FindFirstChildOfClass("AudioDeviceInput").Muted = false
+    end
+end
 wait(1)
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
 local LocalPlayer = Players.LocalPlayer
@@ -5741,8 +5708,8 @@ local UserInputService = cloneref(game:GetService("UserInputService")) or game:G
 function getDisableScript()
     local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
-    local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui")
-    local VEffect = PlayerGui:FindFirstChild("VEffect")
+    local PlayerGui = LocalPlayer.PlayerGui or LocalPlayer:FindFirstChild("PlayerGui")
+    local VEffect = PlayerGui:WaitForChild("VEffect")
     local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
     FindLocalScript.Disabled = true
 end
