@@ -4908,9 +4908,12 @@ if TheMuteAll then
 else
     getgenv().LmaoGetMuted = false
     repeat wait() until getgenv().LmaoGetMuted == false
-    for i, v in pairs(game:GetService("Players"):GetChildren()) do
-        if v and v ~= game.Players.LocalPlayer then
-            v:FindFirstChildOfClass("AudioDeviceInput").Muted = false
+    for i, v in pairs(game.Players:GetPlayers()) do
+        if v ~= game.Players.LocalPlayer and v:FindFirstChild("AudioDeviceInput") then
+            local dude = v.AudioDeviceInput
+            dude.Muted = false
+            task.wait()
+            print(tostring(dude)..", Muted?: "..tostring(dude.Muted)..", Player: "..tostring(dude.Parent)..", UserID: "..tostring(dude.Parent.UserId))
         end
     end
 end
@@ -5679,9 +5682,11 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 wait(.3)
 print("Zacks Easy Hub [OUTPUT]: | Unmuting All...")
 wait(.5)
-for i, v in pairs(game:GetService("Players"):GetChildren()) do
-    if v and v ~= game.Players.LocalPlayer then
-        v:FindFirstChildOfClass("AudioDeviceInput").Muted = false
+for i, v in pairs(game.Players:GetPlayers()) do
+    if v ~= game.Players.LocalPlayer and v:FindFirstChild("AudioDeviceInput") then
+        local dude = v.AudioDeviceInput
+        wait(.1)
+        print(tostring(dude)..", Player: "..tostring(dude.Parent)..", UserID: "..tostring(dude.Parent.UserId))
     end
 end
 wait(1)
@@ -5711,9 +5716,10 @@ function getDisableScript()
     local PlayerGui = LocalPlayer.PlayerGui or LocalPlayer:FindFirstChild("PlayerGui")
     local VEffect = PlayerGui:WaitForChild("VEffect")
     local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
-    FindLocalScript.Disabled = true
+    FindLocalScript:Destroy()
 end
-
+getDisableScript()
+wait(.5)
 getgenv().GetLoopRunning = true
 while getgenv().GetLoopRunning == true do
 wait(0.1)
@@ -5721,7 +5727,6 @@ wait(0.1)
         getgenv().GetLoopRunning = false
         return game.Players.LocalPlayer:Kick("Detected MisMatched Infinite Yield Version, rejoin, and run my Infinite Yield! (sorry)")
     else
-        getDisableScript()
         -- warn("--> WAITING FOR INFINITE YIELD TO BE EXECUTED HERE <--")
     end
 end
