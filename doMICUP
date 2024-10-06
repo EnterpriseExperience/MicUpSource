@@ -3984,53 +3984,50 @@ Callback = function(TheBind)
     Settings.Keybind = tostring(TheBind)
 end})
 
-Tab5:AddButton({
-Name = "Solve All TicTacToe Boards",
-Callback = function()
-local OldCF = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
-local function interactWithClickDetectorInAllBoards(detectorNumber)
-for _, board in pairs(workspace:GetChildren()) do
-    if board:IsA("Model") and board.Name == "Tic Tac Toe" then
-        local partName = "Detector" .. tostring(detectorNumber)
-        local part = board:FindFirstChild(partName)
-        if part and part:IsA("BasePart") then
-            local clickDetector = part:FindFirstChildOfClass("ClickDetector")
-            if clickDetector then
-                game.Players.LocalPlayer.Character:PivotTo(clickDetector.Parent:GetPivot())
-                wait()
-                print("ClickDetector in Part: " .. partName .. ", in board: " .. board.Name)
-                wait()
-                fireclickdetector(clickDetector, 10)
-                wait()
-            else
-                print("ClickDetector not found in part " .. partName .. " in board " .. board.Name)
+function clickAllTheDetectors()
+    local clickDetectors = {}
+
+    for _, model in pairs(workspace:GetDescendants()) do
+        if model:IsA("Model") and model.Name == "Tic Tac Toe" then
+            for _, part in pairs(model:GetDescendants()) do
+                if part:IsA("Part") then
+                    local clickDetector = part:FindFirstChildOfClass("ClickDetector")
+                    if clickDetector then
+                        table.insert(clickDetectors, clickDetector)
+                    end
+                end
             end
-        else
-            print("Part " .. partName .. " not found in board " .. board.Name)
         end
     end
-end
+    
+    for _, clickDetector in pairs(clickDetectors) do
+        clickDetector.MaxActivationDistance = 99999
+        wait()
+        fireclickdetector(clickDetector, 9999)
+    end
 end
 
-interactWithClickDetectorInAllBoards(1)
-wait()
-interactWithClickDetectorInAllBoards(2)
-wait()
-interactWithClickDetectorInAllBoards(3)
-wait()
-interactWithClickDetectorInAllBoards(4)
-wait()
-interactWithClickDetectorInAllBoards(5)
-wait()
-interactWithClickDetectorInAllBoards(6)
-wait()
-interactWithClickDetectorInAllBoards(7)
-wait()
-interactWithClickDetectorInAllBoards(8)
-wait()
-interactWithClickDetectorInAllBoards(9)
-wait(1)
-game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+Tab5:AddButton({
+Name = "Click All TicTacToe Boards",
+Callback = function()
+    clickAllTheDetectors()
+end})
+
+Tab5:AddToggle({
+Name = "Click All TicTacToe Boards (Loop)",
+Default = false,
+Callback = function(ClickAll)
+    if ClickAll then
+        getgenv().doAllClicks = true
+        while getgenv().doAllClicks == true do
+        wait()
+            clickAllTheDetectors()
+        end
+    else
+        getgenv().doAllClicks = false
+        wait()
+        getgenv().doAllClicks = false
+    end
 end})
 
 Tab5:AddButton({
@@ -5685,7 +5682,13 @@ wait(.5)
 for i, v in pairs(game.Players:GetPlayers()) do
     if v ~= game.Players.LocalPlayer and v:FindFirstChild("AudioDeviceInput") then
         local dude = v.AudioDeviceInput
-        wait(.1)
+        wait()
+        print(tostring(dude)..", Player: "..tostring(dude.Parent)..", UserID: "..tostring(dude.Parent.UserId))
+        wait()
+        dude.Muted = false
+        wait()
+        print("Zacks Easy Hub | [OUTPUT]: New Changes...")
+        wait()
         print(tostring(dude)..", Player: "..tostring(dude.Parent)..", UserID: "..tostring(dude.Parent.UserId))
     end
 end
@@ -5716,10 +5719,13 @@ function getDisableScript()
     local PlayerGui = LocalPlayer.PlayerGui or LocalPlayer:FindFirstChild("PlayerGui")
     local VEffect = PlayerGui:WaitForChild("VEffect")
     local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
-    FindLocalScript:Destroy()
+    getgenv().DoDisabledConnection = true
+    while getgenv().DoDisabledconnection == true do
+    wait(0.5)
+        FindLocalScript.Disabled = true
+    end
 end
-getDisableScript()
-wait(.5)
+wait(.2)
 getgenv().GetLoopRunning = true
 while getgenv().GetLoopRunning == true do
 wait(0.1)
@@ -5727,6 +5733,6 @@ wait(0.1)
         getgenv().GetLoopRunning = false
         return game.Players.LocalPlayer:Kick("Detected MisMatched Infinite Yield Version, rejoin, and run my Infinite Yield! (sorry)")
     else
-        -- warn("--> WAITING FOR INFINITE YIELD TO BE EXECUTED HERE <--")
+        getDisableScript()
     end
 end
