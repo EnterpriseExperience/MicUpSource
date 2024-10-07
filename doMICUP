@@ -176,7 +176,7 @@ if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     )
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
-
+wait(0.5)
 local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 local GameFolder = Workspace:FindFirstChild("Game")
 local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
@@ -365,10 +365,12 @@ local Tab6 = Window:MakeTab({
     PremiumOnly = false
 })
 local Section6 = Tab6:AddSection({
-    Name = "Other Shit"
+    Name = "Information/Details"
 })
 wait(0.5)
-if getgenv().GetStartIntro == true then
+-- Modifying loading screen, will be back soon, don't edit this line.
+
+--[[if getgenv().GetStartIntro == true then
     print("Intro Data is already 'True'. Skipping intro...")
 else
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/startIntroFadeScreen')))()
@@ -381,15 +383,16 @@ else
     else
         warn("Unable to retrieve Intro Data | failed | False")
     end
-end
+end--]]
 wait(0.5)
 local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 local FindBaseplate = Workspace:FindFirstChild("Baseplate") or Workspace:WaitForChild("Baseplate")
 
-if getgenv().HasCreatedFolder == false or Workspace:FindFirstChild("PartStorage") and Workspace:FindFirstChild("PartStorage"):FindFirstChildOfClass("Part") then
+if getgenv().HasCreatedFolder == true or Workspace:FindFirstChild("PartStorage") and Workspace:FindFirstChild("PartStorage"):FindFirstChildOfClass("Part") then
     print("Already Found | PartStorage / Anti-Void Part | Folder | True | Skipping...")
 else
     getgenv().HasCreatedFolder = false
+    wait()
     local NewFolder = Instance.new("Folder")
     NewFolder.Name = "PartStorage"
     NewFolder.Parent = Workspace
@@ -401,7 +404,7 @@ else
         GetClone.CFrame = CFrame.new(FindBaseplate.Position)
         GetClone.BrickColor = BrickColor.new("Maroon")
         GetClone.Color = Color3.new(117, 0, 0)
-        GetClone.Size = Vector3.new(2048, 11, 2048)
+        GetClone.Size = Vector3.new(2048, 16, 2048)
         GetClone.CanCollide = true
         GetClone.CanQuery = true
         GetClone.CanTouch = true
@@ -409,6 +412,22 @@ else
         getgenv().HasCreatedFolder = true
     end
 end
+wait(0.5)
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character.HumanoidRootPart
+local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local NewCF = Instance.new("Part")
+NewCF.Name = "CFRAME_STORAGE"
+NewCF.Anchored = true
+NewCF.Parent = Workspace
+NewCF.CanCollide = false
+NewCF.Transparency = 1
+wait(0.4)
+NewCF.CFrame = CFrame.new(36.6786537, 4.99999952, 21.6570473)
+wait(.3)
+print("Set SpawnPosition: "..tostring(NewCF.CFrame))
 wait(0.5)
 if writefile and readfile then
     print("writefile function (unpacked data): "..tostring(writefile).." | readfile function (unpacked data): "..tostring(readfile))
@@ -800,7 +819,7 @@ OrionLib:MakeNotification({
 })
 wait()
 getgenv().GetDataResetLighting = false
-wait()
+wait(.4)
 if getgenv().GetDataResetLighting == false then
 local lighting = game:GetService("Lighting")
 
@@ -833,7 +852,7 @@ else
         Time = 7
     })
 end
-else
+elseif getgenv().GetDataResetLighting == true then
     print("We have already reset lighting, skipping...")
     wait(0.2)
     warn("getNumberOver(tonumber, GET_ID, PID) /// nil >= ???")
@@ -1135,10 +1154,10 @@ Callback = function()
     end
 
     for _, v in ipairs(stalls) do
-        if table.find(whitelist, v.Player.Value) then
+        if table.find(whitelist, tostring(v.Player.Value)) then
             v:FindFirstChild("ProxPart").ProximityPrompt.Enabled = false
         else
-            warn("Unable to determine whether or not ProximityPrompt should be Disabled.")
+            warn(tostring(v.Player.Value)..", was checked, continuing...")
         end
     end
 end})
@@ -1634,6 +1653,93 @@ else
     wait()
     print("Toggle Loop Set To: "..tostring(getgenv().StartRainbowPart))
 end
+end})
+
+Tab11:AddTextbox({
+Name = "Custom Booth Image (FE)",
+Default = "ID Here",
+TextDisappear = true,
+Callback = function(getIdForBooth)
+    local GetCustomID = tostring(getIdForBooth)
+    getgenv().CanProceed = true
+    wait()
+    repeat wait() until getgenv().CanProceed == true
+    wait()
+    if GetCustomID then
+        local function getStall()
+            for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+                if v.Player.Value == game:GetService("Players").LocalPlayer then
+                    return v
+                end
+            end
+        return nil
+        end
+
+        local function CheckHashtags(message)
+            getgenv().CanProceed = true
+            wait()
+            if string.find(message, "#") then
+                getgenv().CanProceed = false
+                
+                OrionLib:MakeNotification({
+                    Name = "Hashtagged Message";
+                    Content = "Your message was filtered: " .. message;
+                    Image = "rbxassetid://4483345998";
+                    Time = 10;
+                })
+                wait(0.5)
+                OrionLib:MakeNotification({
+                    Name = "Cooldown Started.";
+                    Content = "Detected hashtags, Ratelimiting...";
+                    Image = "rbxassetid://4483345998";
+                    Time = 10;
+                })
+                wait(10)
+                getgenv().CanProceed = true
+                wait(0.2)
+                OrionLib:MakeNotification({
+                    Name = "Removed Ratelimit.";
+                    Content = "Thanks for being patient with us [Roblox Sucks]";
+                    Image = "rbxassetid://4483345998";
+                    Time = 7;
+                })
+            end
+        end
+
+        local GetLocalPlayersStall = getStall()
+
+        if not GetLocalPlayersStall then
+            return OrionLib:MakeNotification({
+                Name = "Error: No Booth",
+                Content = "You do not own a booth, claim one!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end
+
+        if GetLocalPlayersStall and getgenv().CanProceed == true then
+            local args = {
+                [1] = "Zacks Easy Hub [ON TOP!]",
+                [2] = GetCustomID
+            }
+            
+            GetLocalPlayersStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        elseif getgenv().CanProceed == false then
+            return OrionLib:MakeNotification({
+                Name = "Error: Ratelimited.",
+                Content = "You cannot proceed right now, sorry!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end
+    elseif not GetCustomID then
+        return OrionLib:MakeNotification({
+            Name = "Error: No Input",
+            Content = "Please input an ID for your booth image.",
+            Image = "rbxassetid://4483345998",
+            Time = 10
+        })
+    end
 end})
 
 Tab11:AddTextbox({
@@ -4167,13 +4273,13 @@ else
     wait()
     repeat wait() until getgenv().doTeleport == false
     print("Success!")
-    wait(2)
+    wait(1)
     local Players = game:GetService("Players")
     local Workspace = game:GetService("Workspace") or workspace
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart") or Character.HumanoidRootPart
-    HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
+    HumanoidRP.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
 end
 end})
 
@@ -4209,9 +4315,10 @@ end
 else
 getgenv().loopTPToVoid = false
 wait()
+repeat wait() until getgenv().loopTPToVoid == false
 local Character = game:GetService("Players").LocalPlayer.Character
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
-HumanoidRootPart.CFrame = CFrame.new(85.846756, 3.61196709, -29.8345909)
+HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
 end
 end})
 
@@ -4973,7 +5080,7 @@ Callback = function()
     wait(0.5)
     Humanoid.Health = 0
 end})
-    
+
 Tab15:AddButton({
 Name = "Destroy GUI/Script",
 Callback = function()
@@ -4987,6 +5094,16 @@ Callback = function()
     wait()
     getgenv().GetLoopRunning = false
     wait()
+    for i, v in pairs(game:GetService("Workspace").PartStorage:GetDescendants()) do
+        if v:FindFirstChild("CFRAME_STORAGE") and v:IsA("Part") then
+            print(tostring(v))
+            wait(.3)
+            v:Destroy()
+        else
+            warn("404_MISSING_StringValue | 'CFRAME_STORAGE' | nil:FindFirstChild(nil?CFRAME_STORAGE) | ???[MISSING_^OUTPUT]")
+        end
+    end
+    wait(.3)
     game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
 end})
 
@@ -5573,8 +5690,6 @@ print(tostring(LocalPlayer.CameraMaxZoomDistance))
 end
 wait(0.5)
 loadGUI()
-wait(0.1)
-getgenv().CompletedIntro = true
 wait(0.3)
 print("Running...")
 wait(0.2)
@@ -5693,32 +5808,45 @@ for i, v in pairs(game.Players:GetPlayers()) do
     end
 end
 wait(1)
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
-wait(0.5)
-repeat wait() until Humanoid
-wait()
+local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+wait(.3)
 Humanoid.Health = 0
-wait(0.1)
-print("Successfully ran!")
 wait(1)
-getGUIEnabled()
+repeat wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
+    if LocalPlayer.Character then
+        local Players = game:GetService("Players")
+        local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HumanoidRP = Character:FindFirstChild("HumanoidRootPart")
+        HumanoidRP.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
+        wait(1)
+        if Workspace:FindFirstChild("CFRAME_STORAGE") then
+            Workspace:FindFirstChild("CFRAME_STORAGE"):Destroy()
+        else
+            warn("CFRAME_STORAGE | nil")
+        end
+    end
+end
+wait(0.5)
+print("Successfully ran!")
 wait(1)
 print("...")
 wait()
 warn("...")
 wait(1)
-local optionPicked = nil
 local UserInputService = cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
 
 function getDisableScript()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local PlayerGui = LocalPlayer.PlayerGui or LocalPlayer:FindFirstChild("PlayerGui")
-    local VEffect = PlayerGui:WaitForChild("VEffect")
-    local FindLocalScript = VEffect:FindFirstChild("Mute") or VEffect:WaitForChild("Mute")
+    local VEffect = PlayerGui:FindFirstChild("VEffect")
+    local FindLocalScript = VEffect:FindFirstChild("Mute")
     getgenv().DoDisabledConnection = true
     while getgenv().DoDisabledconnection == true do
     wait(0.5)
