@@ -1730,7 +1730,7 @@ end
 while getgenv().ShufflePics == true do
 wait(0.5)
 local args = {
-    [1] = "",
+    [1] = "ӻȕㄈҟ",
     [2] = "5600150518"
 }
 
