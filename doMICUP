@@ -1706,8 +1706,6 @@ Default = false,
 Callback = function(wildToggle)
 if wildToggle then
 getgenv().ShufflePics = true
-while getgenv().ShufflePics == true do
-wait(1.3)
 local function getStall()
     for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
         if v.Player.Value == game:GetService("Players").LocalPlayer then
@@ -1729,6 +1727,8 @@ if not GetLocalPlayersStall then
     })
 end
 
+while getgenv().ShufflePics == true do
+wait(0.5)
 local args = {
     [1] = "",
     [2] = "5600150518"
