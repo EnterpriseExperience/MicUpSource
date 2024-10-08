@@ -1715,9 +1715,9 @@ local function getStall()
 return nil
 end
 
-local GetLocalPlayersStall = getStall()
+local MyStall = getStall()
 
-if not GetLocalPlayersStall then
+if not MyStall then
     getgenv().ShufflePics = false
     return OrionLib:MakeNotification({
         Name = "Error: No Booth",
@@ -1734,7 +1734,7 @@ local args = {
     [2] = "5600150518"
 }
 
-GetLocalPlayersStall:FindFirstChild("Edit"):FireServer(unpack(args))
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
 wait(1)
 local args = {
     [1] = "ㄈȕ冂丅",
