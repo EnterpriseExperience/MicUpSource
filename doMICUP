@@ -125,7 +125,7 @@ end
 if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
     warn("OK !!!")
 else
-    local MICUPPlaceID = 6884319169
+    local MICUPPlaceID = 6884319169 or 15546218972
     local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
     TeleportService:Teleport(MICUPPlaceID)
 end
@@ -1661,10 +1661,6 @@ Default = "ID Here",
 TextDisappear = true,
 Callback = function(getIdForBooth)
     local GetCustomID = tostring(getIdForBooth)
-    getgenv().CanProceed = true
-    wait()
-    repeat wait() until getgenv().CanProceed == true
-    wait()
     if GetCustomID then
         local function getStall()
             for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
@@ -1673,37 +1669,6 @@ Callback = function(getIdForBooth)
                 end
             end
         return nil
-        end
-
-        local function CheckHashtags(message)
-            getgenv().CanProceed = true
-            wait()
-            if string.find(message, "#") then
-                getgenv().CanProceed = false
-                
-                OrionLib:MakeNotification({
-                    Name = "Hashtagged Message";
-                    Content = "Your message was filtered: " .. message;
-                    Image = "rbxassetid://4483345998";
-                    Time = 10;
-                })
-                wait(0.5)
-                OrionLib:MakeNotification({
-                    Name = "Cooldown Started.";
-                    Content = "Detected hashtags, Ratelimiting...";
-                    Image = "rbxassetid://4483345998";
-                    Time = 10;
-                })
-                wait(10)
-                getgenv().CanProceed = true
-                wait(0.2)
-                OrionLib:MakeNotification({
-                    Name = "Removed Ratelimit.";
-                    Content = "Thanks for being patient with us [Roblox Sucks]";
-                    Image = "rbxassetid://4483345998";
-                    Time = 7;
-                })
-            end
         end
 
         local GetLocalPlayersStall = getStall()
@@ -1717,21 +1682,14 @@ Callback = function(getIdForBooth)
             })
         end
 
-        if GetLocalPlayersStall and getgenv().CanProceed == true then
-            local args = {
-                [1] = "Zacks Easy Hub [ON TOP!]",
-                [2] = GetCustomID
-            }
-            
-            GetLocalPlayersStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        elseif getgenv().CanProceed == false then
-            return OrionLib:MakeNotification({
-                Name = "Error: Ratelimited.",
-                Content = "You cannot proceed right now, sorry!",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        end
+    if GetLocalPlayersStall then
+        local args = {
+            [1] = "Zacks Easy Hub [ON TOP!]",
+            [2] = GetCustomID
+        }
+
+        GetLocalPlayersStall:FindFirstChild("Edit"):FireServer(unpack(args))
+    end
     elseif not GetCustomID then
         return OrionLib:MakeNotification({
             Name = "Error: No Input",
@@ -1740,6 +1698,103 @@ Callback = function(getIdForBooth)
             Time = 10
         })
     end
+end})
+
+Tab11:AddToggle({
+Name = "Shuffle 18+ Images (FE)",
+Default = false,
+Callback = function(wildToggle)
+if wildToggle then
+getgenv().ShufflePics = true
+while getgenv().ShufflePics == true do
+wait(1.3)
+local function getStall()
+    for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+        if v.Player.Value == game:GetService("Players").LocalPlayer then
+            return v
+        end
+    end
+return nil
+end
+
+local GetLocalPlayersStall = getStall()
+
+if not GetLocalPlayersStall then
+    getgenv().ShufflePics = false
+    return OrionLib:MakeNotification({
+        Name = "Error: No Booth",
+        Content = "You do not own a booth, claim one!",
+        Image = "rbxassetid://4483345998",
+        Time = 10
+    })
+end
+
+local args = {
+    [1] = "",
+    [2] = "5600150518"
+}
+
+GetLocalPlayersStall:FindFirstChild("Edit"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = "ㄈȕ冂丅",
+    [2] = "5888213893"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = "ȿȴȕ丅",
+    [2] = "15058687074"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = "ҟҟҟ",
+    [2] = "8614358451"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = "ŗȇ丅ẳŗȡ",
+    [2] = "13886197679"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = "ώȇȇȡ",
+    [2] = "8614415035"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = "ώȟόŗȇ",
+    [2] = "18768072239"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = "ㄈȕɱ",
+    [2] = "18587094358"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+wait(1)
+local args = {
+    [1] = "ɓ׀ɠ ẳȿȿ",
+    [2] = "5788533331"
+}
+
+MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+end
+else
+getgenv().ShufflePics = false
+end
 end})
 
 Tab11:AddTextbox({
