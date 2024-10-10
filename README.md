@@ -1,6 +1,7 @@
-## [V4 OLD Loadstring, NEW AND IMPROVED!]:
+## [V4 OLD Loadstring, Still Working]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoadstring
 
+## [V5 Loadstring, NEW AND REVAMPED!]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/BETA-Loading
 ## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Not supported for Mobile, and will skip if mobile is detected.]
 
