@@ -400,7 +400,7 @@ local function loadGUI()
         warn("Your executor does not support writefile | readfile | false | SORRY! | There CAN/WILL be errors")
     end
     wait(0.5)
-        if writefile and readfile then
+        if writefile and readfile and not (game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki") then
             writefile("IY_FE.iy", [[
                 {
                     "currentShade2":[0.18039216101169587,0.18039216101169587,0.18431372940540315],
@@ -445,7 +445,52 @@ local function loadGUI()
                     "currentText1":[1,1,1]
                 }
             ]], true)
-        else
+        elseif writefile and readfile and game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki" then
+            writefile("IY_FE.iy", [[
+                {
+                    "currentShade2":[0.18039216101169587,0.18039216101169587,0.18431372940540315],
+                    "StayOpen":false,
+                    "logsEnabled":true,
+                    "aliases":[],
+                    "PluginsTable":[],
+                    "prefix":"-",
+                    "binds":[
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.One","COMMAND":"emote 13071993910"},
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Two","COMMAND":"emote 14901371589"},
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Five","COMMAND":"emote 5104377791"},
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Six","COMMAND":"emote 13694139364"},
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Seven","COMMAND":"emote 7466047578"},
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Eight","COMMAND":"emote 13823339506"},
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.E","COMMAND":"animspeed 4"},
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Q","COMMAND":"animspeed 0.1"},
+                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Nine","COMMAND":"emote 3576823880"},
+                        {"KEY":"Enum.KeyCode.Four","ISKEYUP":false,"COMMAND":"emote 5230615437"},
+                        {"KEY":"Enum.KeyCode.V","ISKEYUP":false,"COMMAND":"freezeanims"},
+                        {"KEY":"Enum.KeyCode.R","ISKEYUP":false,"COMMAND":"emote 16371235025"},
+                        {"KEY":"Enum.KeyCode.T","ISKEYUP":false,"COMMAND":"emote 10214418283"},
+                        {"KEY":"Enum.KeyCode.Z","ISKEYUP":false,"COMMAND":"emote 3994130516"},
+                        {"KEY":"Enum.KeyCode.X","ISKEYUP":false,"COMMAND":"animspeed 1"},
+                        {"KEY":"Enum.KeyCode.Y","ISKEYUP":false,"COMMAND":"emote 11394056822"},
+                        {"KEY":"Enum.KeyCode.N","ISKEYUP":false,"COMMAND":"emote 3823158750"},
+                        {"KEY":"Enum.KeyCode.U","ISKEYUP":false,"COMMAND":"emote 14900153406"},
+                        {"KEY":"Enum.KeyCode.Zero","ISKEYUP":false,"COMMAND":"emote 15506503658"},
+                        {"KEY":"Enum.KeyCode.P","ISKEYUP":false,"COMMAND":"emote 10275057230"},
+                        {"KEY":"Enum.KeyCode.Three","ISKEYUP":false,"COMMAND":"emote 3716633898"},
+                        {"KEY":"Enum.KeyCode.F","ISKEYUP":false,"TOGGLE":"animspeed -1","COMMAND":"animspeed 1"}
+                    ],
+                    "currentShade3":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
+                    "WayPoints":[],
+                    "jLogsEnabled":false,
+                    "currentScroll":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
+                    "keepIY":true,
+                    "eventBinds":"{\"OnSpawn\":[],\"OnDied\":[],\"OnExecute\":[],\"OnKilled\":[],\"OnJoin\":[],\"OnLeave\":[],\"OnDamage\":[],\"OnChatted\":[]}",
+                    "espTransparency":0.3,
+                    "currentShade1":[0.1411764770746231,0.1411764770746231,0.14509804546833039],
+                    "currentText2":[0,0,0],
+                    "currentText1":[1,1,1]
+                }
+            ]], true)
+        elseif not writefile or readfile then
             warn("Your exploit does not support 'writefile' [You will not be able to use custom config for Infinite Yield, sorry!]")
         end
     wait(0.5)
@@ -1818,6 +1863,12 @@ local function loadGUI()
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
         local Stalls = Workspace:WaitForChild("Stalls")
+    
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
         
         local OldestCF = Character:WaitForChild("HumanoidRootPart").CFrame
         local LolBigDawg = findplr(LolUnClaim)
@@ -1860,6 +1911,12 @@ local function loadGUI()
         end
         
         wait()
+
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
         
         local stall = getStallFunc()
         
@@ -1958,6 +2015,12 @@ local function loadGUI()
                     makeHumanoidRootPartInvisible(player.Character)
                 end
             end
+
+            getgenv().ownerWhitelist = {
+                "M1RD3RCAUGHT",
+                "STK_kets4eki",
+                "ItsYoDawgWsgGng"
+            }
         elseif getgenv().ownerWhitelist[stall.Player.Value] then
             return OrionLib:MakeNotification({
                 Name = "Error: Owner",
@@ -2007,15 +2070,11 @@ local function loadGUI()
         local Character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
         local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
         
-        local function isWhitelisted()
-            local ownerWhitelist = getgenv().ownerWhitelist
-            local boothOrigWhitelistTable = getgenv().BoothOrigWhitelistTable
-        
-            local ownerHasEntries = next(ownerWhitelist) ~= nil
-            local boothHasEntries = next(boothOrigWhitelistTable) ~= nil
-        
-            return ownerHasEntries or boothHasEntries
-        end
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
         
         local function makeInvisible(character)
             if character then
@@ -2043,7 +2102,7 @@ local function loadGUI()
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
             local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            if proximityPrompt and not isWhitelisted() then
+            if proximityPrompt and not getgenv().ownerWhitelist[stall.Player.Value] then
                 Character:PivotTo(stall:GetPivot())
                 wait(0.1)
                 Character:WaitForChild("HumanoidRootPart").Anchored = true
@@ -2060,18 +2119,18 @@ local function loadGUI()
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
-            elseif isWhitelisted() then
-                return print("Player is whitelisted, skipping...")
+            elseif getgenv().ownerWhitelist[stall.Player.Value] then
+                return print("Player is an owner, skipping...")
             end
         end
         
         local function unclaimStalls()
             for _, stall in pairs(Folder:GetChildren()) do
                 if stall:FindFirstChild("ProxPart") then
-                    if stall and not isWhitelisted() then
+                    if stall and not getgenv().ownerWhitelist[stall.Player.Value] then
                         wait(0.3)
                         fireAndUnclaimStall(stall)
-                    elseif isWhitelisted() then
+                    elseif getgenv().ownerWhitelist[stall.Player.Value] then
                         return print("Skipping stall for: " .. tostring(stall.Player.Value))
                     end
                 end
@@ -2152,7 +2211,7 @@ local function loadGUI()
             
         local function gettingGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            if not getgenv().BoothOrigWhitelistTable[player.Name] then
+            if player and not getgenv().BoothOrigWhitelistTable[player.Name] then
                 getgenv().BoothOrigWhitelistTable[player.Name] = player
                 wait(0.2)
                 OrionLib:MakeNotification({
@@ -2168,7 +2227,7 @@ local function loadGUI()
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
-            elseif not Players[player.Name] then
+            elseif not player then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR!]: 0",
                     Content = tostring(player)..", does not exist!",
@@ -2189,10 +2248,16 @@ local function loadGUI()
     getgenv().BoothOrigWhitelistTable = getgenv().BoothOrigWhitelistTable or {}
             
     local DoFindPlr = findplr(GetOffBoothWhitelist)
+
+    getgenv().ownerWhitelist = {
+        "M1RD3RCAUGHT",
+        "STK_kets4eki",
+        "ItsYoDawgWsgGng"
+    }
     
     local function getThisPlayerOutOfHere(player)
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        if getgenv().BoothOrigWhitelistTable[player.Name] then
+        if player and getgenv().BoothOrigWhitelistTable[player.Name] then
             getgenv().BoothOrigWhitelistTable[player.Name] = nil
             wait(0.2)
             if not getgenv().BoothOrigWhitelistTable[player.Name] then
@@ -2202,7 +2267,7 @@ local function loadGUI()
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
-            elseif not Players[player.Name] then
+            elseif not player then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: 0",
                     Content = tostring(player)..", does not exist",
@@ -2241,20 +2306,18 @@ local function loadGUI()
     TextDisappear = true,
     Callback = function(urBlacklisted)
         getgenv().PlrBlacklistedTable = getgenv().PlrBlacklistedTable or {}
-        
+
         local globallyBlacklist = findplr(urBlacklisted)
-    
-        local function isWhitelisted()
-            local ownerWhitelist = getgenv().ownerWhitelist
-            
-            local ownerHasEntries = next(ownerWhitelist) ~= nil
-        
-            return ownerHasEntries or boothHasEntries
-        end    
-        
+
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
+
         local function getThatGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            if not getgenv().PlrBlacklistedTable[player.Name] and not isWhitelisted() then
+            if player and player ~= game.Players.LocalPlayer and (not getgenv().PlrBlacklistedTable[player.Name] or getgenv().ownerWhitelist[player.Name]) then
                 getgenv().PlrBlacklistedTable[player.Name] = player
                 wait(0.2)
                 OrionLib:MakeNotification({
@@ -2263,7 +2326,7 @@ local function loadGUI()
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
-            elseif not Players[player.Name] then
+            elseif not player then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: 0",
                     Content = tostring(player)..", does not exist!",
@@ -2277,7 +2340,7 @@ local function loadGUI()
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
-            elseif isWhitelisted() then
+            elseif getgenv().ownerWhitelist[player.Name] then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: -500",
                     Content = tostring(player)..", is an owner!",
@@ -2301,7 +2364,7 @@ local function loadGUI()
             
         local function removePlayerFromGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            if getgenv().PlrBlacklistedTable[player.Name] then
+            if player and getgenv().PlrBlacklistedTable[player.Name] then
                 getgenv().PlrBlacklistedTable[player.Name] = nil
                 wait(0.2)
                 if not getgenv().PlrBlacklistedTable[player.Name] then
@@ -2311,7 +2374,7 @@ local function loadGUI()
                         Image = "rbxassetid://4483345998",
                         Time = 10
                     })
-                elseif not Players[player.Name] then
+                elseif not player then
                     return OrionLib:MakeNotification({
                         Name = "[ERROR]: 0",
                         Content = tostring(player)..", does not exist!",
@@ -2328,7 +2391,7 @@ local function loadGUI()
                 })
             end
         end
-        
+
         removePlayerFromGlobalTable(DoFindPlr)
     end})
     
@@ -2345,6 +2408,12 @@ local function loadGUI()
     local yourSavedBro = findplr(doGetWhitelist)
     
     local function whitelistingTableWarnings(player)
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
+
         if getgenv().getBasicTable[player.Name] and not getgenv().ownerWhitelist[player.Name] then
             getgenv().getBasicTable[player.Name] = player
             wait(0.2)
@@ -2416,6 +2485,12 @@ local function loadGUI()
     Name = "Send Warnings To Blacklisted Player",
     Callback = function()
         getgenv().PlrBlacklistedTable = getgenv().PlrBlacklistedTable or {}
+
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
     
         for i, v in pairs(game.Players:GetChildren()) do
             if getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[v.Name] then
@@ -2423,6 +2498,12 @@ local function loadGUI()
                     [1] = tostring(getgenv().PlrBlacklistedTable[v.Name])
                 }
     
+                game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
+            elseif getgenv().ownerWhitelist[v.Name] then
+                local args = {
+                    [1] = tostring(game.Players.LocalPlayer.Name)
+                }
+
                 game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
             end
         end
@@ -2433,20 +2514,20 @@ local function loadGUI()
     Default = false,
     Callback = function(SpamThePlr)
     if SpamThePlr then
-        function blacklistedTableFindPlr()
-            local Players = game:GetService("Players")
-            for i, v in pairs(Players:GetChildren()) do
-                if getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[v.Name] then
-                    return v
-                end
-            end
-            return nil
-        end
-    
-        local getThatPlr = blacklistedTableFindPlr()
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
         
         for i, v in pairs(game.Players:GetChildren()) do
-            if getThatPlr and not getgenv().ownerWhitelist[v.Name] then
+            getgenv().ownerWhitelist = {
+                "M1RD3RCAUGHT",
+                "STK_kets4eki",
+                "ItsYoDawgWsgGng"
+            }
+
+            if getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[getThatPlr.Name] then
                 getgenv().GetStuffSpam = true
                 while getgenv().GetStuffSpam == true do
                 wait(0.3)
@@ -3061,7 +3142,13 @@ local function loadGUI()
         local whitelist = { "M1RD3RCAUGHT" }
         
         for i, v in pairs(game.Players:GetPlayers()) do
-            if v ~= game.Players.LocalPlayer and not table.find(whitelist, v.Name) and not table.find(ownerWhitelist, v.Name) then
+            getgenv().ownerWhitelist = {
+                "M1RD3RCAUGHT",
+                "STK_kets4eki",
+                "ItsYoDawgWsgGng"
+            }
+
+            if v ~= game.Players.LocalPlayer and (not getgenv().whitelist[v.Name] or getgenv().ownerWhitelist[v.Name]) then
                 local args = {
                     [1] = tostring(v.Name)
                 }
@@ -3080,6 +3167,12 @@ local function loadGUI()
         while getgenv().getSendAllWarningsConnection == true do
         wait(1.5)
         for i, v in pairs(game.Players:GetChildren()) do
+            getgenv().ownerWhitelist = {
+                "M1RD3RCAUGHT",
+                "STK_kets4eki",
+                "ItsYoDawgWsgGng"
+            }
+
             if v ~= game.Players.LocalPlayer and not getgenv().ownerWhitelist[v.Name] then
                 local args = {
                     [1] = tostring(v.Name)
@@ -3106,24 +3199,20 @@ local function loadGUI()
     Default = "User Or Display",
     TextDisappear = true,
     Callback = function(warnPlr)
-    local function isWhitelisted()
-        local ownerWhitelist = getgenv().ownerWhitelist
-        local boothOrigWhitelistTable = getgenv().BoothOrigWhitelistTable
-    
-        local ownerHasEntries = next(ownerWhitelist) ~= nil
-        local boothHasEntries = next(boothOrigWhitelistTable) ~= nil
-        
-        return ownerHasEntries or boothHasEntries
-    end
+    getgenv().ownerWhitelist = {
+        "M1RD3RCAUGHT",
+        "STK_kets4eki",
+        "ItsYoDawgWsgGng"
+    }
     
     local thisPlrWarned = findplr(warnPlr)
-    if thisPlrWarned ~= game.Players.LocalPlayer and not isWhitelisted() then
+    if thisPlrWarned ~= game.Players.LocalPlayer and not getgenv().ownerWhitelist[thisPlrWarned.Name] then
         local args = {
             [1] = tostring(thisPlrWarned.Name)
         }
     
         game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
-    elseif isWhitelisted() then
+    elseif getgenv().ownerWhitelist[thisPlrWarned.Name] then
         return OrionLib:MakeNotification({
             Name = "[ERROR]: -500",
             Content = "Player is an owner!",
@@ -5395,12 +5484,13 @@ local function loadGUI()
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
         getgenv().Invis_Loaded = false
-        wait()
         getgenv().SCRIPT_EXECUTED = false
-        wait()
         getgenv().GetLoopRunning = false
-        wait(.3)
         getgenv().getLoopKick = false
+        getgenv().OtherAntiAfk = false
+        getgenv().AntiAfkScript = false
+        getgenv().LmaoGetMuted = false
+
         wait()
         game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
         wait(1)
@@ -5412,17 +5502,17 @@ local function loadGUI()
     Tab15:AddButton({
     Name = "Destroy GUI/Script",
     Callback = function()
+        getgenv().OtherAntiAfk = false
+        getgenv().AntiAfkScript = false
         getgenv().getLoopKick = false
-        wait(.3)
         getgenv().SCRIPT_EXECUTED = false
-        wait()
         getgenv().SCRIPT_EXECUTED = false
-        wait()
         getgenv().Invis_Loaded = false
-        wait()
         getgenv().GetLoopRunning = false
-        wait()
         getgenv().GetLoopRunning = false
+        getgenv().LmaoGetMuted = false
+        getgenv().GetDataResetLighting = false
+
         wait()
         for i, v in pairs(game:GetService("Workspace").PartStorage:GetDescendants()) do
             if v:FindFirstChild("CFRAME_STORAGE") and v:IsA("Part") then
