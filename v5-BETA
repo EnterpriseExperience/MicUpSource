@@ -2045,7 +2045,7 @@ local function loadGUI()
     if theNote then
         getgenv().crazyNote = true
         while getgenv().crazyNote == true do
-        wait(.1)
+        wait(0.5)
             local args = {
                 [1] = "\211\187\200\149\227\132\136\210\159 \200\159\207\140\200\135"
             }
