@@ -17,10 +17,10 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 ## V3 New Features:
 `SO MANY MORE NEW FEATURES NOW!, CHECK THEM OUT BY RUNNING THIS SCRIPT, IN-GAME.`
 
-## [CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub | MIC UP 🔊]:
-`Mute Player (Works With DisplayNames, Short Names, and Usernames)`
+## [CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub V4 AND V5 | MIC UP 🔊]:
+`[Client] Mute Player (Works With DisplayNames, Short Names, and Usernames)`
 
-`Unmute Player (Works With DisplayNames, Short Names, and Usernames)`
+`[Client] Unmute Player (Works With DisplayNames, Short Names, and Usernames)`
 
 `[INFO]: Just type their user and they will be muted/unmuted for you so you don't have to listen to them!`
 
