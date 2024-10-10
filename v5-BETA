@@ -2913,17 +2913,17 @@ local function loadGUI()
                 [1] = "XHoverboard",
                 [2] = "Hoverboard"
             }
-            
+
             game:GetService("ReplicatedStorage"):WaitForChild("Hoverboard"):FireServer(unpack(args))
             wait(0.5)
             local player = game.Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
             local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-            local flying = false
-            local speed = tonumber(GetSpeed)
+            getgenv().flying = false
+            getgenv().speed = tonumber(GetSpeed)
             local bodyGyro = nil
             local bodyVelocity = nil
-            
+
             local function startFly()
                 flying = true
                 bodyGyro = Instance.new("BodyGyro")
@@ -2936,7 +2936,7 @@ local function loadGUI()
                 bodyVelocity.Parent = humanoidRootPart
                 character.Humanoid.PlatformStand = true
             end
-            
+
             local function updateFly()
                 if flying then
                     local moveDirection = Vector3.new(0, 0, 0)
@@ -2961,20 +2961,20 @@ local function loadGUI()
                         moveDirection = moveDirection - Vector3.new(0, 1, 0)
                     end
                     if moveDirection.Magnitude > 0 then
-                        bodyVelocity.Velocity = moveDirection.Unit * speed
+                        bodyVelocity.Velocity = moveDirection.Unit * tonumber(getgenv().speed)
                     else
                         bodyVelocity.Velocity = Vector3.new(0, 0, 0)
                     end
                     bodyGyro.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + Vector3.new(lookVector.X, 0, lookVector.Z))
                 end
             end
-            
+
             game:GetService("RunService").RenderStepped:Connect(function()
                 if flying then
                     updateFly()
                 end
             end)
-    
+
             startFly()
         elseif tostring(GetSpeed) or GetSpeed == "stop" then
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -2993,7 +2993,7 @@ local function loadGUI()
             local player = Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
             local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-            
+
             local function stopFly()
                 if humanoidRootPart:FindFirstChild("BodyGyro") then
                     humanoidRootPart.BodyGyro:Destroy()
@@ -3005,7 +3005,9 @@ local function loadGUI()
                 getgenv().flyLoop = false
             end
             
-            stopFly()        
+            stopFly()
+        elseif tonumber(GetSpeed) and getgenv().flying == true then
+            return getgenv().speed == tonumber(GetSpeed)
         end
     end})
     
