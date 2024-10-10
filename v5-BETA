@@ -5494,7 +5494,7 @@ local function loadGUI()
         wait()
         game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
         wait(1)
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/doMICUP')))()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v5-BETA')))()
         wait(0.5)
         Humanoid.Health = 0
     end})
