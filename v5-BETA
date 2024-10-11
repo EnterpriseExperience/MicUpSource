@@ -3710,6 +3710,27 @@ local function loadGUI()
         game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
     end
     end})
+
+    Tab13:AddToggle({
+    Name = "Anti In-Game Animations",
+    Default = false,
+    Callback = function(getAntiAnim)
+        if getAntiAnim then
+            getgenv().doAntiEmoting = true
+            while getgenv().doAntiEmoting == true do
+            wait()
+                local args = {
+                    [1] = tonumber(game.Players.LocalPlayer.UserId)
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            end
+        else
+            getgenv().doAntiEmoting = false
+            wait()
+            getgenv().doAntiEmoting = false
+        end
+    end})
     
     Tab13:AddToggle({
     Name = "Spam All Tools (VIP Dances, FE)",
