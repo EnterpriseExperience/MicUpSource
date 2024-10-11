@@ -381,16 +381,16 @@ local function loadGUI()
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character.HumanoidRootPart
     local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-    local NewCF = Instance.new("Part")
+    --[[local NewCF = Instance.new("Part")
     NewCF.Name = "CFRAME_STORAGE"
     NewCF.Anchored = true
     NewCF.Parent = Workspace
     NewCF.CanCollide = false
     NewCF.Transparency = 1
     wait(0.4)
-    NewCF.CFrame = CFrame.new(36.6786537, 4.99999952, 21.6570473)
+    NewCF.CFrame = CFrame.new(36.6786537, 4.99999952, 21.6570473)--]]
     wait(.3)
-    print("Set SpawnPosition: "..tostring(NewCF.CFrame))
+    -- print("Set SpawnPosition: "..tostring(NewCF.CFrame))
     wait(0.5)
     if writefile and readfile then
         print("writefile function (unpacked data): "..tostring(writefile).." | readfile function (unpacked data): "..tostring(readfile))
@@ -1874,22 +1874,38 @@ local function loadGUI()
         local LolBigDawg = findplr(LolUnClaim)
     
         local function getStallFunc()
+            local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local Stalls = Workspace:FindFirstChild("Stalls") or Workspace:WaitForChild("Stalls")
             local LolBigDawg = findplr(LolUnClaim)
             for _, stall in pairs(Stalls:GetChildren()) do
-                if stall:FindFirstChild("ProxPart") and stall:FindFirstChild("Player") then
-                    if not getgenv().ownerWhitelist[stall.Player.Value] then
+                if stall and stall:FindFirstChild("ProxPart") then
+                    if stall and LolBigDawg then
                         return stall
                     elseif getgenv().ownerWhitelist[stall.Player.Value] then
                         return OrionLib:MakeNotification({
-                            Name = "Error: Owner",
+                            Name = "[ERROR]: -500",
                             Content = "Owner of script owns this booth!",
                             Image = "rbxassetid://4483345998",
                             Time = 10
                         })
                     elseif getgenv().BoothOrigWhitelistTable[stall.Player.Value] then
                         return OrionLib:MakeNotification({
-                            Name = "Error: Whitelisted",
+                            Name = "[ERROR]: -111",
                             Content = "You have whitelisted this user, cannot claim.",
+                            Image = "rbxassetid://4483345998",
+                            Time = 10
+                        })
+                    elseif not stall then
+                        return OrionLib:MakeNotification({
+                            Name = "[ERROR]: UNKNOWN?",
+                            Content = tostring(LolBigDawg).."'s Booth was not found!",
+                            Image = "rbxassetid://4483345998",
+                            Time = 10
+                        })
+                    elseif not LolBigDawg then
+                        return OrionLib:MakeNotification({
+                            Name = "[ERROR]: -???",
+                            Content = tostring(LolBigDawg).." was not found!",
                             Image = "rbxassetid://4483345998",
                             Time = 10
                         })
@@ -2370,7 +2386,7 @@ local function loadGUI()
                 if not getgenv().PlrBlacklistedTable[player.Name] then
                     OrionLib:MakeNotification({
                         Name = "Success!",
-                        Content = tostring(player.Name)..", was removed from the blacklist!",
+                        Content = tostring(player)..", was removed from the blacklist!",
                         Image = "rbxassetid://4483345998",
                         Time = 10
                     })
@@ -2385,7 +2401,7 @@ local function loadGUI()
             elseif not getgenv().PlrBlacklistedTable[player.Name] then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: -1",
-                    Content = tostring(player.Name)..", was not found in the blacklist!",
+                    Content = tostring(player)..", was not found in the blacklist!",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
@@ -2500,7 +2516,7 @@ local function loadGUI()
         }
     
         for i, v in pairs(game.Players:GetChildren()) do
-            if getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[v.Name] and not getgenv().getBasicTable[v.Name] then
+            if getgenv().PlrBlacklistedTable[v.Name] and (not getgenv().ownerWhitelist[v.Name] or getgenv().getBasicTable[v.Name]) then
                 local args = {
                     [1] = tostring(getgenv().PlrBlacklistedTable[v.Name])
                 }
@@ -2528,40 +2544,23 @@ local function loadGUI()
                 "ItsYoDawgWsgGng"
             }
 
-            if v and getgenv().PlrBlacklistedTable[v.Name] and not getgenv().ownerWhitelist[v.Name] and not getgenv().getBasicTable[v.Name] then
+            if getgenv().PlrBlacklistedTable[v.Name] and (not getgenv().ownerWhitelist[v.Name] or getgenv().getBasicTable[v.Name]) then
                 getgenv().GetStuffSpam = true
                 while getgenv().GetStuffSpam == true do
                 wait(0.3)
                     local args = {
                         [1] = tostring(getgenv().PlrBlacklistedTable[v.Name])
                     }
-    
+
                     game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
                 end
-            elseif not v then
-                getgenv().GetStuffSpam = false
-                return OrionLib:MakeNotification({
-                    Name = "[ERROR]: 0",
-                    Content = tostring(v)..", is not in the Warning Blacklist!",
-                    Image = "rbxassetid://4483345998",
-                    Time = 10
-                })
-            elseif getgenv().ownerWhitelist[v.Name] then
-                return getgenv().GetStuffSpam == false
-            elseif getgenv().getBasicTable[v.Name] then
-                getgenv().GetStuffSpam = false
-                return OrionLib:MakeNotification({
-                    Name = "[ERROR]: -00",
-                    Content = tostring(v)..", is whitelisted (by you), cannot send.",
-                    Image = "rbxassetid://4483345998",
-                    Time = 10
-                })
-            elseif not getgenv().PlrBlacklistedTable[v.Name] then
-                return getgenv().GetStuffSpam == false
             end
         end
     else
-        getgenv().GetStuffSpam = false
+        for i = 1, 100 do
+            task.wait()
+            getgenv().GetStuffSpam = false
+        end
     end
     end})
     
@@ -6283,7 +6282,7 @@ local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindF
 wait(.3)
 Humanoid.Health = 0
 wait(2.5)
-repeat wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+--[[repeat wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
     game.Players.LocalPlayer.CharacterAdded:Connect(function()
         wait(2.5)
@@ -6307,7 +6306,7 @@ if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Human
             warn("CFRAME_STORAGE | nil")
         end
     end)
-end
+end--]]
 wait(0.5)
 print("Successfully ran!")
 wait(1)
