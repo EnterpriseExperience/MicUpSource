@@ -227,7 +227,7 @@ local function loadGUI()
     trackPlayerExecution(game.Players.LocalPlayer)
     wait()
     local Tab1 = Window:MakeTab({
-        Name = "Home",
+        Name = "> Home",
         Icon = "rbxassetid://7733960981",
         PremiumOnly = false
     })
@@ -235,15 +235,23 @@ local function loadGUI()
         Name = "||| Home Section |||"
     })
     local Tab11 = Window:MakeTab({
-        Name = "Booths",
+        Name = "> Booths",
         Icon = "rbxassetid://7733914390",
         PremiumOnly = false
     })
     local Section11 = Tab11:AddSection({
         Name = "||| Booth Tools/Stand/Stall Tools |||"
     })
+    local Tab17 = Window:MakeTab({
+        Name = "> Warnings Tab",
+        Icon = "rbxassetid://7733960981",
+        PremiumOnly = false
+    })
+    local Section17 = Tab17:AddSection({
+        Name = "||| Warnings Section |||"
+    })
     local Tab2 = Window:MakeTab({
-        Name = "Character",
+        Name = "> Character",
         Icon = "rbxassetid://7743871002",
         PremiumOnly = false
     })
@@ -251,7 +259,7 @@ local function loadGUI()
         Name = "||| Character Tools |||"
     })
     local Tab13 = Window:MakeTab({
-        Name = "Character 2",
+        Name = "> Character 2",
         Icon = "rbxassetid://7743871002",
         PremiumOnly = false
     })
@@ -259,7 +267,7 @@ local function loadGUI()
         Name = "||| Other Character Utilities |||"
     })
     local Tab10 = Window:MakeTab({
-        Name = "Teleports",
+        Name = "> Teleports",
         Icon = "rbxassetid://7733764327",
         PremiumOnly = false
     })
@@ -267,7 +275,7 @@ local function loadGUI()
         Name = "||| Teleport Tools |||"
     })
     local Tab4 = Window:MakeTab({
-        Name = "Chat Mods",
+        Name = "> Chat Tools",
         Icon = "rbxassetid://7734021300",
         PremiumOnly = false
     })
@@ -275,7 +283,7 @@ local function loadGUI()
         Name = "||| Tools For Manipulating Chat |||"
     })
     local Tab5 = Window:MakeTab({
-        Name = "Extra Tools",
+        Name = "> Extra Tools",
         Icon = "rbxassetid://7733954760",
         PremiumOnly = false
     })
@@ -283,7 +291,7 @@ local function loadGUI()
         Name = "||| Extra Tools |||"
     })
     local Tab9 = Window:MakeTab({
-        Name = "Lighting",
+        Name = "> Lighting",
         Icon = "rbxassetid://7734068495",
         PremiumOnly = false
     })
@@ -291,7 +299,7 @@ local function loadGUI()
         Name = "||| Lighting Tools |||"
     })
     local Tab7 = Window:MakeTab({
-        Name = "Whitelist",
+        Name = "> Whitelist",
         Icon = "rbxassetid://7733771472",
         PremiumOnly = false
     })
@@ -299,7 +307,7 @@ local function loadGUI()
         Name = "||| Whitelisting Area |||"
     })
     local Tab16 = Window:MakeTab({
-        Name = "Baseplate Tab",
+        Name = "> Baseplate Tab",
         Icon = "rbxassetid://7734058260",
         PremiumOnly = false
     })
@@ -307,7 +315,7 @@ local function loadGUI()
         Name = "||| Modify Baseplate [Not FE] |||"
     })
     local Tab12 = Window:MakeTab({
-        Name = "Emoting Tools",
+        Name = "> Emoting Tools",
         Icon = "rbxassetid://7743871002",
         PremiumOnly = false
     })
@@ -315,7 +323,7 @@ local function loadGUI()
         Name = "||| Emoting Modifications |||"
     })
     local Tab14 = Window:MakeTab({
-        Name = "CopyAnim Tab",
+        Name = "> CopyAnim Tab",
         Icon = "rbxassetid://7743871002",
         PremiumOnly = false
     })
@@ -323,7 +331,7 @@ local function loadGUI()
         Name = "||| Other Emote Utilities |||"
     })
     local Tab15 = Window:MakeTab({
-        Name = "UI Tab",
+        Name = "> UI Tab",
         Icon = "rbxassetid://7734022107",
         PremiumOnly = false
     })
@@ -331,12 +339,12 @@ local function loadGUI()
         Name = "||| UI Tools |||"
     })
     local Tab6 = Window:MakeTab({
-        Name = "Info",
+        Name = "> Info Tab",
         Icon = "rbxassetid://7734022107",
         PremiumOnly = false
     })
     local Section6 = Tab6:AddSection({
-        Name = "||| Information/Details |||"
+        Name = "||| Information |||"
     })
     wait(0.5)
     -- Modifying loading screen, will be back soon, don't edit this line.
@@ -2381,9 +2389,9 @@ local function loadGUI()
     
     local getBasicTable = {}
     
-    Tab7:AddParagraph("Add dick-heads here.")
+    Tab17:AddParagraph("Add dick-heads here.")
     wait()
-    Tab7:AddTextbox({
+    Tab17:AddTextbox({
     Name = "Add Warning Blacklist",
     Default = "User Here",
     TextDisappear = true,
@@ -2436,9 +2444,9 @@ local function loadGUI()
         getThatGlobalTable(globallyBlacklist)
     end})
     
-    Tab7:AddParagraph("Remove dick-heads here.")
+    Tab17:AddParagraph("Remove dick-heads here.")
     wait()
-    Tab7:AddTextbox({
+    Tab17:AddTextbox({
     Name = "Remove Warning Blacklist",
     Default = "User Here",
     TextDisappear = true,
@@ -2479,9 +2487,9 @@ local function loadGUI()
     end})
     
     wait()
-    Tab7:AddParagraph("Add the 'nice' people to NOT target here.")
+    Tab17:AddParagraph("Add the 'nice' people to NOT target here.")
     wait()
-    Tab7:AddTextbox({
+    Tab17:AddTextbox({
     Name = "Add Warning Whitelist",
     Default = "User Here",
     TextDisappear = true,
@@ -2527,9 +2535,9 @@ local function loadGUI()
     end})
     
     wait()
-    Tab7:AddParagraph("Remove the 'nice' people here.")
+    Tab17:AddParagraph("Remove the 'nice' people here.")
     wait()
-    Tab7:AddTextbox({
+    Tab17:AddTextbox({
     Name = "Remove Warning Whitelist",
     Default = "User Here",
     TextDisappear = true,
@@ -2571,7 +2579,7 @@ local function loadGUI()
         removePlayerFromGlobalTable(GetGoneBud)
     end})
     
-    Tab7:AddButton({
+    Tab17:AddButton({
     Name = "Send Warnings To Blacklisted Player",
     Callback = function()
         getgenv().PlrBlacklistedTable = getgenv().PlrBlacklistedTable or {}
@@ -2599,7 +2607,7 @@ local function loadGUI()
         end
     end})
     
-    Tab7:AddToggle({
+    Tab17:AddToggle({
     Name = "Loop Send Blacklisted Plr Warnings",
     Default = false,
     Callback = function(SpamThePlr)
@@ -3406,7 +3414,7 @@ local function loadGUI()
     end
     end})
     
-    Tab1:AddButton({
+    Tab17:AddButton({
     Name = "Send Fake Warnings (FREE! + FE!)",
     Callback = function()
         local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
@@ -3433,7 +3441,7 @@ local function loadGUI()
         end
     end})
     
-    Tab1:AddToggle({
+    Tab17:AddToggle({
     Name = "Loop Send All Warnings (Free + FE + Bypass)",
     Default = false,
     Callback = function(loopWarn)
@@ -3470,7 +3478,7 @@ local function loadGUI()
     end})
     print("DEBUG_MEMORY | False | Set BYT3_2FRAY? | True | Set OpCode? | True")
     task.wait()
-    Tab1:AddTextbox({
+    Tab17:AddTextbox({
     Name = "Send Someone A Warning",
     Default = "User Or Display",
     TextDisappear = true,
