@@ -2100,27 +2100,6 @@ local function loadGUI()
             "ItsYoDawgWsgGng"
         }
         
-        local function makeInvisible(character)
-            if character then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
-                        part.Transparency = 1
-                        if part:IsA("BasePart") then
-                            part.CanCollide = false
-                        end
-                    end
-                end
-            end
-        end
-        
-        local function makeAllPlayersInvisible()
-            for _, player in pairs(Players:GetPlayers()) do
-                if player ~= localPlayer and player.Character then
-                    makeInvisible(player.Character)
-                end
-            end
-        end
-        
         local function fireAndUnclaimStall(stall)
             local proximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -2161,27 +2140,8 @@ local function loadGUI()
             end
             wait(0.3)
         end
-        
-        local function makeVisible(character)
-            if character then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") or part:IsA("Decal") or part:IsA("SurfaceGui") then
-                        part.Transparency = 0
-                        if part:IsA("BasePart") then
-                            part.CanCollide = false
-                        end
-                    end
-                end
-            end
-        end
-        
-        local function makeAllPlayersVisible()
-            for _, player in pairs(Players:GetPlayers()) do
-                if player ~= localPlayer and player.Character then
-                    makeVisible(player.Character)
-                end
-            end
-        end
+
+        wait(0.3)
     
         local function cancelAllButtons()
             local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
@@ -2197,22 +2157,121 @@ local function loadGUI()
                 end
             else
                 warn("firesignal | is not supported on this executor | making 'StallFrame' Visible property : | False")
-                LocalPlayer.PlayerGui.StallLocal.StallFrame.Visible = false
+                StallFrame.Visible = false
+            end
+        end
+        wait(0.3)
+        local function makeCharacterInvisible(character)
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.Transparency = 1
+                end
             end
         end
         
-        makeAllPlayersInvisible()
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                makeCharacterVisible(player.Character)
+            end
+        end
+        wait()
+        local function makePartInvisible(part)
+            part.Transparency = 1
+        end
+        
+        local function makeHumanoidRootPartInvisible(character)
+            local player = game.Players:GetPlayerFromCharacter(character)
+            if player and player ~= game.Players.LocalPlayer then
+                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart then
+                    makePartInvisible(humanoidRootPart)
+                end
+            end
+        end
+        
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Character then
+                makeHumanoidRootPartInvisible(player.Character)
+            end
+        end
         wait(0.1)
         unclaimStalls()
         wait(0.1)
         localPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
+        
         wait(0.3)
         if firesignal then
+            local function makeCharacterVisible(character)
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.Transparency = 0
+                    end
+                end
+            end
+            
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    makeCharacterVisible(player.Character)
+                end
+            end
+            wait()
+            local function makePartInvisible(part)
+                part.Transparency = 1
+            end
+            
+            local function makeHumanoidRootPartInvisible(character)
+                local player = game.Players:GetPlayerFromCharacter(character)
+                if player and player ~= game.Players.LocalPlayer then
+                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart then
+                        makePartInvisible(humanoidRootPart)
+                    end
+                end
+            end
+            
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player.Character then
+                    makeHumanoidRootPartInvisible(player.Character)
+                end
+            end
+            wait(0.3)
             cancelAllButtons()
             wait(0.3)
             print("Finished Unclaiming ALL Booths.")
         else
-            makeAllPlayersVisible()
+            local function makeCharacterVisible(character)
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.Transparency = 0
+                    end
+                end
+            end
+            
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    makeCharacterVisible(player.Character)
+                end
+            end
+            wait()
+            local function makePartInvisible(part)
+                part.Transparency = 1
+            end
+            
+            local function makeHumanoidRootPartInvisible(character)
+                local player = game.Players:GetPlayerFromCharacter(character)
+                if player and player ~= game.Players.LocalPlayer then
+                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart then
+                        makePartInvisible(humanoidRootPart)
+                    end
+                end
+            end
+            
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player.Character then
+                    makeHumanoidRootPartInvisible(player.Character)
+                end
+            end
             wait(0.3)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
@@ -3364,7 +3423,7 @@ local function loadGUI()
         local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
 
         for _, player in pairs(players) do
-            if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] or getgenv().ownerWhitelist[player.Name] or getgenv().whitelist[player.Name]) then
+            if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] or getgenv().ownerWhitelist[player.Name]) then
                 local args = {
                     [1] = tostring(player.Name)
                 }
@@ -3381,7 +3440,7 @@ local function loadGUI()
     if loopWarn then
         getgenv().getSendAllWarningsConnection = true
         while getgenv().getSendAllWarningsConnection == true do
-        wait(1.5)
+        wait(0.8)
         local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
         local Notification = ReplicatedStorage:WaitForChild("Notification")
 
@@ -3396,7 +3455,7 @@ local function loadGUI()
         local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
 
         for _, player in pairs(players) do
-            if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] and not getgenv().ownerWhitelist[player.Name] or getgenv().whitelist[player.Name]) then
+            if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] and not getgenv().ownerWhitelist[player.Name]) then
                 local args = {
                     [1] = tostring(player.Name)
                 }
@@ -5724,6 +5783,9 @@ local function loadGUI()
         getgenv().SCRIPT_EXECUTED = false
         getgenv().GetLoopRunning = false
         getgenv().getLoopKick = false
+        wait(0.2)
+        getgenv().getLoopKick = false
+        wait(0.2)
         getgenv().LmaoGetMuted = false
 
         wait()
@@ -5738,6 +5800,9 @@ local function loadGUI()
     Name = "Destroy GUI/Script",
     Callback = function()
         getgenv().getLoopKick = false
+        wait()
+        getgenv().getLoopKick = false
+        wait(0.2)
         getgenv().SCRIPT_EXECUTED = false
         getgenv().SCRIPT_EXECUTED = false
         getgenv().Invis_Loaded = false
@@ -6356,6 +6421,15 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
     Duration = 10
 })
 wait(0.3)
+local ws = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
+local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
+if getFolder and getpart then
+    getpart.Transparency = 1
+else
+    warn("ANTI-VOID_MISSING? ---")
+end
+wait(0.2)
 local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
 local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
 
