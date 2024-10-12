@@ -2302,7 +2302,7 @@ local function loadGUI()
             
         local function gettingGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            if player and not getgenv().BoothOrigWhitelistTable[player.Name] then
+            if not getgenv().BoothOrigWhitelistTable[player.Name] then
                 getgenv().BoothOrigWhitelistTable[player.Name] = player
                 wait(0.2)
                 OrionLib:MakeNotification({
@@ -2321,7 +2321,7 @@ local function loadGUI()
             elseif not player then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR!]: 0",
-                    Content = tostring(player)..", does not exist!",
+                    Content = tostring(uAreWhitelisted)..", does not exist!",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
@@ -2361,7 +2361,7 @@ local function loadGUI()
             elseif not player then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: 0",
-                    Content = tostring(player)..", does not exist",
+                    Content = tostring(GetOffBoothWhitelist)..", does not exist",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
@@ -2408,7 +2408,7 @@ local function loadGUI()
 
         local function getThatGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            if player and player ~= game.Players.LocalPlayer and (not getgenv().PlrBlacklistedTable[player.Name] or getgenv().ownerWhitelist[player.Name]) then
+            if player ~= game.Players.LocalPlayer and not getgenv().PlrBlacklistedTable[player.Name] then
                 getgenv().PlrBlacklistedTable[player.Name] = player
                 wait(0.2)
                 OrionLib:MakeNotification({
@@ -2420,7 +2420,7 @@ local function loadGUI()
             elseif not player then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: 0",
-                    Content = tostring(player)..", does not exist!",
+                    Content = tostring(urBlacklisted)..", does not exist!",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
@@ -2485,7 +2485,25 @@ local function loadGUI()
 
         removePlayerFromGlobalTable(DoFindPlr)
     end})
-    
+    wait()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+
+    Players.PlayerAdded:Connect(function(newPlayer)
+        if LocalPlayer:IsFriendsWith(newPlayer.UserId) then
+            if not getgenv().getBasicTable[newPlayer.Name] then
+                getgenv().getBasicTable[newPlayer.Name] = newPlayer
+                wait(0.1)
+                OrionLib:MakeNotification({
+                    Name = "Success! [AutoWhitelist]:",
+                    Content = tostring(newPlayer.Name)..", has been added! IsFriendsWith: "..tostring(LocalPlayer.UserId),
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
+        end
+    end)
+    wait()
     wait()
     Tab17:AddParagraph("Add the 'nice' people to NOT target here.")
     wait()
@@ -2505,7 +2523,7 @@ local function loadGUI()
             "ItsYoDawgWsgGng"
         }
 
-        if player and not getgenv().getBasicTable[player.Name] then
+        if not getgenv().getBasicTable[player.Name] then
             getgenv().getBasicTable[player.Name] = player
             wait(0.2)
             OrionLib:MakeNotification({
@@ -2591,17 +2609,11 @@ local function loadGUI()
         }
     
         for i, v in pairs(game.Players:GetChildren()) do
-            if getgenv().PlrBlacklistedTable[v.Name] and (not getgenv().ownerWhitelist[v.Name] or getgenv().getBasicTable[v.Name]) then
+            if getgenv().PlrBlacklistedTable[v.Name] then
                 local args = {
                     [1] = tostring(getgenv().PlrBlacklistedTable[v.Name])
                 }
     
-                game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
-            elseif getgenv().ownerWhitelist[v.Name] then
-                local args = {
-                    [1] = tostring(game.Players.LocalPlayer.Name)
-                }
-
                 game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent"):FireServer(unpack(args))
             end
         end
@@ -2619,7 +2631,7 @@ local function loadGUI()
                 "ItsYoDawgWsgGng"
             }
 
-            if getgenv().PlrBlacklistedTable[v.Name] and (not getgenv().ownerWhitelist[v.Name] or getgenv().getBasicTable[v.Name]) then
+            if getgenv().PlrBlacklistedTable[v.Name] then
                 getgenv().GetStuffSpam = true
                 while getgenv().GetStuffSpam == true do
                 wait(0.3)
@@ -2632,7 +2644,7 @@ local function loadGUI()
             end
         end
     else
-        for i = 1, 100 do
+        for i = 1, 15 do
             task.wait()
             getgenv().GetStuffSpam = false
         end
@@ -6564,6 +6576,23 @@ for i, v in pairs(game.Players:GetPlayers()) do
         print("Zacks Easy Hub | [OUTPUT]: New Changes...")
         wait()
         print(tostring(dude)..", Player: "..tostring(dude.Parent)..", UserID: "..tostring(dude.Parent.UserId))
+    end
+end
+wait(0.3)
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+for i, v in pairs(game.Players:GetChildren()) do
+    if LocalPlayer:IsFriendsWith(v.UserId) then
+        if not getgenv().getBasicTable[v.Name] then
+            getgenv().getBasicTable[v.Name] = v
+            wait(0.1)
+            print(tostring(v.Name)..", has been added! IsFriendsWith: "..tostring(LocalPlayer.UserId))
+        else
+            warn(tostring(v.Name)..", is already whitelisted!")
+        end
+    else
+        print("No Friends we're found to whitelist! Continuing...")
     end
 end
 wait(1)
