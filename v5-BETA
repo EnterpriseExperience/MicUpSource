@@ -3303,33 +3303,35 @@ local function loadGUI()
     Tab17:AddButton({
     Name = "Send Fake Warnings (FREE! + FE!)",
     Callback = function()
-        local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-        local Notification = ReplicatedStorage:WaitForChild("Notification")
-
-        getgenv().ownerWhitelist = {
-            "M1RD3RCAUGHT",
-            "STK_kets4eki",
-            "ItsYoDawgWsgGng"
-        }
-        
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local players = Players:GetChildren()
+        local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
         local remoteEvent = ReplicatedStorage:WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
+        
+        getgenv().ownerWhitelist = getgenv().ownerWhitelist or {}
+        getgenv().getBasicTable = getgenv().getBasicTable or {}
+        
+        local function isInBasicTable(playerName)
+            return getgenv().getBasicTable[playerName] ~= nil
+        end
+        
+        local function isInOwnerWhitelist(playerName)
+            return table.find(getgenv().ownerWhitelist, playerName) ~= nil
+        end
         
         for _, player in pairs(players) do
             if player ~= Players.LocalPlayer then
-                local isInBasicTable = getgenv().getBasicTable and table.find(getgenv().getBasicTable, player.Name)
-                local isInOwnerWhitelist = table.find(getgenv().ownerWhitelist, player.Name)
-
-                if not isInBasicTable and not isInOwnerWhitelist then
+                local playerName = tostring(player.Name)
+        
+                if not isInBasicTable(playerName) and not isInOwnerWhitelist(playerName) then
                     local args = {
-                        [1] = tostring(player.Name)
+                        [1] = playerName
                     }
-
+        
                     remoteEvent:FireServer(unpack(args))
                 end
             end
-        end        
+        end
     end})
     
     Tab17:AddToggle({
@@ -3341,32 +3343,36 @@ local function loadGUI()
         while getgenv().getSendAllWarningsConnection == true do
             wait(0.8)
         
-            local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-            local Notification = ReplicatedStorage:WaitForChild("Notification")
-        
-            getgenv().ownerWhitelist = {
-                "M1RD3RCAUGHT",
-                "STK_kets4eki",
-                "ItsYoDawgWsgGng"
-            }
-        
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
             local players = Players:GetChildren()
+            local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
             local remoteEvent = ReplicatedStorage:WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
-        
+            
+            getgenv().ownerWhitelist = getgenv().ownerWhitelist or {}
+            getgenv().getBasicTable = getgenv().getBasicTable or {}
+            
+            local function isInBasicTable(playerName)
+                return getgenv().getBasicTable[playerName] ~= nil
+            end
+            
+            local function isInOwnerWhitelist(playerName)
+                return table.find(getgenv().ownerWhitelist, playerName) ~= nil
+            end
+            
             for _, player in pairs(players) do
-                local isInBasicTable = getgenv().getBasicTable and table.find(getgenv().getBasicTable, player.Name)
-                local isInOwnerWhitelist = table.find(getgenv().ownerWhitelist, player.Name)
-
-                if player ~= Players.LocalPlayer and not isInBasicTable and not isInOwnerWhitelist then
-                    local args = {
-                        [1] = tostring(player.Name)
-                    }
-        
-                    remoteEvent:FireServer(unpack(args))
+                if player ~= Players.LocalPlayer then
+                    local playerName = tostring(player.Name)
+            
+                    if not isInBasicTable(playerName) and not isInOwnerWhitelist(playerName) then
+                        local args = {
+                            [1] = playerName
+                        }
+            
+                        remoteEvent:FireServer(unpack(args))
+                    end
                 end
             end
-        end        
+        end
     else
         getgenv().getSendAllWarningsConnection = false
     end
@@ -3381,32 +3387,36 @@ local function loadGUI()
             while getgenv().getSendAllWarningsConnection == true do
                 wait(0.2)
             
-                local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-                local Notification = ReplicatedStorage:WaitForChild("Notification")
-            
-                getgenv().ownerWhitelist = {
-                    "M1RD3RCAUGHT",
-                    "STK_kets4eki",
-                    "ItsYoDawgWsgGng"
-                }
-            
                 local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
                 local players = Players:GetChildren()
+                local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
                 local remoteEvent = ReplicatedStorage:WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
-            
+                
+                getgenv().ownerWhitelist = getgenv().ownerWhitelist or {}
+                getgenv().getBasicTable = getgenv().getBasicTable or {}
+                
+                local function isInBasicTable(playerName)
+                    return getgenv().getBasicTable[playerName] ~= nil
+                end
+                
+                local function isInOwnerWhitelist(playerName)
+                    return table.find(getgenv().ownerWhitelist, playerName) ~= nil
+                end
+                
                 for _, player in pairs(players) do
-                    local isInBasicTable = getgenv().getBasicTable and table.find(getgenv().getBasicTable, player.Name)
-                    local isInOwnerWhitelist = table.find(getgenv().ownerWhitelist, player.Name)
-
-                    if player ~= Players.LocalPlayer and not isInBasicTable and not isInOwnerWhitelist then
-                        local args = {
-                            [1] = tostring(player.Name)
-                        }
-            
-                        remoteEvent:FireServer(unpack(args))
+                    if player ~= Players.LocalPlayer then
+                        local playerName = tostring(player.Name)
+                
+                        if not isInBasicTable(playerName) and not isInOwnerWhitelist(playerName) then
+                            local args = {
+                                [1] = playerName
+                            }
+                
+                            remoteEvent:FireServer(unpack(args))
+                        end
                     end
                 end
-            end            
+            end
         else
             getgenv().whatTheConnections = false
         end
@@ -3419,14 +3429,19 @@ local function loadGUI()
     Default = "User Or Display",
     TextDisappear = true,
     Callback = function(warnPlr)
-        getgenv().ownerWhitelist = {
-            "M1RD3RCAUGHT",
-            "STK_kets4eki",
-            "ItsYoDawgWsgGng"
-        }
+        getgenv().ownerWhitelist = getgenv().ownerWhitelist or {}
+        getgenv().getBasicTable = getgenv().getBasicTable or {}
+        
+        local function isInBasicTable(playerName)
+            return getgenv().getBasicTable[playerName] ~= nil
+        end
+        
+        local function isInOwnerWhitelist(playerName)
+            return table.find(getgenv().ownerWhitelist, playerName) ~= nil
+        end
         
         local thisPlrWarned = findplr(warnPlr)
-        if thisPlrWarned ~= game.Players.LocalPlayer and not getgenv().ownerWhitelist[thisPlrWarned.Name] then
+        if thisPlrWarned ~= game.Players.LocalPlayer and (not isInBasicTable(thisPlrWarned.Name) and not isInOwnerWhitelist(thisPlrWarned.Name)) then
             local args = {
                 [1] = tostring(thisPlrWarned.Name)
             }
@@ -3442,7 +3457,7 @@ local function loadGUI()
         elseif not thisPlrWarned then
             return OrionLib:MakeNotification({
                 Name = "[ERROR]: 0",
-                Content = "Player does not exist!",
+                Content = tostring(warnPlr)..", does not exist!",
                 Image = "rbxassetid://4483345998",
                 Time = 10
             })
