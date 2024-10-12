@@ -3228,8 +3228,17 @@ local function loadGUI()
             end)
 
             startFly()
+            wait(0.1)
+            local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+            local RunService = cloneref(game:GetService("RunService"))
+
+            ReplicatedStorage:WaitForChild("StopAction").Parent = RunService
         elseif tostring(GetSpeed) or GetSpeed == "stop" then
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+            local RunService = cloneref(game:GetService("RunService"))
+            local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+            RunService:FindFirstChild("StopAction").Parent = ReplicatedStorage
+            wait(0.3)
             local LocalPlayer = Players.LocalPlayer
             local args = {
                 [1] = tonumber(LocalPlayer.UserId)
