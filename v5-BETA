@@ -3314,17 +3314,22 @@ local function loadGUI()
         
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local players = Players:GetChildren()
-        local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
-
+        local remoteEvent = ReplicatedStorage:WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
+        
         for _, player in pairs(players) do
-            if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] or getgenv().ownerWhitelist[player.Name]) then
-                local args = {
-                    [1] = tostring(player.Name)
-                }
+            if player ~= Players.LocalPlayer then
+                local isInBasicTable = getgenv().getBasicTable and table.find(getgenv().getBasicTable, player.Name)
+                local isInOwnerWhitelist = table.find(getgenv().ownerWhitelist, player.Name)
 
-                remoteEvent:FireServer(unpack(args))
+                if not isInBasicTable and not isInOwnerWhitelist then
+                    local args = {
+                        [1] = tostring(player.Name)
+                    }
+
+                    remoteEvent:FireServer(unpack(args))
+                end
             end
-        end
+        end        
     end})
     
     Tab17:AddToggle({
@@ -3334,30 +3339,34 @@ local function loadGUI()
     if loopWarn then
         getgenv().getSendAllWarningsConnection = true
         while getgenv().getSendAllWarningsConnection == true do
-        wait(0.8)
-        local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-        local Notification = ReplicatedStorage:WaitForChild("Notification")
-
-        getgenv().ownerWhitelist = {
-            "M1RD3RCAUGHT",
-            "STK_kets4eki",
-            "ItsYoDawgWsgGng"
-        }
+            wait(0.8)
         
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local players = Players:GetChildren()
-        local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
+            local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+            local Notification = ReplicatedStorage:WaitForChild("Notification")
+        
+            getgenv().ownerWhitelist = {
+                "M1RD3RCAUGHT",
+                "STK_kets4eki",
+                "ItsYoDawgWsgGng"
+            }
+        
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+            local players = Players:GetChildren()
+            local remoteEvent = ReplicatedStorage:WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
+        
+            for _, player in pairs(players) do
+                local isInBasicTable = getgenv().getBasicTable and table.find(getgenv().getBasicTable, player.Name)
+                local isInOwnerWhitelist = table.find(getgenv().ownerWhitelist, player.Name)
 
-        for _, player in pairs(players) do
-            if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] and not getgenv().ownerWhitelist[player.Name]) then
-                local args = {
-                    [1] = tostring(player.Name)
-                }
-
-                remoteEvent:FireServer(unpack(args))
+                if player ~= Players.LocalPlayer and not isInBasicTable and not isInOwnerWhitelist then
+                    local args = {
+                        [1] = tostring(player.Name)
+                    }
+        
+                    remoteEvent:FireServer(unpack(args))
+                end
             end
-        end
-    end
+        end        
     else
         getgenv().getSendAllWarningsConnection = false
     end
@@ -3368,32 +3377,36 @@ local function loadGUI()
     Default = false,
     Callback = function(loopWarn)
         if loopWarn then
-            getgenv().whatTheConnections = true
-            while getgenv().whatTheConnections == true do
-            wait(0.2)
-            local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-            local Notification = ReplicatedStorage:WaitForChild("Notification")
-    
-            getgenv().ownerWhitelist = {
-                "M1RD3RCAUGHT",
-                "STK_kets4eki",
-                "ItsYoDawgWsgGng"
-            }
+            getgenv().getSendAllWarningsConnection = true
+            while getgenv().getSendAllWarningsConnection == true do
+                wait(0.2)
             
-            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            local players = Players:GetChildren()
-            local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
-    
-            for _, player in pairs(players) do
-                if player ~= game.Players.LocalPlayer and (not getgenv().getBasicTable[player.Name] and not getgenv().ownerWhitelist[player.Name]) then
-                    local args = {
-                        [1] = tostring(player.Name)
-                    }
-    
-                    remoteEvent:FireServer(unpack(args))
+                local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+                local Notification = ReplicatedStorage:WaitForChild("Notification")
+            
+                getgenv().ownerWhitelist = {
+                    "M1RD3RCAUGHT",
+                    "STK_kets4eki",
+                    "ItsYoDawgWsgGng"
+                }
+            
+                local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+                local players = Players:GetChildren()
+                local remoteEvent = ReplicatedStorage:WaitForChild("Notification"):WaitForChild("PlayerSelectedEvent")
+            
+                for _, player in pairs(players) do
+                    local isInBasicTable = getgenv().getBasicTable and table.find(getgenv().getBasicTable, player.Name)
+                    local isInOwnerWhitelist = table.find(getgenv().ownerWhitelist, player.Name)
+
+                    if player ~= Players.LocalPlayer and not isInBasicTable and not isInOwnerWhitelist then
+                        local args = {
+                            [1] = tostring(player.Name)
+                        }
+            
+                        remoteEvent:FireServer(unpack(args))
+                    end
                 end
-            end
-        end
+            end            
         else
             getgenv().whatTheConnections = false
         end
