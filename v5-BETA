@@ -2396,46 +2396,52 @@ local function loadGUI()
         getgenv().PlrBlacklistedTable = getgenv().PlrBlacklistedTable or {}
 
         local globallyBlacklist = findplr(urBlacklisted)
-
+        
         getgenv().ownerWhitelist = {
             "M1RD3RCAUGHT",
             "STK_kets4eki",
             "ItsYoDawgWsgGng"
         }
-
+        
         local function getThatGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            if not getgenv().PlrBlacklistedTable[player.Name] then
+
+            if player and globallyBlacklist and not getgenv().PlrBlacklistedTable[player.Name] then
+                if table.find(getgenv().ownerWhitelist, player.Name) then
+                    return OrionLib:MakeNotification({
+                        Name = "[ERROR]: -500",
+                        Content = tostring(player.Name) .. ", is an owner!",
+                        Image = "rbxassetid://4483345998",
+                        Time = 10
+                    })
+                end
+
                 getgenv().PlrBlacklistedTable[player.Name] = player
                 wait(0.2)
                 OrionLib:MakeNotification({
                     Name = "Success!",
-                    Content = tostring(player.Name)..", was added to Warning Blacklist!",
+                    Content = tostring(player.Name) .. ", was added to Warning Blacklist!",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
-            elseif not player then
+        
+            elseif not globallyBlacklist then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: 0",
-                    Content = tostring(urBlacklisted)..", does not exist!",
+                    Content = tostring(urBlacklisted) .. ", does not exist!",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
+        
             elseif getgenv().PlrBlacklistedTable[player.Name] then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: -1",
-                    Content = tostring(player)..", is already in the Warning Blacklist!",
+                    Content = tostring(player.Name) .. ", is already in the Warning Blacklist!",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
-            elseif getgenv().ownerWhitelist[player.Name] then
-                return OrionLib:MakeNotification({
-                    Name = "[ERROR]: -500",
-                    Content = tostring(player)..", is an owner!",
-                    Image = "rbxassetid://4483345998",
-                    Time = 10
-                })
-            elseif player == game.Players.LocalPlayer then
+        
+            elseif globallyBlacklist == game.Players.LocalPlayer then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: -98",
                     Content = "You cannot blacklist yourself!",
@@ -2444,8 +2450,8 @@ local function loadGUI()
                 })
             end
         end
-        
-        getThatGlobalTable(globallyBlacklist)
+
+        getThatGlobalTable(globallyBlacklist)        
     end})
     
     Tab17:AddParagraph("Remove dick-heads here.")
@@ -2456,38 +2462,40 @@ local function loadGUI()
     TextDisappear = true,
     Callback = function(RemoveThisGuy)
         local DoFindPlr = findplr(RemoveThisGuy)
-            
+
         local function removePlayerFromGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+            
             if player and getgenv().PlrBlacklistedTable[player.Name] then
                 getgenv().PlrBlacklistedTable[player.Name] = nil
                 wait(0.2)
+                
                 if not getgenv().PlrBlacklistedTable[player.Name] then
                     OrionLib:MakeNotification({
                         Name = "Success!",
-                        Content = tostring(player)..", was removed from the blacklist!",
-                        Image = "rbxassetid://4483345998",
-                        Time = 10
-                    })
-                elseif not player then
-                    return OrionLib:MakeNotification({
-                        Name = "[ERROR]: 0",
-                        Content = tostring(player)..", does not exist!",
+                        Content = tostring(player.Name)..", was removed from the blacklist!",
                         Image = "rbxassetid://4483345998",
                         Time = 10
                     })
                 end
+            elseif not player then
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: 0",
+                    Content = tostring(RemoveThisGuy)..", does not exist!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
             elseif not getgenv().PlrBlacklistedTable[player.Name] then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: -1",
-                    Content = tostring(player)..", was not found in the blacklist!",
+                    Content = tostring(player.Name)..", was not found in the blacklist!",
                     Image = "rbxassetid://4483345998",
                     Time = 10
                 })
             end
         end
-
-        removePlayerFromGlobalTable(DoFindPlr)
+        
+        removePlayerFromGlobalTable(DoFindPlr)        
     end})
     wait()
     Tab17:AddParagraph("Add the 'nice' people to NOT target here.")
@@ -2497,44 +2505,44 @@ local function loadGUI()
     Default = "User Here",
     TextDisappear = true,
     Callback = function(doGetWhitelist)
-    local yourSavedBro = findplr(doGetWhitelist)
+        local yourSavedBro = findplr(doGetWhitelist)
 
-    getgenv().getBasicTable = getgenv().getBasicTable or {}
-    
-    local function whitelistingTableWarnings(player)
-        getgenv().ownerWhitelist = {
-            "M1RD3RCAUGHT",
-            "STK_kets4eki",
-            "ItsYoDawgWsgGng"
-        }
-
-        if not getgenv().getBasicTable[player.Name] then
-            getgenv().getBasicTable[player.Name] = player
-            wait(0.2)
-            OrionLib:MakeNotification({
-                Name = "Success!",
-                Content = tostring(player.Name)..", was added to Warning Whitelist!",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        elseif not player then
-            return OrionLib:MakeNotification({
-                Name = "[ERROR]: 0",
-                Content = tostring(player)..", does not exist!",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
-        elseif getgenv().getBasicTable[player.Name] then
-            return OrionLib:MakeNotification({
-                Name = "[ERROR]: -20",
-                Content = tostring(player.Name)..", is already in the Warning Whitelist!",
-                Image = "rbxassetid://4483345998",
-                Time = 10
-            })
+        getgenv().getBasicTable = getgenv().getBasicTable or {}
+        
+        local function whitelistingTableWarnings(player)
+            getgenv().ownerWhitelist = {
+                "M1RD3RCAUGHT",
+                "STK_kets4eki",
+                "ItsYoDawgWsgGng"
+            }
+        
+            if player and not getgenv().getBasicTable[player.Name] then
+                getgenv().getBasicTable[player.Name] = player
+                wait(0.2)
+                OrionLib:MakeNotification({
+                    Name = "Success!",
+                    Content = tostring(player.Name)..", was added to Warning Whitelist!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            elseif not player then
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: 0",
+                    Content = tostring(doGetWhitelist)..", does not exist!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            elseif getgenv().getBasicTable[player.Name] then
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: -20",
+                    Content = tostring(player.Name)..", is already in the Warning Whitelist!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
         end
-    end
-    
-    whitelistingTableWarnings(yourSavedBro)
+        
+        whitelistingTableWarnings(yourSavedBro)        
     end})
     
     wait()
@@ -2546,29 +2554,30 @@ local function loadGUI()
     TextDisappear = true,
     Callback = function(RemoveThisGuy)
         getgenv().getBasicTable = getgenv().getBasicTable or {}
-    
+
         local GetGoneBud = findplr(RemoveThisGuy)
         
         local function removePlayerFromGlobalTable(player)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-            if getgenv().getBasicTable[player.Name] then
+            
+            if player and getgenv().getBasicTable[player.Name] then
                 getgenv().getBasicTable[player.Name] = nil
                 wait(0.2)
-                if getgenv().getBasicTable[player.Name] == nil then
+                if not getgenv().getBasicTable[player.Name] then
                     OrionLib:MakeNotification({
                         Name = "Success!",
-                        Content = tostring(player.Name)..", was removed from the whitelist!",
-                        Image = "rbxassetid://4483345998",
-                        Time = 10
-                    })
-                elseif not Players[player.Name] then
-                    return OrionLib:MakeNotification({
-                        Name = "[ERROR]: 0",
-                        Content = tostring(player)..", does not exist!",
+                        Content = tostring(player.Name)..", was removed from the Warning Whitelist!",
                         Image = "rbxassetid://4483345998",
                         Time = 10
                     })
                 end
+            elseif not player then
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: 0",
+                    Content = tostring(RemoveThisGuy)..", does not exist!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
             elseif not getgenv().getBasicTable[player.Name] then
                 return OrionLib:MakeNotification({
                     Name = "[ERROR]: -1",
@@ -2579,7 +2588,7 @@ local function loadGUI()
             end
         end
         
-        removePlayerFromGlobalTable(GetGoneBud)
+        removePlayerFromGlobalTable(GetGoneBud)        
     end})
     
     Tab17:AddButton({
