@@ -211,7 +211,7 @@ local function loadGUI()
     getgenv().gethui = function()
         return game:GetService("CoreGui")
     end
-    local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | V5-BETA-7 | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = false, SaveConfig = true, ConfigFolder = "MICUP"})
+    local Window = OrionLib:MakeWindow({Name = "Zacks Easy Hub | V5-BETA-7.5 | Executed At: "..formattedTime, IntroText = "Hello, "..game.Players.LocalPlayer.Name, HidePremium = false, SaveConfig = true, ConfigFolder = "MICUP"})
     wait()
     getgenv().executedPlayers = getgenv().executedPlayers or {}
     
