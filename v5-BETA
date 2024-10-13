@@ -1520,7 +1520,6 @@ local function loadGUI()
                 local tween = TweenService:Create(getpart, tweenInfo, {Color = color})
                 tween:Play()
                 tween.Completed:Wait()
-                print("BrickColor Updated: " .. tostring(color))
             end
         end
     else
@@ -5850,7 +5849,7 @@ local function loadGUI()
     Callback = function()
     local player = game.Players.LocalPlayer
     local character = player.Character
-    local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid") or character:FindFirstChild("Humanoid") or character:FindFirstChildOfClass("Humanoid") or character.Humanoid
+    local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid") or character:FindFirstChild("Humanoid") or character:FindFirstChildOfClass("Humanoid")
     local userInputService = game:GetService("UserInputService")
      
     local isSprinting = false
