@@ -6523,17 +6523,19 @@ wait(0.3)
 local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
+getgenv().getBasicTable = getgenv().getBasicTable or {}
+
 for i, v in pairs(game.Players:GetChildren()) do
     if LocalPlayer:IsFriendsWith(v.UserId) then
-        if not getgenv().getBasicTable[v.Name] then
+        if getgenv().getBasicTable[v.Name] == nil then
             getgenv().getBasicTable[v.Name] = v
             wait(0.1)
-            print(tostring(v.Name)..", has been added! IsFriendsWith: "..tostring(LocalPlayer.UserId))
+            print(tostring(v.Name) .. ", has been added! IsFriendsWith: " .. tostring(LocalPlayer.UserId))
         else
-            warn(tostring(v.Name)..", is already whitelisted!")
+            print(tostring(v.Name) .. " is already in the table, skipping...")
         end
     else
-        print("No Friends we're found to whitelist! Continuing...")
+        print("No friends were found to whitelist! Continuing...")
     end
 end
 wait(1)
