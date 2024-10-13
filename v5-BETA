@@ -3417,7 +3417,11 @@ local function loadGUI()
                 end
             end
         else
-            getgenv().whatTheConnections = false
+            getgenv().getSendAllWarningsConnection = false
+            wait(1.5)
+            for i = 1, 1000 do
+                getgenv().getSendAllWarningsConnection = false
+            end
         end
     end})
 
@@ -4232,13 +4236,102 @@ local function loadGUI()
         getgenv().CharFlick = false
         wait(1)
         local args = {
-            [1] = "ARegular",
-            [2] = "Regular"
+            [1] = tostring(game.Players.LocalPlayer.Name)
         }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("ModifyUserEvent"):FireServer(unpack(args))        
     end
     end})
+
+    --[[Tab2:AddParagraph("The reason this bang is better, btw, read below:")
+    wait()
+    Tab2:AddParagraph("It has: anti-sit, and sets speed below 105, and auto-noclip")
+    wait()
+    Tab2:AddParagraph("So this will make it more efficient at being bypassed.")
+    wait()
+    Tab2:AddTextbox({
+    Name = "Bang Player (Better)",
+    Default = "User Here",
+    TextDisappear = true,
+    Callback = function(inputTheUser)
+    local bruhGetUserName = findplr(inputTheUser)
+    local speedInput = tonumber(getgenv().doBangSpeed)
+
+    function noSitFunc()
+        wait()
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+
+        if Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Sit then
+            Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Sit = false
+        end
+    end
+
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+
+    if noSit then getgenv().noSit:Disconnect() getgenv().nositDied:Disconnect() end
+	getgenv().noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
+	local function nositDiedFunc()
+		repeat wait() until Players.LocalPlayer.Character ~= nil and Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+		noSit:Disconnect()
+		noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
+	end
+	getgenv().nositDied = Players.LocalPlayer.CharacterAdded:Connect(nositDiedFunc)
+
+    function getTorso(x)
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+
+        x = x or Players.LocalPlayer.Character
+        return x:FindFirstChild("Torso") or x:FindFirstChild("UpperTorso") or x:FindFirstChild("LowerTorso") or x:FindFirstChild("HumanoidRootPart")
+    end
+
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local speaker = Players.LocalPlayer
+    local humanoid = Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+
+    function r15(plr)
+        if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
+            return true
+        end
+    end
+
+	bangAnim = Instance.new("Animation")
+	bangAnim.AnimationId = not r15(speaker) and "rbxassetid://148840371" or "rbxassetid://5918726674"
+	bang = humanoid:LoadAnimation(bangAnim)
+	bang:Play(0.1, 1, 1)
+	bang:AdjustSpeed(args[2] or 3)
+	bangDied = humanoid.Died:Connect(function()
+		bang:Stop()
+		
+        bangAnim:Destroy()
+		bangDied:Disconnect()
+		bangLoop:Disconnect()
+	end)
+	if args[1] then
+		local players = getPlayer(args[1], speaker)
+		for _, v in pairs(players) do
+			local bangplr = Players[v].Name
+			local bangOffet = CFrame.new(0, 0, 1.1)
+			bangLoop = RunService.Stepped:Connect(function()
+				pcall(function()
+					local otherRoot = getTorso(Players[bangplr].Character)
+					getRoot(speaker.Character).CFrame = otherRoot.CFrame * bangOffet
+				end)
+			end)
+		end
+	end
+    end})
+
+    Tab2:AddTextbox({
+    Name = "Change Bang Speed",
+    Default = "Speed",
+    TextDisappear = true,
+    Callback = function(getSpeedInput)
+    local bangSpeedBruh = tonumber(getSpeedInput)
+    
+    getgenv().doBangSpeed = bangSpeedBruh
+    wait()
+
+    end})--]]
     
     local Settings = {
         Keybind = "E"
@@ -4248,12 +4341,7 @@ local function loadGUI()
     Name = "Invisible (Keybind Toggle)",
     Callback = function()
     if Invis_Loaded and not _G.INVIS_DEBUG == true then
-        return OrionLib:MakeNotification({
-            Name = "Error: Already Loaded",
-            Content = "You have already loaded Invisible.",
-            Image = "rbxassetid://4483345998",
-            Time = 10
-        })
+        return 
     end
     
     pcall(function() getgenv().Invis_Loaded = true end)
@@ -4261,7 +4349,7 @@ local function loadGUI()
     local ScriptStarted = false
     local Transparency = true
     local Keybind = Settings.Keybind
-    local NoClip = false
+    local NoClip = true
     
     local GetPlayers = cloneref(game:GetService("Players")) or game:GetService("Players")
     local Player = GetPlayers.LocalPlayer
@@ -4328,13 +4416,12 @@ local function loadGUI()
     if Transparency then
       for i, v in pairs(FakeCharacter:GetDescendants()) do
           if v:IsA("BasePart") then
-              v.Transparency = 0.5
+              v.Transparency = 0.8
           end
       end
     end
     RealCharacter.Humanoid.Died:Connect(function()
     getgenv().Invis_Loaded = false
-    wait()
     RealCharacter:Destroy()
     FakeCharacter:Destroy()
     end)
@@ -4342,7 +4429,6 @@ local function loadGUI()
     end
     RealCharacter.Humanoid.Died:Connect(function()
     getgenv().Invis_Loaded = false
-    wait()
     RealCharacter:Destroy()
     FakeCharacter:Destroy()
     end)
@@ -4374,7 +4460,7 @@ local function loadGUI()
               v.Disabled = false
           end
       end
-      wait(0.1)
+
       IsInvisible = true
     else
       local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
@@ -4391,7 +4477,7 @@ local function loadGUI()
               v.Disabled = true
           end
       end
-      wait(0.1)
+
       IsInvisible = false
     end
     end
@@ -5873,6 +5959,11 @@ local function loadGUI()
     userInputService.InputBegan:Connect(onKeyPress)
     userInputService.InputEnded:Connect(onKeyRelease)
     end})
+
+    --[[local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Animate = Character:FindFirstChild("Animate")--]]
     
     Tab5:AddDropdown({
     Name = "Animation Packages",
