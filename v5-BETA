@@ -3336,10 +3336,10 @@ local function loadGUI()
     Tab17:AddToggle({
     Name = "Loop Send All Warnings",
     Default = false,
-    Callback = function(loopWarn)
-    if loopWarn then
-        getgenv().getSendAllWarningsConnection = true
-        while getgenv().getSendAllWarningsConnection == true do
+    Callback = function(getSlowMethod)
+    if getSlowMethod then
+        getgenv().GetNonMassiveConnection = true
+        while getgenv().GetNonMassiveConnection == true do
             wait(0.8)
         
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -3373,7 +3373,7 @@ local function loadGUI()
             end
         end
     else
-        getgenv().getSendAllWarningsConnection = false
+        getgenv().GetNonMassiveConnection = false
     end
     end})
 
@@ -3791,330 +3791,330 @@ local function loadGUI()
         getgenv().EmoteFlickering = true
         while getgenv().EmoteFlickering == true do
         wait()
-        local args = {
-            [1] = "DPunchingZ"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "DPunchingY"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "DPunchingX"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "DPunchingW"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "DPunchingV"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "DPunchingU"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "AYeet"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "AYClap"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ATap"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "AStomp"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ASplits"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ASitZ"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ASitY"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ASitX"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ASitW"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ASit"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ARun"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ALog"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ALaughZ"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ALaugh"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "AJumpscareZ"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "AJumpscare"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "AHandstandZ"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "AHandstand"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ADie"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ADetachZ"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "ADetach"
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = tonumber(game.Players.LocalPlayer.UserId)
-        }
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-    end
+            local args = {
+                [1] = "DPunchingZ"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "DPunchingY"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "DPunchingX"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "DPunchingW"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "DPunchingV"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "DPunchingU"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "AYeet"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "AYClap"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ATap"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "AStomp"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ASplits"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ASitZ"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ASitY"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ASitX"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ASitW"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ASit"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ARun"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ALog"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ALaughZ"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ALaugh"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "AJumpscareZ"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "AJumpscare"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "AHandstandZ"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "AHandstand"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ADie"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ADetachZ"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "ADetach"
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("Action"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+        
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+        end
     else
         getgenv().EmoteFlickering = false
     end
@@ -4125,13 +4125,13 @@ local function loadGUI()
     Default = false,
     Callback = function(dislikeButton)
     if dislikeButton then
-    getgenv().Disliking = true
-    while getgenv().Disliking == true do
-    wait()
-    fireclickdetector(workspace.AvatarUI.DislikeButton.ClickDetector)
-    end
+        getgenv().Disliking = true
+        while getgenv().Disliking == true do
+        wait()
+            fireclickdetector(workspace.AvatarUI.DislikeButton.ClickDetector)
+        end
     else
-    getgenv().Disliking = false
+        getgenv().Disliking = false
     end
     end})
     
@@ -4242,83 +4242,190 @@ local function loadGUI()
         game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("ModifyUserEvent"):FireServer(unpack(args))        
     end
     end})
+    wait()
+    print("Loading Connection Manager... :[Waiting On Response]:")
+    wait(.3)
+    local startEvent = Instance.new("BindableEvent")
+    startEvent.Name = "ConnectEvent"
+    startEvent.Parent = game:GetService("ReplicatedStorage")
+    wait(.1)
+    local disconnectEvent = Instance.new("BindableEvent")
+    disconnectEvent.Name = "DisconnectEvent"
+    disconnectEvent.Parent = game:GetService("ReplicatedStorage")
+    wait(0.3)
+    if startEvent and disconnectEvent then
+        print("Loaded Connection Manager! -[200 : Success]-")
+    else
+        warn("UNABLE TO LOAD CONNECTION MANAGER, BAD_REQUESTED_RESPONSE")
+    end
+    wait()
+    --[[if not game:GetService("ReplicatedStorage"):FindFirstChild("Target_Player") then
+        local remoteEvent = Instance.new("RemoteEvent")
+        remoteEvent.Name = "Target_Player"
+        remoteEvent.Parent = game:GetService("ReplicatedStorage")
+    end
+    
+    local remoteEvent = game:GetService("ReplicatedStorage"):FindFirstChild("Target_Player")
+    
+    wait(0.1)
+    
+    getgenv().executedPlayers = getgenv().executedPlayers or {}
+    
+    local function trackPlayerExecution(action)
+        local player = game.Players.LocalPlayer
+        if not getgenv().executedPlayers[player.Name] then
+            getgenv().executedPlayers[player.Name] = true
+            if action == "kill" then
+                remoteEvent:FireClient(player, "kill")
+            end
+        else
+            remoteEvent:FireClient(player, "kill")
+        end
+    end
+    
+    remoteEvent.OnClientEvent:Connect(function(action)
+        if action == "kill" then
+            trackPlayerExecution("kill")
+        end
+    end)-]]
 
     --[[Tab2:AddParagraph("The reason this bang is better, btw, read below:")
     wait()
-    Tab2:AddParagraph("It has: anti-sit, and sets speed below 105, and auto-noclip")
+    Tab2:AddParagraph("It has: anti-sit, and auto-noclip")
     wait()
     Tab2:AddParagraph("So this will make it more efficient at being bypassed.")
     wait()
+    Tab2:AddParagraph("Type 'stop' to stop banging the player.")
+    wait()
     Tab2:AddTextbox({
-    Name = "Bang Player (Better)",
+    Name = "Bang Player (Upgraded)",
     Default = "User Here",
     TextDisappear = true,
     Callback = function(inputTheUser)
-    local bruhGetUserName = findplr(inputTheUser)
-    local speedInput = tonumber(getgenv().doBangSpeed)
+        local bruhGetUserName = findplr(inputTheUser)
+        local speedInput = tonumber(getgenv().doBangSpeed)
 
-    function noSitFunc()
+        function noSitFunc()
+            wait()
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+
+            if Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Sit then
+                Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Sit = false
+            end
+        end
+
+        local startEvent = Instance.new("BindableEvent")
+        startEvent.Name = "ConnectEvent"
+        startEvent.Parent = game:GetService("ReplicatedStorage")
         wait()
+        local disconnectEvent = Instance.new("BindableEvent")
+        disconnectEvent.Name = "DisconnectEvent"
+        disconnectEvent.Parent = game:GetService("ReplicatedStorage")
+
+        game:GetService("ReplicatedStorage"):FindFirstChild("disconnectEvent").Event:Connect(function()
+            if noSitConnection then
+                noSitConnection:Disconnect()
+                print("Connection disconnected by BindableEvent.")
+            end
+        end)
+
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
 
-        if Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Sit then
-            Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Sit = false
+        if noSit then getgenv().noSit:Disconnect() getgenv().nositDied:Disconnect() end
+        noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
+        local function nositDiedFunc()
+            repeat wait() until Players.LocalPlayer.Character ~= nil and Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            getgenv().noSit:Disconnect()
+            noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
         end
-    end
+        getgenv().nositDied = Players.LocalPlayer.CharacterAdded:Connect(nositDiedFunc)
 
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-
-    if noSit then getgenv().noSit:Disconnect() getgenv().nositDied:Disconnect() end
-	getgenv().noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
-	local function nositDiedFunc()
-		repeat wait() until Players.LocalPlayer.Character ~= nil and Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-		noSit:Disconnect()
-		noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
-	end
-	getgenv().nositDied = Players.LocalPlayer.CharacterAdded:Connect(nositDiedFunc)
-
-    function getTorso(x)
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local speaker = Players.LocalPlayer
+        local getChar = speaker.Character or speaker.CharacterAdded:Wait()
 
-        x = x or Players.LocalPlayer.Character
-        return x:FindFirstChild("Torso") or x:FindFirstChild("UpperTorso") or x:FindFirstChild("LowerTorso") or x:FindFirstChild("HumanoidRootPart")
-    end
-
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-    local speaker = Players.LocalPlayer
-    local humanoid = Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
-
-    function r15(plr)
-        if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
-            return true
-        end
-    end
-
-	bangAnim = Instance.new("Animation")
-	bangAnim.AnimationId = not r15(speaker) and "rbxassetid://148840371" or "rbxassetid://5918726674"
-	bang = humanoid:LoadAnimation(bangAnim)
-	bang:Play(0.1, 1, 1)
-	bang:AdjustSpeed(args[2] or 3)
-	bangDied = humanoid.Died:Connect(function()
-		bang:Stop()
-		
-        bangAnim:Destroy()
-		bangDied:Disconnect()
-		bangLoop:Disconnect()
-	end)
-	if args[1] then
-		local players = getPlayer(args[1], speaker)
-		for _, v in pairs(players) do
-			local bangplr = Players[v].Name
-			local bangOffet = CFrame.new(0, 0, 1.1)
-			bangLoop = RunService.Stepped:Connect(function()
-				pcall(function()
-					local otherRoot = getTorso(Players[bangplr].Character)
-					getRoot(speaker.Character).CFrame = otherRoot.CFrame * bangOffet
-				end)
-			end)
+        for i, v in pairs(getChar:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.CanCollide = false
+			end
 		end
-	end
+
+        function getTorso(x)
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+
+            x = x or Players.LocalPlayer.Character
+            return x:FindFirstChild("Torso") or x:FindFirstChild("UpperTorso") or x:FindFirstChild("LowerTorso") or x:FindFirstChild("HumanoidRootPart")
+        end
+
+        function getRoot(char)
+            local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+            return rootPart
+        end
+
+        function getHumanoid(char)
+            local humanoid = char:FindFirstChildWhichIsA('Humanoid') or char:FindFirstChild('Humanoid') or char:FindFirstChildOfClass('Humanoid') or char:WaitForChild('Humanoid')
+            return humanoid
+        end
+
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local speaker = Players.LocalPlayer
+        local Character = speaker.Character or speaker.CharacterAdded:Wait()
+
+        function r15(plr)
+            if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
+                return true
+            end
+        end
+
+        local RunService = cloneref(game:GetService("RunService")) or game:GetService("RunService")
+        local humanoid = getHumanoid(Character)
+
+        bangAnim = Instance.new("Animation")
+        bangAnim.Name = "INSTANCE_ANIM_R15"
+        bangAnim.AnimationId = not r15(speaker) and "rbxassetid://148840371" or "rbxassetid://5918726674"
+        bang = humanoid:LoadAnimation(bangAnim)
+        bang:Play(0.1, 1, 1)
+        bang:AdjustSpeed(5)
+        getgenv().bangDied = humanoid.Died:Connect(function()
+            bang:Stop()
+
+            bangAnim:Destroy()
+            if getgenv().bangDied then
+                getgenv().bangDied:Disconnect()
+                print("bangDied Connection Disconnected.")
+            end
+            if getgenv().noSitConnection then
+                getgenv().noSitConnection:Disconnect()
+                print("noSitConnection Disconnected.")
+            end
+            wait()
+            getgenv().noSit:Disconnect()
+            getgenv().nositDied:Disconnect()
+        end)
+		local bangplr = bruhGetUserName
+		local bangOffet = CFrame.new(0, 0, 1.1)
+		getgenv().bangLoop = game:GetService("RunService").Stepped:Connect(function()
+			pcall(function()
+				local otherRoot = getTorso(bangplr.Character)
+				getRoot(speaker.Character).CFrame = otherRoot.CFrame * bangOffet
+			end)
+        end)
+        if inputTheUser == "stop" then
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+
+            local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+
+            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                if track.Name == "INSTANCE_ANIM_R15" then
+                    track:Stop()
+                    wait()
+                    track:Destroy()
+                end
+            end
+            wait()
+
+        end
     end})
 
     Tab2:AddTextbox({
@@ -4327,10 +4434,39 @@ local function loadGUI()
     TextDisappear = true,
     Callback = function(getSpeedInput)
     local bangSpeedBruh = tonumber(getSpeedInput)
+
+    function getHumanoid(char)
+        local humanoid = char:FindFirstChildWhichIsA('Humanoid') or char:FindFirstChild('Humanoid') or char:FindFirstChildOfClass('Humanoid') or char:WaitForChild('Humanoid')
+        return humanoid
+    end
+
+    function getRoot(char)
+        local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+        return rootPart
+    end
+
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local speaker = Players.LocalPlayer
+    local Character = speaker.Character or speaker.CharacterAdded:Wait()
     
     getgenv().doBangSpeed = bangSpeedBruh
     wait()
-
+    local getBangSpeed = tonumber(getgenv().doBangSpeed)
+        if getHumanoid(Character) and getRoot(Character) and tonumber(getBangSpeed) then
+            for i, v in pairs(Character:GetDescendants()) do
+                if Character:FindFirstChildOfClass("Humanoid") then
+                    if v:FindFirstChildOfClass("Animation") or v:FindFirstChild("INSTANCE_ANIM_R15") then
+                        v:AdjustSpeed(getBangSpeed)
+                    else
+                        warn("Animation not found in Humanoid: "..tostring(game.Players.LocalPlayer.Name)..":FindFirstChildWhichIsA('Humanoid') | nil")
+                    end
+                else
+                    warn("Humanoid does not exist in Character: "..tostring(game.Players.LocalPlayer.Name))
+                end
+            end
+        else
+            warn("Character does not seem to have loaded properly.")
+        end
     end})--]]
     
     local Settings = {
