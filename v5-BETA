@@ -198,7 +198,7 @@ local HttpService = cloneref(game:GetService("HttpService")) or game:GetService(
 repeat wait() until player and Character and Character:FindFirstChild("HumanoidRootPart", true) and Character:FindFirstChildWhichIsA("Humanoid", true)
 
 if getSupportedFunctions(AllClipboards) then
-    AllClipboards("https://discord.gg/VJh3kkYzBn")
+    AllClipboards("https://discord.gg/VJh3kkYzBn | https://www.youtube.com/@AnonymousExploiting")
 else
     print("...")
 end
