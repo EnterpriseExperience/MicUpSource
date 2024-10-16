@@ -4152,7 +4152,106 @@ local function loadGUI()
     Callback = function()
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
     end})
+    wait(0.3)
+    getgenv().hasLoadedAntiLog = false
+    if getgenv().hasLoadedAntiLog == false then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/vqmpjayZ/More-Scripts/main/Anti-Chat-Logger", true))()
+        getgenv().hasLoadedAntiLog = true
+    else
+        warn("You have already loaded AntiChat Logger!")
+    end
+    wait(0.5)
+    Tab4:AddTextbox({
+    Name = "Chat Bypass Input",
+    Default = "Word To Bypass",
+    TextDisappear = true,
+    Callback = function(saveInputFilter)
+    local TextChatService = cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
+
+    local letters = {
+        set1 = {
+            ["a"] = "ẳ",
+            ["b"] = "ɓ",
+            ["c"] = "ㄈ",
+            ["d"] = "ȡ",
+            ["e"] = "ȇ",
+            ["f"] = "ӻ",
+            ["g"] = "ɠ",
+            ["h"] = "ȟ",
+            ["i"] = "׀",
+            ["j"] = "ǰ",
+            ["k"] = "ҟ",
+            ["l"] = "ȴ",
+            ["m"] = "ɱ",
+            ["n"] = "冂",
+            ["o"] = "ό",
+            ["p"] = "ᵽ",
+            ["q"] = "ԛ",
+            ["r"] = "ŗ",
+            ["s"] = "ȿ",
+            ["t"] = "丅",
+            ["u"] = "ȕ",
+            ["v"] = "ѵ",
+            ["w"] = "ώ",
+            ["x"] = "ẍ",
+            ["y"] = "ƴ",
+            ["z"] = "ȥ",
+        }
+    }
+
+    local numbers = {
+        set1 = {
+            ["0"] = "Θ",
+            ["1"] = "Ɩ",
+            ["2"] = "ƻ",
+            ["3"] = "Ʒ",
+            ["4"] = "🄅",
+            ["5"] = "Ƽ",
+            ["6"] = "Ϭ",
+            ["7"] = "🄈",
+            ["8"] = "Ȣ",
+            ["9"] = "Θ",
+        }
+    }
+
+    local function convert(text)
+        local letters_set = letters["set1"]
+        local numbers_set = numbers["set1"]
     
+        local converted = ""
+        for i = 1, #text do
+            local char = text:sub(i, i)
+            local lower_char = char:lower()
+    
+            if char:match("%a") then
+                if lettersBypass then
+                    converted = converted .. char
+                else
+                    converted = converted .. (letters_set[lower_char] or char)
+                end
+            elseif char:match("%d") then
+                if numbersBypass then
+                    converted = converted .. char
+                else
+                    converted = converted .. (numbers_set[char] or char)
+                end
+            else
+                converted = converted .. char
+            end
+        end
+        return converted
+    end
+    wait(.2)
+    local function sendchat(msg)
+        chat:SendAsync(convert(msg))
+    end
+
+    sendchat(saveInputFilter)
+    end})
+
     -- The NEW 'Character Flicker' is here! People that own the 500 Robux 'thi' (Admin GamePass) will now be able to spam in-game admin functions!
     
     Tab2:AddToggle({
@@ -4242,10 +4341,19 @@ local function loadGUI()
         getgenv().CharFlick = false
         wait(1)
         local args = {
+            [1] = "ARegular",
+            [2] = "Regular"
+        }
+
+        game:GetService("ReplicatedStorage"):WaitForChild("Admin"):FireServer(unpack(args))
+        wait(0.2)
+        local args = {
             [1] = tostring(game.Players.LocalPlayer.Name)
         }
         
-        game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("ModifyUserEvent"):FireServer(unpack(args))        
+        game:GetService("ReplicatedStorage"):WaitForChild("Notification"):WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
+        wait(.2)
+        game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Health = 0
     end
     end})
     wait()
@@ -4476,13 +4584,13 @@ local function loadGUI()
     end})--]]
     
     local Settings = {
-        Keybind = "E"
+        Keybind = "C"
     }
     
     Tab2:AddButton({
     Name = "Invisible (Keybind Toggle)",
     Callback = function()
-    if Invis_Loaded and not _G.INVIS_DEBUG == true then
+    if getgenv().Invis_Loaded == true or Invis_Loaded and not _G.INVIS_DEBUG == true then
         return 
     end
     
