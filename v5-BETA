@@ -157,22 +157,28 @@ end--]]
 if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     return Notification:Notify(
         {Title = "Error: ", Description = "Already running! Reload Script instead!"},
-        {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "default"},
+        {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
         {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function()
-            print("CALLBACK_TRIED_EXECUTING_SCRIPT_MORE_THEN_ONCE.")
-            --[[local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
+            print("[OUTPUT]: Reloading Script...")
+            wait(.3)
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
             local LocalPlayer = Players.LocalPlayer
             local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
             getgenv().Invis_Loaded = false
-            wait()
             getgenv().SCRIPT_EXECUTED = false
+            getgenv().GetLoopRunning = false
+            getgenv().getLoopKick = false
+            wait(0.1)
+            getgenv().getLoopKick = false
+            wait(0.2)
+            getgenv().LmaoGetMuted = false
             wait()
             game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
+            wait(0.2)
+            game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
             wait(1)
-            loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/doMICUP')))()
-            wait(0.5)
-            Humanoid.Health = 0--]]
+            loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v5-BETA')))()
         end}
     )
 end
