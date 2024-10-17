@@ -2115,25 +2115,23 @@ local function loadGUI()
         
         getgenv().BoothOrigWhitelistTable = {}
 
-        local function makeCharacterVisible(character)
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Transparency = 0
-                end
-            end
-        end
-
-        local function makeCharacterInvisible(character)
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Transparency = 1
-                end
-            end
-        end
-
         local function fireAndUnclaimStall(stall)
             local proximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
-            if proximityPrompt and not getgenv().ownerWhitelist[stall.Player.Value] and not getgenv().BoothOrigWhitelistTable[stall.Player.Value] then
+            if proximityPrompt and (not getgenv().ownerWhitelist[stall.Player.Value] or getgenv().BoothOrigWhitelistTable[stall.Player.Value]) then
+                local function makeCharacterInvisible(character)
+                    for _, part in pairs(character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.Transparency = 1
+                        end
+                    end
+                end
+
+                for _, player in pairs(game.Players:GetPlayers()) do
+                    if player.Character and player ~= game.Players.LocalPlayer then
+                        makeCharacterInvisible(player.Character)
+                    end
+                end                
+                wait()
                 Character:PivotTo(stall:GetPivot())
                 wait(0.1)
                 Character:WaitForChild("HumanoidRootPart").Anchored = true
@@ -2214,8 +2212,43 @@ local function loadGUI()
         
         wait(0.1)
         unclaimStalls()
-        wait(0.1)
-
+        wait(0.2)
+        local function makeCharacterVisible(character)
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.Transparency = 0
+                end
+            end
+        end
+        
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                makeCharacterVisible(player.Character)
+            end
+        end
+        wait()
+        local function makePartInvisible(part)
+            part.Transparency = 1
+        end
+        
+        local function makeHumanoidRootPartInvisible(character)
+            local player = game.Players:GetPlayerFromCharacter(character)
+            if player and player ~= game.Players.LocalPlayer then
+                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart then
+                    makePartInvisible(humanoidRootPart)
+                end
+            end
+        end
+        
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Character then
+                makeHumanoidRootPartInvisible(player.Character)
+            end
+        end
+        wait()
+        makeVisible()
+        wait(0.3)
         Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
         
         wait(0.3)
@@ -2227,7 +2260,6 @@ local function loadGUI()
             local PlayerGui = localPlayer:WaitForChild("PlayerGui")
             PlayerGui.StallLocal.StallFrame.Visible = false
         end
-        
         wait(0.2)
         print("Finished Unclaiming ALL Booths.")
     end})
