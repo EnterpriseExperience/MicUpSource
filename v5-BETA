@@ -4773,7 +4773,11 @@ local function loadGUI()
           PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
       end
        if NoClip then
-           FakeCharacter.Humanoid:ChangeState(11)
+            for i, v in pairs(FakeCharacter:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end
+            end
        end
     end
     )
