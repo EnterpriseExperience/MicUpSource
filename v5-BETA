@@ -5708,28 +5708,44 @@ local function loadGUI()
     Tab9:AddButton({
     Name = "NightTime",
     Callback = function()
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
-    Lighting.ClockTime = 0
-    wait()
-    Lighting.Brightness = 0
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+    if Lighting.ClockTime <= 1 then
+        Lighting.ClockTime = 0
+        wait()
+        Lighting.Brightness = 0
+    else
+        resetLightingSettings()
+        wait(0.2)
+        Lighting.ClockTime = 0
+        wait()
+        Lighting.Brightness = 0
+    end
     end})
     
     Tab9:AddButton({
     Name = "NightTime (With Night-Light)",
     Callback = function()
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
-    Lighting.ClockTime = 1
-    wait()
-    Lighting.Brightness = 2
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+    if Lighting.ClockTime <= 2 then
+        Lighting.ClockTime = 1
+        wait()
+        Lighting.Brightness = 2
+    else
+        resetLightingSettings()
+        wait(0.2)
+        Lighting.ClockTime = 0
+        wait()
+        Lighting.Brightness = 0
+    end
     end})
     
     Tab9:AddButton({
     Name = "DayTime",
     Callback = function()
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
-    Lighting.ClockTime = 14
+    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+    Lighting.ClockTime = 12
     wait()
-    Lighting.Brightness = 3
+    Lighting.Brightness = 1.5
     end})
     
     Tab9:AddToggle({
@@ -5817,12 +5833,6 @@ local function loadGUI()
         getgenv().SpookSun = false
         wait(1.5)
         resetLightingSettings()
-        wait(0.6)
-        Lighting.ClockTime = 1
-        wait(0.3)
-        Lighting.ClockTime = 14
-        wait(0.5)
-        sky.SunAngularSize = 11
     end
     end})
     
@@ -5894,22 +5904,24 @@ local function loadGUI()
     else
         getgenv().SpookyDayTime = false
         wait(2)
-        local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
-    
-        local function removeSmokeFromPart(part)
-        local smoke = part:FindFirstChild("SpookySmoke")
-            if smoke then
-                smoke:Destroy()
+        for i = 1, 10 do
+            local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+        
+            local function removeSmokeFromPart(part)
+            local smoke = part:FindFirstChild("SpookySmoke")
+                if smoke then
+                    smoke:Destroy()
+                end
             end
-        end
-    
-        local function removeSmokeFromEverything()
-            for _, obj in pairs(workspace:GetDescendants()) do
-                removeSmokeFromPart(obj)
+        
+            local function removeSmokeFromEverything()
+                for _, obj in pairs(workspace:GetDescendants()) do
+                    removeSmokeFromPart(obj)
+                end
             end
+        
+            removeSmokeFromEverything()
         end
-    
-        removeSmokeFromEverything()
     end
     end})
     
@@ -5963,6 +5975,26 @@ local function loadGUI()
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for i,v in next, Humanoid:GetPlayingAnimationTracks() do
             v:Stop()
+        end
+    end})
+
+    Tab12:AddSlider({
+    Name = "Emote Speed Slider",
+    Min = 0,
+    Max = 500,
+    Default = 1,
+    Color = Color3.fromRGB(0,0,0),
+    Increment = 0.1,
+    ValueName = "",
+    Callback = function(slidingSpeed)
+        local getEmoteNum = tonumber(slidingSpeed) or slidingSpeed
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+        for _, v in pairs(ActiveTracks) do
+            v:AdjustSpeed(getEmoteNum)
         end
     end})
     
