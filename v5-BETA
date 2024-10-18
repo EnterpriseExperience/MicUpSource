@@ -4352,6 +4352,162 @@ local function loadGUI()
     sendchat(saveInputFilter)
     end})
 
+    Tab4:AddTextbox({
+    Name = "Booth Text Bypass",
+    Default = "Enter Text",
+    TextDisappear = true,
+    Callback = function(enteredTextInput)
+        local TextChatService = cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
+
+        local letters = {
+            set1 = {
+                ["a"] = "ẳ",
+                ["b"] = "ɓ",
+                ["c"] = "ㄈ",
+                ["d"] = "ȡ",
+                ["e"] = "ȇ",
+                ["f"] = "ӻ",
+                ["g"] = "ɠ",
+                ["h"] = "ȟ",
+                ["i"] = "׀",
+                ["j"] = "ǰ",
+                ["k"] = "ҟ",
+                ["l"] = "ȴ",
+                ["m"] = "ɱ",
+                ["n"] = "冂",
+                ["o"] = "ό",
+                ["p"] = "ᵽ",
+                ["q"] = "ԛ",
+                ["r"] = "ŗ",
+                ["s"] = "ȿ",
+                ["t"] = "丅",
+                ["u"] = "ȕ",
+                ["v"] = "ѵ",
+                ["w"] = "ώ",
+                ["x"] = "ẍ",
+                ["y"] = "ƴ",
+                ["z"] = "ȥ",
+            }
+        }
+
+        local numbers = {
+            set1 = {
+                ["0"] = "Θ",
+                ["1"] = "Ɩ",
+                ["2"] = "ƻ",
+                ["3"] = "Ʒ",
+                ["4"] = "🄅",
+                ["5"] = "Ƽ",
+                ["6"] = "Ϭ",
+                ["7"] = "🄈",
+                ["8"] = "Ȣ",
+                ["9"] = "Θ",
+            }
+        }
+
+        local function convert(text)
+            local letters_set = letters["set1"]
+            local numbers_set = numbers["set1"]
+        
+            local converted = ""
+            for i = 1, #text do
+                local char = text:sub(i, i)
+                local lower_char = char:lower()
+        
+                if char:match("%a") then
+                    if lettersBypass then
+                        converted = converted .. char
+                    else
+                        converted = converted .. (letters_set[lower_char] or char)
+                    end
+                elseif char:match("%d") then
+                    if numbersBypass then
+                        converted = converted .. char
+                    else
+                        converted = converted .. (numbers_set[char] or char)
+                    end
+                else
+                    converted = converted .. char
+                end
+            end
+            return converted
+        end
+        wait(.2)
+        local function sendchat(msg)
+            local TheStall = LocalStall
+            local imageIDs = {
+                "5600150518",
+                "5888213893",
+                "15058687074",
+                "8614358451",
+                "13886197679",
+                "8614415035",
+                "18768072239",
+                "18587094358",
+                "5788533331"
+            }
+            
+            local function pickRandomImage()
+                local randomIndex = math.random(1, #imageIDs)
+                return imageIDs[randomIndex]
+            end
+
+            function getStall()
+                for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
+                    if v.Player.Value == game:GetService("Players").LocalPlayer then
+                        return v
+                    end
+                end
+            return nil
+            end
+
+            local Stall = getStall()
+            
+            if not Stall then
+                return OrionLib:MakeNotification({
+                    Name = "Error: No Booth",
+                    Content = "You do not own a booth!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
+            wait()
+            local args = {
+                [1] = convert(msg),
+                [2] = tostring(pickRandomImage())
+            }
+            
+            Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        end
+
+        sendchat(enteredTextInput)
+    end})
+
+    Tab4:AddButton({
+    Name = "Clear Chat Messages",
+    Callback = function()
+        local TextChatService = cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
+        
+        local function sendchat(msg)
+            chat:SendAsync(msg)
+        end
+        
+        local random_number = math.random(1, 8)
+        for i = 1, random_number do
+            if random_number >= 6 then
+                sendchat("")
+            else
+                sendchat(" ")
+            end
+        end
+    end})
+
     -- The NEW 'Character Flicker' is here! People that own the 500 Robux 'thi' (Admin GamePass) will now be able to spam in-game admin functions!
     
     Tab2:AddToggle({
@@ -5304,7 +5460,15 @@ local function loadGUI()
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = wsVal
+        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+        
+        if Humanoid then
+            Humanoid.WalkSpeed = wsVal
+        else
+            repeat wait() until Humanoid and Humanoid.Health >= 90
+            wait(0.5)
+            warn("Humanoid Successfully Initialized! (1)")
+        end
     end})
     
     if game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == true then
@@ -5327,12 +5491,25 @@ local function loadGUI()
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
             local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            Character:FindFirstChildWhichIsA("Humanoid").JumpPower = jpVal
+            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+        
+            if Humanoid then
+                Humanoid.JumpPower = jpVal
+            else
+                repeat wait() until Humanoid and Humanoid.Health >= 90
+                wait(0.5)
+                warn("Humanoid Successfully Initialized! (2)")
+            end
         end})
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    elseif Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == false then
+        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+        
+        repeat wait() until Humanoid and Humanoid.Health >= 90
+        wait(0.5)
+        warn("Humanoid Successfully Initialized! (3)")
+    elseif game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid").UseJumpPower == false then
         OrionLib:MakeNotification({
             Name = "Detection!",
             Content = "UseJumpPower is disabled, switching...",
@@ -5352,7 +5529,15 @@ local function loadGUI()
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
             local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            Character:FindFirstChildWhichIsA("Humanoid").JumpHeight = jumpHeight
+            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+        
+            if Humanoid then
+                Humanoid.JumpHeight = jumpHeight
+            else
+                repeat wait() until Humanoid and Humanoid.Health >= 90
+                wait(0.5)
+                warn("Humanoid Successfully Initialized! (4)")
+            end
         end})
     end
     
@@ -5365,6 +5550,8 @@ local function loadGUI()
     Increment = 1,
     ValueName = "",
     Callback = function(gravVal)
+        repeat wait() until game:IsLoaded()
+        wait()
         local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
         GetWorkspace.Gravity = gravVal
     end})
@@ -5377,19 +5564,28 @@ local function loadGUI()
         local LocalPlayer = Players.LocalPlayer
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-        HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
-        wait(0.5)
-        Character:FindFirstChildWhichIsA("Humanoid").Jump = true
-        wait(1)
-        local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
-        wait(1)
-        HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
-        wait(0.7)
-        HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
-        wait(0.7)
-        HumanoidRP.CFrame = OldCF
-        wait(0.7)
-        print("Successfully Executed | Method 1 | 0")
+        local Humanoid =  Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+        if HumanoidRP then
+            print("HumanoidRootPart was found successfully!")
+            wait()
+            HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
+            wait(0.5)
+            Character:FindFirstChildWhichIsA("Humanoid").Jump = true
+            wait(1)
+            local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
+            wait(1)
+            HumanoidRP.CFrame = CFrame.new(4213.66602, 2.76511836, 67.6830292)
+            wait(0.7)
+            HumanoidRP.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
+            wait(0.7)
+            HumanoidRP.CFrame = OldCF
+            wait(0.7)
+            print("Successfully Executed | Method 1 | 0")
+        else
+            print("Need to wait for HumanoidRootPart...")
+            wait()
+            repeat wait() until HumanoidRP and Humanoid
+        end
     end})
     
     Tab2:AddToggle({
@@ -5420,13 +5616,16 @@ local function loadGUI()
         getgenv().doTeleport = false
         wait()
         repeat wait() until getgenv().doTeleport == false
-        print("Success!")
+        wait()
+        print("Success! getgenv().doTeleport = false")
         wait(0.5)
         local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+        print("Teleporting Back...")
+        wait()
         HumanoidRP.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
     end
     end})
@@ -5440,7 +5639,8 @@ local function loadGUI()
         local LocalPlayer = Players.LocalPlayer
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-        
+        print("Killing...")
+        wait(.2)
         HumanoidRP.CFrame = CFrame.new(voidPosition)
     end})
     
@@ -5448,28 +5648,28 @@ local function loadGUI()
     Name = "Anti-TP (Method 4, Loop TP Void)",
     Default = false,
     Callback = function(getLoopTpToVoid)
-    if getLoopTpToVoid then
-    local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
-    local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-    getgenv().loopTPToVoid = true
-    while getgenv().loopTPToVoid == true do
-    wait()
-    HumanoidRP.CFrame = CFrame.new(putPositionTo)
-    end
-    else
-    getgenv().loopTPToVoid = false
-    wait()
-    repeat wait() until getgenv().loopTPToVoid == false
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character
-    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
-    HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
-    end
+        if getLoopTpToVoid then
+            local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
+            local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+                getgenv().loopTPToVoid = true
+                while getgenv().loopTPToVoid == true do
+                wait()
+                    HumanoidRP.CFrame = CFrame.new(putPositionTo)
+                end
+            else
+                getgenv().loopTPToVoid = false
+            wait()
+            repeat wait() until getgenv().loopTPToVoid == false
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character
+            local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+            HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
+        end
     end})
     
     Tab5:AddButton({
