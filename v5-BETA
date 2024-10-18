@@ -4352,7 +4352,7 @@ local function loadGUI()
     sendchat(saveInputFilter)
     end})
 
-    Tab4:AddTextbox({
+    Tab11:AddTextbox({
     Name = "Booth Text Bypass",
     Default = "Enter Text",
     TextDisappear = true,
