@@ -2182,6 +2182,14 @@ local function loadGUI()
             end
         end
 
+        local function makeCharacterVisible(character)
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.Transparency = 0
+                end
+            end
+        end
+
         for _, player in pairs(Players:GetPlayers()) do
             if player ~= localPlayer and player.Character then
                 makeCharacterVisible(player.Character)
@@ -2246,8 +2254,6 @@ local function loadGUI()
                 makeHumanoidRootPartInvisible(player.Character)
             end
         end
-        wait()
-        makeVisible()
         wait(0.3)
         Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
         
