@@ -2866,14 +2866,14 @@ local function loadGUI()
             
             getgenv().copyAllWhitelistedAnims = true
             while getgenv().copyAllWhitelistedAnims == true do
-            wait(0.1)
+            wait()
                 copyAnimations()
             end
         else
             getgenv().copyAllWhitelistedAnims = false
             wait()
             repeat wait() until getgenv().copyAllWhitelistedAnims == false
-            wait(0.5)
+            wait(0.3)
             getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
     
             function getThatPlr()
@@ -2930,7 +2930,7 @@ local function loadGUI()
                 end
             end
             
-            for i = 1, 25 do
+            for i = 1, 10 do
                 stopAnimations()
             end
         end
