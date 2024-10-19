@@ -2787,6 +2787,154 @@ local function loadGUI()
         
         copyAnimations()    
     end})
+
+    Tab14:AddToggle({
+    Name = "Loop CopyAnim Whitelist Plr",
+    Default = false,
+    Callback = function(getLoopCopyAnim)
+        if getLoopCopyAnim then
+            getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
+        
+            function getThatPlr()
+                local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+                for i, v in pairs(Players:GetChildren()) do
+                    if getgenv().singlePlayerTable[v.Name] then
+                        return v
+                    end
+                end
+                return nil
+            end
+            
+            local thePlayer = getThatPlr()
+            
+            if thePlayer then
+                print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+            else
+                getgenv().copyAllWhitelistedAnims = false
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: 0",
+                    Content = "Player was not found!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
+            
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+            local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+            local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
+            
+            if thePlayer then
+                print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+            else
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: 0",
+                    Content = "Player was not found!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
+            
+            for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                animTrack:Stop()
+            end
+            
+            local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+            local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
+            
+            local function copyAnimations()
+                for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                    animTrack:Stop()
+                end
+            
+                for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+                    if not string.find(animTrack.Animation.AnimationId, "507768375") then
+                        local copiedAnim = Humanoid:LoadAnimation(animTrack.Animation)
+                        copiedAnim:Play(0.1, 1, animTrack.Speed)
+                        copiedAnim.TimePosition = animTrack.TimePosition
+            
+                        task.spawn(function()
+                            animTrack.Stopped:Wait()
+                            copiedAnim:Stop()
+                            copiedAnim:Destroy()
+                        end)
+                    end
+                end
+            end
+            
+            getgenv().copyAllWhitelistedAnims = true
+            while getgenv().copyAllWhitelistedAnims == true do
+            wait(0.1)
+                copyAnimations()
+            end
+        else
+            getgenv().copyAllWhitelistedAnims = false
+            wait()
+            repeat wait() until getgenv().copyAllWhitelistedAnims == false
+            wait(0.5)
+            getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
+    
+            function getThatPlr()
+                local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+                for i, v in pairs(Players:GetChildren()) do
+                    if getgenv().singlePlayerTable[v.Name] then
+                        return v
+                    end
+                end
+                return nil
+            end
+        
+            local thePlayer = getThatPlr()
+            
+            if thePlayer then
+                print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+            else
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: 0",
+                    Content = "Player was not found!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
+            
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+            local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+            local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
+            
+            if thePlayer then
+                print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+            else
+                return OrionLib:MakeNotification({
+                    Name = "[ERROR]: 0",
+                    Content = "Player was not found!",
+                    Image = "rbxassetid://4483345998",
+                    Time = 10
+                })
+            end
+            
+            for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                animTrack:Stop()
+            end
+            
+            local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+            local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
+            
+            local function stopAnimations()
+                for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+                    animTrack:Stop()
+                end
+            end
+            
+            for i = 1, 25 do
+                stopAnimations()
+            end
+        end
+    end})
     
     Tab12:AddButton({
     Name = "Stop All Emotes",
@@ -5466,7 +5614,7 @@ local function loadGUI()
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
         
         if Humanoid then
             Humanoid.WalkSpeed = wsVal
@@ -5497,7 +5645,7 @@ local function loadGUI()
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
             local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
         
             if Humanoid then
                 Humanoid.JumpPower = jpVal
@@ -5510,12 +5658,12 @@ local function loadGUI()
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
         
         repeat wait() until Humanoid and Humanoid.Health >= 90
         wait(0.5)
         warn("Humanoid Successfully Initialized! (3)")
-    elseif game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid").UseJumpPower == false then
+    elseif game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == false then
         OrionLib:MakeNotification({
             Name = "Detection!",
             Content = "UseJumpPower is disabled, switching...",
