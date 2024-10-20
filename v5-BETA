@@ -4657,7 +4657,7 @@ local function loadGUI()
             if random_number >= 6 then
                 sendchat("")
             else
-                sendchat(" ")
+                sendchat(" . ")
             end
         end
     end})
