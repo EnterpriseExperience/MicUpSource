@@ -1414,15 +1414,14 @@ local function loadGUI()
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
         getgenv().isNoclipOn = true
-
-        if not character then return end
-        if getgenv().isNoclipOn == true then
+        
+        while getgenv().isNoclipOn == true do
+            wait()
             for i, v in pairs(character:GetDescendants()) do
                 if v:IsA("BasePart") then
                     v.CanCollide = false
-
-                    getgenv().isNoclipOn = true
                 end
             end
         end
