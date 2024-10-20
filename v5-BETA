@@ -1448,7 +1448,53 @@ local function loadGUI()
         end
     end
     end})
-    
+
+    Tab13:AddToggle({
+    Name = "Noclip (With Anti-Sit)",
+    Default = false,
+    Callback = function(antiSitNoclip)
+    if antiSitNoclip then
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local speaker = Players.LocalPlayer
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        wait()
+        getgenv().noClipNoSit = true
+        while getgenv().noClipNoSit == true do
+        wait()
+            for i, v in pairs(character:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                    wait()
+                    speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+                end
+            end
+        end
+    else
+        getgenv().noClipNoSit = false
+        wait()
+        repeat wait() until getgenv().noClipNoSit == false
+        wait(0.3)
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local LastCF = character:FindFirstChild("HumanoidRootPart").CFrame
+
+        if not character then
+            repeat wait() until character and character:FindFirstChildWhichIsA("Humanoid")
+        end
+        wait(.1)
+		for i, v in pairs(character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.CanCollide = true
+			end
+		end
+        wait(0.4)
+        for i = 1, 6 do
+            game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Jump = true
+        end
+    end
+    end})
+
     Tab5:AddButton({
     Name = "Players Invisible Fix",
     Callback = function()
