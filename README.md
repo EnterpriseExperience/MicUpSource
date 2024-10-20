@@ -5,6 +5,10 @@ https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoad
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/BETA-Loading
 ## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Not supported for Mobile, and will skip if mobile is detected.]
 
+https://discord.gg/VJh3kkYzBn
+
+[Make Sure To Join The Discord! For Exclusive Updates And Also Normal People Can Join To!]
+
 ## Make Sure To Star This Repo!
 
 ## If you steal my code, leave me some credit as this project has been in the works for 6-7 months.
