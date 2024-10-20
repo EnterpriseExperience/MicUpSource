@@ -1,4 +1,4 @@
-## [V4 OLD Loadstring, Still Working]:
+## [V4 OLD Loadstring, Now reverts to V5 automatically]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoadstring
 
 ## [V5 Loadstring, NEW AND REVAMPED!]:
