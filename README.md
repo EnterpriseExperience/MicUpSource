@@ -3,7 +3,7 @@ https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoad
 
 ## [V5 Loadstring, NEW AND REVAMPED!]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/BETA-Loading
-## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Not supported for Mobile, and will skip if mobile is detected.]
+## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Support For Every Executor!]
 
 https://discord.gg/VJh3kkYzBn
 
