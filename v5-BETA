@@ -1432,10 +1432,10 @@ local function loadGUI()
         local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local LastCF = character:FindFirstChild("HumanoidRootPart").CFrame
 
-        if not character then 
+        if not character then
             repeat wait() until character and character:FindFirstChildWhichIsA("Humanoid")
         end
-        wait()
+        wait(.1)
 		for i, v in pairs(character:GetDescendants()) do
 			if v:IsA("BasePart") then
 				v.CanCollide = true
