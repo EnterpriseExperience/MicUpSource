@@ -1395,14 +1395,58 @@ local function loadGUI()
     Default = false,
     Callback = function(freezeChar)
     if freezeChar then
-    getgenv().FreezingChar = true
-    if getgenv().FreezingChar == true then
-    game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Anchored = true
-    end
+        getgenv().FreezingChar = true
+        if getgenv().FreezingChar == true then
+            game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Anchored = true
+        end
     else
-    getgenv().FreezingChar = false
-    wait()
-    game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Anchored = false
+        getgenv().FreezingChar = false
+        wait()
+        game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Anchored = false
+    end
+    end})
+
+    Tab13:AddToggle({
+    Name = "Noclip",
+    Default = false,
+    Callback = function(noclipToggle)
+    if noclipToggle then
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        getgenv().isNoclipOn = true
+
+        if not character then return end
+        if getgenv().isNoclipOn == true then
+            for i, v in pairs(character:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+
+                    getgenv().isNoclipOn = true
+                end
+            end
+        end
+    else
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local LastCF = character:FindFirstChild("HumanoidRootPart").CFrame
+
+        if not character then 
+            repeat wait() until character and character:FindFirstChildWhichIsA("Humanoid")
+        end
+        wait()
+		for i, v in pairs(character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.CanCollide = true
+
+                getgenv().isNoclipOn = false
+			end
+		end
+        wait(0.4)
+        for i = 1, 6 do
+            game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Jump = true
+        end
     end
     end})
     
@@ -7204,6 +7248,12 @@ local function loadGUI()
     wait(0.5)
     print(tostring(LocalPlayer.CameraMaxZoomDistance))
 end
+local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+local getOldCF = HumanoidRootPart.CFrame
 wait(0.5)
 loadGUI()
 wait(0.3)
@@ -7356,8 +7406,32 @@ local Players = cloneref(game:GetService("Players")) or game:GetService("Players
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
 wait(.3)
 Humanoid.Health = 0
+wait(0.3)
+Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(function()
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+    local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+    print("Humanoid Died, Waiting...")
+    wait(0.5)
+    repeat wait() until LocalPlayer and Character and Humanoid and HumanoidRootPart and Humanoid.Health >= 90 and HumanoidRootPart ~= nil
+    wait()
+    if Character:FindFirstChildWhichIsA("Humanoid") and Humanoid and HumanoidRootPart then
+        LocalPlayer.CharacterAdded:Connect(function(Char)
+            print("Character Loaded Successfully!")
+            wait()
+            HumanoidRootPart.CFrame = getOldCF
+        end)
+    end
+end)
+wait(2.5)
+repeat wait() until Character and Character:FindFirstChildWhichIsA("Humanoid") and Humanoid and Character:FindFirstChild("HumanoidRootPart") and HumanoidRootPart
+wait(0.3)
+Character:FindFirstChild("HumanoidRootPart").CFrame = getOldCF
 wait(2.5)
 --[[repeat wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
