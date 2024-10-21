@@ -372,16 +372,23 @@ local function loadGUI()
     wait(0.5)
     local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
     local FindBaseplate = Workspace:FindFirstChild("Baseplate") or Workspace:WaitForChild("Baseplate")
-    local CHUNK_SIZE = 2048
-    local RENDER_DISTANCE = 2
 
     if not Workspace:FindFirstChild("PartStorage") then
         local NewFolder = Instance.new("Folder")
         NewFolder.Name = "PartStorage"
         NewFolder.Parent = Workspace
     end
+
+    local NewFolder = Workspace:FindFirstChild("PartStorage")
+    local newChunk = Instance.new("Part")
+    newChunk.Name = "BASEPLATE_CLONE_ANTI_VOID"
+    newChunk.Size = Vector3.new(2048, 0, 2048)
+    newChunk.BrickColor = BrickColor.new("Maroon")
+    newChunk.Anchored = true
+    newChunk.CanCollide = true
+    newChunk.Parent = NewFolder
     
-    local function createBaseplateChunk(position)
+    --[[local function createBaseplateChunk(position)
         local NewFolder = Workspace:FindFirstChild("PartStorage")
         local newChunk = Instance.new("Part")
         newChunk.Name = "BASEPLATE_CLONE_ANTI_VOID"
@@ -434,7 +441,7 @@ local function loadGUI()
                 generateChunksAroundPlayer(playerPosition)
             end
         end
-    end)
+    end)--]]
     wait(0.5)
     local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
