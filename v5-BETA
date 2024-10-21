@@ -1888,7 +1888,7 @@ writefile("IY_FE.iy", [[
         "13886197679",
         "12875268373",
         "125124809459735",
-        "78267907856078"
+        "78267907856078",
     }
 
     local function pickRandomImage()
@@ -1900,7 +1900,7 @@ writefile("IY_FE.iy", [[
     wait(0.5)
     local args = {
         [1] = "ӻȕㄈҟ",
-        [2] = "5600150518"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
@@ -6654,7 +6654,7 @@ writefile("IY_FE.iy", [[
     Tab14:AddButton({
     Name = "Free Emotes GUI",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/AllEmotes"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/EmotesGUI"))()
     end})
     
     -- Might bring this back, it still works, but it's not really all that useful, as there is an automated version already, this is just manual (Zacks Easy Hub, is designed to be manual)
@@ -6716,8 +6716,6 @@ writefile("IY_FE.iy", [[
             if v ~= game.Players.LocalPlayer and v:FindFirstChild("AudioDeviceInput") then
                 local dude = v.AudioDeviceInput
                 dude.Muted = false
-                task.wait()
-                print(tostring(dude)..", Muted?: "..tostring(dude.Muted)..", Player: "..tostring(dude.Parent)..", UserID: "..tostring(dude.Parent.UserId))
             end
         end
     end
@@ -6745,6 +6743,13 @@ writefile("IY_FE.iy", [[
                 audioDevice.Changed:Connect(function(property)
                     if property == "Muted" and getgenv().shouldMute == true and not audioDevice.Muted then
                         audioDevice.Muted = true
+                        wait()
+                        OrionLib:MakeNotification({
+                            Name = "Success!",
+                            Content = tostring(derUser).." was muted successfully!",
+                            Image = "rbxassetid://4483345998",
+                            Time = 10
+                        })
                     end
                 end)
             end
@@ -6759,6 +6764,46 @@ writefile("IY_FE.iy", [[
             Time = 10
         })
     end
+    end})
+
+    Tab15:AddButton({
+    Name = "Rejoin",
+    Callback = function()
+        local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+        wait()
+        TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+    end})
+
+    Tab15:AddButton({
+    Name = "Server Hop",
+    Callback = function()
+        -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
+        httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+        local PlaceId = game.PlaceId
+        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local JobId = game.JobId
+        local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+        local HttpService = cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+        
+        if httprequest then
+            local servers = {}
+            local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", PlaceId)})
+            local body = HttpService:JSONDecode(req.Body)
+    
+            if body and body.data then
+                for i, v in next, body.data do
+                    if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= JobId then
+                        table.insert(servers, 1, v.id)
+                    end
+                end
+            end
+        end
+
+        if #servers > 0 then
+            TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
+        else
+            return print("Serverhop", "Couldn't find a server.")
+        end
     end})
     
     Tab15:AddButton({
@@ -6838,6 +6883,13 @@ writefile("IY_FE.iy", [[
                     audioDevice.Changed:Connect(function(property)
                         if property == "Muted" and getgenv().shouldMute == false and audioDevice.Muted then
                             audioDevice.Muted = false
+                            wait()
+                            OrionLib:MakeNotification({
+                                Name = "Success!",
+                                Content = tostring(thisUser).." was unmuted successfully!",
+                                Image = "rbxassetid://4483345998",
+                                Time = 10
+                            })
                         end
                     end)
                 end
