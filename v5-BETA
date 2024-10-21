@@ -372,31 +372,69 @@ local function loadGUI()
     wait(0.5)
     local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
     local FindBaseplate = Workspace:FindFirstChild("Baseplate") or Workspace:WaitForChild("Baseplate")
+    local CHUNK_SIZE = 2048
+    local RENDER_DISTANCE = 2
     
-    if getgenv().HasCreatedFolder == true or Workspace:FindFirstChild("PartStorage") and Workspace:FindFirstChild("PartStorage"):FindFirstChildOfClass("Part") then
-        print("Already Found | PartStorage / Anti-Void Part | Folder | True | Skipping...")
-    else
-        getgenv().HasCreatedFolder = false
-        wait()
+    if not Workspace:FindFirstChild("PartStorage") then
         local NewFolder = Instance.new("Folder")
         NewFolder.Name = "PartStorage"
         NewFolder.Parent = Workspace
-        repeat wait() until NewFolder and FindBaseplate
-        if FindBaseplate and NewFolder then
-            local GetClone = FindBaseplate:Clone()
-            GetClone.Name = "BASEPLATE_CLONE_ANTI_VOID"
-            GetClone.Parent = NewFolder
-            GetClone.CFrame = CFrame.new(FindBaseplate.Position)
-            GetClone.BrickColor = BrickColor.new("Maroon")
-            GetClone.Color = Color3.new(117, 0, 0)
-            GetClone.Size = Vector3.new(2048, 16, 2048)
-            GetClone.CanCollide = true
-            GetClone.CanQuery = true
-            GetClone.CanTouch = true
-            wait()
-            getgenv().HasCreatedFolder = true
+    end
+    
+    local function createBaseplateChunk(position)
+        local NewFolder = Workspace:FindFirstChild("PartStorage")
+        local newChunk = Instance.new("Part")
+        newChunk.Name = "BASEPLATE_CLONE_ANTI_VOID"
+        newChunk.Size = Vector3.new(CHUNK_SIZE, 16, CHUNK_SIZE)
+        newChunk.Position = position
+        newChunk.BrickColor = BrickColor.new("Maroon")
+        newChunk.Color = Color3.new(117 / 255, 0, 0)
+        newChunk.Anchored = true
+        newChunk.CanCollide = true
+        newChunk.Parent = NewFolder
+    end
+    
+    local function chunkExistsAt(position)
+        local NewFolder = Workspace:FindFirstChild("PartStorage")
+        for _, part in pairs(NewFolder:GetChildren()) do
+            if part.Position == position then
+                return true
+            end
+        end
+        return false
+    end
+    
+    local function generateChunksAroundPlayer(playerPosition)
+        local baseX = math.floor(playerPosition.X / CHUNK_SIZE) * CHUNK_SIZE
+        local baseZ = math.floor(playerPosition.Z / CHUNK_SIZE) * CHUNK_SIZE
+    
+        for x = -RENDER_DISTANCE, RENDER_DISTANCE do
+            for z = -RENDER_DISTANCE, RENDER_DISTANCE do
+                local chunkPosition = Vector3.new(baseX + x * CHUNK_SIZE, FindBaseplate.Position.Y, baseZ + z * CHUNK_SIZE)
+                if not chunkExistsAt(chunkPosition) then
+                    createBaseplateChunk(chunkPosition)
+                end
+            end
         end
     end
+    
+    if FindBaseplate and not getgenv().HasCreatedFolder then
+        getgenv().HasCreatedFolder = true
+    else
+        generateChunksAroundPlayer(game.Players.LocalPlayer.Character.HumanoidRootPart.Position)
+    end
+    
+    game:GetService("RunService").Stepped:Connect(function()
+        local player = game.Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local playerPosition = player.Character.HumanoidRootPart.Position
+            if getgenv().HasCreatedFolder then
+                return
+            else
+                generateChunksAroundPlayer(playerPosition)
+            end
+        end
+    end)
     wait(0.5)
     local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
@@ -422,13 +460,214 @@ local function loadGUI()
         warn("Your executor does not support writefile | readfile | false | SORRY! | There CAN/WILL be errors")
     end
     wait(0.5)
-        if writefile and readfile and not (game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki") then
+    if writefile and readfile and not (game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki" or game.Players.LocalPlayer.Name == "Laylay_4kla") then
+        local player = game.Players.LocalPlayer
+        local playerGui = player:WaitForChild("PlayerGui")
+    
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Parent = playerGui
+        screenGui.ResetOnSpawn = false
+    
+        local mainFrame = Instance.new("Frame")
+        mainFrame.Size = UDim2.new(1, 0, 1, 0)
+        mainFrame.Position = UDim2.new(0, 0, 0, 0)
+        mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+        mainFrame.BackgroundTransparency = 0.5
+        mainFrame.Parent = screenGui
+    
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(0.5, 0, 0.2, 0)
+        label.Position = UDim2.new(0.25, 0, 0.2, 0)
+        label.BackgroundTransparency = 1
+        label.Text = "Would you like an emote/rizz config?"
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.TextScaled = true
+        label.Font = Enum.Font.SourceSansBold
+        label.Parent = mainFrame
+    
+        local yesButton = Instance.new("TextButton")
+        yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+        yesButton.Position = UDim2.new(0.2, 0, 0.5, 0)
+        yesButton.Text = "Yes"
+        yesButton.BackgroundColor3 = Color3.new(0, 1, 0)
+        yesButton.TextColor3 = Color3.new(1, 1, 1)
+        yesButton.TextScaled = true
+        yesButton.Font = Enum.Font.SourceSansBold
+        yesButton.Parent = mainFrame
+    
+        local noButton = Instance.new("TextButton")
+        noButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+        noButton.Position = UDim2.new(0.6, 0, 0.5, 0)
+        noButton.Text = "No"
+        noButton.BackgroundColor3 = Color3.new(1, 0, 0)
+        noButton.TextColor3 = Color3.new(1, 1, 1)
+        noButton.TextScaled = true
+        noButton.Font = Enum.Font.SourceSansBold
+        noButton.Parent = mainFrame
+    
+        local userSelected = false
+        local selection = nil
+    
+        yesButton.MouseButton1Click:Connect(function()
+            selection = "Yes"
+            userSelected = true
+        end)
+    
+        noButton.MouseButton1Click:Connect(function()
+            selection = "No"
+            userSelected = true
+        end)
+    
+        repeat
+            task.wait()
+        until userSelected
+    
+        screenGui:Destroy()
+    
+        if selection == "Yes" and not (game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki" or game.Players.LocalPlayer.Name == "Laylay_4kla") then
+writefile("IY_FE.iy", [[
+{
+    "currentShade2":[0.18039216101169587,0.18039216101169587,0.18431372940540315],
+    "StayOpen":false,
+    "logsEnabled":false,
+    "aliases":[],
+    "PluginsTable":[],
+    "prefix":";",
+    "binds":[
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.One","COMMAND":"emote 13071993910"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Two","COMMAND":"emote 14901371589"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Five","COMMAND":"emote 5104377791"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Six","COMMAND":"emote 13694139364"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Seven","COMMAND":"emote 7466047578"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Eight","COMMAND":"emote 13823339506"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.E","COMMAND":"animspeed 4"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Q","COMMAND":"animspeed 0.1"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Nine","COMMAND":"emote 3576823880"},
+    {"KEY":"Enum.KeyCode.Four","ISKEYUP":false,"COMMAND":"emote 5230615437"},
+    {"KEY":"Enum.KeyCode.V","ISKEYUP":false,"COMMAND":"freezeanims"},
+    {"KEY":"Enum.KeyCode.R","ISKEYUP":false,"COMMAND":"emote 16371235025"},
+    {"KEY":"Enum.KeyCode.T","ISKEYUP":false,"COMMAND":"emote 10214418283"},
+    {"KEY":"Enum.KeyCode.Z","ISKEYUP":false,"COMMAND":"emote 3994130516"},
+    {"KEY":"Enum.KeyCode.X","ISKEYUP":false,"COMMAND":"animspeed 1"},
+    {"KEY":"Enum.KeyCode.Y","ISKEYUP":false,"COMMAND":"emote 10147924028"},
+    {"KEY":"Enum.KeyCode.N","ISKEYUP":false,"COMMAND":"emote 3823158750"},
+    {"KEY":"Enum.KeyCode.U","ISKEYUP":false,"COMMAND":"emote 14900153406"},
+    {"KEY":"Enum.KeyCode.Zero","ISKEYUP":false,"COMMAND":"emote 15506503658"},
+    {"KEY":"Enum.KeyCode.P","ISKEYUP":false,"COMMAND":"emote 10275057230"},
+    {"KEY":"Enum.KeyCode.Three","ISKEYUP":false,"COMMAND":"emote 18666650035"},
+    {"KEY":"Enum.KeyCode.F","ISKEYUP":false,"TOGGLE":"animspeed -1","COMMAND":"animspeed 1"}
+    ],
+    "currentShade3":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
+    "WayPoints":[],
+    "jLogsEnabled":false,
+    "currentScroll":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
+    "keepIY":true,
+    "eventBinds":"{\"OnSpawn\":[],\"OnDied\":[],\"OnExecute\":[],\"OnKilled\":[],\"OnJoin\":[],\"OnLeave\":[],\"OnDamage\":[],\"OnChatted\":[]}",
+    "espTransparency":0.3,
+    "currentShade1":[0.1411764770746231,0.1411764770746231,0.14509804546833039],
+    "currentText2":[0,0,0],
+    "currentText1":[1,1,1]
+}
+]], true)
+    wait(1)
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+    wait(0.5)
+    local player = game.Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = playerGui
+
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(1, 0, 1, 0)
+    mainFrame.Position = UDim2.new(0, 0, 0, 0)
+    mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+    mainFrame.BackgroundTransparency = 0.5
+    mainFrame.Parent = screenGui
+
+    local messageLabel = Instance.new("TextLabel")
+    messageLabel.Size = UDim2.new(1, 0, 0.2, 0)
+    messageLabel.Position = UDim2.new(0, 0, 0.4, 0)
+    messageLabel.BackgroundTransparency = 1
+    messageLabel.Text = "You are rejoining, do NOT! Press 'Yes' when you have rejoined."
+    messageLabel.TextColor3 = Color3.new(1, 1, 1)
+    messageLabel.TextScaled = true
+    messageLabel.Font = Enum.Font.SourceSansBold
+    messageLabel.Parent = mainFrame
+
+    wait(5.5)
+    local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    PlaceId, JobId = game.PlaceId, game.JobId
+    local LocalPlayer = Players.LocalPlayer
+    queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+    local TeleportCheck = false
+    game.Players.LocalPlayer.OnTeleport:Connect(function(State)
+        if (not TeleportCheck) and queueteleport then
+            TeleportCheck = true
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v5-BETA')))()")
+        end
+    end)
+    wait(1)
+    TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+    wait(0.5)
+    warn(tostring(game.Players.LocalPlayer.Name) .. ", selected 'Yes'")
+    elseif selection == "No" then
+        warn(tostring(game.Players.LocalPlayer.Name) .. ", selected 'No'")
+    end
+elseif writefile and readfile and (game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki" or game.Players.LocalPlayer.Name == "Laylay_4kla") then
+writefile("IY_FE.iy", [[
+{
+    "currentShade2":[0.18039216101169587,0.18039216101169587,0.18431372940540315],
+    "StayOpen":false,
+    "logsEnabled":false,
+    "aliases":[],
+    "PluginsTable":[],
+    "prefix":";",
+    "binds":[
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.One","COMMAND":"emote 13071993910"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Two","COMMAND":"emote 14901371589"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Five","COMMAND":"emote 5104377791"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Six","COMMAND":"emote 13694139364"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Seven","COMMAND":"emote 7466047578"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Eight","COMMAND":"emote 13823339506"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.E","COMMAND":"animspeed 4"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Q","COMMAND":"animspeed 0.1"},
+    {"ISKEYUP":false,"KEY":"Enum.KeyCode.Nine","COMMAND":"emote 3576823880"},
+    {"KEY":"Enum.KeyCode.Four","ISKEYUP":false,"COMMAND":"emote 5230615437"},
+    {"KEY":"Enum.KeyCode.V","ISKEYUP":false,"COMMAND":"freezeanims"},
+    {"KEY":"Enum.KeyCode.R","ISKEYUP":false,"COMMAND":"emote 16371235025"},
+    {"KEY":"Enum.KeyCode.T","ISKEYUP":false,"COMMAND":"emote 10214418283"},
+    {"KEY":"Enum.KeyCode.Z","ISKEYUP":false,"COMMAND":"emote 3994130516"},
+    {"KEY":"Enum.KeyCode.X","ISKEYUP":false,"COMMAND":"animspeed 1"},
+    {"KEY":"Enum.KeyCode.Y","ISKEYUP":false,"COMMAND":"emote 10147924028"},
+    {"KEY":"Enum.KeyCode.N","ISKEYUP":false,"COMMAND":"emote 3823158750"},
+    {"KEY":"Enum.KeyCode.U","ISKEYUP":false,"COMMAND":"emote 14900153406"},
+    {"KEY":"Enum.KeyCode.Zero","ISKEYUP":false,"COMMAND":"emote 15506503658"},
+    {"KEY":"Enum.KeyCode.P","ISKEYUP":false,"COMMAND":"emote 10275057230"},
+    {"KEY":"Enum.KeyCode.Three","ISKEYUP":false,"COMMAND":"emote 18666650035"},
+    {"KEY":"Enum.KeyCode.F","ISKEYUP":false,"TOGGLE":"animspeed -1","COMMAND":"animspeed 1"}
+    ],
+    "currentShade3":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
+    "WayPoints":[],
+    "jLogsEnabled":true,
+    "currentScroll":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
+    "keepIY":true,
+    "eventBinds":"{\"OnSpawn\":[],\"OnDied\":[],\"OnExecute\":[],\"OnKilled\":[],\"OnJoin\":[],\"OnLeave\":[],\"OnDamage\":[],\"OnChatted\":[]}",
+    "espTransparency":0.3,
+    "currentShade1":[0.1411764770746231,0.1411764770746231,0.14509804546833039],
+    "currentText2":[0,0,0],
+    "currentText1":[1,1,1]
+}
+]], true)
+        wait(1)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+        wait(0.5)
             local player = game.Players.LocalPlayer
             local playerGui = player:WaitForChild("PlayerGui")
 
             local screenGui = Instance.new("ScreenGui")
             screenGui.Parent = playerGui
-            screenGui.ResetOnSpawn = false
 
             local mainFrame = Instance.new("Frame")
             mainFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -437,177 +676,40 @@ local function loadGUI()
             mainFrame.BackgroundTransparency = 0.5
             mainFrame.Parent = screenGui
 
-            local label = Instance.new("TextLabel")
-            label.Size = UDim2.new(0.5, 0, 0.2, 0)
-            label.Position = UDim2.new(0.25, 0, 0.2, 0)
-            label.BackgroundTransparency = 1
-            label.Text = "Would you like an emote/rizz config?"
-            label.TextColor3 = Color3.new(1, 1, 1)
-            label.TextScaled = true
-            label.Font = Enum.Font.SourceSansBold
-            label.Parent = mainFrame
+            local messageLabel = Instance.new("TextLabel")
+            messageLabel.Size = UDim2.new(1, 0, 0.2, 0)
+            messageLabel.Position = UDim2.new(0, 0, 0.4, 0)
+            messageLabel.BackgroundTransparency = 1
+            messageLabel.Text = "You are rejoining, do NOT! Press 'Yes' when you have rejoined."
+            messageLabel.TextColor3 = Color3.new(1, 1, 1)
+            messageLabel.TextScaled = true
+            messageLabel.Font = Enum.Font.SourceSansBold
+            messageLabel.Parent = mainFrame
 
-            local yesButton = Instance.new("TextButton")
-            yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
-            yesButton.Position = UDim2.new(0.2, 0, 0.5, 0)
-            yesButton.Text = "Yes"
-            yesButton.BackgroundColor3 = Color3.new(0, 1, 0)
-            yesButton.TextColor3 = Color3.new(1, 1, 1)
-            yesButton.TextScaled = true
-            yesButton.Font = Enum.Font.SourceSansBold
-            yesButton.Parent = mainFrame
-
-            local noButton = Instance.new("TextButton")
-            noButton.Size = UDim2.new(0.2, 0, 0.1, 0)
-            noButton.Position = UDim2.new(0.6, 0, 0.5, 0)
-            noButton.Text = "No"
-            noButton.BackgroundColor3 = Color3.new(1, 0, 0)
-            noButton.TextColor3 = Color3.new(1, 1, 1)
-            noButton.TextScaled = true
-            noButton.Font = Enum.Font.SourceSansBold
-            noButton.Parent = mainFrame
-
-            local userSelected = false
-            local selection = nil
-
-            yesButton.MouseButton1Click:Connect(function()
-                selection = "Yes"
-                userSelected = true
+            wait(5.5)
+            local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+            local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+            PlaceId, JobId = game.PlaceId, game.JobId
+            local LocalPlayer = Players.LocalPlayer
+            queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+            local TeleportCheck = false
+            game.Players.LocalPlayer.OnTeleport:Connect(function(State)
+                if (not TeleportCheck) and queueteleport then
+                    TeleportCheck = true
+                    queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v5-BETA')))()")
+                end
             end)
-
-            noButton.MouseButton1Click:Connect(function()
-                selection = "No"
-                userSelected = true
-            end)
-
-            repeat
-                task.wait()
-            until userSelected
-
-            screenGui:Destroy()
-
-            if selection == "Yes" then
-                writefile("IY_FE.iy", [[
-                    {
-                        "currentShade2":[0.18039216101169587,0.18039216101169587,0.18431372940540315],
-                        "StayOpen":false,
-                        "logsEnabled":false,
-                        "aliases":[],
-                        "PluginsTable":[],
-                        "prefix":";",
-                        "binds":[
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.One","COMMAND":"emote 13071993910"},
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.Two","COMMAND":"emote 14901371589"},
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.Five","COMMAND":"emote 5104377791"},
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.Six","COMMAND":"emote 13694139364"},
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.Seven","COMMAND":"emote 7466047578"},
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.Eight","COMMAND":"emote 13823339506"},
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.E","COMMAND":"animspeed 4"},
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.Q","COMMAND":"animspeed 0.1"},
-                            {"ISKEYUP":false,"KEY":"Enum.KeyCode.Nine","COMMAND":"emote 3576823880"},
-                            {"KEY":"Enum.KeyCode.Four","ISKEYUP":false,"COMMAND":"emote 5230615437"},
-                            {"KEY":"Enum.KeyCode.V","ISKEYUP":false,"COMMAND":"freezeanims"},
-                            {"KEY":"Enum.KeyCode.R","ISKEYUP":false,"COMMAND":"emote 16371235025"},
-                            {"KEY":"Enum.KeyCode.T","ISKEYUP":false,"COMMAND":"emote 10214418283"},
-                            {"KEY":"Enum.KeyCode.Z","ISKEYUP":false,"COMMAND":"emote 3994130516"},
-                            {"KEY":"Enum.KeyCode.X","ISKEYUP":false,"COMMAND":"animspeed 1"},
-                            {"KEY":"Enum.KeyCode.Y","ISKEYUP":false,"COMMAND":"emote 10147924028"},
-                            {"KEY":"Enum.KeyCode.N","ISKEYUP":false,"COMMAND":"emote 3823158750"},
-                            {"KEY":"Enum.KeyCode.U","ISKEYUP":false,"COMMAND":"emote 14900153406"},
-                            {"KEY":"Enum.KeyCode.Zero","ISKEYUP":false,"COMMAND":"emote 15506503658"},
-                            {"KEY":"Enum.KeyCode.P","ISKEYUP":false,"COMMAND":"emote 10275057230"},
-                            {"KEY":"Enum.KeyCode.Three","ISKEYUP":false,"COMMAND":"emote 18666650035"},
-                            {"KEY":"Enum.KeyCode.F","ISKEYUP":false,"TOGGLE":"animspeed -1","COMMAND":"animspeed 1"}
-                        ],
-                        "currentShade3":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
-                        "WayPoints":[],
-                        "jLogsEnabled":false,
-                        "currentScroll":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
-                        "keepIY":true,
-                        "eventBinds":"{\"OnSpawn\":[],\"OnDied\":[],\"OnExecute\":[],\"OnKilled\":[],\"OnJoin\":[],\"OnLeave\":[],\"OnDamage\":[],\"OnChatted\":[]}",
-                        "espTransparency":0.3,
-                        "currentShade1":[0.1411764770746231,0.1411764770746231,0.14509804546833039],
-                        "currentText2":[0,0,0],
-                        "currentText1":[1,1,1]
-                    }
-                ]], true)
-            else
-                print("Player Selected 'No'")
-            end
-        wait()
-        elseif writefile and readfile and game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki" then
-            writefile("IY_FE.iy", [[
-                {
-                    "currentShade2":[0.18039216101169587,0.18039216101169587,0.18431372940540315],
-                    "StayOpen":false,
-                    "logsEnabled":true,
-                    "aliases":[],
-                    "PluginsTable":[],
-                    "prefix":"-",
-                    "binds":[
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.One","COMMAND":"emote 13071993910"},
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Two","COMMAND":"emote 14901371589"},
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Five","COMMAND":"emote 5104377791"},
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Six","COMMAND":"emote 13694139364"},
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Seven","COMMAND":"emote 7466047578"},
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Eight","COMMAND":"emote 13823339506"},
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.E","COMMAND":"animspeed 4"},
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Q","COMMAND":"animspeed 0.1"},
-                        {"ISKEYUP":false,"KEY":"Enum.KeyCode.Nine","COMMAND":"emote 3576823880"},
-                        {"KEY":"Enum.KeyCode.Four","ISKEYUP":false,"COMMAND":"emote 5230615437"},
-                        {"KEY":"Enum.KeyCode.V","ISKEYUP":false,"COMMAND":"freezeanims"},
-                        {"KEY":"Enum.KeyCode.R","ISKEYUP":false,"COMMAND":"emote 16371235025"},
-                        {"KEY":"Enum.KeyCode.T","ISKEYUP":false,"COMMAND":"emote 10214418283"},
-                        {"KEY":"Enum.KeyCode.Z","ISKEYUP":false,"COMMAND":"emote 3994130516"},
-                        {"KEY":"Enum.KeyCode.X","ISKEYUP":false,"COMMAND":"animspeed 1"},
-                        {"KEY":"Enum.KeyCode.Y","ISKEYUP":false,"COMMAND":"emote 10147924028"},
-                        {"KEY":"Enum.KeyCode.N","ISKEYUP":false,"COMMAND":"emote 3823158750"},
-                        {"KEY":"Enum.KeyCode.U","ISKEYUP":false,"COMMAND":"emote 14900153406"},
-                        {"KEY":"Enum.KeyCode.Zero","ISKEYUP":false,"COMMAND":"emote 15506503658"},
-                        {"KEY":"Enum.KeyCode.P","ISKEYUP":false,"COMMAND":"emote 10275057230"},
-                        {"KEY":"Enum.KeyCode.Three","ISKEYUP":false,"COMMAND":"emote 18666650035"},
-                        {"KEY":"Enum.KeyCode.F","ISKEYUP":false,"TOGGLE":"animspeed -1","COMMAND":"animspeed 1"}
-                    ],
-                    "currentShade3":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
-                    "WayPoints":[],
-                    "jLogsEnabled":false,
-                    "currentScroll":[0.30588236451148989,0.30588236451148989,0.30980393290519717],
-                    "keepIY":true,
-                    "eventBinds":"{\"OnSpawn\":[],\"OnDied\":[],\"OnExecute\":[],\"OnKilled\":[],\"OnJoin\":[],\"OnLeave\":[],\"OnDamage\":[],\"OnChatted\":[]}",
-                    "espTransparency":0.3,
-                    "currentShade1":[0.1411764770746231,0.1411764770746231,0.14509804546833039],
-                    "currentText2":[0,0,0],
-                    "currentText1":[1,1,1]
-                }
-            ]], true)
-        elseif not writefile or readfile then
-            warn("Your exploit does not support 'writefile' [You will not be able to use custom config for Infinite Yield, sorry!]")
-        end
+            wait(1)
+            TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+    elseif not writefile or readfile then
+        warn("Your exploit does not support 'writefile' [You will not be able to use custom config for Infinite Yield, sorry!]")    
+    end    
     wait(0.5)
     local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
     local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
     PlaceId, JobId = game.PlaceId, game.JobId
     local LocalPlayer = Players.LocalPlayer
     queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-    wait()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-    wait(1)
-    getgenv().TeleportCheck = false
-    --[[LocalPlayer.OnTeleport:Connect(function(State)
-        if (not getgenv().TeleportCheck) and queueteleport then
-            getgenv().TeleportCheck = true
-            TeleportService:TeleportToPlaceInstance(PlaceId, JobId, LocalPlayer)
-            queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/doMICUP'))()")
-        end
-    end)
-    wait(1)
-    if #Players:GetPlayers() <= 1 then
-        Players.LocalPlayer:Kick("\nRejoining...")
-        wait()
-        TeleportService:Teleport(PlaceId, LocalPlayer)
-    else
-        TeleportService:TeleportToPlaceInstance(PlaceId, JobId, LocalPlayer)
-    end--]]
     wait(0.3)
     local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
@@ -728,7 +830,7 @@ local function loadGUI()
                 Time = 10
             })
         end
-    elseif getgenv().AntiAfkScript or getgenv().OtherAntiAfk then
+    elseif getgenv().AntiAfkScript == true or getgenv().OtherAntiAfk == true then
         OrionLib:MakeNotification({
             Name = "Cleaned-Up",
             Content = "You have already loaded anti-afk, Continue...",
@@ -891,7 +993,8 @@ local function loadGUI()
     getgenv().ownerWhitelist = {
         "M1RD3RCAUGHT",
         "STK_kets4eki",
-        "ItsYoDawgWsgGng"
+        "ItsYoDawgWsgGng",
+        "Laylay_4kla"
     }
     wait()
     print("Whitelisting Finished.")
@@ -1754,7 +1857,7 @@ local function loadGUI()
     end})
     
     Tab11:AddToggle({
-    Name = "Shuffle 18+ Images (FE)",
+    Name = "Loop Bypassed Stall (FE)",
     Default = false,
     Callback = function(wildToggle)
     if wildToggle then
@@ -1779,6 +1882,19 @@ local function loadGUI()
             Time = 10
         })
     end
+
+    local imageIDs = {
+        "5888213893",
+        "13886197679",
+        "12875268373",
+        "125124809459735",
+        "78267907856078"
+    }
+
+    local function pickRandomImage()
+        local randomIndex = math.random(1, #imageIDs)
+        return imageIDs[randomIndex]
+    end
     
     while getgenv().ShufflePics == true do
     wait(0.5)
@@ -1791,56 +1907,56 @@ local function loadGUI()
     wait(1)
     local args = {
         [1] = "ㄈȕ冂丅",
-        [2] = "5888213893"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     wait(1)
     local args = {
         [1] = "ȿȴȕ丅",
-        [2] = "15058687074"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     wait(1)
     local args = {
         [1] = "ҟҟҟ",
-        [2] = "8614358451"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     wait(1)
     local args = {
         [1] = "ŗȇ丅ẳŗȡ",
-        [2] = "13886197679"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     wait(1)
     local args = {
         [1] = "ώȇȇȡ",
-        [2] = "8614415035"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     wait(1)
     local args = {
         [1] = "ώȟόŗȇ",
-        [2] = "18768072239"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     wait(1)
     local args = {
         [1] = "ㄈȕɱ",
-        [2] = "18587094358"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     wait(1)
     local args = {
         [1] = "ɓ׀ɠ ẳȿȿ",
-        [2] = "5788533331"
+        [2] = tostring(pickRandomImage())
     }
     
     MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
@@ -1866,15 +1982,11 @@ local function loadGUI()
     if LocalStall and LocalStall:FindFirstChild("Edit") then
     local TheStall = LocalStall
     local imageIDs = {
-        "5600150518",
         "5888213893",
-        "15058687074",
-        "8614358451",
         "13886197679",
-        "8614415035",
-        "18768072239",
-        "18587094358",
-        "5788533331"
+        "12875268373",
+        "125124809459735",
+        "78267907856078"
     }
     
     local function pickRandomImage()
@@ -2028,7 +2140,7 @@ local function loadGUI()
         end
     end})
     
-    Tab11:AddTextbox({
+    --[[Tab11:AddTextbox({
     Name = "UnClaim A Booth (broken, fixing)",
     Default = "UserName or Display",
     TextDisappear = true,
@@ -2161,7 +2273,7 @@ local function loadGUI()
         end     
         
         unclaimStallByUsername(bruhGuy)
-    end})
+    end})--]]
     
     Tab1:AddToggle({
     Name = "Submit Note Bypass (Board)",
