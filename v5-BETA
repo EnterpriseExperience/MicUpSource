@@ -623,7 +623,7 @@ writefile("IY_FE.iy", [[
     "logsEnabled":false,
     "aliases":[],
     "PluginsTable":[],
-    "prefix":";",
+    "prefix":"-",
     "binds":[
     {"ISKEYUP":false,"KEY":"Enum.KeyCode.One","COMMAND":"emote 13071993910"},
     {"ISKEYUP":false,"KEY":"Enum.KeyCode.Two","COMMAND":"emote 14901371589"},
