@@ -662,7 +662,7 @@ writefile("IY_FE.iy", [[
 ]], true)
         wait(1)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-        wait(0.5)
+        --[[wait(0.5)
             local player = game.Players.LocalPlayer
             local playerGui = player:WaitForChild("PlayerGui")
 
@@ -698,9 +698,9 @@ writefile("IY_FE.iy", [[
                     TeleportCheck = true
                     queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v5-BETA')))()")
                 end
-            end)
-            wait(1)
-            TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+            end)--]]
+            --wait(1)
+            --TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
     elseif not writefile or readfile then
         warn("Your exploit does not support 'writefile' [You will not be able to use custom config for Infinite Yield, sorry!]")    
     end    
