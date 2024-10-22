@@ -3219,7 +3219,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
             if blackHoleActive then
                 for i, v in pairs(workspace:GetDescendants()) do
                     if v:IsA("RopeConstraint") then
-                        return v.Enabled = false
+                        return v.Enabled == false
                     end
                 end
                 wait(0.1)
