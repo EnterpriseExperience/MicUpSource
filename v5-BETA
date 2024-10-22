@@ -3134,7 +3134,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     end})
 
     Tab13:AddButton({
-    Name = "Ball Fling (FE)",
+    Name = "Ball Fling GUI (FE)",
     Callback = function()
         local Players = game:GetService("Players")
         local RunService = game:GetService("RunService")
@@ -3217,6 +3217,12 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         local function toggleBlackHole()
             blackHoleActive = not blackHoleActive
             if blackHoleActive then
+                for i, v in pairs(workspace:GetDescendants()) do
+                    if v:IsA("RopeConstraint") then
+                        return v.Enabled = false
+                    end
+                end
+                wait(0.1)
                 for _, v in next, Workspace:GetDescendants() do
                     ForcePart(v)
                 end
@@ -3243,12 +3249,17 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
             screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
         
             button.Name = "ToggleBlackHoleButton"
-            button.BackgroundColor3 = Color3.new(0, 255, 0)
-            button.TextColor3 = Color3.new(17, 17, 17)
+            button.TextScaled = true
             button.Size = UDim2.new(0, 200, 0, 50)
             button.Position = UDim2.new(0.5, -100, 0, 100)
             button.Text = "Disable Black Hole"
             button.Parent = screenGui
+
+            local playersGUI = game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("BlackHoleControlGUI")
+            local ButtonFind = playersGUI:FindFirstChild("ToggleBlackHoleButton")
+
+            ButtonFind.TextColor3 = Color3.new(0, 0, 0)
+            ButtonFind.BackgroundColor3 = Color3.new(49980, 0, 0)
         
             button.MouseButton1Click:Connect(function()
                 toggleBlackHole()
