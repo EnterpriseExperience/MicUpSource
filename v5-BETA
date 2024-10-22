@@ -388,14 +388,18 @@ local function loadGUI()
         NewFolder.Parent = Workspace
     end
 
-    local NewFolder = Workspace:FindFirstChild("PartStorage")
-    local newChunk = Instance.new("Part")
-    newChunk.Name = "BASEPLATE_CLONE_ANTI_VOID"
-    newChunk.Size = Vector3.new(2048, 0, 2048)
-    newChunk.BrickColor = BrickColor.new("Maroon")
-    newChunk.Anchored = true
-    newChunk.CanCollide = true
-    newChunk.Parent = NewFolder
+    if not Workspace:FindFirstChild("PartStorage"):FindFirstChild("BASEPLATE_CLONE_ANTI_VOID") then
+        local NewFolder = Workspace:FindFirstChild("PartStorage")
+        local newChunk = Instance.new("Part")
+        newChunk.Name = "BASEPLATE_CLONE_ANTI_VOID"
+        newChunk.Size = Vector3.new(2048, 0, 2048)
+        newChunk.BrickColor = BrickColor.new("Maroon")
+        newChunk.Anchored = true
+        newChunk.CanCollide = true
+        newChunk.Parent = NewFolder
+    else
+        warn("BASEPLATE is already created.")
+    end
     
     --[[local function createBaseplateChunk(position)
         local NewFolder = Workspace:FindFirstChild("PartStorage")
@@ -3239,7 +3243,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
             screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
         
             button.Name = "ToggleBlackHoleButton"
-            button.Color3 = Color3.new(0, 255, 0)
+            button.BackgroundColor3 = Color3.new(0, 255, 0)
             button.TextColor3 = Color3.new(17, 17, 17)
             button.Size = UDim2.new(0, 200, 0, 50)
             button.Position = UDim2.new(0.5, -100, 0, 100)
