@@ -3635,7 +3635,7 @@ writefile("IY_FE.iy", [[
     end})
     
     Tab1:AddToggle({
-    Name = "Shuffle Voices",
+    Name = "Laggy Voice (FE)",
     Default = false,
     Callback = function(voices)
     if voices then
