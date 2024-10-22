@@ -371,7 +371,16 @@ local function loadGUI()
     end--]]
     wait(0.5)
     local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-    local FindBaseplate = Workspace:FindFirstChild("Baseplate") or Workspace:WaitForChild("Baseplate")
+    
+    --[[function ReturnBaseplate()
+        for i, v in pairs(workspace:GetDescendants()) do 
+            if v:IsA("UnionOperation") and v.BrickColor == BrickColor.new("Dark stone grey") and v.CFrame == CFrame.new(65.9999619, -8, 72.4999542, 0, 0, 1, 0, 1, -0, -1, 0, 0) then
+                return v
+            end
+        end
+    end
+
+    local BasePlate = ReturnBaseplate()--]]
 
     if not Workspace:FindFirstChild("PartStorage") then
         local NewFolder = Instance.new("Folder")
@@ -5919,7 +5928,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         wait(.2)
         HumanoidRP.CFrame = CFrame.new(voidPosition)
     end})
-    
+
     Tab2:AddToggle({
     Name = "Anti-TP (Method 4, Loop TP Void)",
     Default = false,
