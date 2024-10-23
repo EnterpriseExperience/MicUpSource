@@ -1588,6 +1588,21 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         end
     
     local MyStall = getStall()
+
+    local imageIDs = {
+        "5888213893",
+        "13886197679",
+        "12875268373",
+        "125124809459735",
+        "78267907856078",
+        "79596231249987",
+        "96618101195949"
+    }
+
+    local function pickRandomImage()
+        local randomIndex = math.random(1, #imageIDs)
+        return imageIDs[randomIndex]
+    end
     
     if not MyStall or MyStall == nil then
         getgenv().Cuss = false
@@ -1599,82 +1614,82 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         })
     end
     
-    local args = {
-        [1] = "ɓ׀丅ㄈȟ",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ӻȕㄈҟ",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ㄈȕ冂丅",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ȿȴȕ丅",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ҟҟҟ",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ŗȇ丅ẳŗȡ",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ώȇȇȡ",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ώȟόŗȇ",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ㄈȕɱ",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ɓ׀ɠ ẳȿȿ",
-        [2] = "5888213893"
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        local args = {
+            [1] = "ɓ׀丅ㄈȟ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ӻȕㄈҟ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ㄈȕ冂丅",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ȿȴȕ丅",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ҟҟҟ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ŗȇ丅ẳŗȡ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ώȇȇȡ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ώȟόŗȇ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ㄈȕɱ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ɓ׀ɠ ẳȿȿ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     end
     else
-    getgenv().Cuss = false
-    wait()
-    getgenv().Cuss = false
-    wait()
-    getgenv().Cuss = false
+        getgenv().Cuss = false
+        wait()
+        getgenv().Cuss = false
+        wait()
+        getgenv().Cuss = false
     end
     end})
     
@@ -1802,7 +1817,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
                 return v
             end
         end
-    return nil
+        return nil
     end
     
     local MyStall = getStall()
@@ -1823,7 +1838,8 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         "12875268373",
         "125124809459735",
         "78267907856078",
-        "79596231249987"
+        "79596231249987",
+        "96618101195949"
     }
 
     local function pickRandomImage()
@@ -1922,7 +1938,8 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         "12875268373",
         "125124809459735",
         "78267907856078",
-        "79596231249987"
+        "79596231249987",
+        "96618101195949"
     }
     
     local function pickRandomImage()
@@ -3500,6 +3517,21 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
             Time = 10
         })
     end
+
+    local imageIDs = {
+        "5888213893",
+        "13886197679",
+        "12875268373",
+        "125124809459735",
+        "78267907856078",
+        "79596231249987",
+        "96618101195949"
+    }
+
+    local function pickRandomImage()
+        local randomIndex = math.random(1, #imageIDs)
+        return imageIDs[randomIndex]
+    end
     
     getgenv().Auto = true
     while getgenv().Auto == true do
@@ -4861,17 +4893,15 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         local function sendchat(msg)
             local TheStall = LocalStall
             local imageIDs = {
-                "5600150518",
                 "5888213893",
-                "15058687074",
-                "8614358451",
                 "13886197679",
-                "8614415035",
-                "18768072239",
-                "18587094358",
-                "5788533331"
+                "12875268373",
+                "125124809459735",
+                "78267907856078",
+                "79596231249987",
+                "96618101195949"
             }
-            
+
             local function pickRandomImage()
                 local randomIndex = math.random(1, #imageIDs)
                 return imageIDs[randomIndex]
