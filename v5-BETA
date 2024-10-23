@@ -2218,7 +2218,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     if theNote then
         getgenv().crazyNote = true
         while getgenv().crazyNote == true do
-        wait(0.5)
+        wait(0.2)
             local args = {
                 [1] = "\211\187\200\149\227\132\136\210\159 \200\159\207\140\200\135"
             }
@@ -2226,10 +2226,6 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
             game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
         end
     else
-        getgenv().crazyNote = false
-        wait()
-        getgenv().crazyNote = false
-        wait()
         getgenv().crazyNote = false
     end
     end})
