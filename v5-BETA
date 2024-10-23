@@ -248,14 +248,14 @@ local function loadGUI()
     local Section11 = Tab11:AddSection({
         Name = "||| Booth Tools/Stand/Stall Tools |||"
     })
-    local Tab17 = Window:MakeTab({
+    --[[local Tab17 = Window:MakeTab({
         Name = "> Warnings Tab",
         Icon = "rbxassetid://7733960981",
         PremiumOnly = false
     })
     local Section17 = Tab17:AddSection({
         Name = "||| Warnings Section |||"
-    })
+    })--]]
     local Tab2 = Window:MakeTab({
         Name = "> Character",
         Icon = "rbxassetid://7743871002",
@@ -2499,7 +2499,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         getThisPlayerOutOfHere(DoFindPlr)        
     end})
     wait()
-    Tab17:AddParagraph("Add dick-heads here.")
+    --[[Tab17:AddParagraph("Add dick-heads here.")
     wait()
     Tab17:AddTextbox({
     Name = "Add Warning Blacklist",
@@ -2758,7 +2758,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
             getgenv().GetStuffSpam = false
         end
     end
-    end})
+    end})--]]
     
     local singlePlayerTable = {}
     
@@ -3827,7 +3827,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     end
     end})
     
-    Tab17:AddButton({
+    --[[Tab17:AddButton({
     Name = "Send Fake Warnings (FREE! + FE!)",
     Callback = function()
         local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -3993,7 +3993,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
                 Time = 10
             })
         end
-    end})
+    end})--]]
     
     Tab5:AddButton({
     Name = "Free Tools (FE)",
