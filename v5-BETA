@@ -4099,7 +4099,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
     end})
     
-    Tab5:AddButton({
+    Tab5:AddToggle({
     Name = "Loop Grab Free Tools",
     Default = false,
     Callback = function(grabFreeTools)
