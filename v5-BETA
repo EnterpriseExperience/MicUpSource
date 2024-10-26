@@ -3161,18 +3161,20 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
 
         humanoidRootPart.CFrame = CFrame.new(225.964813, 3.02499914, -78.1774216)
         wait()
-        for i, v in pairs(workspace:GetDescendants()) do
-            if v:IsA("RopeConstraint") then
-                v.Enabled = false
-            end
-        end
-        wait()
         local Folder = Instance.new("Folder", Workspace)
         local Part = Instance.new("Part", Folder)
         local Attachment1 = Instance.new("Attachment", Part)
         Part.Anchored = true
         Part.CanCollide = false
         Part.Transparency = 1
+
+        for i, v in pairs(workspace:GetDescendants()) do
+            if v:IsA("RopeConstraint") then
+                v.Enabled = true
+                wait()
+                v.Enabled = false
+            end
+        end
 
         if not getgenv().Network then
             getgenv().Network = {
@@ -3289,7 +3291,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     TextDisappear = true,
     Callback = function(getTheIDForEmote)
     local getNumberID = tonumber(getTheIDForEmote) or getTheIDForEmote
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+    local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
@@ -3311,7 +3313,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     end
     end})
 
-    local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+    local GetWorkspace = game:GetService("Workspace")
     local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
     local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
     if FindBaseplate then
@@ -3329,7 +3331,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     if makeVis then
         getgenv().MakingVisible = true
         if getgenv().MakingVisible == true then
-            local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local GetWorkspace = game:GetService("Workspace")
             local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
             local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
             if FindBaseplate then
@@ -3339,7 +3341,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     else
         getgenv().MakingVisible = false
         wait()
-        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local GetWorkspace = game:GetService("Workspace")
         local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
         local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
         if FindBaseplate then
@@ -3353,7 +3355,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Default = "Grey",
     Options = {"Grey", "Blue", "Green", "Yellow", "Pink", "Hot Pink", "Purple", "White", "Black", "Orange", "Red"},
     Callback = function(getColor)
-        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local GetWorkspace = game:GetService("Workspace")
         local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
         local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
         if getColor == "Grey" then
@@ -3431,7 +3433,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Default = "Air",
     Options = {"Air", "Asphalt", "Basalt", "Brick", "Cardboard", "Carpet", "CeramicTiles", "ClayRoofTiles", "Cobblestone", "Concrete", "CorrodedMetal", "CrackedLava", "DiamondPlate", "Fabric", "Foil", "ForceField", "Glacier", "Glass", "Granite", "Grass", "Ground", "Ice", "LeafyGrass", "Leather", "Limestone", "Marble", "Metal", "Mud", "Neon", "Pavement", "Pebble", "Plaster", "Plastic", "Rock", "RoofShingles", "Rubber", "Salt", "Sand", "Sandstone", "Slate", "SmoothPlastic", "Snow", "Water", "Wood", "WoodPlanks,", "random"},
     Callback = function(doBaseplateMaterial)
-        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local GetWorkspace = game:GetService("Workspace")
         local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
         local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
         if FindBaseplate.Transparency == 1 and doBaseplateMaterial ~= "random" then
@@ -3536,57 +3538,57 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     getgenv().Auto = true
     while getgenv().Auto == true do
     wait()
-    local args = {
-        [1] = "Zacks Easy Hub [WINNING]!",
-        [2] = ""
-    }
-    
-    Stall:WaitForChild("Edit"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Join: VJh3kkYzBn",
-        [2] = ""
-    }
-    
-    Stall:WaitForChild("Edit"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Zacks Easy Hub [WE UP]!",
-        [2] = ""
-    }
-    
-    Stall:WaitForChild("Edit"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Zacks Easy Hub V5, Automated",
-        [2] = ""
-    }
-    
-    Stall:WaitForChild("Edit"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Powering Automation | Scripting",
-        [2] = ""
-    }
-    
-    Stall:WaitForChild("Edit"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Zacks Easy Hub | WE OP!",
-        [2] = ""
-    }
-    
-    Stall:WaitForChild("Edit"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Zacks Easy Hub | V5-STABLE",
-        [2] = ""
-    }
-    
-    Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        local args = {
+            [1] = "Zacks Easy Hub [WINNING]!",
+            [2] = ""
+        }
+        
+        Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        wait()
+        local args = {
+            [1] = "Join: VJh3kkYzBn",
+            [2] = ""
+        }
+        
+        Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        wait()
+        local args = {
+            [1] = "Zacks Easy Hub [WE UP]!",
+            [2] = ""
+        }
+        
+        Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        wait()
+        local args = {
+            [1] = "Zacks Easy Hub V5, Automated",
+            [2] = ""
+        }
+        
+        Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        wait()
+        local args = {
+            [1] = "Powering Automation | Scripting",
+            [2] = ""
+        }
+        
+        Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        wait()
+        local args = {
+            [1] = "Zacks Easy Hub | WE OP!",
+            [2] = ""
+        }
+        
+        Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        wait()
+        local args = {
+            [1] = "Zacks Easy Hub | V5-STABLE",
+            [2] = ""
+        }
+        
+        Stall:WaitForChild("Edit"):FireServer(unpack(args))
     end
     else
-    getgenv().Auto = false
+        getgenv().Auto = false
     end
     end})
     
@@ -3731,65 +3733,65 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Default = false,
     Callback = function(voices)
     if voices then
-    getgenv().shuffleVoices = true
-    while getgenv().shuffleVoices == true do
-    wait()
-    local args = {
-        [1] = "Normal"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Chorus"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Darling"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Demon"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Elf"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Fun"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Low"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Reverb"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = "Normal"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
-    end
+        getgenv().shuffleVoices = true
+        while getgenv().shuffleVoices == true do
+        wait()
+            local args = {
+                [1] = "Normal"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "Chorus"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "Darling"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "Demon"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "Elf"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "Fun"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "Low"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "Reverb"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "Normal"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("VEffect"):FireServer(unpack(args))
+        end
     else
-    getgenv().shuffleVoices = false
+        getgenv().shuffleVoices = false
     end
     end})
     
@@ -3814,48 +3816,48 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Default = false,
     Callback = function(hoverBoard)
     if hoverBoard then
-    getgenv().HoverboardRide = true
-    while getgenv().HoverboardRide == true do
-    wait()
-    local args = {
-        [1] = "XHoverboard",
-        [2] = "Hoverboard"
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("Hoverboard"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = tonumber(game.Players.LocalPlayer.UserId)
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-    end
+        getgenv().HoverboardRide = true
+        while getgenv().HoverboardRide == true do
+        wait()
+            local args = {
+                [1] = "XHoverboard",
+                [2] = "Hoverboard"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Hoverboard"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = tonumber(game.Players.LocalPlayer.UserId)
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+        end
     else
-    getgenv().HoverboardRide = false
-    wait(1)
-    local args = {
-        [1] = tonumber(game.Players.LocalPlayer.UserId)
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = tonumber(game.Players.LocalPlayer.UserId)
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = tonumber(game.Players.LocalPlayer.UserId)
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
-    wait()
-    local args = {
-        [1] = tonumber(game.Players.LocalPlayer.UserId)
-    }
+        getgenv().HoverboardRide = false
+        wait(1)
+        local args = {
+            [1] = tonumber(game.Players.LocalPlayer.UserId)
+        }
         
-    game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = tonumber(game.Players.LocalPlayer.UserId)
+        }
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+        wait()
+        local args = {
+            [1] = tonumber(game.Players.LocalPlayer.UserId)
+        }
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
+        wait()
+        local args = {
+            [1] = tonumber(game.Players.LocalPlayer.UserId)
+        }
+            
+        game:GetService("ReplicatedStorage"):WaitForChild("StopAction"):FireServer(unpack(args))
     end
     end})
     
@@ -4026,7 +4028,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
             })
         end
     end})--]]
-    
+
     Tab5:AddButton({
     Name = "Free Tools (FE)",
     Callback = function()
@@ -4095,6 +4097,89 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         }
         
         game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+    end})
+    
+    Tab5:AddButton({
+    Name = "Loop Grab Free Tools",
+    Default = false,
+    Callback = function(grabFreeTools)
+        if grabFreeTools then
+            getgenv().shouldGrabTools = true
+                function getFreeTools()
+                    local args = {
+                        [1] = "Fit"
+                    }
+                        
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Wand"
+                    }
+                        
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Horrible"
+                    }
+                        
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Doll"
+                    }
+                        
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Burrito"
+                    }
+                        
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Bloxy"
+                    }
+                        
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Bloxilicious"
+                    }
+                        
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Sauce"
+                    }
+                        
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Pistol"
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Spray"
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Torch"
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Wand"
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    local args = {
+                        [1] = "Camera"
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("Additional"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                end
+            wait()
+            while getgenv().shouldGrabTools == true do
+                wait()
+                getFreeTools()
+            end
+        else
+            getgenv().shouldGrabTools = false
+        end
     end})
     
     Tab13:AddToggle({
@@ -6826,7 +6911,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     local derUser = findplr(getAUser)
     
     if derUser then
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local Players = game:GetService("Players")
     
         getgenv().shouldMute = true
     
@@ -6836,24 +6921,23 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
                 if getgenv().shouldMute == true then
                     audioDevice.Muted = true
                 end
-    
-                audioDevice.Changed:Connect(function(property)
-                    if property == "Muted" and getgenv().shouldMute == true and not audioDevice.Muted then
-                        audioDevice.Muted = true
-                        wait()
-                        OrionLib:MakeNotification({
-                            Name = "Success!",
-                            Content = tostring(derUser).." was muted successfully!",
-                            Image = "rbxassetid://4483345998",
-                            Time = 10
-                        })
-                    end
-                end)
+
+                if property == "Muted" and getgenv().shouldMute == true and not audioDevice.Muted then
+                    audioDevice.Muted = true
+                    wait()
+                    OrionLib:MakeNotification({
+                        Name = "Success!",
+                        Content = tostring(derUser).." was muted successfully!",
+                        Image = "rbxassetid://4483345998",
+                        Time = 10
+                    })
+                end
             end
         end
     
         monitorPlayerAudio(derUser)
     else
+        getgenv().shouldMute = false
         return OrionLib:MakeNotification({
             Name = "Error: Not Found",
             Content = tostring(getAUser).." was not found!",
@@ -6866,7 +6950,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Tab15:AddButton({
     Name = "Rejoin",
     Callback = function()
-        local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+        local TeleportService = game:GetService("TeleportService")
         wait()
         TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
     end})
@@ -6877,9 +6961,9 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
         httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
         local PlaceId = game.PlaceId
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local Players = game:GetService("Players")
         local JobId = game.JobId
-        local TeleportService = cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+        local TeleportService = game:GetService("TeleportService")
         local HttpService = cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
         
         if httprequest then
@@ -6976,24 +7060,23 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
                     if getgenv().shouldMute == false then
                         audioDevice.Muted = false
                     end
-        
-                    audioDevice.Changed:Connect(function(property)
-                        if property == "Muted" and getgenv().shouldMute == false and audioDevice.Muted then
-                            audioDevice.Muted = false
-                            wait()
-                            OrionLib:MakeNotification({
-                                Name = "Success!",
-                                Content = tostring(thisUser).." was unmuted successfully!",
-                                Image = "rbxassetid://4483345998",
-                                Time = 10
-                            })
-                        end
-                    end)
+
+                    if property == "Muted" and getgenv().shouldMute == false and audioDevice.Muted then
+                        audioDevice.Muted = false
+                        wait()
+                        OrionLib:MakeNotification({
+                            Name = "Success!",
+                            Content = tostring(thisUser).." was unmuted successfully!",
+                            Image = "rbxassetid://4483345998",
+                            Time = 10
+                        })
+                    end
                 end
             end
         
             monitorPlayerAudio(thisUser)    
         else
+            getgenv().shouldMute = false
             return OrionLib:MakeNotification({
                 Name = "Error: Not Found",
                 Content = tostring(LolPUser).." was not found!",
@@ -7010,25 +7093,25 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     local character = player.Character
     local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid") or character:FindFirstChild("Humanoid") or character:FindFirstChildOfClass("Humanoid")
     local userInputService = game:GetService("UserInputService")
-     
+    
     local isSprinting = false
     local walkSpeed = humanoid.WalkSpeed
     local sprintSpeed = 400
-     
+    
     local function onKeyPress(input)
         if input.KeyCode == Enum.KeyCode.LeftShift then
             isSprinting = true
             humanoid.WalkSpeed = sprintSpeed
         end
     end
-     
+    
     local function onKeyRelease(input)
         if input.KeyCode == Enum.KeyCode.LeftShift then
             isSprinting = false
             humanoid.WalkSpeed = walkSpeed
         end
     end
-     
+    
     userInputService.InputBegan:Connect(onKeyPress)
     userInputService.InputEnded:Connect(onKeyRelease)
     end})
@@ -7037,7 +7120,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Animate = Character:FindFirstChild("Animate")--]]
-    
+
     Tab5:AddDropdown({
     Name = "Animation Packages",
     Default = "",
@@ -7504,8 +7587,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     end
     end})
     wait()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
     -- Don't fuck with this shit, im gonna be fixing it, but soon. (different method coming.)
     
     --[[Tab2:AddToggle({
@@ -7533,7 +7615,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     NewInf.execCmd("nospawnpoint")
     end
     end})--]]
-    
+
     wait()
     Tab6:AddParagraph("Zacks Easy Hub | Scripting Made Easy")
     Tab6:AddLabel("https://www.youtube.com/@AnonymousExploiting")
@@ -7546,7 +7628,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Tab6:AddParagraph("To scared to work? Remember, You need money to live.")
     Tab6:AddParagraph("Life not being fair? Remember, YOU are part of what makes life.")
     wait(0.5)
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
+    local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HRPBase = Character:FindFirstChild("HumanoidRootPart")
@@ -7554,7 +7636,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     wait(0.5)
     print(tostring(LocalPlayer.CameraMaxZoomDistance))
 end
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
