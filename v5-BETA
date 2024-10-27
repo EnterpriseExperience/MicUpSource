@@ -5614,134 +5614,103 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     getgenv().UseInvisMethod = false
     end
     end})--]]
+
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+    function WaitForFunction(Obje)
+        local plr = game.Players.LocalPlayer or game:GetService("Players").LocalPlayer
+
+        if plr.Character:FindFirstChildWhichIsA(tostring(Obje)) or plr.Character:WaitForChild(tostring(Obje)) or plr.Character:FindFirstChildOfClass(tostring(Obje)) or plr.Character:FindFirstChild(tostring(Obje)) then
+            return plr.Character:FindFirstChild(Obje)
+        else
+            repeat wait() until plr.Character:FindFirstChild(tostring(Obje)) or plr.Character:WaitForChild(tostring(Obje)) or plr.Character:FindFirstChildOfClass(tostring(Obje)) or plr.Character:FindFirstChildWhichIsA(tostring(Obje))
+            wait()
+            if plr.Character:FindFirstChild(tostring(Obje)) or Character:WaitForChild(tostring(Obje)) then
+                return plr.Character:FindFirstChild(Obje)
+            end
+        end
+    end
+
+    local HumanoidRootPart = WaitForFunction("HumanoidRootPart")
+    local Humanoid = WaitForFunction("Humanoid")
     
     Tab10:AddButton({
     Name = "TP To Private Room (Ground)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(4220.82275, 2.76511836, 60.7681046)
     end})
     
     Tab10:AddButton({
     Name = "TP To Room Next To Bathrooms (?)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
     end})
     
     Tab10:AddButton({
     Name = "TP To Bathrooms",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-72.3955917, 5.09832525, 93.0914459)
     end})
     
     Tab10:AddButton({
     Name = "TP To Chill Spot",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(228.970184, 5.75081444, -21.5613441)
     end})
     
     Tab10:AddButton({
     Name = "TP To Picnic (1)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(85.846756, 3.61196709, -29.8345909)
     end})
     
     Tab10:AddButton({
     Name = "TP To Picnic (2)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(76.6581955, 3.61196709, -29.8332996)
     end})
     
     Tab10:AddButton({
     Name = "TP To Stage Mic (1)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(39.2528572, 7.80023623, -67.7634125)
     end})
     
     Tab10:AddButton({
     Name = "TP To Stage Mic (2)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(14.8289356, 7.80023623, -67.7656097)
     end})
     
     Tab10:AddButton({
     Name = "TP To Middle Room (Center)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(70.9464493, 5.62692404, 24.2968006)
     end})
     
     Tab10:AddButton({
     Name = "TP To Booth Rows (Center, Table)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(26.7397423, 7.81395245, 86.7164536)
     end})
     
     Tab10:AddButton({
     Name = "TP To Tower (Float Up Part)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(61.3288841, 72.0192184, 215.731613)
     end})
     
     Tab10:AddButton({
     Name = "TP To Tower (Top)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(63.2298126, 284.407227, 193.529007)
     end})
     
     Tab10:AddButton({
     Name = "TP To Tower (The Very Top)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(58.0468788, 313.312622, 225.215027)
     end})
     
@@ -5813,100 +5782,60 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Tab10:AddButton({
     Name = "TP To Donut Shop",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-80.8301239, 3.1662631, -82.6656799)
     end})
     
     Tab10:AddButton({
     Name = "TP To Donut Shop (Chair 1)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-98.4535675, 4.04168415, -96.7826004)
     end})
     
     Tab10:AddButton({
     Name = "TP To Donut Shop (Chair 2)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-91.7390671, 4.04168415, -90.0620728)
     end})
     
     Tab10:AddButton({
     Name = "TP To Donut Shop (Table, Seat 1)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-102.440971, 4.51146317, -66.6184387)
     end})
     
     Tab10:AddButton({
     Name = "TP To Donut Shop (Table, Seat 2)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-94.6592941, 4.51146317, -74.3931046)
     end})
     
     Tab10:AddButton({
     Name = "TP To Donut Shop (Behind Counter)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-122.382172, 3.22726321, -83.5359192)
     end})
     
     Tab10:AddButton({
     Name = "TP Above Relaxing Room",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-97.4412308, 24.4840164, 121.394676)
     end})
     
     Tab10:AddButton({
     Name = "TP To Submit Note Board",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(58.6107864, 4.99999857, 245.690369)
     end})
     
     Tab10:AddButton({
     Name = "TP To Stage Mic",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(-61.6848221, 10.0853853, 229.676834)
     end})
     
     Tab10:AddButton({
     Name = "TP To Private Room (Roof)",
     Callback = function()
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(4220.37842, 23.5336628, 61.3636169)
     end})
     
@@ -5936,7 +5865,8 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         
         for _, clickDetector in pairs(clickDetectors) do
             clickDetector.MaxActivationDistance = 99999
-            wait()
+            fireclickdetector(clickDetector, 9999)
+            fireclickdetector(clickDetector, 9999)
             fireclickdetector(clickDetector, 9999)
         end
     end
