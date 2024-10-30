@@ -1152,6 +1152,8 @@ wait(1.5)
                 ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(function()
                     if not ProximityPrompt.Enabled then
                         ProximityPrompt.Enabled = true
+                        ProximityPrompt.RequiresLineOfSight = false
+                        ProximityPrompt.MaxActivationDistance = 35
                     end
                 end)
             end
@@ -1320,42 +1322,22 @@ wait(1.5)
     
         local function getStall()
             for i, v in pairs(workspace.Stalls:GetChildren()) do
-                if v:FindFirstChild("Player") and v.Player.Value == player then
+                if v and v.Player.Value == game:GetService("Players").LocalPlayer then
                     return v
                 end
             end
             return nil
         end
+
+        local GetLocalPlayersStall = getStall()
+
+        GetLocalPlayersStall.RequiresLineOfSight = false
+        GetLocalPlayersStall.Enabled = true
+        GetLocalPlayersStall.ClickablePrompt = true
         
         local function fireProximityPrompt(prompt)
             if prompt then
                 fireproximityprompt(prompt)
-            end
-        end
-        
-        local function makeCharacterInvisible(character)
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Transparency = 1
-                    part.CanCollide = false
-                end
-            end
-        end
-        
-        local function makeCharacterVisible(character)
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Transparency = 0
-                    part.CanCollide = true
-                end
-            end
-        end
-        
-        local function makeAllPlayersInvisible()
-            for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-                if otherPlayer ~= player and otherPlayer.Character then
-                    makeCharacterInvisible(otherPlayer.Character)
-                end
             end
         end
         
@@ -1370,58 +1352,17 @@ wait(1.5)
                     Time = 10
                 })
             end
+
+            local PlayerValue = ownedStall:FindFirstChild("Player")
         
-            local icon = ownedStall:FindFirstChild("Icon")
-            if icon and icon:FindFirstChild("Decal") then
-                local decal = icon.Decal
-        
-                decal:GetPropertyChangedSignal("Texture"):Connect(function()
-                    makeAllPlayersInvisible()
-                    wait(0.3)
-    
-                    local proxPart = ownedStall:FindFirstChild("ProxPart")
-                    if proxPart and proxPart:FindFirstChild("ProximityPrompt") then
-                        fireProximityPrompt(proxPart.ProximityPrompt)
-                    else
-                        warn("ProximityPrompt not found in the stall")
-                    end
-        
-                    wait(0.3)
-                    local function makeCharacterVisible(character)
-                        for _, part in pairs(character:GetDescendants()) do
-                            if part:IsA("BasePart") then
-                                part.Transparency = 0
-                            end
-                        end
-                    end
-                    
-                    for _, player in pairs(game.Players:GetPlayers()) do
-                        if player ~= game.Players.LocalPlayer and player.Character then
-                            makeCharacterVisible(player.Character)
-                        end
-                    end
-                    wait()
-                    local function makePartInvisible(part)
-                        part.Transparency = 1
-                    end
-                    
-                    local function makeHumanoidRootPartInvisible(character)
-                        local player = game.Players:GetPlayerFromCharacter(character)
-                        if player and player ~= game.Players.LocalPlayer then
-                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                            if humanoidRootPart then
-                                makePartInvisible(humanoidRootPart)
-                            end
-                        end
-                    end
-                    
-                    for _, player in pairs(game.Players:GetPlayers()) do
-                        if player.Character then
-                            makeHumanoidRootPartInvisible(player.Character)
-                        end
-                    end
-                end)
-            end
+            PlayerValue:GetPropertyChangedSignal("Value"):Connect(function()
+                local proxPart = ownedStall:FindFirstChild("ProxPart")
+                if proxPart and proxPart:FindFirstChild("ProximityPrompt") then
+                    fireProximityPrompt(proxPart.ProximityPrompt)
+                else
+                    warn("ProximityPrompt not found in the stall")
+                end
+            end)
         end
         
         monitorPlayerStall()    
@@ -1849,68 +1790,68 @@ wait(1.5)
     
     while getgenv().ShufflePics == true do
     wait(0.5)
-    local args = {
-        [1] = "ӻȕㄈҟ",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ㄈȕ冂丅",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ȿȴȕ丅",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ҟҟҟ",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ŗȇ丅ẳŗȡ",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ώȇȇȡ",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ώȟόŗȇ",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ㄈȕɱ",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-    wait(1)
-    local args = {
-        [1] = "ɓ׀ɠ ẳȿȿ",
-        [2] = tostring(pickRandomImage())
-    }
-    
-    MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        local args = {
+            [1] = "ӻȕㄈҟ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ㄈȕ冂丅",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ȿȴȕ丅",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ҟҟҟ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ŗȇ丅ẳŗȡ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ώȇȇȡ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ώȟόŗȇ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ㄈȕɱ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        wait(1)
+        local args = {
+            [1] = "ɓ׀ɠ ẳȿȿ",
+            [2] = tostring(pickRandomImage())
+        }
+        
+        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     end
     else
         getgenv().ShufflePics = false
@@ -2235,7 +2176,31 @@ wait(1.5)
     if theNote then
         getgenv().crazyNote = true
         while getgenv().crazyNote == true do
-        wait(0.2)
+        wait()
+            local args = {
+                [1] = "\211\187\200\149\227\132\136\210\159 \200\159\207\140\200\135"
+            }
+    
+            game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "\211\187\200\149\227\132\136\210\159 \200\159\207\140\200\135"
+            }
+    
+            game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "\211\187\200\149\227\132\136\210\159 \200\159\207\140\200\135"
+            }
+    
+            game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
+            wait()
+            local args = {
+                [1] = "\211\187\200\149\227\132\136\210\159 \200\159\207\140\200\135"
+            }
+    
+            game:GetService("ReplicatedStorage"):WaitForChild("SubmitNote"):FireServer(unpack(args))
+            wait()
             local args = {
                 [1] = "\211\187\200\149\227\132\136\210\159 \200\159\207\140\200\135"
             }
@@ -2260,37 +2225,20 @@ wait(1.5)
         getgenv().ownerWhitelist = {
             "M1RD3RCAUGHT",
             "STK_kets4eki",
-            "ItsYoDawgWsgGng"
+            "ItsYoDawgWsgGng",
+            "Laylay_4kla"
         }
         
-        getgenv().BoothOrigWhitelistTable = {}
+        getgenv().BoothOrigWhitelistTable = getgenv().BoothOrigWhitelistTable or {}
 
         local function fireAndUnclaimStall(stall)
             local proximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
             if proximityPrompt and (not getgenv().ownerWhitelist[stall.Player.Value] or getgenv().BoothOrigWhitelistTable[stall.Player.Value]) then
-                local function makeCharacterInvisible(character)
-                    for _, part in pairs(character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.Transparency = 1
-                        end
-                    end
-                end
-
-                for _, player in pairs(game.Players:GetPlayers()) do
-                    if player.Character and player ~= game.Players.LocalPlayer then
-                        makeCharacterInvisible(player.Character)
-                    end
-                end                
-                wait()
                 Character:PivotTo(stall:GetPivot())
                 wait(0.1)
-                Character:WaitForChild("HumanoidRootPart").Anchored = true
+                fireproximityprompt(proximityPrompt, 999)
                 wait(0.3)
-                fireproximityprompt(proximityPrompt, 10)
-                wait(0.5)
                 stall:WaitForChild("CloseStall"):FireServer()
-                wait(0.2)
-                Character:WaitForChild("HumanoidRootPart").Anchored = false
             elseif not proximityPrompt then
                 return OrionLib:MakeNotification({
                     Name = "Failed!",
@@ -2305,8 +2253,7 @@ wait(1.5)
 
         local function unclaimStalls()
             for _, stall in pairs(Folder:GetChildren()) do
-                if stall:FindFirstChild("ProxPart") and not getgenv().ownerWhitelist[stall.Player.Value] and not getgenv().BoothOrigWhitelistTable[stall.Player.Value] then
-                    wait(0.3)
+                if stall:FindFirstChild("ProxPart") and (not getgenv().ownerWhitelist[stall.Player.Value] and getgenv().BoothOrigWhitelistTable[stall.Player.Value]) then
                     fireAndUnclaimStall(stall)
                 else
                     print("Skipping stall for: " .. tostring(stall.Player.Value))
@@ -2331,89 +2278,16 @@ wait(1.5)
                 StallFrame.Visible = false
             end
         end
-
-        local function makeCharacterVisible(character)
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Transparency = 0
-                end
-            end
-        end
-
-        for _, player in pairs(Players:GetPlayers()) do
-            if player ~= localPlayer and player.Character then
-                makeCharacterVisible(player.Character)
-            end
-        end
-        
-        wait()
-        
-        local function makePartInvisible(part)
-            part.Transparency = 1
-        end
-        
-        local function makeHumanoidRootPartInvisible(character)
-            local player = Players:GetPlayerFromCharacter(character)
-            if player and player ~= localPlayer then
-                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                if humanoidRootPart then
-                    makePartInvisible(humanoidRootPart)
-                end
-            end
-        end
-
-        for _, player in pairs(Players:GetPlayers()) do
-            if player.Character then
-                makeHumanoidRootPartInvisible(player.Character)
-            end
-        end
-        
-        wait(0.1)
-        unclaimStalls()
         wait(0.2)
-        local function makeCharacterVisible(character)
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Transparency = 0
-                end
-            end
-        end
-        
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer and player.Character then
-                makeCharacterVisible(player.Character)
-            end
-        end
-        wait()
-        local function makePartInvisible(part)
-            part.Transparency = 1
-        end
-        
-        local function makeHumanoidRootPartInvisible(character)
-            local player = game.Players:GetPlayerFromCharacter(character)
-            if player and player ~= game.Players.LocalPlayer then
-                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                if humanoidRootPart then
-                    makePartInvisible(humanoidRootPart)
-                end
-            end
-        end
-        
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player.Character then
-                makeHumanoidRootPartInvisible(player.Character)
-            end
-        end
+        unclaimStalls()
         wait(0.3)
         Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
-        
         wait(0.3)
-
         if firesignal then
             cancelAllButtons()
         else
             warn("firesignal is not supported, making StallFrame.Visible = false")
-            local PlayerGui = localPlayer:WaitForChild("PlayerGui")
+            local PlayerGui = localPlayer:WaitForChild("PlayerGui") or localPlayer:FindFirstChild("PlayerGui")
             PlayerGui.StallLocal.StallFrame.Visible = false
         end
         wait(0.2)
