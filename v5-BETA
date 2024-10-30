@@ -163,8 +163,6 @@ if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
             wait(.3)
             local Players = cloneref(game:GetService("Players")) or game:GetService("Players") 
             local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
             getgenv().Invis_Loaded = false
             getgenv().SCRIPT_EXECUTED = false
             getgenv().GetLoopRunning = false
@@ -176,7 +174,7 @@ if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
             wait()
             game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
             wait(0.2)
-            game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
+            LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
             wait(1)
             loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v5-BETA')))()
         end}
