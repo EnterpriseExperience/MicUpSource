@@ -6810,16 +6810,6 @@ wait(1.5)
         getgenv().getLoopKick = false
         wait(0.2)
         getgenv().LmaoGetMuted = false
-        wait(0.3)
-        if writefile and readfile and delfile and readfile("CUSTOM_CONFIG_MIC_UP.txt") then
-            delfile("CUSTOM_CONFIG_MIC_UP.txt")
-            wait()
-            delfile("IY_FE.iy")
-            wait()
-            print("___")
-        else
-            warn("No Custom Config File Found! Exiting...")
-        end
         wait(0.2)
         game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
         wait(0.2)
@@ -6842,16 +6832,6 @@ wait(1.5)
         getgenv().GetLoopRunning = false
         getgenv().LmaoGetMuted = false
         getgenv().GetDataResetLighting = false
-        wait(0.3)
-        if writefile and readfile and delfile and readfile("CUSTOM_CONFIG_MIC_UP.txt") then
-            delfile("CUSTOM_CONFIG_MIC_UP.txt")
-            wait()
-            delfile("IY_FE.iy")
-            wait()
-            print("___")
-        else
-            warn("No Custom Config File Found! Exiting...")
-        end
         wait(0.2)
         for i, v in pairs(game:GetService("Workspace").PartStorage:GetDescendants()) do
             if v:FindFirstChild("CFRAME_STORAGE") and v:IsA("Part") then
