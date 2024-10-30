@@ -1145,9 +1145,6 @@ wait(1.5)
         local function setupProximityPrompt(stall)
             if stall:FindFirstChild("ProxPart") then
                 local ProximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
-                ProximityPrompt.Enabled = true
-                wait()
-                ProximityPrompt.HoldDuration = 0
     
                 ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(function()
                     if not ProximityPrompt.Enabled then
@@ -2247,13 +2244,13 @@ wait(1.5)
                     Time = 10
                 })
             elseif getgenv().ownerWhitelist[stall.Player.Value] or getgenv().BoothOrigWhitelistTable[stall.Player.Value] then
-                return print("Player is an owner or in the booth whitelist, skipping...")
+                print("Player is an owner or in the booth whitelist, skipping...")
             end
         end
 
         local function unclaimStalls()
             for _, stall in pairs(Folder:GetChildren()) do
-                if stall:FindFirstChild("ProxPart") and (not getgenv().ownerWhitelist[stall.Player.Value] and getgenv().BoothOrigWhitelistTable[stall.Player.Value]) then
+                if stall:FindFirstChild("ProxPart") then
                     fireAndUnclaimStall(stall)
                 else
                     print("Skipping stall for: " .. tostring(stall.Player.Value))
