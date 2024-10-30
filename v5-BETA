@@ -211,7 +211,7 @@ local function loadGUI()
     repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     local currentTime = os.time()
     local formattedTime = os.date("%I:%M %p", currentTime)
-    local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+    local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary')))()
     getgenv().gethui = function()
         return game:GetService("CoreGui")
     end
