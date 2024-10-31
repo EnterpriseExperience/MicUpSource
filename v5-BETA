@@ -1151,6 +1151,7 @@ wait(1.5)
                         ProximityPrompt.Enabled = true
                         ProximityPrompt.RequiresLineOfSight = false
                         ProximityPrompt.MaxActivationDistance = 35
+                        ProximityPrompt.ClickablePrompt = true
                     end
                 end)
             end
@@ -1167,14 +1168,6 @@ wait(1.5)
         for _, stall in ipairs(stalls) do
             if stall then
                 setupProximityPrompt(stall)
-            end
-        end
-    
-        for _, v in ipairs(stalls) do
-            if table.find(whitelist, tostring(v.Player.Value)) then
-                v:FindFirstChild("ProxPart").ProximityPrompt.Enabled = false
-            else
-                warn(tostring(v.Player.Value)..", was checked, continuing...")
             end
         end
     end})
@@ -2212,9 +2205,9 @@ wait(1.5)
     Tab11:AddButton({
     Name = "Unclaim ALL Booths",
     Callback = function()
-        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+        local GetWorkspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
         local Folder = GetWorkspace:WaitForChild("Stalls") 
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
         local localPlayer = Players.LocalPlayer
         local Character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
         local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
@@ -2230,10 +2223,15 @@ wait(1.5)
 
         local function fireAndUnclaimStall(stall)
             local proximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
+            proximityPrompt.Enabled = true
+            proximityPrompt.ClickablePrompt = true
+            proximityPrompt.MaxActivationDistance = 999
+            proximityPrompt.RequiresLineOfSight = false
+            wait(0.2)
             if proximityPrompt and (not getgenv().ownerWhitelist[stall.Player.Value] or getgenv().BoothOrigWhitelistTable[stall.Player.Value]) then
                 Character:PivotTo(stall:GetPivot())
                 wait(0.1)
-                fireproximityprompt(proximityPrompt, 999)
+                fireproximityprompt(proximityPrompt, 50)
                 wait(0.3)
                 stall:WaitForChild("CloseStall"):FireServer()
             elseif not proximityPrompt then
