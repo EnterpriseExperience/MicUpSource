@@ -1158,7 +1158,7 @@ wait(1.5)
                         ProximityPrompt.MaxActivationDistance = 35
                         ProximityPrompt.ClickablePrompt = true
                     end
-                elseif getgenv().ModifiedStalls == true
+                elseif getgenv().ModifiedStalls == true then
                     return warn("getgenv().ModifiedStalls = true | Value = True")
                 end
             end
