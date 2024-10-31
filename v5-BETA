@@ -350,7 +350,11 @@ local function loadGUI()
     local Section6 = Tab6:AddSection({
         Name = "||| Information |||"
     })
-    wait(0.5)
+    wait(0.4)
+    local StarterPlayer = game:GetService("StarterPlayer") or cloneref(game:GetService("StarterPlayer")) or game.StarterPlayer or game:FindService("StarterPlayer")
+
+    StarterPlayer.CharacterUseJumpPower = true
+    wait(0.3)
     -- Modifying loading screen, will be back soon, don't edit this line.
     
     --[[if getgenv().GetStartIntro == true then
@@ -1140,30 +1144,8 @@ wait(1.5)
     Tab11:AddButton({
     Name = "Claim Any Booth (Go To A Booth)",
     Callback = function()
-        local Workspace_Service = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
-        local Folder = Workspace_Service:WaitForChild("Stalls")
-        getgenv().ModifiedStalls = false
+        local Folder = game:GetService("Workspace").Stalls
 
-        wait(.2)
-        local function setupProximityPrompt(stall)
-            if stall:FindFirstChild("ProxPart") then
-                local ProximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
-                if getgenv().ModifiedStalls == false then
-                    getgenv().ModifiedStalls = true
-                    wait()
-                    while getgenv().ModifiedStalls == true do
-                        wait()
-                        ProximityPrompt.Enabled = true
-                        ProximityPrompt.RequiresLineOfSight = false
-                        ProximityPrompt.MaxActivationDistance = 35
-                        ProximityPrompt.ClickablePrompt = true
-                    end
-                elseif getgenv().ModifiedStalls == true then
-                    return warn("getgenv().ModifiedStalls = true | Value = True")
-                end
-            end
-        end
-    
         local stalls = {
             Folder:FindFirstChild("Stall1"),
             Folder:FindFirstChild("Stall2"),
@@ -1171,7 +1153,27 @@ wait(1.5)
             Folder:FindFirstChild("Stall4"),
             Folder:FindFirstChild("Stall5")
         }
-    
+        
+        local function setupProximityPrompt(stall)
+            local ProximityPrompt = stall:FindFirstChild("ProxPart"):FindFirstChild("ProximityPrompt")
+            if ProximityPrompt then
+                local function enforceSettings()
+                    ProximityPrompt.Enabled = true
+                    ProximityPrompt.ClickablePrompt = true
+                    ProximityPrompt.MaxActivationDistance = 18
+                    ProximityPrompt.RequiresLineOfSight = false
+                    ProximityPrompt.HoldDuration = 0
+                end
+        
+                enforceSettings()
+        
+                ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(enforceSettings)
+                ProximityPrompt:GetPropertyChangedSignal("ClickablePrompt"):Connect(enforceSettings)
+                ProximityPrompt:GetPropertyChangedSignal("MaxActivationDistance"):Connect(enforceSettings)
+                ProximityPrompt:GetPropertyChangedSignal("RequiresLineOfSight"):Connect(enforceSettings)
+            end
+        end
+        
         for _, stall in ipairs(stalls) do
             if stall then
                 setupProximityPrompt(stall)
@@ -2032,138 +2034,45 @@ wait(1.5)
     end})
     
     --[[Tab11:AddTextbox({
-    Name = "UnClaim A Booth (broken, fixing)",
-    Default = "UserName or Display",
+    Name = "UnClaim A Booth (WORKING!)",
+    Default = "User or Display",
     TextDisappear = true,
     Callback = function(LolUnClaim)
-        local Players = game:GetService("Players")
-        local Workspace = game:GetService("Workspace")
+        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+        local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
         local LocalPlayer = Players.LocalPlayer
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local Stalls = Workspace:WaitForChild("Stalls")
         local bruhGuy = findplr(LolUnClaim)
         
-        getgenv().BoothOrigWhitelistTable = getgenv().BoothOrigWhitelistTable or {}
-        getgenv().BoothWhitelistTable = getgenv().BoothWhitelistTable or {}
-        getgenv().BoothOnlyWhitelistTable = getgenv().BoothOnlyWhitelistTable or {}
-        getgenv().ownerWhitelist = {
-            "M1RD3RCAUGHT",
-            "STK_kets4eki",
-            "ItsYoDawgWsgGng"
-        }
-        
-        local function isStallWhitelisted(stallName)
-            for _, whitelistStall in pairs(getgenv().BoothWhitelistTable) do
-                if stallName == whitelistStall then
-                    return true
-                end
-            end
-            return false
-        end
-        
-        local function addToStallWhitelist(stall)
-            if not isStallWhitelisted(stall.Name) then
-                table.insert(getgenv().BoothWhitelistTable, stall.Name)
-            end
-        end
-        
-        local function removeFromStallWhitelist(stall)
-            for i, whitelistStall in ipairs(getgenv().BoothWhitelistTable) do
-                if whitelistStall == stall.Name then
-                    table.remove(getgenv().BoothWhitelistTable, i)
-                    break
-                end
-            end
-        end
-        
-        local function isStallOnlyWhitelisted(stallName)
-            for _, whitelistStall in pairs(getgenv().BoothOnlyWhitelistTable) do
-                if stallName == whitelistStall then
-                    return true
-                end
-            end
-            return false
-        end
-        
-        local function addToStallOnlyWhitelist(stall)
-            if not isStallOnlyWhitelisted(stall.Name) then
-                table.insert(getgenv().BoothOnlyWhitelistTable, stall.Name)
-            end
-        end
-        
-        local function removeFromStallOnlyWhitelist(stall)
-            for i, whitelistStall in ipairs(getgenv().BoothOnlyWhitelistTable) do
-                if whitelistStall == stall.Name then
-                    table.remove(getgenv().BoothOnlyWhitelistTable, i)
-                    break
-                end
-            end
-        end
-        
         local function fireAndUnclaimStall(stall)
             local proximityPrompt = stall:FindFirstChild("ProxPart") and stall.ProxPart:FindFirstChild("ProximityPrompt")
-            if proximityPrompt and not getgenv().ownerWhitelist[stall.Player.Value] and not getgenv().BoothOrigWhitelistTable[stall.Player.Value] then
+
+            proximityPrompt.Enabled = true
+            proximityPrompt.ClickablePrompt = true
+            proximityPrompt.MaxActivationDistance = 18
+            proximityPrompt.RequiresLineOfSight = false
+            proximityPrompt.HoldDuration = 0
+            wait(0.2)
+            if proximityPrompt then
                 Character:PivotTo(stall:GetPivot())
-                wait(0.1)
-                Character:WaitForChild("HumanoidRootPart").Anchored = true
                 wait(0.3)
-                fireproximityprompt(proximityPrompt, 10)
+                fireproximityprompt(proximityPrompt, 15)
                 wait(0.5)
-                stall:WaitForChild("CloseStall"):FireServer()
-                wait(0.2)
-                Character:WaitForChild("HumanoidRootPart").Anchored = false
+                stall:FindFirstChild("CloseStall"):FireServer()
             end
         end
-        
-        local function checkBoothOwnershipChange()
-            while true do
-                for _, stall in pairs(Stalls:GetChildren()) do
-                    if stall:FindFirstChild("Player") then
-                        local playerInStall = stall.Player.Value
-                        
-                        if isStallWhitelisted(stall.Name) then
-                            addToStallOnlyWhitelist(stall)
-                        else
-                            return
-                        end
-        
-                        stall.Player:GetPropertyChangedSignal("Value"):Connect(function()
-                            local updatedPlayer = stall.Player.Value
-                            
-                            if isStallOnlyWhitelisted(stall.Name) then
-                                if updatedPlayer and updatedPlayer ~= "" then
-                                    addToStallWhitelist(stall)
-                                end
-                            else
-                                removeFromStallOnlyWhitelist(stall)
-                            end
-        
-                            if updatedPlayer and updatedPlayer ~= "" and not isStallWhitelisted(stall.Name) then
-                                addToStallWhitelist(stall)
-                            end
-                        end)
-                    end
-                end
-                wait(1)
-            end
-        end
-        
-        spawn(function()
-            checkBoothOwnershipChange()
-        end)
         
         function unclaimStallByUsername(username)
             for _, stall in pairs(Stalls:GetChildren()) do
                 local player = stall:FindFirstChild("Player")
-                if player and player.Value and type(player.Value) == "string" then
-                    if player.Value:lower() == username:lower() and not getgenv().BoothOrigWhitelistTable[player.Value] then
-                        fireAndUnclaimStall(stall)
-                    end
+                if player.Value == tostring(username) then
+                    fireAndUnclaimStall(stall)
                 end
             end
-        end     
+        end
         
-        unclaimStallByUsername(bruhGuy)
+        unclaimStallByUsername(bruhGuy.Name)
     end})--]]
     
     Tab1:AddToggle({
@@ -2212,86 +2121,63 @@ wait(1.5)
     Tab11:AddButton({
     Name = "Unclaim ALL Booths",
     Callback = function()
-        local GetWorkspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
-        local Folder = GetWorkspace:WaitForChild("Stalls") 
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local localPlayer = Players.LocalPlayer
-        local Character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+        local Player = game.Players.LocalPlayer
+        local Folder = game:GetService("Workspace").Stalls
+        local Character = Player.Character or Player.CharacterAdded:Wait()
+        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
         local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
+        local PlayerGui = Player:FindFirstChild("PlayerGui")
         
-        getgenv().ownerWhitelist = {
-            "M1RD3RCAUGHT",
-            "STK_kets4eki",
-            "ItsYoDawgWsgGng",
-            "Laylay_4kla"
+        local stalls = {
+            Folder:FindFirstChild("Stall1"),
+            Folder:FindFirstChild("Stall2"),
+            Folder:FindFirstChild("Stall3"),
+            Folder:FindFirstChild("Stall4"),
+            Folder:FindFirstChild("Stall5")
         }
         
-        getgenv().BoothOrigWhitelistTable = getgenv().BoothOrigWhitelistTable or {}
-
-        local function fireAndUnclaimStall(stall)
-            local proximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
-            proximityPrompt.Enabled = true
-            proximityPrompt.ClickablePrompt = true
-            proximityPrompt.MaxActivationDistance = 999
-            proximityPrompt.RequiresLineOfSight = false
-            wait(0.2)
-            if proximityPrompt and (not getgenv().ownerWhitelist[stall.Player.Value] or getgenv().BoothOrigWhitelistTable[stall.Player.Value]) then
-                Character:PivotTo(stall:GetPivot())
-                wait(0.1)
-                fireproximityprompt(proximityPrompt, 50)
-                wait(0.3)
-                stall:WaitForChild("CloseStall"):FireServer()
-            elseif not proximityPrompt then
-                return OrionLib:MakeNotification({
-                    Name = "Failed!",
-                    Content = "ProximityPrompt does not exist!",
-                    Image = "rbxassetid://4483345998",
-                    Time = 10
-                })
-            elseif getgenv().ownerWhitelist[stall.Player.Value] or getgenv().BoothOrigWhitelistTable[stall.Player.Value] then
-                print("Player is an owner or in the booth whitelist, skipping...")
-            end
-        end
-
-        local function unclaimStalls()
-            for _, stall in pairs(Folder:GetChildren()) do
-                if stall:FindFirstChild("ProxPart") then
-                    fireAndUnclaimStall(stall)
-                else
-                    print("Skipping stall for: " .. tostring(stall.Player.Value))
+        local function getCharacter()
+            local Character = Player.Character
+            repeat
+                if Character and Character:IsA("Model") and Character:FindFirstChild("HumanoidRootPart") then
+                    return Character
                 end
-            end
+                wait()
+                Character = Player.Character
+            until Character
         end
-
-        local function cancelAllButtons()
-            local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-            local StallFrame = localPlayer.PlayerGui:FindFirstChild("StallLocal"):FindFirstChild("StallFrame")
         
-            if firesignal then
-                for _, v in pairs(StallFrame:GetDescendants()) do
-                    if (v:IsA("ImageButton") or v:IsA("TextButton")) and v.Name == "CancelButton" then
-                        for _, signal in pairs(Signals) do
-                            firesignal(v[signal])
-                        end
-                    end
-                end
-            else
-                warn("firesignal is not supported, setting StallFrame.Visible to false")
-                StallFrame.Visible = false
+        local function teleportAndUsePrompt(stall)
+            local ProximityPrompt = stall:FindFirstChild("ProxPart"):FindFirstChild("ProximityPrompt")
+        
+            ProximityPrompt.Enabled = true
+            ProximityPrompt.ClickablePrompt = true
+            ProximityPrompt.MaxActivationDistance = 18
+            ProximityPrompt.RequiresLineOfSight = false
+            ProximityPrompt.HoldDuration = 0
+        
+            if ProximityPrompt then
+                local Character = getCharacter()
+                Character:PivotTo(stall:GetPivot())
+                wait(0.7)
+                fireproximityprompt(ProximityPrompt)
+                wait(0.6)
+                stall:FindFirstChild("CloseStall"):FireServer()
+                wait(0.2)
+                repeat wait() until stall:FindFirstChild("TextBoard"):FindFirstChild("SurfaceGui"):FindFirstChild("SIGN").Text == "Empty"
+                wait(0.1)
+            end
+        end
+        
+        for _, stall in ipairs(stalls) do
+            if stall then
+                teleportAndUsePrompt(stall)
             end
         end
         wait(0.2)
-        unclaimStalls()
+        HumanoidRootPart.CFrame = OldCF
         wait(0.3)
-        Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
-        wait(0.3)
-        if firesignal then
-            cancelAllButtons()
-        else
-            warn("firesignal is not supported, making StallFrame.Visible = false")
-            local PlayerGui = localPlayer:WaitForChild("PlayerGui") or localPlayer:FindFirstChild("PlayerGui")
-            PlayerGui.StallLocal.StallFrame.Visible = false
-        end
+        PlayerGui:FindFirstChild("StallLocal"):FindFirstChild("StallFrame").Visible = false
         wait(0.2)
         print("Finished Unclaiming ALL Booths.")
     end})
