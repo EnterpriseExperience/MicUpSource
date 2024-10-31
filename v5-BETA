@@ -1140,20 +1140,27 @@ wait(1.5)
     Tab11:AddButton({
     Name = "Claim Any Booth (Go To A Booth)",
     Callback = function()
-        local Folder = workspace:WaitForChild("Stalls")
-    
+        local Workspace_Service = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
+        local Folder = Workspace_Service:WaitForChild("Stalls")
+        getgenv().ModifiedStalls = false
+
+        wait(.2)
         local function setupProximityPrompt(stall)
             if stall:FindFirstChild("ProxPart") then
                 local ProximityPrompt = stall:FindFirstChild("ProxPart").ProximityPrompt
-    
-                ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(function()
-                    if not ProximityPrompt.Enabled then
+                if getgenv().ModifiedStalls == false then
+                    getgenv().ModifiedStalls = true
+                    wait()
+                    while getgenv().ModifiedStalls == true do
+                        wait()
                         ProximityPrompt.Enabled = true
                         ProximityPrompt.RequiresLineOfSight = false
                         ProximityPrompt.MaxActivationDistance = 35
                         ProximityPrompt.ClickablePrompt = true
                     end
-                end)
+                elseif getgenv().ModifiedStalls == true
+                    return warn("getgenv().ModifiedStalls = true | Value = True")
+                end
             end
         end
     
