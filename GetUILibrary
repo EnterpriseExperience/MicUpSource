@@ -28,18 +28,6 @@ local OrionLib = {
 --Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
 local Icons = {}
 
-local Success, Response = pcall(function()
-	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/evoincorp/lucideblox/master/src/modules/util/icons.json")).icons
-end)
-
-if Success then
-	print("OK")
-end
-
-if not Success then
-	warn("\nOrion Library - Failed to load Feather Icons. Error code: " .. Response .. "\n")
-end
-
 local function GetIcon(IconName)
 	if Icons[IconName] ~= nil then
 		return Icons[IconName]
@@ -647,15 +635,16 @@ function OrionLib:MakeWindow(WindowConfig)
 	ScreenCreateGui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
 	ScreenCreateGui.ResetOnSpawn = false
 	wait(0.7)
-	local buttonSize = UDim2.new(0, 50, 0, 50)
+	local buttonSize = UDim2.new(0.00999999978, 50, 0.0299999993, 50)
     local ui = MainWindow
 
     local toggleButton = Instance.new("TextButton")
     toggleButton.Name = "ToggleOpenButtonOrion"
     toggleButton.Size = buttonSize
-    toggleButton.Position = UDim2.new(0, 10, 0.5, -25)
+    toggleButton.Position = UDim2.new(0, 10, 0.5, -145)
 	toggleButton.BackgroundColor3 = Color3.new(226, 0, 0)
 	toggleButton.TextColor3 = Color3.new(0, 0, 0)
+	toggleButton.Font = Enum.Font.Code
     toggleButton.Text = "Toggle UI"
     toggleButton.TextScaled = true
     toggleButton.Parent = game.Players.LocalPlayer.PlayerGui:FindFirstChild("GetOrionGUI")
