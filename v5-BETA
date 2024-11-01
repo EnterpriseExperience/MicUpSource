@@ -1018,169 +1018,6 @@ wait(1.5)
         hum.Health = 0
     end})
     
-    -- This is probably going to be removed soon, due to the fact it's useless now.
-    
-    --[[Tab11:AddToggle({
-    Name = "Auto Claim/Steal Booth (for hackers?)",
-    Default = false,
-    Callback = function(AutoClaimStand)
-    if AutoClaimStand then
-        getgenv().ClaimTheStand = true
-    
-        local function getStall()
-            for _, stall in pairs(workspace:WaitForChild("Stalls"):GetChildren()) do
-                if stall:FindFirstChild("Player") and stall.Player.Value == game:GetService("Players").LocalPlayer then
-                    return stall
-                end
-            end
-            return nil
-        end
-        
-        local function makePlayersInvisible()
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player ~= game.Players.LocalPlayer and player.Character then
-                    for _, part in pairs(player.Character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.Transparency = 1
-                        end
-                    end
-                end
-            end
-        end
-        
-        makePlayersInvisible()
-        wait(0.2)
-        
-        while getgenv().ClaimTheStand == true do
-            wait()
-        
-            local ClaimTexture = "rbxthumb://type=Asset&id=5888213893&w=420&h=420"
-            local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-            local LocalPlayer = game.Players.LocalPlayer
-            local stall = getStall()
-        
-            if stall and stall:FindFirstChild("Icon") and stall.Icon:FindFirstChild("Decal") and stall:FindFirstChild("ProxPart") then
-                local decal = stall.Icon.Decal
-        
-                if decal.Texture ~= ClaimTexture then
-                    local ProximityPrompt = stall.ProxPart:FindFirstChild("ProximityPrompt")
-        
-                    LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(stall.ProxPart.Position)
-                    wait(0.3)
-                    fireproximityprompt(ProximityPrompt, 15)
-                    wait()
-        
-                    local args = {
-                        [1] = "Stolen By: " .. LocalPlayer.Name,
-                        [2] = "5888213893"
-                    }
-                    stall:FindFirstChild("Edit"):FireServer(unpack(args))
-                    wait()
-        
-                    local Button = LocalPlayer.PlayerGui.StallLocal.StallFrame
-                    for _, v in pairs(Button:GetDescendants()) do
-                        if (v:IsA("ImageButton") or v:IsA("TextButton")) and v.Name == "CancelButton" then
-                            for _, signal in pairs(Signals) do
-                                firesignal(v[signal])
-                            end
-                        end
-                    end
-        
-                    wait(0.1)
-        
-                    stall:WaitForChild("CloseStall"):FireServer()
-                end
-            end
-        end      
-    else
-        getgenv().ClaimTheStand = false
-        wait()
-        getgenv().ClaimTheStand = false
-        wait()
-        getgenv().ClaimTheStand = false
-        wait(0.2)
-        local function makePlayersVisible()
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player ~= game.Players.LocalPlayer and player.Character then
-                    for _, part in pairs(player.Character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.Transparency = 0
-                        end
-                    end
-                end
-            end
-        end    
-        
-        local function makeHumanoidRootPartsInvisible()
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player ~= game.Players.LocalPlayer and player.Character then
-                    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        hrp.Transparency = 1
-                    end
-                end
-            end
-        end    
-        
-        makePlayersVisible()
-        wait(0.3)
-        makeHumanoidRootPartsInvisible()
-    end
-    end})--]]
-    
-    --[[Tab11:AddButton({
-    Name = "Anti Booth Stealer (for hackers)",
-    Callback = function()
-        local player = game.Players.LocalPlayer
-    
-        local function getStall()
-            for i, v in pairs(workspace.Stalls:GetChildren()) do
-                if v and v.Player.Value == game:GetService("Players").LocalPlayer then
-                    return v
-                end
-            end
-            return nil
-        end
-
-        local GetLocalPlayersStall = getStall()
-
-        GetLocalPlayersStall.RequiresLineOfSight = false
-        GetLocalPlayersStall.Enabled = true
-        GetLocalPlayersStall.ClickablePrompt = true
-        
-        local function fireProximityPrompt(prompt)
-            if prompt then
-                fireproximityprompt(prompt)
-            end
-        end
-        
-        local function monitorPlayerStall()
-            local ownedStall = getStall()
-    
-            if not ownedStall then
-                return OrionLib:MakeNotification({
-                    Name = "Error: No Booth",
-                    Content = "You don't own a booth!",
-                    Image = "rbxassetid://4483345998",
-                    Time = 10
-                })
-            end
-
-            local PlayerValue = ownedStall:FindFirstChild("Player")
-        
-            PlayerValue:GetPropertyChangedSignal("Value"):Connect(function()
-                local proxPart = ownedStall:FindFirstChild("ProxPart")
-                if proxPart and proxPart:FindFirstChild("ProximityPrompt") then
-                    fireProximityPrompt(proxPart.ProximityPrompt)
-                else
-                    warn("ProximityPrompt not found in the stall")
-                end
-            end)
-        end
-        
-        monitorPlayerStall()    
-    end})--]]
-    
     Tab13:AddToggle({
     Name = "Freeze YOUR Character (FE)",
     Default = false,
@@ -1346,21 +1183,6 @@ wait(1.5)
     
     local MyStall = getStall() 
 
-    --[[local imageIDs = {
-        "5888213893",
-        "13886197679",
-        "12875268373",
-        "125124809459735",
-        "78267907856078",
-        "79596231249987",
-        "96618101195949"
-    }
-
-    local function pickRandomImage()
-        local randomIndex = math.random(1, #imageIDs)
-        return imageIDs[randomIndex]
-    end--]]
-
     local colorsList = {
         "Teal",
         "Gray",
@@ -1423,6 +1245,65 @@ wait(1.5)
     else
         getgenv().Cuss = false
     end
+    end})
+
+    Tab2:AddToggle({
+        Name = "Flicker Avatar (FE)",
+        Default = false,
+        Callback = function(avatarFlicking)
+        local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+        local Modify_Username_Event = Replicated_Storage:FindFirstChild("ModifyUsername") or Replicated_Storage:WaitForChild("ModifyUsername")
+
+        if avatarFlicking then
+            getgenv().FlickAvatar = true
+            while getgenv().FlickAvatar == true do
+            wait()
+                Modify_Username_Event:FireServer("Roblox")
+                Modify_Username_Event:FireServer("Stickmasterluke")
+                Modify_Username_Event:FireServer("Shedletsky")
+                Modify_Username_Event:FireServer("Linkmon99")
+                Modify_Username_Event:FireServer("EarlGrey")
+                Modify_Username_Event:FireServer("Zlib")
+                Modify_Username_Event:FireServer("A_A")
+                Modify_Username_Event:FireServer("SonOfSevenless")
+                Modify_Username_Event:FireServer("CV10K")
+                Modify_Username_Event:FireServer("rip_indra")
+                Modify_Username_Event:FireServer("kenami")
+                Modify_Username_Event:FireServer("Merely")
+                Modify_Username_Event:FireServer("BuildIntoGames")
+                Modify_Username_Event:FireServer("Berezaa")
+                Modify_Username_Event:FireServer("Pokediger1")
+                Modify_Username_Event:FireServer("MightyBaseplate")
+                Modify_Username_Event:FireServer("333333333")
+                Modify_Username_Event:FireServer("TheMule101")
+                Modify_Username_Event:FireServer("Cindering")
+                Modify_Username_Event:FireServer("WhoToTrus")
+                Modify_Username_Event:FireServer("ImASquidKid")
+                Modify_Username_Event:FireServer("Lonnie")
+                Modify_Username_Event:FireServer("NapkinNate")
+                Modify_Username_Event:FireServer("Litozinnamon")
+                Modify_Username_Event:FireServer("TixRex")
+                Modify_Username_Event:FireServer("InceptionTime")
+                Modify_Username_Event:FireServer("Telanthric")
+                Modify_Username_Event:FireServer("IceColdDev")
+                Modify_Username_Event:FireServer("Mysteregg")
+                Modify_Username_Event:FireServer("SkyDoesRoblox")
+            end
+        else
+            local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+            local Modify_Username_Event = Replicated_Storage:FindFirstChild("ModifyUsername") or Replicated_Storage:WaitForChild("ModifyUsername")
+            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local lPlayer_Name
+
+            getgenv().FlickAvatar = false
+            wait(1)
+            repeat wait() until getgenv().FlickAvatar == false
+            wait()
+            if getgenv().FlickAvatar == false then
+                Modify_Username_Event:FireServer(tostring(lPlayer_Name))
+            end
+        end
     end})
     
     Tab16:AddToggle({
@@ -5734,36 +5615,6 @@ wait(1.5)
     end
     end})
     wait()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-    -- Don't fuck with this shit, im gonna be fixing it, but soon. (different method coming.)
-    
-    --[[Tab2:AddToggle({
-    Name = "Set Waypoint Here",
-    Default = false,
-    Callback = function(setWayPoint)
-    if setWayPoint then
-    getgenv().WPName = true
-    if getgenv().WPName == true then
-        local NewInfYielding = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-        wait(0.5)
-        NewInfYielding.execCmd("setwaypoint ZACKS_EASY_HUB_CONFIG")
-        wait(0.5)
-        NewInfYielding.execCmd("spawn")
-    end
-    else
-    getgenv().WPName = false
-    wait()
-    local NewInf = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-    wait(0.5)
-    NewInf.execCmd("dwp ZACKS_EASY_HUB_CONFIG")
-    wait(0.1)
-    NewInf.execCmd("nospawn")
-    wait(0.1)
-    NewInf.execCmd("nospawnpoint")
-    end
-    end})--]]
-
-    wait()
     Tab6:AddParagraph("Zacks Easy Hub | Scripting Made Easy")
     Tab6:AddLabel("https://www.youtube.com/@AnonymousExploiting")
     Tab6:AddLabel("Subscribe for more content retards.")
@@ -5775,7 +5626,7 @@ wait(1.5)
     Tab6:AddParagraph("To scared to work? Remember, You need money to live.")
     Tab6:AddParagraph("Life not being fair? Remember, YOU are part of what makes life.")
     wait(0.5)
-    local Players = game:GetService("Players")
+    local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HRPBase = Character:FindFirstChild("HumanoidRootPart")
@@ -5785,7 +5636,7 @@ wait(1.5)
     wait()
     OrionLib:Init()
 end
-local Players = game:GetService("Players")
+local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
@@ -5803,7 +5654,7 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
     Duration = 10
 })
 wait(0.3)
-local ws = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local ws = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
 local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
 local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
 if getFolder and getpart then
@@ -5812,7 +5663,7 @@ else
     warn("ANTI-VOID_MISSING? ---")
 end
 wait(0.2)
-local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+local Lighting = game:GetService("Lighting") or cloneref(game:GetService("Lighting")) or game.Lighting or game:FindService("Lighting")
 local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
 
 Lighting.ClockTime = 14.5
@@ -5924,7 +5775,7 @@ for i, v in pairs(game.Players:GetPlayers()) do
     end
 end
 wait(0.3)
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 getgenv().getBasicTable = getgenv().getBasicTable or {}
@@ -5943,62 +5794,25 @@ for i, v in pairs(game.Players:GetChildren()) do
     end
 end
 wait(1)
-local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
 local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+local Modify_User_Event = Replicated_Storage:FindFirstChild("ModifyUserEvent") or Replicated_Storage:WaitForChild("ModifyUserEvent") or Replicated_Storage.ModifyUserEvent
 wait(.3)
 Humanoid.Health = 0
-wait(0.3)
-Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(function()
-    local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
-    local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-    print("Humanoid Died, Waiting...")
-    wait(0.5)
-    repeat wait() until LocalPlayer and Character and Humanoid and HumanoidRootPart and Humanoid.Health >= 90 and HumanoidRootPart ~= nil
-    wait()
-    if Character:FindFirstChildWhichIsA("Humanoid") and Humanoid and HumanoidRootPart then
-        LocalPlayer.CharacterAdded:Connect(function(Char)
-            print("Character Loaded Successfully!")
-            wait()
-            HumanoidRootPart.CFrame = getOldCF
-        end)
-    end
-end)
-wait(2.5)
-repeat wait() until Character and Character:FindFirstChildWhichIsA("Humanoid") and Humanoid and Character:FindFirstChild("HumanoidRootPart") and HumanoidRootPart
-wait(0.3)
-Character:FindFirstChild("HumanoidRootPart").CFrame = getOldCF
-wait(2.5)
---[[repeat wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
-    game.Players.LocalPlayer.CharacterAdded:Connect(function()
-        wait(2.5)
-        print("CHARACTER_ADDED | CALLED.")
-        wait()
-        local Players = game:GetService("Players") or game.Players
-        local Workspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-        repeat wait() until Character and HumanoidRootPart
-        if HumanoidRootPart then
-            HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
-        else
-            warn("Waited To Long For HumanoidRootPart")
-        end
-        wait(0.6)
-        if Workspace:FindFirstChild("CFRAME_STORAGE") then
-            Workspace:FindFirstChild("CFRAME_STORAGE"):Destroy()
-        else
-            warn("CFRAME_STORAGE | nil")
-        end
-    end)
-end--]]
+wait(2)
+repeat wait() until Players.LocalPlayer.Character or LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildWhichIsA("Humanoid") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
+wait(1)
+if LocalPlayer.Name == "Laylay_4kla" or LocalPlayer.Name == "ItsYoDawgWsgGng" or LocalPlayer.Name == "STK_kets4eki" and not LocalPlayer.Name == "M1RD3RCAUGHT" then
+    local args = {
+        [1] = "M1RD3RCAUGHT"
+    }
+
+    Modify_User_Event:FireServer(unpack(args))
+end
 wait(0.5)
 print("Successfully ran!")
 wait(1)
