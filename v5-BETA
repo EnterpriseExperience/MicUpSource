@@ -1144,23 +1144,23 @@ wait(1.5)
     Tab11:AddButton({
     Name = "Claim Any Booth (Go To A Booth)",
     Callback = function()
-        local Folder = game:GetService("Workspace").Stalls
+        local Folder = game:GetService("Workspace").Booth
 
         local stalls = {
-            Folder:FindFirstChild("Stall1"),
-            Folder:FindFirstChild("Stall2"),
-            Folder:FindFirstChild("Stall3"),
-            Folder:FindFirstChild("Stall4"),
-            Folder:FindFirstChild("Stall5")
+            Folder:FindFirstChild("Booth01"),
+            Folder:FindFirstChild("Booth02"),
+            Folder:FindFirstChild("Booth03"),
+            Folder:FindFirstChild("Booth04"),
+            Folder:FindFirstChild("Booth05")
         }
         
         local function setupProximityPrompt(stall)
-            local ProximityPrompt = stall:FindFirstChild("ProxPart"):FindFirstChild("ProximityPrompt")
+            local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
             if ProximityPrompt then
                 local function enforceSettings()
                     ProximityPrompt.Enabled = true
                     ProximityPrompt.ClickablePrompt = true
-                    ProximityPrompt.MaxActivationDistance = 18
+                    ProximityPrompt.MaxActivationDistance = 15
                     ProximityPrompt.RequiresLineOfSight = false
                     ProximityPrompt.HoldDuration = 0
                 end
@@ -1314,7 +1314,7 @@ wait(1.5)
     end
     end})--]]
     
-    Tab11:AddButton({
+    --[[Tab11:AddButton({
     Name = "Anti Booth Stealer (for hackers)",
     Callback = function()
         local player = game.Players.LocalPlayer
@@ -1365,7 +1365,7 @@ wait(1.5)
         end
         
         monitorPlayerStall()    
-    end})
+    end})--]]
     
     Tab13:AddToggle({
     Name = "Freeze YOUR Character (FE)",
@@ -1518,18 +1518,21 @@ wait(1.5)
     getgenv().Cuss = true
     while getgenv().Cuss == true do
     wait(0.5)
-        local function getStall()
-            for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
-                if v.Player.Value == game:GetService("Players").LocalPlayer then
-                    return v
-                end
+    local function getStall()
+        for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+            if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                return v
             end
-            return nil
         end
+        return nil
+    end
     
-    local MyStall = getStall()
+    local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+    local Booth_Remote = Replicated_Storage:FindFirstChild("UpdateBoothText") or Replicated_Storage:WaitForChild("UpdateBoothText")
+    
+    local MyStall = getStall() 
 
-    local imageIDs = {
+    --[[local imageIDs = {
         "5888213893",
         "13886197679",
         "12875268373",
@@ -1542,6 +1545,46 @@ wait(1.5)
     local function pickRandomImage()
         local randomIndex = math.random(1, #imageIDs)
         return imageIDs[randomIndex]
+    end--]]
+
+    local colorsList = {
+        "Teal",
+        "Gray",
+        "Red",
+    }
+
+    local function pickRandomColor()
+        local randomIndex = math.random(1, #colorsList)
+        return colorsList[randomIndex]
+    end
+
+    local wordsList = {
+        "ɓ׀丅ㄈȟ",
+        "ӻȕㄈҟ",
+        "ㄈȕ冂丅",
+        "ȿȴȕ丅",
+        "ҟҟҟ",
+        "ŗȇ丅ẳŗȡ",
+        "ώȇȇȡ",
+        "ώȟόŗȇ",
+        "ㄈȕɱ",
+        "ɓ׀ɠ ẳȿȿ",
+    }
+
+    local function pickRandomWord()
+        local randomIndex = math.random(1, #wordsList)
+        return wordsList[randomIndex]
+    end
+
+    local fontsList = {
+        "DenkOne",
+        "GrenzeGotisch",
+        "SourceSans"    
+    }
+
+    local function pickRandomFont()
+        local randomIndex = math.random(1, #fontsList)
+        return fontsList[randomIndex]
     end
     
     if not MyStall or MyStall == nil then
@@ -1553,82 +1596,17 @@ wait(1.5)
             Time = 10
         })
     end
-    
+        wait(0.8)
         local args = {
-            [1] = "ɓ׀丅ㄈȟ",
-            [2] = tostring(pickRandomImage())
+            [1] = tostring(pickRandomWord()),
+            [2] = tostring(pickRandomColor()),
+            [3] = tostring(pickRandomFont())
         }
         
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+        Booth_Remote:FireServer(unpack(args))
         wait(1)
-        local args = {
-            [1] = "ӻȕㄈҟ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ㄈȕ冂丅",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ȿȴȕ丅",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ҟҟҟ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ŗȇ丅ẳŗȡ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ώȇȇȡ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ώȟόŗȇ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ㄈȕɱ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ɓ׀ɠ ẳȿȿ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
     end
     else
-        getgenv().Cuss = false
-        wait()
-        getgenv().Cuss = false
-        wait()
         getgenv().Cuss = false
     end
     end})
@@ -1700,7 +1678,9 @@ wait(1.5)
     end
     end})
     
-    Tab11:AddTextbox({
+    -- Image ID's do NOT work anymore, currently.
+
+    --[[Tab11:AddTextbox({
     Name = "Custom Booth Image (FE)",
     Default = "ID Here",
     TextDisappear = true,
@@ -1708,12 +1688,12 @@ wait(1.5)
         local GetCustomID = tostring(getIdForBooth)
         if GetCustomID then
             local function getStall()
-                for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
-                    if v.Player.Value == game:GetService("Players").LocalPlayer then
+                for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                    if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
                         return v
                     end
                 end
-            return nil
+                return nil
             end
     
             local GetLocalPlayersStall = getStall()
@@ -1743,9 +1723,9 @@ wait(1.5)
                 Time = 10
             })
         end
-    end})
+    end})--]]
     
-    Tab11:AddToggle({
+    --[[Tab11:AddToggle({
     Name = "Loop Bypassed Stall (FE)",
     Default = false,
     Callback = function(wildToggle)
@@ -1786,78 +1766,63 @@ wait(1.5)
         local randomIndex = math.random(1, #imageIDs)
         return imageIDs[randomIndex]
     end
+
+    local colorsList = {
+        "Teal",
+        "Gray",
+        "Red",
+    }
+
+    local function pickRandomColor()
+        local randomIndex = math.random(1, #colorsList)
+        return colorsList[randomIndex]
+    end
+
+    local wordsList = {
+        "ɓ׀丅ㄈȟ",
+        "ӻȕㄈҟ",
+        "ㄈȕ冂丅",
+        "ȿȴȕ丅",
+        "ҟҟҟ",
+        "ŗȇ丅ẳŗȡ",
+        "ώȇȇȡ",
+        "ώȟόŗȇ",
+        "ㄈȕɱ",
+        "ɓ׀ɠ ẳȿȿ",
+    }
+
+    local function pickRandomWord()
+        local randomIndex = math.random(1, #wordsList)
+        return wordsList[randomIndex]
+    end
+
+    local fontsList = {
+        "DenkOne",
+        "GrenzeGotisch",
+        "SourceSans"    
+    }
+
+    local function pickRandomFont()
+        local randomIndex = math.random(1, #fontsList)
+        return fontsList[randomIndex]
+    end
     
     while getgenv().ShufflePics == true do
     wait(0.5)
         local args = {
-            [1] = "ӻȕㄈҟ",
-            [2] = tostring(pickRandomImage())
+            [1] = tostring(pickRandomWord()),
+            [2] = tostring(pickRandomColor()),
+            [3] = tostring(pickRandomFont())
         }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ㄈȕ冂丅",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ȿȴȕ丅",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ҟҟҟ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ŗȇ丅ẳŗȡ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ώȇȇȡ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ώȟόŗȇ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ㄈȕɱ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
-        wait(1)
-        local args = {
-            [1] = "ɓ׀ɠ ẳȿȿ",
-            [2] = tostring(pickRandomImage())
-        }
-        
-        MyStall:FindFirstChild("Edit"):FireServer(unpack(args))
+    
+        Booth_Remote:FireServer(unpack(args))
     end
     else
         getgenv().ShufflePics = false
     end
-    end})
+    end})--]]
     
-    Tab11:AddButton({
+    --[[Tab11:AddButton({
     Name = "18+ Booth Image (Random, FE)",
     Callback = function()
     local function getStall()
@@ -1901,7 +1866,7 @@ wait(1.5)
             Time = 10
         })
     end
-    end})
+    end})--]]
     
     Tab7:AddTextbox({
     Name = "Whitelist User",
@@ -2122,30 +2087,20 @@ wait(1.5)
     Name = "Unclaim ALL Booths",
     Callback = function()
         local Player = game.Players.LocalPlayer
-        local Folder = game:GetService("Workspace").Stalls
+        local Folder = game:GetService("Workspace").Booth
         local Character = Player.Character or Player.CharacterAdded:Wait()
         local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
         local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
         local PlayerGui = Player:FindFirstChild("PlayerGui")
+        local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
         
         local stalls = {
-            Folder:FindFirstChild("Stall1"),
-            Folder:FindFirstChild("Stall2"),
-            Folder:FindFirstChild("Stall3"),
-            Folder:FindFirstChild("Stall4"),
-            Folder:FindFirstChild("Stall5")
+            Folder:FindFirstChild("Booth01"),
+            Folder:FindFirstChild("Booth02"),
+            Folder:FindFirstChild("Booth03"),
+            Folder:FindFirstChild("Booth04"),
+            Folder:FindFirstChild("Booth05")
         }
-        
-        local function getCharacter()
-            local Character = Player.Character
-            repeat
-                if Character and Character:IsA("Model") and Character:FindFirstChild("HumanoidRootPart") then
-                    return Character
-                end
-                wait()
-                Character = Player.Character
-            until Character
-        end
         
         local function teleportAndUsePrompt(stall)
             local ProximityPrompt = stall:FindFirstChild("ProxPart"):FindFirstChild("ProximityPrompt")
@@ -2157,12 +2112,15 @@ wait(1.5)
             ProximityPrompt.HoldDuration = 0
         
             if ProximityPrompt then
-                local Character = getCharacter()
+                local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+                local LocalPlayer = Players.LocalPlayer
+                local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
                 Character:PivotTo(stall:GetPivot())
                 wait(0.7)
                 fireproximityprompt(ProximityPrompt)
                 wait(0.6)
-                stall:FindFirstChild("CloseStall"):FireServer()
+                Replicated_Storage:WaitForChild("DeleteBoothOwnership"):FireServer()
                 wait(0.2)
                 repeat wait() until stall:FindFirstChild("TextBoard"):FindFirstChild("SurfaceGui"):FindFirstChild("SIGN").Text == "Empty"
                 wait(0.1)
@@ -2177,7 +2135,7 @@ wait(1.5)
         wait(0.2)
         HumanoidRootPart.CFrame = OldCF
         wait(0.3)
-        PlayerGui:FindFirstChild("StallLocal"):FindFirstChild("StallFrame").Visible = false
+        PlayerGui:FindFirstChild("Booth"):FindFirstChild("Frame").Visible = false
         wait(0.2)
         print("Finished Unclaiming ALL Booths.")
     end})
@@ -3264,13 +3222,53 @@ wait(1.5)
     Name = "Auto Change Booth Text",
     Default = false,
     Callback = function(crazy)
-    function getStall()
-        for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
-            if v.Player.Value == game:GetService("Players").LocalPlayer then
+    local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+    local Booth_Remote = Replicated_Storage:FindFirstChild("UpdateBoothText") or Replicated_Storage:WaitForChild("UpdateBoothText")
+
+    local colorsList = {
+        "Teal",
+        "Gray",
+        "Red",
+    }
+
+    local function pickRandomColor()
+        local randomIndex = math.random(1, #colorsList)
+        return colorsList[randomIndex]
+    end
+
+    local wordsList = {
+        "Zacks Easy Hub [WINNING]!",
+        "Join: VJh3kkYzBn",
+        "Zacks Easy Hub [WE UP]!",
+        "Zacks Easy Hub V5, Automated",
+        "Powering Automation | Scripting",
+        "Zacks Easy Hub | WE OP!",
+        "Zacks Easy Hub | V5-STABLE",
+    }
+
+    local function pickRandomWord()
+        local randomIndex = math.random(1, #wordsList)
+        return wordsList[randomIndex]
+    end
+
+    local fontsList = {
+        "DenkOne",
+        "GrenzeGotisch",
+        "SourceSans"    
+    }
+
+    local function pickRandomFont()
+        local randomIndex = math.random(1, #fontsList)
+        return fontsList[randomIndex]
+    end
+
+    local function getStall()
+        for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+            if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
                 return v
             end
         end
-    return nil
+        return nil
     end
     
     if crazy then
@@ -3286,7 +3284,7 @@ wait(1.5)
         })
     end
 
-    local imageIDs = {
+    --[[local imageIDs = {
         "5888213893",
         "13886197679",
         "12875268373",
@@ -3299,59 +3297,18 @@ wait(1.5)
     local function pickRandomImage()
         local randomIndex = math.random(1, #imageIDs)
         return imageIDs[randomIndex]
-    end
+    end--]]
     
     getgenv().Auto = true
     while getgenv().Auto == true do
     wait()
         local args = {
-            [1] = "Zacks Easy Hub [WINNING]!",
-            [2] = ""
+            [1] = tostring(pickRandomWord()),
+            [2] = tostring(pickRandomColor()),
+            [3] = tostring(pickRandomFont())
         }
         
-        Stall:WaitForChild("Edit"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "Join: VJh3kkYzBn",
-            [2] = ""
-        }
-        
-        Stall:WaitForChild("Edit"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "Zacks Easy Hub [WE UP]!",
-            [2] = ""
-        }
-        
-        Stall:WaitForChild("Edit"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "Zacks Easy Hub V5, Automated",
-            [2] = ""
-        }
-        
-        Stall:WaitForChild("Edit"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "Powering Automation | Scripting",
-            [2] = ""
-        }
-        
-        Stall:WaitForChild("Edit"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "Zacks Easy Hub | WE OP!",
-            [2] = ""
-        }
-        
-        Stall:WaitForChild("Edit"):FireServer(unpack(args))
-        wait()
-        local args = {
-            [1] = "Zacks Easy Hub | V5-STABLE",
-            [2] = ""
-        }
-        
-        Stall:WaitForChild("Edit"):FireServer(unpack(args))
+        Booth_Remote:FireServer(unpack(args))
     end
     else
         getgenv().Auto = false
@@ -4662,10 +4619,21 @@ wait(1.5)
     Default = "Enter Text",
     TextDisappear = true,
     Callback = function(enteredTextInput)
-        local TextChatService = cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
+        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
         local LocalPlayer = Players.LocalPlayer
-        local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
+        local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+        local Booth_Remote = Replicated_Storage:FindFirstChild("UpdateBoothText") or Replicated_Storage:WaitForChild("UpdateBoothText")      
+
+        local function get_Booth()
+            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                    return v
+                end
+            end
+            return nil
+        end
+
+        local LocalStall = get_Booth()
 
         local letters = {
             set1 = {
@@ -4709,7 +4677,7 @@ wait(1.5)
                 ["6"] = "Ϭ",
                 ["7"] = "🄈",
                 ["8"] = "Ȣ",
-                ["9"] = "Θ",
+                ["9"] = "ϑ",
             }
         }
 
@@ -4740,10 +4708,34 @@ wait(1.5)
             end
             return converted
         end
+
+        local colorsList = {
+            "Teal",
+            "Gray",
+            "Red",
+        }
+    
+        local function pickRandomColor()
+            local randomIndex = math.random(1, #colorsList)
+            return colorsList[randomIndex]
+        end
+    
+        local fontsList = {
+            "DenkOne",
+            "GrenzeGotisch",
+            "SourceSans"    
+        }
+    
+        local function pickRandomFont()
+            local randomIndex = math.random(1, #fontsList)
+            return fontsList[randomIndex]
+        end
+
         wait(.2)
-        local function sendchat(msg)
+        local function send_Remote(msg)
             local TheStall = LocalStall
-            local imageIDs = {
+
+            --[[local imageIDs = {
                 "5888213893",
                 "13886197679",
                 "12875268373",
@@ -4756,7 +4748,7 @@ wait(1.5)
             local function pickRandomImage()
                 local randomIndex = math.random(1, #imageIDs)
                 return imageIDs[randomIndex]
-            end
+            end--]]
 
             function getStall()
                 for i,v in pairs(game:GetService("Workspace").Stalls:GetChildren()) do
@@ -4780,13 +4772,14 @@ wait(1.5)
             wait()
             local args = {
                 [1] = convert(msg),
-                [2] = tostring(pickRandomImage())
+                [2] = tostring(pickRandomFont()),
+                [3] = tostring(pickRandomColor())
             }
             
-            Stall:WaitForChild("Edit"):FireServer(unpack(args))
+            Booth_Remote:FireServer(unpack(args))
         end
 
-        sendchat(enteredTextInput)
+        send_Remote(enteredTextInput)
     end})
 
     Tab4:AddButton({
