@@ -1294,7 +1294,7 @@ wait(1.5)
             local Modify_Username_Event = Replicated_Storage:FindFirstChild("ModifyUsername") or Replicated_Storage:WaitForChild("ModifyUsername")
             local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
             local LocalPlayer = Players.LocalPlayer
-            local lPlayer_Name
+            local lPlayer_Name = LocalPlayer.Name
 
             getgenv().FlickAvatar = false
             wait(1)
@@ -1502,48 +1502,6 @@ wait(1.5)
             end
         end
     end})
-    
-    --[[Tab11:AddTextbox({
-    Name = "UnClaim A Booth (WORKING!)",
-    Default = "User or Display",
-    TextDisappear = true,
-    Callback = function(LolUnClaim)
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-        local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local Stalls = Workspace:WaitForChild("Stalls")
-        local bruhGuy = findplr(LolUnClaim)
-        
-        local function fireAndUnclaimStall(stall)
-            local proximityPrompt = stall:FindFirstChild("ProxPart") and stall.ProxPart:FindFirstChild("ProximityPrompt")
-
-            proximityPrompt.Enabled = true
-            proximityPrompt.ClickablePrompt = true
-            proximityPrompt.MaxActivationDistance = 18
-            proximityPrompt.RequiresLineOfSight = false
-            proximityPrompt.HoldDuration = 0
-            wait(0.2)
-            if proximityPrompt then
-                Character:PivotTo(stall:GetPivot())
-                wait(0.3)
-                fireproximityprompt(proximityPrompt, 15)
-                wait(0.5)
-                stall:FindFirstChild("CloseStall"):FireServer()
-            end
-        end
-        
-        function unclaimStallByUsername(username)
-            for _, stall in pairs(Stalls:GetChildren()) do
-                local player = stall:FindFirstChild("Player")
-                if player.Value == tostring(username) then
-                    fireAndUnclaimStall(stall)
-                end
-            end
-        end
-        
-        unclaimStallByUsername(bruhGuy.Name)
-    end})--]]
     
     Tab1:AddToggle({
     Name = "Submit Note Bypass (Board)",
