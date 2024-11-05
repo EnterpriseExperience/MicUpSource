@@ -1050,42 +1050,6 @@ wait(1)
         end
     end,})
 
-    function doNoSitFunctions(Character)
-        local function noSitFunc()
-            wait()
-            local humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid") or Character:WaitForChild("Humanoid", 9999)
-            if humanoid and humanoid.Sit then
-                humanoid.Sit = false
-            end
-        end
-        
-        local function nositDiedFunc()
-            repeat wait() until speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
-            if getgenv().noSit then
-                getgenv().noSit:Disconnect()
-            end
-            getgenv().noSit = speaker.Character:FindFirstChildWhichIsA("Humanoid"):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
-        end
-        
-        if getgenv().noSit then getgenv().noSit:Disconnect() end
-        getgenv().noSit = Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
-        
-        if getgenv().nositDied then getgenv().nositDied:Disconnect() end
-        getgenv().nositDied = speaker.CharacterAdded:Connect(nositDiedFunc)        
-    end
-
-    function noSitDisconnectFunc()
-        if getgenv().noSit then
-            getgenv().noSit:Disconnect()
-            getgenv().noSit = nil
-        end
-        
-        if getgenv().nositDied then
-            getgenv().nositDied:Disconnect()
-            getgenv().nositDied = nil
-        end        
-    end
-
     local Button = Tab5:CreateButton({
         Name = "Players Invisible Fix",
         Callback = function()
