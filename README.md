@@ -19,33 +19,7 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 `SO MANY MORE NEW FEATURES NOW!, CHECK THEM OUT BY RUNNING THIS SCRIPT, IN-GAME.`
 
 ## [CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub V4 AND V5 | MIC UP 🔊]:
-`[Client] Mute Player (Works With DisplayNames, Short Names, and Usernames)`
-
-`[Client] Unmute Player (Works With DisplayNames, Short Names, and Usernames)`
-
-`[INFO]: Just type their user and they will be muted/unmuted for you so you don't have to listen to them!`
-
-`[Client] Lighting Features (Shadows, Graphics, etc)`
-
-`[FE] Auto Like Players`
-
-`[FE] Auto Dislike Players`
-
-`[INFO]: Just toggle the button and every avatar that comes up will be auto disliked/liked. (behind the bathrooms)`
-
-`[FE] Spam Hoverboard`
-
-`[FE] Spam Tools`
-
-`[Client] Mute All/Unmute All`
-
-`[FE] Mute Yourself/Unmute Yourself`
-
-`[FE] Shuffle Voice Changer Voices (sounds like static/robotic shit lol)`
-
-`[FE] Put Bypassed Note(s)`
-
-`AND SO MUCH MORE FEATURES TO ENJOY!`
+`Check Discord server for features!`
 
 
 ## Did some reworking and I have released a LIVE version of the script so no more picking and choosing for your stupid ass executor!
@@ -60,7 +34,7 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 `[BYPASSES ARE WORKING, AND NEW BYPASSES ARE NOW IN THE SCRIPT TO!]`
 
-`[SUPPORTS EVERY EXECUTOR!]`
+`[SUPPORTS EVERY EXECUTOR!] [OFFICIALLY!]`
 
 `[FE FEATURES AND CLIENT FEATURES (FUN FOR ALL!)]`
 
