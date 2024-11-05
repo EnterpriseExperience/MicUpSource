@@ -1,8 +1,5 @@
-## [V4 OLD Loadstring, Now reverts to V5 automatically]:
-https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/bruhLoadstring
-
-## [V5 Loadstring, NEW AND REVAMPED!]:
-https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/BETA-Loading
+## [V6 Loadstring, BETA RELEASE!]:
+https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/new-loadstring
 ## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Support For Every Executor!]
 
 https://discord.gg/VJh3kkYzBn
