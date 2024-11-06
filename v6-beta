@@ -430,134 +430,78 @@ wait(1)
     wait(0.4)
     Players.RespawnTime = 0
     wait(0.3)
-    getgenv().OtherAntiAfk = false
-    getgenv().AntiAfkScript = false
-    wait(0.5)
     local GC = getconnections or get_signal_cons
+
     if GC then
-        for i,v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
+        for i, v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
             if v["Disable"] then
                 v["Disable"](v)
-                    wait()
-                    Rayfield:Notify({
-                        Title = "Idled!",
-                        Content = "Disabling Event...",
-                        Duration = 7,
-                        Image = 4483362458,
-                        Actions = {
-                        Ignore = {
-                            Name = "Okay!",
-                            Callback = function()
-                                print("...")
-                            end
-                        },
-                        },
-                    })
-                    wait()
-                    getgenv().AntiAfkScript = true
-                end
-            end
-        end
-        local GC = getconnections or get_signal_cons
-        if getgenv().AntiAfkScript == false then
-            for i,v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
-                if v["Disconnect"] then
-                    v["Disconnect"](v)
-                    wait()
-                    Rayfield:Notify({
-                        Title = "Idled!",
-                        Content = "Disconnecting Event...",
-                        Duration = 7,
-                        Image = 4483362458,
-                        Actions = {
-                        Ignore = {
-                            Name = "Okay!",
-                            Callback = function()
-                                print("...")
-                            end
-                            },
-                        },
-                    })
-                else
-                    getgenv().AntiAfkScript = false
-                end
-            end
-        else
-            print("Anti-AFK Already Loaded.")
-        end
-        wait(0.3)
-        if getgenv().AntiAfkScript == true then
-            Rayfield:Notify({
-                Title = "Success!",
-                Content = "We have enabled Anti-AFK",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
-        end
-        wait()
-        if getgenv().OtherAntiAfk == false and getgenv().AntiAfkScript == false then
-            Rayfield:Notify({
-                Title = "Starting...",
-                Content = "AntiAFK (2) is loading...",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
-            wait()
-            local VirtualUser = game:GetService("VirtualUser")
-            game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                wait()
                 Rayfield:Notify({
                     Title = "Idled!",
-                    Content = "Clicking button...",
+                    Content = "Disabling Event...",
                     Duration = 7,
                     Image = 4483362458,
                     Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
+                        Ignore = {
+                            Name = "Okay!",
+                            Callback = function() print("...") end
+                        },
                     },
                 })
-                VirtualUser:CaptureController()
-                VirtualUser:ClickButton2(Vector2.new())
-                wait(0.1)
-                getgenv().OtherAntiAfk = false
-                wait(0.1)
-                Rayfield:Notify({
-                    Title = "Success!",
-                    Content = "Clicked Button (Anti-Idle)",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
-            end)
+                getgenv().AntiAfkScript = true
+            end
         end
-    wait(0.3)
-    if getgenv().AntiAfkScript == true and getgenv().OtherAntiAfk == false then
+    else
+        warn("Your executor does not support 'getconnections'! Using VirtualUser for Anti-AFK.")
+        Rayfield:Notify({
+            Title = "Starting...",
+            Content = "AntiAFK (2) is loading with VirtualUser...",
+            Duration = 7,
+            Image = 4483362458,
+            Actions = {
+                Ignore = {
+                    Name = "Okay!",
+                    Callback = function() print("...") end
+                },
+            },
+        })
+
+        local VirtualUser = game:GetService("VirtualUser")
+        game:GetService("Players").LocalPlayer.Idled:Connect(function()
+            Rayfield:Notify({
+                Title = "Idled!",
+                Content = "Clicking button...",
+                Duration = 7,
+                Image = 4483362458,
+                Actions = {
+                    Ignore = {
+                        Name = "Okay!",
+                        Callback = function() print("...") end
+                    },
+                },
+            })
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new())
+            wait(0.1)
+            Rayfield:Notify({
+                Title = "Success!",
+                Content = "Clicked Button (Anti-Idle)",
+                Duration = 7,
+                Image = 4483362458,
+                Actions = {
+                    Ignore = {
+                        Name = "Okay!",
+                        Callback = function() print("...") end
+                    },
+                },
+            })
+            getgenv().OtherAntiAfk = true
+        end)
+    end
+
+    wait(0.4)
+    if getgenv().AntiAfkScript then
         Rayfield:Notify({
             Title = "Success!",
             Content = "AntiAFK (1) has loaded!",
@@ -565,15 +509,14 @@ wait(1)
             Image = 4483362458,
             Actions = {
                 Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
+                    Name = "Okay!",
+                    Callback = function() print("...") end
                 },
             },
         })
     end
-    if getgenv().OtherAntiAfk == true and getgenv().AntiAfkScript == false then
+
+    if getgenv().OtherAntiAfk then
         Rayfield:Notify({
             Title = "Success!",
             Content = "AntiAFK (2) has loaded.",
@@ -581,15 +524,14 @@ wait(1)
             Image = 4483362458,
             Actions = {
                 Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
+                    Name = "Okay!",
+                    Callback = function() print("...") end
                 },
             },
         })
     end
-    if getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
+
+    if not getgenv().AntiAfkScript and not getgenv().OtherAntiAfk then
         Rayfield:Notify({
             Title = "Failed!",
             Content = "Could not load any Anti-AFK Scripts.",
@@ -597,28 +539,9 @@ wait(1)
             Image = 4483362458,
             Actions = {
                 Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
+                    Name = "Okay!",
+                    Callback = function() print("...") end
                 },
-            },
-        })
-    end
-    wait(0.2)
-    if getgenv().AntiAfkScript == true or getgenv().OtherAntiAfk == true then
-        Rayfield:Notify({
-            Title = "Cleaned-Up",
-            Content = "You have already loaded anti-afk, Continue...",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
             },
         })
     end
