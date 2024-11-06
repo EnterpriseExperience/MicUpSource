@@ -458,6 +458,7 @@ wait(1)
                 end
             end
         end
+        local GC = getconnections or get_signal_cons
         if getgenv().AntiAfkScript == false then
             for i,v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
                 if v["Disconnect"] then
