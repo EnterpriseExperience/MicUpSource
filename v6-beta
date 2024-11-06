@@ -18,49 +18,55 @@ local player = Players.LocalPlayer
 
 -- [] -->> Check supported functions in the current executor, that are necessary for the script. <<-- [] --
 
-function checkNecessaryFunctions()
-    if cloneref then
-        print("cloneref [Success]")
-    else
-        warn("cloneref [Failed]")
-    end
-    
-    if writefile then
-        print("writefile [Success]")
-    else
-        warn("writefile [Failed]")
-    end
-
-    if readfile then
-        print("readfile [Success]")
-    else
-        warn("readfile [Failed]")
-    end
-
-    if delfile then
-        print("delfile [delete-file] [Success]")
-    else
-        warn("delfile [delete-file] [Failed]")
-    end
-
-    if AllClipboards then
-        print("setclipboard [Success]")
-    else
-        warn("setclipboard [Failed]")
-    end
-
-    if httprequest_Init then
-        print("httprequest [Success]")
-    else
-        warn("httprequest [Failed]")
-    end
-end
-
-if game:IsLoaded() then
-    checkNecessaryFunctions()
+if getgenv().has_checked_funcs then
+    print("Functions Checking | True") 
 else
-    repeat wait() until game:IsLoaded()
-    checkNecessaryFunctions()
+    function checkNecessaryFunctions()
+        if cloneref then
+            print("cloneref [Success]")
+        else
+            warn("cloneref [Failed]")
+        end
+        
+        if writefile then
+            print("writefile [Success]")
+        else
+            warn("writefile [Failed]")
+        end
+
+        if readfile then
+            print("readfile [Success]")
+        else
+            warn("readfile [Failed]")
+        end
+
+        if delfile then
+            print("delfile [delete-file] [Success]")
+        else
+            warn("delfile [delete-file] [Failed]")
+        end
+
+        if AllClipboards then
+            print("setclipboard [Success]")
+        else
+            warn("setclipboard [Failed]")
+        end
+
+        if httprequest_Init then
+            print("httprequest [Success]")
+        else
+            warn("httprequest [Failed]")
+        end
+    end
+
+    if game:IsLoaded() then
+        checkNecessaryFunctions()
+        getgenv().has_checked_funcs = true
+    else
+        repeat wait() until game:IsLoaded()
+        checkNecessaryFunctions()
+        getgenv().has_checked_funcs = true
+    end
 end
 
 -- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
@@ -241,7 +247,9 @@ local function loadGUI()
         NewFolder.Parent = Workspace
     end
 
-    if not Workspace:FindFirstChild("PartStorage"):FindFirstChildOfClass("Part") then
+    if getgenv().baseplate_init then
+        print("Baseplate was already created.")
+    else
         local NewFolder = Workspace:FindFirstChild("PartStorage")
         local newChunk = Instance.new("Part")
         newChunk.Name = "BASEPLATE_CLONE_ANTI_VOID"
@@ -250,17 +258,16 @@ local function loadGUI()
         newChunk.Anchored = true
         newChunk.CanCollide = true
         newChunk.Parent = NewFolder
-    else
-        warn("BASEPLATE is already created.")
+        getgenv().baseplate_init = true
     end
     wait(0.5)
     -- [] -->> Initialize Emote/Rizz Configuration. [Including Keybinds.] <<-- [] --
 
-    local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+    local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-    local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace
+    local Workspace = game:GetService("Workspace")
     wait(0.5)
     if writefile and readfile then
         print("writefile function (unpacked data): "..tostring(writefile).." | readfile function (unpacked data): "..tostring(readfile))
@@ -418,7 +425,7 @@ wait(1)
         warn("000 >>> 000 >>> nil")
     end
     wait(0.3)
-    local StarterPlayer = game:GetService("StarterPlayer") or cloneref(game:GetService("StarterPlayer"))
+    local StarterPlayer = game:GetService("StarterPlayer")
     StarterPlayer.CharacterUseJumpPower = true
     wait(0.4)
     Players.RespawnTime = 0
@@ -427,49 +434,58 @@ wait(1)
     getgenv().AntiAfkScript = false
     wait(0.5)
     local GC = getconnections or get_signal_cons
-    if GC and getgenv().OtherAntiAfk == false and getgenv().AntiAfkScript == false then
+    if GC then
         for i,v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
-            wait()
             if v["Disable"] then
                 v["Disable"](v)
-                wait()
-                Rayfield:Notify({
-                    Title = "Idled!",
-                    Content = "Disabling Event...",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
-            elseif v["Disconnect"] then
-                v["Disconnect"](v)
-                wait()
-                Rayfield:Notify({
-                    Title = "Idled!",
-                    Content = "Disconnecting Event...",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
+                    wait()
+                    Rayfield:Notify({
+                        Title = "Idled!",
+                        Content = "Disabling Event...",
+                        Duration = 7,
+                        Image = 4483362458,
+                        Actions = {
+                        Ignore = {
+                            Name = "Okay!",
+                            Callback = function()
+                                print("...")
+                            end
+                        },
+                        },
+                    })
+                    wait()
+                    getgenv().AntiAfkScript = true
+                end
             end
         end
+        if getgenv().AntiAfkScript == false then
+            for i,v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
+                if v["Disconnect"] then
+                    v["Disconnect"](v)
+                    wait()
+                    Rayfield:Notify({
+                        Title = "Idled!",
+                        Content = "Disconnecting Event...",
+                        Duration = 7,
+                        Image = 4483362458,
+                        Actions = {
+                        Ignore = {
+                            Name = "Okay!",
+                            Callback = function()
+                                print("...")
+                            end
+                            },
+                        },
+                    })
+                else
+                    getgenv().AntiAfkScript = false
+                end
+            end
+        else
+            print("Anti-AFK Already Loaded.")
+        end
         wait(0.3)
-        getgenv().AntiAfkScript = true
-        wait()
-        if GC and getgenv().AntiAfkScript then
+        if getgenv().AntiAfkScript == true then
             Rayfield:Notify({
                 Title = "Success!",
                 Content = "We have enabled Anti-AFK",
@@ -484,26 +500,9 @@ wait(1)
                    },
                 },
             })
-        else
-            getgenv().AntiAfkScript = false
-            wait(0.2)
-            Rayfield:Notify({
-                Title = "Failed!",
-                Content = "This method will not work for you.",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
         end
         wait()
-        if not GC and getgenv().AntiAfkScript == false then
+        if getgenv().OtherAntiAfk == false and getgenv().AntiAfkScript == false then
             Rayfield:Notify({
                 Title = "Starting...",
                 Content = "AntiAFK (2) is loading...",
@@ -519,7 +518,7 @@ wait(1)
                 },
             })
             wait()
-            local VirtualUser = game:GetService("VirtualUser") or cloneref(game:GetService("VirtualUser")) or game.VirtualUser or game:FindService("VirtualUser")
+            local VirtualUser = game:GetService("VirtualUser")
             game:GetService("Players").LocalPlayer.Idled:Connect(function()
                 Rayfield:Notify({
                     Title = "Idled!",
@@ -538,6 +537,8 @@ wait(1)
                 VirtualUser:CaptureController()
                 VirtualUser:ClickButton2(Vector2.new())
                 wait(0.1)
+                getgenv().OtherAntiAfk = false
+                wait(0.1)
                 Rayfield:Notify({
                     Title = "Success!",
                     Content = "Clicked Button (Anti-Idle)",
@@ -554,56 +555,57 @@ wait(1)
                 })
             end)
         end
-        wait(0.3)
-        getgenv().OtherAntiAfk = true
-        wait()
-        if getgenv().AntiAfkScript == true and getgenv().OtherAntiAfk == false then
-            Rayfield:Notify({
-                Title = "Success!",
-                Content = "AntiAFK (1) has loaded!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
+    wait(0.3)
+    if getgenv().AntiAfkScript == true and getgenv().OtherAntiAfk == false then
+        Rayfield:Notify({
+            Title = "Success!",
+            Content = "AntiAFK (1) has loaded!",
+            Duration = 7,
+            Image = 4483362458,
+            Actions = {
+                Ignore = {
+                Name = "Okay!",
+                Callback = function()
+                    print("...")
+                end
                 },
-            })
-        elseif getgenv().OtherAntiAfk == true and getgenv().AntiAfkScript == false then
-            Rayfield:Notify({
-                Title = "Success!",
-                Content = "AntiAFK (2) has loaded.",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
+            },
+        })
+    end
+    if getgenv().OtherAntiAfk == true and getgenv().AntiAfkScript == false then
+        Rayfield:Notify({
+            Title = "Success!",
+            Content = "AntiAFK (2) has loaded.",
+            Duration = 7,
+            Image = 4483362458,
+            Actions = {
+                Ignore = {
+                Name = "Okay!",
+                Callback = function()
+                    print("...")
+                end
                 },
-            })
-        elseif getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
-            Rayfield:Notify({
-                Title = "Failed!",
-                Content = "Could not load any Anti-AFK Scripts.",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
+            },
+        })
+    end
+    if getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
+        Rayfield:Notify({
+            Title = "Failed!",
+            Content = "Could not load any Anti-AFK Scripts.",
+            Duration = 7,
+            Image = 4483362458,
+            Actions = {
+                Ignore = {
+                Name = "Okay!",
+                Callback = function()
+                    print("...")
+                end
                 },
-            })
-        end
-    elseif getgenv().AntiAfkScript == true or getgenv().OtherAntiAfk == true then
+            },
+        })
+    end
+    wait(0.2)
+    if getgenv().AntiAfkScript == true or getgenv().OtherAntiAfk == true then
         Rayfield:Notify({
             Title = "Cleaned-Up",
             Content = "You have already loaded anti-afk, Continue...",
@@ -673,102 +675,115 @@ wait(1)
     wait()
     local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
     local ReplicatedStorage = game:GetService("ReplicatedStorage") or clonref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
-    Rayfield:Notify({
-        Title = "Modifying Scripts...",
-        Content = "We are modifying game scripts, hold on...",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
+    wait(0.2)
+    getgenv().scripts_init = false
     wait(0.5)
-    for _, descendant in pairs(workspace:GetDescendants()) do
-        if descendant:IsA("Script") and descendant.Name == "Kill" then
-            local parent = descendant.Parent
-            local touchInterest = parent:FindFirstChild("TouchInterest")
-            if touchInterest then
-                touchInterest:Destroy()
+    if getgenv().scripts_init then
+        print("Scripts we're already modified.")
+    else
+        Rayfield:Notify({
+            Title = "Modifying Scripts...",
+            Content = "We are modifying game scripts, hold on...",
+            Duration = 7,
+            Image = 4483362458,
+            Actions = {
+               Ignore = {
+                Name = "Okay!",
+                Callback = function()
+                    print("...")
+                end
+               },
+            },
+        })
+        wait(0.2)
+        for _, descendant in pairs(workspace:GetDescendants()) do
+            if descendant:IsA("Script") and descendant.Name == "Kill" then
+                local parent = descendant.Parent
+                local touchInterest = parent:FindFirstChild("TouchInterest")
+                if touchInterest then
+                    touchInterest:Destroy()
+                end
+                descendant:Destroy()
+                getgenv().scripts_init = true
             end
-            descendant:Destroy()
+        end
+    end
+    wait(0.3)
+    if getgenv().lighting_data then
+        print("lighting_data | true")
+    else
+        function Lighting_Modify()
+            Rayfield:Notify({
+                Title = "Hang On...",
+                Content = "We are modifying Lighting...",
+                Duration = 7,
+                Image = 4483362458,
+                Actions = {
+                Ignore = {
+                    Name = "Okay!",
+                    Callback = function()
+                        print("...")
+                    end
+                },
+                },
+            })
+            wait()
+            local lighting = game:GetService("Lighting")
+            
+            lighting.ClockTime = 0
+            wait(0.2)
+            lighting.ClockTime = 3
+            wait(0.2)
+            lighting.ClockTime = 9
+            wait(0.2)
+            lighting.Brightness = 3
+            wait(0.2)
+            lighting.Brightness = 0
+            wait(0.2)
+            lighting.ClockTime = 8
+            wait(.2)
+            if lighting.ClockTime == 8 then
+                Rayfield:Notify({
+                    Title = "Success!",
+                    Content = "We have configured Lighting.",
+                    Duration = 7,
+                    Image = 4483362458,
+                    Actions = {
+                    Ignore = {
+                        Name = "Okay!",
+                        Callback = function()
+                            print("...")
+                        end
+                    },
+                    },
+                })
+                wait(0.2)
+                getgenv().lighting_data = true
+            else
+                Rayfield:Notify({
+                    Title = "Failed!",
+                    Content = "An error has occurred, we're sorry.",
+                    Duration = 7,
+                    Image = 4483362458,
+                    Actions = {
+                    Ignore = {
+                        Name = "Okay!",
+                        Callback = function()
+                            print("...")
+                        end
+                    },
+                    },
+                })
+            end
         end
     end
     wait(0.5)
-    Rayfield:Notify({
-        Title = "Hang On...",
-        Content = "We are modifying Lighting...",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
-    wait()
-    getgenv().GetDataResetLighting = false
-    wait(.4)
-    warn("RESET_LIGHTING_DATA | False")
-    wait()
-    local lighting = game:GetService("Lighting")
-    
-    lighting.ClockTime = 0
-    wait(0.2)
-    lighting.ClockTime = 3
-    wait(0.2)
-    lighting.ClockTime = 9
-    wait(0.2)
-    lighting.Brightness = 3
-    wait(0.2)
-    lighting.Brightness = 0
-    wait(0.2)
-    lighting.ClockTime = 8
-    wait(.2)
-    if lighting.ClockTime == 8 then
-        Rayfield:Notify({
-            Title = "Success!",
-            Content = "We have configured Lighting.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
-        wait(0.2)
-        getgenv().GetDataResetLighting = true
-    else
-        Rayfield:Notify({
-            Title = "Failed!",
-            Content = "An error has occurred, we're sorry.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
-    end
-    if getgenv().GetDataResetLighting == true then
+    if getgenv().lighting_data then
         print("We have already reset lighting, skipping...")
-        wait(0.2)
+        wait(0.1)
         warn("getNumberOver(tonumber, GET_ID, PID) /// nil >= ???")
+    else
+        Lighting_Modify()
     end
     wait()
     warn("LIGHTING FINISHED.")
@@ -785,7 +800,7 @@ wait(1)
         "Laylay_4kla"
     }
     wait()
-    local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+    local Players = game:GetService("Players")
     -- [] -->> Functions <<-- [] --
     local cmdp = Players
     local cmdlp = cmdp.LocalPlayer
@@ -2753,9 +2768,9 @@ wait(1)
     Callback = function()
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
     end,})
-    wait(0.3)
-    getgenv().hasLoadedAntiLog = false
-    if getgenv().hasLoadedAntiLog == false then
+    if getgenv().hasLoadedAntiLog then
+        warn("You have already loaded AntiChat Logger!")
+    else
         loadstring(game:HttpGet("https://raw.githubusercontent.com/vqmpjayZ/More-Scripts/main/Anti-Chat-Logger", true))()
         wait(0.5)
         local TextChatService = game:GetService("TextChatService") or cloneref(game:GetService("TextChatService")) or game.TextChatService or game:FindService("TextChatService")
@@ -2772,8 +2787,6 @@ wait(1)
         end
         wait(0.2)
         getgenv().hasLoadedAntiLog = true
-    else
-        warn("You have already loaded AntiChat Logger!")
     end
     wait(0.5)
     local ChatBypassTextInput = Tab4:CreateInput({
@@ -3177,7 +3190,7 @@ wait(1)
         Part = Instance.new("Part", Workspace_Service)
         Part.Anchored = true
         Part.Size = Vector3.new(200, 1, 200)
-        Part.CFrame = CFrame.new(-2500, -2500, -2500)
+        Part.CFrame = CFrame.new(999, 999, 999)
         Part.CanCollide = true
         Part.Name = "TheBaseplate"
         
@@ -3219,7 +3232,7 @@ wait(1)
             Part = Instance.new("Part", Workspace_Service)
             Part.Anchored = true
             Part.Size = Vector3.new(200, 1, 200)
-            Part.CFrame = CFrame.new(-2500, -2500, -2500)
+            Part.CFrame = CFrame.new(999, 999, 999)
             Part.CanCollide = true
             Part.Name = "Secondary BasePlate"
             FakeCharacter.Parent = Workspace_Service
@@ -5349,32 +5362,27 @@ wait(1)
     local Release_Date = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "V6 Released On: 11/5/2024"})
     local Scammers = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "If you bought this, you got scammed."})
     local ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."})
-    wait(0.5)
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local HRPBase = Character:FindFirstChild("HumanoidRootPart")
-    LocalPlayer.CameraMaxZoomDistance = 800000
-    wait(0.5)
-    print(tostring(LocalPlayer.CameraMaxZoomDistance))
+    wait(0.2)
+    if getgenv().camera_zoom_data then
+        print("CameraMaxZoomDistance - Data | True")
+    else
+        getgenv().camera_zoom_data = false
+        wait(0.5)
+        
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HRPBase = Character:FindFirstChild("HumanoidRootPart")
+        
+        LocalPlayer.CameraMaxZoomDistance = 800000
+        getgenv().camera_zoom_data = true
+        wait(0.1)
+    end    
 end
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
-local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-local getOldCF = HumanoidRootPart.CFrame
 wait(0.5)
 loadGUI()
 wait(0.3)
 print("Running...")
-wait(0.2)
-game:GetService("StarterGui"):SetCore("SendNotification",{
-	Title = "Resetting Lighting...",
-	Text = "We are going to reset Lighting settings.",
-	Icon = "rbxassetid://1234567890",
-    Duration = 10
-})
 wait(0.3)
 local ws = game:GetService("Workspace")
 local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
@@ -5384,90 +5392,52 @@ if getFolder and getpart then
 else
     warn("ANTI-VOID_MISSING? ---")
 end
-wait(0.2)
-local Lighting = game:GetService("Lighting") 
-local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
+wait(0.1)
+if getgenv().Invis_Data then
+    warn("Already Set Invis_Data")
+else
+    getgenv().Invis_Data = false
+    wait(0.3)
 
-Lighting.ClockTime = 14.5
-wait()
-Lighting.Brightness = 3
-wait()
-Lighting.Atmosphere.Density = 0.3
-wait()
-Lighting.Atmosphere.Offset = 0.25
-wait()
-Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
-wait()
-Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
-wait()
-Lighting.Atmosphere.Glare = 0
-wait()
-Lighting.Atmosphere.Haze = 0
-wait()
-Lighting.Sky.MoonAngularSize = 11
-wait()
-Lighting.Sky.StarCount = 3000
-wait()
-Lighting.Sky.SunAngularSize = 11
-wait()
-Lighting.Bloom.Intensity = 1
-wait()
-Lighting.Bloom.Enabled = true
-wait()
-Lighting.Bloom.Size = 24
-wait()
-Lighting.Bloom.Threshold = 2
-wait()
-Lighting.DepthOfField.Enabled = false
-wait()
-Lighting.DepthOfField.FarIntensity = 0.1
-wait()
-Lighting.DepthOfField.FocusDistance = 0.05
-wait()
-Lighting.DepthOfField.InFocusRadius = 30
-wait()
-Lighting.DepthOfField.NearIntensity = 0.75
-wait()
-Lighting.SunRays.Enabled = true
-wait()
-Lighting.SunRays.Intensity = 0.01
-wait()
-Lighting.SunRays.Spread = 0.1
-wait()
-local function makeCharacterVisible(character)
-    for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.Transparency = 0
-            part.CanCollide = false
+    local function makeCharacterVisible(character)
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 0
+                part.CanCollide = false
+            end
         end
     end
-end
 
-for _, player in pairs(game.Players:GetPlayers()) do
-    if player ~= game.Players.LocalPlayer and player.Character then
-        makeCharacterVisible(player.Character)
-    end
-end
-wait()
-local function makePartInvisible(part)
-    part.Transparency = 1
-    part.CanCollide = false
-end
-
-local function makeHumanoidRootPartInvisible(character)
-    local player = game.Players:GetPlayerFromCharacter(character)
-    if player and player ~= game.Players.LocalPlayer then
-        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-        if humanoidRootPart then
-            makePartInvisible(humanoidRootPart)
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character then
+            makeCharacterVisible(player.Character)
         end
     end
-end
+    wait()
 
-for _, player in pairs(game.Players:GetPlayers()) do
-    if player.Character then
-        makeHumanoidRootPartInvisible(player.Character)
+    local function makePartInvisible(part)
+        part.Transparency = 1
+        part.CanCollide = false
     end
+
+    local function makeHumanoidRootPartInvisible(character)
+        local player = game.Players:GetPlayerFromCharacter(character)
+        if player and player ~= game.Players.LocalPlayer then
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                makePartInvisible(humanoidRootPart)
+            end
+        end
+    end
+
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character then
+            makeHumanoidRootPartInvisible(player.Character)
+        end
+    end
+    
+    getgenv().Invis_Data = true
+    wait(0.1)
 end
 wait(0.5)
 local GetWorkspace = game:GetService("Workspace")
@@ -5498,72 +5468,46 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 	Icon = "rbxassetid://1234567890",
     Duration = 10
 })
-wait(.3)
-print("Zacks Easy Hub [OUTPUT]: | Unmuting All...")
-wait(.5)
-for i, v in pairs(game.Players:GetPlayers()) do
-    if v ~= game.Players.LocalPlayer and v:FindFirstChild("AudioDeviceInput") then
-        local dude = v.AudioDeviceInput
-        wait()
-        print(tostring(dude)..", Player: "..tostring(dude.Parent)..", UserID: "..tostring(dude.Parent.UserId))
-        wait()
-        dude.Muted = false
-        wait()
-        print("Zacks Easy Hub | [OUTPUT]: New Changes...")
-        wait()
-        print(tostring(dude)..", Player: "..tostring(dude.Parent)..", UserID: "..tostring(dude.Parent.UserId))
-    end
-end
-wait(0.3)
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-getgenv().getBasicTable = getgenv().getBasicTable or {}
-
-for i, v in pairs(game.Players:GetChildren()) do
-    if LocalPlayer:IsFriendsWith(v.UserId) then
-        if getgenv().getBasicTable[v.Name] == nil then
-            getgenv().getBasicTable[v.Name] = v
-            wait(0.1)
-            print(tostring(v.Name) .. ", has been added! IsFriendsWith: " .. tostring(LocalPlayer.UserId))
-        else
-            print(tostring(v.Name) .. " is already in the table, skipping...")
+if getgenv().Muted_Data then
+    print("Already Setup Unmute All.")
+else
+    getgenv().Muted_Data = false
+    wait(0.3)
+    print("Zacks Easy Hub [OUTPUT]: | Unmuting All...")
+    wait(0.3)
+    
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player:FindFirstChild("AudioDeviceInput") then
+            local audioDevice = player.AudioDeviceInput
+            wait()
+            print(tostring(audioDevice) .. ", Player: " .. tostring(audioDevice.Parent) .. ", UserID: " .. tostring(audioDevice.Parent.UserId))
+            wait()
+            audioDevice.Muted = false
+            wait()
+            print("Zacks Easy Hub | [OUTPUT]: New Changes...")
+            wait()
+            print(tostring(audioDevice) .. ", Player: " .. tostring(audioDevice.Parent) .. ", UserID: " .. tostring(audioDevice.Parent.UserId))
         end
-    else
-        print("No friends were found to whitelist! Continuing...")
     end
+    
+    getgenv().Muted_Data = true
 end
-wait(1)
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
-local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-wait(.3)
-Humanoid.Health = 0
-wait(0.3)
-Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(function()
+wait(0.4)
+if getgenv().Has_Died_Func then
+    warn("Already setup death function.")
+else
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
     local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-    print("Humanoid Died, Waiting...")
-    wait(0.5)
-    repeat wait() until LocalPlayer and Character and Humanoid and HumanoidRootPart and Humanoid.Health >= 90 and HumanoidRootPart ~= nil
-    wait()
-    if Character:FindFirstChildWhichIsA("Humanoid") and Humanoid and HumanoidRootPart then
-        LocalPlayer.CharacterAdded:Connect(function(Char)
-            print("Character Loaded Successfully!")
-            wait()
-            HumanoidRootPart.CFrame = getOldCF
-        end)
-    end
-end)
-wait(2.5)
-repeat wait() until Character and Character:FindFirstChildWhichIsA("Humanoid") and Humanoid and Character:FindFirstChild("HumanoidRootPart") and HumanoidRootPart
-wait(0.3)
-Character:FindFirstChild("HumanoidRootPart").CFrame = getOldCF
+    
+    wait(0.3)
+    Humanoid.Health = 0
+    getgenv().Has_Died_Func = true
+    wait(0.1)
+    print("Died Func setup")
+end
 wait(0.5)
 print("Successfully ran!")
 wait(1)
