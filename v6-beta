@@ -2948,6 +2948,12 @@ wait(1)
         end
     end,})
 
+    local DelInventory = Tab5:CreateButton({
+    Name = "Delete Inventory",
+    Callback = function()
+        game:GetService("ReplicatedStorage"):WaitForChild("DeleteInventory"):FireServer()
+    end,})
+
     local GrabEverything = Tab5:CreateButton({
     Name = "Grab All Tools (Free)",
     Callback = function()
