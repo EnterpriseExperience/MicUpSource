@@ -101,8 +101,6 @@ if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
             getgenv().getLoopKick = false
             wait(0.2)
             getgenv().LmaoGetMuted = false
-            wait(0.2)
-            LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
             wait(1)
             loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
         end}
