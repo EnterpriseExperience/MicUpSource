@@ -603,7 +603,7 @@ wait(1)
     getgenv().scripts_init = false
     wait(0.5)
     if getgenv().scripts_init then
-        print("Scripts we're already modified.")
+        warn("Scripts we're already modified.")
     else
         Rayfield:Notify({
             Title = "Modifying Scripts...",
@@ -1406,8 +1406,6 @@ wait(1)
             local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
             local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
             
-            repeat wait() until getFolder and getpart
-            
             if getpart and getFolder then
                 getpart.Transparency = 0
                 wait(0.2)
@@ -1433,9 +1431,9 @@ wait(1)
                     for _, color in ipairs(colors) do
                         local tween = TweenService:Create(getpart, tweenInfo, {Color = color})
                         tween:Play()
-                        tween.Completed:Wait()
+                        wait(0.1)
                     end
-                end
+                end            
             else
                 getgenv().StartRainbowPart = false
                 return warn("nil | Baseplate")
@@ -1451,6 +1449,44 @@ wait(1)
             getpart.BrickColor = BrickColor.new("Medium stone grey")
         end
     end,})
+
+    --[[local changeBaseplateColor = Tab16:CreateDropdown({
+    Name = "Change Baseplate Color",
+    Options = {"White", "Red", "Blue", "Green", "Yellow", "Purple", "Brown", "Cyan", "Pink", "Orange", "Teal", "Grey"},
+    CurrentOption = {"Gray"},
+    MultipleOptions = false,
+    Flag = "baseplateColoring",
+    Callback = function(getChangeBaseplateColor)
+        local ws = game:GetService("Workspace")
+        local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
+        local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
+
+        if getChangeBaseplateColor == "White" then
+            getpart.BrickColor = BrickColor.White()
+        elseif getChangeBaseplateColor == "Red" then
+            getpart.BrickColor = BrickColor.Red()
+        elseif getChangeBaseplateColor == "Blue" then
+            getpart.BrickColor = BrickColor.Blue()
+        elseif getChangeBaseplateColor == "Green" then
+            getpart.BrickColor = BrickColor.Green()
+        elseif getChangeBaseplateColor == "Yellow" then
+            getpart.BrickColor = BrickColor.Yellow()
+        elseif getChangeBaseplateColor == "Purple" then
+            getpart.BrickColor = BrickColor.Purple()
+        elseif getChangeBaseplateColor == "Brown" then
+            getpart.BrickColor = BrickColor.Brown()
+        elseif getChangeBaseplateColor == "Cyan" then
+            getpart.BrickColor = BrickColor.Cyan()
+        elseif getChangeBaseplateColor == "Pink" then
+            getpart.BrickColor = BrickColor.Pink()
+        elseif getChangeBaseplateColor == "Orange" then
+            getpart.BrickColor = BrickColor.Orange()
+        elseif getChangeBaseplateColor == "Teal" then
+            getpart.BrickColor = BrickColor.Teal()
+        elseif getChangeBaseplateColor == "Grey" then
+            getpart.BrickColor = BrickColor.Gray()
+        end
+    end,})--]]
 
     local SpinCharBox = Tab2:CreateInput({
     Name = "Spin Character",
@@ -1712,7 +1748,7 @@ wait(1)
         local args = {
             [1] = tostring(beAnyAvatar)
         }
-            
+        
         ModifyUser_Remote:FireServer(unpack(args))
     end,})
 
@@ -1788,6 +1824,10 @@ wait(1)
                 while getgenv().AutoClaimEnabled do
                     local stall = getStall()
                     if stall then
+                        local Players = game:GetService("Players")
+                        local LocalPlayer = Players.LocalPlayer
+                        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+                        local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
                         getgenv().Booth = stall
                         if getgenv().OwnershipConnection then
                             getgenv().OwnershipConnection:Disconnect()
@@ -1807,6 +1847,8 @@ wait(1)
                                 }
                                 
                                 game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                                wait(0.2)
+                                Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
                             end
                         end)
                     else
@@ -2478,6 +2520,8 @@ wait(1)
             end
         end
     end,})
+
+
 
     local CollisionForBaseplate = Tab16:CreateToggle({
     Name = "Turn Collision Off/On",
@@ -5025,26 +5069,20 @@ wait(1)
         userInputService.InputEnded:Connect(onKeyRelease)
     end,})
 
-    if getgenv().AnimPackages then
-        print("Animation-Packages _ DATA | True")
-    else
-        getgenv().AnimPackages = false
-        wait(0.3)
-
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local Animate = Character:FindFirstChild("Animate")
-
-        local Animate = game.Players.LocalPlayer.Character.Animate
+    local function run_anims()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+            
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
-        for i, track in pairs (animtrack) do
+
+        local animtrack = character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        for i, track in pairs(animtrack) do
             track:Stop()
         end
-        wait()
+
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
         Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
@@ -5052,106 +5090,25 @@ wait(1)
         Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
         Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
         Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
+
         wait()
-        game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
+        character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
         wait()
         Animate.Disabled = false
-        wait()
-        local player = game.Players.LocalPlayer
+    end
 
-        local function run_anims()
-            local character = player.Character or player.CharacterAdded:Wait()
-            local Animate = character:WaitForChild("Animate")
-        
-            Animate.Disabled = true
-            wait()
-            Animate.Disabled = false
+    player.CharacterAdded:Connect(run_anims)
 
-            local animtrack = character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
-            for i, track in pairs(animtrack) do
-                track:Stop()
-            end
+    if workspace:FindFirstChild(player.Name) or player.Character then
+        run_anims()
+    end
 
-            Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
-            Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
-            Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
-            Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
-            Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
-            Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
-            Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
-
-            wait()
-            character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
-            wait()
-            Animate.Disabled = false
-        end
-
-        player.CharacterAdded:Connect(run_anims)
-
-        if workspace:FindFirstChild(player.Name) or player.Character then
-            run_anims()
-        end
+    if (LocalPlayer.Name == "M1RD3RCAUGHT" or LocalPlayer.Name == "ItsYoDawgWsgGng") and getgenv().hasOwnerAnims then
+        print("Owner Animation Packages _ DATA | True")
+    elseif (LocalPlayer.Name == "M1RD3RCAUGHT" or LocalPlayer.Name == "ItsYoDawgWsgGng") and not getgenv().hasOwnerAnims then
+        run_owner_anims()
         wait(0.1)
-    end    
-
-    if LocalPlayer.Name == "M1RD3RCAUGHT" or LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().hasOwnerAnims then
-        local Animate = game.Players.LocalPlayer.Character.Animate
-        Animate.Disabled = true
-        wait()
-        Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
-        for i, track in pairs (animtrack) do
-            track:Stop()
-        end
-        wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
-        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
-        wait()
-        game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
-        wait()
-        Animate.Disabled = false
-        wait()
-        local player = game.Players.LocalPlayer
-
-        local function run_anims()
-            local character = player.Character or player.CharacterAdded:Wait()
-            local Animate = character:WaitForChild("Animate")
-        
-            Animate.Disabled = true
-            wait()
-            Animate.Disabled = false
-
-            local animtrack = character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
-            for i, track in pairs(animtrack) do
-                track:Stop()
-            end
-
-            Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
-            Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
-            Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
-            Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
-            Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
-            Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
-            Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
-
-            wait()
-            character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
-            wait()
-            Animate.Disabled = false
-        end
-
-        player.CharacterAdded:Connect(run_anims)
-
-        if workspace:FindFirstChild(player.Name) or player.Character then
-            run_anims()
-        end
-    else
-        warn("Skipped function, unnecessary.")
+        getgenv().hasOwnerAnims = true
     end
 
     local function create_Button(localName, Name, callback) 
