@@ -3001,7 +3001,7 @@ wait(1)
     local GrabEverything = Tab5:CreateButton({
     Name = "Grab All Tools (Free)",
     Callback = function()
-        local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+        local Rep_Storage = game:GetService("ReplicatedStorage")
         local Tool_Event = Rep_Storage:FindFirstChild("ToolEvent") or Rep_Storage:WaitForChild("ToolEvent")
 
         Tool_Event:FireServer("Bag")
@@ -3033,7 +3033,7 @@ wait(1)
         getgenv().shouldGrabTools = true
         while getgenv().shouldGrabTools == true do
             wait()
-            local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+            local Rep_Storage = game:GetService("ReplicatedStorage")
             local Tool_Event = Rep_Storage:FindFirstChild("ToolEvent") or Rep_Storage:WaitForChild("ToolEvent")
 
             local Grab_Tools_List = {
@@ -5039,48 +5039,60 @@ wait(1)
         end
     end,})
     
-    local ShiftToRun = Tab2:CreateButton({
-    Name = "Shift To Run (Speed Coil Alt)",
-    Callback = function()
-        local player = game.Players.LocalPlayer
-        local character = player.Character
-        local humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid") or character:FindFirstChild("Humanoid") or character:FindFirstChildOfClass("Humanoid")
-        local userInputService = game:GetService("UserInputService")
-        
-        local isSprinting = false
-        local walkSpeed = humanoid.WalkSpeed
-        local sprintSpeed = 400
-        
-        local function onKeyPress(input)
-            if input.KeyCode == Enum.KeyCode.LeftShift then
-                isSprinting = true
-                humanoid.WalkSpeed = sprintSpeed
+    local ShiftToRun = Tab2:CreateToggle({
+    Name = "Shift To Run",
+    CurrentValue = false,
+    Flag = "SpeedCoilAlt",
+    Callback = function(speedCoil)
+        if speedCoil then
+            getgenv().getRunningState = true
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid") or character:FindFirstChild("Humanoid")
+            local walkSpeed = 16
+            local runSpeed = 400
+            getgenv().runningEnabled = true
+    
+            local function onShiftPress(input, gameProcessed)
+                if getgenv().runningEnabled and input.KeyCode == Enum.KeyCode.LeftShift then
+                    humanoid.WalkSpeed = runSpeed
+                end
             end
-        end
-        
-        local function onKeyRelease(input)
-            if input.KeyCode == Enum.KeyCode.LeftShift then
-                isSprinting = false
-                humanoid.WalkSpeed = walkSpeed
+    
+            local function onShiftRelease(input, gameProcessed)
+                if getgenv().runningEnabled and input.KeyCode == Enum.KeyCode.LeftShift then
+                    humanoid.WalkSpeed = walkSpeed
+                end
             end
-        end
+    
+            game:GetService("UserInputService").InputBegan:Connect(onShiftPress)
+            game:GetService("UserInputService").InputEnded:Connect(onShiftRelease)
+        else
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
         
-        userInputService.InputBegan:Connect(onKeyPress)
-        userInputService.InputEnded:Connect(onKeyRelease)
+            humanoid.WalkSpeed = 16
+            getgenv().runningEnabled = false
+        end
     end,})
 
     local function run_anims()
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
-            
+
+        if not Animate then return end
+    
         Animate.Disabled = true
-        wait()
+        task.wait()
         Animate.Disabled = false
 
-        local animtrack = character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
-        for i, track in pairs(animtrack) do
-            track:Stop()
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
         end
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
@@ -5090,26 +5102,31 @@ wait(1)
         Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
         Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
         Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
-
-        wait()
-        character:FindFirstChildOfClass("Humanoid"):ChangeState(3)
-        wait()
+    
+        task.wait()
+        if humanoid then
+            humanoid:ChangeState(Enum.HumanoidStateType.Running)
+        end
+        task.wait()
         Animate.Disabled = false
     end
-
+    
+    local player = game.Players.LocalPlayer
     player.CharacterAdded:Connect(run_anims)
-
+    
     if workspace:FindFirstChild(player.Name) or player.Character then
         run_anims()
     end
 
-    if (LocalPlayer.Name == "M1RD3RCAUGHT" or LocalPlayer.Name == "ItsYoDawgWsgGng") and getgenv().hasOwnerAnims then
+    if (player.Name == "M1RD3RCAUGHT" or player.Name == "ItsYoDawgWsgGng") and getgenv().hasOwnerAnims then
         print("Owner Animation Packages _ DATA | True")
-    elseif (LocalPlayer.Name == "M1RD3RCAUGHT" or LocalPlayer.Name == "ItsYoDawgWsgGng") and not getgenv().hasOwnerAnims then
-        run_owner_anims()
-        wait(0.1)
+    elseif (player.Name == "M1RD3RCAUGHT" or player.Name == "ItsYoDawgWsgGng") and not getgenv().hasOwnerAnims then
+        if run_owner_anims then
+            run_owner_anims()
+        end
+        task.wait(0.1)
         getgenv().hasOwnerAnims = true
-    end
+    end    
 
     local function create_Button(localName, Name, callback) 
         local localName = Tab17:CreateButton({
