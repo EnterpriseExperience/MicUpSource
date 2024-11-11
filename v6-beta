@@ -2573,7 +2573,7 @@ wait(1)
     end,})
 
     local quickAvChange = Tab13:CreateToggle({
-    Name = "Change Avatar Quick [Can Lag Server!⚠️]",
+    Name = "Change Avatar Quick [WILL Lag!⚠️]",
     CurrentValue = false,
     Flag = "quickAvChange",
     Callback = function(quickAv)
@@ -5225,12 +5225,12 @@ wait(1)
     local function run_anims()
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
-        local Animate = character:WaitForChild("Animate")
+        local Animate = character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
 
         if not Animate then return end
     
         Animate.Disabled = true
-        task.wait()
+        wait(0.1)
         Animate.Disabled = false
 
         local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -5239,7 +5239,7 @@ wait(1)
                 track:Stop()
             end
         end
-
+        wait(0.2)
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
         Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
@@ -5248,11 +5248,11 @@ wait(1)
         Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
         Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
     
-        task.wait()
+        wait(0.2)
         if humanoid then
             humanoid:ChangeState(3)
         end
-        task.wait()
+        wait()
         Animate.Disabled = false
     end
     
@@ -5269,7 +5269,7 @@ wait(1)
         if run_owner_anims then
             run_owner_anims()
         end
-        task.wait(0.1)
+        wait(0.1)
         getgenv().hasOwnerAnims = true
     end    
 
