@@ -5250,7 +5250,7 @@ wait(1)
     
         task.wait()
         if humanoid then
-            humanoid:ChangeState(Enum.HumanoidStateType.Running)
+            humanoid:ChangeState(3)
         end
         task.wait()
         Animate.Disabled = false
