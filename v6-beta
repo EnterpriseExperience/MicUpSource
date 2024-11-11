@@ -3012,48 +3012,44 @@ wait(1)
     CurrentValue = false,
     Flag = "LikingOnlyFriends",
     Callback = function(myFriendsLiked)
-        local Workspace_Service = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
-        local Avatar_UI = Workspace_Service:FindFirstChild("AvatarUI") or Workspace_Service:WaitForChild("AvatarUI")
-        local Like_Button = Avatar_UI:FindFirstChild("LikeButton") or Avatar_UI:WaitForChild("LikeButton")
-        local Click_Detector_Input = Like_Button:FindFirstChild("ClickDetector") or Like_Button.ClickDetector or Like_Button:FindFirstChildWhichIsA("ClickDetector") or Like_Button:WaitForChild("ClickDetector") or Like_Button:FindFirstChildOfClass("ClickDetector")
-        local Avatar_Part_UI = Avatar_UI:FindFirstChild("AvatarUI") or Avatar_UI:WaitForChild("AvatarUI") or Avatar_UI:FindFirstChildOfClass("Part") or Avatar_UI:FindFirstChildWhichIsA("Part")
-        local Image_Label = Avatar_Part_UI:FindFirstChild("SurfaceGui"):FindFirstChild("ImageLabel") or Avatar_Part_UI:WaitForChild("SurfaceGui"):WaitForChild("ImageLabel") or Avatar_Part_UI:FindFirstChildWhichIsA("SurfaceGui"):FindFirstChildOfClass("ImageLabel")
-        
-        function Get_Friend_Func()
-            local Players = game:GetService("Players")
-            local Local_Player = Players.LocalPlayer
-
-            for i,v in pairs(Players:GetChildren()) do
-                if v:IsFriendsWith(Local_Player.UserId) then
-                    return v
-                end
-            end
-            return nil
-        end
-
-        local Friends = Get_Friend_Func()
-
-        if not Friends and getgenv().Like_Friends then
-            getgenv().Like_Friends = false
-            return Notify_User("Error:", "[Exited Loop]: No Friends Detected", 6)
-        end
-
-        if not Friends then
-            getgenv().Like_Friends = false
-            return Notify_User("Error:", "There isn't any friends in this server!", 6)
-        end
-
         if myFriendsLiked then
-            if Friends then
-                getgenv().Like_Friends = true
-                while getgenv().Like_Friends == true do
-                wait(1.2)
-                    if Image_Label.Image == "rbxthumb://type=Avatar&id="..tostring(Friends.UserId).."..&w=420&h=420" then
-                        fireclickdetector(Click_Detector_Input)
+            local Workspace_Service = game:GetService("Workspace") or workspace
+            local Avatar_UI = Workspace_Service:FindFirstChild("AvatarUI") or Workspace_Service:WaitForChild("AvatarUI")
+            local Like_Button = Avatar_UI:FindFirstChild("LikeButton") or Avatar_UI:WaitForChild("LikeButton")
+            local Click_Detector_Input = Like_Button:FindFirstChild("ClickDetector") or Like_Button.ClickDetector or Like_Button:FindFirstChildWhichIsA("ClickDetector") or Like_Button:WaitForChild("ClickDetector") or Like_Button:FindFirstChildOfClass("ClickDetector")
+            local Avatar_Part_UI = Avatar_UI:FindFirstChild("AvatarUI") or Avatar_UI:WaitForChild("AvatarUI") or Avatar_UI:FindFirstChildOfClass("Part") or Avatar_UI:FindFirstChildWhichIsA("Part")
+            local Image_Label = Avatar_Part_UI:FindFirstChild("SurfaceGui"):FindFirstChild("ImageLabel") or Avatar_Part_UI:WaitForChild("SurfaceGui"):WaitForChild("ImageLabel") or Avatar_Part_UI:FindFirstChildWhichIsA("SurfaceGui"):FindFirstChildOfClass("ImageLabel")
+            
+            function Get_Friend_Func()
+                local Players = game:GetService("Players")
+                local Local_Player = Players.LocalPlayer
+
+                for i,v in pairs(Players:GetChildren()) do
+                    if v:IsFriendsWith(Local_Player.UserId) then
+                        return v
                     end
                 end
-            else
-                return getgenv().Like_Friends == false
+                return nil
+            end
+
+            local Friends = Get_Friend_Func()
+
+            if not Friends and getgenv().Like_Friends then
+                getgenv().Like_Friends = false
+                return Notify_User("Error:", "[Exited Loop]: No Friends Detected", 6)
+            end
+
+            if not Friends then
+                getgenv().Like_Friends = false
+                return Notify_User("Error:", "There isn't any friends in this server!", 6)
+            end
+
+            getgenv().Like_Friends = true
+            while getgenv().Like_Friends == true do
+            wait(0.3)
+                if Image_Label.Image == "rbxthumb://type=Avatar&id="..tostring(Friends.UserId).."..&w=420&h=420" then
+                    fireclickdetector(Click_Detector_Input)
+                end
             end
         else
             getgenv().Like_Friends = false
