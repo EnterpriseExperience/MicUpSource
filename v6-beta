@@ -2521,7 +2521,79 @@ wait(1)
         end
     end,})
 
+    local quickAvChange = Tab13:CreateToggle({
+    Name = "Change Avatar Quick [Can Lag Server!⚠️]",
+    CurrentValue = false,
+    Flag = "quickAvChange",
+    Callback = function(quickAv)
+        if quickAv then
+            getgenv().ava_switch = true
 
+            local usernames = {
+                "DenisDaily",
+                "ItsFunneh",
+                "Flamingo",
+                "KreekCraft",
+                "GamingWithKev",
+                "RussoTalks",
+                "Tofuu",
+                "Sketch",
+                "AshleytheUnicorn",
+                "TanqR",
+                "LeahAshe",
+                "Thinknoodles",
+                "iamSanna",
+                "FGTEEV",
+                "ZacharyZaxor",
+                "Builderman",
+                "Roblox",
+                "Minitoon",
+                "Asimo3089",
+                "Badcc",
+                "Callmehbob",
+                "Loleris",
+                "Beeism",
+                "MeganPlays",
+                "ChadAlly",
+                "AussieVixen",
+                "Thinknoodles",
+                "GDad",
+                "SuperShiftery",
+                "SimplyBlox",
+                "MeganPlays",
+                "GoldenGlove",
+                "TeraBrite",
+            }
+
+            local function gatherCurrentPlayers()
+                local players = game:GetService("Players")
+                for _, player in ipairs(players:GetPlayers()) do
+                    table.insert(usernames, player.Name)
+                end
+            end
+
+            gatherCurrentPlayers()
+
+            while getgenv().ava_switch == true do
+                wait()
+                for _, username in ipairs(usernames) do
+                    local args = {
+                        [1] = username
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                end
+            end
+        else
+            getgenv().ava_switch = false
+            wait(0.3)
+            local args = {
+                [1] = tostring(game.Players.LocalPlayer.Name)
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
+        end
+    end})
 
     local CollisionForBaseplate = Tab16:CreateToggle({
     Name = "Turn Collision Off/On",
@@ -2628,7 +2700,11 @@ wait(1)
                 "Zacks Easy Hub V6, POWERFUL!",
                 "Powering Automation | Scripting",
                 "Zacks Easy Hub | WE OP!",
-                "Zacks Easy Hub | V5-STABLE",
+                "Zacks Easy Hub | V6-BETA",
+                "Zacks Easy Hub | WE SIGMA",
+                "BEST FREE SCRIPT RN!",
+                "WE ARE TAKING OVER, JOIN US!",
+                "IF YOU DONT JOIN, YOUR NOT SIGMA"
             }
 
             local function select_words()
@@ -2765,16 +2841,14 @@ wait(1)
     
                 startFly()           
             elseif tostring(GetSpeed) or GetSpeed == "stop" then
-                local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-                local RunService = cloneref(game:GetService("RunService"))
-                local ReplicatedStorage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+                local Players = game:GetService("Players")
+                local RunService = game:GetService("RunService")
+                local ReplicatedStorage = game:GetService("ReplicatedStorage")
                 local LocalPlayer = Players.LocalPlayer
                 wait(0.3)
                 getgenv().flyLoop = false
-                wait(0.5)
-                repeat wait() until getgenv().flyLoop == false
-                wait()
-                local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+                wait(0.2)
+                local Players = game:GetService("Players")
                 local player = Players.LocalPlayer
                 local character = player.Character or player.CharacterAdded:Wait()
                 local humanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
@@ -2790,10 +2864,10 @@ wait(1)
                     character.Humanoid.PlatformStand = false
                     getgenv().flyLoop = false
                 end
-            
+                wait(0.1)
                 stopFly()
-            wait(0.5)
-            Humanoid.Health = 0
+            wait(0.3)
+            game:GetService("ReplicatedStorage"):WaitForChild("DeleteInventory"):FireServer()
         elseif tonumber(GetSpeed) and getgenv().flying == true then
             getgenv().speed = tonumber(GetSpeed)
         end
@@ -2893,9 +2967,9 @@ wait(1)
         local Click_Detector_Input = Like_Button:FindFirstChild("ClickDetector") or Like_Button.ClickDetector or Like_Button:FindFirstChildWhichIsA("ClickDetector") or Like_Button:WaitForChild("ClickDetector") or Like_Button:FindFirstChildOfClass("ClickDetector")
         local Avatar_Part_UI = Avatar_UI:FindFirstChild("AvatarUI") or Avatar_UI:WaitForChild("AvatarUI") or Avatar_UI:FindFirstChildOfClass("Part") or Avatar_UI:FindFirstChildWhichIsA("Part")
         local Image_Label = Avatar_Part_UI:FindFirstChild("SurfaceGui"):FindFirstChild("ImageLabel") or Avatar_Part_UI:WaitForChild("SurfaceGui"):WaitForChild("ImageLabel") or Avatar_Part_UI:FindFirstChildWhichIsA("SurfaceGui"):FindFirstChildOfClass("ImageLabel")
-
+        
         function Get_Friend_Func()
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game:FindService("Players")
+            local Players = game:GetService("Players")
             local Local_Player = Players.LocalPlayer
 
             for i,v in pairs(Players:GetChildren()) do
@@ -2907,6 +2981,16 @@ wait(1)
         end
 
         local Friends = Get_Friend_Func()
+
+        if not Friends and getgenv().Like_Friends then
+            getgenv().Like_Friends = false
+            return Notify_User("Error:", "[Exited Loop]: No Friends Detected", 6)
+        end
+
+        if not Friends then
+            getgenv().Like_Friends = false
+            return Notify_User("Error:", "There isn't any friends in this server!", 6)
+        end
 
         if myFriendsLiked then
             if Friends then
@@ -2932,41 +3016,58 @@ wait(1)
     Callback = function(voices)
         local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
         local V_Effect_Remote = Rep_Storage:FindFirstChild("VEffect") or Rep_Storage:WaitForChild("VEffect")
-        
-        local Voice_Effects = {
-            "Normal",
-            "Chorus",
-            "Darling",
-            "Demon",
-            "Elf",
-            "Fun",
-            "Low",
-            "Reverb"
-        }
-
-        local function voice_chooser()
-            local randomIndex = math.random(1, #Voice_Effects)
-            return Voice_Effects[randomIndex]
-        end
 
         if voices then
             getgenv().shuffleVoices = true
             while getgenv().shuffleVoices == true do
             wait()
                 local args = {
-                    [1] = tostring(voice_chooser())
+                    [1] = "Normal"
+                }
+                
+                V_Effect_Remote:FireServer(unpack(args))
+                local args = {
+                    [1] = "Chorus"
+                }
+                
+                V_Effect_Remote:FireServer(unpack(args))
+                local args = {
+                    [1] = "Darling"
+                }
+                
+                V_Effect_Remote:FireServer(unpack(args))
+                local args = {
+                    [1] = "Demon"
+                }
+                
+                V_Effect_Remote:FireServer(unpack(args))
+                local args = {
+                    [1] = "Elf"
+                }
+                
+                V_Effect_Remote:FireServer(unpack(args))
+                local args = {
+                    [1] = "Fun"
+                }
+                
+                V_Effect_Remote:FireServer(unpack(args))
+                local args = {
+                    [1] = "Low"
+                }
+                
+                V_Effect_Remote:FireServer(unpack(args))
+                local args = {
+                    [1] = "Reverb"
                 }
                 
                 V_Effect_Remote:FireServer(unpack(args))
             end
         else
-            local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+            local Rep_Storage = game:GetService("ReplicatedStorage")
             local V_Effect_Remote = Rep_Storage:FindFirstChild("VEffect") or Rep_Storage:WaitForChild("VEffect")
 
             getgenv().shuffleVoices = false
-            wait(1)
-            repeat wait() until getgenv().shuffleVoices == false
-            wait(0.4)
+            wait(0.1)
             local args = {
                 [1] = "Normal"
             }
@@ -2999,7 +3100,7 @@ wait(1)
     end,})
 
     local GrabEverything = Tab5:CreateButton({
-    Name = "Grab All Tools (Free)",
+    Name = "Grab All Tools (FREE)",
     Callback = function()
         local Rep_Storage = game:GetService("ReplicatedStorage")
         local Tool_Event = Rep_Storage:FindFirstChild("ToolEvent") or Rep_Storage:WaitForChild("ToolEvent")
@@ -3057,21 +3158,14 @@ wait(1)
                 "Wand"
             }
 
-            local function tool_chooser()
-                local randomIndex = math.random(1, #Grab_Tools_List)
-                return Grab_Tools_List[randomIndex]
-            end
-
-            for i = 1, 4 do
-                Tool_Event:FireServer(tool_chooser())
-            end
+            for _, toolName in ipairs(Grab_Tools_List) do
+                Tool_Event:FireServer(toolName)
+            end            
         end
     else
         local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
         local Delete_Inv_Event = Rep_Storage:WaitForChild("DeleteInventory") or Rep_Storage:FindFirstChild("DeleteInventory")
         getgenv().shouldGrabTools = false
-        wait(0.5)
-        repeat wait() until getgenv().shouldGrabTools == false
         wait(0.2)
         Delete_Inv_Event:FireServer()
     end
@@ -5135,6 +5229,176 @@ wait(1)
         })
     end
 
+    create_Button(adidasAnim, "[NEW] Adidas Animation Package", function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+
+        if not Animate then return end
+    
+        Animate.Disabled = true
+        task.wait()
+        Animate.Disabled = false
+
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+        end
+
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=18537376492"
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18537371272"
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18537392113"
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=18537384940"
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=18537380791"
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=18537363391"
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=18537367238"
+    
+        task.wait()
+        if humanoid then
+            humanoid:ChangeState(3)
+        end
+        task.wait()
+        Animate.Disabled = false
+    end)
+
+    create_Button(NFLAnim, "[NEW] NFL Animation Package", function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+
+        if not Animate then return end
+    
+        Animate.Disabled = true
+        task.wait()
+        Animate.Disabled = false
+
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+        end
+
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=92080889861410"
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=74451233229259"
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=110358958299415"
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=117333533048078"
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=134630013742019"
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
+    
+        task.wait()
+        if humanoid then
+            humanoid:ChangeState(3)
+        end
+        task.wait()
+        Animate.Disabled = false
+    end)
+
+    create_Button(BoldAnim, "[NEW] Bold Animation Package", function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+
+        if not Animate then return end
+    
+        Animate.Disabled = true
+        task.wait()
+        Animate.Disabled = false
+
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+        end
+
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=16738333868"
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=16738334710"
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=16738340646"
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=16738337225"
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=16738336650"
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=16738333171"
+    
+        task.wait()
+        if humanoid then
+            humanoid:ChangeState(3)
+        end
+        task.wait()
+        Animate.Disabled = false
+    end)
+
+    create_Button(noBoundariesAnim, "[NEW] No Boundaries Animation Package", function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+
+        if not Animate then return end
+    
+        Animate.Disabled = true
+        task.wait()
+        Animate.Disabled = false
+
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+        end
+
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=18747067405"
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18747063918"
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18747074203"
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=18747070484"
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=18747069148"
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=18747060903"
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=18747062535"
+    
+        task.wait()
+        if humanoid then
+            humanoid:ChangeState(3)
+        end
+        task.wait()
+        Animate.Disabled = false
+    end)
+
+    create_Button(robotAnim, "Robot Animation Package", function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+
+        if not Animate then return end
+    
+        Animate.Disabled = true
+        task.wait()
+        Animate.Disabled = false
+
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+        end
+
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921248039"
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921248831"
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921255446"
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921250460"
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921252123"
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=10921247141"
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921251156"
+    
+        task.wait()
+        if humanoid then
+            humanoid:ChangeState(3)
+        end
+        task.wait()
+        Animate.Disabled = false
+    end)
+
     create_Button(zombieAnim, "Zombie Animation Package", function()
         local Animate = game.Players.LocalPlayer.Character.Animate
         Animate.Disabled = true
@@ -5801,4 +6065,4 @@ end
 wait(0.5)
 print("Successfully ran!")
 wait()
-print("YEAH! Zacks Easy Hub [ON TOP!]")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+print("YEAH! Zacks Easy Hub [ON TOP!]")
