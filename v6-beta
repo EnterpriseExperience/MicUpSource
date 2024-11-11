@@ -954,43 +954,94 @@ wait(1)
         end
     end
 
-    local StallClaimToggle = Tab11:CreateButton({
-    Name = "Claim Any Stall",
-    Callback = function()
-        local Folder = game:GetService("Workspace").Booth
+    local StallClaimToggle = Tab11:CreateToggle({
+    Name = "Claim Any booth",
+    CurrentValue = false,
+    Flag = "StallClaimToggle",
+    Callback = function(claimAnyBooth)
+        if claimAnyBooth then
+            getgenv().isToggled = true
 
-        local stalls = {
-            Folder:FindFirstChild("Booth01"),
-            Folder:FindFirstChild("Booth02"),
-            Folder:FindFirstChild("Booth03"),
-            Folder:FindFirstChild("Booth04"),
-            Folder:FindFirstChild("Booth05")
-        }
-        
-        local function setupProximityPrompt(stall)
-            local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-            if ProximityPrompt then
-                local function enforceSettings()
-                    ProximityPrompt.Enabled = true
-                    ProximityPrompt.ClickablePrompt = true
-                    ProximityPrompt.MaxActivationDistance = 15
-                    ProximityPrompt.RequiresLineOfSight = false
-                    ProximityPrompt.HoldDuration = 0
+            local Folder = game:GetService("Workspace").Booth
+
+            local stalls = {
+                Folder:FindFirstChild("Booth01"),
+                Folder:FindFirstChild("Booth02"),
+                Folder:FindFirstChild("Booth03"),
+                Folder:FindFirstChild("Booth04"),
+                Folder:FindFirstChild("Booth05")
+            }
+
+            getgenv().connections = {}
+
+            local function setupProximityPrompt(stall)
+                local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+                if ProximityPrompt then
+                    local function enforceSettings()
+                        if getgenv().isToggled then
+                            ProximityPrompt.Enabled = true
+                            ProximityPrompt.ClickablePrompt = true
+                            ProximityPrompt.MaxActivationDistance = 15
+                            ProximityPrompt.RequiresLineOfSight = false
+                            ProximityPrompt.HoldDuration = 0
+                        else
+                            ProximityPrompt.Enabled = false
+                            ProximityPrompt.ClickablePrompt = true
+                            ProximityPrompt.MaxActivationDistance = 10
+                            ProximityPrompt.RequiresLineOfSight = true
+                            ProximityPrompt.HoldDuration = 1
+                        end
+                    end
+
+                    enforceSettings()
+
+                    getgenv().connections[ProximityPrompt] = {
+                        ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(enforceSettings),
+                        ProximityPrompt:GetPropertyChangedSignal("ClickablePrompt"):Connect(enforceSettings),
+                        ProximityPrompt:GetPropertyChangedSignal("MaxActivationDistance"):Connect(enforceSettings),
+                        ProximityPrompt:GetPropertyChangedSignal("RequiresLineOfSight"):Connect(enforceSettings),
+                        ProximityPrompt:GetPropertyChangedSignal("HoldDuration"):Connect(enforceSettings)
+                    }
                 end
-        
-                enforceSettings()
-        
-                ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(enforceSettings)
-                ProximityPrompt:GetPropertyChangedSignal("ClickablePrompt"):Connect(enforceSettings)
-                ProximityPrompt:GetPropertyChangedSignal("MaxActivationDistance"):Connect(enforceSettings)
-                ProximityPrompt:GetPropertyChangedSignal("RequiresLineOfSight"):Connect(enforceSettings)
             end
-        end
-        
-        for _, stall in ipairs(stalls) do
-            if stall then
-                setupProximityPrompt(stall)
+
+            for _, stall in ipairs(stalls) do
+                if stall then
+                    setupProximityPrompt(stall)
+                end
             end
+        else
+            getgenv().isToggled = false
+
+            local Folder = game:GetService("Workspace").Booth
+            
+            local stalls = {
+                Folder:FindFirstChild("Booth01"),
+                Folder:FindFirstChild("Booth02"),
+                Folder:FindFirstChild("Booth03"),
+                Folder:FindFirstChild("Booth04"),
+                Folder:FindFirstChild("Booth05")
+            }
+            
+            for _, stall in ipairs(stalls) do
+                if stall then
+                    local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+                    if ProximityPrompt then
+                        ProximityPrompt.Enabled = true
+                        ProximityPrompt.ClickablePrompt = true
+                        ProximityPrompt.MaxActivationDistance = 10
+                        ProximityPrompt.RequiresLineOfSight = true
+                        ProximityPrompt.HoldDuration = 1
+            
+                        if getgenv().connections[ProximityPrompt] then
+                            for _, conn in ipairs(getgenv().connections[ProximityPrompt]) do
+                                conn:Disconnect()
+                            end
+                            getgenv().connections[ProximityPrompt] = nil
+                        end
+                    end
+                end
+            end            
         end
     end,})
 
