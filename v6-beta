@@ -3025,7 +3025,7 @@ wait(1)
                 local Local_Player = Players.LocalPlayer
 
                 for i,v in pairs(Players:GetChildren()) do
-                    if v:IsFriendsWith(Local_Player.UserId) then
+                    if v:IsFriendsWith(Local_Player.UserId) or v == game.Players.LocalPlayer then
                         return v
                     end
                 end
@@ -5255,19 +5255,11 @@ wait(1)
     local player = game.Players.LocalPlayer
     player.CharacterAdded:Connect(run_anims)
     
-    if workspace:FindFirstChild(player.Name) or player.Character then
+    if workspace:FindFirstChild(player.Name) or player.Character and player.Name == "M1RD3RCAUGHT" or player.Name == "ItsYoDawgWsgGng" then
         run_anims()
+    else
+        warn("Skipping, Player isn't whitelisted here.")
     end
-
-    if (player.Name == "M1RD3RCAUGHT" or player.Name == "ItsYoDawgWsgGng") and getgenv().hasOwnerAnims then
-        print("Owner Animation Packages _ DATA | True")
-    elseif (player.Name == "M1RD3RCAUGHT" or player.Name == "ItsYoDawgWsgGng") and not getgenv().hasOwnerAnims then
-        if run_owner_anims then
-            run_owner_anims()
-        end
-        wait(0.1)
-        getgenv().hasOwnerAnims = true
-    end    
 
     local function create_Button(localName, Name, callback) 
         local localName = Tab17:CreateButton({
