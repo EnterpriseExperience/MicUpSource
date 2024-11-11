@@ -3046,7 +3046,7 @@ wait(1)
 
             getgenv().Like_Friends = true
             while getgenv().Like_Friends == true do
-            wait(0.3)
+            wait()
                 if Image_Label.Image == "rbxthumb://type=Avatar&id="..tostring(Friends.UserId).."..&w=420&h=420" then
                     fireclickdetector(Click_Detector_Input)
                 end
