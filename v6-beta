@@ -955,7 +955,7 @@ wait(1)
     end
 
     local StallClaimToggle = Tab11:CreateToggle({
-    Name = "Claim Any booth",
+    Name = "Claim Any Booth",
     CurrentValue = false,
     Flag = "StallClaimToggle",
     Callback = function(claimAnyBooth)
@@ -978,14 +978,14 @@ wait(1)
                 local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
                 if ProximityPrompt then
                     local function enforceSettings()
-                        if getgenv().isToggled then
+                        if getgenv().isToggled and  not ProximityPrompt.Enabled then
                             ProximityPrompt.Enabled = true
                             ProximityPrompt.ClickablePrompt = true
                             ProximityPrompt.MaxActivationDistance = 15
                             ProximityPrompt.RequiresLineOfSight = false
                             ProximityPrompt.HoldDuration = 0
                         else
-                            ProximityPrompt.Enabled = false
+                            ProximityPrompt.Enabled = true
                             ProximityPrompt.ClickablePrompt = true
                             ProximityPrompt.MaxActivationDistance = 10
                             ProximityPrompt.RequiresLineOfSight = true
@@ -3248,7 +3248,7 @@ wait(1)
             smoothFOV()
         end
         else
-            local Workspace_Service = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
+            local Workspace_Service = game:GetService("Workspace")
 
             getgenv().FOVZoomSliding = false
             wait(1)
