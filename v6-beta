@@ -1124,7 +1124,7 @@ end
                 local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
                 if ProximityPrompt then
                     local function enforceSettings()
-                        if getgenv().isToggled and  not ProximityPrompt.Enabled then
+                        if getgenv().isToggled then
                             ProximityPrompt.Enabled = true
                             ProximityPrompt.ClickablePrompt = true
                             ProximityPrompt.MaxActivationDistance = 15
