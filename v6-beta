@@ -1275,7 +1275,9 @@ end
                     [3] = "SourceSans"
                 }
                 
-                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))                
+                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                wait(0.2)
+                Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
                 wait(.1)
                 if plr_booth then
                     return 
@@ -1325,6 +1327,106 @@ end
         else
             getgenv().lmao_colors = false
         end
+    end,})
+
+    local ClaimPlrsBooth = Tab11:CreateInput({
+    Name = "Claim Someones Booth",
+    PlaceholderText = "User Here",
+    RemoveTextAfterFocusLost = true,
+    Callback = function(takeThatBooth)
+        local Folder = game:GetService("Workspace").Booth
+        local find_plr_func_booth = findplr(takeThatBooth)
+
+        if find_plr_func_booth == game.Players.LocalPlayer or find_plr_func_booth.Name == game.Players.LocalPlayer then
+            notify("Error:", "You are trying to unclaim your own booth, removing booth.", 6.5, 3)
+            return game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+        end
+
+        if not find_plr_func_booth then
+            return notify("error:", "Player not found!", 6.5, 3)
+        end
+
+        local function getStall()
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+
+            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                if v ~= game.Players.LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
+                    return v
+                end
+            end
+            return nil
+        end
+
+        local plr_booth = getStall()
+
+        if not plr_booth and find_plr_func_booth then
+            return notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5, 3)
+        end
+
+        local Folder = game:GetService("Workspace").Booth
+
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+        local OldCF = Character.HumanoidRootPart.CFrame
+
+        local stalls = {
+            Folder:FindFirstChild("Booth01"),
+            Folder:FindFirstChild("Booth02"),
+            Folder:FindFirstChild("Booth03"),
+            Folder:FindFirstChild("Booth04"),
+            Folder:FindFirstChild("Booth05")
+        }
+
+        local function setupProximityPrompt(stall)
+            local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+            if ProximityPrompt and not ProximityPrompt.Enabled then
+                ProximityPrompt.Enabled = true
+                ProximityPrompt.ClickablePrompt = true
+                ProximityPrompt.MaxActivationDistance = 15
+                ProximityPrompt.RequiresLineOfSight = false
+                ProximityPrompt.HoldDuration = 0
+            end
+        end
+
+        local function Claim_A_Booth()
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+            local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
+
+            local stall = plr_booth
+            local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+            if stall then
+                setupProximityPrompt(stall)
+                wait(0.3)
+                Character:PivotTo(stall:GetPivot())
+                wait(0.3)
+                fireproximityprompt(ProximityPrompt)
+                wait(0.2)
+                local args = {
+                    [1] = "",
+                    [2] = "Gray",
+                    [3] = "SourceSans"
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                wait(0.2)
+                Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+                wait(.1)
+                if plr_booth then
+                    return 
+                end
+            end
+        end
+        wait(0.2)
+        local stall = plr_booth
+        setupProximityPrompt(stall)
+        wait(0.3)
+        Claim_A_Booth()
     end,})
 
     local unclaimPlrBooth = Tab11:CreateInput({
@@ -1393,7 +1495,7 @@ end
             local LocalPlayer = Players.LocalPlayer
             local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
             local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-            local OldCF = Character.HumanoidRootPart.CFrame
+            local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
 
             local stall = plr_booth
             local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
@@ -1413,6 +1515,8 @@ end
                 game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
                 wait(0.2)
                 game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+                wait(0.2)
+                Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
                 wait(.1)
                 if plr_booth then
                     return 
