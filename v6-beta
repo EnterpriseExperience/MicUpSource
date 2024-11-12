@@ -122,7 +122,9 @@ end
 
 -- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
 
-if game.PlaceId ~= 6884319169 or game.PlaceId ~= 15546218972 then
+if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    print("MIC UP [PlaceId]?: True, PlaceID: "..tostring(game.PlaceId))
+else
     local player = game.Players.LocalPlayer
     local TweenService = game:GetService("TweenService")
 
