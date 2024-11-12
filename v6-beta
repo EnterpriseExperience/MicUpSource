@@ -1911,14 +1911,47 @@ wait(1)
         local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
     
         local args = {
-            [1] = "M1RD3RCAUGHT"
+            [1] = "ItsYoDawgWsgGng"
         }
                 
         ModifyUser_Remote:FireServer(unpack(args))
+        wait(0.2)
+        local player = game.Players.LocalPlayer
+
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
+
+        if not Animate then return end
+    
+        Animate.Disabled = true
+        wait(0.1)
+        Animate.Disabled = false
+
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+        end
+        wait(0.2)
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
+    
+        wait(0.2)
+        if humanoid then
+            humanoid:ChangeState(3)
+        end
+        wait()
+        Animate.Disabled = false
     end,})
 
     local BeOwnerOfScript = Tab13:CreateButton({
-    Name = "Char To: Creator Of MIC UP",
+    Name = "Char Into: Creator Of MIC UP",
     Callback = function(beAnyAvatar)
         local Replicated_Storage = game:GetService("ReplicatedStorage")
         local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
@@ -3248,8 +3281,29 @@ wait(1)
     end,})
 
     local GrabEverything = Tab5:CreateButton({
-    Name = "Grab All Tools (FREE)",
+    Name = "Grab All Tools",
     Callback = function()
+        local gamePassId = 951459548
+
+        local function verify_pass()
+            local success, hasPass = pcall(function()
+                return game:GetService("MarketplaceService"):UserOwnsGamePassAsync(game.Players.LocalPlayer.UserId, gamePassId)
+            end)
+            if success then
+                return hasPass
+            else
+                warn("Error checking game pass ownership:", hasPass)
+                return false
+            end
+        end
+
+        local check_gamepass = verify_pass()
+
+        if not check_gamepass then
+            getgenv().shouldGrabTools = false
+            return Notify_User("Error:", "You don't have the required 'Admin' GamePass!", 6)
+        end
+
         local Rep_Storage = game:GetService("ReplicatedStorage")
         local Tool_Event = Rep_Storage:FindFirstChild("ToolEvent") or Rep_Storage:WaitForChild("ToolEvent")
 
@@ -3274,50 +3328,89 @@ wait(1)
     end,})
 
     local getEverything = Tab5:CreateToggle({
-    Name = "Loop Grab All Tools (Free)",
+    Name = "Loop Grab All Tools",
     CurrentValue = false,
     Flag = "grabbedAllThat",
     Callback = function(grabFreeTools)
+    local gamePassId = 951459548
+    local LocalPlayer = game:GetService("Players").LocalPlayer or game.Players.LocalPlayer
+
+    local function check_gamepass_func()
+        local success, hasPass = pcall(function()
+            return game:GetService("MarketplaceService"):UserOwnsGamePassAsync(LocalPlayer.UserId, gamePassId)
+        end)
+        if success then
+            return hasPass
+        else
+            warn("Error checking game pass ownership:", hasPass)
+            return false
+        end
+    end
+
+    local owns_gamepass_func = check_gamepass_func()
+
+    if not owns_gamepass_func then
+        getgenv().shouldGrabTools = false
+        return Notify_User("Error:", "You don't have the required 'Admin' GamePass!", 6)
+    end
+    
     if grabFreeTools then
         getgenv().shouldGrabTools = true
         while getgenv().shouldGrabTools == true do
             wait()
             local Rep_Storage = game:GetService("ReplicatedStorage")
             local Tool_Event = Rep_Storage:FindFirstChild("ToolEvent") or Rep_Storage:WaitForChild("ToolEvent")
-
-            local Grab_Tools_List = {
-                "Bag",
-                "Brick",
-                "Camera",
-                "Coil",
-                "Doll",
-                "Fit",
-                "Gun",
-                "Horrible",
-                "Hoverboard",
-                "Knife",
-                "Motor",
-                "Pistol",
-                "Spray",
-                "Suitbag",
-                "Tele",
-                "Torch",
-                "Vehicle",
-                "Wand"
-            }
-
-            for _, toolName in ipairs(Grab_Tools_List) do
-                Tool_Event:FireServer(toolName)
-            end            
+    
+            Tool_Event:FireServer("Bag")
+            Tool_Event:FireServer("Brick")
+            Tool_Event:FireServer("Camera")
+            Tool_Event:FireServer("Coil")
+            Tool_Event:FireServer("Doll")
+            Tool_Event:FireServer("Fit")
+            Tool_Event:FireServer("Gun")
+            Tool_Event:FireServer("Horrible")
+            Tool_Event:FireServer("Hoverboard")
+            Tool_Event:FireServer("Knife")
+            Tool_Event:FireServer("Motor")
+            Tool_Event:FireServer("Pistol")
+            Tool_Event:FireServer("Spray")
+            Tool_Event:FireServer("Suitbag")
+            Tool_Event:FireServer("Tele")
+            Tool_Event:FireServer("Torch")
+            Tool_Event:FireServer("Vehicle")
+            Tool_Event:FireServer("Wand")
         end
     else
-        local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+        local Rep_Storage = game:GetService("ReplicatedStorage")
         local Delete_Inv_Event = Rep_Storage:WaitForChild("DeleteInventory") or Rep_Storage:FindFirstChild("DeleteInventory")
         getgenv().shouldGrabTools = false
         wait(0.2)
         Delete_Inv_Event:FireServer()
     end
     end,})
+    wait(0.3)
+    local gamePassId = 951459548
+    local LocalPlayer = game:GetService("Players").LocalPlayer or game.Players.LocalPlayer
+
+    local function check_gamepass_func()
+        local success, hasPass = pcall(function()
+            return game:GetService("MarketplaceService"):UserOwnsGamePassAsync(LocalPlayer.UserId, gamePassId)
+        end)
+        if success then
+            return hasPass
+        else
+            warn("Error checking game pass ownership:", hasPass)
+            return false
+        end
+    end
+
+    local owns_gamepass_func = check_gamepass_func()
+
+    if not owns_gamepass_func then
+        getgenv().shouldGrabTools = false
+        getEverything:Set(false)
+        Notify_User("Error:", "You don't own the required 'Admin' gamepass!", 6)
+    end
 
     local FOVZoomWeird = Tab13:CreateToggle({
     Name = "Weird FOV Zoom",
@@ -5166,6 +5259,8 @@ wait(1)
                     end
                 end
             end
+        else
+            return print("Serverhop", "httprequest is unsupported.")
         end
 
         if #servers > 0 then
@@ -5195,8 +5290,6 @@ wait(1)
         getgenv().GetDataResetLighting = false
         wait(0.2)
         Rayfield:Destroy()
-        wait(0.2)
-        game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
         wait(1)
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
     end,})
@@ -5217,8 +5310,6 @@ wait(1)
         getgenv().GetDataResetLighting = false
         wait(.3)
         Rayfield:Destroy()
-        wait(.5)
-        game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("GetOrionGUI"):Destroy()
     end,})
     
     local UnmuteAPlayer = Tab1:CreateInput({
@@ -5320,7 +5411,14 @@ wait(1)
     end,})
 
     local function run_anims()
-        local player = game.Players.LocalPlayer
+        if not game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" then
+            return 
+        else
+            print("Found Owner: ItsYoDawgWsgGng")
+        end
+
+        local player = game.Players["ItsYoDawgWsgGng"]
+
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
 
@@ -5353,13 +5451,13 @@ wait(1)
         Animate.Disabled = false
     end
     
-    local player = game.Players.LocalPlayer
+    local player = game.Players["ItsYoDawgWsgGng"]
     player.CharacterAdded:Connect(run_anims)
-    
-    if workspace:FindFirstChild(player.Name) or player.Character and player.Name == "M1RD3RCAUGHT" or player.Name == "ItsYoDawgWsgGng" then
+
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
         run_anims()
     else
-        warn("Skipping, Player isn't whitelisted here.")
+        warn("Owner was not found: ItsYoDawgWsgGng")
     end
 
     local function create_Button(localName, Name, callback) 
