@@ -1,8 +1,56 @@
+
+local Notify = function(Text , Description, Length)
+    local ScreenGui = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local TextLabel = Instance.new("TextLabel")
+    local TextLabel_2 = Instance.new("TextLabel")
+    
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    
+    Frame.Parent = ScreenGui
+    Frame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+    Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    Frame.BorderSizePixel = 4
+    Frame.Position = UDim2.new(0.801588178, 0, 0.748129725, 0)
+    Frame.Size = UDim2.new(0, 293, 0, 103)
+    
+    TextLabel.Parent = Frame
+    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.BackgroundTransparency = 1.000
+    TextLabel.Position = UDim2.new(0.194539249, 0, 0.411764711, 0)
+    TextLabel.Size = UDim2.new(0, 200, 0, 50)
+    TextLabel.Font = Enum.Font.SourceSans
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextSize = 24.000
+    TextLabel.Text = Description
+    TextLabel.TextStrokeColor3 = Color3.fromRGB(129, 129, 129)
+    TextLabel.TextStrokeTransparency = 3.000
+    TextLabel.TextWrapped = true
+    
+    TextLabel_2.Parent = Frame
+    TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel_2.BackgroundTransparency = 1.000
+    TextLabel_2.BorderSizePixel = 0
+    TextLabel_2.Position = UDim2.new(0.194539249, 0, 0, 0)
+    TextLabel_2.Size = UDim2.new(0, 200, 0, 50)
+    TextLabel_2.Font = Enum.Font.SourceSans
+    TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel_2.TextSize = 25.000
+    TextLabel_2.Text = Text
+    TextLabel_2.TextStrokeColor3 = Color3.fromRGB(75, 75, 75)
+    TextLabel_2.TextStrokeTransparency = 0.300
+    TextLabel_2.TextWrapped = true
+    local tween = game:GetService("TweenService")
+    tween:Create(Frame, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Position = UDim2.new(0.802, 0,0.748, 0)}):Play()
+    task.wait(Length)
+    tween:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(1, 0,0.794, 0)}):Play()
+    Frame:Destroy()     
+end
+
 -- [] -->> Initializing Notification and the first set of necessary stuff. [Trying to make support for all executors in the process.] <<-- [] --
 
-local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
-local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
-local TeleportService = game:GetService("TeleportService") or cloneref(game:GetService("TeleportService")) or game.TeleportService or game:FindService("TeleportService")
+local TeleportService = game:GetService("TeleportService")
 local AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 local httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
@@ -74,55 +122,130 @@ end
 
 -- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
 
-if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-    warn("OK !!!")
-else
-    local MICUPPlaceID = 6884319169 or 15546218972
-    local TeleportService = game:GetService("TeleportService") or cloneref(game:GetService("TeleportService")) or game.TeleportService or game:FindService("TeleportService")
-    TeleportService:Teleport(MICUPPlaceID)
+if game.PlaceId ~= 6884319169 or game.PlaceId ~= 15546218972 then
+    local player = game.Players.LocalPlayer
+    local TweenService = game:GetService("TweenService")
+
+    local screenGui = Instance.new("ScreenGui")
+    local frame = Instance.new("Frame")
+    local textLabel = Instance.new("TextLabel")
+    local corner = Instance.new("UICorner")
+
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+    screenGui.ResetOnSpawn = false
+
+    frame.Parent = screenGui
+    frame.Size = UDim2.new(0.5, 0, 0.5, 0)
+    frame.Position = UDim2.new(0.25, 0, 0.25, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    frame.BackgroundTransparency = 0
+    corner.Parent = frame
+    frame.ZIndex = 10
+
+    textLabel.Parent = frame
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.Position = UDim2.new(0, 0, 0, 0)
+    textLabel.Text = ""
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    textLabel.TextScaled = true
+    textLabel.TextWrapped = true
+    textLabel.ZIndex = 20
+
+    local goalFrame = {Size = UDim2.new(1, 0, 1, 0), Position = UDim2.new(0, 0, 0, 0)}
+    local tweenInfo = TweenInfo.new(2.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, false)
+
+    local tweenFrame = TweenService:Create(frame, tweenInfo, goalFrame)
+    local tweenText = TweenService:Create(textLabel, tweenInfo, goalFrame)
+
+    tweenFrame:Play()
+    tweenText:Play()
+    wait(0.2)
+    getgenv().bruh_text = true
+
+    while getgenv().bruh_text == true do
+        wait(0.5)
+        textLabel.Text = "T"
+        wait(0.2)
+        textLabel.Text = "Te"
+        wait(0.2)
+        textLabel.Text = "Tel"
+        wait(0.2)
+        textLabel.Text = "Tele"
+        wait(0.2)
+        textLabel.Text = "Telep"
+        wait(0.2)
+        textLabel.Text = "Telepo"
+        wait(0.2)
+        textLabel.Text = "Telepor"
+        wait(0.2)
+        textLabel.Text = "Teleport"
+        wait(0.2)
+        textLabel.Text = "Teleporti"
+        wait(0.2)
+        textLabel.Text = "Teleportin"
+        wait(0.2)
+        textLabel.Text = "Teleporting"
+        wait(0.2)
+        textLabel.Text = "Teleporting."
+        wait(0.2)
+        textLabel.Text = "Teleporting.."
+        wait(0.2)
+        textLabel.Text = "Teleporting..."
+        wait(0.5)
+        textLabel.Text = "T"
+        wait(0.2)
+        textLabel.Text = "Te"
+        wait(0.2)
+        textLabel.Text = "Tel"
+        wait(0.2)
+        textLabel.Text = "Tele"
+        wait(0.2)
+        textLabel.Text = "Telep"
+        wait(0.2)
+        textLabel.Text = "Telepo"
+        wait(0.2)
+        textLabel.Text = "Telepor"
+        wait(0.2)
+        textLabel.Text = "Teleport"
+        wait(0.2)
+        textLabel.Text = "Teleporti"
+        wait(0.2)
+        textLabel.Text = "Teleportin"
+        wait(0.2)
+        textLabel.Text = "Teleporting"
+        wait(0.2)
+        textLabel.Text = "Teleporting."
+        wait(0.2)
+        textLabel.Text = "Teleporting.."
+        wait(0.2)
+        textLabel.Text = "Teleporting..."
+        wait(0.1)
+        TeleportService:Teleport(6884319169, game.Players.LocalPlayer)
+    end
 end
 
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the button to restart the process. <<-- [] --
-
 if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
-    return Notification:Notify(
-        {Title = "Error: ", Description = "Already running! Reload Script instead!"},
-        {OutlineColor = Color3.fromRGB(80, 80, 80), Time = 10, Type = "option"},
-        {Image = "http://www.roblox.com/asset/?id=0", ImageColor = Color3.fromRGB(255, 84, 84), Callback = function()
-            print("[OUTPUT]: Reloading Script...")
-            wait(.3)
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            getgenv().Invis_Loaded = false
-            getgenv().SCRIPT_EXECUTED = false
-            getgenv().GetLoopRunning = false
-            getgenv().getLoopKick = false
-            wait(0.1)
-            getgenv().getLoopKick = false
-            wait(0.2)
-            getgenv().LmaoGetMuted = false
-            wait(1)
-            loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
-        end}
-    )
+    Notify("Zacks Easy Hub:" , "Try 'Re-Execute GUI' instead.", 6)
+    return Notify("Zacks Easy Hub:" , "Zacks Easy Hub is already running!", 8)
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
-wait(0.5)
+wait(0.3)
 -- [] -->> [First real setup part, parenting 'Teleport' to AssetService, (To prevent the game from teleporting you when you fall into it.)] <<-- [] --
-local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
+local Workspace = game:GetService("Workspace") or workspace
 local GameFolder = Workspace:FindFirstChild("Game")
 local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
-local AssetService = game:GetService("AssetService") or cloneref(game:GetService("AssetService")) or game.AssetService or game:FindService("AssetService")
-local Asset_Service_Duplicate = game:GetService("AssetService") or cloneref(game:GetService("AssetService")) or game.AssetService or game:FindService("AssetService")
+local AssetService = game:GetService("AssetService") or game.AssetService
+local Asset_Service_Duplicate = game:GetService("AssetService") or game.AssetService
 
-if GetTeleportPart or GetTeleportPart ~= nil then
-    GetTeleportPart.Parent = Asset_Service_Duplicate
-    wait()
-    print(GetTeleportPart.Name .. " is now in Parent: " .. tostring(GetTeleportPart.Parent))
-elseif not GetTeleportPart or GetTeleportPart == nil then
+if not GetTeleportPart then
     warn("Part: Teleport = nil | false | null")
-elseif AssetService:FindFirstChild("Teleport") then
-    warn("'Teleport' ClassName: Part | AssetService | Return Message: Already found in AssetService")
+else
+    if GameFolder:FindFirstChild("Teleport") then
+        local TeleportPart = GameFolder:FindFirstChild("Teleport")
+        TeleportPart.Parent = AssetService
+    end
 end
 
 -- [] -->> Initialize Services /|\ Setup Services [Try to support every executor in the process.] <<-- [] --
@@ -131,14 +254,16 @@ local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local Character = player.Character or player.CharacterAdded:Wait()
-if not Character or Character == nil then
-    repeat wait() until player.Character and player.Character:FindFirstChildWhichIsA("Humanoid") or player.Character:FindFirstChildWhichIsA("Humanoid").Health >= 98 and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head")
+if not Character then
+    print("Character not found, waiting for character...")
+    wait(0.1)
+    repeat wait() until player.Character and player.Character:FindFirstChild("Humanoid") and player.Character:FindFirstChild("HumanoidRootPart")
     local LoadedCharacter = player.Character or player.CharacterAdded:Wait()
-    Character = Character
+    local Character = LoadedCharacter
 end
 local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui") or player:WaitForChild("PlayerGui", 1)
-local HttpService = game:GetService("HttpService") or cloneref(game:GetService("HttpService")) or game.HttpService
-local ReplicatedStorage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage
+local HttpService = game:GetService("HttpService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 repeat wait() until player and Character and Character:FindFirstChild("HumanoidRootPart") and Character:FindFirstChildWhichIsA("Humanoid") or player.Character:FindFirstChild("Humanoid") or player.Character:FindFirstChildWhichIsA("Humanoid").Health >= 98
 
 local function loadGUI()
@@ -180,21 +305,6 @@ local function loadGUI()
            Key = {"None"}
         }
     })
-    wait()
-    -- [] -->> Keep track of execution, and which players are currently using the script. <<-- [] --
-
-    getgenv().executedPlayers = getgenv().executedPlayers or {}
-    
-    local function trackPlayerExecution(player)
-        if not getgenv().executedPlayers[player.Name] then
-            getgenv().executedPlayers[player.Name] = true
-            print(player.Name .. " has executed the script.")
-        else
-            print(tostring(player.Name).." has already executed the script!")
-        end
-    end
-    
-    trackPlayerExecution(game.Players.LocalPlayer)
     wait()
     -- [] -->> Initialize Tabs and Sections <<-- [] --
     local Tab1 = Window:CreateTab("> Home Tab <", 7733960981)
@@ -247,7 +357,7 @@ local function loadGUI()
     end
 
     if getgenv().baseplate_init then
-        print("Baseplate was already created.")
+        warn("Baseplate was already created.")
     else
         local NewFolder = Workspace:FindFirstChild("PartStorage")
         local newChunk = Instance.new("Part")
@@ -1181,15 +1291,6 @@ wait(1)
         end
     end,})
 
-    local function getStall()
-        for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-            if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
-                return v
-            end
-        end
-        return nil
-    end
-
     local unclaimPlrBooth = Tab11:CreateInput({
     Name = "Unclaim A Booth",
     PlaceholderText = "User Here",
@@ -1198,13 +1299,11 @@ wait(1)
         local Folder = game:GetService("Workspace").Booth
         local find_plr_func_booth = findplr(unclaimTheirBooth)
 
-        if find_plr_func_booth.Name == game.Players.LocalPlayer.Name then
+        if find_plr_func_booth.Name == game.Players.LocalPlayer then
             game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
         end
 
-        if find_plr_func_booth then
-            print("PLR_FOUND")
-        else
+        if not find_plr_func_booth then
             return notify("error:", "Player not found!", 6.5, 3)
         end
 
@@ -1213,7 +1312,7 @@ wait(1)
             local LocalPlayer = Players.LocalPlayer
 
             for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
+                if v ~= game.Players.LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
                     return v
                 end
             end
@@ -1222,8 +1321,8 @@ wait(1)
 
         local plr_booth = getStall()
 
-        if not plr_booth then
-            return notify("error", "Player does not own a booth!", 5, 3)
+        if not plr_booth and find_plr_func_booth then
+            return notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5, 3)
         end
 
         local Folder = game:GetService("Workspace").Booth
@@ -1244,7 +1343,7 @@ wait(1)
 
         local function setupProximityPrompt(stall)
             local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-            if ProximityPrompt then
+            if ProximityPrompt and not ProximityPrompt.Enabled then
                 ProximityPrompt.Enabled = true
                 ProximityPrompt.ClickablePrompt = true
                 ProximityPrompt.MaxActivationDistance = 15
