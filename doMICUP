@@ -1,5 +1,5 @@
 if game.Players.LocalPlayer then
-	return loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v5-BETA')))()
+	return loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
 end
 
 local GuiService = game:GetService("GuiService")
