@@ -7,4 +7,4 @@
 -- If you appreciate my content, and would like to support my work, just join my Discord, it's the least you could do, I only make scripts OP, and fun, so that everybody can enjoy the fun and entertainment.
 -- V5 IS HERE! ENJOY! ITS IN BETA, SO EXPECT BUGS!!
 
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v5-BETA')))()
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
