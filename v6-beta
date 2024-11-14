@@ -3667,7 +3667,9 @@ end
     local ChatBypassBest = Tab4:CreateButton({
     Name = "Chat Bypass (UserCreation)",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/1price/usercreation/refs/heads/main/UserCreation.lua", true))()
+        --loadstring(game:HttpGet("https://raw.githubusercontent.com/1price/usercreation/refs/heads/main/UserCreation.lua", true))()
+        Notify_User("Error:", "The library would close and you would have to rejoin.", 6)
+        return Notify_User("[Read]:", "Usercreation bypassing is temporarily disabled.", 6)
     end,})
 
     local GetFakeChatGUI = Tab4:CreateButton({
