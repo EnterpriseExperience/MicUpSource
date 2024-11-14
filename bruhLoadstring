@@ -6,4 +6,4 @@
 -- If you don't subscribe to my YouTube for only the most OP scripts for games you like | https://www.youtube.com/@AnonymousExploiting | I'm gonna tear your fucking head off
 -- If you appreciate my content, and would like to support my work, just join my Discord, it's the least you could do, I only make scripts OP, and fun, so that everybody can enjoy the fun and entertainment.
 
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/doMICUP')))()
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/v6-beta')))()
