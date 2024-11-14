@@ -282,6 +282,110 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 repeat wait() until player and Character and Character:FindFirstChild("HumanoidRootPart") and Character:FindFirstChildWhichIsA("Humanoid") or player.Character:FindFirstChild("Humanoid") or player.Character:FindFirstChildWhichIsA("Humanoid").Health >= 98
 
 local function loadGUI()
+    if getgenv().loading_screen_data then
+        print("Already Seen Loading Screen")
+    else
+        local player = game.Players.LocalPlayer
+        local StarterGui = game:GetService("StarterGui")
+        StarterGui:SetCore("TopbarEnabled", false)
+
+        local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+        gui.Name = "LoadingGUI"
+        gui.IgnoreGuiInset = true
+
+        local frame = Instance.new("Frame", gui)
+        frame.Size = UDim2.new(1, 0, 1, 36)
+        frame.Position = UDim2.new(0, 0, 0, -36)
+        frame.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
+        frame.BorderSizePixel = 0
+        frame.BackgroundTransparency = 1
+
+        local titleText = Instance.new("TextLabel", frame)
+        titleText.Size = UDim2.new(0.7, 0, 0.1, 0)
+        titleText.Position = UDim2.new(0.15, 0, 0.3, 0)
+        titleText.BackgroundTransparency = 1
+        titleText.Font = Enum.Font.GothamBold
+        titleText.Text = "Zacks Easy Hub | Automation is #1 | ©"
+        titleText.TextColor3 = Color3.fromRGB(128, 128, 128)
+        titleText.TextScaled = true
+
+        local loadingText = Instance.new("TextLabel", frame)
+        loadingText.Size = UDim2.new(0.5, 0, 0.1, 0)
+        loadingText.Position = UDim2.new(0.25, 0, 0.45, 0)
+        loadingText.BackgroundTransparency = 1
+        loadingText.Font = Enum.Font.GothamBold
+        loadingText.Text = "Loading Zacks Easy Hub..."
+        loadingText.TextColor3 = Color3.fromRGB(0, 0, 255)
+        loadingText.TextScaled = true
+
+        local progressBar = Instance.new("Frame", frame)
+        progressBar.Size = UDim2.new(0, 0, 0.02, 0)
+        progressBar.Position = UDim2.new(0.25, 0, 0.55, 0)
+        progressBar.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+        progressBar.BorderSizePixel = 0
+
+        local barCorner = Instance.new("UICorner", progressBar)
+        barCorner.CornerRadius = UDim.new(0, 5)
+
+        local finalMessage = "Zacks Easy Hub Presents: MIC UP | Script Hub | November 2024 | Doing It Better"
+        local finalTextLabel = Instance.new("TextLabel", frame)
+        finalTextLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
+        finalTextLabel.Position = UDim2.new(0.1, 0, 0.6, 0)
+        finalTextLabel.BackgroundTransparency = 1
+        finalTextLabel.Font = Enum.Font.GothamBold
+        finalTextLabel.Text = ""
+        finalTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        finalTextLabel.TextScaled = true
+        finalTextLabel.TextTransparency = 1
+
+        local TweenService = game:GetService("TweenService")
+        local fadeInInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local fadeOutInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+
+        local fadeTween = TweenService:Create(frame, fadeInInfo, { BackgroundTransparency = 0 })
+        fadeTween:Play()
+
+        local tweenInfo = TweenInfo.new(5.2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(progressBar, tweenInfo, { Size = UDim2.new(0.5, 0, 0.02, 0) })
+
+        fadeTween.Completed:Connect(function()
+            tween:Play()
+        end)
+
+        wait(0.3)
+        for i = 1, 3 do
+            wait(0.6)
+            loadingText.Text = "Loading Zacks Easy Hub."
+            wait(0.7)
+            loadingText.Text = "Loading Zacks Easy Hub.."
+            wait(0.7)
+            loadingText.Text = "Loading Zacks Easy Hub..."
+        end
+
+        tween.Completed:Connect(function()
+            progressBar.Visible = false
+            loadingText.Text = ""
+            
+            finalTextLabel.TextTransparency = 0
+            for i = 1, #finalMessage do
+                finalTextLabel.Text = string.sub(finalMessage, 1, i)
+                wait(0.05)
+            end
+
+            wait(1)
+
+            local fadeOutTween = TweenService:Create(finalTextLabel, fadeOutInfo, { TextTransparency = 1 })
+            fadeOutTween:Play()
+            fadeOutTween.Completed:Connect(function()
+                wait(0.3)
+                StarterGui:SetCore("TopbarEnabled", true)
+                gui:Destroy()
+            end)
+        end)
+        wait()
+        getgenv().loading_screen_data = true
+    end
+    wait(0.5)
     -- [] -->> Initialization <<-- [] --
     repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     local currentTime = os.time()
@@ -403,7 +507,7 @@ local function loadGUI()
     wait(0.5)
     -- [] -->> Validate [writefile] and [readfile] permissions, also authorize correct usernames, ignoring them on this line. <<-- [] --
 
-    if writefile and readfile and not (game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki" or game.Players.LocalPlayer.Name == "Laylay_4kla") then
+    if writefile and readfile and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
         -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
 
         local player = game.Players.LocalPlayer
@@ -468,11 +572,12 @@ local function loadGUI()
         until userSelected
     
         screenGui:Destroy()
+    end
     
         -- [] -->> Validate [selection] and confirm whether or not the user is in this list, then proceed to call [writefile] to initialize Emote/Rizz Configuration. <<-- [] --
 
-        if selection == "Yes" and not (game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki" or game.Players.LocalPlayer.Name == "Laylay_4kla") then
-writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":false,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\";\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 3823158750\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)    
+        if selection == "Yes" and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":true,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\";\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)    
 wait(1)
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
     wait(0.5)
@@ -545,10 +650,9 @@ wait(1)
     else
         warn(tostring(game.Players.LocalPlayer.Name) .. ", selected 'No'")
     end
-end
     -- [] -->> Setup the last part of the Rizz/Emote Configuration, also I will add more comments about functions soon, this is it for now, at the time of writing this | 2:35 AM | EST | 11/1/2024 | I am working on the other features [down]. <<-- [] --
-if writefile and readfile and (game.Players.LocalPlayer.Name == "M1RD3RCAUGHT" or game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" or game.Players.LocalPlayer.Name == "STK_kets4eki" or game.Players.LocalPlayer.Name == "Laylay_4kla") then
-writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":false,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\"-\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)       
+if writefile and readfile and game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" then
+writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":true,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\"-\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)       
 wait(1)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
 end
@@ -999,105 +1103,24 @@ end
             content = "DEFAULT_MESSAGE_CONTENT"
         end
 
-        if title and not level or level == nil or level == 0 then
-            level = 0
-            wait(0.1)
-
-            Rayfield:Notify({
-                Title = tostring(title),
-                Content = tostring(content),
-                Duration = tonumber(duration),
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Alright",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                },
-            })
+        if not level or level == 0 then
+            title = "Notification:"
         end
 
-        if level == 1 and title then
-            title = "Alert: "
-            wait(0.1)
-
-            Rayfield:Notify({
-                Title = "Alert: ",
-                Content = tostring(content),
-                Duration = tonumber(duration),
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Alright",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
+        Rayfield:Notify({
+            Title = tostring(title),
+            Content = tostring(content),
+            Duration = tonumber(duration),
+            Image = 4483362458,
+            Actions = {
+                Ignore = {
+                Name = "Alright",
+                Callback = function()
+                    print("...")
+                end
                 },
-            })
-        end
-
-        if severity == 2 and title then
-            title = "Warning: "
-            wait(0.1)
-
-            Rayfield:Notify({
-                Title = "Warning: ",
-                Content = tostring(content),
-                Duration = tonumber(duration),
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Alright",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                },
-            })
-        end
-
-        if severity == 3 and title then
-            title = "Error: "
-            wait(0.1)
-
-            Rayfield:Notify({
-                Title = "Error: ",
-                Content = tostring(content),
-                Duration = tonumber(duration),
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Alright",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                },
-            })
-        end
-
-        if severity == 4 and title then
-            title = "Success: "
-            wait(0.1)
-
-            Rayfield:Notify({
-                Title = "Success: ",
-                Content = tostring(content),
-                Duration = tonumber(duration),
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Alright",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                },
-            })
-        end
+            },
+        })
     end
 
     local StallClaimToggle = Tab11:CreateToggle({
@@ -1337,13 +1360,31 @@ end
         local Folder = game:GetService("Workspace").Booth
         local find_plr_func_booth = findplr(takeThatBooth)
 
-        if find_plr_func_booth == game.Players.LocalPlayer or find_plr_func_booth.Name == game.Players.LocalPlayer then
-            notify("Error:", "You are trying to unclaim your own booth, removing booth.", 6.5, 3)
+        local function local_booth()
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+
+            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                if v ~= game.Players.LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(game.Players.LocalPlayer.Name) then
+                    return v
+                end
+            end
+            return nil
+        end
+
+        local local_plr_booth = local_booth()
+
+        if not local_plr_booth and find_plr_func_booth then
+            return notify("Error:", "You do not own a booth!", 5, 3)
+        end
+
+        if find_plr_func_booth == game.Players.LocalPlayer then
+            notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
             return game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
         end
 
         if not find_plr_func_booth then
-            return notify("error:", "Player not found!", 6.5, 3)
+            return notify("Error:", "Player not found!", 6.5)
         end
 
         local function getStall()
@@ -1361,7 +1402,7 @@ end
         local plr_booth = getStall()
 
         if not plr_booth and find_plr_func_booth then
-            return notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5, 3)
+            return notify("Error:", tostring(find_plr_func_booth).." does not own a booth!", 5)
         end
 
         local Folder = game:GetService("Workspace").Booth
@@ -1416,6 +1457,8 @@ end
                 game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
                 wait(0.2)
                 Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+                wait(0.2)
+                notify("Success:", "Claimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
                 wait(.1)
                 if plr_booth then
                     return 
@@ -1437,12 +1480,31 @@ end
         local Folder = game:GetService("Workspace").Booth
         local find_plr_func_booth = findplr(unclaimTheirBooth)
 
-        if find_plr_func_booth.Name == game.Players.LocalPlayer then
-            game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+        local function local_booth()
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+
+            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                if v ~= game.Players.LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(game.Players.LocalPlayer.Name) then
+                    return v
+                end
+            end
+            return nil
+        end
+
+        local local_plr_booth = local_booth()
+
+        if not local_plr_booth and find_plr_func_booth then
+            return notify("Error:", "You do not own a booth!", 5, 3)
+        end
+
+        if find_plr_func_booth == game.Players.LocalPlayer then
+            notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
+            return game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
         end
 
         if not find_plr_func_booth then
-            return notify("error:", "Player not found!", 6.5, 3)
+            return notify("error:", "Player not found!", 6.5)
         end
 
         local function getStall()
@@ -1517,6 +1579,8 @@ end
                 game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
                 wait(0.2)
                 Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+                wait(0.2)
+                notify("Success:", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
                 wait(.1)
                 if plr_booth then
                     return 
@@ -3333,7 +3397,7 @@ end
     CurrentValue = false,
     Flag = "LaggyAssVoice",
     Callback = function(voices)
-        local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+        local Rep_Storage = game:GetService("ReplicatedStorage")
         local V_Effect_Remote = Rep_Storage:FindFirstChild("VEffect") or Rep_Storage:WaitForChild("VEffect")
 
         if voices then
@@ -3386,7 +3450,7 @@ end
             local V_Effect_Remote = Rep_Storage:FindFirstChild("VEffect") or Rep_Storage:WaitForChild("VEffect")
 
             getgenv().shuffleVoices = false
-            wait(0.1)
+            wait(0.5)
             local args = {
                 [1] = "Normal"
             }
