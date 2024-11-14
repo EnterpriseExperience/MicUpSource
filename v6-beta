@@ -1362,24 +1362,6 @@ end
         local Folder = game:GetService("Workspace").Booth
         local find_plr_func_booth = findplr(takeThatBooth)
 
-        local function local_booth()
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-
-            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v ~= game.Players.LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(game.Players.LocalPlayer.Name) then
-                    return v
-                end
-            end
-            return nil
-        end
-
-        local local_plr_booth = local_booth()
-
-        if not local_plr_booth and find_plr_func_booth then
-            return notify("Error:", "You do not own a booth!", 5, 3)
-        end
-
         if find_plr_func_booth == game.Players.LocalPlayer then
             notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
             return game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
@@ -1481,24 +1463,6 @@ end
     Callback = function(unclaimTheirBooth)
         local Folder = game:GetService("Workspace").Booth
         local find_plr_func_booth = findplr(unclaimTheirBooth)
-
-        local function local_booth()
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-
-            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v ~= game.Players.LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(game.Players.LocalPlayer.Name) then
-                    return v
-                end
-            end
-            return nil
-        end
-
-        local local_plr_booth = local_booth()
-
-        if not local_plr_booth and find_plr_func_booth then
-            return notify("Error:", "You do not own a booth!", 5, 3)
-        end
 
         if find_plr_func_booth == game.Players.LocalPlayer then
             notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
