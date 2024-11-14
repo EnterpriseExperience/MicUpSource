@@ -235,6 +235,8 @@ else
         textLabel.Text = "Teleporting.."
         wait(0.2)
         textLabel.Text = "Teleporting..."
+        wait(0.3)
+        getgenv().bruh_text = false
         wait(0.1)
         TeleportService:Teleport(6884319169, game.Players.LocalPlayer)
     end
