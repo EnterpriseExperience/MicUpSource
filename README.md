@@ -13,13 +13,13 @@ https://discord.gg/VJh3kkYzBn
 ## [Or See]:
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 
-## UPDATE <-> [V3] [UPDATE!]:
+## UPDATE <-> [V6] [UPDATE!]:
 
-## V3 New Features:
-`SO MANY MORE NEW FEATURES NOW!, CHECK THEM OUT BY RUNNING THIS SCRIPT, IN-GAME.`
+## V6 New Features:
+`Check out the Discord server linked above for every feature!`
 
-## [CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub V4 AND V5 | MIC UP 🔊]:
-`Check Discord server for features!`
+## [CUSTOM FEATURES ONLY AVAILABLE TO: Zacks Easy Hub V6 | MIC UP 🔊]:
+`Check Discord server linked above for features!`
 
 
 ## Did some reworking and I have released a LIVE version of the script so no more picking and choosing for your stupid ass executor!
