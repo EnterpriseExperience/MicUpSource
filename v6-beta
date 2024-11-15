@@ -1,4 +1,3 @@
-
 local Notify = function(Text , Description, Length)
     local ScreenGui = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
@@ -243,7 +242,7 @@ else
 end
 
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the button to restart the process. <<-- [] --
-if SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
+if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     Notify("Zacks Easy Hub:" , "Try 'Re-Execute GUI' instead.", 6)
     return Notify("Zacks Easy Hub:" , "Zacks Easy Hub is already running!", 8)
 end
@@ -467,6 +466,21 @@ local function loadGUI()
     local Tab15 = Window:CreateTab("> UI Tab <", 7734022107)
     local Section15 = Tab15:CreateSection("||| UI Control Section |||")
     wait(0.5)
+    if game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownersWriteFile then
+        warn("Already Loaded: Owners-Write-File")
+    else
+        print("Owner Found: ItsYoDawgWsgGng, UserID: "..tostring(game.Players.LocalPlayer.UserId))
+        
+        function write_file_setup()
+            writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":true,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\"-\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)
+            wait(1.5)
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+        end
+        wait()
+        getgenv().ownersWriteFile = true
+    end
+    write_file_setup()
+    wait(0.5)
     -- [] -->> Initialize Baseplate (Floating Part) <<-- [] --
 
     local Workspace = game:GetService("Workspace")
@@ -506,12 +520,13 @@ local function loadGUI()
     else
         warn("Your executor does not support writefile | readfile | false | SORRY! | There CAN/WILL be errors")
     end
-    wait(0.5)
+    wait(0.3)
     -- [] -->> Validate [writefile] and [readfile] permissions, also authorize correct usernames, ignoring them on this line. <<-- [] --
+    -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
 
-    if writefile and readfile and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-        -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
-
+    if getgenv().rizzEmoteConfig and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+        warn("Already Loaded: Emote/Rizz Configuration | Zacks Easy Hub")
+    elseif getgenv().rizzEmoteConfig == false or not getgenv().rizzEmoteConfig and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
         local player = game.Players.LocalPlayer
         local playerGui = player:WaitForChild("PlayerGui")
     
@@ -525,7 +540,7 @@ local function loadGUI()
         mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
         mainFrame.BackgroundTransparency = 0.5
         mainFrame.Parent = screenGui
-    
+
         local label = Instance.new("TextLabel")
         label.Size = UDim2.new(0.5, 0, 0.2, 0)
         label.Position = UDim2.new(0.25, 0, 0.2, 0)
@@ -558,13 +573,97 @@ local function loadGUI()
     
         local userSelected = false
         local selection = nil
+
+        function selected_Yes()
+        if writefile and readfile then
+writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":true,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\";\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)    
+            wait(1)
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+            wait(1.5)
+            getgenv().rizzEmoteConfig = true
+            wait()
+            local TweenService = game:GetService("TweenService")
+            local player = game:GetService("Players").LocalPlayer
+            
+            local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+            screenGui.Name = "RejoinWarningGUI"
+            screenGui.IgnoreGuiInset = true
+            
+            local frame = Instance.new("Frame", screenGui)
+            frame.Size = UDim2.new(1, 0, 1, 0)
+            frame.Position = UDim2.new(0, 0, 0, 0)
+            frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            frame.BorderSizePixel = 0
+            frame.BackgroundTransparency = 1
+            
+            local textLabel = Instance.new("TextLabel", frame)
+            textLabel.Size = UDim2.new(0.8, 0, 0.3, 0)
+            textLabel.Position = UDim2.new(0.1, 0, 0.35, 0)
+            textLabel.BackgroundTransparency = 1
+            textLabel.Text = "You are rejoining, wait a few seconds, and config will apply automatically."
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.TextScaled = true
+            textLabel.Font = Enum.Font.SourceSansBold
+            
+            local yesButton = Instance.new("TextButton", frame)
+            yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+            yesButton.Position = UDim2.new(0.4, 0, 0.7, 0)
+            yesButton.BackgroundColor3 = Color3.fromRGB(32, 58, 86)
+            yesButton.TextColor3 = Color3.fromRGB(220, 188, 129)
+            yesButton.Text = "Okay, I will."
+            yesButton.TextScaled = true
+            yesButton.Font = Enum.Font.SourceSansBold
+            yesButton.BackgroundTransparency = 1
+            
+            local buttonCorner = Instance.new("UICorner", yesButton)
+            buttonCorner.CornerRadius = UDim.new(1, 0)
+            
+            local fadeInTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            local frameFadeIn = TweenService:Create(frame, fadeInTweenInfo, {BackgroundTransparency = 0})
+            local textFadeIn = TweenService:Create(textLabel, fadeInTweenInfo, {TextTransparency = 0})
+            local buttonFadeIn = TweenService:Create(yesButton, fadeInTweenInfo, {BackgroundTransparency = 0})
+            
+            frameFadeIn:Play()
+            textFadeIn:Play()
+            buttonFadeIn:Play()
+            
+            yesButton.MouseButton1Click:Connect(function()
+                screenGui:Destroy()
+            end)
+            wait(0.4)
+            local TeleportService = game:GetService("TeleportService")
+            local Players = game:GetService("Players") or game.Players
+            PlaceId, JobId = game.PlaceId, game.JobId
+            local LocalPlayer = Players.LocalPlayer
+            queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+            local TeleportCheck = false
+            game.Players.LocalPlayer.OnTeleport:Connect(function(State)
+                if (not TeleportCheck) and queueteleport then
+                    TeleportCheck = true
+                    queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
+                end
+            end)
+            wait(0.5)
+            TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+        else
+            warn("readfile/writefile does not exist on this executor! Skipping...")
+        end
+        end
+        -- [] -->> Validate [selection] and confirm whether or not the user is in this list, then proceed to call [writefile] to initialize Emote/Rizz Configuration. <<-- [] --
+        function selected_No()
+            warn(tostring(game.Players.LocalPlayer.Name)..", selected 'No'")
+        end
     
         yesButton.MouseButton1Click:Connect(function()
+            selected_Yes()
+            wait()
             selection = "Yes"
             userSelected = true
         end)
     
         noButton.MouseButton1Click:Connect(function()
+            selected_No()
+            wait()
             selection = "No"
             userSelected = true
         end)
@@ -575,115 +674,27 @@ local function loadGUI()
     
         screenGui:Destroy()
     end
-    
-        -- [] -->> Validate [selection] and confirm whether or not the user is in this list, then proceed to call [writefile] to initialize Emote/Rizz Configuration. <<-- [] --
-
-        if selection == "Yes" and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":true,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\";\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)    
-wait(1)
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-    wait(0.5)
-    local TweenService = game:GetService("TweenService")
-    local player = game:GetService("Players").LocalPlayer
-    
-    local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-    screenGui.Name = "RejoinWarningGUI"
-    screenGui.IgnoreGuiInset = true
-    
-    local frame = Instance.new("Frame", screenGui)
-    frame.Size = UDim2.new(1, 0, 1, 0)
-    frame.Position = UDim2.new(0, 0, 0, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    frame.BorderSizePixel = 0
-    frame.BackgroundTransparency = 1
-    
-    local textLabel = Instance.new("TextLabel", frame)
-    textLabel.Size = UDim2.new(0.8, 0, 0.3, 0)
-    textLabel.Position = UDim2.new(0.1, 0, 0.35, 0)
-    textLabel.BackgroundTransparency = 1
-    textLabel.Text = "You are rejoining, do NOT! Press 'Yes' when you have rejoined."
-    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    textLabel.TextScaled = true
-    textLabel.Font = Enum.Font.SourceSansBold
-    
-    local yesButton = Instance.new("TextButton", frame)
-    yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
-    yesButton.Position = UDim2.new(0.4, 0, 0.7, 0)
-    yesButton.BackgroundColor3 = Color3.fromRGB(32, 58, 86)
-    yesButton.TextColor3 = Color3.fromRGB(220, 188, 129)
-    yesButton.Text = "Okay I won't"
-    yesButton.TextScaled = true
-    yesButton.Font = Enum.Font.SourceSansBold
-    yesButton.BackgroundTransparency = 1
-    
-    local buttonCorner = Instance.new("UICorner", yesButton)
-    buttonCorner.CornerRadius = UDim.new(1, 0)
-    
-    local fadeInTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local frameFadeIn = TweenService:Create(frame, fadeInTweenInfo, {BackgroundTransparency = 0})
-    local textFadeIn = TweenService:Create(textLabel, fadeInTweenInfo, {TextTransparency = 0})
-    local buttonFadeIn = TweenService:Create(yesButton, fadeInTweenInfo, {BackgroundTransparency = 0})
-    
-    frameFadeIn:Play()
-    textFadeIn:Play()
-    buttonFadeIn:Play()
-    
-    yesButton.MouseButton1Click:Connect(function()
-        screenGui:Destroy()
-    end)
-    wait(1)
-    local TeleportService = game:GetService("TeleportService")
-    local Players = game:GetService("Players") or game.Players
-    PlaceId, JobId = game.PlaceId, game.JobId
-    local LocalPlayer = Players.LocalPlayer
-    queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-    local TeleportCheck = false
-    game.Players.LocalPlayer.OnTeleport:Connect(function(State)
-        if (not TeleportCheck) and queueteleport then
-            TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
-        end
-    end)
-    wait(0.4)
-    TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
-    wait(0.5)
-    warn(tostring(game.Players.LocalPlayer.Name) .. ", selected 'Yes'")
-    -- [] -->> If [selection] is 'No' then deny user the Rizz/Emote Configuration. <<-- [] --
-    else
-        warn(tostring(game.Players.LocalPlayer.Name) .. ", selected 'No'")
-    end
-    -- [] -->> Setup the last part of the Rizz/Emote Configuration, also I will add more comments about functions soon, this is it for now, at the time of writing this | 2:35 AM | EST | 11/1/2024 | I am working on the other features [down]. <<-- [] --
-if writefile and readfile and game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" then
-writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":true,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\"-\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)       
-wait(1)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-end
     wait(0.5)
     local TeleportService = game:GetService("TeleportService")
-    local Players = game:GetService("Players") or game.Players
+    local Players = game:GetService("Players")
     PlaceId, JobId = game.PlaceId, game.JobId
     local LocalPlayer = Players.LocalPlayer
-    queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
     wait(0.3)
-    local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
     local LocalPlayer = Players.LocalPlayer
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
     wait(0.1)
-    if getgenv().AntiAfkScript == true or getgenv().OtherAntiAfk == true then
-        print("AntiAFK Scripts have already been pre-loaded from last session | exiting...")
+    if getgenv().AntiAfkScript or getgenv().OtherAntiAfk then
+        print("AntiAFK Scripts have already been pre-loaded from last session | skipping...")
         wait(0.2)
         warn("000 >>> 000 >>> nil")
     end
     wait(0.3)
-    local StarterPlayer = game:GetService("StarterPlayer")
-    StarterPlayer.CharacterUseJumpPower = true
-    wait(0.4)
-    Players.RespawnTime = 0
-    wait(0.3)
     local GC = getconnections or get_signal_cons
 
     if GC then
+        getgenv().AntiAfkScript = true
+        wait()
         for i, v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
             if v["Disable"] then
                 v["Disable"](v)
@@ -700,10 +711,11 @@ end
                         },
                     },
                 })
-                getgenv().AntiAfkScript = true
             end
         end
     else
+        getgenv().OtherAntiAfk = true
+        wait(0.1)
         warn("Your executor does not support 'getconnections'! Using VirtualUser for Anti-AFK.")
         wait()
         Rayfield:Notify({
@@ -720,6 +732,7 @@ end
         })
 
         local VirtualUser = game:GetService("VirtualUser")
+        wait()
         game:GetService("Players").LocalPlayer.Idled:Connect(function()
             Rayfield:Notify({
                 Title = "Idled!",
@@ -748,7 +761,6 @@ end
                     },
                 },
             })
-            getgenv().OtherAntiAfk = true
         end)
     end
 
@@ -766,9 +778,7 @@ end
                 },
             },
         })
-    end
-
-    if getgenv().OtherAntiAfk then
+    elseif getgenv().OtherAntiAfk then
         Rayfield:Notify({
             Title = "Success!",
             Content = "AntiAFK (2) has loaded.",
@@ -783,7 +793,7 @@ end
         })
     end
 
-    if not getgenv().AntiAfkScript and not getgenv().OtherAntiAfk then
+    if getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
         Rayfield:Notify({
             Title = "Failed!",
             Content = "Could not load any Anti-AFK Scripts.",
@@ -799,7 +809,7 @@ end
     end
     wait()
     function resetLightingSettings()
-        local Lighting = game:GetService("Lighting") or cloneref(game:GetService("Lighting")) or game.Lighting or game:FindService("Lighting")
+        local Lighting = game:GetService("Lighting")
         local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
         
         Lighting.ClockTime = 14.5
@@ -849,10 +859,8 @@ end
         Lighting.SunRays.Spread = 0.1
     end
     wait()
-    local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-    local ReplicatedStorage = game:GetService("ReplicatedStorage") or clonref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
-    wait(0.2)
-    getgenv().scripts_init = false
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
     wait(0.5)
     if getgenv().scripts_init then
         warn("Scripts we're already modified.")
@@ -880,9 +888,10 @@ end
                     touchInterest:Destroy()
                 end
                 descendant:Destroy()
-                getgenv().scripts_init = true
             end
         end
+        wait(0.1)
+        getgenv().scripts_init = true
     end
     wait(0.3)
     if getgenv().lighting_data then
