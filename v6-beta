@@ -3269,7 +3269,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     end
 
     local viewBooth = Tab1:CreateToggle({
-    Name = "View Current Booth",
+    Name = "View Your Booth",
     CurrentValue = false,
     Flag = "theBoothView",
     Callback = function(specBooth)
