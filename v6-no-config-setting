@@ -3425,6 +3425,46 @@ local function loadGUI()
         Notify_User("Error:", "You don't own the required 'Admin' gamepass!", 6)
     end
 
+    local viewBooth = Tab11:CreateToggle({
+    Name = "View Your Booth",
+    CurrentValue = false,
+    Flag = "theBoothView",
+    Callback = function(specBooth)
+        local Workspace = game:GetService("Workspace") or workspace
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    
+        local function get_booth()
+            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                    return v
+                end
+            end
+            return nil
+        end
+    
+        local plr_booth = get_booth()
+    
+        if not plr_booth then
+            return notify("Error: ", "You do not have a booth, claim one!", 6.5)
+        end
+        wait()
+        if specBooth and plr_booth then
+            getgenv().viewing_booth = true
+            Workspace.CurrentCamera.CameraSubject = plr_booth
+        else
+            local Workspace = game:GetService("Workspace") or workspace
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    
+            getgenv().viewing_booth = false
+            wait(0.5)
+            Workspace.CurrentCamera.CameraSubject = Character
+        end
+    end,})
+
     local FOVZoomWeird = Tab13:CreateToggle({
     Name = "Weird FOV Zoom",
     CurrentValue = false,
