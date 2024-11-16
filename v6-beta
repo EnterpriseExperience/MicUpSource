@@ -3235,12 +3235,85 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         end
     end,})
 
+    function notify(title, content, duration, image)
+        if not image then
+            image = tonumber(4483362458)
+        end
+
+        if not duration then
+            duration = tonumber(6)
+        end
+
+        if not title then
+            title = "Notification: "
+        end
+
+        if not content then
+            content = "DEFAULT_MESSAGE_CONTENT"
+        end
+
+        Rayfield:Notify({
+            Title = tostring(title),
+            Content = tostring(content),
+            Duration = tonumber(duration),
+            Image = 4483362458,
+            Actions = {
+                Ignore = {
+                Name = "Alright",
+                Callback = function()
+                    print("...")
+                end
+                },
+            },
+        })
+    end
+
+    local viewBooth = Tab1:CreateToggle({
+    Name = "View Current Booth",
+    CurrentValue = false,
+    Flag = "theBoothView",
+    Callback = function(specBooth)
+        local Workspace = game:GetService("Workspace") or workspace
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+        local function get_booth()
+            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                    return v
+                end
+            end
+            return nil
+        end
+
+        local plr_booth = get_booth()
+
+        if not plr_booth then
+            return notify("Error: ", "You do not have a booth, claim one!", 6.5)
+        end
+        wait()
+        if specBooth and plr_booth then
+            getgenv().viewing_booth = true
+            Workspace.CurrentCamera.CameraSubject = plr_booth
+        else
+            local Workspace = game:GetService("Workspace") or workspace
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+            getgenv().viewing_booth = false
+            wait(0.5)
+            Workspace.CurrentCamera.CameraSubject = Character
+        end
+    end,})
+
     local AutoLikingPlayer = Tab1:CreateToggle({
     Name = "Auto Like Player",
     CurrentValue = false,
     Flag = "likingPlayerAuto",
     Callback = function(likeLol)
-        local Workspace_Service = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
+        local Workspace_Service = game:GetService("Workspace") or workspace
         local Avatar_UI = Workspace_Service:FindFirstChild("AvatarUI") or Workspace_Service:WaitForChild("AvatarUI")
         local Like_Button = Avatar_UI:FindFirstChild("LikeButton") or Avatar_UI:WaitForChild("LikeButton")
         local Click_Detector_Input = Like_Button:FindFirstChild("ClickDetector") or Like_Button.ClickDetector or Like_Button:FindFirstChildWhichIsA("ClickDetector") or Like_Button:WaitForChild("ClickDetector") or Like_Button:FindFirstChildOfClass("ClickDetector")
@@ -3261,7 +3334,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     CurrentValue = false,
     Flag = "dislikingEverybody",
     Callback = function(dislikeButton)
-        local Workspace_Service = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
+        local Workspace_Service = game:GetService("Workspace") or workspace
         local Avatar_UI = Workspace_Service:FindFirstChild("AvatarUI") or Workspace_Service:WaitForChild("AvatarUI")
         local Like_Button = Avatar_UI:FindFirstChild("LikeButton") or Avatar_UI:WaitForChild("LikeButton")
         local Click_Detector_Input = Like_Button:FindFirstChild("ClickDetector") or Like_Button.ClickDetector or Like_Button:FindFirstChildWhichIsA("ClickDetector") or Like_Button:WaitForChild("ClickDetector") or Like_Button:FindFirstChildOfClass("ClickDetector")
