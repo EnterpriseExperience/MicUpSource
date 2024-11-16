@@ -168,7 +168,7 @@ else
     game.Players.LocalPlayer.OnTeleport:Connect(function(State)
         if (not TeleportCheck) and queueteleport then
             TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
         end
     end)
     wait(0.5)
@@ -5346,7 +5346,7 @@ local function loadGUI()
         wait(0.2)
         Rayfield:Destroy()
         wait(1)
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()
     end,})
     
     local DestroyGUIScript = Tab15:CreateButton({
