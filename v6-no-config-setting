@@ -2051,13 +2051,15 @@ local function loadGUI()
                                 wait(0.3)
                                 fireproximityprompt(stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
                                 wait(0.3)
-                                local args = {
-                                    [1] = "",
-                                    [2] = "Gray",
-                                    [3] = "SourceSans"
-                                }
-                                
-                                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                                for i = 1, 20 do
+                                    local args = {
+                                        [1] = "",
+                                        [2] = "Gray",
+                                        [3] = "SourceSans"
+                                    }
+                                    
+                                    game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                                end
                                 wait(0.2)
                                 Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
                             end
