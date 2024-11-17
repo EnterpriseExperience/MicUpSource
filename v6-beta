@@ -400,7 +400,7 @@ local function loadGUI()
 
     -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
     local Window = Rayfield:CreateWindow({
-        Name = "Zacks Easy Hub | V6.2.3-B | Executed At: "..formattedTime,
+        Name = "Zacks Easy Hub | V6.2.0-B | Executed At: "..formattedTime,
         LoadingTitle = "V6, WE ARE UP!!!",
         LoadingSubtitle = "Zacks Easy Hub | Productions.",
         ConfigurationSaving = {
@@ -5790,27 +5790,38 @@ local function loadGUI()
     Callback = function(speedCoil)
         if speedCoil then
             getgenv().getRunningState = true
-            local player = game.Players.LocalPlayer
-            local character = player.Character or player.CharacterAdded:Wait()
-            local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid") or character:FindFirstChild("Humanoid")
-            local walkSpeed = 16
-            local runSpeed = 400
             getgenv().runningEnabled = true
-    
-            local function onShiftPress(input, gameProcessed)
-                if getgenv().runningEnabled and input.KeyCode == Enum.KeyCode.LeftShift then
-                    humanoid.WalkSpeed = runSpeed
+        
+            local player = game.Players.LocalPlayer
+            local walkSpeed = 16
+            local runSpeed = 450
+
+            local function setupCharacter(character)
+                local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
+                
+                local function onShiftPress(input, gameProcessed)
+                    if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled == true then
+                        humanoid.WalkSpeed = runSpeed
+                    end
                 end
-            end
-    
-            local function onShiftRelease(input, gameProcessed)
-                if getgenv().runningEnabled and input.KeyCode == Enum.KeyCode.LeftShift then
-                    humanoid.WalkSpeed = walkSpeed
+        
+                local function onShiftRelease(input, gameProcessed)
+                    if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled == true then
+                        humanoid.WalkSpeed = walkSpeed
+                    end
                 end
+        
+                game:GetService("UserInputService").InputBegan:Connect(onShiftPress)
+                game:GetService("UserInputService").InputEnded:Connect(onShiftRelease)
+
+                humanoid.WalkSpeed = walkSpeed
             end
-    
-            game:GetService("UserInputService").InputBegan:Connect(onShiftPress)
-            game:GetService("UserInputService").InputEnded:Connect(onShiftRelease)
+
+            player.CharacterAdded:Connect(setupCharacter)
+
+            if player.Character then
+                setupCharacter(player.Character)
+            end
         else
             local player = game.Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
