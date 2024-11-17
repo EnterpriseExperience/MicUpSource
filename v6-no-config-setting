@@ -1921,7 +1921,7 @@ local function loadGUI()
     RemoveTextAfterFocusLost = true,
     Callback = function(beAnyAvatar)
         local Replicated_Storage = game:GetService("ReplicatedStorage")
-        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
 
         local args = {
             [1] = tostring(beAnyAvatar)
@@ -1934,7 +1934,7 @@ local function loadGUI()
     Name = "Char Into: Owner Of Script",
     Callback = function(beAnyAvatar)
         local Replicated_Storage = game:GetService("ReplicatedStorage")
-        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
     
         local args = {
             [1] = "ItsYoDawgWsgGng"
@@ -1980,7 +1980,7 @@ local function loadGUI()
     Name = "Char Into: Creator Of MIC UP",
     Callback = function(beAnyAvatar)
         local Replicated_Storage = game:GetService("ReplicatedStorage")
-        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
 
         local function get_creator_of_game()
             local ownerUserId = 25335555
@@ -2022,7 +2022,7 @@ local function loadGUI()
             local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
             local Humanoid = Character:WaitForChild("Humanoid") or Character:FindFirstChildWhichIsA("Humanoid")
         
-            local function getStall()
+            local function booth_localplayer()
                 for _, v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
                     if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. tostring(LocalPlayer.Name) then
                         return v
@@ -2030,9 +2030,11 @@ local function loadGUI()
                 end
                 return nil
             end
+
+            local plr_booth = booth_localplayer()
         
             local function monitorOwnership()
-                while getgenv().AutoClaimEnabled do
+                while getgenv().AutoClaimEnabled == true do
                     local stall = getStall()
                     if stall then
                         local Players = game:GetService("Players")
@@ -2051,7 +2053,7 @@ local function loadGUI()
                                 wait(0.3)
                                 fireproximityprompt(stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
                                 wait(0.3)
-                                for i = 1, 20 do
+                                for i = 1, 8 do
                                     local args = {
                                         [1] = "",
                                         [2] = "Gray",
@@ -2067,12 +2069,15 @@ local function loadGUI()
                     else
                         print("Claiming the booth...")
                     end
-                    wait(0.4)
+                    wait(0.5)
                 end
             end
         
-            if getgenv().AutoClaimEnabled then
+            if plr_booth and getgenv().AutoClaimEnabled then
                 monitorOwnership()
+            else
+                getgenv().AutoClaimEnabled = false
+                warn("No Booth/Script Off.")
             end
         else
             getgenv().AutoClaimEnabled = false
@@ -5449,27 +5454,38 @@ local function loadGUI()
     Callback = function(speedCoil)
         if speedCoil then
             getgenv().getRunningState = true
-            local player = game.Players.LocalPlayer
-            local character = player.Character or player.CharacterAdded:Wait()
-            local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid") or character:FindFirstChild("Humanoid")
-            local walkSpeed = 16
-            local runSpeed = 400
             getgenv().runningEnabled = true
-    
-            local function onShiftPress(input, gameProcessed)
-                if getgenv().runningEnabled and input.KeyCode == Enum.KeyCode.LeftShift then
-                    humanoid.WalkSpeed = runSpeed
+        
+            local player = game.Players.LocalPlayer
+            local walkSpeed = 16
+            local runSpeed = 450
+
+            local function setupCharacter(character)
+                local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
+                
+                local function onShiftPress(input, gameProcessed)
+                    if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled == true then
+                        humanoid.WalkSpeed = runSpeed
+                    end
                 end
-            end
-    
-            local function onShiftRelease(input, gameProcessed)
-                if getgenv().runningEnabled and input.KeyCode == Enum.KeyCode.LeftShift then
-                    humanoid.WalkSpeed = walkSpeed
+        
+                local function onShiftRelease(input, gameProcessed)
+                    if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled == true then
+                        humanoid.WalkSpeed = walkSpeed
+                    end
                 end
+        
+                game:GetService("UserInputService").InputBegan:Connect(onShiftPress)
+                game:GetService("UserInputService").InputEnded:Connect(onShiftRelease)
+
+                humanoid.WalkSpeed = walkSpeed
             end
-    
-            game:GetService("UserInputService").InputBegan:Connect(onShiftPress)
-            game:GetService("UserInputService").InputEnded:Connect(onShiftRelease)
+
+            player.CharacterAdded:Connect(setupCharacter)
+
+            if player.Character then
+                setupCharacter(player.Character)
+            end
         else
             local player = game.Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
