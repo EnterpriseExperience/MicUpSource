@@ -478,21 +478,105 @@ local function loadGUI()
             queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
         end
     end)
-    wait(0.5)
+    wait(0.2)
+    local function create_bindings()
+        local UserInputService = game:GetService("UserInputService")
+        local Players = game:GetService("Players")
+
+        local player = Players.LocalPlayer
+        local emoteSpeed = 1
+        local freezeEmotes = false
+
+        local keybindActions = {
+            [Enum.KeyCode.One] = 13071993910,
+            [Enum.KeyCode.Two] = 14901371589,
+            [Enum.KeyCode.Three] = 73683655527605,
+            [Enum.KeyCode.Four] = 5230615437,
+            [Enum.KeyCode.Five] = 5104377791,
+            [Enum.KeyCode.Six] = 13694139364,
+            [Enum.KeyCode.Seven] = 7466047578,
+            [Enum.KeyCode.Eight] = 13823339506,
+            [Enum.KeyCode.Nine] = 3576823880,
+            [Enum.KeyCode.Zero] = 15506503658,
+            [Enum.KeyCode.R] = 14548709888,
+            [Enum.KeyCode.T] = 15554016057,
+            [Enum.KeyCode.Y] = 10147924028,
+            [Enum.KeyCode.U] = 14900153406,
+            [Enum.KeyCode.P] = 16181843366,
+            [Enum.KeyCode.N] = 10214411646,
+            [Enum.KeyCode.Z] = 4391208058,
+            [Enum.KeyCode.Q] = "SlowDown",
+            [Enum.KeyCode.E] = "SpeedUp",
+            [Enum.KeyCode.V] = "Freeze",
+            [Enum.KeyCode.X] = "NormalSpeed"
+        }
+
+        local function adjustEmoteSpeed()
+            local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:AdjustSpeed(emoteSpeed)
+                end
+            end
+        end
+
+        local function playEmote(emoteId)
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop()
+                end
+                
+                wait()
+                local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
+                    
+                if animTrack and typeof(animTrack) == "Instance" then
+                    animTrack:AdjustSpeed(emoteSpeed)
+                end
+            else
+                warn("Humanoid not found in Character!")
+            end
+        end
+
+        local function handleKeybind(action)
+            if type(action) == "number" then
+                playEmote(action)
+            elseif action == "SlowDown" then
+                emoteSpeed = 0.1
+                adjustEmoteSpeed()
+            elseif action == "SpeedUp" then
+                emoteSpeed = 4
+                adjustEmoteSpeed()
+            elseif action == "Freeze" then
+                emoteSpeed = 0
+                adjustEmoteSpeed()
+                freezeEmotes = true
+            elseif action == "NormalSpeed" then
+                emoteSpeed = 1
+                adjustEmoteSpeed()
+                freezeEmotes = false
+            end
+        end
+
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            local action = keybindActions[input.KeyCode]
+            if action then
+                handleKeybind(action)
+            end
+        end)
+    end
+    wait()
     if game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownersWriteFile then
         warn("Already Loaded: Owners-Write-File")
     else
         print("Owner Found: ItsYoDawgWsgGng, UserID: "..tostring(game.Players.LocalPlayer.UserId))
-        
-        function write_file_setup()
-            writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":true,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\"-\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)
-            wait(1.5)
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-        end
+        wait()
+        create_bindings()
         wait()
         getgenv().ownersWriteFile = true
     end
-    write_file_setup()
     wait(0.5)
     -- [] -->> Initialize Baseplate (Floating Part) <<-- [] --
 
@@ -539,8 +623,8 @@ local function loadGUI()
 
     if getgenv().rizzEmoteConfig and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
         warn("Already Loaded: Emote/Rizz Configuration | Zacks Easy Hub")
-    elseif getgenv().rizzEmoteConfig == false or not getgenv().rizzEmoteConfig and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-        local player = game.Players.LocalPlayer
+    elseif getgenv().rizzEmoteConfig == false and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+        local player = game.Players.LocalPlayer or game:GetService("Players").LocalPlayer
         local playerGui = player:WaitForChild("PlayerGui")
     
         local screenGui = Instance.new("ScreenGui")
@@ -558,7 +642,7 @@ local function loadGUI()
         label.Size = UDim2.new(0.5, 0, 0.2, 0)
         label.Position = UDim2.new(0.25, 0, 0.2, 0)
         label.BackgroundTransparency = 1
-        label.Text = "Would you like an emote/rizz config?"
+        label.Text = "Would you like an emote/rizz config? [No Infinite Yield anymore! :)]"
         label.TextColor3 = Color3.new(1, 1, 1)
         label.TextScaled = true
         label.Font = Enum.Font.SourceSansBold
@@ -588,79 +672,94 @@ local function loadGUI()
         local selection = nil
 
         function selected_Yes()
-        if writefile and readfile then
-writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.18039216101169587,0.18431372940540315],\"StayOpen\":false,\"logsEnabled\":true,\"aliases\":[],\"PluginsTable\":[],\"prefix\":\";\",\"binds\":[{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.One\",\"COMMAND\":\"emote 13071993910\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Two\",\"COMMAND\":\"emote 14901371589\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Five\",\"COMMAND\":\"emote 5104377791\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Six\",\"COMMAND\":\"emote 13694139364\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Seven\",\"COMMAND\":\"emote 7466047578\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Eight\",\"COMMAND\":\"emote 13823339506\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.E\",\"COMMAND\":\"animspeed 4\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Q\",\"COMMAND\":\"animspeed 0.1\"},{\"ISKEYUP\":false,\"KEY\":\"Enum.KeyCode.Nine\",\"COMMAND\":\"emote 3576823880\"},{\"KEY\":\"Enum.KeyCode.Four\",\"ISKEYUP\":false,\"COMMAND\":\"emote 5230615437\"},{\"KEY\":\"Enum.KeyCode.V\",\"ISKEYUP\":false,\"COMMAND\":\"freezeanims\"},{\"KEY\":\"Enum.KeyCode.R\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14548709888\"},{\"KEY\":\"Enum.KeyCode.T\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15554016057\"},{\"KEY\":\"Enum.KeyCode.Z\",\"ISKEYUP\":false,\"COMMAND\":\"emote 4391208058\"},{\"KEY\":\"Enum.KeyCode.X\",\"ISKEYUP\":false,\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.Y\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10147924028\"},{\"KEY\":\"Enum.KeyCode.N\",\"ISKEYUP\":false,\"COMMAND\":\"emote 10214411646\"},{\"KEY\":\"Enum.KeyCode.U\",\"ISKEYUP\":false,\"COMMAND\":\"emote 14900153406\"},{\"KEY\":\"Enum.KeyCode.Zero\",\"ISKEYUP\":false,\"COMMAND\":\"emote 15506503658\"},{\"KEY\":\"Enum.KeyCode.P\",\"ISKEYUP\":false,\"COMMAND\":\"emote 16181843366\"},{\"KEY\":\"Enum.KeyCode.Three\",\"ISKEYUP\":false,\"COMMAND\":\"emote 73683655527605\"},{\"KEY\":\"Enum.KeyCode.F\",\"ISKEYUP\":false,\"TOGGLE\":\"animspeed -1\",\"COMMAND\":\"animspeed 1\"},{\"KEY\":\"Enum.KeyCode.M\",\"ISKEYUP\":false,\"COMMAND\":\"clicktp\"}],\"currentShade3\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"WayPoints\":[],\"jLogsEnabled\":true,\"currentScroll\":[0.30588236451148989,0.30588236451148989,0.30980393290519717],\"keepIY\":true,\"eventBinds\":\"{\\\"OnSpawn\\\":[[\\\"nospawn\\\",[0],1]],\\\"OnDied\\\":[[\\\"spawn 0\\\",[0],0]],\\\"OnExecute\\\":[],\\\"OnKilled\\\":[],\\\"OnJoin\\\":[],\\\"OnLeave\\\":[],\\\"OnDamage\\\":[],\\\"OnChatted\\\":[]}\",\"espTransparency\":0.3,\"currentShade1\":[0.1411764770746231,0.1411764770746231,0.14509804546833039],\"currentText2\":[0,0,0],\"currentText1\":[1,1,1]}", true)    
-            wait(1)
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-            wait(1.5)
-            getgenv().rizzEmoteConfig = true
-            wait()
-            local TweenService = game:GetService("TweenService")
-            local player = game:GetService("Players").LocalPlayer
-            
-            local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-            screenGui.Name = "RejoinWarningGUI"
-            screenGui.IgnoreGuiInset = true
-            
-            local frame = Instance.new("Frame", screenGui)
-            frame.Size = UDim2.new(1, 0, 1, 0)
-            frame.Position = UDim2.new(0, 0, 0, 0)
-            frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-            frame.BorderSizePixel = 0
-            frame.BackgroundTransparency = 1
-            
-            local textLabel = Instance.new("TextLabel", frame)
-            textLabel.Size = UDim2.new(0.8, 0, 0.3, 0)
-            textLabel.Position = UDim2.new(0.1, 0, 0.35, 0)
-            textLabel.BackgroundTransparency = 1
-            textLabel.Text = "You are rejoining, wait a few seconds, and config will apply automatically."
-            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            textLabel.TextScaled = true
-            textLabel.Font = Enum.Font.SourceSansBold
-            
-            local yesButton = Instance.new("TextButton", frame)
-            yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
-            yesButton.Position = UDim2.new(0.4, 0, 0.7, 0)
-            yesButton.BackgroundColor3 = Color3.fromRGB(32, 58, 86)
-            yesButton.TextColor3 = Color3.fromRGB(220, 188, 129)
-            yesButton.Text = "Okay, I will."
-            yesButton.TextScaled = true
-            yesButton.Font = Enum.Font.SourceSansBold
-            yesButton.BackgroundTransparency = 1
-            
-            local buttonCorner = Instance.new("UICorner", yesButton)
-            buttonCorner.CornerRadius = UDim.new(1, 0)
-            
-            local fadeInTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-            local frameFadeIn = TweenService:Create(frame, fadeInTweenInfo, {BackgroundTransparency = 0})
-            local textFadeIn = TweenService:Create(textLabel, fadeInTweenInfo, {TextTransparency = 0})
-            local buttonFadeIn = TweenService:Create(yesButton, fadeInTweenInfo, {BackgroundTransparency = 0})
-            
-            frameFadeIn:Play()
-            textFadeIn:Play()
-            buttonFadeIn:Play()
-            
-            yesButton.MouseButton1Click:Connect(function()
-                screenGui:Destroy()
-            end)
-            wait(0.4)
-            local TeleportService = game:GetService("TeleportService")
-            local Players = game:GetService("Players") or game.Players
-            PlaceId, JobId = game.PlaceId, game.JobId
-            local LocalPlayer = Players.LocalPlayer
-            queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-            local TeleportCheck = false
-            game.Players.LocalPlayer.OnTeleport:Connect(function(State)
-                if (not TeleportCheck) and queueteleport then
-                    TeleportCheck = true
-                    queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
+    local function create_bindings()
+                local UserInputService = game:GetService("UserInputService")
+                local Players = game:GetService("Players")
+        
+                local player = Players.LocalPlayer
+                local emoteSpeed = 1
+                local freezeEmotes = false
+        
+                local keybindActions = {
+                    [Enum.KeyCode.One] = 13071993910,
+                    [Enum.KeyCode.Two] = 14901371589,
+                    [Enum.KeyCode.Three] = 73683655527605,
+                    [Enum.KeyCode.Four] = 5230615437,
+                    [Enum.KeyCode.Five] = 5104377791,
+                    [Enum.KeyCode.Six] = 13694139364,
+                    [Enum.KeyCode.Seven] = 7466047578,
+                    [Enum.KeyCode.Eight] = 13823339506,
+                    [Enum.KeyCode.Nine] = 3576823880,
+                    [Enum.KeyCode.Zero] = 15506503658,
+                    [Enum.KeyCode.R] = 14548709888,
+                    [Enum.KeyCode.T] = 15554016057,
+                    [Enum.KeyCode.Y] = 10147924028,
+                    [Enum.KeyCode.U] = 14900153406,
+                    [Enum.KeyCode.P] = 16181843366,
+                    [Enum.KeyCode.N] = 10214411646,
+                    [Enum.KeyCode.Z] = 4391208058,
+                    [Enum.KeyCode.Q] = "SlowDown",
+                    [Enum.KeyCode.E] = "SpeedUp",
+                    [Enum.KeyCode.V] = "Freeze",
+                    [Enum.KeyCode.X] = "NormalSpeed"
+                }
+        
+                local function adjustEmoteSpeed()
+                    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:AdjustSpeed(emoteSpeed)
+                        end
+                    end
                 end
-            end)
-            wait(0.5)
-            TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
-        else
-            warn("readfile/writefile does not exist on this executor! Skipping...")
-        end
+        
+                local function playEmote(emoteId)
+                    local character = player.Character or player.CharacterAdded:Wait()
+                    local humanoid = character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:Stop()
+                        end
+                        
+                        wait()
+                        local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
+                            
+                        if animTrack and typeof(animTrack) == "Instance" then
+                            animTrack:AdjustSpeed(emoteSpeed)
+                        end
+                    else
+                        warn("Humanoid not found in Character!")
+                    end
+                end
+        
+                local function handleKeybind(action)
+                    if type(action) == "number" then
+                        playEmote(action)
+                    elseif action == "SlowDown" then
+                        emoteSpeed = 0.1
+                        adjustEmoteSpeed()
+                    elseif action == "SpeedUp" then
+                        emoteSpeed = 4
+                        adjustEmoteSpeed()
+                    elseif action == "Freeze" then
+                        emoteSpeed = 0
+                        adjustEmoteSpeed()
+                        freezeEmotes = true
+                    elseif action == "NormalSpeed" then
+                        emoteSpeed = 1
+                        adjustEmoteSpeed()
+                        freezeEmotes = false
+                    end
+                end
+        
+                UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                    if gameProcessed then return end
+                    local action = keybindActions[input.KeyCode]
+                    if action then
+                        handleKeybind(action)
+                    end
+                end)
+            end
         end
         -- [] -->> Validate [selection] and confirm whether or not the user is in this list, then proceed to call [writefile] to initialize Emote/Rizz Configuration. <<-- [] --
         function selected_No()
@@ -1911,7 +2010,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     CurrentValue = false,
     Flag = "BypassNoteBoard",
     Callback = function(theNote)     
-        local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+        local Replicated_Storage = game:GetService("ReplicatedStorage")
         local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
 
         if theNote then
@@ -1979,9 +2078,9 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     PlaceholderText = "Note",
     RemoveTextAfterFocusLost = true,
     Callback = function(noteToBypass)
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+        local Players = game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
-        local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+        local Replicated_Storage = game:GetService("ReplicatedStorage")
         local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
     
         local letters = {
@@ -2085,7 +2184,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     RemoveTextAfterFocusLost = true,
     Callback = function(beAnyAvatar)
         local Replicated_Storage = game:GetService("ReplicatedStorage")
-        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
 
         local args = {
             [1] = tostring(beAnyAvatar)
@@ -2098,7 +2197,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Name = "Char Into: Owner Of Script",
     Callback = function(beAnyAvatar)
         local Replicated_Storage = game:GetService("ReplicatedStorage")
-        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
     
         local args = {
             [1] = "ItsYoDawgWsgGng"
@@ -2117,7 +2216,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
         wait(0.1)
         Animate.Disabled = false
 
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        local humanoid = character:FindFirstChildWhichIsA("Humanoid")
         if humanoid then
             for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                 track:Stop()
@@ -2144,7 +2243,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     Name = "Char Into: Creator Of MIC UP",
     Callback = function(beAnyAvatar)
         local Replicated_Storage = game:GetService("ReplicatedStorage")
-        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUserEvent")
+        local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
 
         local function get_creator_of_game()
             local ownerUserId = 25335555
@@ -2172,7 +2271,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
     end,})
 
     local AutoReclaimToggle = Tab11:CreateToggle({
-    Name = "Anti Booth Stealer (WORKING!)",
+    Name = "Anti Booth Stealer",
     CurrentValue = false,
     Flag = "NoStealingBooths",
     Callback = function(boothStolen)
@@ -2180,6 +2279,40 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
             getgenv().AutoClaimEnabled = true
             getgenv().Booth = nil
             getgenv().OwnershipConnection = nil
+
+            function notify(title, content, duration)
+        
+                if not duration then
+                    duration = tonumber(6)
+                end
+        
+                if not title then
+                    title = "Notification: "
+                end
+        
+                if not content then
+                    content = "DEFAULT_MESSAGE_CONTENT"
+                end
+        
+                if not level or level == 0 then
+                    title = "Notification:"
+                end
+        
+                Rayfield:Notify({
+                    Title = tostring(title),
+                    Content = tostring(content),
+                    Duration = tonumber(duration),
+                    Image = 4483362458,
+                    Actions = {
+                        Ignore = {
+                        Name = "Alright",
+                        Callback = function()
+                            print("...")
+                        end
+                        },
+                    },
+                })
+            end
         
             local Players = game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
@@ -2194,9 +2327,18 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
                 end
                 return nil
             end
+
+            local plr_booth = getStall()
+
+            if not plr_booth then
+                getgenv().OwnershipConnection = nil
+                getgenv().Booth = nil
+                getgenv().AutoClaimedEnabled = false
+                return notify("Error:", "No Booth, claim a Booth and then toggle this!", 7.5)
+            end
         
             local function monitorOwnership()
-                while getgenv().AutoClaimEnabled do
+                while getgenv().AutoClaimEnabled == true do
                     local stall = getStall()
                     if stall then
                         local Players = game:GetService("Players")
@@ -2215,7 +2357,7 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
                                 wait(0.3)
                                 fireproximityprompt(stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
                                 wait(0.3)
-                                for i = 1, 20 do
+                                for i = 1, 8 do
                                     local args = {
                                         [1] = "",
                                         [2] = "Gray",
@@ -2231,12 +2373,14 @@ writefile("IY_FE.iy", "{\"currentShade2\":[0.18039216101169587,0.180392161011695
                     else
                         print("Claiming the booth...")
                     end
-                    wait(0.4)
+                    wait(0.5)
                 end
             end
         
-            if getgenv().AutoClaimEnabled then
+            if plr_booth and getgenv().AutoClaimEnabled then
                 monitorOwnership()
+            else
+                warn("No Booth/Script Off.")
             end
         else
             getgenv().AutoClaimEnabled = false
