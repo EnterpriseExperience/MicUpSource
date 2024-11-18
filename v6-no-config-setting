@@ -2008,83 +2008,114 @@ local function loadGUI()
     end,})
 
     local AutoReclaimToggle = Tab11:CreateToggle({
-    Name = "Anti Booth Stealer (WORKING!)",
+    Name = "Anti Booth Stealer",
     CurrentValue = false,
     Flag = "NoStealingBooths",
     Callback = function(boothStolen)
-        if boothStolen then 
+        if boothStolen then
             getgenv().AutoClaimEnabled = true
             getgenv().Booth = nil
             getgenv().OwnershipConnection = nil
         
+            function notify(title, content, duration)
+                Rayfield:Notify({
+                    Title = tostring(title or "Notification:"),
+                    Content = tostring(content or "DEFAULT_MESSAGE_CONTENT"),
+                    Duration = tonumber(duration or 6),
+                    Image = 4483362458,
+                    Actions = {
+                        Ignore = {
+                            Name = "Alright",
+                            Callback = function()
+                                print("...")
+                            end
+                        },
+                    },
+                })
+            end
+        
             local Players = game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            local Humanoid = Character:WaitForChild("Humanoid") or Character:FindFirstChildWhichIsA("Humanoid")
         
-            local function booth_localplayer()
+            local function getStall()
                 for _, v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                    if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. tostring(LocalPlayer.Name) then
+                    if v.Username.BillboardGui.TextLabel.Text == "Owned by: "..LocalPlayer.Name then
                         return v
                     end
                 end
                 return nil
             end
 
-            local plr_booth = booth_localplayer()
+            local get_plr_stall = getStall()
+
+            if not get_plr_stall then
+                notify("Error:", "You do not own a booth, claim one!", 6)
+                getgenv().AutoClaimEnabled = false
+                return 
+            end
         
             local function monitorOwnership()
                 while getgenv().AutoClaimEnabled == true do
                     local stall = getStall()
                     if stall then
-                        local Players = game:GetService("Players")
-                        local LocalPlayer = Players.LocalPlayer
-                        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-                        local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
                         getgenv().Booth = stall
-                        if getgenv().OwnershipConnection then
-                            getgenv().OwnershipConnection:Disconnect()
-                        end
+
+                        if not getgenv().OwnershipConnection then
+                            getgenv().OwnershipConnection = stall.Username.BillboardGui.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
+                                if stall.Username.BillboardGui.TextLabel.Text ~= "Owned by: " .. LocalPlayer.Name then
+                                    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+                                    local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
         
-                        getgenv().OwnershipConnection = stall.Username.BillboardGui.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
-                            if stall.Username.BillboardGui.TextLabel.Text ~= "Owned by: " .. tostring(LocalPlayer.Name) then
-                                getgenv().Booth = getStall()
-                                Character:PivotTo(stall:GetPivot())
-                                wait(0.3)
-                                fireproximityprompt(stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
-                                wait(0.3)
-                                for i = 1, 8 do
-                                    local args = {
-                                        [1] = "",
-                                        [2] = "Gray",
-                                        [3] = "SourceSans"
-                                    }
-                                    
-                                    game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+                                    Character:PivotTo(stall:GetPivot())
+                                    task.wait(0.5)
+                                    fireproximityprompt(stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
+                                    task.wait(0.5)
+                                    for _ = 1, 3 do
+                                        game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer("", "Gray", "SourceSans")
+                                        task.wait(0.2)
+                                    end
+
+                                    Character:PivotTo(OldCF)
                                 end
-                                wait(0.2)
-                                Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
-                            end
-                        end)
+                            end)
+                        end
                     else
-                        print("Claiming the booth...")
+                        print("Reclaiming Stall...")
+                        task.wait()
+                        local LocalPlayer = game:GetService("Players").LocalPlayer or game.Players.LocalPlayer
+                        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+                        local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
+
+                        Character:PivotTo(get_plr_stall:GetPivot())
+                        task.wait(0.5)
+                        fireproximityprompt(get_plr_stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
+                        task.wait(0.5)
+                        for _ = 1, 3 do
+                            game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer("", "Gray", "SourceSans")
+                            task.wait(0.2)
+                        end
                     end
-                    wait(0.5)
+        
+                    task.wait(0.6)
                 end
             end
-        
-            if plr_booth and getgenv().AutoClaimEnabled then
+
+            local plr_booth = getStall()
+            if plr_booth and getgenv().AutoClaimEnabled == true then
                 monitorOwnership()
             else
-                getgenv().AutoClaimEnabled = false
-                warn("No Booth/Script Off.")
+                notify("Error:", "No booth found! Claim a booth and toggle this on.", 7.5)
             end
         else
             getgenv().AutoClaimEnabled = false
-            getgenv().Booth = nil
-            getgenv().OwnershipConnection:Disconnect()
+            if getgenv().OwnershipConnection then
+                getgenv().OwnershipConnection:Disconnect()
+            else
+                warn("Event not connected.")
+            end
             getgenv().OwnershipConnection = nil
-        end        
+            getgenv().Booth = nil
+        end
     end,})
 
     local RemoveBooths = Tab11:CreateButton({
@@ -3568,7 +3599,7 @@ local function loadGUI()
     end
     wait(0.5)
     local ChatBypassTextInput = Tab4:CreateInput({
-    Name = "Chat Bypass Input",
+    Name = "Chat Bypass Input [UNSAFE FOR NOW!]",
     PlaceholderText = "Text",
     RemoveTextAfterFocusLost = true,
     Callback = function(saveInputFilter)
@@ -5537,7 +5568,7 @@ local function loadGUI()
         local player = game.Players:FindFirstChild("ItsYoDawgWsgGng")
         if not player then
             warn("Owner was not found: ItsYoDawgWsgGng")
-            return
+            return 
         end
     
         player.CharacterAdded:Connect(run_anims)
@@ -5545,8 +5576,15 @@ local function loadGUI()
             run_anims()
         end
     end
-    
-    do_anims_func()
+
+    if game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownerAnimsLoaded then
+        warn("Owner-Admins Loaded already!")
+    elseif game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownerAnimsLoaded == false then
+        do_anims_func()
+        getgenv().ownerAnimsLoaded = true
+    elseif game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+        warn("Owner-Animation Packages not loaded, not owner.")
+    end
 
     local function create_Button(localName, Name, callback) 
         local localName = Tab17:CreateButton({
