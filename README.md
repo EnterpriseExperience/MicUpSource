@@ -1,5 +1,6 @@
 ## [V6 Loadstring, BETA RELEASE!]:
 https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/new-loadstring
+https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-loadstring
 ## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Support For Every Executor!]
 
 https://discord.gg/VJh3kkYzBn
