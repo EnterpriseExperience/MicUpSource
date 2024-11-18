@@ -5577,14 +5577,22 @@ local function loadGUI()
         end
     end
 
-    if game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownerAnimsLoaded then
-        warn("Owner-Admins Loaded already!")
-    elseif game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownerAnimsLoaded == false then
-        do_anims_func()
-        getgenv().ownerAnimsLoaded = true
-    elseif game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-        warn("Owner-Animation Packages not loaded, not owner.")
+    if getgenv().ownerAnimsLoaded == nil then
+        getgenv().ownerAnimsLoaded = false
     end
+    
+    if game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownerAnimsLoaded then 
+        warn("Owner-Animations already loaded!")
+    elseif game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and not getgenv().ownerAnimsLoaded then
+        if typeof(do_anims_func) == "function" then
+            do_anims_func()
+            getgenv().ownerAnimsLoaded = true
+        else
+            warn("Error: Animation function is missing!")
+        end
+    else
+        warn("Owner-Animation Packages not loaded, not owner.")
+    end  
 
     local function create_Button(localName, Name, callback) 
         local localName = Tab17:CreateButton({
