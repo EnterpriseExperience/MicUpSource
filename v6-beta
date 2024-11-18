@@ -4839,9 +4839,13 @@ local function loadGUI()
                 clickAllTheDetectors()
             end
         else
-            getgenv().doAllClicks = false
-            wait()
-            getgenv().doAllClicks = false
+            for i = 1, 100000 do
+                getgenv().doAllClicks = false
+                getgenv().doAllClicks = false
+                getgenv().doAllClicks = false
+                getgenv().doAllClicks = false
+                getgenv().doAllClicks = false
+            end
         end
     end})
     
@@ -5888,7 +5892,7 @@ local function loadGUI()
         end
     else
         warn("Owner-Animation Packages not loaded, not owner.")
-    end    
+    end
 
     local function create_Button(localName, Name, callback) 
         local localName = Tab17:CreateButton({
