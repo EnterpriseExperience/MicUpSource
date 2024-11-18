@@ -4835,7 +4835,7 @@ local function loadGUI()
         if ClickAll then
             getgenv().doAllClicks = true
             while getgenv().doAllClicks == true do
-            wait()
+            wait(0.6)
                 clickAllTheDetectors()
             end
         else
