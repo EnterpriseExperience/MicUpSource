@@ -1,31 +1,5 @@
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
-
-local blacklist = {
-    "Ransacked007",
-}
-
-local function isPlayerBlacklisted(username)
-    for _, blacklistedName in ipairs(blacklist) do
-        if username == blacklistedName then
-            return true
-        end
-    end
-    return false
-end
-
-game.Players.PlayerAdded:Connect(function(player)
-    if isPlayerBlacklisted(player.Name) then
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/exercise_knowledge.lua'))()
-        wait()
-        while true do
-            player:Kick("You have been blacklisted from 'Zacks Easy Hub', all execution attempts are logged.")
-            wait()
-        end
-    else
-        warn("..??>>")
-    end
-end)
-
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/what_is_ai_documentation')))()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/exercise_knowledge.lua'))()
 
 -- [] -->> Initializing Notification and the first set of necessary stuff. [Trying to make support for all executors in the process.] <<-- [] --
@@ -245,9 +219,9 @@ local function loadGUI()
 
     -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
     local Window = Rayfield:CreateWindow({
-        Name = "Zacks Zesty ;) Hub | V6.3.6-B | Executed At: "..formattedTime,
+        Name = "Zacks Easy Hub | V6.3.6-B | Executed At: "..formattedTime,
         LoadingTitle = "V6, WE ARE UP!!!",
-        LoadingSubtitle = "Zacks Zesty Hub ;) | Productions.",
+        LoadingSubtitle = "Zacks Easy Hub | Running The Game.",
         ConfigurationSaving = {
            Enabled = false,
            FolderName = nil,
@@ -272,40 +246,40 @@ local function loadGUI()
     })
     
     -- [] -->> Initialize Tabs and Sections <<-- [] --
-    local Tab1 = Window:CreateTab("> Home Tab <", 7733960981)
+    local Tab1 = Window:CreateTab("< Home >", 7733960981)
     local Section1 = Tab1:CreateSection("||| Home Section |||")
 
-    local Tab11 = Window:CreateTab("> Booths Tab <", 7733914390)
+    local Tab11 = Window:CreateTab("< Booths >", 7733914390)
     local Section11 = Tab11:CreateSection("||| Booths Section |||")
 
-    local Tab2 = Window:CreateTab("> Character [1] <", 7743871002)
+    local Tab2 = Window:CreateTab("< Character >", 7743871002)
     local Section2 = Tab2:CreateSection("||| Character [1] Section |||")
 
-    local Tab13 = Window:CreateTab("> Character [2] <", 7743871002)
+    local Tab13 = Window:CreateTab("< Players >", 7743871002)
     local Section13 = Tab13:CreateSection("||| Character [2] Section |||")
 
-    local Tab10 = Window:CreateTab("> Teleports Tab <", 7733764327)
+    local Tab10 = Window:CreateTab("< Teleports >", 7733764327)
     local Section10 = Tab10:CreateSection("||| Teleports Section |||")
 
-    local Tab4 = Window:CreateTab("> Chatting Tab <", 7734021300)
+    local Tab4 = Window:CreateTab("< Chat >", 7734021300)
     local Section4 = Tab4:CreateSection("||| Chatting Section |||")
 
-    local Tab5 = Window:CreateTab("> Extras Tab <", 7733954760)
+    local Tab5 = Window:CreateTab("< Misc >", 7733954760)
     local Section5 = Tab5:CreateSection("||| Extras Section |||")
 
-    local Tab17 = Window:CreateTab("> Anims Tab <", 7733954760)
+    local Tab17 = Window:CreateTab("< Animations >", 7733954760)
     local Section17 = Tab17:CreateSection("||| Animation Packages Section |||")
 
-    local Tab9 = Window:CreateTab("> Lighting Tab <", 7734068495)
+    local Tab9 = Window:CreateTab("< Lighting >", 7734068495)
     local Section9 = Tab9:CreateSection("||| Lighting Section |||")
     
-    local Tab16 = Window:CreateTab("> Baseplate Tab <", 7734058260)
+    local Tab16 = Window:CreateTab("< Baseplate >", 7734058260)
     local Section16 = Tab16:CreateSection("||| Baseplate Section |||")
     
-    local Tab12 = Window:CreateTab("> Emoting Tab <", 7743871002)
+    local Tab12 = Window:CreateTab("< Emotes >", 7743871002)
     local Section12 = Tab12:CreateSection("||| Emoting Section |||")
     
-    local Tab14 = Window:CreateTab("> CopyAnim Tab <", 7743871002)
+    local Tab14 = Window:CreateTab("< Copy Anim >", 7743871002)
     local Section14 = Tab14:CreateSection("||| Copy Animation Section |||")
     
     local Tab15 = Window:CreateTab("> UI Tab <", 7734022107)
