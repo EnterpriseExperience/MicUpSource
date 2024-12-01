@@ -1,5 +1,7 @@
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
+
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/what_is_ai_documentation')))()
+
 loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/exercise_knowledge.lua'))()
 
 -- [] -->> Initializing Notification and the first set of necessary stuff. [Trying to make support for all executors in the process.] <<-- [] --
@@ -219,8 +221,8 @@ local function loadGUI()
 
     -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
     local Window = Rayfield:CreateWindow({
-        Name = "Zacks Easy Hub | V6.3.6-B | Executed At: "..formattedTime,
-        LoadingTitle = "How are you doing? :)",
+        Name = "Zacks Easy Hub | V6.3.7-B | Executed At: "..formattedTime,
+        LoadingTitle = "How are you doing today? :)",
         LoadingSubtitle = "Zacks Easy Hub | Running The Game.",
         ConfigurationSaving = {
            Enabled = false,
@@ -363,7 +365,7 @@ local function loadGUI()
             local barCorner = Instance.new("UICorner", progressBar)
             barCorner.CornerRadius = UDim.new(0, 5)
 
-            local finalMessage = "Zacks Easy Hub Presents: MIC UP  | Script Hub | November 2024 | Doing It Better"
+            local finalMessage = "Zacks Easy Hub: MIC UP 🔊 | December 2024 | Running The Game."
             local finalTextLabel = Instance.new("TextLabel", frame)
             finalTextLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
             finalTextLabel.Position = UDim2.new(0.1, 0, 0.6, 0)
