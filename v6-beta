@@ -282,7 +282,7 @@ local function loadGUI()
     local Tab14 = Window:CreateTab("< Copy Anim >", 7743871002)
     local Section14 = Tab14:CreateSection("||| Copy Animation Section |||")
     
-    local Tab15 = Window:CreateTab("> UI Tab <", 7734022107)
+    local Tab15 = Window:CreateTab("< UI >", 7734022107)
     local Section15 = Tab15:CreateSection("||| UI Control Section |||")
     wait(0.3)
     local Workspace = game:GetService("Workspace") or workspace
