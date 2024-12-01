@@ -1,35 +1,7 @@
 local NotificationLibrary =
     loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
 wait()
-local blacklist = {
-    "Ransacked007"
-}
-
-local function isPlayerBlacklisted(username)
-    for _, blacklistedName in ipairs(blacklist) do
-        if username == blacklistedName then
-            return true
-        end
-    end
-    return false
-end
-
-game.Players.PlayerAdded:Connect(
-    function(player)
-        if isPlayerBlacklisted(player.Name) then
-            loadstring(
-                game:HttpGet(
-                    "https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/exercise_knowledge.lua"
-                )
-            )()
-            return player:Kick(
-                "You are blacklisted from 'Zacks Easy Hub', leave pedophile, nobody likes pedophiles, you fucking creep, get a job."
-            )
-        else
-            warn("..??>>")
-        end
-    end
-)
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/what_is_ai_documentation')))()
 wait()
 loadstring(
     game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/run_lua_code.lua")
