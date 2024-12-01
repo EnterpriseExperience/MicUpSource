@@ -220,7 +220,7 @@ local function loadGUI()
     -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
     local Window = Rayfield:CreateWindow({
         Name = "Zacks Easy Hub | V6.3.6-B | Executed At: "..formattedTime,
-        LoadingTitle = "V6, WE ARE UP!!!",
+        LoadingTitle = "How are you doing? :)",
         LoadingSubtitle = "Zacks Easy Hub | Running The Game.",
         ConfigurationSaving = {
            Enabled = false,
