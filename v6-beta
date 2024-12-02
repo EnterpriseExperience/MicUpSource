@@ -717,6 +717,7 @@ local function loadGUI()
                     end
                 end)
             end
+            create_bindings()
         end
 
         function selected_No()
