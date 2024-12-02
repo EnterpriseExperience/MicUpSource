@@ -207,101 +207,6 @@ if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == tr
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 wait(0.3)
--- [] -->> [First real setup part, parenting 'Teleport' to AssetService, (To prevent the game from teleporting you when you fall into it.)] <<-- [] --
-local function loadGUI()
-    wait(0.2)
-    local currentTime = os.time()
-    local formattedTime = os.date("%I:%M %p", currentTime)
-    local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
-    -- [] -->> Comment out unnecessary functions, code, etc <<-- [] --
-
-    --[[getgenv().gethui = function()
-        return game:GetService("CoreGui")
-    end--]]
-
-    -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
-    local Window = Rayfield:CreateWindow({
-        Name = "Zacks Easy Hub | V6.3.7-B | Executed At: "..formattedTime,
-        LoadingTitle = "How are you doing today? :)",
-        LoadingSubtitle = "Zacks Easy Hub | Running The Game.",
-        ConfigurationSaving = {
-           Enabled = false,
-           FolderName = nil,
-           FileName = "Zacks Easy Hub"
-        },
-        -- [] -->> Discord invite feature is neat. <<-- [] --
-        Discord = {
-           Enabled = true,
-           Invite = "VJh3kkYzBn",
-           RememberJoins = true
-        },
-        KeySystem = false,
-        KeySettings = {
-           Title = "False | No Key System",
-           Subtitle = "No Key System",
-           Note = "No method of obtaining the key is provided",
-           FileName = "Key",
-           SaveKey = true,
-           GrabKeyFromSite = false,
-           Key = {"None"}
-        }
-    })
-    
-    -- [] -->> Initialize Tabs and Sections <<-- [] --
-    local Tab1 = Window:CreateTab("< Home >", 7733960981)
-    local Section1 = Tab1:CreateSection("||| Home Section |||")
-
-    local Tab11 = Window:CreateTab("< Booths >", 7733914390)
-    local Section11 = Tab11:CreateSection("||| Booths Section |||")
-
-    local Tab2 = Window:CreateTab("< Character >", 7743871002)
-    local Section2 = Tab2:CreateSection("||| Character [1] Section |||")
-
-    local Tab13 = Window:CreateTab("< Players >", 7743871002)
-    local Section13 = Tab13:CreateSection("||| Character [2] Section |||")
-
-    local Tab10 = Window:CreateTab("< Teleports >", 7733764327)
-    local Section10 = Tab10:CreateSection("||| Teleports Section |||")
-
-    local Tab4 = Window:CreateTab("< Chat >", 7734021300)
-    local Section4 = Tab4:CreateSection("||| Chatting Section |||")
-
-    local Tab5 = Window:CreateTab("< Misc >", 7733954760)
-    local Section5 = Tab5:CreateSection("||| Extras Section |||")
-
-    local Tab17 = Window:CreateTab("< Animations >", 7733954760)
-    local Section17 = Tab17:CreateSection("||| Animation Packages Section |||")
-
-    local Tab9 = Window:CreateTab("< Lighting >", 7734068495)
-    local Section9 = Tab9:CreateSection("||| Lighting Section |||")
-    
-    local Tab16 = Window:CreateTab("< Baseplate >", 7734058260)
-    local Section16 = Tab16:CreateSection("||| Baseplate Section |||")
-    
-    local Tab12 = Window:CreateTab("< Emotes >", 7743871002)
-    local Section12 = Tab12:CreateSection("||| Emoting Section |||")
-    
-    local Tab14 = Window:CreateTab("< Copy Anim >", 7743871002)
-    local Section14 = Tab14:CreateSection("||| Copy Animation Section |||")
-    
-    local Tab15 = Window:CreateTab("< UI >", 7734022107)
-    local Section15 = Tab15:CreateSection("||| UI Control Section |||")
-    wait(0.3)
-    local Workspace = game:GetService("Workspace") or workspace
-    local GameFolder = Workspace:FindFirstChild("Game")
-    local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
-    local AssetService = game:GetService("AssetService")
-    local Asset_Service_Duplicate = game:GetService("AssetService")
-
-    if not GetTeleportPart then
-        warn("Part: Teleport = nil | false | null")
-    else
-        if GameFolder:FindFirstChild("Teleport") then
-            local TeleportPart = GameFolder:FindFirstChild("Teleport")
-            TeleportPart.Parent = AssetService
-        end
-    end
-
     -- [] -->> Initialize Services /|\ Setup Services [Try to support every executor in the process.] <<-- [] --
 
     local Workspace = game:GetService("Workspace") or workspace
@@ -309,8 +214,6 @@ local function loadGUI()
     local player = Players.LocalPlayer
     local Character = player.Character or player.CharacterAdded:Wait()
     if not Character then
-        print("Character not found, waiting for character...")
-        wait(0.1)
         repeat wait() until player.Character and player.Character:FindFirstChild("Humanoid") and player.Character:FindFirstChild("HumanoidRootPart")
         local LoadedCharacter = player.Character or player.CharacterAdded:Wait()
         local Character = LoadedCharacter
@@ -318,8 +221,6 @@ local function loadGUI()
     local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui") or player:WaitForChild("PlayerGui", 1)
     local HttpService = game:GetService("HttpService")
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    repeat wait() until player and Character and Character:FindFirstChild("HumanoidRootPart") and Character:FindFirstChildWhichIsA("Humanoid") or player.Character:FindFirstChild("Humanoid") or player.Character:FindFirstChildWhichIsA("Humanoid").Health >= 98
-
         if getgenv().loading_screen_data then
             print("Already Seen Loading Screen")
         else
@@ -334,7 +235,7 @@ local function loadGUI()
             local frame = Instance.new("Frame", gui)
             frame.Size = UDim2.new(1, 0, 1, 36)
             frame.Position = UDim2.new(0, 0, 0, -36)
-            frame.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
+            frame.BackgroundColor3 = Color3.fromRGB(123, 46, 47)
             frame.BorderSizePixel = 0
             frame.BackgroundTransparency = 1
 
@@ -343,7 +244,7 @@ local function loadGUI()
             titleText.Position = UDim2.new(0.15, 0, 0.3, 0)
             titleText.BackgroundTransparency = 1
             titleText.Font = Enum.Font.GothamBold
-            titleText.Text = "Zacks Easy Hub | Automation is #1 | ©"
+            titleText.Text = "😈✔😈 | Zacks Easy Hub | 😈✔😈"
             titleText.TextColor3 = Color3.fromRGB(128, 128, 128)
             titleText.TextScaled = true
 
@@ -352,8 +253,8 @@ local function loadGUI()
             loadingText.Position = UDim2.new(0.25, 0, 0.45, 0)
             loadingText.BackgroundTransparency = 1
             loadingText.Font = Enum.Font.GothamBold
-            loadingText.Text = "Loading Zacks Easy Hub..."
-            loadingText.TextColor3 = Color3.fromRGB(0, 0, 255)
+            loadingText.Text = "Loading 😈😈 Zacks Easy Hub 😈😈..."
+            loadingText.TextColor3 = Color3.fromRGB(107, 50, 124)
             loadingText.TextScaled = true
 
             local progressBar = Instance.new("Frame", frame)
@@ -365,7 +266,7 @@ local function loadGUI()
             local barCorner = Instance.new("UICorner", progressBar)
             barCorner.CornerRadius = UDim.new(0, 5)
 
-            local finalMessage = "Zacks Easy Hub: MIC UP 🔊 | December 2024 | Running The Game."
+            local finalMessage = "😈☠️ | ZACKS EASY HUB__TAKEOVER | ☠️😈"
             local finalTextLabel = Instance.new("TextLabel", frame)
             finalTextLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
             finalTextLabel.Position = UDim2.new(0.1, 0, 0.6, 0)
@@ -420,12 +321,13 @@ local function loadGUI()
                     gui:Destroy()
                 end)
             end)
+        end
         wait()
         getgenv().loading_screen_data = true
         wait(4.5)
         -- [] -->> Initialization <<-- [] --
         repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        wait(0.6)
+        wait(0.3)
         local Workspace = game:GetService("Workspace")
 
         if not Workspace:FindFirstChild("PartStorage") then
@@ -464,21 +366,30 @@ local function loadGUI()
             textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
             textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
             textLabel.BackgroundTransparency = 1
-            textLabel.Text = "We are creating a large Baseplate, hang tight... [Will freeze.]"
+            textLabel.Text = "😈 Zacks Easy Hub 😈, is creating the BasePlate <YOU WILL FREEZE.>, Wait until this screen disappears."
             textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             textLabel.TextScaled = true
             textLabel.Font = Enum.Font.GothamBold
             textLabel.Parent = fullScreenFrame
             wait(0.7)
-            local WS_Service = game:GetService("Workspace") or workspace or cloneref(game:GetService("Workspace"))
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
+            local Workspace
+            local Players
+            task.wait()
+            if cloneref then
+                Workspace = cloneref(game:GetService("Workspace"))
+                Players = cloneref(game:GetService("Players"))
+            else
+                Workspace = game:GetService("Workspace")
+                Players = game:GetService("Players")
+            end
             local Player = Players.LocalPlayer
-            local Terrain = WS_Service.Terrain
+            local PlayerGui = Player:WaitForChild("PlayerGui")
+            local Terrain = Workspace.Terrain
 
             Terrain:FillBlock(CFrame.new(66, -10, 72.5), Vector3.new(13000, 16, 13000), Enum.Material.Asphalt)
             wait(0.3)
-            if game.Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("BASEPLATE_LOADING") then
-                local bruh_GUI = game.Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("BASEPLATE_LOADING")
+            if PlayerGui:FindFirstChild("BASEPLATE_LOADING") then
+                local bruh_GUI = PlayerGui:FindFirstChild("BASEPLATE_LOADING")
 
                 bruh_GUI:Destroy()
             else 
@@ -492,122 +403,102 @@ local function loadGUI()
         else
             do_baseplate_check()
         end
-        wait(0.4)
-        local function create_bindings()
-            local UserInputService = game:GetService("UserInputService") or cloneref(game:GetService("UserInputService"))
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            
-            local player = Players.LocalPlayer
-            local emoteSpeed = 1
-            local freezeEmotes = false
-            getgenv().isReversed = getgenv().isReversed or false
-            
-            local keybindActions = {
-                [Enum.KeyCode.One] = 13071993910,
-                [Enum.KeyCode.Two] = 14901371589,
-                [Enum.KeyCode.Three] = 73683655527605,
-                [Enum.KeyCode.Four] = 5230615437,
-                [Enum.KeyCode.Five] = 5104377791,
-                [Enum.KeyCode.Six] = 13694139364,
-                [Enum.KeyCode.Seven] = 7466047578,
-                [Enum.KeyCode.Eight] = 13823339506,
-                [Enum.KeyCode.Nine] = 3576823880,
-                [Enum.KeyCode.Zero] = 15506503658,
-                [Enum.KeyCode.R] = 14548709888,
-                [Enum.KeyCode.T] = 15554016057,
-                [Enum.KeyCode.Y] = 10147924028,
-                [Enum.KeyCode.U] = 14900153406,
-                [Enum.KeyCode.P] = 16181843366,
-                [Enum.KeyCode.N] = 10214411646,
-                [Enum.KeyCode.Z] = 4391208058,
-                [Enum.KeyCode.Q] = "SlowDown",
-                [Enum.KeyCode.E] = "SpeedUp",
-                [Enum.KeyCode.V] = "Freeze",
-                [Enum.KeyCode.X] = "NormalSpeed",
-                [Enum.KeyCode.F] = "Reverse"
-            }
-            
-            local function adjustEmoteSpeed()
-                local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:AdjustSpeed(emoteSpeed)
-                    end
-                end
-            end
-            
-            local function reverseEmotes()
-                local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:AdjustSpeed(-1)
-                    end
-                end
-            end
-            
-            local function playNormalSpeed()
-                local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:AdjustSpeed(1)
-                    end
-                end
-            end
-            
-            local function playEmote(emoteId)
-                local character = player.Character or player.CharacterAdded:Wait()
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:Stop()
-                    end
-                    
-                    wait()
-                    local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-                        
-                    if animTrack and typeof(animTrack) == "Instance" then
-                        animTrack:AdjustSpeed(emoteSpeed)
-                    end
-                else
-                    warn("Humanoid not found in Character!")
-                end
-            end
-            
-            local function handleKeybind(action)
-                if type(action) == "number" then
-                    playEmote(action)
-                elseif action == "SlowDown" then
-                    emoteSpeed = 0.1
-                    adjustEmoteSpeed()
-                elseif action == "SpeedUp" then
-                    emoteSpeed = 4
-                    adjustEmoteSpeed()
-                elseif action == "Freeze" then
-                    emoteSpeed = 0
-                    adjustEmoteSpeed()
-                    freezeEmotes = true
-                elseif action == "NormalSpeed" then
-                    emoteSpeed = 1
-                    adjustEmoteSpeed()
-                    freezeEmotes = false
-                elseif action == "Reverse" then
-                    if getgenv().isReversed then
-                        playNormalSpeed()
-                    else
-                        reverseEmotes()
-                    end
-                    getgenv().isReversed = not getgenv().isReversed
-                end
-            end
-            
-            UserInputService.InputBegan:Connect(function(input, gameProcessed)
-                if gameProcessed then return end
-                local action = keybindActions[input.KeyCode]
-                if action then
-                    handleKeybind(action)
-                end
-            end)
-            wait(0.1)
+        task.wait(0.1)
+-- [] -->> [First real setup part, parenting 'Teleport' to AssetService, (To prevent the game from teleporting you when you fall into it.)] <<-- [] --
+local function loadGUI()
+    wait(0.2)
+    local currentTime = os.time()
+    local formattedTime = os.date("%I:%M %p", currentTime)
+    local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
+    -- [] -->> Comment out unnecessary functions, code, etc <<-- [] --
+
+    --[[getgenv().gethui = function()
+        return game:GetService("CoreGui")
+    end--]]
+
+    -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
+    local Window = Rayfield:CreateWindow({
+        Name = "Zacks Easy Hub | V6.3.9-B | Executed At: "..formattedTime,
+        LoadingTitle = "How are you doing today? :)",
+        LoadingSubtitle = "Zacks Easy Hub | Running The Game.",
+        ConfigurationSaving = {
+           Enabled = false,
+           FolderName = nil,
+           FileName = "Zacks Easy Hub"
+        },
+        -- [] -->> Discord invite feature is neat. <<-- [] --
+        Discord = {
+           Enabled = true,
+           Invite = "VJh3kkYzBn",
+           RememberJoins = true
+        },
+        KeySystem = false,
+        KeySettings = {
+           Title = "False | No Key System",
+           Subtitle = "No Key System",
+           Note = "No method of obtaining the key is provided",
+           FileName = "Key",
+           SaveKey = true,
+           GrabKeyFromSite = false,
+           Key = {"None"}
+        }
+    })
+    
+    -- [] -->> Initialize Tabs and Sections <<-- [] --
+    local Tab1 = Window:CreateTab("< / Home >", 7733960981)
+    local Section1 = Tab1:CreateSection("||| Home Section |||")
+
+    local Tab11 = Window:CreateTab("< / Booths >", 7733914390)
+    local Section11 = Tab11:CreateSection("||| Booths Section |||")
+
+    local Tab2 = Window:CreateTab("< / Character >", 7743871002)
+    local Section2 = Tab2:CreateSection("||| Character [1] Section |||")
+
+    local Tab13 = Window:CreateTab("< / Players >", 7743871002)
+    local Section13 = Tab13:CreateSection("||| Character [2] Section |||")
+
+    local Tab10 = Window:CreateTab("< / Teleports >", 7733764327)
+    local Section10 = Tab10:CreateSection("||| Teleports Section |||")
+
+    local Tab4 = Window:CreateTab("< / Chat >", 7734021300)
+    local Section4 = Tab4:CreateSection("||| Chatting Section |||")
+
+    local Tab5 = Window:CreateTab("< / Misc >", 7733954760)
+    local Section5 = Tab5:CreateSection("||| Extras Section |||")
+
+    local Tab17 = Window:CreateTab("< / Animations >", 7733954760)
+    local Section17 = Tab17:CreateSection("||| Animation Packages Section |||")
+
+    local Tab9 = Window:CreateTab("< / Lighting >", 7734068495)
+    local Section9 = Tab9:CreateSection("||| Lighting Section |||")
+    
+    local Tab16 = Window:CreateTab("< / Baseplate >", 7734058260)
+    local Section16 = Tab16:CreateSection("||| / Baseplate Section |||")
+    
+    local Tab12 = Window:CreateTab("< Emotes >", 7743871002)
+    local Section12 = Tab12:CreateSection("||| / Emoting Section |||")
+    
+    local Tab14 = Window:CreateTab("< Copy Anim >", 7743871002)
+    local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
+    
+    local Tab15 = Window:CreateTab("< UI >", 7734022107)
+    local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
+    wait(0.3)
+    local Workspace = game:GetService("Workspace") or workspace
+    local GameFolder = Workspace:FindFirstChild("Game")
+    local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
+    local AssetService = game:GetService("AssetService")
+    local Asset_Service_Duplicate = game:GetService("AssetService")
+
+    if not GetTeleportPart then
+        warn("Part: Teleport = nil | false | null")
+    else
+        if GameFolder:FindFirstChild("Teleport") then
+            local TeleportPart = GameFolder:FindFirstChild("Teleport")
+            TeleportPart.Parent = AssetService
+        end
+    end
+        wait(0.3)
             function notify(title, content, duration)
                 Rayfield:Notify({
                     Title = tostring(title),
@@ -645,204 +536,232 @@ local function loadGUI()
             end
     
             UserInputService.InputBegan:Connect(onInputBegan)
-        end
-        wait()
-        if game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownersWriteFile then
-            warn("Already Loaded: Owners-Write-File")
-        else
-            print("Owner Found: ItsYoDawgWsgGng, UserID: "..tostring(game.Players.LocalPlayer.UserId))
-            wait()
-            create_bindings()
-            wait()
-            getgenv().ownersWriteFile = true
-        end
         wait(0.3)
-        -- [] -->> Validate [writefile] and [readfile] permissions, also authorize correct usernames, ignoring them on this line. <<-- [] --
-        -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
-    
-        if getgenv().rizzEmoteConfig and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-            warn("Already Loaded: Emote/Rizz Configuration | Zacks Easy Hub")
-        elseif getgenv().rizzEmoteConfig == false and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-            local player = game.Players.LocalPlayer or game:GetService("Players").LocalPlayer
-            local playerGui = player:WaitForChild("PlayerGui")
-        
-            local screenGui = Instance.new("ScreenGui")
-            screenGui.Parent = playerGui
-            screenGui.ResetOnSpawn = false
-        
-            local mainFrame = Instance.new("Frame")
-            mainFrame.Size = UDim2.new(1, 0, 1, 0)
-            mainFrame.Position = UDim2.new(0, 0, 0, 0)
-            mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-            mainFrame.BackgroundTransparency = 0.5
-            mainFrame.Parent = screenGui
-    
-            local label = Instance.new("TextLabel")
-            label.Size = UDim2.new(0.5, 0, 0.2, 0)
-            label.Position = UDim2.new(0.25, 0, 0.2, 0)
-            label.BackgroundTransparency = 1
-            label.Text = "Would you like an emote/rizz config? [No Infinite Yield anymore! :)]"
-            label.TextColor3 = Color3.new(1, 1, 1)
-            label.TextScaled = true
-            label.Font = Enum.Font.SourceSansBold
-            label.Parent = mainFrame
-        
-            local yesButton = Instance.new("TextButton")
-            yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
-            yesButton.Position = UDim2.new(0.2, 0, 0.5, 0)
-            yesButton.Text = "Yes"
-            yesButton.BackgroundColor3 = Color3.new(0, 1, 0)
-            yesButton.TextColor3 = Color3.new(1, 1, 1)
-            yesButton.TextScaled = true
-            yesButton.Font = Enum.Font.SourceSansBold
-            yesButton.Parent = mainFrame
-        
-            local noButton = Instance.new("TextButton")
-            noButton.Size = UDim2.new(0.2, 0, 0.1, 0)
-            noButton.Position = UDim2.new(0.6, 0, 0.5, 0)
-            noButton.Text = "No"
-            noButton.BackgroundColor3 = Color3.new(1, 0, 0)
-            noButton.TextColor3 = Color3.new(1, 1, 1)
-            noButton.TextScaled = true
-            noButton.Font = Enum.Font.SourceSansBold
-            noButton.Parent = mainFrame
-        
-            local userSelected = false
-            local selection = nil
-    
-            function selected_Yes()
-        local function create_bindings()
-                    local UserInputService = game:GetService("UserInputService")
-                    local Players = game:GetService("Players")
-            
-                    local player = Players.LocalPlayer
-                    local emoteSpeed = 1
-                    local freezeEmotes = false
-            
-                    local keybindActions = {
-                        [Enum.KeyCode.One] = 13071993910,
-                        [Enum.KeyCode.Two] = 14901371589,
-                        [Enum.KeyCode.Three] = 73683655527605,
-                        [Enum.KeyCode.Four] = 5230615437,
-                        [Enum.KeyCode.Five] = 5104377791,
-                        [Enum.KeyCode.Six] = 13694139364,
-                        [Enum.KeyCode.Seven] = 7466047578,
-                        [Enum.KeyCode.Eight] = 13823339506,
-                        [Enum.KeyCode.Nine] = 3576823880,
-                        [Enum.KeyCode.Zero] = 15506503658,
-                        [Enum.KeyCode.R] = 14548709888,
-                        [Enum.KeyCode.T] = 15554016057,
-                        [Enum.KeyCode.Y] = 10147924028,
-                        [Enum.KeyCode.U] = 14900153406,
-                        [Enum.KeyCode.P] = 16181843366,
-                        [Enum.KeyCode.N] = 10214411646,
-                        [Enum.KeyCode.Z] = 4391208058,
-                        [Enum.KeyCode.Q] = "SlowDown",
-                        [Enum.KeyCode.E] = "SpeedUp",
-                        [Enum.KeyCode.V] = "Freeze",
-                        [Enum.KeyCode.X] = "NormalSpeed"
-                    }
-            
-                    local function adjustEmoteSpeed()
-                        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-                        if humanoid then
-                            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                                track:AdjustSpeed(emoteSpeed)
-                            end
+    local TeleportService = game:GetService("TeleportService")
+    local Players = game:GetService("Players")
+    PlaceId, JobId = game.PlaceId, game.JobId
+    local LocalPlayer = Players.LocalPlayer
+    queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+    local TeleportCheck = false
+    game.Players.LocalPlayer.OnTeleport:Connect(function(State)
+        if (not TeleportCheck) and queueteleport then
+            TeleportCheck = true
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+        end
+    end)
+    -- [] -->> Validate [writefile] and [readfile] permissions, also authorize correct usernames, ignoring them on this line. <<-- [] --
+    -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
+    if getgenv().get_setup_config or getgenv().get_setup_config == true and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+        warn("Keybind Setup already loaded.")
+    elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+        local player = game.Players.LocalPlayer or game:GetService("Players").LocalPlayer
+        local playerGui = player:WaitForChild("PlayerGui")
+
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Parent = playerGui
+        screenGui.ResetOnSpawn = false
+
+        local mainFrame = Instance.new("Frame")
+        mainFrame.Size = UDim2.new(1, 0, 1, 0)
+        mainFrame.Position = UDim2.new(0, 0, 0, 0)
+        mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+        mainFrame.BackgroundTransparency = 0.5
+        mainFrame.Parent = screenGui
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(0.5, 0, 0.2, 0)
+        label.Position = UDim2.new(0.25, 0, 0.2, 0)
+        label.BackgroundTransparency = 1
+        label.Text = "Would you like an emote/rizz config? [No Infinite Yield anymore! :)]"
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.TextScaled = true
+        label.Font = Enum.Font.SourceSansBold
+        label.Parent = mainFrame
+
+        local yesButton = Instance.new("TextButton")
+        yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+        yesButton.Position = UDim2.new(0.2, 0, 0.5, 0)
+        yesButton.Text = "Yes"
+        yesButton.BackgroundColor3 = Color3.new(0, 1, 0)
+        yesButton.TextColor3 = Color3.new(1, 1, 1)
+        yesButton.TextScaled = true
+        yesButton.Font = Enum.Font.SourceSansBold
+        yesButton.Parent = mainFrame
+
+        local noButton = Instance.new("TextButton")
+        noButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+        noButton.Position = UDim2.new(0.6, 0, 0.5, 0)
+        noButton.Text = "No"
+        noButton.BackgroundColor3 = Color3.new(1, 0, 0)
+        noButton.TextColor3 = Color3.new(1, 1, 1)
+        noButton.TextScaled = true
+        noButton.Font = Enum.Font.SourceSansBold
+        noButton.Parent = mainFrame
+
+        local userSelected = false
+        local selection = nil
+
+        function selected_Yes()
+            local function create_bindings()
+                local UserInputService = game:GetService("UserInputService") or cloneref(game:GetService("UserInputService"))
+                local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
+                
+                local player = Players.LocalPlayer
+                local emoteSpeed = 1
+                local freezeEmotes = false
+                getgenv().isReversed = getgenv().isReversed or false
+                
+                local keybindActions = {
+                    [Enum.KeyCode.One] = 13071993910,
+                    [Enum.KeyCode.Two] = 14901371589,
+                    [Enum.KeyCode.Three] = 73683655527605,
+                    [Enum.KeyCode.Four] = 5230615437,
+                    [Enum.KeyCode.Five] = 5104377791,
+                    [Enum.KeyCode.Six] = 13694139364,
+                    [Enum.KeyCode.Seven] = 7466047578,
+                    [Enum.KeyCode.Eight] = 13823339506,
+                    [Enum.KeyCode.Nine] = 3576823880,
+                    [Enum.KeyCode.Zero] = 15506503658,
+                    [Enum.KeyCode.R] = 14548709888,
+                    [Enum.KeyCode.T] = 15554016057,
+                    [Enum.KeyCode.Y] = 10147924028,
+                    [Enum.KeyCode.U] = 14900153406,
+                    [Enum.KeyCode.P] = 16181843366,
+                    [Enum.KeyCode.N] = 10214411646,
+                    [Enum.KeyCode.Z] = 4391208058,
+                    [Enum.KeyCode.Q] = "SlowDown",
+                    [Enum.KeyCode.E] = "SpeedUp",
+                    [Enum.KeyCode.V] = "Freeze",
+                    [Enum.KeyCode.X] = "NormalSpeed",
+                    [Enum.KeyCode.F] = "Reverse"
+                }
+                
+                local function adjustEmoteSpeed()
+                    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:AdjustSpeed(emoteSpeed)
                         end
                     end
-            
-                    local function playEmote(emoteId)
-                        local character = player.Character or player.CharacterAdded:Wait()
-                        local humanoid = character:FindFirstChildOfClass("Humanoid")
-                        if humanoid then
-                            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                                track:Stop()
-                            end
-                            
-                            wait()
-                            local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-                                
-                            if animTrack and typeof(animTrack) == "Instance" then
-                                animTrack:AdjustSpeed(emoteSpeed)
-                            end
-                        else
-                            warn("Humanoid not found in Character!")
-                        end
-                    end
-            
-                    local function handleKeybind(action)
-                        if type(action) == "number" then
-                            playEmote(action)
-                        elseif action == "SlowDown" then
-                            emoteSpeed = 0.1
-                            adjustEmoteSpeed()
-                        elseif action == "SpeedUp" then
-                            emoteSpeed = 4
-                            adjustEmoteSpeed()
-                        elseif action == "Freeze" then
-                            emoteSpeed = 0
-                            adjustEmoteSpeed()
-                            freezeEmotes = true
-                        elseif action == "NormalSpeed" then
-                            emoteSpeed = 1
-                            adjustEmoteSpeed()
-                            freezeEmotes = false
-                        end
-                    end
-            
-                    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-                        if gameProcessed then return end
-                        local action = keybindActions[input.KeyCode]
-                        if action then
-                            handleKeybind(action)
-                        end
-                    end)
                 end
+                
+                local function reverseEmotes()
+                    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:AdjustSpeed(-1)
+                        end
+                    end
+                end
+                
+                local function playNormalSpeed()
+                    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:AdjustSpeed(1)
+                        end
+                    end
+                end
+                
+                local function playEmote(emoteId)
+                    local character = player.Character or player.CharacterAdded:Wait()
+                    local humanoid = character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:Stop()
+                        end
+                        
+                        wait()
+                        local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
+                            
+                        if animTrack and typeof(animTrack) == "Instance" then
+                            animTrack:AdjustSpeed(emoteSpeed)
+                        end
+                    else
+                        warn("Humanoid not found in Character!")
+                    end
+                end
+                
+                local function handleKeybind(action)
+                    if type(action) == "number" then
+                        playEmote(action)
+                    elseif action == "SlowDown" then
+                        emoteSpeed = 0.1
+                        adjustEmoteSpeed()
+                    elseif action == "SpeedUp" then
+                        emoteSpeed = 4
+                        adjustEmoteSpeed()
+                    elseif action == "Freeze" then
+                        emoteSpeed = 0
+                        adjustEmoteSpeed()
+                        freezeEmotes = true
+                    elseif action == "NormalSpeed" then
+                        emoteSpeed = 1
+                        adjustEmoteSpeed()
+                        freezeEmotes = false
+                    elseif action == "Reverse" then
+                        if getgenv().isReversed then
+                            playNormalSpeed()
+                        else
+                            reverseEmotes()
+                        end
+                        getgenv().isReversed = not getgenv().isReversed
+                    end
+                end
+                
+                UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                    if gameProcessed then return end
+                    local action = keybindActions[input.KeyCode]
+                    if action then
+                        handleKeybind(action)
+                    end
+                end)
             end
-            -- [] -->> Validate [selection] and confirm whether or not the user is in this list, then proceed to call [writefile] to initialize Emote/Rizz Configuration. <<-- [] --
-            function selected_No()
-                warn(tostring(game.Players.LocalPlayer.Name)..", selected 'No'")
-            end
-        
-            yesButton.MouseButton1Click:Connect(function()
-                selected_Yes()
-                wait()
-                selection = "Yes"
-                userSelected = true
-            end)
-        
-            noButton.MouseButton1Click:Connect(function()
-                selected_No()
-                wait()
-                selection = "No"
-                userSelected = true
-            end)
-        
-            repeat
-                task.wait()
-            until userSelected
-        
-            screenGui:Destroy()
         end
-        wait(0.5)
-        local TeleportService = game:GetService("TeleportService")
-        local Players = game:GetService("Players")
-        PlaceId, JobId = game.PlaceId, game.JobId
-        local LocalPlayer = Players.LocalPlayer
-        wait(0.3)
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
-        wait(0.1)
-        if getgenv().AntiAfkScript or getgenv().OtherAntiAfk then
-            print("AntiAFK Scripts have already been pre-loaded from last session | skipping...")
-            wait(0.2)
-            warn("000 >>> 000 >>> nil")
+
+        function selected_No()
+            warn(tostring(game.Players.LocalPlayer.Name)..", selected 'No'")
         end
-        wait(0.3)
+
+        yesButton.MouseButton1Click:Connect(function()
+            selected_Yes()
+            task.wait()
+            selection = "Yes"
+            userSelected = true
+            getgenv().get_setup_config = true
+        end)
+
+        noButton.MouseButton1Click:Connect(function()
+            selected_No()
+            wait()
+            selection = "No"
+            userSelected = true
+            getgenv().get_setup_config = true
+        end)
+
+        repeat
+            task.wait()
+        until userSelected
+
+        screenGui:Destroy()
+    end
+    wait(0.5)
+    local TeleportService = game:GetService("TeleportService")
+    local Players = game:GetService("Players")
+    PlaceId, JobId = game.PlaceId, game.JobId
+    local LocalPlayer = Players.LocalPlayer
+    wait(0.3)
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
+    wait(0.1)
+    if getgenv().AntiAfkScript or getgenv().OtherAntiAfk then
+        print("AntiAFK Scripts have already been pre-loaded from last session | skipping...")
+        wait(0.2)
+        warn("000 >>> 000 >>> nil")
+    else
         local GC = getconnections or get_signal_cons
-    
+
         if GC then
             getgenv().AntiAfkScript = true
             wait()
@@ -958,624 +877,8 @@ local function loadGUI()
                 },
             })
         end
-        wait()
-        function resetLightingSettings()
-            local Lighting = game:GetService("Lighting")
-            local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
-            
-            Lighting.ClockTime = 14.5
-            wait()
-            Lighting.Brightness = 3
-            wait()
-            Lighting.Atmosphere.Density = 0.3
-            wait()
-            Lighting.Atmosphere.Offset = 0.25
-            wait()
-            Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
-            wait()
-            Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
-            wait()
-            Lighting.Atmosphere.Glare = 0
-            wait()
-            Lighting.Atmosphere.Haze = 0
-            wait()
-            Lighting.Sky.MoonAngularSize = 11
-            wait()
-            Lighting.Sky.StarCount = 3000
-            wait()
-            Lighting.Sky.SunAngularSize = 11
-            wait()
-            Lighting.Bloom.Intensity = 1
-            wait()
-            Lighting.Bloom.Enabled = true
-            wait()
-            Lighting.Bloom.Size = 24
-            wait()
-            Lighting.Bloom.Threshold = 2
-            wait()
-            Lighting.DepthOfField.Enabled = false
-            wait()
-            Lighting.DepthOfField.FarIntensity = 0.1
-            wait()
-            Lighting.DepthOfField.FocusDistance = 0.05
-            wait()
-            Lighting.DepthOfField.InFocusRadius = 30
-            wait()
-            Lighting.DepthOfField.NearIntensity = 0.75
-            wait()
-            Lighting.SunRays.Enabled = true
-            wait()
-            Lighting.SunRays.Intensity = 0.01
-            wait()
-            Lighting.SunRays.Spread = 0.1
-        end
-        wait()
-        local Players = game:GetService("Players")
-        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-        wait(0.5)
-        if getgenv().scripts_init then
-            warn("Scripts we're already modified.")
-        else
-            Rayfield:Notify({
-                Title = "Modifying Scripts...",
-                Content = "We are modifying game scripts, hold on...",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
-            wait(0.2)
-            for _, descendant in pairs(workspace:GetDescendants()) do
-                if descendant:IsA("Script") and descendant.Name == "Kill" then
-                    local parent = descendant.Parent
-                    local touchInterest = parent:FindFirstChild("TouchInterest")
-                    if touchInterest then
-                        touchInterest:Destroy()
-                    end
-                    descendant:Destroy()
-                end
-            end
-            wait(0.1)
-            getgenv().scripts_init = true
-        end
-        wait(0.3)
-        if getgenv().lighting_data then
-            print("lighting_data | true")
-        else
-            function Lighting_Modify()
-                Rayfield:Notify({
-                    Title = "Hang On...",
-                    Content = "We are modifying Lighting...",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                    },
-                })
-                wait()
-                local lighting = game:GetService("Lighting")
-                
-                lighting.ClockTime = 0
-                wait(0.2)
-                lighting.ClockTime = 3
-                wait(0.2)
-                lighting.ClockTime = 9
-                wait(0.2)
-                lighting.Brightness = 3
-                wait(0.2)
-                lighting.Brightness = 0
-                wait(0.2)
-                lighting.ClockTime = 8
-                wait(.2)
-                if lighting.ClockTime == 8 then
-                    Rayfield:Notify({
-                        Title = "Success!",
-                        Content = "We have configured Lighting.",
-                        Duration = 7,
-                        Image = 4483362458,
-                        Actions = {
-                        Ignore = {
-                            Name = "Okay!",
-                            Callback = function()
-                                print("...")
-                            end
-                        },
-                        },
-                    })
-                    wait(0.2)
-                    getgenv().lighting_data = true
-                else
-                    Rayfield:Notify({
-                        Title = "Failed!",
-                        Content = "An error has occurred, we're sorry.",
-                        Duration = 7,
-                        Image = 4483362458,
-                        Actions = {
-                        Ignore = {
-                            Name = "Okay!",
-                            Callback = function()
-                                print("...")
-                            end
-                        },
-                        },
-                    })
-                end
-            end
-        end
-        wait(0.5)
-        if getgenv().lighting_data then
-            print("We have already reset lighting, skipping...")
-            wait(0.1)
-            warn("getNumberOver(tonumber, GET_ID, PID) /// nil >= ???")
-        else
-            Lighting_Modify()
-        end
-        wait()
-        warn("LIGHTING FINISHED.")
-    end
-    wait(0.2)
-    local TeleportService = game:GetService("TeleportService")
-    local Players = game:GetService("Players")
-    PlaceId, JobId = game.PlaceId, game.JobId
-    local LocalPlayer = Players.LocalPlayer
-    queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-    local TeleportCheck = false
-    game.Players.LocalPlayer.OnTeleport:Connect(function(State)
-        if (not TeleportCheck) and queueteleport then
-            TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
-        end
-    end)
-    wait(0.2)
-    --[[local function create_bindings()
-        local UserInputService = game:GetService("UserInputService")
-        local Players = game:GetService("Players")
-
-        local player = Players.LocalPlayer
-        local emoteSpeed = 1
-        local freezeEmotes = false
-
-        local keybindActions = {
-            [Enum.KeyCode.One] = 13071993910,
-            [Enum.KeyCode.Two] = 14901371589,
-            [Enum.KeyCode.Three] = 73683655527605,
-            [Enum.KeyCode.Four] = 5230615437,
-            [Enum.KeyCode.Five] = 5104377791,
-            [Enum.KeyCode.Six] = 13694139364,
-            [Enum.KeyCode.Seven] = 7466047578,
-            [Enum.KeyCode.Eight] = 13823339506,
-            [Enum.KeyCode.Nine] = 3576823880,
-            [Enum.KeyCode.Zero] = 15506503658,
-            [Enum.KeyCode.R] = 14548709888,
-            [Enum.KeyCode.T] = 15554016057,
-            [Enum.KeyCode.Y] = 10147924028,
-            [Enum.KeyCode.U] = 14900153406,
-            [Enum.KeyCode.P] = 16181843366,
-            [Enum.KeyCode.N] = 10214411646,
-            [Enum.KeyCode.Z] = 4391208058,
-            [Enum.KeyCode.Q] = "SlowDown",
-            [Enum.KeyCode.E] = "SpeedUp",
-            [Enum.KeyCode.V] = "Freeze",
-            [Enum.KeyCode.X] = "NormalSpeed"
-        }
-
-        local function adjustEmoteSpeed()
-            local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                    track:AdjustSpeed(emoteSpeed)
-                end
-            end
-        end
-
-        local function playEmote(emoteId)
-            local character = player.Character or player.CharacterAdded:Wait()
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                    track:Stop()
-                end
-                
-                wait()
-                local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-                    
-                if animTrack and typeof(animTrack) == "Instance" then
-                    animTrack:AdjustSpeed(emoteSpeed)
-                end
-            else
-                warn("Humanoid not found in Character!")
-            end
-        end
-
-        local function handleKeybind(action)
-            if type(action) == "number" then
-                playEmote(action)
-            elseif action == "SlowDown" then
-                emoteSpeed = 0.1
-                adjustEmoteSpeed()
-            elseif action == "SpeedUp" then
-                emoteSpeed = 4
-                adjustEmoteSpeed()
-            elseif action == "Freeze" then
-                emoteSpeed = 0
-                adjustEmoteSpeed()
-                freezeEmotes = true
-            elseif action == "NormalSpeed" then
-                emoteSpeed = 1
-                adjustEmoteSpeed()
-                freezeEmotes = false
-            end
-        end
-
-        UserInputService.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            local action = keybindActions[input.KeyCode]
-            if action then
-                handleKeybind(action)
-            end
-        end)
-        wait(0.1)
-        function notify(title, content, duration)
-            Rayfield:Notify({
-                Title = tostring(title),
-                Content = tostring(content),
-                Duration = tonumber(duration),
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function() print("...") end
-                    },
-                },
-            })
-        end
-        
-        local UserInputService = game:GetService("UserInputService")
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Audio_Device_Input = LocalPlayer.AudioDeviceInput
-
-        local isMuted = false
-        Audio_Device_Input.Muted = isMuted
-
-        local function onInputBegan(input, gameProcessed)
-            if gameProcessed then return end
-            if input.KeyCode == Enum.KeyCode.RightControl then
-                isMuted = not isMuted
-                Audio_Device_Input.Muted = isMuted
-                if isMuted then
-                    notify("Success!", "Muted Microphone", 2)
-                else
-                    notify("Success!", "Unmuted Microphone", 2)
-                end
-            end
-        end
-
-        UserInputService.InputBegan:Connect(onInputBegan)
-    end
-    wait()
-    if game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownersWriteFile then
-        warn("Already Loaded: Owners-Write-File")
-    else
-        print("Owner Found: ItsYoDawgWsgGng, UserID: "..tostring(game.Players.LocalPlayer.UserId))
-        wait()
-        create_bindings()
-        wait()
-        getgenv().ownersWriteFile = true
     end
     wait(0.3)
-    -- [] -->> Validate [writefile] and [readfile] permissions, also authorize correct usernames, ignoring them on this line. <<-- [] --
-    -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
-
-    if getgenv().rizzEmoteConfig and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-        warn("Already Loaded: Emote/Rizz Configuration | Zacks Easy Hub")
-    elseif getgenv().rizzEmoteConfig == false and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-        local player = game.Players.LocalPlayer or game:GetService("Players").LocalPlayer
-        local playerGui = player:WaitForChild("PlayerGui")
-    
-        local screenGui = Instance.new("ScreenGui")
-        screenGui.Parent = playerGui
-        screenGui.ResetOnSpawn = false
-    
-        local mainFrame = Instance.new("Frame")
-        mainFrame.Size = UDim2.new(1, 0, 1, 0)
-        mainFrame.Position = UDim2.new(0, 0, 0, 0)
-        mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-        mainFrame.BackgroundTransparency = 0.5
-        mainFrame.Parent = screenGui
-
-        local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(0.5, 0, 0.2, 0)
-        label.Position = UDim2.new(0.25, 0, 0.2, 0)
-        label.BackgroundTransparency = 1
-        label.Text = "Would you like an emote/rizz config? [No Infinite Yield anymore! :)]"
-        label.TextColor3 = Color3.new(1, 1, 1)
-        label.TextScaled = true
-        label.Font = Enum.Font.SourceSansBold
-        label.Parent = mainFrame
-    
-        local yesButton = Instance.new("TextButton")
-        yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
-        yesButton.Position = UDim2.new(0.2, 0, 0.5, 0)
-        yesButton.Text = "Yes"
-        yesButton.BackgroundColor3 = Color3.new(0, 1, 0)
-        yesButton.TextColor3 = Color3.new(1, 1, 1)
-        yesButton.TextScaled = true
-        yesButton.Font = Enum.Font.SourceSansBold
-        yesButton.Parent = mainFrame
-    
-        local noButton = Instance.new("TextButton")
-        noButton.Size = UDim2.new(0.2, 0, 0.1, 0)
-        noButton.Position = UDim2.new(0.6, 0, 0.5, 0)
-        noButton.Text = "No"
-        noButton.BackgroundColor3 = Color3.new(1, 0, 0)
-        noButton.TextColor3 = Color3.new(1, 1, 1)
-        noButton.TextScaled = true
-        noButton.Font = Enum.Font.SourceSansBold
-        noButton.Parent = mainFrame
-    
-        local userSelected = false
-        local selection = nil
-
-        function selected_Yes()
-    local function create_bindings()
-                local UserInputService = game:GetService("UserInputService")
-                local Players = game:GetService("Players")
-        
-                local player = Players.LocalPlayer
-                local emoteSpeed = 1
-                local freezeEmotes = false
-        
-                local keybindActions = {
-                    [Enum.KeyCode.One] = 13071993910,
-                    [Enum.KeyCode.Two] = 14901371589,
-                    [Enum.KeyCode.Three] = 73683655527605,
-                    [Enum.KeyCode.Four] = 5230615437,
-                    [Enum.KeyCode.Five] = 5104377791,
-                    [Enum.KeyCode.Six] = 13694139364,
-                    [Enum.KeyCode.Seven] = 7466047578,
-                    [Enum.KeyCode.Eight] = 13823339506,
-                    [Enum.KeyCode.Nine] = 3576823880,
-                    [Enum.KeyCode.Zero] = 15506503658,
-                    [Enum.KeyCode.R] = 14548709888,
-                    [Enum.KeyCode.T] = 15554016057,
-                    [Enum.KeyCode.Y] = 10147924028,
-                    [Enum.KeyCode.U] = 14900153406,
-                    [Enum.KeyCode.P] = 16181843366,
-                    [Enum.KeyCode.N] = 10214411646,
-                    [Enum.KeyCode.Z] = 4391208058,
-                    [Enum.KeyCode.Q] = "SlowDown",
-                    [Enum.KeyCode.E] = "SpeedUp",
-                    [Enum.KeyCode.V] = "Freeze",
-                    [Enum.KeyCode.X] = "NormalSpeed"
-                }
-        
-                local function adjustEmoteSpeed()
-                    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-                    if humanoid then
-                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                            track:AdjustSpeed(emoteSpeed)
-                        end
-                    end
-                end
-        
-                local function playEmote(emoteId)
-                    local character = player.Character or player.CharacterAdded:Wait()
-                    local humanoid = character:FindFirstChildOfClass("Humanoid")
-                    if humanoid then
-                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                            track:Stop()
-                        end
-                        
-                        wait()
-                        local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-                            
-                        if animTrack and typeof(animTrack) == "Instance" then
-                            animTrack:AdjustSpeed(emoteSpeed)
-                        end
-                    else
-                        warn("Humanoid not found in Character!")
-                    end
-                end
-        
-                local function handleKeybind(action)
-                    if type(action) == "number" then
-                        playEmote(action)
-                    elseif action == "SlowDown" then
-                        emoteSpeed = 0.1
-                        adjustEmoteSpeed()
-                    elseif action == "SpeedUp" then
-                        emoteSpeed = 4
-                        adjustEmoteSpeed()
-                    elseif action == "Freeze" then
-                        emoteSpeed = 0
-                        adjustEmoteSpeed()
-                        freezeEmotes = true
-                    elseif action == "NormalSpeed" then
-                        emoteSpeed = 1
-                        adjustEmoteSpeed()
-                        freezeEmotes = false
-                    end
-                end
-        
-                UserInputService.InputBegan:Connect(function(input, gameProcessed)
-                    if gameProcessed then return end
-                    local action = keybindActions[input.KeyCode]
-                    if action then
-                        handleKeybind(action)
-                    end
-                end)
-            end
-        end
-        -- [] -->> Validate [selection] and confirm whether or not the user is in this list, then proceed to call [writefile] to initialize Emote/Rizz Configuration. <<-- [] --
-        function selected_No()
-            warn(tostring(game.Players.LocalPlayer.Name)..", selected 'No'")
-        end
-    
-        yesButton.MouseButton1Click:Connect(function()
-            selected_Yes()
-            wait()
-            selection = "Yes"
-            userSelected = true
-        end)
-    
-        noButton.MouseButton1Click:Connect(function()
-            selected_No()
-            wait()
-            selection = "No"
-            userSelected = true
-        end)
-    
-        repeat
-            task.wait()
-        until userSelected
-    
-        screenGui:Destroy()
-    end
-    wait(0.5)
-    local TeleportService = game:GetService("TeleportService")
-    local Players = game:GetService("Players")
-    PlaceId, JobId = game.PlaceId, game.JobId
-    local LocalPlayer = Players.LocalPlayer
-    wait(0.3)
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
-    wait(0.1)
-    if getgenv().AntiAfkScript or getgenv().OtherAntiAfk then
-        print("AntiAFK Scripts have already been pre-loaded from last session | skipping...")
-        wait(0.2)
-        warn("000 >>> 000 >>> nil")
-    end
-    wait(0.3)
-    local GC = getconnections or get_signal_cons
-
-    if GC then
-        getgenv().AntiAfkScript = true
-        wait()
-        for i, v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
-            if v["Disable"] then
-                v["Disable"](v)
-                wait()
-                Rayfield:Notify({
-                    Title = "Idled!",
-                    Content = "Disabling Event...",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                        Ignore = {
-                            Name = "Okay!",
-                            Callback = function() print("...") end
-                        },
-                    },
-                })
-            end
-        end
-    else
-        getgenv().OtherAntiAfk = true
-        wait(0.1)
-        warn("Your executor does not support 'getconnections'! Using VirtualUser for Anti-AFK.")
-        wait()
-        Rayfield:Notify({
-            Title = "Starting...",
-            Content = "AntiAFK (2) is loading with VirtualUser...",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function() print("...") end
-                },
-            },
-        })
-
-        local VirtualUser = game:GetService("VirtualUser")
-        wait()
-        game:GetService("Players").LocalPlayer.Idled:Connect(function()
-            Rayfield:Notify({
-                Title = "Idled!",
-                Content = "Clicking button...",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function() print("...") end
-                    },
-                },
-            })
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new())
-            wait(0.1)
-            Rayfield:Notify({
-                Title = "Success!",
-                Content = "Clicked Button (Anti-Idle)",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function() print("...") end
-                    },
-                },
-            })
-        end)
-    end
-
-    wait(0.4)
-    if getgenv().AntiAfkScript then
-        Rayfield:Notify({
-            Title = "Success!",
-            Content = "AntiAFK (1) has loaded!",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function() print("...") end
-                },
-            },
-        })
-    elseif getgenv().OtherAntiAfk then
-        Rayfield:Notify({
-            Title = "Success!",
-            Content = "AntiAFK (2) has loaded.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function() print("...") end
-                },
-            },
-        })
-    end
-
-    if getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
-        Rayfield:Notify({
-            Title = "Failed!",
-            Content = "Could not load any Anti-AFK Scripts.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function() print("...") end
-                },
-            },
-        })
-    end
     wait()
     function resetLightingSettings()
         local Lighting = game:GetService("Lighting")
@@ -1662,85 +965,6 @@ local function loadGUI()
         wait(0.1)
         getgenv().scripts_init = true
     end
-    wait(0.3)
-    if getgenv().lighting_data then
-        print("lighting_data | true")
-    else
-        function Lighting_Modify()
-            Rayfield:Notify({
-                Title = "Hang On...",
-                Content = "We are modifying Lighting...",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                },
-                },
-            })
-            wait()
-            local lighting = game:GetService("Lighting")
-            
-            lighting.ClockTime = 0
-            wait(0.2)
-            lighting.ClockTime = 3
-            wait(0.2)
-            lighting.ClockTime = 9
-            wait(0.2)
-            lighting.Brightness = 3
-            wait(0.2)
-            lighting.Brightness = 0
-            wait(0.2)
-            lighting.ClockTime = 8
-            wait(.2)
-            if lighting.ClockTime == 8 then
-                Rayfield:Notify({
-                    Title = "Success!",
-                    Content = "We have configured Lighting.",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                    },
-                })
-                wait(0.2)
-                getgenv().lighting_data = true
-            else
-                Rayfield:Notify({
-                    Title = "Failed!",
-                    Content = "An error has occurred, we're sorry.",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                    },
-                })
-            end
-        end
-    end
-    wait(0.5)
-    if getgenv().lighting_data then
-        print("We have already reset lighting, skipping...")
-        wait(0.1)
-        warn("getNumberOver(tonumber, GET_ID, PID) /// nil >= ???")
-    else
-        Lighting_Modify()
-    end
-    wait()
-    warn("LIGHTING FINISHED.")--]]
     wait()
     local Players = game:GetService("Players")
     local player = Players.LocalPlayer
@@ -6460,7 +5684,7 @@ local function loadGUI()
     end,})
 
     local ServerHopButton = Tab15:CreateButton({
-    Name = "Server Hop (Not Supported on Solara?)",
+    Name = "Server Hop (Roblox broke this!.)",
     Callback = function()
         -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
         httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
@@ -7331,7 +6555,7 @@ local function loadGUI()
         Animate.Disabled = false
     end)
     
-    local SystemBroken = Tab5:CreateButton({
+    SystemBroken = Tab5:CreateButton({
     Name = "System Broken",
     Callback = function()
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
@@ -7356,145 +6580,52 @@ local function loadGUI()
     end
     end,})
 
-    local ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDatDawgWsgGng | [Main Account Now.]"})
+    ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDatDawgWsgGng | [Main Account Now.]"})
     wait()
-    local MadeEasy = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Scripting Made Easy"})
-    local YouTube_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://www.youtube.com/@AnonymousExploiting"})
-    local Discord_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://discord.gg/VJh3kkYzBn"})
-    local JoinDiscordLabel = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Join the discord for juicy updates, and maybe giveaways."})
-    local Release_Date = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "V6 Released On: 11/5/2024"})
-    local Scammers = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "If you bought this, you got scammed."})
-    local ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."})
-    wait(0.2)
-    if getgenv().camera_zoom_data then
-        print("CameraMaxZoomDistance - Data | True")
-    else
-        getgenv().camera_zoom_data = false
-        wait(0.5)
-        
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local HRPBase = Character:FindFirstChild("HumanoidRootPart")
-        
-        LocalPlayer.CameraMaxZoomDistance = 800000
-        getgenv().camera_zoom_data = true
-        wait(0.1)
-    end    
+    MadeEasy = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Scripting Made Easy"})
+    YouTube_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://www.youtube.com/@AnonymousExploiting"})
+    Discord_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://discord.gg/VJh3kkYzBn"})
+    JoinDiscordLabel = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Join the discord for juicy updates, and maybe giveaways."})
+    Release_Date = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "V6 Released On: 11/5/2024"})
+    Scammers = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "If you bought this, you got scammed."})
+    ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."}) 
 end
-wait(0.5)
+wait(0.4)
 loadGUI()
-wait(0.3)
+task.wait()
 print("Running...")
-wait(0.3)
-local ws = game:GetService("Workspace")
-local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
-local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
-if getFolder and getpart then
-    getpart.Transparency = 1
+wait(0.2)
+if getgenv().camera_zoom_data then
+    print("CameraMaxZoomDistance - Data | True")
 else
-    warn("ANTI-VOID_MISSING? ---")
-end
-wait(0.1)
-if getgenv().Invis_Data then
-    warn("Already Set Invis_Data")
-else
-    getgenv().Invis_Data = false
-    wait(0.3)
-
-    local function makeCharacterVisible(character)
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.Transparency = 0
-                part.CanCollide = false
-            end
-        end
-    end
-
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and player.Character then
-            makeCharacterVisible(player.Character)
-        end
-    end
-    wait()
-
-    local function makePartInvisible(part)
-        part.Transparency = 1
-        part.CanCollide = false
-    end
-
-    local function makeHumanoidRootPartInvisible(character)
-        local player = game.Players:GetPlayerFromCharacter(character)
-        if player and player ~= game.Players.LocalPlayer then
-            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-            if humanoidRootPart then
-                makePartInvisible(humanoidRootPart)
-            end
-        end
-    end
-
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player.Character then
-            makeHumanoidRootPartInvisible(player.Character)
-        end
-    end
+    getgenv().camera_zoom_data = false
+    wait(0.5)
     
-    getgenv().Invis_Data = true
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local HRPBase = Character:FindFirstChild("HumanoidRootPart")
+    
+    LocalPlayer.CameraMaxZoomDistance = 800000
+    getgenv().camera_zoom_data = true
     wait(0.1)
 end
-wait(0.5)
-local GetWorkspace = game:GetService("Workspace")
-local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
-local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChildWhichIsA("Part")
-if FindBaseplate.Transparency == 1 then
-    FindBaseplate.Transparency = 0
-    wait()
-    FindBaseplate.Material = Enum.Material.Carpet
+wait(0.3)
+local ws
+if cloneref then
+    ws = cloneref(game:GetService("Workspace"))
 else
-    FindBaseplate.Transparency = 1
-    wait(0.2)
-    FindBaseplate.Material = Enum.Material.Carpet
+    ws = game:GetService("Workspace")
 end
 wait(0.3)
-local GetWorkspace = game:GetService("Workspace")
-local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
+local PartStorageFolder = ws:WaitForChild("PartStorage") or ws:FindFirstChild("PartStorage")
 local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChildOfClass("Part") or PartStorageFolder:FindFirstChildWhichIsA("Part")
 FindBaseplate.BrickColor = BrickColor.new("Grey")
+FindBaseplate.Material = Enum.Material.Carpet
 wait(0.2)
 print("Getting Requirements... [1 moment.]")
 wait(0.3)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld", true))()
-wait(1)
-game:GetService("StarterGui"):SetCore("SendNotification",{
-	Title = "Success!",
-	Text = "Have fun! "..tostring(game.Players.LocalPlayer.Name),
-	Icon = "rbxassetid://1234567890",
-    Duration = 10
-})
-if getgenv().Muted_Data then
-    print("Already Setup Unmute All.")
-else
-    getgenv().Muted_Data = false
-    wait(0.3)
-    print("Zacks Easy Hub [OUTPUT]: | Unmuting All...")
-    wait(0.3)
-    
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and player:FindFirstChild("AudioDeviceInput") then
-            local audioDevice = player.AudioDeviceInput
-            wait()
-            print(tostring(audioDevice) .. ", Player: " .. tostring(audioDevice.Parent) .. ", UserID: " .. tostring(audioDevice.Parent.UserId))
-            wait()
-            audioDevice.Muted = false
-            wait()
-            print("Zacks Easy Hub | [OUTPUT]: New Changes...")
-            wait()
-            print(tostring(audioDevice) .. ", Player: " .. tostring(audioDevice.Parent) .. ", UserID: " .. tostring(audioDevice.Parent.UserId))
-        end
-    end
-    
-    getgenv().Muted_Data = true
-end
 wait(0.4)
 if getgenv().Has_Died_Func then
     warn("Already setup death function.")
@@ -7511,9 +6642,9 @@ else
     wait(0.1)
     print("Died Func setup")
 end
-wait(0.5)
+wait(0.3)
 print("Successfully ran!")
-wait()
+task.wait()
 print("YEAH! Zacks Easy Hub [ON TOP!]")
 wait(0.5)
 if getgenv().performance_stats then
