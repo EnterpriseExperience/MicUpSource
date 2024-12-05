@@ -1,7 +1,7 @@
 local NotificationLibrary =
     loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
 wait()
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/what_is_ai_documentation')))()
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/qaweyrtgweryyr/refs/heads/main/lmao')))()
 wait()
 loadstring(
     game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/run_lua_code.lua")
