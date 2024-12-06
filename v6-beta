@@ -402,7 +402,7 @@
         end
         task.wait(0.1)
     -- [] -->> [First real setup part, parenting 'Teleport' to AssetService, (To prevent the game from teleporting you when you fall into it.)] <<-- [] --
-    getgenv().start_Script() = function()
+    getgenv().start_Script = function()
     wait(0.2)
     local currentTime = os.time()
     local formattedTime = os.date("%I:%M %p", currentTime)
@@ -415,7 +415,7 @@
 
     -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
     local Window = Rayfield:CreateWindow({
-        Name = "Zacks Easy Hub | V6.3.9-B | Executed At: "..formattedTime,
+        Name = "Zacks Easy Hub | V6.4.0-B | Executed At: "..formattedTime,
         LoadingTitle = "How are you doing today? :)",
         LoadingSubtitle = "Zacks Easy Hub | Running The Game.",
         ConfigurationSaving = {
