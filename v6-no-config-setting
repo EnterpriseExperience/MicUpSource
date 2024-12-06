@@ -32,16 +32,16 @@ getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport o
 getgenv().GC = getconnections or get_signal_cons
 -- Initial Character updater.
 local function updateCharacterComponents(character)
-    print("Resolving Character problems.")
+    warn("Resolving Character problems.")
     getgenv().Character = character
     getgenv().HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
     getgenv().Humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
 end
 -- New fix for Character issues.
 updateCharacterComponents(getgenv().Character)
-print("Updated Character properties.")
+warn("Updated Character properties.")
 getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-    print("Fixing Character issues.")
+    warn("Fixing Character issues.")
     updateCharacterComponents(newCharacter)
 end)
 
