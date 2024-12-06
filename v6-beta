@@ -1,232 +1,246 @@
-local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
+    local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
+    getgenv().Game = game
+    getgenv().JobID = getgenv().Game.JobId
+    getgenv().PlaceID = getgenv().Game.PlaceId
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/hfrghwerhrwenh/refs/heads/main/exercise_knowledge.lua'))()
-
--- [] -->> Initializing Notification and the first set of necessary stuff. [Trying to make support for all executors in the process.] <<-- [] --
-
-local TeleportService = game:GetService("TeleportService")
-local AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-local httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-
--- [] -->> Correctly initialize HumanoidRootPart | Properly load BasePart of Character [Thanks: Infinite Yield] <<-- [] --
-
-function getRoot(char)
-    local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-    return rootPart
-end
-
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-
-local StarterPlayer = game:GetService("StarterPlayer")
-StarterPlayer.CharacterUseJumpPower = true
-
--- [] -->> Check supported functions in the current executor, that are necessary for the script. <<-- [] --
-
-if getgenv().has_checked_funcs then
-    print("Functions Checking | True") 
-else
-    function checkNecessaryFunctions()
+    getgenv().Service_Wrap = function(serviceName)
         if cloneref then
-            print("cloneref [Success]")
+            return cloneref(getgenv().Game:GetService(serviceName))
         else
-            warn("cloneref [Failed]")
-        end
-        
-        if writefile then
-            print("writefile [Success]")
-        else
-            warn("writefile [Failed]")
-        end
-
-        if readfile then
-            print("readfile [Success]")
-        else
-            warn("readfile [Failed]")
-        end
-
-        if delfile then
-            print("delfile [delete-file] [Success]")
-        else
-            warn("delfile [delete-file] [Failed]")
-        end
-
-        if AllClipboards then
-            print("setclipboard [Success]")
-        else
-            warn("setclipboard [Failed]")
-        end
-
-        if httprequest_Init then
-            print("httprequest [Success]")
-        else
-            warn("httprequest [Failed]")
+            return getgenv().Game:GetService(serviceName)
         end
     end
 
-    if game:IsLoaded() then
-        checkNecessaryFunctions()
-        getgenv().has_checked_funcs = true
+    -- Fully working spoofed variables functions. [ez].
+    getgenv().Players = getgenv().Service_Wrap("Players")
+    getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
+    getgenv().Lighting = getgenv().Service_Wrap("Lighting")
+    getgenv().StarterPlayer = getgenv().Service_Wrap("StarterPlayer")
+    getgenv().Workspace = getgenv().Service_Wrap("Workspace")
+    getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
+    getgenv().TeleportService = getgenv().Service_Wrap("TeleportService")
+    getgenv().TweenService = getgenv().Service_Wrap("TweenService")
+    getgenv().HttpService = getgenv().Service_Wrap("HttpService")
+    getgenv().AssetService = getgenv().Service_Wrap("AssetService")
+    getgenv().LocalPlayer = getgenv().Players.LocalPlayer
+    getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
+    getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
+    getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
+    getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+    getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+    getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+    getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+
+    -- [] -->> Correctly initialize HumanoidRootPart | Properly load BasePart of Character [Thanks: Infinite Yield] <<-- [] --
+
+    function getRoot(char)
+        getgenv().rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+        return getgenv().rootPart
+    end
+
+    getgenv().StarterPlayer.CharacterUseJumpPower = true
+    task.wait(.3)
+    -- [] -->> Check supported functions in the current executor, that are necessary for the script. <<-- [] --
+
+    if getgenv().has_checked_funcs then
+        print("Functions Checking | True") 
     else
-        repeat wait() until game:IsLoaded()
-        checkNecessaryFunctions()
-        getgenv().has_checked_funcs = true
-    end
-end
+        getgenv().checkNecessaryFunctions = function()
+            if cloneref then
+                print("cloneref [Success]")
+            else
+                warn("cloneref [Failed]")
+            end
+            
+            if writefile then
+                print("writefile [Success]")
+            else
+                warn("writefile [Failed]")
+            end
 
--- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
+            if readfile then
+                print("readfile [Success]")
+            else
+                warn("readfile [Failed]")
+            end
 
-if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-    print("MIC UP [PlaceId]?: True, PlaceID: "..tostring(game.PlaceId))
-else
-    local player = game.Players.LocalPlayer
-    local TweenService = game:GetService("TweenService")
+            if delfile then
+                print("delfile [delete-file] [Success]")
+            else
+                warn("delfile [delete-file] [Failed]")
+            end
 
-    local screenGui = Instance.new("ScreenGui")
-    local frame = Instance.new("Frame")
-    local textLabel = Instance.new("TextLabel")
-    local corner = Instance.new("UICorner")
+            if AllClipboards then
+                print("setclipboard [Success]")
+            else
+                warn("setclipboard [Failed]")
+            end
 
-    screenGui.Parent = player:WaitForChild("PlayerGui")
-    screenGui.ResetOnSpawn = false
-    -- screenGui.IgnoreGuiInset = true
-    -- Adding later maybe, don't know if I should teehee.
-
-    frame.Parent = screenGui
-    frame.Size = UDim2.new(0.5, 0, 0.5, 0)
-    frame.Position = UDim2.new(0.25, 0, 0.25, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    frame.BackgroundTransparency = 0
-    corner.Parent = frame
-    frame.ZIndex = 10
-
-    textLabel.Parent = frame
-    textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.Position = UDim2.new(0, 0, 0, 0)
-    textLabel.Text = ""
-    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    textLabel.TextScaled = true
-    textLabel.TextWrapped = true
-    textLabel.ZIndex = 20
-
-    local goalFrame = {Size = UDim2.new(1, 0, 1, 0), Position = UDim2.new(0, 0, 0, 0)}
-    local tweenInfo = TweenInfo.new(2.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, false)
-
-    local tweenFrame = TweenService:Create(frame, tweenInfo, goalFrame)
-    local tweenText = TweenService:Create(textLabel, tweenInfo, goalFrame)
-
-    tweenFrame:Play()
-    tweenText:Play()
-    wait(0.2)
-    local TeleportService = game:GetService("TeleportService")
-    local Players = game:GetService("Players") or game.Players
-    PlaceId, JobId = game.PlaceId, game.JobId
-    local LocalPlayer = Players.LocalPlayer
-    queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-    local TeleportCheck = false
-    game.Players.LocalPlayer.OnTeleport:Connect(function(State)
-        if (not TeleportCheck) and queueteleport then
-            TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            if httprequest_Init then
+                print("httprequest [Success]")
+            else
+                warn("httprequest [Failed]")
+            end
         end
-    end)
-    wait(0.5)
-    getgenv().bruh_text = true
 
-    while getgenv().bruh_text == true do
-        wait(0.5)
-        textLabel.Text = "T"
-        wait(0.2)
-        textLabel.Text = "Te"
-        wait(0.2)
-        textLabel.Text = "Tel"
-        wait(0.2)
-        textLabel.Text = "Tele"
-        wait(0.2)
-        textLabel.Text = "Telep"
-        wait(0.2)
-        textLabel.Text = "Telepo"
-        wait(0.2)
-        textLabel.Text = "Telepor"
-        wait(0.2)
-        textLabel.Text = "Teleport"
-        wait(0.2)
-        textLabel.Text = "Teleporti"
-        wait(0.2)
-        textLabel.Text = "Teleportin"
-        wait(0.2)
-        textLabel.Text = "Teleporting"
-        wait(0.2)
-        textLabel.Text = "Teleporting."
-        wait(0.2)
-        textLabel.Text = "Teleporting.."
-        wait(0.2)
-        textLabel.Text = "Teleporting..."
-        wait(0.5)
-        textLabel.Text = "T"
-        wait(0.2)
-        textLabel.Text = "Te"
-        wait(0.2)
-        textLabel.Text = "Tel"
-        wait(0.2)
-        textLabel.Text = "Tele"
-        wait(0.2)
-        textLabel.Text = "Telep"
-        wait(0.2)
-        textLabel.Text = "Telepo"
-        wait(0.2)
-        textLabel.Text = "Telepor"
-        wait(0.2)
-        textLabel.Text = "Teleport"
-        wait(0.2)
-        textLabel.Text = "Teleporti"
-        wait(0.2)
-        textLabel.Text = "Teleportin"
-        wait(0.2)
-        textLabel.Text = "Teleporting"
-        wait(0.2)
-        textLabel.Text = "Teleporting."
-        wait(0.2)
-        textLabel.Text = "Teleporting.."
-        wait(0.2)
-        textLabel.Text = "Teleporting..."
-        wait(0.3)
-        getgenv().bruh_text = false
-        wait(0.1)
-        TeleportService:Teleport(6884319169, game.Players.LocalPlayer)
+        if getgenv().Game:IsLoaded() then
+            getgenv().checkNecessaryFunctions()
+            task.wait()
+            getgenv().has_checked_funcs = true
+        else
+            repeat wait() until getgenv().Game:IsLoaded()
+            getgenv().checkNecessaryFunctions()
+            task.wait()
+            getgenv().has_checked_funcs = true
+        end
     end
-end
 
--- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the button to restart the process. <<-- [] --
-if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
-    NotificationLibrary:SendNotification("Error", "Zacks Easy Hub is already running!", 6)
-    return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6)
-end
-pcall(function() getgenv().SCRIPT_EXECUTED = true end)
-wait(0.3)
-    -- [] -->> Initialize Services /|\ Setup Services [Try to support every executor in the process.] <<-- [] --
+    -- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
 
-    local Workspace = game:GetService("Workspace") or workspace
-    local Players = game:GetService("Players")
-    local player = Players.LocalPlayer
-    local Character = player.Character or player.CharacterAdded:Wait()
-    if not Character then
-        repeat wait() until player.Character and player.Character:FindFirstChild("Humanoid") and player.Character:FindFirstChild("HumanoidRootPart")
-        local LoadedCharacter = player.Character or player.CharacterAdded:Wait()
-        local Character = LoadedCharacter
+    if getgenv().PlaceID == 6884319169 or getgenv().PlaceID == 15546218972 then
+        print("MIC UP [PlaceId]?: True, PlaceID: "..tostring(game.PlaceId))
+    else
+        local screenGui = Instance.new("ScreenGui")
+        local frame = Instance.new("Frame")
+        local textLabel = Instance.new("TextLabel")
+        local corner = Instance.new("UICorner")
+
+        screenGui.Parent = getgenv().PlayerGui
+        screenGui.ResetOnSpawn = false
+        -- screenGui.IgnoreGuiInset = true
+        -- Adding later maybe, don't know if I should teehee.
+
+        frame.Parent = screenGui
+        frame.Size = UDim2.new(0.5, 0, 0.5, 0)
+        frame.Position = UDim2.new(0.25, 0, 0.25, 0)
+        frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        frame.BackgroundTransparency = 0
+        corner.Parent = frame
+        frame.ZIndex = 10
+
+        textLabel.Parent = frame
+        textLabel.Size = UDim2.new(1, 0, 1, 0)
+        textLabel.Position = UDim2.new(0, 0, 0, 0)
+        textLabel.Text = ""
+        textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        textLabel.TextScaled = true
+        textLabel.TextWrapped = true
+        textLabel.ZIndex = 20
+
+        local goalFrame = {Size = UDim2.new(1, 0, 1, 0), Position = UDim2.new(0, 0, 0, 0)}
+        local tweenInfo = TweenInfo.new(2.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, false)
+
+        local tweenFrame = getgenv().TweenService:Create(frame, tweenInfo, goalFrame)
+        local tweenText = getgenv().TweenService:Create(textLabel, tweenInfo, goalFrame)
+
+        tweenFrame:Play()
+        tweenText:Play()
+        wait(0.2)
+        getgenv().TeleportCheck = false
+        getgenv().LocalPlayer.OnTeleport:Connect(function(State)
+            if (not getgenv().TeleportCheck) and getgenv().queueteleport then
+                getgenv().TeleportCheck = true
+                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            end
+        end)
+        wait(0.5)
+        getgenv().bruh_text = true
+
+        while getgenv().bruh_text == true do
+            wait(0.5)
+            textLabel.Text = "T"
+            wait(0.2)
+            textLabel.Text = "Te"
+            wait(0.2)
+            textLabel.Text = "Tel"
+            wait(0.2)
+            textLabel.Text = "Tele"
+            wait(0.2)
+            textLabel.Text = "Telep"
+            wait(0.2)
+            textLabel.Text = "Telepo"
+            wait(0.2)
+            textLabel.Text = "Telepor"
+            wait(0.2)
+            textLabel.Text = "Teleport"
+            wait(0.2)
+            textLabel.Text = "Teleporti"
+            wait(0.2)
+            textLabel.Text = "Teleportin"
+            wait(0.2)
+            textLabel.Text = "Teleporting"
+            wait(0.2)
+            textLabel.Text = "Teleporting."
+            wait(0.2)
+            textLabel.Text = "Teleporting.."
+            wait(0.2)
+            textLabel.Text = "Teleporting..."
+            wait(0.5)
+            textLabel.Text = "T"
+            wait(0.2)
+            textLabel.Text = "Te"
+            wait(0.2)
+            textLabel.Text = "Tel"
+            wait(0.2)
+            textLabel.Text = "Tele"
+            wait(0.2)
+            textLabel.Text = "Telep"
+            wait(0.2)
+            textLabel.Text = "Telepo"
+            wait(0.2)
+            textLabel.Text = "Telepor"
+            wait(0.2)
+            textLabel.Text = "Teleport"
+            wait(0.2)
+            textLabel.Text = "Teleporti"
+            wait(0.2)
+            textLabel.Text = "Teleportin"
+            wait(0.2)
+            textLabel.Text = "Teleporting"
+            wait(0.2)
+            textLabel.Text = "Teleporting."
+            wait(0.2)
+            textLabel.Text = "Teleporting.."
+            wait(0.2)
+            textLabel.Text = "Teleporting..."
+            wait(0.3)
+            getgenv().bruh_text = false
+            wait(0.1)
+            getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
+        end
     end
-    local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui") or player:WaitForChild("PlayerGui", 1)
-    local HttpService = game:GetService("HttpService")
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+    -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the button to restart the process. <<-- [] --
+    if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
+        NotificationLibrary:SendNotification("Error", "Zacks Easy Hub is already running!", 6)
+        return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6)
+    end
+    pcall(function() getgenv().SCRIPT_EXECUTED = true end)
+    wait(0.3)
+        -- [] -->> Initialize Character /|\ Wait for Character and other necessary parts. <<-- [] --
+        if not getgenv().Character then
+            repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
+            wait()
+        end
+
+        getgenv().WaitForCharacter_Load = function()
+            repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
+            if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().Humanoid then
+                getgenv().load_char = true
+                print("Loaded!")
+            end
+
+            return getgenv().load_char
+        end
+
         if getgenv().loading_screen_data then
             print("Already Seen Loading Screen")
         else
-            local player = game.Players.LocalPlayer
-            local StarterGui = game:GetService("StarterGui")
+            getgenv().StarterGui = getgenv().StarterGui or game:GetService("StarterGui")
             StarterGui:SetCore("TopbarEnabled", false)
 
-            local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+            local gui = Instance.new("ScreenGui", getgenv().PlayerGui)
             gui.Name = "LoadingGUI"
             gui.IgnoreGuiInset = true
 
@@ -274,16 +288,15 @@ wait(0.3)
             finalTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             finalTextLabel.TextScaled = true
             finalTextLabel.TextTransparency = 1
-            
-            local TweenService = game:GetService("TweenService")
+
             local fadeInInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
             local fadeOutInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 
-            local fadeTween = TweenService:Create(frame, fadeInInfo, { BackgroundTransparency = 0 })
+            local fadeTween = getgenv().TweenService:Create(frame, fadeInInfo, { BackgroundTransparency = 0 })
             fadeTween:Play()
 
             local tweenInfo = TweenInfo.new(5.2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-            local tween = TweenService:Create(progressBar, tweenInfo, { Size = UDim2.new(0.5, 0, 0.02, 0) })
+            local tween = getgenv().TweenService:Create(progressBar, tweenInfo, { Size = UDim2.new(0.5, 0, 0.02, 0) })
 
             fadeTween.Completed:Connect(function()
                 tween:Play()
@@ -311,11 +324,11 @@ wait(0.3)
 
                 wait(1)
 
-                local fadeOutTween = TweenService:Create(finalTextLabel, fadeOutInfo, { TextTransparency = 1 })
+                local fadeOutTween = getgenv().TweenService:Create(finalTextLabel, fadeOutInfo, { TextTransparency = 1 })
                 fadeOutTween:Play()
                 fadeOutTween.Completed:Connect(function()
                     wait(0.3)
-                    StarterGui:SetCore("TopbarEnabled", true)
+                    getgenv().StarterGui:SetCore("TopbarEnabled", true)
                     gui:Destroy()
                 end)
             end)
@@ -324,20 +337,18 @@ wait(0.3)
         getgenv().loading_screen_data = true
         wait(4.5)
         -- [] -->> Initialization <<-- [] --
-        repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        repeat wait() until getgenv().Game:IsLoaded() and getgenv().Service_Wrap("Players") and getgenv().LocalPlayer and getgenv().LocalPlayer.Character and getgenv().Character:FindFirstChild("HumanoidRootPart")
         wait(0.3)
-        local Workspace = game:GetService("Workspace")
-
-        if not Workspace:FindFirstChild("PartStorage") then
+        if not getgenv().Workspace:FindFirstChild("PartStorage") then
             local NewFolder = Instance.new("Folder")
             NewFolder.Name = "PartStorage"
-            NewFolder.Parent = Workspace
+            NewFolder.Parent = getgenv().Workspace
         end
 
         if getgenv().baseplate_init then
             warn("Baseplate was already created.")
         else
-            local NewFolder = Workspace:FindFirstChild("PartStorage")
+            local NewFolder = getgenv().Workspace:FindFirstChild("PartStorage")
             local newChunk = Instance.new("Part")
             newChunk.Name = "BASEPLATE_CLONE_ANTI_VOID"
             newChunk.Size = Vector3.new(2048, 0, 2048)
@@ -352,7 +363,7 @@ wait(0.3)
             local screenGui = Instance.new("ScreenGui")
             screenGui.IgnoreGuiInset = true
             screenGui.Name = "BASEPLATE_LOADING"
-            screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+            screenGui.Parent = getgenv().PlayerGui
 
             local fullScreenFrame = Instance.new("Frame")
             fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -370,19 +381,7 @@ wait(0.3)
             textLabel.Font = Enum.Font.GothamBold
             textLabel.Parent = fullScreenFrame
             wait(0.7)
-            local Workspace
-            local Players
-            task.wait()
-            if cloneref then
-                Workspace = cloneref(game:GetService("Workspace"))
-                Players = cloneref(game:GetService("Players"))
-            else
-                Workspace = game:GetService("Workspace")
-                Players = game:GetService("Players")
-            end
-            local Player = Players.LocalPlayer
-            local PlayerGui = Player:WaitForChild("PlayerGui")
-            local Terrain = Workspace.Terrain
+            local Terrain = getgenv().Workspace.Terrain
 
             Terrain:FillBlock(CFrame.new(66, -10, 72.5), Vector3.new(13000, 16, 13000), Enum.Material.Asphalt)
             wait(0.3)
@@ -402,8 +401,8 @@ wait(0.3)
             do_baseplate_check()
         end
         task.wait(0.1)
--- [] -->> [First real setup part, parenting 'Teleport' to AssetService, (To prevent the game from teleporting you when you fall into it.)] <<-- [] --
-local function loadGUI()
+    -- [] -->> [First real setup part, parenting 'Teleport' to AssetService, (To prevent the game from teleporting you when you fall into it.)] <<-- [] --
+    getgenv().start_Script() = function()
     wait(0.2)
     local currentTime = os.time()
     local formattedTime = os.date("%I:%M %p", currentTime)
@@ -455,6 +454,9 @@ local function loadGUI()
     local Tab13 = Window:CreateTab("< / Players >", 7743871002)
     local Section13 = Tab13:CreateSection("||| Character [2] Section |||")
 
+    local Tab18 = Window:CreateTab("< / Avatar >", 7733954760)
+    local Section18 = Tab18:CreateSection("||| Avatar Section |||")
+
     local Tab10 = Window:CreateTab("< / Teleports >", 7733764327)
     local Section10 = Tab10:CreateSection("||| Teleports Section |||")
 
@@ -482,8 +484,7 @@ local function loadGUI()
     local Tab15 = Window:CreateTab("< UI >", 7734022107)
     local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
     wait(0.3)
-    local Workspace = game:GetService("Workspace") or workspace
-    local GameFolder = Workspace:FindFirstChild("Game")
+    local GameFolder = getgenv().Workspace:FindFirstChild("Game")
     local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
     local AssetService = game:GetService("AssetService")
     local Asset_Service_Duplicate = game:GetService("AssetService")
@@ -497,7 +498,7 @@ local function loadGUI()
         end
     end
         wait(0.3)
-            function notify(title, content, duration)
+            getgenv().notify = function(title, content, duration)
                 Rayfield:Notify({
                     Title = tostring(title),
                     Content = tostring(content),
@@ -513,8 +514,8 @@ local function loadGUI()
             end
             
             local UserInputService = game:GetService("UserInputService")
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
+            
+            
             local Audio_Device_Input = LocalPlayer.AudioDeviceInput
     
             local isMuted = false
@@ -536,12 +537,12 @@ local function loadGUI()
             UserInputService.InputBegan:Connect(onInputBegan)
         wait(0.3)
     local TeleportService = game:GetService("TeleportService")
-    local Players = game:GetService("Players")
+    
     PlaceId, JobId = game.PlaceId, game.JobId
-    local LocalPlayer = Players.LocalPlayer
+    
     queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
     local TeleportCheck = false
-    game.Players.LocalPlayer.OnTeleport:Connect(function(State)
+    getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not TeleportCheck) and queueteleport then
             TeleportCheck = true
             queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
@@ -549,10 +550,10 @@ local function loadGUI()
     end)
     -- [] -->> Validate [writefile] and [readfile] permissions, also authorize correct usernames, ignoring them on this line. <<-- [] --
     -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
-    if getgenv().get_setup_config or getgenv().get_setup_config == true and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+    if getgenv().get_setup_config or getgenv().get_setup_config == true and getgenv().LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
         warn("Keybind Setup already loaded.")
-    elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and game.Players.LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
-        local player = game.Players.LocalPlayer or game:GetService("Players").LocalPlayer
+    elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+        local player = getgenv().LocalPlayer or game:GetService("Players").LocalPlayer
         local playerGui = player:WaitForChild("PlayerGui")
 
         local screenGui = Instance.new("ScreenGui")
@@ -602,9 +603,9 @@ local function loadGUI()
         function selected_Yes()
             local function create_bindings()
                 local UserInputService = game:GetService("UserInputService") or cloneref(game:GetService("UserInputService"))
-                local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
                 
-                local player = Players.LocalPlayer
+                
+                local player = getgenv().LocalPlayer
                 local emoteSpeed = 1
                 local freezeEmotes = false
                 getgenv().isReversed = getgenv().isReversed or false
@@ -635,7 +636,7 @@ local function loadGUI()
                 }
                 
                 local function adjustEmoteSpeed()
-                    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                    
                     if humanoid then
                         for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
                             track:AdjustSpeed(emoteSpeed)
@@ -644,7 +645,7 @@ local function loadGUI()
                 end
                 
                 local function reverseEmotes()
-                    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                    
                     if humanoid then
                         for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
                             track:AdjustSpeed(-1)
@@ -653,7 +654,7 @@ local function loadGUI()
                 end
                 
                 local function playNormalSpeed()
-                    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+                    
                     if humanoid then
                         for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
                             track:AdjustSpeed(1)
@@ -719,7 +720,7 @@ local function loadGUI()
         end
 
         function selected_No()
-            warn(tostring(game.Players.LocalPlayer.Name)..", selected 'No'")
+            warn(tostring(getgenv().LocalPlayer.Name)..", selected 'No'")
         end
 
         yesButton.MouseButton1Click:Connect(function()
@@ -746,12 +747,12 @@ local function loadGUI()
     end
     wait(0.5)
     local TeleportService = game:GetService("TeleportService")
-    local Players = game:GetService("Players")
+    
     PlaceId, JobId = game.PlaceId, game.JobId
-    local LocalPlayer = Players.LocalPlayer
+    
     wait(0.3)
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    
+    
     local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
     wait(0.1)
     if getgenv().AntiAfkScript or getgenv().OtherAntiAfk then
@@ -930,7 +931,7 @@ local function loadGUI()
         Lighting.SunRays.Spread = 0.1
     end
     wait()
-    local Players = game:GetService("Players")
+    
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
     wait(0.5)
     if getgenv().scripts_init then
@@ -965,8 +966,8 @@ local function loadGUI()
         getgenv().scripts_init = true
     end
     wait()
-    local Players = game:GetService("Players")
-    local player = Players.LocalPlayer
+    
+    local player = getgenv().LocalPlayer
     
     getgenv().whitelist = {}
     
@@ -977,9 +978,8 @@ local function loadGUI()
         "Laylay_4kla"
     }
     wait()
-    local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
     -- [] -->> Functions <<-- [] --
-    local cmdp = Players
+    local cmdp = getgenv().Players
     local cmdlp = cmdp.LocalPlayer
     
     function findplr(args, tbl)
@@ -1089,7 +1089,7 @@ local function loadGUI()
         end
     end
     wait()
-    function notify(title, content, duration, image, level)
+    getgenv().notify = function(title, content, duration, image, level)
         if not image then
             image = tonumber(4483362458)
         end
@@ -1220,13 +1220,13 @@ local function loadGUI()
     local claimRandomBooth = Tab11:CreateButton({
     Name = "Claim Random Booth",
     Callback = function()
-        notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
+        getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
         task.wait(.2)
         local Folder = game:GetService("Workspace").Booth
 
         local function getStall()
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
+            
+            
 
             for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
                 if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(LocalPlayer.Name) then
@@ -1241,12 +1241,8 @@ local function loadGUI()
         if plr_booth then
             return 
         end
-
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-        local OldCF = Character.HumanoidRootPart.CFrame
+        
+        local OldCF = getgenv().HumanoidRootPart.CFrame
 
         local stalls = {
             Folder:FindFirstChild("Booth01"),
@@ -1268,15 +1264,15 @@ local function loadGUI()
         end
 
         local function Claim_A_Booth()
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-            local OldCF = Character.HumanoidRootPart.CFrame
+            
+            
+            
+            
+            local OldCF = getgenv().HumanoidRootPart.CFrame
 
             local function getStall()
-                local Players = game:GetService("Players")
-                local LocalPlayer = Players.LocalPlayer
+                
+                
 
                 for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
                     if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(LocalPlayer.Name) then
@@ -1305,7 +1301,7 @@ local function loadGUI()
                 
                 game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
                 wait(0.2)
-                Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+                getgenv().HumanoidRootPart.CFrame = OldCF
                 wait(.1)
                 if plr_booth then
                     return 
@@ -1329,7 +1325,7 @@ local function loadGUI()
             print("Owner Found! Teleporting...")
             task.wait()
             local OwnerOfScript = game.Players:FindFirstChild(OwnerName)
-            game.Players.LocalPlayer.Character:PivotTo(OwnerOfScript.Character:GetPivot())
+            getgenv().LocalPlayer.Character:PivotTo(OwnerOfScript.Character:GetPivot())
             task.wait(.5)
             print("Teleported To Script Owner!")
         else
@@ -1361,9 +1357,9 @@ local function loadGUI()
         else
             local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
             local Camera = Workspace:FindFirstChild("Camera")
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
             getgenv().spectateOwner = false
             wait(0.2)
             Camera.CameraSubject = Character
@@ -1418,24 +1414,21 @@ local function loadGUI()
         local Folder = game:GetService("Workspace").Booth
         local find_plr_func_booth = findplr(takeThatBooth)
 
-        notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
+        getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
         task.wait(.2)
 
-        if find_plr_func_booth == game.Players.LocalPlayer then
-            notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
+        if find_plr_func_booth == getgenv().LocalPlayer then
+            getgenv().notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
             return game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
         end
 
         if not find_plr_func_booth then
-            return notify("Error:", "Player not found!", 6.5)
+            return getgenv().notify("Error:", "Player not found!", 6.5)
         end
 
         local function getStall()
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-
             for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v ~= game.Players.LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
+                if v ~= getgenv().LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
                     return v
                 end
             end
@@ -1450,11 +1443,11 @@ local function loadGUI()
 
         local Folder = game:GetService("Workspace").Booth
 
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-        local OldCF = Character.HumanoidRootPart.CFrame
+        
+        
+        
+        
+        local OldCF = getgenv().HumanoidRootPart.CFrame
 
         local stalls = {
             Folder:FindFirstChild("Booth01"),
@@ -1476,11 +1469,11 @@ local function loadGUI()
         end
 
         local function Claim_A_Booth()
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-            local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
+            
+            
+            
+            
+            local OldCF = getgenv().HumanoidRootPart.CFrame
 
             local stall = plr_booth
             local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
@@ -1499,7 +1492,7 @@ local function loadGUI()
                 
                 game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
                 wait(0.2)
-                Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+                getgenv().HumanoidRootPart.CFrame = OldCF
                 wait(0.2)
                 notify("Success:", "Claimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
                 wait(.1)
@@ -1526,7 +1519,7 @@ local function loadGUI()
         notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
         task.wait(.2)
 
-        if find_plr_func_booth == game.Players.LocalPlayer then
+        if find_plr_func_booth == getgenv().LocalPlayer then
             notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
             return game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
         end
@@ -1536,11 +1529,11 @@ local function loadGUI()
         end
 
         local function getStall()
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
+            
+            
 
             for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v ~= game.Players.LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
+                if v ~= getgenv().LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
                     return v
                 end
             end
@@ -1555,11 +1548,11 @@ local function loadGUI()
 
         local Folder = game:GetService("Workspace").Booth
 
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-        local OldCF = Character.HumanoidRootPart.CFrame
+        
+        
+        
+        
+        local OldCF = getgenv().HumanoidRootPart.CFrame
 
         local stalls = {
             Folder:FindFirstChild("Booth01"),
@@ -1581,11 +1574,11 @@ local function loadGUI()
         end
 
         local function Claim_A_Booth()
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
-            local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
+            
+            
+            
+            
+            local OldCF = getgenv().HumanoidRootPart.CFrame
 
             local stall = plr_booth
             local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
@@ -1606,7 +1599,7 @@ local function loadGUI()
                 wait(0.2)
                 game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
                 wait(0.2)
-                Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+                getgenv().HumanoidRootPart.CFrame = OldCF
                 wait(0.2)
                 notify("Success:", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
                 wait(.1)
@@ -1630,10 +1623,10 @@ local function loadGUI()
             return rootPart
         end
 
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
+        
         local Workspace_Service = game:GetService("Workspace") or workspace or cloneref(game:GetService("Workspace"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
         local hum = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid") or Character:WaitForChild("Humanoid") or Workspace_Service:WaitForChild(LocalPlayer.Name):FindFirstChildWhichIsA("Humanoid") or Workspace_Service:WaitForChild(LocalPlayer.Name):WaitForChild("Humanoid", 999)
         local root = getRoot(Character)
         if hum then
@@ -1654,10 +1647,10 @@ local function loadGUI()
     Flag = "AntiMovement",
     Callback = function(hasFrozenChar)
         if hasFrozenChar then
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
+            
             local Workspace_Service = game:GetService("Workspace") or workspace or cloneref(game:GetService("Workspace"))
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
             local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart", true) or Workspace_Service:WaitForChild(LocalPlayer.Name):WaitForChild("HumanoidRootPart", 999)
             getgenv().FreezingChar = true
             if Character and HumanoidRootPart or Character:FindFirstChild("HuamnoidRootPart") then
@@ -1668,9 +1661,9 @@ local function loadGUI()
                 getgenv().FreezingChar = false
             end
         else
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
             local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart", true)
             if Character and HumanoidRootPart or Character:FindFirstChild("HumanoidRootPart") then
                 getgenv().FreezingChar = false
@@ -1722,7 +1715,7 @@ local function loadGUI()
             wait(0.5)
             local function getStall()
                 for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                    if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                    if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                         return v
                     end
                 end
@@ -1903,9 +1896,9 @@ local function loadGUI()
     PlaceholderText = "Speed",
     RemoveTextAfterFocusLost = true,
     Callback = function(getSpinSpeed)
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid")
         local spinSpeed = tonumber(getSpinSpeed)
@@ -1963,10 +1956,10 @@ local function loadGUI()
     local UnspinNow = Tab2:CreateButton({
     Name = "Unspin",
     Callback = function()
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+        
+        
+        
+        
         for i,v in pairs(HumanoidRootPart:GetChildren()) do
             if v.Name == "Spinning" then
                 v:Destroy()
@@ -2057,8 +2050,8 @@ local function loadGUI()
     PlaceholderText = "Note",
     RemoveTextAfterFocusLost = true,
     Callback = function(noteToBypass)
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
+        
+        
         local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage"))
         local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
     
@@ -2184,7 +2177,7 @@ local function loadGUI()
                 
         ModifyUser_Remote:FireServer(unpack(args))
         wait(0.2)
-        local player = game.Players.LocalPlayer
+        local player = getgenv().LocalPlayer
 
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
@@ -2226,7 +2219,7 @@ local function loadGUI()
 
         local function get_creator_of_game()
             local ownerUserId = 25335555
-            local Players = game:GetService("Players")
+            
     
             local success, ownerUsername = pcall(function()
                 return Players:GetNameFromUserIdAsync(ownerUserId)
@@ -2276,8 +2269,8 @@ local function loadGUI()
                 })
             end
         
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
+            
+            
         
             local function getStall()
                 for _, v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
@@ -2305,7 +2298,7 @@ local function loadGUI()
                         if not getgenv().OwnershipConnection then
                             getgenv().OwnershipConnection = stall.Username.BillboardGui.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
                                 if stall.Username.BillboardGui.TextLabel.Text ~= "Owned by: " .. LocalPlayer.Name then
-                                    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+                                    
                                     local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
         
                                     Character:PivotTo(stall:GetPivot())
@@ -2329,10 +2322,6 @@ local function loadGUI()
                     else
                         print("Reclaiming Stall...")
                         task.wait()
-                        local LocalPlayer = game:GetService("Players").LocalPlayer or game.Players.LocalPlayer
-                        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-                        local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
-
                         Character:PivotTo(get_plr_stall:GetPivot())
                         task.wait(0.5)
                         fireproximityprompt(get_plr_stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
@@ -2370,12 +2359,12 @@ local function loadGUI()
     Callback = function()
         local GetWorkspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
         local Folder = GetWorkspace:FindFirstChild("Booth") or GetWorkspace:WaitForChild("Booth") 
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+        
         local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
         local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
-        local localPlayer = Players.LocalPlayer
-        local Character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
-        local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
+        
+        
+        local OldCF = getgenv().HumanoidRootPart.CFrame
 
         local function fireAndUnclaimStall(stall)
             local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
@@ -2439,7 +2428,7 @@ local function loadGUI()
         local bruhUser = findplr(thisUserGet)
         
         local function addPlayerToGlobalTable(player)
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+            
             if next(getgenv().singlePlayerTable) then
                 return Rayfield:Notify({
                     Title = "Error: Player Limit",
@@ -2488,7 +2477,7 @@ local function loadGUI()
                            },
                         },
                     })
-                elseif bruhUser == Players.LocalPlayer.Name then
+                elseif bruhUser == getgenv().LocalPlayer.Name then
                     return Rayfield:Notify({
                         Title = "[ERROR]: ?",
                         Content = "You cannot add yourself!",
@@ -2581,7 +2570,7 @@ local function loadGUI()
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
     
         function getThatPlr()
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+            
             for i, v in pairs(Players:GetChildren()) do
                 if getgenv().singlePlayerTable[v.Name] then
                     return v
@@ -2611,9 +2600,9 @@ local function loadGUI()
             })
         end
         
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
         local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
         local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
@@ -2680,7 +2669,6 @@ local function loadGUI()
             getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
             
             function getThatPlr()
-                local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
                 for i, v in pairs(Players:GetChildren()) do
                     if getgenv().singlePlayerTable[v.Name] then
                         return v
@@ -2711,9 +2699,9 @@ local function loadGUI()
                 })
             end
             
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
             local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
             local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
@@ -2777,7 +2765,7 @@ local function loadGUI()
             getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
             
             function getThatPlr()
-                local Players = game:GetService("Players")
+                
                 for i, v in pairs(Players:GetChildren()) do
                     if getgenv().singlePlayerTable[v.Name] then
                         return v
@@ -2807,9 +2795,9 @@ local function loadGUI()
                 })
             end
             
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
             local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
             local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
@@ -2858,7 +2846,7 @@ local function loadGUI()
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
     
         function getThatPlr()
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
+            
             for i, v in pairs(Players:GetChildren()) do
                 if getgenv().singlePlayerTable[v.Name] then
                     return v
@@ -2888,9 +2876,9 @@ local function loadGUI()
             })
         end
         
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
         local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
         local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
@@ -2936,11 +2924,11 @@ local function loadGUI()
     RemoveTextAfterFocusLost = true,
     Callback = function(getTheIDForEmote)
         local getNumberID = tonumber(getTheIDForEmote) or getTheIDForEmote
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
-        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+        
         
         local succ, err = pcall(function()
             Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
@@ -2969,9 +2957,9 @@ local function loadGUI()
     local StopTheEmotes = Tab12:CreateButton({
     Name = "Stop Emoting",
     Callback = function()
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid", 60) or LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
 
         for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
@@ -3062,7 +3050,7 @@ local function loadGUI()
             }
 
             local function gatherCurrentPlayers()
-                local players = game:GetService("Players")
+                
                 for _, player in ipairs(players:GetPlayers()) do
                     table.insert(usernames, player.Name)
                 end
@@ -3084,7 +3072,7 @@ local function loadGUI()
             getgenv().ava_switch = false
             wait(0.3)
             local args = {
-                [1] = tostring(game.Players.LocalPlayer.Name)
+                [1] = tostring(getgenv().LocalPlayer.Name)
             }
             
             game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
@@ -3161,7 +3149,7 @@ local function loadGUI()
 
         local function getStall()
             for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                     return v
                 end
             end
@@ -3266,9 +3254,9 @@ local function loadGUI()
                 
                 game:GetService("ReplicatedStorage"):WaitForChild("ToolEvent"):FireServer(unpack(args))
                 wait(0.2)
-                local Players = game:GetService("Players") or cloneref(game:GetService("Players")) or game.Players or game:FindService("Players")
-                local LocalPlayer = Players.LocalPlayer
-                local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+                
+                
+                
 
                 if LocalPlayer.Backpack:FindFirstChild("Hoverboard") then
                     LocalPlayer.Backpack:FindFirstChild("Hoverboard").Parent = Character
@@ -3280,7 +3268,7 @@ local function loadGUI()
                     Character:FindFirstChildWhichIsA("Humanoid").Health = 0
                 end
                 wait(0.5)
-                local player = game.Players.LocalPlayer
+                local player = getgenv().LocalPlayer
                 local character = player.Character or player.CharacterAdded:Wait()
                 local humanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
                 getgenv().flying = false
@@ -3341,15 +3329,15 @@ local function loadGUI()
     
                 startFly()           
             elseif tostring(GetSpeed) or GetSpeed == "stop" then
-                local Players = game:GetService("Players")
+                
                 local RunService = game:GetService("RunService")
                 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                local LocalPlayer = Players.LocalPlayer
+                
                 wait(0.3)
                 getgenv().flyLoop = false
                 wait(0.2)
-                local Players = game:GetService("Players")
-                local player = Players.LocalPlayer
+                
+                local player = getgenv().LocalPlayer
                 local character = player.Character or player.CharacterAdded:Wait()
                 local humanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
                 local Humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid") or character:FindFirstChildOfClass("Humanoid") or character:FindFirstChild("Humanoid")
@@ -3412,13 +3400,13 @@ local function loadGUI()
     Flag = "theBoothView",
     Callback = function(specBooth)
         local Workspace = game:GetService("Workspace") or workspace
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
 
         local function get_booth()
             for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                     return v
                 end
             end
@@ -3436,9 +3424,9 @@ local function loadGUI()
             Workspace.CurrentCamera.CameraSubject = plr_booth
         else
             local Workspace = game:GetService("Workspace") or workspace
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
 
             getgenv().viewing_booth = false
             wait(0.2)
@@ -3450,13 +3438,13 @@ local function loadGUI()
     Name = "Teleport To Booth",
     Callback = function()
         local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
 
         local function get_booth()
             for i,v in pairs(Workspace:FindFirstChild("Booth"):GetChildren()) do
-                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                     return v
                 end
             end
@@ -3477,9 +3465,9 @@ local function loadGUI()
     Callback = function()
         local Workspace_Service = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
         local Avatar_UI = Workspace_Service:FindFirstChild("AvatarUI") or Workspace_Service:WaitForChild("AvatarUI")
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
 
         Character:PivotTo(Avatar_UI:GetPivot())
     end,})
@@ -3632,8 +3620,8 @@ local function loadGUI()
             local Click_Detector_Input = Like_Button:FindFirstChild("ClickDetector")
             local Avatar_Part_UI = Avatar_UI:WaitForChild("AvatarUI")
             local Image_Label = Avatar_Part_UI:WaitForChild("SurfaceGui"):WaitForChild("ImageLabel")
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            local Local_Player = Players.LocalPlayer
+            
+            local Local_Player = getgenv().LocalPlayer
             
             function Get_Friend_Func()
                 for _, player in pairs(Players:GetPlayers()) do
@@ -3743,9 +3731,9 @@ local function loadGUI()
     Flag = "TPToPlayerBo",
     Callback = function(get_player_func)
         local tp_pivot_plr = findplr(get_player_func)
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         
         if not tp_pivot_plr then
             return Notify_User("Error:", "Player not found or does not exist!", 6)
@@ -3769,9 +3757,9 @@ local function loadGUI()
     Flag = "ViewPlrSpectating",
     Callback = function(do_plr_func)
         local tp_pivot_plr = findplr(do_plr_func)
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
         local Camera = Workspace:FindFirstChild("Camera")
         
@@ -3794,9 +3782,9 @@ local function loadGUI()
     Callback = function()
         local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
         local Camera = Workspace:FindFirstChild("Camera")
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
     
         Camera.CameraSubject = Character
     end,})
@@ -3831,9 +3819,8 @@ local function loadGUI()
         -- [[ <> Old Method <> [In Use.] ]] --
         ----------------------------
         if firesignal then
-            local Players = game:GetService("Players") or game.Players
-            local LocalPlayer = Players.LocalPlayer
-            local Player_Gui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChild("PlayerGui")
+            
+            getgenv().PlayerGui = getgenv().PlayerGui or getgenv().LocalPlayer:WaitForChild("PlayerGui")
             local Menu_Frame = Player_Gui:WaitForChild("Menu") or Player_Gui:FindFirstChild("Menu")
             local Background_Frame = Menu_Frame:WaitForChild("Background") or Menu_Frame:FindFirstChild("Background")
             local Tool_Frame = Background_Frame:WaitForChild("Tool") or Background_Frame:FindFirstChild("Tool")
@@ -3865,7 +3852,7 @@ local function loadGUI()
 
             local function verify_pass()
                 local success, hasPass = pcall(function()
-                    return game:GetService("MarketplaceService"):UserOwnsGamePassAsync(game.Players.LocalPlayer.UserId, gamePassId)
+                    return game:GetService("MarketplaceService"):UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, gamePassId)
                 end)
                 if success then
                     return hasPass
@@ -3909,8 +3896,8 @@ local function loadGUI()
         ----------------------------
         -- [[ <> New Method <> ]] --
         ----------------------------
-        --[[local Players = game:GetService("Players") or game.Players
-        local LocalPlayer = Players.LocalPlayer
+        --[[ or game.Players
+        
         local Player_Gui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChild("PlayerGui")
         local Menu_Frame = Player_Gui:WaitForChild("Menu") or Player_Gui:FindFirstChild("Menu")
         local Background_Frame = Menu_Frame:WaitForChild("Background") or Menu_Frame:FindFirstChild("Background")
@@ -3984,8 +3971,8 @@ local function loadGUI()
         warn("You have already loaded AntiChat Logger!")
     else
         local TextChatService = game:GetService("TextChatService")
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
+        
+        
         local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
         
         local function sendchat(msg)
@@ -4006,8 +3993,8 @@ local function loadGUI()
     RemoveTextAfterFocusLost = true,
     Callback = function(saveInputFilter)
         local TextChatService = game:GetService("TextChatService")
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
+        
+        
         local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
 
         local letters = {
@@ -4097,8 +4084,8 @@ local function loadGUI()
     RemoveTextAfterFocusLost = true,
     Callback = function(enteredTextInput)
         local TextChatService = game:GetService("TextChatService")
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
+        
+        
         local Rep_Storage = game:GetService("ReplicatedStorage")
         local Booth_Remote = Rep_Storage:FindFirstChild("UpdateBoothText") or Rep_Storage:WaitForChild("UpdateBoothText")
 
@@ -4202,7 +4189,7 @@ local function loadGUI()
         local function send_bypass_config(msg)
             local function getStall()
                 for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                    if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(game.Players.LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                    if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                         return v
                     end
                 end
@@ -4295,8 +4282,8 @@ local function loadGUI()
         else
             local Rep_Storage = game:GetService("ReplicatedStorage")
             local Modify_User_Remote = Rep_Storage:WaitForChild("ModifyUserEvent") or Rep_Storage:FindFirstChild("ModifyUserEvent")
-            local Players = game:GetService("Players")
-            local Local_Player = Players.LocalPlayer
+            
+            local Local_Player = getgenv().LocalPlayer
             local Local_Plr_Name = Local_Player.Name or tostring(Local_Player.Name)
     
             getgenv().CharFlick = false
@@ -4352,7 +4339,7 @@ local function loadGUI()
         local NoClip = true
         
         local GetPlayers = game:GetService("Players")
-        local Player = GetPlayers.LocalPlayer
+        local Player = Getgetgenv().LocalPlayer
         local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
         
         local IsInvisible = false
@@ -4371,7 +4358,7 @@ local function loadGUI()
         Part.Name = "BasePart"
         
         FakeCharacter.Parent = Workspace_Service
-        FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+        Fakegetgenv().HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
         
         for i, v in pairs(RealCharacter:GetChildren()) do
             if v:IsA("LocalScript") then
@@ -4412,7 +4399,7 @@ local function loadGUI()
             Part.CanCollide = true
             Part.Name = "MeshPart"
             FakeCharacter.Parent = Workspace_Service
-            FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+            Fakegetgenv().HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
             
             for i, v in pairs(RealCharacter:GetChildren()) do
                 if v:IsA("LocalScript") then
@@ -4464,9 +4451,9 @@ local function loadGUI()
         PseudoAnchor = FakeCharacter.HumanoidRootPart
         local function Invisible()
             if IsInvisible == false then
-                local StoredCF = RealCharacter.HumanoidRootPart.CFrame
-                RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
-                FakeCharacter.HumanoidRootPart.CFrame = StoredCF
+                local StoredCF = Realgetgenv().HumanoidRootPart.CFrame
+                Realgetgenv().HumanoidRootPart.CFrame = Fakegetgenv().HumanoidRootPart.CFrame
+                Fakegetgenv().HumanoidRootPart.CFrame = StoredCF
                 RealCharacter.Humanoid:UnequipTools()
                 Player.Character = FakeCharacter
                 Workspace_Service.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
@@ -4479,10 +4466,10 @@ local function loadGUI()
 
                 IsInvisible = true
             else
-                local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
-                FakeCharacter.HumanoidRootPart.CFrame = RealCharacter.HumanoidRootPart.CFrame
+                local StoredCF = Fakegetgenv().HumanoidRootPart.CFrame
+                Fakegetgenv().HumanoidRootPart.CFrame = Realgetgenv().HumanoidRootPart.CFrame
                 
-                RealCharacter.HumanoidRootPart.CFrame = StoredCF
+                Realgetgenv().HumanoidRootPart.CFrame = StoredCF
                 
                 FakeCharacter.Humanoid:UnequipTools()
                 Player.Character = RealCharacter
@@ -4522,9 +4509,9 @@ local function loadGUI()
     local PrivRoomFloor = Tab10:CreateButton({
     Name = "TP To Private Room (Inside)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
 
         HumanoidRootPart.CFrame = CFrame.new(4220.82275, 2.76511836, 60.7681046)
@@ -4533,9 +4520,9 @@ local function loadGUI()
     local NextToBathrooms = Tab10:CreateButton({
     Name = "TP To Room Next To Bathrooms",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
 
         HumanoidRootPart.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
@@ -4544,9 +4531,9 @@ local function loadGUI()
     local TPToBathrooms = Tab10:CreateButton({
     Name = "TP To Bathrooms",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
 
         HumanoidRootPart.CFrame = CFrame.new(-72.3955917, 5.09832525, 93.0914459)
@@ -4555,9 +4542,9 @@ local function loadGUI()
     local TPToChilling = Tab10:CreateButton({
     Name = "TP To Chill Spot",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
 
         HumanoidRootPart.CFrame = CFrame.new(228.970184, 5.75081444, -21.5613441)
@@ -4566,9 +4553,9 @@ local function loadGUI()
     local TPPicnicFirst = Tab10:CreateButton({
     Name = "TP To Picnic (Seat 1)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
 
         HumanoidRootPart.CFrame = CFrame.new(85.846756, 3.61196709, -29.8345909)
@@ -4577,9 +4564,9 @@ local function loadGUI()
     local TPPicnicSecond = Tab10:CreateButton({
     Name = "TP To Picnic (Seat 2)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
 
         HumanoidRootPart.CFrame = CFrame.new(76.6581955, 3.61196709, -29.8332996)
@@ -4588,9 +4575,9 @@ local function loadGUI()
     local TPMicFirst = Tab10:CreateButton({
     Name = "TP To Stage (Mic 1)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         HumanoidRootPart.CFrame = CFrame.new(39.2528572, 7.80023623, -67.7634125)
     end,})
@@ -4598,9 +4585,9 @@ local function loadGUI()
     local TPMicSecond = Tab10:CreateButton({
     Name = "TP To Stage (Mic 2)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
 
         HumanoidRootPart.CFrame = CFrame.new(14.8289356, 7.80023623, -67.7656097)
@@ -4609,9 +4596,9 @@ local function loadGUI()
     local TPMiddleRoomArea = Tab10:CreateButton({
     Name = "TP To Middle Room (Tent)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(70.9464493, 5.62692404, 24.2968006)
@@ -4620,9 +4607,9 @@ local function loadGUI()
     local TPBoothRows = Tab10:CreateButton({
     Name = "TP To Booth Rows (Table)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(26.7397423, 7.81395245, 86.7164536)
@@ -4631,9 +4618,9 @@ local function loadGUI()
     local TPToTowerFloatPart = Tab10:CreateButton({
     Name = "TP To Tower (Float Up Part)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(61.3288841, 72.0192184, 215.731613)
@@ -4642,9 +4629,9 @@ local function loadGUI()
     local TPToTowerTop = Tab10:CreateButton({
     Name = "TP To Tower (Top)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(63.2298126, 284.407227, 193.529007)
@@ -4653,9 +4640,9 @@ local function loadGUI()
     local TPToHighestPoint = Tab10:CreateButton({
     Name = "TP To Tower (Highest Part)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(58.0468788, 313.312622, 225.215027)
@@ -4664,9 +4651,9 @@ local function loadGUI()
     local TPBooth1 = Tab10:CreateButton({
     Name = "TP To Booth-1",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         local Workspace = game:GetService("Workspace")
         local Booth_Folder = Workspace:FindFirstChild("Booth")
@@ -4677,9 +4664,9 @@ local function loadGUI()
     local TPBooth2 = Tab10:CreateButton({
     Name = "TP To Booth-2",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         local Workspace = game:GetService("Workspace")
         local Booth_Folder = Workspace:FindFirstChild("Booth")
@@ -4690,9 +4677,9 @@ local function loadGUI()
     local TPBooth3 = Tab10:CreateButton({
     Name = "TP To Booth-3",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         local Workspace = game:GetService("Workspace")
         local Booth_Folder = Workspace:FindFirstChild("Booth")
@@ -4703,9 +4690,9 @@ local function loadGUI()
     local TPBooth4 = Tab10:CreateButton({
     Name = "TP To Booth-4",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         local Workspace = game:GetService("Workspace")
         local Booth_Folder = Workspace:FindFirstChild("Booth")
@@ -4716,9 +4703,9 @@ local function loadGUI()
     local TPBooth5 = Tab10:CreateButton({
     Name = "TP To Booth-5",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         local Workspace = game:GetService("Workspace")
         local Booth_Folder = Workspace:FindFirstChild("Booth")
@@ -4729,9 +4716,9 @@ local function loadGUI()
     local TPToDonutShop = Tab10:CreateButton({
     Name = "TP To Donut Shop",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(-80.8301239, 3.1662631, -82.6656799)
@@ -4740,9 +4727,9 @@ local function loadGUI()
     local TPSeat1Donut = Tab10:CreateButton({
     Name = "TP To Donut Shop (Seat 1)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(-98.4535675, 4.04168415, -96.7826004)
@@ -4751,9 +4738,9 @@ local function loadGUI()
     local TPSeat1Donut = Tab10:CreateButton({
     Name = "TP To Donut Shop (Seat 2)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(-91.7390671, 4.04168415, -90.0620728)
@@ -4762,9 +4749,9 @@ local function loadGUI()
     local TPTableSeat1 = Tab10:CreateButton({
     Name = "TP To Donut Shop (Table Seat 1)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(-102.440971, 4.51146317, -66.6184387)
@@ -4773,9 +4760,9 @@ local function loadGUI()
     local TPTableSeat2 = Tab10:CreateButton({
     Name = "TP To Donut Shop (Table, Seat 2)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(-94.6592941, 4.51146317, -74.3931046)
@@ -4784,9 +4771,9 @@ local function loadGUI()
     local TPBehindCounter = Tab10:CreateButton({
     Name = "TP To Donut Shop (Behind Counter)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(-122.382172, 3.22726321, -83.5359192)
@@ -4795,9 +4782,9 @@ local function loadGUI()
     local TPAboveRelax = Tab10:CreateButton({
     Name = "TP Above Relaxing Room",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(-97.4412308, 24.4840164, 121.394676)
@@ -4806,9 +4793,9 @@ local function loadGUI()
     local TPSubmitNoteBoard = Tab10:CreateButton({
     Name = "TP To Submit Note Board",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(58.6107864, 4.99999857, 245.690369)
@@ -4817,9 +4804,9 @@ local function loadGUI()
     local TPStageMic = Tab10:CreateButton({
     Name = "TP To Stage Mic",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(-61.6848221, 10.0853853, 229.676834)
@@ -4828,9 +4815,9 @@ local function loadGUI()
     local TPPrivRoomRoof = Tab10:CreateButton({
     Name = "TP To Private Room (Roof)",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         
         HumanoidRootPart.CFrame = CFrame.new(4220.37842, 23.5336628, 61.3636169)
@@ -4842,9 +4829,9 @@ local function loadGUI()
     RemoveTextAfterFocusLost = false,
     Callback = function(TheBind)
         Settings.Keybind = tostring(TheBind)
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid", 9999)
 
         wait(0.6)
@@ -4864,7 +4851,7 @@ local function loadGUI()
                 },
             })
             wait(2.9)
-            Humanoid.Health = 0
+            getgenv().Humanoid.Health = 0
         end
     end,})
     
@@ -4934,9 +4921,9 @@ local function loadGUI()
     CurrentValue = 16,
     Flag = "walkSpeedValue",
     Callback = function(wsVal)
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
         
         if Humanoid then
@@ -4968,9 +4955,9 @@ local function loadGUI()
         CurrentValue = 50,
         Flag = "jpValue",
         Callback = function(jpVal)
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
         
             if Humanoid then
@@ -5002,15 +4989,15 @@ local function loadGUI()
         CurrentValue = 7,
         Flag = "JumpingHeightValue",
         Callback = function(jumpHeight)
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
         
             if Humanoid then
                 Humanoid.JumpHeight = jumpHeight
             else
-                repeat wait() until Humanoid and Humanoid.Health >= 90
+                repeat wait() until Humanoid and getgenv().Humanoid.Health >= 90
                 wait(0.5)
                 warn("Humanoid Successfully Initialized! (4)")
             end
@@ -5040,9 +5027,9 @@ local function loadGUI()
     wait(0.5)
     if doAntiTP then
         local Workspace = game:GetService("Workspace")
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
     
         if HumanoidRP and HumanoidRP ~= nil then
@@ -5062,9 +5049,9 @@ local function loadGUI()
         repeat wait() until getgenv().doTeleport == false
         wait(0.3)
         local Workspace = game:GetService("Workspace") or workspace
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
         print("Teleporting Back...")
         wait()
@@ -5077,9 +5064,9 @@ local function loadGUI()
     Callback = function()
         local voidPosition = Vector3.new(-499, -499, -499)
         local Workspace = game:GetService("Workspace") or workspace
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
         print("Killing...")
         wait(.4)
@@ -5094,9 +5081,9 @@ local function loadGUI()
         if getLoopTpToVoid then
             local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
             local Workspace = game:GetService("Workspace") or workspace or cloneref(game:GetService("Workspace"))
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
             local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
                 getgenv().loopTPToVoid = true
                 while getgenv().loopTPToVoid == true do
@@ -5107,9 +5094,9 @@ local function loadGUI()
                 getgenv().loopTPToVoid = false
             wait()
             repeat wait() until getgenv().loopTPToVoid == false
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character
+            
+            
+            
             local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
             HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
         end
@@ -5182,7 +5169,7 @@ local function loadGUI()
         getgenv().setFireWorksOn = true
         while getgenv().setFireWorksOn == true do
         wait()
-        local player = game.Players.LocalPlayer
+        local player = getgenv().LocalPlayer
         local Lighting = game:GetService("Lighting")
         
         local function createFirework(position)
@@ -5412,9 +5399,9 @@ local function loadGUI()
         getgenv().doFreezeToggle = true
         while getgenv().doFreezeToggle == true do
         wait()
-            local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            
+            
+            
             local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
             local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
             for _, v in pairs(ActiveTracks) do
@@ -5424,9 +5411,9 @@ local function loadGUI()
     else
         getgenv().doFreezeToggle = false
         wait(0.5)
-        local Players = game:GetService("Players") 
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+         
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5442,9 +5429,9 @@ local function loadGUI()
     local StopAllEmotes = Tab12:CreateButton({
     Name = "Stop Playing Emotes",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for i,v in next, Humanoid:GetPlayingAnimationTracks() do
@@ -5461,9 +5448,9 @@ local function loadGUI()
     Flag = "EmoteSpeedSliding",
     Callback = function(slidingSpeed)
         local getEmoteNum = tonumber(slidingSpeed) or slidingSpeed
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5477,9 +5464,9 @@ local function loadGUI()
     RemoveTextAfterFocusLost = true,
     Callback = function(inputNum)
         local getNumberInput = tonumber(inputNum)
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5490,9 +5477,9 @@ local function loadGUI()
     local SpeedTheEmoteUp = Tab12:CreateButton({
     Name = "Kinda Fast Emote Speed",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5503,9 +5490,9 @@ local function loadGUI()
     local GettingFaster = Tab12:CreateButton({
     Name = "Faster Emote Speed",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5516,9 +5503,9 @@ local function loadGUI()
     local BackToNormalSpeed = Tab12:CreateButton({
     Name = "Normal Emote Speed",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5529,9 +5516,9 @@ local function loadGUI()
     local SlowerEmoteSpeed = Tab12:CreateButton({
     Name = "Slow Emote Speed",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5542,9 +5529,9 @@ local function loadGUI()
     local SlowingTheEmoteDown = Tab12:CreateButton({
     Name = "Super Slow Emote Speed",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5555,9 +5542,9 @@ local function loadGUI()
     local ReverseTheEmote = Tab12:CreateButton({
     Name = "Reverse Emote Speed",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
@@ -5568,7 +5555,7 @@ local function loadGUI()
     local FreeEmotesGUI = Tab14:CreateButton({
     Name = "Free Emotes GUI",
     Callback = function()
-        local StarterGui = game:GetService("StarterGui") or cloneref(game:GetService("StarterGui"))
+        getgenv().StarterGui = getgenv().StarterGui or game:GetService("StarterGui")
 
         local function sendNotification(title, text, duration)
             StarterGui:SetCore("SendNotification", {
@@ -5593,7 +5580,7 @@ local function loadGUI()
         if TheMuteAll then
             getgenv().LmaoGetMuted = true
             for i, v in pairs(game:GetService("Players"):GetPlayers()) do
-                if v ~= game.Players.LocalPlayer then
+                if v ~= getgenv().LocalPlayer then
                     local audio = v:FindFirstChild("AudioDeviceInput")
                     if audio then
                         audio.Muted = true
@@ -5604,7 +5591,7 @@ local function loadGUI()
             getgenv().LmaoGetMuted = false
             wait(0.2)
             for i, v in pairs(game:GetService("Players"):GetPlayers()) do
-                if v ~= game.Players.LocalPlayer then
+                if v ~= getgenv().LocalPlayer then
                     local audio = v:FindFirstChild("AudioDeviceInput")
                     if audio then
                         audio.Muted = false
@@ -5622,7 +5609,7 @@ local function loadGUI()
     local derUser = findplr(getAUser)
     
     if derUser then
-        local Players = game:GetService("Players")
+        
     
         getgenv().shouldMute = true
     
@@ -5680,9 +5667,9 @@ local function loadGUI()
         local TeleportService = game:GetService("TeleportService")
         local JobId = game.JobId
         local PlaceId = game.PlaceId
-        local Players = game:GetService("Players") or cloneref(game:GetService("Players"))
+        
         wait()
-        TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+        TeleportService:TeleportToPlaceInstance(PlaceId, JobId, getgenv().LocalPlayer)
     end,})
 
     local ServerHopButton = Tab15:CreateButton({
@@ -5691,7 +5678,7 @@ local function loadGUI()
         -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
         httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
         local PlaceId = game.PlaceId
-        local Players = game:GetService("Players")
+        
         local JobId = game.JobId
         local TeleportService = game:GetService("TeleportService")
         local HttpService = game:GetService("HttpService")
@@ -5713,7 +5700,7 @@ local function loadGUI()
         end
 
         if #servers > 0 then
-            TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
+            TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
         else
             return print("Serverhop", "Couldn't find a server.")
         end
@@ -5722,9 +5709,9 @@ local function loadGUI()
     local ReExecuteGUI = Tab15:CreateButton({
     Name = "Re-Execute GUI",
     Callback = function()
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        
+        
+        
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
         getgenv().getLoopKick = false
         wait()
@@ -5766,7 +5753,7 @@ local function loadGUI()
     Callback = function(LolPUser)
         local thisUser = findplr(LolPUser)
     
-        local Players = game:GetService("Players")
+        
         
         if thisUser then
             getgenv().shouldMute = false
@@ -5828,7 +5815,7 @@ local function loadGUI()
             getgenv().getRunningState = true
             getgenv().runningEnabled = true
         
-            local player = game.Players.LocalPlayer
+            local player = getgenv().LocalPlayer
             local walkSpeed = 16
             local runSpeed = 450
 
@@ -5859,7 +5846,7 @@ local function loadGUI()
                 setupCharacter(player.Character)
             end
         else
-            local player = game.Players.LocalPlayer
+            local player = getgenv().LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
             local humanoid = character:WaitForChild("Humanoid")
         
@@ -5922,9 +5909,9 @@ local function loadGUI()
         getgenv().ownerAnimsLoaded = false
     end
     
-    if game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownerAnimsLoaded then 
+    if getgenv().LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownerAnimsLoaded then 
         warn("Owner-Animations already loaded!")
-    elseif game.Players.LocalPlayer.Name == "ItsYoDawgWsgGng" and not getgenv().ownerAnimsLoaded then
+    elseif getgenv().LocalPlayer.Name == "ItsYoDawgWsgGng" and not getgenv().ownerAnimsLoaded then
         if typeof(do_anims_func) == "function" then
             do_anims_func()
             getgenv().ownerAnimsLoaded = true
@@ -5943,7 +5930,7 @@ local function loadGUI()
     end
 
     create_Button(WickedPopularAnim, "[NEW] 'Wicked Popular' Animation Package", function()
-        local player = game.Players.LocalPlayer
+        local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
@@ -5972,7 +5959,7 @@ local function loadGUI()
     end)
 
     create_Button(adidasAnim, "[NEW] Adidas Animation Package", function()
-        local player = game.Players.LocalPlayer
+        local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
@@ -6001,7 +5988,7 @@ local function loadGUI()
     end)
 
     create_Button(NFLAnim, "[NEW] NFL Animation Package", function()
-        local player = game.Players.LocalPlayer
+        local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
@@ -6030,7 +6017,7 @@ local function loadGUI()
     end)
 
     create_Button(BoldAnim, "[NEW] Bold Animation Package", function()
-        local player = game.Players.LocalPlayer
+        local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
@@ -6059,7 +6046,7 @@ local function loadGUI()
     end)
 
     create_Button(noBoundariesAnim, "[NEW] No Boundaries Animation Package", function()
-        local player = game.Players.LocalPlayer
+        local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
@@ -6088,7 +6075,7 @@ local function loadGUI()
     end)
 
     create_Button(robotAnim, "Robot Animation Package", function()
-        local player = game.Players.LocalPlayer
+        local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
@@ -6117,11 +6104,11 @@ local function loadGUI()
     end)
 
     create_Button(zombieAnim, "Zombie Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6138,11 +6125,11 @@ local function loadGUI()
     end)
 
     create_Button(HeroAnim, "Hero Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6159,11 +6146,11 @@ local function loadGUI()
     end)
 
     create_Button(vampireAnim, "Vampire Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6180,11 +6167,11 @@ local function loadGUI()
     end)
 
     create_Button(mageAnim, "Mage Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6201,11 +6188,11 @@ local function loadGUI()
     end)
 
     create_Button(ghostAnim, "Ghost (FE) Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6222,11 +6209,11 @@ local function loadGUI()
     end)
 
     create_Button(elderAnim, "Elder Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6243,11 +6230,11 @@ local function loadGUI()
     end)
 
     create_Button(LevitationAnim, "Levitation Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6264,11 +6251,11 @@ local function loadGUI()
     end)
 
     create_Button(AstronautAnim, "Astronaut Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6285,11 +6272,11 @@ local function loadGUI()
     end)
 
     create_Button(NinjaAnim, "Ninja Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6306,11 +6293,11 @@ local function loadGUI()
     end)
 
     create_Button(WerewolfAnim, "Werewolf Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6327,11 +6314,11 @@ local function loadGUI()
     end)
 
     create_Button(CartoonAnim, "Cartoon Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6348,11 +6335,11 @@ local function loadGUI()
     end)
 
     create_Button(PirateAnim, "Pirate Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6369,11 +6356,11 @@ local function loadGUI()
     end)
 
     create_Button(SneakyFEAnim, "Sneaky (FE) Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6390,11 +6377,11 @@ local function loadGUI()
     end)
 
     create_Button(ToyAnim, "Toy Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6411,11 +6398,11 @@ local function loadGUI()
     end)
 
     create_Button(KnightAnim, "Knight Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6432,11 +6419,11 @@ local function loadGUI()
     end)
 
     create_Button(ConfidentFEAnim, "Confident (FE) Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6453,11 +6440,11 @@ local function loadGUI()
     end)
 
     create_Button(PopstarFEAnim, "Popstar (FE) Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6474,11 +6461,11 @@ local function loadGUI()
     end)
 
     create_Button(PrincessFEAnim, "Princess (FE) Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6495,11 +6482,11 @@ local function loadGUI()
     end)
 
     create_Button(CowboyFEAnim, "Cowboy (FE) Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6516,11 +6503,11 @@ local function loadGUI()
     end)
 
     create_Button(PatrolFEAnim, "Patrol (FE) Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6537,11 +6524,11 @@ local function loadGUI()
     end)
 
     create_Button(ZombieFEAnim, "Zombie (FE) Animation Package", function()
-        local Animate = game.Players.LocalPlayer.Character.Animate
+        local Animate = getgenv().LocalPlayer.Character.Animate
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -6578,7 +6565,7 @@ local function loadGUI()
             },
         })
         wait(1)
-        game.Players.LocalPlayer:Kick("This is not MIC UP, Please join MIC UP.")
+        getgenv().LocalPlayer:Kick("This is not MIC UP, Please join MIC UP.")
     end
     end,})
 
@@ -6593,7 +6580,7 @@ local function loadGUI()
     ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."}) 
 end
 wait(0.4)
-loadGUI()
+getgenv().start_Script()
 task.wait()
 print("Running...")
 wait(0.2)
@@ -6602,25 +6589,12 @@ if getgenv().camera_zoom_data then
 else
     getgenv().camera_zoom_data = false
     wait(0.5)
-    
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local HRPBase = Character:FindFirstChild("HumanoidRootPart")
-    
     LocalPlayer.CameraMaxZoomDistance = 800000
     getgenv().camera_zoom_data = true
     wait(0.1)
 end
 wait(0.3)
-local ws
-if cloneref then
-    ws = cloneref(game:GetService("Workspace"))
-else
-    ws = game:GetService("Workspace")
-end
-wait(0.3)
-local PartStorageFolder = ws:WaitForChild("PartStorage") or ws:FindFirstChild("PartStorage")
+local PartStorageFolder = getgenv().Workspace:WaitForChild("PartStorage") or getgenv().Workspace:FindFirstChild("PartStorage")
 local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChildOfClass("Part") or PartStorageFolder:FindFirstChildWhichIsA("Part")
 FindBaseplate.BrickColor = BrickColor.new("Grey")
 FindBaseplate.Material = Enum.Material.Carpet
@@ -6632,14 +6606,7 @@ wait(0.4)
 if getgenv().Has_Died_Func then
     warn("Already setup death function.")
 else
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
-    local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-    
-    wait(0.3)
-    Humanoid.Health = 0
+    getgenv().Humanoid.Health = 0
     getgenv().Has_Died_Func = true
     wait(0.1)
     print("Died Func setup")
