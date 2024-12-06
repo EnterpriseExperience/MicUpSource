@@ -619,8 +619,7 @@ end)
             local function create_bindings()
                 local UserInputService = game:GetService("UserInputService") or cloneref(game:GetService("UserInputService"))
                 
-                
-                local player = getgenv().LocalPlayer
+                local player = getgenv().Character
                 local emoteSpeed = 1
                 local freezeEmotes = false
                 getgenv().isReversed = getgenv().isReversed or false
@@ -651,37 +650,34 @@ end)
                 }
                 
                 local function adjustEmoteSpeed()
-                    
-                    if humanoid then
-                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                    if getgenv().Humanoid then
+                        for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
                             track:AdjustSpeed(emoteSpeed)
                         end
                     end
                 end
                 
                 local function reverseEmotes()
-                    
-                    if humanoid then
-                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                    if getgenv().Humanoid then
+                        for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
                             track:AdjustSpeed(-1)
                         end
                     end
                 end
                 
                 local function playNormalSpeed()
-                    
-                    if humanoid then
-                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                    if getgenv().Humanoid then
+                        for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
                             track:AdjustSpeed(1)
                         end
                     end
                 end
                 
                 local function playEmote(emoteId)
-                    local character = player.Character or player.CharacterAdded:Wait()
-                    local humanoid = character:FindFirstChildOfClass("Humanoid")
+                    local character = getgenv().Character
+                    local humanoid = character:FindFirstChildOfClass("Humanoid") or getgenv().Humanoid
                     if humanoid then
-                        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                        for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
                             track:Stop()
                         end
                         
