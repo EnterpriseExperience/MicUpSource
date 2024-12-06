@@ -31,6 +31,21 @@
     getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
     getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 
+-- Initial Character updater.
+local function updateCharacterComponents(character)
+    print("Resolving Character problems.")
+    getgenv().Character = character
+    getgenv().HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
+    getgenv().Humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
+end
+-- New fix for Character issues.
+updateCharacterComponents(getgenv().Character)
+print("Updated Character properties.")
+getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+    print("Fixing Character issues.")
+    updateCharacterComponents(newCharacter)
+end)
+
     -- [] -->> Correctly initialize HumanoidRootPart | Properly load BasePart of Character [Thanks: Infinite Yield] <<-- [] --
 
     function getRoot(char)
