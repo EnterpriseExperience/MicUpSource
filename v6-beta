@@ -4350,8 +4350,7 @@
         local Keybind = Settings.Keybind
         local NoClip = true
         
-        local GetPlayers = game:GetService("Players")
-        local Player = Getgetgenv().LocalPlayer
+        local Player = getgenv().LocalPlayer
         local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
         
         local IsInvisible = false
@@ -4359,7 +4358,7 @@
         RealCharacter.Archivable = true
 
         local FakeCharacter = RealCharacter:Clone()
-        local Workspace_Service = game:GetService("Workspace") or workspace
+        local Workspace_Service = getgenv().Workspace
 
         local Part
         Part = Instance.new("Part", Workspace_Service)
@@ -4370,7 +4369,7 @@
         Part.Name = "BasePart"
         
         FakeCharacter.Parent = Workspace_Service
-        Fakegetgenv().HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+        FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
         
         for i, v in pairs(RealCharacter:GetChildren()) do
             if v:IsA("LocalScript") then
@@ -4391,15 +4390,15 @@
         local CanInvis = true
 
         function RealCharacterDied()
-            local Workspace_Service = game:GetService("Workspace") or workspace
+            local Workspace_Service = getgenv().Workspace
 
             CanInvis = false
             RealCharacter:Destroy()
-            RealCharacter = Player.Character
+            RealCharacter = getgenv().Character
             CanInvis = true
             isinvisible = false
             FakeCharacter:Destroy()
-            Workspace_Service.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+            getgenv().Workspace.CurrentCamera.CameraSubject = RealCharacter:WaitForChild("Humanoid")
             
             RealCharacter.Archivable = true
             FakeCharacter = RealCharacter:Clone()
@@ -4463,9 +4462,9 @@
         PseudoAnchor = FakeCharacter.HumanoidRootPart
         local function Invisible()
             if IsInvisible == false then
-                local StoredCF = Realgetgenv().HumanoidRootPart.CFrame
-                Realgetgenv().HumanoidRootPart.CFrame = Fakegetgenv().HumanoidRootPart.CFrame
-                Fakegetgenv().HumanoidRootPart.CFrame = StoredCF
+                local StoredCF = RealCharacter.HumanoidRootPart.CFrame
+                RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
+                FakeCharacter.HumanoidRootPart.CFrame = StoredCF
                 RealCharacter.Humanoid:UnequipTools()
                 Player.Character = FakeCharacter
                 Workspace_Service.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
@@ -4478,10 +4477,10 @@
 
                 IsInvisible = true
             else
-                local StoredCF = Fakegetgenv().HumanoidRootPart.CFrame
-                Fakegetgenv().HumanoidRootPart.CFrame = Realgetgenv().HumanoidRootPart.CFrame
+                local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
+                FakeCharacter.HumanoidRootPart.CFrame = RealCharacter.HumanoidRootPart.CFrame
                 
-                Realgetgenv().HumanoidRootPart.CFrame = StoredCF
+                RealCharacter.HumanoidRootPart.CFrame = StoredCF
                 
                 FakeCharacter.Humanoid:UnequipTools()
                 Player.Character = RealCharacter
