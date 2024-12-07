@@ -11,6 +11,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
+-- Fully working spoofed variables functions. [ez].
 getgenv().Players = getgenv().Service_Wrap("Players")
 getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
 getgenv().Lighting = getgenv().Service_Wrap("Lighting")
@@ -29,7 +30,7 @@ getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().C
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-getgenv().GC = getconnections or get_signal_cons
+
 -- Initial Character updater.
 local function updateCharacterComponents(character)
     warn("Resolving Character problems.")
@@ -155,7 +156,7 @@ else
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
         end
     end)
     wait(0.5)
@@ -429,7 +430,7 @@ end--]]
 
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "Zacks Easy Hub | V6.2.8-9 | Executed At: "..formattedTime,
+    Name = "Zacks Easy Hub | V6.4.0-B | Executed At: "..formattedTime,
     LoadingTitle = "How are you doing today? :)",
     LoadingSubtitle = "Zacks Easy Hub | Running The Game.",
     ConfigurationSaving = {
@@ -549,15 +550,27 @@ end
         end
 
         UserInputService.InputBegan:Connect(onInputBegan)
-    local TeleportCheck = false
-    getgenv().LocalPlayer.OnTeleport:Connect(function(State)
-        if (not TeleportCheck) and getgenv().queueteleport then
-            TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
-        end
-    end)
     wait(0.3)
-    getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+local TeleportService = game:GetService("TeleportService")
+
+PlaceId, JobId = game.PlaceId, game.JobId
+
+queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+local TeleportCheck = false
+getgenv().LocalPlayer.OnTeleport:Connect(function(State)
+    if (not TeleportCheck) and queueteleport then
+        TeleportCheck = true
+        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+    end
+end)
+wait(0.5)
+local TeleportService = game:GetService("TeleportService")
+
+PlaceId, JobId = game.PlaceId, game.JobId
+
+wait(0.3)
+
+local StartedScriptCFrame = Character:WaitForChild("HumanoidRootPart", 0.5).CFrame
 wait(0.1)
 if getgenv().AntiAfkScript or getgenv().OtherAntiAfk then
     print("AntiAFK Scripts have already been pre-loaded from last session | skipping...")
@@ -5199,44 +5212,35 @@ Name = "Freeze Emotes",
 CurrentValue = false,
 Flag = "FreezingEveryEmote",
 Callback = function(freezeToggle)
-if freezeToggle then
-    getgenv().doFreezeToggle = true
-    while getgenv().doFreezeToggle == true do
-    wait()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    if freezeToggle then
+        getgenv().doFreezeToggle = true
+        while getgenv().doFreezeToggle == true do
+        wait()
+            local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+            local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+            for _, v in pairs(ActiveTracks) do
+                v:AdjustSpeed(0)
+            end
+        end
+    else
+        getgenv().doFreezeToggle = false
+        wait(0.5)
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
-            v:AdjustSpeed(0)
+            v:AdjustSpeed(1)
+        end
+        wait()
+        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
+            v:Stop()
         end
     end
-else
-    getgenv().doFreezeToggle = false
-    wait(0.5)
-     
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(1)
-    end
-    wait()
-    for i,v in next, Humanoid:GetPlayingAnimationTracks() do
-        v:Stop()
-    end
-end
 end,})
 
 local StopAllEmotes = Tab12:CreateButton({
 Name = "Stop Playing Emotes",
 Callback = function()
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for i,v in next, Humanoid:GetPlayingAnimationTracks() do
         v:Stop()
@@ -5252,10 +5256,7 @@ CurrentValue = 1,
 Flag = "EmoteSpeedSliding",
 Callback = function(slidingSpeed)
     local getEmoteNum = tonumber(slidingSpeed) or slidingSpeed
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(getEmoteNum)
@@ -5268,10 +5269,7 @@ PlaceholderText = "Number",
 RemoveTextAfterFocusLost = true,
 Callback = function(inputNum)
     local getNumberInput = tonumber(inputNum)
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(getNumberInput)
@@ -5281,10 +5279,7 @@ end,})
 local SpeedTheEmoteUp = Tab12:CreateButton({
 Name = "Kinda Fast Emote Speed",
 Callback = function()
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(2)
@@ -5294,10 +5289,7 @@ end,})
 local GettingFaster = Tab12:CreateButton({
 Name = "Faster Emote Speed",
 Callback = function()
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(4.5)
@@ -5307,10 +5299,7 @@ end,})
 local BackToNormalSpeed = Tab12:CreateButton({
 Name = "Normal Emote Speed",
 Callback = function()
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(1)
@@ -5320,10 +5309,7 @@ end,})
 local SlowerEmoteSpeed = Tab12:CreateButton({
 Name = "Slow Emote Speed",
 Callback = function()
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(0.5)
@@ -5333,10 +5319,7 @@ end,})
 local SlowingTheEmoteDown = Tab12:CreateButton({
 Name = "Super Slow Emote Speed",
 Callback = function()
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(0.1)
@@ -5346,10 +5329,7 @@ end,})
 local ReverseTheEmote = Tab12:CreateButton({
 Name = "Reverse Emote Speed",
 Callback = function()
-    
-    
-    
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(-1)
@@ -5410,59 +5390,57 @@ Name = "Mute Player",
 PlaceholderText = "User",
 RemoveTextAfterFocusLost = true,
 Callback = function(getAUser)
-local derUser = findplr(getAUser)
-
-if derUser then
+    local derUser = findplr(getAUser)
     
+    if derUser then
+        getgenv().shouldMute = true
+    
+        local function monitorPlayerAudio(player)
+            local audioDevice = player:FindFirstChild("AudioDeviceInput")
+            if audioDevice then
+                if getgenv().shouldMute == true then
+                    audioDevice.Muted = true
+                end
 
-    getgenv().shouldMute = true
-
-    local function monitorPlayerAudio(player)
-        local audioDevice = player:FindFirstChild("AudioDeviceInput")
-        if audioDevice then
-            if getgenv().shouldMute == true then
-                audioDevice.Muted = true
-            end
-
-            if property == "Muted" and getgenv().shouldMute == true and not audioDevice.Muted then
-                audioDevice.Muted = true
-                wait()
-                Rayfield:Notify({
-                    Title = "Success!",
-                    Content = tostring(derUser).." was muted successfully!",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
+                if property == "Muted" and getgenv().shouldMute == true and not audioDevice.Muted then
+                    audioDevice.Muted = true
+                    wait()
+                    Rayfield:Notify({
+                        Title = "Success!",
+                        Content = tostring(derUser).." was muted successfully!",
+                        Duration = 7,
+                        Image = 4483362458,
+                        Actions = {
+                        Ignore = {
+                            Name = "Okay!",
+                            Callback = function()
+                                print("...")
+                            end
+                        },
+                        },
+                    })
+                end
             end
         end
+    
+        monitorPlayerAudio(derUser)
+    else
+        getgenv().shouldMute = false
+        return Rayfield:Notify({
+            Title = "Error: Not Found",
+            Content = tostring(getAUser).." was not found!",
+            Duration = 7,
+            Image = 4483362458,
+            Actions = {
+            Ignore = {
+                Name = "Okay!",
+                Callback = function()
+                    print("...")
+                end
+            },
+            },
+        })
     end
-
-    monitorPlayerAudio(derUser)
-else
-    getgenv().shouldMute = false
-    return Rayfield:Notify({
-        Title = "Error: Not Found",
-        Content = tostring(getAUser).." was not found!",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
-end
 end,})
 
 local RejoinButton = Tab15:CreateButton({
@@ -5471,7 +5449,6 @@ Callback = function()
     local TeleportService = game:GetService("TeleportService")
     local JobId = game.JobId
     local PlaceId = game.PlaceId
-    
     wait()
     TeleportService:TeleportToPlaceInstance(PlaceId, JobId, getgenv().LocalPlayer)
 end,})
@@ -5513,10 +5490,7 @@ end,})
 local ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute GUI",
 Callback = function()
-    
-    
-    
-    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChild("Humanoid") or getgenv().Character:FindFirstChildOfClass("Humanoid")
     getgenv().getLoopKick = false
     wait()
     getgenv().getLoopKick = false
@@ -5557,8 +5531,6 @@ RemoveTextAfterFocusLost = true,
 Callback = function(LolPUser)
     local thisUser = findplr(LolPUser)
 
-    
-    
     if thisUser then
         getgenv().shouldMute = false
     
@@ -6408,12 +6380,12 @@ wait(0.3)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld", true))()
 wait(0.4)
 if getgenv().Has_Died_Func then
-    warn("Already setup death function.")
+warn("Already setup death function.")
 else
-    getgenv().Humanoid.Health = 0
-    getgenv().Has_Died_Func = true
-    wait(0.1)
-    print("Died Func setup")
+getgenv().Humanoid.Health = 0
+getgenv().Has_Died_Func = true
+wait(0.1)
+print("Died Func setup")
 end
 wait(0.3)
 print("Successfully ran!")
@@ -6421,8 +6393,8 @@ task.wait()
 print("YEAH! Zacks Easy Hub [ON TOP!]")
 wait(0.5)
 if getgenv().performance_stats then
-    warn("Performance stats checked.")
+warn("Performance stats checked.")
 else
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/expert-octo-telegram/refs/heads/main/expressive_contacting_ai.lua"))()
-    getgenv().performance_stats = true
+loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/expert-octo-telegram/refs/heads/main/expressive_contacting_ai.lua"))()
+getgenv().performance_stats = true
 end
