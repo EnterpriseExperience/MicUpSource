@@ -5406,44 +5406,35 @@
     CurrentValue = false,
     Flag = "FreezingEveryEmote",
     Callback = function(freezeToggle)
-    if freezeToggle then
-        getgenv().doFreezeToggle = true
-        while getgenv().doFreezeToggle == true do
-        wait()
-            
-            
-            
-            local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        if freezeToggle then
+            getgenv().doFreezeToggle = true
+            while getgenv().doFreezeToggle == true do
+            wait()
+                local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+                local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+                for _, v in pairs(ActiveTracks) do
+                    v:AdjustSpeed(0)
+                end
+            end
+        else
+            getgenv().doFreezeToggle = false
+            wait(0.5)
+            local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
             local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
             for _, v in pairs(ActiveTracks) do
-                v:AdjustSpeed(0)
+                v:AdjustSpeed(1)
+            end
+            wait()
+            for i,v in next, Humanoid:GetPlayingAnimationTracks() do
+                v:Stop()
             end
         end
-    else
-        getgenv().doFreezeToggle = false
-        wait(0.5)
-         
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
-        local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-        for _, v in pairs(ActiveTracks) do
-            v:AdjustSpeed(1)
-        end
-        wait()
-        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
-            v:Stop()
-        end
-    end
     end,})
     
     local StopAllEmotes = Tab12:CreateButton({
     Name = "Stop Playing Emotes",
     Callback = function()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for i,v in next, Humanoid:GetPlayingAnimationTracks() do
             v:Stop()
@@ -5459,10 +5450,7 @@
     Flag = "EmoteSpeedSliding",
     Callback = function(slidingSpeed)
         local getEmoteNum = tonumber(slidingSpeed) or slidingSpeed
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(getEmoteNum)
@@ -5475,10 +5463,7 @@
     RemoveTextAfterFocusLost = true,
     Callback = function(inputNum)
         local getNumberInput = tonumber(inputNum)
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(getNumberInput)
@@ -5488,10 +5473,7 @@
     local SpeedTheEmoteUp = Tab12:CreateButton({
     Name = "Kinda Fast Emote Speed",
     Callback = function()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(2)
@@ -5501,10 +5483,7 @@
     local GettingFaster = Tab12:CreateButton({
     Name = "Faster Emote Speed",
     Callback = function()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(4.5)
@@ -5514,10 +5493,7 @@
     local BackToNormalSpeed = Tab12:CreateButton({
     Name = "Normal Emote Speed",
     Callback = function()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(1)
@@ -5527,10 +5503,7 @@
     local SlowerEmoteSpeed = Tab12:CreateButton({
     Name = "Slow Emote Speed",
     Callback = function()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(0.5)
@@ -5540,10 +5513,7 @@
     local SlowingTheEmoteDown = Tab12:CreateButton({
     Name = "Super Slow Emote Speed",
     Callback = function()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(0.1)
@@ -5553,10 +5523,7 @@
     local ReverseTheEmote = Tab12:CreateButton({
     Name = "Reverse Emote Speed",
     Callback = function()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(-1)
@@ -5617,59 +5584,57 @@
     PlaceholderText = "User",
     RemoveTextAfterFocusLost = true,
     Callback = function(getAUser)
-    local derUser = findplr(getAUser)
-    
-    if derUser then
+        local derUser = findplr(getAUser)
         
-    
-        getgenv().shouldMute = true
-    
-        local function monitorPlayerAudio(player)
-            local audioDevice = player:FindFirstChild("AudioDeviceInput")
-            if audioDevice then
-                if getgenv().shouldMute == true then
-                    audioDevice.Muted = true
-                end
+        if derUser then
+            getgenv().shouldMute = true
+        
+            local function monitorPlayerAudio(player)
+                local audioDevice = player:FindFirstChild("AudioDeviceInput")
+                if audioDevice then
+                    if getgenv().shouldMute == true then
+                        audioDevice.Muted = true
+                    end
 
-                if property == "Muted" and getgenv().shouldMute == true and not audioDevice.Muted then
-                    audioDevice.Muted = true
-                    wait()
-                    Rayfield:Notify({
-                        Title = "Success!",
-                        Content = tostring(derUser).." was muted successfully!",
-                        Duration = 7,
-                        Image = 4483362458,
-                        Actions = {
-                           Ignore = {
-                            Name = "Okay!",
-                            Callback = function()
-                                print("...")
-                            end
-                           },
-                        },
-                    })
+                    if property == "Muted" and getgenv().shouldMute == true and not audioDevice.Muted then
+                        audioDevice.Muted = true
+                        wait()
+                        Rayfield:Notify({
+                            Title = "Success!",
+                            Content = tostring(derUser).." was muted successfully!",
+                            Duration = 7,
+                            Image = 4483362458,
+                            Actions = {
+                            Ignore = {
+                                Name = "Okay!",
+                                Callback = function()
+                                    print("...")
+                                end
+                            },
+                            },
+                        })
+                    end
                 end
             end
+        
+            monitorPlayerAudio(derUser)
+        else
+            getgenv().shouldMute = false
+            return Rayfield:Notify({
+                Title = "Error: Not Found",
+                Content = tostring(getAUser).." was not found!",
+                Duration = 7,
+                Image = 4483362458,
+                Actions = {
+                Ignore = {
+                    Name = "Okay!",
+                    Callback = function()
+                        print("...")
+                    end
+                },
+                },
+            })
         end
-    
-        monitorPlayerAudio(derUser)
-    else
-        getgenv().shouldMute = false
-        return Rayfield:Notify({
-            Title = "Error: Not Found",
-            Content = tostring(getAUser).." was not found!",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
-    end
     end,})
 
     local RejoinButton = Tab15:CreateButton({
@@ -5678,7 +5643,6 @@
         local TeleportService = game:GetService("TeleportService")
         local JobId = game.JobId
         local PlaceId = game.PlaceId
-        
         wait()
         TeleportService:TeleportToPlaceInstance(PlaceId, JobId, getgenv().LocalPlayer)
     end,})
@@ -5720,10 +5684,7 @@
     local ReExecuteGUI = Tab15:CreateButton({
     Name = "Re-Execute GUI",
     Callback = function()
-        
-        
-        
-        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid") or Character:FindFirstChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid")
+        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChild("Humanoid") or getgenv().Character:FindFirstChildOfClass("Humanoid")
         getgenv().getLoopKick = false
         wait()
         getgenv().getLoopKick = false
@@ -5763,9 +5724,7 @@
     RemoveTextAfterFocusLost = true,
     Callback = function(LolPUser)
         local thisUser = findplr(LolPUser)
-    
-        
-        
+
         if thisUser then
             getgenv().shouldMute = false
         
