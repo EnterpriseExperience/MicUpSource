@@ -1360,7 +1360,7 @@ Callback = function(viewingOwner)
 
         getgenv().spectateOwner = false
         wait(0.2)
-        Camera.CameraSubject = Character
+        Camera.CameraSubject = getgenv().Character
     end
 end,})
 
@@ -4682,28 +4682,6 @@ RemoveTextAfterFocusLost = false,
 Callback = function(TheBind)
     Settings.Keybind = tostring(TheBind)
     local Humanoid = getgenv().Humanoid
-
-    wait(0.6)
-    if getgenv().Invis_Loaded == true or Invis_Loaded and not getgenv().INVIS_DEBUG == true then
-        Rayfield:Notify({
-            Title = "Important Notification:",
-            Content = "You are going to be reset in 3 seconds...",
-            Duration = 5,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("The user tapped Okay!")
-                end
-                },
-            },
-        })
-        wait(2.9)
-        getgenv().Humanoid.Health = 0
-        wait(0.2)
-        getgenv().Invis_Loaded = false
-    end
 end,})
 
 function clickAllTheDetectors()
