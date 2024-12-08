@@ -1360,7 +1360,7 @@
 
             getgenv().spectateOwner = false
             wait(0.2)
-            Camera.CameraSubject = Character
+            Camera.CameraSubject = getgenv().Character
         end
     end,})
 
