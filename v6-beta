@@ -3906,22 +3906,16 @@
     local ClearChatMsgs = Tab4:CreateButton({
     Name = "Clear Chat Messages",
     Callback = function()
-        if getgenv().hasLoadedAntiLog then
-            warn("You have already loaded AntiChat Logger!")
-        else
-            local TextChatService = getgenv().TextChatService
+        local TextChatService = getgenv().TextChatService
             
-            local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
+        local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
             
-            local function sendchat(msg)
-                chat:SendAsync(msg)
-            end
+        local function sendchat(msg)
+            chat:SendAsync(msg)
+        end
             
-            for i = 1, 8 do
-                sendchat("   ")
-            end
-            wait(.1)
-            getgenv().hasLoadedAntiLog = true
+        for i = 1, 8 do
+            sendchat(" ")
         end
     end,})
 
