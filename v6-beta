@@ -22,6 +22,8 @@
     getgenv().TweenService = getgenv().Service_Wrap("TweenService")
     getgenv().HttpService = getgenv().Service_Wrap("HttpService")
     getgenv().AssetService = getgenv().Service_Wrap("AssetService")
+    getgenv().MaterialService = getgenv().Service_Wrap("MaterialService")
+    getgenv().RunService = getgenv().Service_Wrap("RunService")
     getgenv().LocalPlayer = getgenv().Players.LocalPlayer
     getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
     getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
@@ -110,6 +112,16 @@
             getgenv().has_checked_funcs = true
         end
     end
+
+    getgenv().MaterialService.Use2022Materials = false
+    getgenv().Lighting.GlobalShadows = false
+    getgenv().Lighting.Brightness = 2
+    getgenv().Lighting.Technology = Enum.Technology.Future
+    getgenv().Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+    getgenv().Lighting.Ambient = Color3.new(0, 0, 0)
+    local blur_eff = Instance.new("BlurEffect")
+    blur_eff.Size = 3
+    blur_eff.Enabled = true
 
     -- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
 
@@ -253,101 +265,49 @@
         if getgenv().loading_screen_data then
             print("Already Seen Loading Screen")
         else
-            getgenv().StarterGui = getgenv().StarterGui or game:GetService("StarterGui")
-            StarterGui:SetCore("TopbarEnabled", false)
-
-            local gui = Instance.new("ScreenGui", getgenv().PlayerGui)
-            gui.Name = "LoadingGUI"
-            gui.IgnoreGuiInset = true
-
-            local frame = Instance.new("Frame", gui)
-            frame.Size = UDim2.new(1, 0, 1, 36)
-            frame.Position = UDim2.new(0, 0, 0, -36)
-            frame.BackgroundColor3 = Color3.fromRGB(123, 46, 47)
-            frame.BorderSizePixel = 0
-            frame.BackgroundTransparency = 1
-
-            local titleText = Instance.new("TextLabel", frame)
-            titleText.Size = UDim2.new(0.7, 0, 0.1, 0)
-            titleText.Position = UDim2.new(0.15, 0, 0.3, 0)
-            titleText.BackgroundTransparency = 1
-            titleText.Font = Enum.Font.GothamBold
-            titleText.Text = "😈✔😈 | Zacks Easy Hub | 😈✔😈"
-            titleText.TextColor3 = Color3.fromRGB(128, 128, 128)
-            titleText.TextScaled = true
-
-            local loadingText = Instance.new("TextLabel", frame)
-            loadingText.Size = UDim2.new(0.5, 0, 0.1, 0)
-            loadingText.Position = UDim2.new(0.25, 0, 0.45, 0)
-            loadingText.BackgroundTransparency = 1
-            loadingText.Font = Enum.Font.GothamBold
-            loadingText.Text = "Loading 😈😈 Zacks Easy Hub 😈😈..."
-            loadingText.TextColor3 = Color3.fromRGB(107, 50, 124)
-            loadingText.TextScaled = true
-
-            local progressBar = Instance.new("Frame", frame)
-            progressBar.Size = UDim2.new(0, 0, 0.02, 0)
-            progressBar.Position = UDim2.new(0.25, 0, 0.55, 0)
-            progressBar.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-            progressBar.BorderSizePixel = 0
-
-            local barCorner = Instance.new("UICorner", progressBar)
-            barCorner.CornerRadius = UDim.new(0, 5)
-
-            local finalMessage = "😈☠️ | ZACKS EASY HUB__TAKEOVER | ☠️😈"
-            local finalTextLabel = Instance.new("TextLabel", frame)
-            finalTextLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-            finalTextLabel.Position = UDim2.new(0.1, 0, 0.6, 0)
-            finalTextLabel.BackgroundTransparency = 1
-            finalTextLabel.Font = Enum.Font.GothamBold
-            finalTextLabel.Text = ""
-            finalTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            finalTextLabel.TextScaled = true
-            finalTextLabel.TextTransparency = 1
-
-            local fadeInInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-            local fadeOutInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-
-            local fadeTween = getgenv().TweenService:Create(frame, fadeInInfo, { BackgroundTransparency = 0 })
-            fadeTween:Play()
-
-            local tweenInfo = TweenInfo.new(5.2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-            local tween = getgenv().TweenService:Create(progressBar, tweenInfo, { Size = UDim2.new(0.5, 0, 0.02, 0) })
-
-            fadeTween.Completed:Connect(function()
-                tween:Play()
-            end)
-
-            wait(0.3)
-            for i = 1, 3 do
-                wait(0.6)
-                loadingText.Text = "Loading Zacks Easy Hub."
-                wait(0.7)
-                loadingText.Text = "Loading Zacks Easy Hub.."
-                wait(0.7)
-                loadingText.Text = "Loading Zacks Easy Hub..."
-            end
-
-            tween.Completed:Connect(function()
-                progressBar.Visible = false
-                loadingText.Text = ""
+            local player = getgenv().LocalPlayer
+            local screenGui = Instance.new("ScreenGui")
+            screenGui.Parent = player:WaitForChild("PlayerGui")
+            screenGui.IgnoreGuiInset = true
+            
+            local blurEffect = Instance.new("BlurEffect")
+            blurEffect.Parent = game.Lighting
+            blurEffect.Size = 20
+            
+            local loadingFrame = Instance.new("Frame")
+            loadingFrame.Size = UDim2.new(1, 0, 1, 0)
+            loadingFrame.BackgroundTransparency = 1
+            loadingFrame.Position = UDim2.new(0, 0, 0, 0)
+            loadingFrame.Parent = screenGui
+            
+            local image = Instance.new("ImageLabel")
+            image.Size = UDim2.new(0.25, 0, 0.25, 0)
+            image.Position = UDim2.new(0.5, 0, 0.5, 0)
+            image.AnchorPoint = Vector2.new(0.5, 0.5)
+            image.Image = "rbxassetid://74294167835237"
+            image.BackgroundTransparency = 1
+            image.Parent = loadingFrame
+            
+            local aspectConstraint = Instance.new("UIAspectRatioConstraint")
+            aspectConstraint.AspectRatio = 1
+            aspectConstraint.Parent = image
+            
+            local elapsedTime = 0
+            local zoomSpeed = 1.2
+            local maxSize = 0.35
+            local minSize = 0.25
+            
+            while elapsedTime < 10 do
+                local scale = minSize + (math.abs(math.sin(elapsedTime * zoomSpeed)) * (maxSize - minSize))
+                image.Size = UDim2.new(scale, 0, scale, 0)
+            
+                image.Position = UDim2.new(0.5, 0, 0.5, 0)
                 
-                finalTextLabel.TextTransparency = 0
-                for i = 1, #finalMessage do
-                    finalTextLabel.Text = string.sub(finalMessage, 1, i)
-                    wait(0.05)
-                end
-
-                wait(1)
-
-                local fadeOutTween = getgenv().TweenService:Create(finalTextLabel, fadeOutInfo, { TextTransparency = 1 })
-                fadeOutTween:Play()
-                fadeOutTween.Completed:Connect(function()
-                    wait(0.3)
-                    getgenv().StarterGui:SetCore("TopbarEnabled", true)
-                    gui:Destroy()
-                end)
-            end)
+                elapsedTime = elapsedTime + getgenv().RunService.Heartbeat:Wait()
+            end
+            
+            screenGui:Destroy()
+            blurEffect:Destroy()
         end
         wait()
         getgenv().loading_screen_data = true
@@ -376,23 +336,25 @@
         end
         wait(0.2)
         function do_baseplate_check()
-            local screenGui = Instance.new("ScreenGui")
+            local screenGui = Instance.new("ScreenGui") 
             screenGui.IgnoreGuiInset = true
             screenGui.Name = "BASEPLATE_LOADING"
-            screenGui.Parent = getgenv().PlayerGui
-
+            screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+            
             local fullScreenFrame = Instance.new("Frame")
             fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
             fullScreenFrame.Position = UDim2.new(0, 0, 0, 0)
             fullScreenFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            fullScreenFrame.BackgroundTransparency = 0.3
             fullScreenFrame.Parent = screenGui
-
+            
             local textLabel = Instance.new("TextLabel")
             textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
             textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
             textLabel.BackgroundTransparency = 1
-            textLabel.Text = "😈 Zacks Easy Hub 😈, is creating the BasePlate <YOU WILL FREEZE.>, Wait until this screen disappears."
-            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.Text = "You Are: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n😇 Zacks Holy Hub 😇\n----------------------------\nIs creating a Baseplate,\n\nWait until this screen disappears."
+            textLabel.RichText = true
+            textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
             textLabel.TextScaled = true
             textLabel.Font = Enum.Font.GothamBold
             textLabel.Parent = fullScreenFrame
@@ -491,13 +453,13 @@
     local Tab16 = Window:CreateTab("< / Baseplate >", 7734058260)
     local Section16 = Tab16:CreateSection("||| / Baseplate Section |||")
     
-    local Tab12 = Window:CreateTab("< Emotes >", 7743871002)
+    local Tab12 = Window:CreateTab("< / Emotes >", 7743871002)
     local Section12 = Tab12:CreateSection("||| / Emoting Section |||")
     
-    local Tab14 = Window:CreateTab("< Copy Anim >", 7743871002)
+    local Tab14 = Window:CreateTab("< / Copy Anim >", 7743871002)
     local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
     
-    local Tab15 = Window:CreateTab("< UI >", 7734022107)
+    local Tab15 = Window:CreateTab("< / UI >", 7734022107)
     local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
     wait(0.3)
     local GameFolder = getgenv().Workspace:FindFirstChild("Game")
