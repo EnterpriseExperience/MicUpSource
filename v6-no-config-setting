@@ -3267,6 +3267,12 @@ local getHoverboardFlyInput = Tab13:CreateInput({
             local humanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
             local Humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid") or character:FindFirstChildOfClass("Humanoid") or character:FindFirstChild("Humanoid")
 
+            if character:FindFirstChild("Hoverboard") then
+                local hover = character:FindFirstChild("Hoverboard")
+
+                hover.Parent = player.Backpack
+            end
+            wait(0.2)
             local function stopFly()
                 if humanoidRootPart:FindFirstChild("BodyGyro") then
                     humanoidRootPart.BodyGyro:Destroy()
