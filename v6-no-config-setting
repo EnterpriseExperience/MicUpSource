@@ -5488,6 +5488,7 @@ Callback = function()
     getgenv().GetLoopRunning = false
     getgenv().GetLoopRunning = false
     getgenv().LmaoGetMuted = false
+    getgenv().css_digital = false
     wait(0.2)
     Rayfield:Destroy()
     wait(1)
@@ -5507,6 +5508,7 @@ Callback = function()
     getgenv().GetLoopRunning = false
     getgenv().GetLoopRunning = false
     getgenv().LmaoGetMuted = false
+    getgenv().css_digital = false
     wait(.3)
     Rayfield:Destroy()
 end,})
