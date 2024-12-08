@@ -311,7 +311,7 @@
         end
         wait()
         getgenv().loading_screen_data = true
-        wait(4.5)
+        wait(0.1)
         -- [] -->> Initialization <<-- [] --
         repeat wait() until getgenv().Game:IsLoaded() and getgenv().Service_Wrap("Players") and getgenv().LocalPlayer and getgenv().LocalPlayer.Character and getgenv().Character:FindFirstChild("HumanoidRootPart")
         wait(0.3)
