@@ -3181,7 +3181,7 @@
                     [1] = "Hoverboard"
                 }
                 
-                game:GetService("ReplicatedStorage"):WaitForChild("ToolEvent"):FireServer(unpack(args))
+                getgenv().ReplicatedStorage:WaitForChild("ToolEvent"):FireServer(unpack(args))
                 wait(0.2)
                 if getgenv().LocalPlayer.Backpack:FindFirstChild("Hoverboard") then
                     getgenv().LocalPlayer.Backpack:FindFirstChild("Hoverboard").Parent = getgenv().Character
@@ -3260,12 +3260,17 @@
                 wait(0.3)
                 getgenv().flyLoop = false
                 wait(0.2)
-                
                 local player = getgenv().LocalPlayer
                 local character = player.Character or player.CharacterAdded:Wait()
                 local humanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
                 local Humanoid = character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid") or character:FindFirstChildOfClass("Humanoid") or character:FindFirstChild("Humanoid")
-    
+
+                if character:FindFirstChild("Hoverboard") then
+                    local hover = character:FindFirstChild("Hoverboard")
+
+                    hover.Parent = player.Backpack
+                end
+                wait(0.5)
                 local function stopFly()
                     if humanoidRootPart:FindFirstChild("BodyGyro") then
                         humanoidRootPart.BodyGyro:Destroy()
@@ -3276,10 +3281,10 @@
                     character.Humanoid.PlatformStand = false
                     getgenv().flyLoop = false
                 end
-                wait(0.1)
+                wait(0.2)
                 stopFly()
             wait(0.3)
-            game:GetService("ReplicatedStorage"):WaitForChild("DeleteInventory"):FireServer()
+            getgenv().ReplicatedStorage:WaitForChild("DeleteInventory"):FireServer()
         elseif tonumber(GetSpeed) and getgenv().flying == true then
             getgenv().speed = tonumber(GetSpeed)
         end
