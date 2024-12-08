@@ -4785,7 +4785,7 @@ Callback = function(wsVal)
     end
 end})
 
-if getgenv()..Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == true then
+if getgenv().Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == true then
     Rayfield:Notify({
         Title = "Success!",
         Content = "JumpPower is enabled, continuing...",
