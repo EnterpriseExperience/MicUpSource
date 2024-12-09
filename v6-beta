@@ -132,6 +132,8 @@
     getgenv().Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
     getgenv().Lighting.Ambient = Color3.new(0, 0, 0)
     local blur_eff = Instance.new("BlurEffect")
+    blur_eff.Name = "Blur"
+    blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
     blur_eff.Size = 3
     blur_eff.Enabled = true
 
