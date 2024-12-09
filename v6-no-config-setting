@@ -24,6 +24,8 @@ getgenv().HttpService = getgenv().Service_Wrap("HttpService")
 getgenv().AssetService = getgenv().Service_Wrap("AssetService")
 getgenv().MaterialService = getgenv().Service_Wrap("MaterialService")
 getgenv().RunService = getgenv().Service_Wrap("RunService")
+getgenv().VoiceChatInternal = getgenv().Service_Wrap("VoiceChatInternal")
+getgenv().VoiceChatService = getgenv().Service_Wrap("VoiceChatService")
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
 getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
@@ -48,6 +50,16 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     warn("Fixing Character issues.")
     updateCharacterComponents(newCharacter)
 end)
+
+local function onVoiceChatStateChanged(oldState, newState)
+    if newState == Enum.VoiceChatState.Ended then
+        print("Unmuting Microphone [Unsuspend]...")
+        wait(0.1)
+        getgenv().VoiceChatService:joinVoice()
+    end
+end
+
+getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)
 
 -- [] -->> Correctly initialize HumanoidRootPart | Properly load BasePart of Character [Thanks: Infinite Yield] <<-- [] --
 
