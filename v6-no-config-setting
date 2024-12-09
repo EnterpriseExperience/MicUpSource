@@ -254,12 +254,12 @@ else
 end
 
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the button to restart the process. <<-- [] --
-    if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
-        NotificationLibrary:SendNotification("Error", "Zacks Easy Hub is already running!", 6)
-        return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6)
-    end
-    pcall(function() getgenv().SCRIPT_EXECUTED = true end)
-    wait(0.3)
+if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
+    NotificationLibrary:SendNotification("Error", "Zacks Easy Hub is already running!", 6)
+    return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6)
+end
+pcall(function() getgenv().SCRIPT_EXECUTED = true end)
+wait(0.3)
     -- [] -->> Initialize Character /|\ Wait for Character and other necessary parts. <<-- [] --
     if not getgenv().Character then
         repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
@@ -325,10 +325,10 @@ end
     end
     wait()
     getgenv().loading_screen_data = true
-    wait(0.2)
+    wait(0.1)
     -- [] -->> Initialization <<-- [] --
     repeat wait() until getgenv().Game:IsLoaded() and getgenv().Service_Wrap("Players") and getgenv().LocalPlayer and getgenv().LocalPlayer.Character and getgenv().Character:FindFirstChild("HumanoidRootPart")
-    wait(0.1)
+    wait(0.3)
     if not getgenv().Workspace:FindFirstChild("PartStorage") then
         local NewFolder = Instance.new("Folder")
         NewFolder.Name = "PartStorage"
@@ -372,7 +372,6 @@ end
         textLabel.TextScaled = true
         textLabel.Font = Enum.Font.GothamBold
         textLabel.Parent = fullScreenFrame
-
         wait(0.7)
         local Terrain = getgenv().Workspace.Terrain
 
@@ -410,7 +409,7 @@ end--]]
 local Window = Rayfield:CreateWindow({
     Name = "Zacks Easy Hub | V6.2.9.2 | Executed At: "..formattedTime,
     LoadingTitle = "How are you doing today? :)",
-    LoadingSubtitle = "Zacks Easy Hub | Running The Game.",
+    LoadingSubtitle = "Zacks Easy Hub | Ruling.",
     ConfigurationSaving = {
        Enabled = false,
        FolderName = nil,
@@ -1002,12 +1001,16 @@ function findplr(args, tbl)
             return vAges[math.random(1,#vAges)]
         elseif args == "friend" then
             local vAges = {} 
-            for _,v in pairs(tbl) do
+            for _, v in pairs(tbl) do
                 if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
                     vAges[#vAges+1] = v
                 end
             end
-            return vAges[math.random(1,#vAges)]
+            if #vAges > 0 then
+                return vAges[math.random(1, #vAges)]
+            else
+                return nil
+            end
         elseif args == "notfriend" then
             local vAges = {} 
             for _,v in pairs(tbl) do
@@ -1121,7 +1124,7 @@ Callback = function(claimAnyBooth)
     if claimAnyBooth then
         getgenv().isToggled = true
 
-        local Folder = game:GetService("Workspace").Booth
+        local Folder = getgenv().Workspace.Booth
 
         local stalls = {
             Folder:FindFirstChild("Booth01"),
@@ -1172,7 +1175,7 @@ Callback = function(claimAnyBooth)
     else
         getgenv().isToggled = false
 
-        local Folder = game:GetService("Workspace").Booth
+        local Folder = getgenv().Workspace.Booth
         
         local stalls = {
             Folder:FindFirstChild("Booth01"),
@@ -1210,9 +1213,10 @@ Callback = function()
     getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
     task.wait(.2)
     local Folder = getgenv().Workspace:FindFirstChild("Booth")
+    local Character = getgenv().Character
 
     local function getStall()
-        for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+        for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
             if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(LocalPlayer.Name) then
                 return v
             end
@@ -1251,7 +1255,7 @@ Callback = function()
         local OldCF = getgenv().HumanoidRootPart.CFrame
 
         local function getStall()
-            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+            for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
                 if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(LocalPlayer.Name) then
                     return v
                 end
@@ -1276,7 +1280,7 @@ Callback = function()
                 [3] = "SourceSans"
             }
             
-            game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
             wait(0.2)
             getgenv().HumanoidRootPart.CFrame = OldCF
             wait(.1)
@@ -1302,7 +1306,7 @@ Callback = function()
         print("Owner Found! Teleporting...")
         task.wait()
         local OwnerOfScript = game.Players:FindFirstChild(OwnerName)
-        getgenv().LocalPlayer.Character:PivotTo(OwnerOfScript.Character:GetPivot())
+        getgenv().Character:PivotTo(OwnerOfScript.Character:GetPivot())
         task.wait(.5)
         print("Teleported To Script Owner!")
     else
@@ -1318,9 +1322,9 @@ Callback = function(viewingOwner)
     if viewingOwner then
         getgenv().spectateOwner = true
         local OwnerName = "ItsYoDawgWsgGng"
-        local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
+        local Workspace = getgenv().Workspace
         local Camera = Workspace:FindFirstChild("Camera")
-        if not game.Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
+        if not getgenv().Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
     
         if game.Players:FindFirstChild(OwnerName) then
             print("Owner Found! Viewing...")
@@ -1332,7 +1336,7 @@ Callback = function(viewingOwner)
             return 
         end
     else
-        local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
+        local Workspace = getgenv().Workspace
         local Camera = Workspace:FindFirstChild("Camera")
 
         getgenv().spectateOwner = false
@@ -1356,7 +1360,7 @@ Callback = function(boothColors)
                 [3] = "SourceSans"
             }
 
-            game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
             wait(0.2)
             local args = {
                 [1] = "",
@@ -1364,7 +1368,7 @@ Callback = function(boothColors)
                 [3] = "SourceSans"
             }
 
-            game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
             wait(0.2)
             local args = {
                 [1] = "",
@@ -1372,7 +1376,7 @@ Callback = function(boothColors)
                 [3] = "SourceSans"
             }
 
-            game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
         end
     else
         getgenv().lmao_colors = false
@@ -1478,7 +1482,7 @@ Name = "Unclaim A Booth",
 PlaceholderText = "User Here",
 RemoveTextAfterFocusLost = true,
 Callback = function(unclaimTheirBooth)
-    local Folder = game:GetService("Workspace").Booth
+    local Folder = getgenv().Workspace.Booth
     local find_plr_func_booth = findplr(unclaimTheirBooth)
 
     notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
@@ -1486,7 +1490,7 @@ Callback = function(unclaimTheirBooth)
 
     if find_plr_func_booth == getgenv().LocalPlayer then
         notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
-        return game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+        return getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
     end
 
     if not find_plr_func_booth then
@@ -1494,7 +1498,7 @@ Callback = function(unclaimTheirBooth)
     end
 
     local function getStall()
-        for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+        for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
             if v ~= getgenv().LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
                 return v
             end
@@ -1508,7 +1512,7 @@ Callback = function(unclaimTheirBooth)
         return notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5, 3)
     end
 
-    local Folder = game:GetService("Workspace").Booth
+    local Folder = getgenv().Workspace.Booth
 
     local OldCF = getgenv().HumanoidRootPart.CFrame
 
@@ -1532,10 +1536,6 @@ Callback = function(unclaimTheirBooth)
     end
 
     local function Claim_A_Booth()
-        
-        
-        
-        
         local OldCF = getgenv().HumanoidRootPart.CFrame
 
         local stall = plr_booth
@@ -1543,7 +1543,7 @@ Callback = function(unclaimTheirBooth)
         if stall then
             setupProximityPrompt(stall)
             wait(0.3)
-            Character:PivotTo(stall:GetPivot())
+            getgenv().Character:PivotTo(stall:GetPivot())
             wait(0.3)
             fireproximityprompt(ProximityPrompt)
             wait(0.2)
@@ -1553,9 +1553,9 @@ Callback = function(unclaimTheirBooth)
                 [3] = "SourceSans"
             }
             
-            game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
             wait(0.2)
-            game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+            getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
             wait(0.2)
             getgenv().HumanoidRootPart.CFrame = OldCF
             wait(0.2)
@@ -1580,13 +1580,8 @@ Callback = function()
         local rootPart = char:FindFirstChild('HumanoidRootPart') or char:WaitForChild("HumanoidRootPart") or char:FindFirstChild("HumanoidRootPart", true) or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
         return rootPart
     end
-
-    
-    local Workspace_Service = game:GetService("Workspace") or workspace or cloneref(game:GetService("Workspace"))
-    
-    
-    local hum = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid") or Character:WaitForChild("Humanoid") or Workspace_Service:WaitForChild(LocalPlayer.Name):FindFirstChildWhichIsA("Humanoid") or Workspace_Service:WaitForChild(LocalPlayer.Name):WaitForChild("Humanoid", 999)
-    local root = getRoot(Character)
+    local hum = getgenv().Humanoid
+    local root = getRoot(getgenv().Character)
     if hum then
         hum.Jump = true
         wait()
@@ -1599,16 +1594,14 @@ Callback = function()
     end
 end,})
 
-local FrozenChar = Tab13:CreateToggle({
+local FrozenChar = Tab2:CreateToggle({
 Name = "Freeze Your Character",
 CurrentValue = false,
 Flag = "AntiMovement",
 Callback = function(hasFrozenChar)
     if hasFrozenChar then
-        
+        local Character = getgenv().Character
         local Workspace_Service = game:GetService("Workspace") or workspace or cloneref(game:GetService("Workspace"))
-        
-        
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart", true) or Workspace_Service:WaitForChild(LocalPlayer.Name):WaitForChild("HumanoidRootPart", 999)
         getgenv().FreezingChar = true
         if Character and HumanoidRootPart or Character:FindFirstChild("HuamnoidRootPart") then
@@ -1619,9 +1612,7 @@ Callback = function(hasFrozenChar)
             getgenv().FreezingChar = false
         end
     else
-        
-        
-        
+        local Character = getgenv().Character
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart", true)
         if Character and HumanoidRootPart or Character:FindFirstChild("HumanoidRootPart") then
             getgenv().FreezingChar = false
@@ -1640,8 +1631,7 @@ PlaceholderText = "Text To Type",
 RemoveTextAfterFocusLost = true,
 Flag = "TypingTextAuto",
 Callback = function(TypeEffectStall)
-    local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage"))
-    local Booth_Remote = Replicated_Storage:FindFirstChild("UpdateBoothText") or Replicated_Storage:WaitForChild("UpdateBoothText")
+    local Booth_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText")
 
     local function typeText(remote, text, typingSpeed)
         local currentText = ""
@@ -1671,85 +1661,84 @@ Callback = function(Cussing)
         getgenv().Cuss = true
         while getgenv().Cuss == true do
         wait(0.5)
-        local function getStall()
-            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
-                    return v
-                end
-            end
-            return nil
-        end
-        
-        local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage"))
-        local Booth_Remote = Replicated_Storage:FindFirstChild("UpdateBoothText") or Replicated_Storage:WaitForChild("UpdateBoothText")
-        
-        local MyStall = getStall()
-
-        if not MyStall or MyStall == nil then
-            getgenv().Cuss = false
-            return Rayfield:Notify({
-                Title = "Error: No Booth",
-                Content = "You don't own a booth!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
+            local function getStall()
+                for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                    if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                        return v
                     end
-                   },
-                },
-            })
-        end
-    
-        local colorsList = {
-            "Teal",
-            "Gray",
-            "Red",
-        }
-    
-        local function pickRandomColor()
-            local randomIndex = math.random(1, #colorsList)
-            return colorsList[randomIndex]
-        end
-    
-        local wordsList = {
-            "ɓ׀丅ㄈȟ",
-            "ӻȕㄈҟ",
-            "ㄈȕ冂丅",
-            "ȿȴȕ丅",
-            "ҟҟҟ",
-            "ŗȇ丅ẳŗȡ",
-            "ώȇȇȡ",
-            "ώȟόŗȇ",
-            "ㄈȕɱ",
-            "ɓ׀ɠ ẳȿȿ",
-        }
-    
-        local function pickRandomWord()
-            local randomIndex = math.random(1, #wordsList)
-            return wordsList[randomIndex]
-        end
-    
-        local fontsList = {
-            "DenkOne",
-            "GrenzeGotisch",
-            "SourceSans"    
-        }
-    
-        local function pickRandomFont()
-            local randomIndex = math.random(1, #fontsList)
-            return fontsList[randomIndex]
-        end
-        wait(0.4)
-        local args = {
-            [1] = tostring(pickRandomWord()),
-            [2] = tostring(pickRandomColor()),
-            [3] = tostring(pickRandomFont())
-        }
+                end
+                return nil
+            end
             
-        Booth_Remote:FireServer(unpack(args))
+            local Booth_Remote = getgenv().ReplicatedStorage:FindFirstChild("UpdateBoothText")
+            
+            local MyStall = getStall()
+
+            if not MyStall or MyStall == nil then
+                getgenv().Cuss = false
+                return Rayfield:Notify({
+                    Title = "Error: No Booth",
+                    Content = "You don't own a booth!",
+                    Duration = 7,
+                    Image = 4483362458,
+                    Actions = {
+                    Ignore = {
+                        Name = "Okay!",
+                        Callback = function()
+                            print("...")
+                        end
+                    },
+                    },
+                })
+            end
+        
+            local colorsList = {
+                "Teal",
+                "Gray",
+                "Red",
+            }
+        
+            local function pickRandomColor()
+                local randomIndex = math.random(1, #colorsList)
+                return colorsList[randomIndex]
+            end
+        
+            local wordsList = {
+                "ɓ׀丅ㄈȟ",
+                "ӻȕㄈҟ",
+                "ㄈȕ冂丅",
+                "ȿȴȕ丅",
+                "ҟҟҟ",
+                "ŗȇ丅ẳŗȡ",
+                "ώȇȇȡ",
+                "ώȟόŗȇ",
+                "ㄈȕɱ",
+                "ɓ׀ɠ ẳȿȿ",
+            }
+        
+            local function pickRandomWord()
+                local randomIndex = math.random(1, #wordsList)
+                return wordsList[randomIndex]
+            end
+        
+            local fontsList = {
+                "DenkOne",
+                "GrenzeGotisch",
+                "SourceSans"    
+            }
+        
+            local function pickRandomFont()
+                local randomIndex = math.random(1, #fontsList)
+                return fontsList[randomIndex]
+            end
+            wait(0.4)
+            local args = {
+                [1] = tostring(pickRandomWord()),
+                [2] = tostring(pickRandomColor()),
+                [3] = tostring(pickRandomFont())
+            }
+                
+            Booth_Remote:FireServer(unpack(args))
         end
     else
         getgenv().Cuss = false
@@ -3196,7 +3185,7 @@ local getHoverboardFlyInput = Tab13:CreateInput({
                 [1] = "Hoverboard"
             }
             
-            game:GetService("ReplicatedStorage"):WaitForChild("ToolEvent"):FireServer(unpack(args))
+            getgenv().ReplicatedStorage:WaitForChild("ToolEvent"):FireServer(unpack(args))
             wait(0.2)
             if getgenv().LocalPlayer.Backpack:FindFirstChild("Hoverboard") then
                 getgenv().LocalPlayer.Backpack:FindFirstChild("Hoverboard").Parent = getgenv().Character
@@ -3275,7 +3264,6 @@ local getHoverboardFlyInput = Tab13:CreateInput({
             wait(0.3)
             getgenv().flyLoop = false
             wait(0.2)
-            
             local player = getgenv().LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
             local humanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
@@ -3286,7 +3274,7 @@ local getHoverboardFlyInput = Tab13:CreateInput({
 
                 hover.Parent = player.Backpack
             end
-            wait(0.2)
+            wait(0.5)
             local function stopFly()
                 if humanoidRootPart:FindFirstChild("BodyGyro") then
                     humanoidRootPart.BodyGyro:Destroy()
@@ -3297,10 +3285,10 @@ local getHoverboardFlyInput = Tab13:CreateInput({
                 character.Humanoid.PlatformStand = false
                 getgenv().flyLoop = false
             end
-            wait(0.1)
+            wait(0.2)
             stopFly()
         wait(0.3)
-        game:GetService("ReplicatedStorage"):WaitForChild("DeleteInventory"):FireServer()
+        getgenv().ReplicatedStorage:WaitForChild("DeleteInventory"):FireServer()
     elseif tonumber(GetSpeed) and getgenv().flying == true then
         getgenv().speed = tonumber(GetSpeed)
     end
@@ -3344,7 +3332,7 @@ Name = "View Your Booth",
 CurrentValue = false,
 Flag = "theBoothView",
 Callback = function(specBooth)
-    local Workspace = game:GetService("Workspace") or workspace
+    local Workspace = getgenv().Workspace
     local function get_booth()
         for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
             if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
@@ -3364,14 +3352,10 @@ Callback = function(specBooth)
         getgenv().viewing_booth = true
         Workspace.CurrentCamera.CameraSubject = plr_booth
     else
-        local Workspace = game:GetService("Workspace") or workspace
-        
-        
-        
-
+        local Workspace = getgenv().Workspace
         getgenv().viewing_booth = false
         wait(0.2)
-        Workspace.CurrentCamera.CameraSubject = Character
+        Workspace.CurrentCamera.CameraSubject = getgenv().Character
     end
 end,})
 
@@ -3549,7 +3533,7 @@ CurrentValue = false,
 Flag = "LikingOnlyFriends",
 Callback = function(myFriendsLiked)
     if myFriendsLiked then
-        local Workspace_Service = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
+        local Workspace_Service = getgenv().Workspace
         local Avatar_UI = Workspace_Service:WaitForChild("AvatarUI")
         local Like_Button = Avatar_UI:FindFirstChild("LikeButton") or Avatar_UI:WaitForChild("LikeButton")
         local Click_Detector_Input = Like_Button:FindFirstChild("ClickDetector")
@@ -3558,29 +3542,35 @@ Callback = function(myFriendsLiked)
         
         local Local_Player = getgenv().LocalPlayer
         
-        function Get_Friend_Func()
-            for _, player in pairs(Players:GetPlayers()) do
-                if player:IsFriendsWith(Local_Player.UserId) then
-                    return player
+        local friend_find = findplr("friend")
+        
+        if not friend_find then
+            getgenv().Like_Friends = false
+            return Notify_User("Error:", "You have 0 friends in this server!", 6)
+        end
+        
+        function like_friend_only(user)
+            if user then
+                local expectedURL = "rbxthumb://type=Avatar&id=" .. tostring(user.UserId) .. "&w=420&h=420"
+                if Image_Label.Image == expectedURL then
+                    fireclickdetector(Click_Detector_Input, 999)
+                    return true
                 end
             end
-            return nil
+            return false
         end
         
-        local Friends = Get_Friend_Func()
-        
-        if not Friends then
-            getgenv().Like_Friends = false
-            return Notify_User("Error:", "There isn't any friends in this server!", 6)
-        end
-        
-        getgenv().Like_Friends = true
-        while getgenv().Like_Friends == true do
-            wait()
-            local expectedURL = "rbxthumb://type=Avatar&id="..tostring(Friends.UserId).."&w=420&h=420"
-            if Image_Label.Image == expectedURL then
-                fireclickdetector(Click_Detector_Input, 999)
+        if friend_find then
+            getgenv().Like_Friends = true
+            while getgenv().Like_Friends == true do
+                wait()
+                local liked = like_friend_only(friend_find)
+                if not liked then
+                    getgenv().Like_Friends = false
+                end
             end
+        else
+            getgenv().Like_Friends = false
         end
     else
         getgenv().Like_Friends = false
@@ -5460,7 +5450,7 @@ end,})
 local ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute GUI",
 Callback = function()
-    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChild("Humanoid") or getgenv().Character:FindFirstChildOfClass("Humanoid")
+    local Humanoid = getgenv().Humanoid
     getgenv().getLoopKick = false
     wait()
     getgenv().getLoopKick = false
@@ -5554,34 +5544,51 @@ Callback = function(LolPUser)
     end
 end,})
 
+getgenv().run_Shift_Speed = 450
+wait(0.2)
+local ShifTToRunSpeed = Tab2:CreateInput({
+Name = "Shift_To_Run Speed",
+PlaceholderText = "Speed",
+RemoveTextAfterFocusLost = true,
+Callback = function(get_speed)
+    getgenv().run_Shift_Speed = tonumber(get_speed)
+
+    local player = getgenv().LocalPlayer
+    if getgenv().runningEnabled and player.Character then
+        local humanoid = player.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = getgenv().run_Shift_Speed
+        end
+    end
+end,})
+wait(0.1)
 local ShiftToRun = Tab2:CreateToggle({
 Name = "Shift To Run",
 CurrentValue = false,
 Flag = "SpeedCoilAlt",
 Callback = function(speedCoil)
     if speedCoil then
-        getgenv().getRunningState = true
         getgenv().runningEnabled = true
-    
+
         local player = getgenv().LocalPlayer
         local walkSpeed = 16
-        local runSpeed = 450
+        local runSpeed = getgenv().run_Shift_Speed
 
         local function setupCharacter(character)
             local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
-            
+                    
             local function onShiftPress(input, gameProcessed)
-                if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled == true then
-                    humanoid.WalkSpeed = runSpeed
+                if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
+                    humanoid.WalkSpeed = getgenv().run_Shift_Speed
                 end
             end
-    
+            
             local function onShiftRelease(input, gameProcessed)
-                if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled == true then
+                if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
                     humanoid.WalkSpeed = walkSpeed
                 end
             end
-    
+            
             game:GetService("UserInputService").InputBegan:Connect(onShiftPress)
             game:GetService("UserInputService").InputEnded:Connect(onShiftRelease)
 
@@ -5601,7 +5608,7 @@ Callback = function(speedCoil)
         humanoid.WalkSpeed = 16
         getgenv().runningEnabled = false
     end
-end,})
+end,})    
 
 local function run_anims() 
     local player = game.Players:FindFirstChild("ItsYoDawgWsgGng")
