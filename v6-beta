@@ -53,38 +53,14 @@ end)
 
 local function onVoiceChatStateChanged(oldState, newState)
     if newState == Enum.VoiceChatState.Ended then
-        local screenGui = Instance.new("ScreenGui") 
-        screenGui.IgnoreGuiInset = true
-        screenGui.Name = "SUSPENSION_FRAME"
-        screenGui.Parent = getgenv().PlayerGui
-        
-        local fullScreenFrame = Instance.new("Frame")
-        fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
-        fullScreenFrame.Position = UDim2.new(0, 0, 0, 0)
-        fullScreenFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        fullScreenFrame.BackgroundTransparency = 0.3
-        fullScreenFrame.Parent = screenGui
-        
-        local textLabel = Instance.new("TextLabel")
-        textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-        textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
-        textLabel.BackgroundTransparency = 1
-        textLabel.Text = "You Are: <font color=\"rgb(255,0,0)\">Suspended</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nIs going to unsuspend you, wait."
-        textLabel.RichText = true
-        textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
-        textLabel.TextScaled = true
-        textLabel.Font = Enum.Font.GothamBold
-        textLabel.Parent = fullScreenFrame
-        wait(0.6)
-        getgenv().Joined_VC_Connection = true
-        while getgenv().Joined_VC_Connection == true do
-            wait(0.2)
+        for i = 1, 10 do
             getgenv().VoiceChatService:joinVoice()
+            task.wait()
         end
-    wait(0.2)
+        wait()
+        getgenv().VoiceChatService:joinVoice()
+        wait(.2)
     elseif newState == Enum.VoiceChatState.Joined then
-        getgenv().Joined_VC_Connection = false
-        wait(0.3)
         if getgenv().PlayerGui:FindFirstChild("SUSPENSION_FRAME") then
             getgenv().PlayerGui:FindFirstChild("SUSPENSION_FRAME"):Destroy()
         end
