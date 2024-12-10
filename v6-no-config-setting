@@ -75,9 +75,18 @@ local function onVoiceChatStateChanged(oldState, newState)
         textLabel.TextScaled = true
         textLabel.Font = Enum.Font.GothamBold
         textLabel.Parent = fullScreenFrame
-        wait(5)
-        for i = 1, 125 do
+        wait(0.6)
+        getgenv().Joined_VC_Connection = true
+        while getgenv().Joined_VC_Connection == true do
+            wait(0.2)
             getgenv().VoiceChatService:joinVoice()
+        end
+    wait(0.2)
+    elseif newState == Enum.VoiceChatState.Joined then
+        getgenv().Joined_VC_Connection = false
+        wait(0.3)
+        if getgenv().PlayerGui:FindFirstChild("SUSPENSION_FRAME") then
+            getgenv().PlayerGui:FindFirstChild("SUSPENSION_FRAME"):Destroy()
         end
     end
 end
