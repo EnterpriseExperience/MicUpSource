@@ -2115,7 +2115,7 @@ Callback = function()
     game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
 end,})
 
-local CharIntoAnyAvatar = Tab13:CreateInput({
+--[[local CharIntoAnyAvatar = Tab13:CreateInput({
 Name = "Be Any Avatar",
 PlaceholderText = "User Here",
 RemoveTextAfterFocusLost = true,
@@ -2205,7 +2205,7 @@ Callback = function(beAnyAvatar)
     }
                 
     ModifyUser_Remote:FireServer(unpack(args))
-end,})
+end,})--]]
 
 local AutoReclaimToggle = Tab11:CreateToggle({
 Name = "Anti Booth Stealer",
