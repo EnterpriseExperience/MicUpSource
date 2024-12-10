@@ -53,9 +53,32 @@ end)
 
 local function onVoiceChatStateChanged(oldState, newState)
     if newState == Enum.VoiceChatState.Ended then
-        print("Unmuting Microphone [Unsuspend]...")
-        wait(0.1)
-        getgenv().VoiceChatService:joinVoice()
+        local screenGui = Instance.new("ScreenGui") 
+        screenGui.IgnoreGuiInset = true
+        screenGui.Name = "SUSPENSION_FRAME"
+        screenGui.Parent = getgenv().PlayerGui
+        
+        local fullScreenFrame = Instance.new("Frame")
+        fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
+        fullScreenFrame.Position = UDim2.new(0, 0, 0, 0)
+        fullScreenFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        fullScreenFrame.BackgroundTransparency = 0.3
+        fullScreenFrame.Parent = screenGui
+        
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
+        textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
+        textLabel.BackgroundTransparency = 1
+        textLabel.Text = "You Are: <font color=\"rgb(255,0,0)\">Suspended</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nIs going to unsuspend you, wait."
+        textLabel.RichText = true
+        textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
+        textLabel.TextScaled = true
+        textLabel.Font = Enum.Font.GothamBold
+        textLabel.Parent = fullScreenFrame
+        wait(5)
+        for i = 1, 125 do
+            getgenv().VoiceChatService:joinVoice()
+        end
     end
 end
 
@@ -366,13 +389,13 @@ wait(0.3)
         textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
         textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
         textLabel.BackgroundTransparency = 1
-        textLabel.Text = "You Are: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n😇 Zacks Holy Hub 😇\n----------------------------\nIs creating a Baseplate,\n\nWait until this screen disappears."
+        textLabel.Text = "You Are: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nIs creating a Baseplate,\n\nWait until this screen disappears."
         textLabel.RichText = true
         textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
         textLabel.TextScaled = true
         textLabel.Font = Enum.Font.GothamBold
         textLabel.Parent = fullScreenFrame
-        wait(0.7)
+        wait(0.2)
         local Terrain = getgenv().Workspace.Terrain
 
         Terrain:FillBlock(CFrame.new(66, -10, 72.5), Vector3.new(13000, 16, 13000), Enum.Material.Asphalt)
