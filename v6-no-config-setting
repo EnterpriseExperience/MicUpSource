@@ -26,15 +26,19 @@ getgenv().MaterialService = getgenv().Service_Wrap("MaterialService")
 getgenv().RunService = getgenv().Service_Wrap("RunService")
 getgenv().VoiceChatInternal = getgenv().Service_Wrap("VoiceChatInternal")
 getgenv().VoiceChatService = getgenv().Service_Wrap("VoiceChatService")
+getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
+getgenv().UserInputService = getgenv().Service_Wrap("UserInputService")
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
 getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
 getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
-getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 local get_http = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+
+getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
 -- Initial Character updater.
 local function updateCharacterComponents(character)
@@ -53,17 +57,12 @@ end)
 
 local function onVoiceChatStateChanged(oldState, newState)
     if newState == Enum.VoiceChatState.Ended then
-        for i = 1, 10 do
+        for i = 1, 20 do
             getgenv().VoiceChatService:joinVoice()
-            task.wait()
+            task.wait(0.4)
         end
-        wait()
+        wait(0.2)
         getgenv().VoiceChatService:joinVoice()
-        wait(.2)
-    elseif newState == Enum.VoiceChatState.Joined then
-        if getgenv().PlayerGui:FindFirstChild("SUSPENSION_FRAME") then
-            getgenv().PlayerGui:FindFirstChild("SUSPENSION_FRAME"):Destroy()
-        end
     end
 end
 
@@ -417,7 +416,7 @@ end--]]
 local Window = Rayfield:CreateWindow({
     Name = "Zacks Easy Hub | V6.2.9.2 | Executed At: "..formattedTime,
     LoadingTitle = "How are you doing today? :)",
-    LoadingSubtitle = "Zacks Easy Hub | Ruling.",
+    LoadingSubtitle = "Zacks Easy Hub | Dominating.",
     ConfigurationSaving = {
        Enabled = false,
        FolderName = nil,
@@ -515,7 +514,6 @@ end
         
         local UserInputService = game:GetService("UserInputService")
         
-        
         local Audio_Device_Input = LocalPlayer.AudioDeviceInput
 
         local isMuted = false
@@ -534,9 +532,9 @@ end
             end
         end
 
-        UserInputService.InputBegan:Connect(onInputBegan)
+        getgenv().UserInputService.InputBegan:Connect(onInputBegan)
     wait(0.3)
-local TeleportService = game:GetService("TeleportService")
+local TeleportService = getgenv().TeleportService
 
 PlaceId, JobId = game.PlaceId, game.JobId
 
@@ -548,13 +546,9 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
     end
 end)
-wait(0.5)
-local TeleportService = getgenv().TeleportService
-
+wait(0.3)
 PlaceId, JobId = game.PlaceId, game.JobId
 
-wait(0.3)
-local StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 wait(0.1)
 if getgenv().AntiAfkScript or getgenv().OtherAntiAfk then
     print("AntiAFK Scripts have already been pre-loaded from last session | skipping...")
@@ -1658,8 +1652,7 @@ Name = "Spin Character",
 PlaceholderText = "Speed",
 RemoveTextAfterFocusLost = true,
 Callback = function(getSpinSpeed)
-    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart")
-    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid")
+    local HumanoidRootPart = getgenv().HumanoidRootPart
     local spinSpeed = tonumber(getSpinSpeed)
     if spinSpeed and spinSpeed <= 145 then
         local Spin = Instance.new("BodyAngularVelocity")
@@ -1683,7 +1676,7 @@ Callback = function(getSpinSpeed)
             },
         })
         wait(0.2)
-        if not HumanoidRootPart:FindFirstChild("Spinning") then
+        if not getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
             local Spin = Instance.new("BodyAngularVelocity")
             Spin.Name = "Spinning"
             Spin.Parent = HumanoidRootPart
@@ -1692,7 +1685,7 @@ Callback = function(getSpinSpeed)
         else
             HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,145,0)
         end
-    elseif spinSpeed <= 145 and HumanoidRootPart:FindFirstChild("Spinning") then
+    elseif spinSpeed <= 145 and getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
         Rayfield:Notify({
             Title = "[OUTPUT]: Already Spinning",
             Content = "Updated speed instead, detected edited spin.",
@@ -1708,7 +1701,7 @@ Callback = function(getSpinSpeed)
             },
         })
         wait(0.3)
-        HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
+        getgenv().HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
     end
 end,})
 
@@ -1717,7 +1710,7 @@ end,})
 local UnspinNow = Tab2:CreateButton({
 Name = "Unspin",
 Callback = function()
-    for i,v in pairs(HumanoidRootPart:GetChildren()) do
+    for i,v in pairs(getgenv().HumanoidRootPart:GetChildren()) do
         if v.Name == "Spinning" then
             v:Destroy()
         end
@@ -1729,7 +1722,7 @@ Name = "Submit Note Bypass",
 CurrentValue = false,
 Flag = "BypassNoteBoard",
 Callback = function(theNote)     
-    local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage"))
+    local Replicated_Storage = getgenv().ReplicatedStorage
     local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
 
     if theNote then
@@ -1807,9 +1800,7 @@ Name = "Note Bypass Input",
 PlaceholderText = "Note",
 RemoveTextAfterFocusLost = true,
 Callback = function(noteToBypass)
-    
-    
-    local Replicated_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage"))
+    local Replicated_Storage = getgenv().ReplicatedStorage
     local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
 
     local letters = {
@@ -1887,9 +1878,8 @@ Callback = function(noteToBypass)
     end
     task.wait(.7)
     local function send_Remote(msg)
-        local Replicated_Storage = game:GetService("ReplicatedStorage")
+        local Replicated_Storage = getgenv().ReplicatedStorage
         local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
-
 
         local args = {
             [1] = tostring(convert(msg))
@@ -1904,7 +1894,7 @@ end,})
 local DeletePlrBooth = Tab11:CreateButton({
 Name = "Delete Current Booth",
 Callback = function()
-    game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
+    getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
 end,})
 
 --[[local CharIntoAnyAvatar = Tab13:CreateInput({
@@ -3696,7 +3686,7 @@ Name = "Clear Chat Messages",
 Callback = function()
     local TextChatService = getgenv().TextChatService
         
-    local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
+    local chat = TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
         
     local function sendchat(msg)
         chat:SendAsync(msg)
@@ -3718,9 +3708,7 @@ Name = "Chat Bypass Input",
 PlaceholderText = "Text",
 RemoveTextAfterFocusLost = true,
 Callback = function(saveInputFilter)
-    local TextChatService = getgenv().TextChatService
-
-    local chat = TextChatService.ChatInputBarConfiguration.TargetTextChannel
+    local chat = getgenv().TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
 
     local letters = {
         set1 = {
@@ -3808,7 +3796,7 @@ Name = "Booth Text Bypass",
 PlaceholderText = "Text",
 RemoveTextAfterFocusLost = true,
 Callback = function(enteredTextInput)
-    local TextChatService = game:GetService("TextChatService")
+    local TextChatService = getgenv().TextChatService
     
     
     local Rep_Storage = game:GetService("ReplicatedStorage")
@@ -3913,7 +3901,7 @@ Callback = function(enteredTextInput)
     wait(.2)
     local function send_bypass_config(msg)
         local function getStall()
-            for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
+            for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
                 if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                     return v
                 end
@@ -3963,7 +3951,7 @@ Callback = function(Flick)
         getgenv().CharFlick = true
         while getgenv().CharFlick == true do
             task.wait()
-            local Rep_Storage = game:GetService("ReplicatedStorage")
+            local Rep_Storage = getgenv().ReplicatedStorage
             local Update_Height_Remote = Rep_Storage:WaitForChild("UpdateHeight") or Rep_Storage:FindFirstChild("UpdateHeight")
             local Update_Depth_Remote = Rep_Storage:WaitForChild("UpdateDepth") or Rep_Storage:FindFirstChild("UpdateDepth")
             local Update_Width_Remote = Rep_Storage:WaitForChild("UpdateWidth") or Rep_Storage:FindFirstChild("UpdateWidth")
@@ -4123,7 +4111,7 @@ Callback = function()
         Part.CanCollide = true
         Part.Name = "MeshPart"
         FakeCharacter.Parent = Workspace_Service
-        Fakegetgenv().HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+        FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
         
         for i, v in pairs(RealCharacter:GetChildren()) do
             if v:IsA("LocalScript") then
@@ -4538,7 +4526,7 @@ Suffix = "",
 CurrentValue = 16,
 Flag = "walkSpeedValue",
 Callback = function(wsVal)
-    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+    local Humanoid = getgenv().Humanoid
     
     if Humanoid then
         Humanoid.WalkSpeed = wsVal
@@ -4630,8 +4618,8 @@ if getgenv().doTeleport == true then
 end
 wait(0.5)
 if doAntiTP then
-    local Workspace = game:GetService("Workspace")
-    local HumanoidRP = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
+    local Workspace = getgenv().Workspace
+    local HumanoidRP = getgenv().HumanoidRootPart
 
     if HumanoidRP and HumanoidRP ~= nil then
         getgenv().doTeleport = true
@@ -4649,11 +4637,8 @@ else
     wait(.1)
     repeat wait() until getgenv().doTeleport == false
     wait(0.3)
-    local Workspace = game:GetService("Workspace") or workspace
-    
-    
-    
-    local HumanoidRP = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+    local Workspace = getgenv().Workspace
+    local HumanoidRP = getgenv().HumanoidRootPart
     print("Teleporting Back...")
     wait()
     HumanoidRP.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
@@ -4665,7 +4650,7 @@ Name = "Anti Bang/TP (Method 3, You Die To)",
 Callback = function()
     local voidPosition = Vector3.new(-499, -499, -499)
     local Workspace = getgenv().Workspace
-    local HumanoidRP = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
+    local HumanoidRP = getgenv().HumanoidRootPart
     print("Killing...")
     wait(.4)
     HumanoidRP.CFrame = CFrame.new(voidPosition)
@@ -4678,8 +4663,8 @@ Flag = "AntiTPMethod4",
 Callback = function(getLoopTpToVoid)
     if getLoopTpToVoid then
         local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
-        local Workspace = game:GetService("Workspace") or workspace or cloneref(game:GetService("Workspace"))
-        local HumanoidRP = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
+        local Workspace = getgenv().Workspace
+        local HumanoidRP = getgenv().HumanoidRootPart
             getgenv().loopTPToVoid = true
             while getgenv().loopTPToVoid == true do
             wait()
@@ -4689,7 +4674,7 @@ Callback = function(getLoopTpToVoid)
             getgenv().loopTPToVoid = false
         wait()
         repeat wait() until getgenv().loopTPToVoid == false
-        local HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
+        local HumanoidRootPart = getgenv().HumanoidRootPart
         HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
     end
 end,})
@@ -4920,11 +4905,11 @@ Flag = "SpookySunDayTime",
 Callback = function(sunSpooky)
 if sunSpooky then
     getgenv().SpookSun = true
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+    local Lighting = game:GetService("Lighting") 
     local sky = Lighting:FindFirstChildOfClass("Sky")
 
     local function smoothTransition()
-        local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting") 
+        local Lighting = game:GetService("Lighting") 
         local sky = Lighting:FindFirstChildOfClass("Sky")
         Lighting.ClockTime = 14
 
@@ -4943,7 +4928,7 @@ if sunSpooky then
         smoothTransition()
     end
 else
-    local Lighting = cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+    local Lighting = game:GetService("Lighting")
     local sky = Lighting:FindFirstChildOfClass("Sky")
     wait(0.5)
     getgenv().SpookSun = false
@@ -4991,7 +4976,7 @@ Callback = function(freezeToggle)
         getgenv().doFreezeToggle = true
         while getgenv().doFreezeToggle == true do
         wait()
-            local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+            local Humanoid = getgenv().Humanoid
             local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
             for _, v in pairs(ActiveTracks) do
                 v:AdjustSpeed(0)
@@ -5000,7 +4985,7 @@ Callback = function(freezeToggle)
     else
         getgenv().doFreezeToggle = false
         wait(0.5)
-        local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+        local Humanoid = getgenv().Humanoid
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
         for _, v in pairs(ActiveTracks) do
             v:AdjustSpeed(1)
@@ -5015,7 +5000,7 @@ end,})
 local StopAllEmotes = Tab12:CreateButton({
 Name = "Stop Playing Emotes",
 Callback = function()
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for i,v in next, Humanoid:GetPlayingAnimationTracks() do
         v:Stop()
@@ -5031,7 +5016,7 @@ CurrentValue = 1,
 Flag = "EmoteSpeedSliding",
 Callback = function(slidingSpeed)
     local getEmoteNum = tonumber(slidingSpeed) or slidingSpeed
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(getEmoteNum)
@@ -5044,7 +5029,7 @@ PlaceholderText = "Number",
 RemoveTextAfterFocusLost = true,
 Callback = function(inputNum)
     local getNumberInput = tonumber(inputNum)
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(getNumberInput)
@@ -5054,7 +5039,7 @@ end,})
 local SpeedTheEmoteUp = Tab12:CreateButton({
 Name = "Kinda Fast Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(2)
@@ -5064,7 +5049,7 @@ end,})
 local GettingFaster = Tab12:CreateButton({
 Name = "Faster Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(4.5)
@@ -5074,7 +5059,7 @@ end,})
 local BackToNormalSpeed = Tab12:CreateButton({
 Name = "Normal Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(1)
@@ -5084,7 +5069,7 @@ end,})
 local SlowerEmoteSpeed = Tab12:CreateButton({
 Name = "Slow Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(0.5)
@@ -5094,7 +5079,7 @@ end,})
 local SlowingTheEmoteDown = Tab12:CreateButton({
 Name = "Super Slow Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(0.1)
@@ -5104,7 +5089,7 @@ end,})
 local ReverseTheEmote = Tab12:CreateButton({
 Name = "Reverse Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().Character:FindFirstChildOfClass("AnimationController")
+    local Humanoid = getgenv().Humanoid
     local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
     for _, v in pairs(ActiveTracks) do
         v:AdjustSpeed(-1)
@@ -5114,7 +5099,7 @@ end,})
 local FreeEmotesGUI = Tab14:CreateButton({
 Name = "Free Emotes GUI",
 Callback = function()
-    getgenv().StarterGui = getgenv().StarterGui or game:GetService("StarterGui")
+    getgenv().StarterGui = getgenv().StarterGui
 
     local function sendNotification(title, text, duration)
         StarterGui:SetCore("SendNotification", {
@@ -5221,7 +5206,7 @@ end,})
 local RejoinButton = Tab15:CreateButton({
 Name = "Rejoin",
 Callback = function()
-    local TeleportService = game:GetService("TeleportService")
+    local TeleportService = getgenv().TeleportService
     local JobId = game.JobId
     local PlaceId = game.PlaceId
     wait()
@@ -5390,8 +5375,8 @@ Callback = function(speedCoil)
         local runSpeed = getgenv().run_Shift_Speed
 
         local function setupCharacter(character)
-            local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
-                    
+            local humanoid = getgenv().Humanoid
+            
             local function onShiftPress(input, gameProcessed)
                 if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
                     humanoid.WalkSpeed = getgenv().run_Shift_Speed
@@ -5418,7 +5403,7 @@ Callback = function(speedCoil)
     else
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
+        local humanoid = getgenv().Humanoid
     
         humanoid.WalkSpeed = 16
         getgenv().runningEnabled = false
