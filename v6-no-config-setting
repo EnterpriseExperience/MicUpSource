@@ -141,7 +141,7 @@ getgenv().Lighting.Ambient = Color3.new(0, 0, 0)
 local blur_eff = Instance.new("BlurEffect")
 blur_eff.Name = "Blur"
 blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
-blur_eff.Size = 3
+blur_eff.Size = 4.5
 blur_eff.Enabled = true
 
 -- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
@@ -318,7 +318,7 @@ wait(0.3)
         local maxSize = 0.35
         local minSize = 0.25
         
-        while elapsedTime < 10 do
+        while elapsedTime < 8 do
             local scale = minSize + (math.abs(math.sin(elapsedTime * zoomSpeed)) * (maxSize - minSize))
             image.Size = UDim2.new(scale, 0, scale, 0)
         
@@ -360,7 +360,7 @@ wait(0.3)
         local screenGui = Instance.new("ScreenGui") 
         screenGui.IgnoreGuiInset = true
         screenGui.Name = "BASEPLATE_LOADING"
-        screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+        screenGui.Parent = getgenv().PlayerGui
         
         local fullScreenFrame = Instance.new("Frame")
         fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
