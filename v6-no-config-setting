@@ -2964,6 +2964,16 @@ Callback = function(infJumpConnect)
     end
 end,})
 
+local faceBangScript = Tab16:CreateButton({
+Name = "Face F**k Script",
+Callback = function()
+    if getgenv().loaded_face_bang then
+        return notify("Notification:", "Already loaded face f*ck script!", 7.5)
+    else
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/saya420/Mic-Up/main/facefuck'))()
+    end
+end,})
+
 local InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
 wait()
 local InfoLabelParagraph = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
