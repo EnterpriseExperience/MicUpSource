@@ -4832,47 +4832,87 @@ Callback = function()
     wait()
     Lighting.Brightness = 3
     wait()
-    Lighting.Atmosphere.Density = 0.3
-    wait()
-    Lighting.Atmosphere.Offset = 0.25
-    wait()
-    Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
-    wait()
-    Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
-    wait()
-    Lighting.Atmosphere.Glare = 0
-    wait()
-    Lighting.Atmosphere.Haze = 0
-    wait()
-    Lighting.Sky.MoonAngularSize = 11
-    wait()
-    Lighting.Sky.StarCount = 3000
-    wait()
-    Lighting.Sky.SunAngularSize = 11
-    wait()
-    Lighting.Bloom.Intensity = 1
-    wait()
-    Lighting.Bloom.Enabled = true
-    wait()
-    Lighting.Bloom.Size = 24
-    wait()
-    Lighting.Bloom.Threshold = 2
-    wait()
-    Lighting.DepthOfField.Enabled = false
-    wait()
-    Lighting.DepthOfField.FarIntensity = 0.1
-    wait()
-    Lighting.DepthOfField.FocusDistance = 0.05
-    wait()
-    Lighting.DepthOfField.InFocusRadius = 30
-    wait()
-    Lighting.DepthOfField.NearIntensity = 0.75
-    wait()
-    Lighting.SunRays.Enabled = true
-    wait()
-    Lighting.SunRays.Intensity = 0.01
-    wait()
-    Lighting.SunRays.Spread = 0.1
+    if Lighting.Atmosphere then
+        Lighting.Atmosphere.Density = 0.3
+        wait()
+        Lighting.Atmosphere.Offset = 0.25
+        wait()
+        Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
+        wait()
+        Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
+        wait()
+        Lighting.Atmosphere.Glare = 0
+        wait()
+        Lighting.Atmosphere.Haze = 0
+    else
+        local Atmosphere = Instance.new("Atmosphere")
+        Atmosphere.Name = "Atmosphere"
+        Atmosphere.Parent = Lighting
+        Atmosphere.Density = 0.3
+        Atmosphere.Offset = 0.25
+        Atmosphere.Color = Color3.new(199, 199, 199)
+        Atmosphere.Decay = Color3.new(106, 112, 125)
+        Atmosphere.Glare = 0
+        Atmosphere.Haze = 0
+    end
+    wait(0.1)
+    if Lighting.Sky then
+        Lighting.Sky.MoonAngularSize = 11
+        Lighting.Sky.StarCount = 3000
+        Lighting.Sky.SunAngularSize = 11
+    else
+        local Sky = Instance.new("Sky")
+        Sky.Name = "Sky"
+        Sky.Parent = Lighting
+        Sky.MoonAngularSize = 11
+        Sky.StarCount = 3000
+        Sky.SunAngularSize = 11
+    end
+    wait(0.1)
+    if Lighting.Bloom then
+        Lighting.Bloom.Intensity = 1
+        Lighting.Bloom.Enabled = true
+        Lighting.Bloom.Size = 24
+        Lighting.Bloom.Threshold = 2
+    else
+        local Bloom = Instance.new("BloomEffect")
+        Bloom.Name = "Bloom"
+        Bloom.Parent = Lighting
+        Bloom.Intensity 1
+        Bloom.Enabled = true
+        Bloom.Size = 24
+        Bloom.Threshold = 2
+    end
+    wait(0.1)
+    if Lighting.DepthOfField then
+        Lighting.DepthOfField.Enabled = false
+        Lighting.DepthOfField.FarIntensity = 0.1
+        Lighting.DepthOfField.FocusDistance = 0.05
+        Lighting.DepthOfField.InFocusRadius = 30
+        Lighting.DepthOfField.NearIntensity = 0.75
+    else
+        local DepthOfField = Instance.new("DepthOfFieldEffect")
+        DepthOfField.Name = "DepthOfField"
+        DepthOfField.Parent = Lighting
+        DepthOfField.Enabled = false
+        DepthOfField.FarIntensity = 0.1
+        DepthOfField.FocusDistance = 0.05
+        DepthOfField.InFocusRadius = 30
+        DepthOfField.NearIntensity = 0.75
+    end
+    wait(0.1)
+    if Lighting.SunRays then
+        Lighting.SunRays.Enabled = true
+        Lighting.SunRays.Intensity = 0.01
+        Lighting.SunRays.Spread = 0.1
+    else
+        local SunRays = Instance.new("SunRaysEffect")
+        SunRays.Name = "SunRays"
+        SunRays.Parent = Lighting
+        SunRays.Enabled = true
+        SunRays.Intensity = 0.01
+        SunRays.Spread = 0.1
+    end
 end,})
 
 local fireworksToggle = Tab9:CreateToggle({
