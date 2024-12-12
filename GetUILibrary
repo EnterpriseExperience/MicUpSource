@@ -42,10 +42,10 @@ local RayfieldLibrary = {
 			SelectedTabTextColor = Color3.fromRGB(178, 0, 165),
 
 			ElementBackground = Color3.fromRGB(7, 0, 123),
-			ElementBackgroundHover = Color3.fromRGB(40, 40, 40),
+			ElementBackgroundHover = Color3.fromRGB(7, 0, 123),
 			SecondaryElementBackground = Color3.fromRGB(155, 0, 152),
 			ElementStroke = Color3.fromRGB(178, 0, 165),
-			SecondaryElementStroke = Color3.fromRGB(40, 40, 40),
+			SecondaryElementStroke = Color3.fromRGB(7, 0, 123),
 
 			SliderBackground = Color3.fromRGB(50, 138, 220),
 			SliderProgress = Color3.fromRGB(50, 138, 220),
@@ -59,7 +59,7 @@ local RayfieldLibrary = {
 			ToggleEnabledOuterStroke = Color3.fromRGB(100, 100, 100),
 			ToggleDisabledOuterStroke = Color3.fromRGB(65, 65, 65),
 
-			DropdownSelected = Color3.fromRGB(40, 40, 40),
+			DropdownSelected = Color3.fromRGB(7, 0, 123),
 			DropdownUnselected = Color3.fromRGB(30, 30, 30),
 
 			InputBackground = Color3.fromRGB(30, 30, 30),
