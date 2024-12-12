@@ -28,28 +28,28 @@ local RayfieldLibrary = {
 		Default = {
 			TextColor = Color3.fromRGB(0, 0, 0),
 
-			Background = Color3.fromRGB(155, 0, 152),
-			Topbar = Color3.fromRGB(14, 0, 171),
-			Shadow = Color3.fromRGB(7, 0, 123),
+			Background = Color3.fromRGB(0, 0, 0),
+			Topbar = Color3.fromRGB(144, 0, 0),
+			Shadow = Color3.fromRGB(144, 0, 0),
 
-			NotificationBackground = Color3.fromRGB(7, 0, 123),
-			NotificationActionsBackground = Color3.fromRGB(230, 230, 230),
+			NotificationBackground = Color3.fromRGB(0, 0, 0),
+			NotificationActionsBackground = Color3.fromRGB(0, 0, 0),
 
-			TabBackground = Color3.fromRGB(7, 0, 123),
-			TabStroke = Color3.fromRGB(85, 85, 85),
-			TabBackgroundSelected = Color3.fromRGB(7, 0, 123),
-			TabTextColor = Color3.fromRGB(0, 0, 0),
-			SelectedTabTextColor = Color3.fromRGB(7, 0, 123),
+			TabBackground = Color3.fromRGB(0, 0, 0),
+			TabStroke = Color3.fromRGB(29, 29, 29),
+			TabBackgroundSelected = Color3.fromRGB(29, 29, 29),
+			TabTextColor = Color3.fromRGB(255, 255, 255),
+			SelectedTabTextColor = Color3.fromRGB(255, 255, 255),
 
-			ElementBackground = Color3.fromRGB(7, 0, 123),
-			ElementBackgroundHover = Color3.fromRGB(7, 0, 123),
-			SecondaryElementBackground = Color3.fromRGB(7, 0, 123),
-			ElementStroke = Color3.fromRGB(7, 0, 123),
-			SecondaryElementStroke = Color3.fromRGB(7, 0, 123),
+			ElementBackground = Color3.fromRGB(0, 0, 0),
+			ElementBackgroundHover = Color3.fromRGB(0, 0, 0),
+			SecondaryElementBackground = Color3.fromRGB(0, 0, 0),
+			ElementStroke = Color3.fromRGB(0, 0, 0),
+			SecondaryElementStroke = Color3.fromRGB(0, 0, 0),
 
-			SliderBackground = Color3.fromRGB(50, 138, 220),
-			SliderProgress = Color3.fromRGB(50, 138, 220),
-			SliderStroke = Color3.fromRGB(58, 163, 255),
+			SliderBackground = Color3.fromRGB(155, 0, 152),
+			SliderProgress = Color3.fromRGB(155, 0, 152),
+			SliderStroke = Color3.fromRGB(155, 0, 152),
 
 			ToggleBackground = Color3.fromRGB(30, 30, 30),
 			ToggleEnabled = Color3.fromRGB(0, 146, 214),
@@ -64,7 +64,7 @@ local RayfieldLibrary = {
 
 			InputBackground = Color3.fromRGB(30, 30, 30),
 			InputStroke = Color3.fromRGB(65, 65, 65),
-			PlaceholderColor = Color3.fromRGB(178, 178, 178)
+			PlaceholderColor = Color3.fromRGB(155, 0, 152)
 		},
 
 		Light = {
@@ -255,6 +255,7 @@ end
 
 local Camera = workspace.CurrentCamera
 local Main = Rayfield.Main
+Main.BackgroundColor3 = Color3.fromRGB(14, 0, 169)
 local MPrompt = Rayfield:FindFirstChild('Prompt')
 local Topbar = Main.Topbar
 local Elements = Main.Elements
@@ -266,8 +267,6 @@ local dragBarCosmetic = dragBar and dragBar.Drag or nil
 
 Rayfield.DisplayOrder = 100
 LoadingFrame.Version.Text = Release
-
--- Variables
 
 local request = (syn and syn.request) or (http and http.request) or http_request
 local CFileName = nil
@@ -408,7 +407,7 @@ local function LoadConfiguration(Configuration)
 				end    
 			end)
 		else
-			RayfieldLibrary:Notify({Title = "Flag Error", Content = "Rayfield was unable to find '"..FlagName.. "'' in the current script. Check docs.sirius.menu for help."})
+			RayfieldLibrary:Notify({Title = "Flag Error", Content = "Rayfield was unable to find: '"..FlagName.. "'' in the current script. Check docs.sirius.menu for help."})
 		end
 	end
 end
@@ -1255,6 +1254,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Button.Title.Text = ButtonSettings.Name
 			Button.Visible = true
 			Button.Parent = TabPage
+			Button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 
 			Button.BackgroundTransparency = 1
 			Button.UIStroke.Transparency = 1
@@ -1273,7 +1273,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 					Button.Title.Text = "Callback Error"
 					print("Rayfield | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
-					warn('Check docs.sirius.menu for help with Rayfield specific development.')
 					task.wait(0.5)
 					Button.Title.Text = ButtonSettings.Name
 					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -1310,7 +1309,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 		end
 
 		-- ColorPicker
-		function Tab:CreateColorPicker(ColorPickerSettings) -- by Throit
+		function Tab:CreateColorPicker(ColorPickerSettings)
 			ColorPickerSettings.Type = "ColorPicker"
 			local ColorPicker = Elements.Template.ColorPicker:Clone()
 			local Background = ColorPicker.CPBackground
@@ -1568,6 +1567,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 			local Section = Elements.Template.SectionTitle:Clone()
 			Section.Title.Text = SectionName
+			Section.Title.TextColor3 = Color3.fromRGB(0, 0, 0)
 			Section.Visible = true
 			Section.Parent = TabPage
 
@@ -1591,8 +1591,8 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Label.Title.Text = LabelText
 			Label.Visible = true
 			Label.Parent = TabPage
+			Label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 
-			Label.BackgroundColor3 = SelectedTheme.SecondaryElementBackground
 			Label.UIStroke.Color = SelectedTheme.SecondaryElementStroke
 
 			Label.BackgroundTransparency = 1
@@ -1630,7 +1630,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Paragraph.Title.TextTransparency = 1
 			Paragraph.Content.TextTransparency = 1
 			
-			Paragraph.BackgroundColor3 = SelectedTheme.SecondaryElementBackground
+			Paragraph.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			Paragraph.UIStroke.Color = SelectedTheme.SecondaryElementStroke
 
 			TweenService:Create(Paragraph, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
@@ -1662,6 +1662,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Input.BackgroundTransparency = 1
 			Input.UIStroke.Transparency = 1
 			Input.Title.TextTransparency = 1
+			Input.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			
 			Input.InputFrame.BackgroundColor3 = SelectedTheme.InputBackground
 			Input.InputFrame.UIStroke.Color = SelectedTheme.InputStroke
@@ -1733,6 +1734,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Dropdown.Title.Text = DropdownSettings.Name
 			Dropdown.Visible = true
 			Dropdown.Parent = TabPage
+			Dropdown.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 
 			Dropdown.List.Visible = false
 			if DropdownSettings.CurrentOption then
@@ -2168,6 +2170,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Toggle.BackgroundTransparency = 1
 			Toggle.UIStroke.Transparency = 1
 			Toggle.Title.TextTransparency = 1
+			Toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			Toggle.Switch.BackgroundColor3 = SelectedTheme.ToggleBackground
 
 			if SelectedTheme ~= RayfieldLibrary.Theme.Default then
@@ -2229,7 +2232,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 					Toggle.Title.Text = "Callback Error"
 					print("Rayfield | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
-					warn('Check docs.sirius.menu for help with Rayfield specific development.')
 					task.wait(0.5)
 					Toggle.Title.Text = ToggleSettings.Name
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2326,6 +2328,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Slider.BackgroundTransparency = 1
 			Slider.UIStroke.Transparency = 1
 			Slider.Title.TextTransparency = 1
+			Slider.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			
 			if SelectedTheme ~= RayfieldLibrary.Theme.Default then
 				Slider.Main.Shadow.Visible = false
@@ -2500,6 +2503,8 @@ function RayfieldLibrary:CreateWindow(Settings)
 	task.wait(0.2)
 	TweenService:Create(Main, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Size = useMobileSizing and UDim2.new(0, 500, 0, 275) or UDim2.new(0, 500, 0, 475)}):Play()
 	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {ImageTransparency = 0.6}):Play()
+	wait(0.2)
+	Main.Shadow.BackgroundTransparency = 0.8
 
 	Topbar.BackgroundTransparency = 1
 	Topbar.Divider.Size = UDim2.new(0, 0, 0, 1)
