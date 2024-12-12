@@ -1,5 +1,24 @@
-local Release = "Build 1.2"
-local RayfieldFolder = "Rayfield"
+local Release
+wait(0.1)
+if game.PlaceId == 15546218972 then
+	Release = "Build 1.2"
+elseif game.PlaceId == 6884319169 then
+	Release = "1.5"
+else
+	Release = "1.0"
+end
+wait(0.2)
+local RayfieldFolder
+local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+wait(0.2)
+if game.PlaceId == 15546218972 then
+	RayfieldFolder = "MIC-UP-17"
+elseif game.PlaceId == 6884319169 then
+	RayfieldFolder = "MIC-UP"
+else
+	RayfieldFolder = tostring(GameName)
+end
+wait(0.1)
 local ConfigurationFolder = RayfieldFolder.."/Configurations"
 local ConfigurationExtension = ".rfld"
 
@@ -7,9 +26,9 @@ local RayfieldLibrary = {
 	Flags = {},
 	Theme = {
 		Default = {
-			TextColor = Color3.fromRGB(240, 240, 240),
+			TextColor = Color3.fromRGB(0, 0, 0),
 
-			Background = Color3.fromRGB(25, 25, 25),
+			Background = Color3.fromRGB(155, 0, 152),
 			Topbar = Color3.fromRGB(14, 0, 171),
 			Shadow = Color3.fromRGB(20, 20, 20),
 
@@ -19,14 +38,14 @@ local RayfieldLibrary = {
 			TabBackground = Color3.fromRGB(7, 0, 123),
 			TabStroke = Color3.fromRGB(85, 85, 85),
 			TabBackgroundSelected = Color3.fromRGB(7, 0, 123),
-			TabTextColor = Color3.fromRGB(240, 240, 240),
+			TabTextColor = Color3.fromRGB(0, 0, 0),
 			SelectedTabTextColor = Color3.fromRGB(178, 0, 165),
 
-			ElementBackground = Color3.fromRGB(35, 35, 35),
+			ElementBackground = Color3.fromRGB(7, 0, 123),
 			ElementBackgroundHover = Color3.fromRGB(40, 40, 40),
-			SecondaryElementBackground = Color3.fromRGB(25, 25, 25), -- For labels and paragraphs
+			SecondaryElementBackground = Color3.fromRGB(155, 0, 152),
 			ElementStroke = Color3.fromRGB(178, 0, 165),
-			SecondaryElementStroke = Color3.fromRGB(40, 40, 40), -- For labels and paragraphs
+			SecondaryElementStroke = Color3.fromRGB(40, 40, 40),
 
 			SliderBackground = Color3.fromRGB(50, 138, 220),
 			SliderProgress = Color3.fromRGB(50, 138, 220),
@@ -173,9 +192,6 @@ local RayfieldLibrary = {
 			InputStroke = Color3.fromRGB(45, 50, 55), -- Deepened input stroke
 			PlaceholderColor = Color3.fromRGB(150, 150, 160)
 		}
-
-
-
 	}
 }
 
@@ -235,8 +251,6 @@ if Rayfield.AbsoluteSize.X < minSize.X and Rayfield.AbsoluteSize.Y < minSize.Y t
 	useMobileSizing = true
 end
 
-
-
 -- Object Variables
 
 local Camera = workspace.CurrentCamera
@@ -252,8 +266,6 @@ local dragBarCosmetic = dragBar and dragBar.Drag or nil
 
 Rayfield.DisplayOrder = 100
 LoadingFrame.Version.Text = Release
-
-
 
 -- Variables
 
@@ -289,7 +301,9 @@ local function ChangeTheme(ThemeName)
 
 	for _, text in ipairs(Rayfield:GetDescendants()) do
 		if text.Parent.Parent ~= Notifications then
-			if text:IsA('TextLabel') or text:IsA('TextBox') then text.TextColor3 = SelectedTheme.TextColor end
+			if text:IsA('TextLabel') or text:IsA('TextBox') then 
+				text.TextColor3 = SelectedTheme.TextColor 
+			end
 		end
 	end
 
