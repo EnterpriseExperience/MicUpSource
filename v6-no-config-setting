@@ -5369,34 +5369,36 @@ Flag = "SpeedCoilAlt",
 Callback = function(speedCoil)
     if speedCoil then
         getgenv().runningEnabled = true
-
-        local player = getgenv().LocalPlayer
+        getgenv().run_Shift_Speed = 16
+        
+        local player = game.Players.LocalPlayer
         local walkSpeed = 16
-        local runSpeed = getgenv().run_Shift_Speed
-
+        
         local function setupCharacter(character)
-            local humanoid = getgenv().Humanoid
+            local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChild("Humanoid")
             
             local function onShiftPress(input, gameProcessed)
                 if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
                     humanoid.WalkSpeed = getgenv().run_Shift_Speed
                 end
             end
-            
+        
             local function onShiftRelease(input, gameProcessed)
                 if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
                     humanoid.WalkSpeed = walkSpeed
                 end
             end
-            
+        
             game:GetService("UserInputService").InputBegan:Connect(onShiftPress)
             game:GetService("UserInputService").InputEnded:Connect(onShiftRelease)
-
+        
             humanoid.WalkSpeed = walkSpeed
         end
-
-        player.CharacterAdded:Connect(setupCharacter)
-
+        
+        player.CharacterAdded:Connect(function(character)
+            setupCharacter(character)
+        end)
+        
         if player.Character then
             setupCharacter(player.Character)
         end
