@@ -57,7 +57,7 @@ end)
 
 local function onVoiceChatStateChanged(oldState, newState)
     if newState == Enum.VoiceChatState.Ended then
-        for i = 1, 20 do
+        for i = 1, 15 do
             getgenv().VoiceChatService:joinVoice()
             task.wait(0.4)
         end
@@ -131,18 +131,42 @@ else
         getgenv().has_checked_funcs = true
     end
 end
-
-getgenv().MaterialService.Use2022Materials = false
-getgenv().Lighting.GlobalShadows = false
-getgenv().Lighting.Brightness = 2
-getgenv().Lighting.Technology = Enum.Technology.Future
-getgenv().Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
-getgenv().Lighting.Ambient = Color3.new(0, 0, 0)
-local blur_eff = Instance.new("BlurEffect")
-blur_eff.Name = "Blur"
-blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
-blur_eff.Size = 4.5
-blur_eff.Enabled = true
+wait(0.2)
+if setfpscap then
+    if getgenv().setup_fps_performance then
+        warn("Setup for performance has already been ran.")
+    else
+        setfpscap(999)
+        getgenv().MaterialService.Use2022Materials = false
+        getgenv().Lighting.GlobalShadows = false
+        getgenv().Lighting.Brightness = 2
+        getgenv().Lighting.Technology = Enum.Technology.Compatibility
+        getgenv().Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+        getgenv().Lighting.Ambient = Color3.new(0, 0, 0)
+        getgenv().Lighting.ClockTime = 12
+        local blur_eff = Instance.new("BlurEffect")
+        blur_eff.Name = "Blur"
+        blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
+        blur_eff.Size = 2.2
+        blur_eff.Enabled = true
+    end
+else
+    warn("setfpscap is unsupported, alternating...")
+    wait(0.2)
+    getgenv().MaterialService.Use2022Materials = false
+    getgenv().Lighting.GlobalShadows = false
+    getgenv().Lighting.Brightness = 2
+    getgenv().Lighting.Technology = Enum.Technology.Compatibility
+    getgenv().Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+    getgenv().Lighting.Ambient = Color3.new(0, 0, 0)
+    getgenv().Lighting.ClockTime = 11
+    local blur_eff = Instance.new("BlurEffect")
+    blur_eff.Name = "Blur"
+    blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
+    blur_eff.Size = 2
+    blur_eff.Enabled = true
+end
+wait(0.2)
 
 -- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
 
@@ -342,19 +366,6 @@ wait(0.3)
         NewFolder.Parent = getgenv().Workspace
     end
 
-    if getgenv().baseplate_init then
-        warn("Baseplate was already created.")
-    else
-        local NewFolder = getgenv().Workspace:FindFirstChild("PartStorage")
-        local newChunk = Instance.new("Part")
-        newChunk.Name = "BASEPLATE_CLONE_ANTI_VOID"
-        newChunk.Size = Vector3.new(2048, 0, 2048)
-        newChunk.BrickColor = BrickColor.new("Maroon")
-        newChunk.Anchored = true
-        newChunk.CanCollide = true
-        newChunk.Parent = NewFolder
-        getgenv().baseplate_init = true
-    end
     wait(0.2)
     function do_baseplate_check()
         local screenGui = Instance.new("ScreenGui") 
@@ -370,6 +381,7 @@ wait(0.3)
         fullScreenFrame.Parent = screenGui
         
         local textLabel = Instance.new("TextLabel")
+        textLabel.Name = "LABEL_BASEPLATE"
         textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
         textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
         textLabel.BackgroundTransparency = 1
@@ -386,7 +398,8 @@ wait(0.3)
         wait(0.3)
         if getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING") then
             local bruh_GUI = getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING")
-
+            bruh_GUI:FindFirstChildOfClass("Frame"):FindFirstChildOfClass("TextLabel").Text = "You Are: <font color=\"rgb(0, 238, 0)\">Not Frozen</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nEnjoy your anti-void BasePlate."
+            wait(1)
             bruh_GUI:Destroy()
         else 
             warn("GUI does not exist, skipping...")
@@ -414,7 +427,7 @@ end--]]
 
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "Zacks Easy Hub | V6.4.2-B | Executed At: "..formattedTime,
+    Name = "Zacks Easy Hub | V6.6.2-C | Executed At: "..formattedTime,
     LoadingTitle = "How are you doing today? :)",
     LoadingSubtitle = "Zacks Easy Hub | Dominating.",
     ConfigurationSaving = {
@@ -465,14 +478,14 @@ local Section4 = Tab4:CreateSection("||| Chatting Section |||")
 local Tab5 = Window:CreateTab("< / Misc >", 7733954760)
 local Section5 = Tab5:CreateSection("||| Extras Section |||")
 
+local Tab16 = Window:CreateTab("< / Universal >", 7733954760)
+local Section16 = Tab16:CreateSection("||| Universal Section |||")
+
 local Tab17 = Window:CreateTab("< / Animations >", 7733954760)
 local Section17 = Tab17:CreateSection("||| Animation Packages Section |||")
 
 local Tab9 = Window:CreateTab("< / Lighting >", 7734068495)
 local Section9 = Tab9:CreateSection("||| Lighting Section |||")
-
-local Tab16 = Window:CreateTab("< / Baseplate >", 7734058260)
-local Section16 = Tab16:CreateSection("||| / Baseplate Section |||")
 
 local Tab12 = Window:CreateTab("< / Emotes >", 7743871002)
 local Section12 = Tab12:CreateSection("||| / Emoting Section |||")
@@ -482,7 +495,7 @@ local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
 
 local Tab15 = Window:CreateTab("< / UI >", 7734022107)
 local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
-wait(0.3)
+wait()
 local GameFolder = getgenv().Workspace:FindFirstChild("Game")
 local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
 local AssetService = game:GetService("AssetService")
@@ -1577,27 +1590,6 @@ Callback = function(unclaimTheirBooth)
     Claim_A_Booth()
 end,})
 
-local Button = Tab13:CreateButton({
-Name = "Trip And Die (FE)",
-Callback = function()
-    function getRoot(char)
-        local rootPart = char:FindFirstChild('HumanoidRootPart') or char:WaitForChild("HumanoidRootPart") or char:FindFirstChild("HumanoidRootPart", true) or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-        return rootPart
-    end
-    local hum = getgenv().Humanoid
-    local root = getRoot(getgenv().Character)
-    if hum then
-        hum.Jump = true
-        wait()
-        hum.Jump = true
-        wait(0.1)
-        hum:ChangeState(0)
-        root.Velocity = root.CFrame.LookVector * 30
-        wait(0.3)
-        hum.Health = 0
-    end
-end,})
-
 local FrozenChar = Tab2:CreateToggle({
 Name = "Freeze Your Character",
 CurrentValue = false,
@@ -1748,99 +1740,6 @@ Callback = function(Cussing)
         getgenv().Cuss = false
     end
 end,})
-
-local ToggleBaseplateRainbow = Tab16:CreateToggle({
-Name = "Rainbow Baseplate",
-CurrentValue = false,
-Flag = "ToggleRainbowBaseplate",
-Callback = function(getRainbowBaseplate)
-    if getRainbowBaseplate then
-        local TweenService = game:GetService("TweenService") or cloneref(game:GetService("TweenService")) or game.TweenService or game:FindService("TweenService")
-        local ws = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
-        local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
-        local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
-        
-        if getpart and getFolder then
-            getpart.Transparency = 0
-            wait(0.2)
-            getgenv().StartRainbowPart = true
-            wait(0.1)
-            local colors = {
-                Color3.fromRGB(255, 255, 255),
-                Color3.fromRGB(255, 0, 0),
-                Color3.fromRGB(0, 0, 255),
-                Color3.fromRGB(255, 105, 180),
-                Color3.fromRGB(255, 255, 0),
-                Color3.fromRGB(0, 128, 128),
-                Color3.fromRGB(107, 142, 35),
-                Color3.fromRGB(75, 0, 130),
-                Color3.fromRGB(255, 0, 255),
-                Color3.fromRGB(255, 182, 193),
-                Color3.fromRGB(139, 69, 19)
-            }
-        
-            local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-        
-            while getgenv().StartRainbowPart == true do
-                for _, color in ipairs(colors) do
-                    local tween = TweenService:Create(getpart, tweenInfo, {Color = color})
-                    tween:Play()
-                    wait(0.1)
-                end
-            end            
-        else
-            getgenv().StartRainbowPart = false
-            return warn("nil | Baseplate")
-        end
-    else
-        getgenv().StartRainbowPart = false
-        wait()
-        local ws = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
-        local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
-        local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
-        getpart.Transparency = 1
-        wait(0.2)
-        getpart.BrickColor = BrickColor.new("Medium stone grey")
-    end
-end,})
-
---[[local changeBaseplateColor = Tab16:CreateDropdown({
-Name = "Change Baseplate Color",
-Options = {"White", "Red", "Blue", "Green", "Yellow", "Purple", "Brown", "Cyan", "Pink", "Orange", "Teal", "Grey"},
-CurrentOption = {"Gray"},
-MultipleOptions = false,
-Flag = "baseplateColoring",
-Callback = function(getChangeBaseplateColor)
-    local ws = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
-    local getFolder = ws:FindFirstChild("PartStorage") or ws:WaitForChild("PartStorage")
-    local getpart = getFolder:FindFirstChildOfClass("Part") or getFolder:FindFirstChildWhichIsA("Part")
-
-    if CurrentOption == "White" then
-        getpart.BrickColor = BrickColor.White()
-    elseif CurrentOption == "Red" then
-        getpart.BrickColor = BrickColor.Red()
-    elseif CurrentOption == "Blue" then
-        getpart.BrickColor = BrickColor.Blue()
-    elseif CurrentOption == "Green" then
-        getpart.BrickColor = BrickColor.Green()
-    elseif CurrentOption == "Yellow" then
-        getpart.BrickColor = BrickColor.Yellow()
-    elseif CurrentOption == "Purple" then
-        getpart.BrickColor = BrickColor.Purple()
-    elseif CurrentOption == "Brown" then
-        getpart.BrickColor = BrickColor.Brown()
-    elseif CurrentOption == "Cyan" then
-        getpart.BrickColor = BrickColor.Cyan()
-    elseif CurrentOption == "Pink" then
-        getpart.BrickColor = BrickColor.Pink()
-    elseif CurrentOption == "Orange" then
-        getpart.BrickColor = BrickColor.Orange()
-    elseif CurrentOption == "Teal" then
-        getpart.BrickColor = BrickColor.Teal()
-    elseif CurrentOption == "Grey" then
-        getpart.BrickColor = BrickColor.Gray()
-    end
-end,})--]]
 
 local SpinCharBox = Tab2:CreateInput({
 Name = "Spin Character",
@@ -2899,44 +2798,6 @@ Callback = function()
         animTrack:Stop()
     end
 end,})
-wait()
-local GetWorkspace = game:GetService("Workspace")
-local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
-local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
-if FindBaseplate then
-    FindBaseplate.Material = Enum.Material.Air
-    wait()
-    FindBaseplate.Transparency = 1
-else
-    warn("??? - BASEPLATE")
-end
-wait()
-local MakeBaseplateVis = Tab16:CreateToggle({
-Name = "Baseplate Visible",
-CurrentValue = false,
-Flag = "MakingBaseplateVisible",
-Callback = function(makeVis)
-    if makeVis then
-        getgenv().MakingVisible = true
-        if getgenv().MakingVisible == true then
-            local GetWorkspace = game:GetService("Workspace")
-            local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
-            local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
-            if FindBaseplate then
-                FindBaseplate.Transparency = 0
-            end
-        end
-    else
-        getgenv().MakingVisible = false
-        wait()
-        local GetWorkspace = game:GetService("Workspace")
-        local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
-        local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
-        if FindBaseplate then
-            FindBaseplate.Transparency = 1
-        end
-    end
-end,})
 
 local quickAvChange = Tab13:CreateToggle({
 Name = "Change Avatar Quick [WILL Lag!⚠️]",
@@ -3011,66 +2872,6 @@ Callback = function(quickAv)
         game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
     end
 end})
-
-local CollisionForBaseplate = Tab16:CreateToggle({
-Name = "Turn Collision Off/On",
-CurrentValue = false,
-Flag = "CollisionFlagBaseplate",
-Callback = function(CollisionFieldBaseplate)
-    local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-    local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
-    local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
-
-    if CollisionFieldBaseplate then
-        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-        local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
-        local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
-        getgenv().doCollisionField = true
-        if getgenv().doCollisionField == true then
-            FindBaseplate.CanCollide = false
-        end
-    else
-        local GetWorkspace = cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-        local PartStorageFolder = GetWorkspace:WaitForChild("PartStorage") or GetWorkspace:FindFirstChild("PartStorage")
-        local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID")
-        FindBaseplate.CanCollide = true
-        wait()
-        getgenv().doCollisionField = false
-    if FindBaseplate.CanCollide == false and getgenv().doCollisionField == true then
-        getgenv().doCollisionField = false
-        wait()
-        Rayfield:Notify({
-            Title = "[Note]: Read This:",
-            Content = "You have disabled CanCollide, we turned off loop.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
-        wait()
-        Rayfield:Notify({
-            Title = "[OUTPUT]: CanCollide:",
-            Content = "CanCollide = false, Loop: OFF",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
-        end
-    end
-end,})
 
 local AutoChangingBooth = Tab11:CreateToggle({
 Name = "Quick Changing Booth",
@@ -3168,6 +2969,153 @@ Callback = function(crazy)
         end
     else
         getgenv().Auto = false
+    end
+end,})
+
+local GraphicsEnhancer = Tab16:CreateButton({
+Name = "Graphics Enhancer",
+Callback = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PublicScriptsOnRobloxExploiting/refs/heads/main/GraphicsEnhancer.lua"))()
+end,})
+
+local CtrlClickTP = Tab16:CreateToggle({
+Name = "Ctrl Click-TP (Hold CTRL and Click)",
+CurrentValue = false,
+Flag = "CtrlClickTPConnection",
+Callback = function(toggleConnectionClickTP)
+    if toggleConnectionClickTP then
+        if getgenv().TeleportConnection then getgenv().TeleportConnection:Disconnect() end
+
+        local UIS = game:GetService("UserInputService")
+        local Player = game.Players.LocalPlayer
+        local Mouse = Player:GetMouse()
+
+        function GetCharacter()
+            return Player.Character
+        end
+
+        function Teleport(pos)
+            local Char = GetCharacter()
+            if Char then
+                Char:MoveTo(pos)
+            end
+        end
+
+        getgenv().TeleportConnection = UIS.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 and UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
+                Teleport(Mouse.Hit.p)
+            end
+        end)
+    else
+        if getgenv().TeleportConnection then
+            getgenv().TeleportConnection:Disconnect()
+            getgenv().TeleportConnection = nil
+        end
+    end
+end,})
+
+local Backflips = Tab16:CreateButton({
+Name = "Backflips (FE)",
+Callback = function()
+    local ver = "2.15"
+    local scriptname = "feFlip"
+
+    local FrontflipKey = Enum.KeyCode.Z
+    local BackflipKey = Enum.KeyCode.X
+    local AirjumpKey = Enum.KeyCode.C
+
+    local ca = game:GetService("ContextActionService")
+    local zeezy = getgenv().LocalPlayer
+    local Humanoid = getgenv().Humanoid
+    local h = 0.0174533
+    local antigrav
+
+    function zeezyFrontflip(act,inp,obj)
+        if inp == Enum.UserInputState.Begin then
+            getgenv().Humanoid:ChangeState("Jumping")
+            wait()
+            getgenv().Humanoid.Sit = true
+            for i = 1,360 do 
+                delay(i/720,function()
+                    getgenv().Humanoid.Sit = true
+                    getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(-h,0,0)
+                end)
+            end
+            wait(0.55)
+            getgenv().Humanoid.Sit = false
+        end
+    end
+
+    function zeezyBackflip(act,inp,obj)
+        if inp == Enum.UserInputState.Begin then
+            getgenv().Humanoid:ChangeState("Jumping")
+            wait()
+            getgenv().Humanoid.Sit = true
+            for i = 1,360 do
+                delay(i/720,function()
+                    getgenv().Humanoid.Sit = true
+                    getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(h,0,0)
+                end)
+            end
+            wait(0.55)
+            getgenv().Humanoid.Sit = false
+        end
+    end
+
+    function zeezyAirjump(act,inp,obj)
+        if inp == Enum.UserInputState.Begin then
+            getgenv().Humanoid:ChangeState("Seated")
+            wait()
+            getgenv().Humanoid:ChangeState("Jumping")	
+        end
+    end
+
+    ca:BindAction("zeezyFrontflip",zeezyFrontflip,false,FrontflipKey)
+    ca:BindAction("zeezyBackflip",zeezyBackflip,false,BackflipKey)
+    ca:BindAction("zeezyAirjump",zeezyAirjump,false,AirjumpKey)
+
+    local notifSound = Instance.new("Sound",workspace)
+    notifSound.PlaybackSpeed = 1.5
+    notifSound.Volume = 0.25
+    notifSound.SoundId = "rbxassetid://170765130"
+    notifSound.PlayOnRemove = true
+    notifSound:Destroy()
+    game.StarterGui:SetCore("SendNotification", {Title = "feFlip", Text = "FE Flip loaded successfully!", Icon = "rbxassetid://505845268", Duration = 8, Button1 = "Okay"})
+end,})
+
+local InfJumpDoFunc = Tab16:CreateToggle({
+Name = "Infinite Jump",
+CurrentValue = false,
+Flag = "ConnectionInfiJump",
+Callback = function(infJumpConnect)
+    if infJumpConnect then
+        local Player = game:GetService('Players').LocalPlayer
+        local UIS = game:GetService('UserInputService')
+        
+        _G.JumpHeight = 50
+        
+        function Action(Object, Function)
+            if Object ~= nil then
+                Function(Object)
+            end
+        end
+        
+        getgenv().JumpBoostConnection = UIS.InputBegan:Connect(function(UserInput)
+            if UserInput.UserInputType == Enum.UserInputType.Keyboard and UserInput.KeyCode == Enum.KeyCode.Space then
+                Action(Player.Character.Humanoid, function(self)
+                    if self:GetState() == Enum.HumanoidStateType.Jumping or self:GetState() == Enum.HumanoidStateType.Freefall then
+                        Action(self.Parent.HumanoidRootPart, function(self)
+                            self.Velocity = Vector3.new(0, _G.JumpHeight, 0)
+                        end)
+                    end
+                end)
+            end
+        end)
+    else
+        if getgenv().JumpBoostConnection then
+            getgenv().JumpBoostConnection:Disconnect()
+            getgenv().JumpBoostConnection = nil
+        end
     end
 end,})
 
@@ -5398,6 +5346,16 @@ Callback = function(getAUser)
     end
 end,})
 
+local ResetButton = Tab15:CreateButton({
+Name = "Reset",
+Callback = function()
+    local Humanoid = getgenv().Humanoid
+    wait()
+    if getgenv().LocalPlayer.Character and getgenv().Character and getgenv().Character:FindFirstChildWhichIsA("Humanoid") and getgenv().Humanoid and Humanoid then
+        Humanoid.Health = 0
+    end
+end,})
+
 local RejoinButton = Tab15:CreateButton({
 Name = "Rejoin",
 Callback = function()
@@ -5409,7 +5367,7 @@ Callback = function()
 end,})
 
 local ServerHopButton = Tab15:CreateButton({
-Name = "Server Hop (Roblox broke this!.)",
+Name = "Server Hop (Roblox broke this!)",
 Callback = function()
     -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
     httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
@@ -6345,11 +6303,6 @@ else
     getgenv().camera_zoom_data = true
     wait(0.1)
 end
-wait(0.3)
-local PartStorageFolder = getgenv().Workspace:WaitForChild("PartStorage") or getgenv().Workspace:FindFirstChild("PartStorage")
-local FindBaseplate = PartStorageFolder:WaitForChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChild("BASEPLATE_CLONE_ANTI_VOID") or PartStorageFolder:FindFirstChildOfClass("Part") or PartStorageFolder:FindFirstChildWhichIsA("Part")
-FindBaseplate.BrickColor = BrickColor.new("Grey")
-FindBaseplate.Material = Enum.Material.Carpet
 wait(0.2)
 print("Getting Requirements... [1 moment.]")
 wait(0.3)
