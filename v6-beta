@@ -5220,6 +5220,36 @@ Callback = function()
     light.SunRays.Spread = 3
 end,})
 
+local slowMotionToggle = Tab12:CreateToggle({
+Name = "Slow Motion Emotes (Loop)",
+CurrentValue = false,
+Flag = "slowMotionAllEmotes",
+Callback = function(slowMotionToggle)
+    if slowMotionToggle then
+        getgenv().slowMotionToggle = true
+        while getgenv().slowMotionToggle == true do
+        wait()
+            local Humanoid = getgenv().Humanoid
+            local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+            for _, v in pairs(ActiveTracks) do
+                v:AdjustSpeed(0.3)
+            end
+        end
+    else
+        getgenv().slowMotionToggle = false
+        wait(0.5)
+        local Humanoid = getgenv().Humanoid
+        local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+        for _, v in pairs(ActiveTracks) do
+            v:AdjustSpeed(1)
+        end
+        wait()
+        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
+            v:Stop()
+        end
+    end
+end,})
+
 local FreezeEmotesToggle = Tab12:CreateToggle({
 Name = "Freeze Emotes",
 CurrentValue = false,
@@ -5237,6 +5267,36 @@ Callback = function(freezeToggle)
         end
     else
         getgenv().doFreezeToggle = false
+        wait(0.5)
+        local Humanoid = getgenv().Humanoid
+        local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+        for _, v in pairs(ActiveTracks) do
+            v:AdjustSpeed(1)
+        end
+        wait()
+        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
+            v:Stop()
+        end
+    end
+end,})
+
+local FastestEmotes = Tab12:CreateToggle({
+Name = "Fast Emotes (Loop)",
+CurrentValue = false,
+Flag = "FastEmotesEveryEmote",
+Callback = function(fastToggle)
+    if fastToggle then
+        getgenv().fastToggle = true
+        while getgenv().fastToggle == true do
+        wait()
+            local Humanoid = getgenv().Humanoid
+            local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+            for _, v in pairs(ActiveTracks) do
+                v:AdjustSpeed(70)
+            end
+        end
+    else
+        getgenv().fastToggle = false
         wait(0.5)
         local Humanoid = getgenv().Humanoid
         local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
