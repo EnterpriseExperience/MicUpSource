@@ -3168,6 +3168,17 @@ Callback = function(toggleBool)
     end
 end,})
 
+local flashBackRewindScript = Tab16:CreateButton({
+Name = "Flashback Rewind",
+Callback = function()
+    if getgenv().flashbacks then
+        return 
+    else
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/saya420/Mic-Up/main/Flashback-Rewind"))();
+        getgenv().flashbacks = true
+    end
+end,})
+
 local InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
 wait()
 local InfoLabelParagraph = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
