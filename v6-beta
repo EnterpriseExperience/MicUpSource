@@ -1224,6 +1224,14 @@ Callback = function(claimAnyBooth)
     end
 end,})
 
+local DeletePlrBooth = Tab11:CreateButton({
+Name = "Fix Glitched Booth Screen (GUI)",
+Callback = function()
+    for i = 1, 2000 do
+        getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
+    end
+end,})
+
 local claimRandomBooth = Tab11:CreateButton({
 Name = "Claim Random Booth",
 Callback = function()
@@ -1988,7 +1996,9 @@ end,})
 local DeletePlrBooth = Tab11:CreateButton({
 Name = "Delete Current Booth",
 Callback = function()
-    getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
+    for i = 1, 80 do
+        getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
+    end
 end,})
 
 --[[local CharIntoAnyAvatar = Tab13:CreateInput({
