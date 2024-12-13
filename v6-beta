@@ -3126,6 +3126,45 @@ Callback = function()
         return notify("Notification:", "Already loaded face f*ck script!", 7.5)
     else
         loadstring(game:HttpGet('https://raw.githubusercontent.com/saya420/Mic-Up/main/facefuck'))()
+        getgenv().loaded_face_bang = true
+    end
+end,})
+
+local glitchingSide = Tab16:CreateToggle({
+Name = "Glitch SideToSide",
+CurrentValue = false,
+Flag = "GlitchyScript"
+Callback = function(toggleBool)
+    if toggleBool then
+        getgenv().glitchActive = true
+    
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+        local runService = game:GetService("RunService")
+        local teleportDistance = 20
+        local teleportSpeed = 0.01
+        local toggleConnection
+    
+        local function toggleTeleportEffect()
+            if getgenv().glitchActive then
+                getgenv().toggleConnection = runService.RenderStepped:Connect(function()
+                    local direction = math.random(1, 2) == 1 and -1 or 1
+                    local rightVector = humanoidRootPart.CFrame.RightVector
+                    local offset = rightVector * (direction * teleportDistance)
+                    humanoidRootPart.CFrame = humanoidRootPart.CFrame + offset
+                    task.wait(teleportSpeed)
+                    humanoidRootPart.CFrame = humanoidRootPart.CFrame - offset
+                end)
+            end
+        end
+    
+        toggleTeleportEffect()
+    else
+        if getgenv().toggleConnection then
+            getgenv().toggleConnection:Disconnect()
+            getgenv().toggleConnection = nil
+        end
     end
 end,})
 
