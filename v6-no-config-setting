@@ -2978,7 +2978,7 @@ end,})
 local glitchingSide = Tab16:CreateToggle({
 Name = "Glitch SideToSide",
 CurrentValue = false,
-Flag = "GlitchyScript"
+Flag = "GlitchyScript",
 Callback = function(toggleBool)
     if toggleBool then
         getgenv().glitchActive = true
