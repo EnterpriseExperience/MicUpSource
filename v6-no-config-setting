@@ -4772,7 +4772,7 @@ Callback = function()
         local Bloom = Instance.new("BloomEffect")
         Bloom.Name = "Bloom"
         Bloom.Parent = Lighting
-        Bloom.Intensity 1
+        Bloom.Intensity = 1
         Bloom.Enabled = true
         Bloom.Size = 24
         Bloom.Threshold = 2
