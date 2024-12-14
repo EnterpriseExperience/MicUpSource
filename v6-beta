@@ -57,11 +57,6 @@ end)
 
 local function onVoiceChatStateChanged(oldState, newState)
     if newState == Enum.VoiceChatState.Ended then
-        for i = 1, 15 do
-            getgenv().VoiceChatService:joinVoice()
-            task.wait(0.4)
-        end
-        wait(0.2)
         getgenv().VoiceChatService:joinVoice()
     end
 end
