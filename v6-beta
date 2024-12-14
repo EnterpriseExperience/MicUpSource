@@ -358,12 +358,12 @@ wait(0.3)
     getgenv().loading_screen_data = true
     wait(0.1)
     -- [] -->> Initialization <<-- [] --
-    repeat wait() until getgenv().Game:IsLoaded() and getgenv().Service_Wrap("Players") and getgenv().LocalPlayer and getgenv().LocalPlayer.Character and getgenv().Character:FindFirstChild("HumanoidRootPart")
-    wait(0.3)
-    if not getgenv().Workspace:FindFirstChild("PartStorage") then
+    if getgenv().Workspace:FindFirstChild("PartStorage") then
+        print("Already found Folder")
+    else
         local NewFolder = Instance.new("Folder")
         NewFolder.Name = "PartStorage"
-        NewFolder.Parent = getgenv().Workspace
+        NewFolder.Parent = game:GetService("Workspace")
     end
 
     wait(0.2)
@@ -371,7 +371,7 @@ wait(0.3)
         local screenGui = Instance.new("ScreenGui") 
         screenGui.IgnoreGuiInset = true
         screenGui.Name = "BASEPLATE_LOADING"
-        screenGui.Parent = getgenv().PlayerGui
+        screenGui.Parent = getgenv().LocalPlayer:WaitForChild("PlayerGui")
         
         local fullScreenFrame = Instance.new("Frame")
         fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
