@@ -615,27 +615,31 @@ end
             })
         end
         
-        local UserInputService = game:GetService("UserInputService")
-        
-        local Audio_Device_Input = LocalPlayer.AudioDeviceInput
-
-        local isMuted = false
-        Audio_Device_Input.Muted = isMuted
-
-        local function onInputBegan(input, gameProcessed)
-            if gameProcessed then return end
-            if input.KeyCode == Enum.KeyCode.RightControl then
-                isMuted = not isMuted
-                Audio_Device_Input.Muted = isMuted
-                if isMuted then
-                    notify("Success!", "Muted Microphone", 2)
-                else
-                    notify("Success!", "Unmuted Microphone", 2)
+        if getgenv().muted_self_keybind then
+            print("Already loaded mute keybind.")
+        else
+            local UserInputService = game:GetService("UserInputService")
+            
+            local Audio_Device_Input = LocalPlayer.AudioDeviceInput
+    
+            local isMuted = false
+            Audio_Device_Input.Muted = isMuted
+    
+            local function onInputBegan(input, gameProcessed)
+                if gameProcessed then return end
+                if input.KeyCode == Enum.KeyCode.RightControl then
+                    isMuted = not isMuted
+                    Audio_Device_Input.Muted = isMuted
+                    if isMuted then
+                        notify("Success!", "Muted Microphone", 2)
+                    else
+                        notify("Success!", "Unmuted Microphone", 2)
+                    end
                 end
             end
+            getgenv().UserInputService.InputBegan:Connect(onInputBegan)
+            getgenv().muted_self_keybind = true
         end
-
-        getgenv().UserInputService.InputBegan:Connect(onInputBegan)
     wait(0.3)
 local TeleportService = game:GetService("TeleportService")
 
