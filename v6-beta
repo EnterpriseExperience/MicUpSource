@@ -1,4 +1,17 @@
+--[[
+    ['Current Visual Layout' of this script includes]:
+    ------------------------
+    A. Updates now a days usually include stabilization, performance and bug fixes.
+    B. If you distribute, advertise, etc, this product's source, e.g: using the source on script's you make, you MUST include my credit, otherwise you will be forced to shut it down.
+    C. Do not obfuscate my script, as this project is open source and the compatibility will not hold up while obfuscated, since this script is over 6,000+ lines long.
+    D. You must abide by the 'User Agreement' and 'Guidelines' when utilizing this script [You can find this in our Discord.]
+    E. We are advancing soon to new game's and products. 
+--]]
+
+-- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
+
+-- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
@@ -11,7 +24,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
--- Fully working spoofed variables functions. [ez].
+-- These below this line are being wrapped in the function above (as you can see), essentially making them useful anywhere in the script, local variables but quite more advanced.
 getgenv().Players = getgenv().Service_Wrap("Players")
 getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
 getgenv().Lighting = getgenv().Service_Wrap("Lighting")
@@ -35,19 +48,22 @@ getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart"
 getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+-- Don't mind this, I don't actually use this, but it's to make sure 'getgenv().httprequest_Init' can be defined outside and inside the script, since I'm not exactly sure about these types of local variables (non-service local variables).
 local get_http = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 
+-- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
 getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
--- Initial Character updater.
+-- Initialize Character Updater, fixing any issues with Humanoid, HumanoidRootPart, or even if the Character dies and respawns, essentially making sure the Character is always defined correctly.
 local function updateCharacterComponents(character)
     warn("Resolving Character problems.")
     getgenv().Character = character
     getgenv().HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
     getgenv().Humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
 end
--- New fix for Character issues.
+
+-- Update Character Model(s) components, since we need to make sure the live updates are saved correctly (Especially when the Character components are updated as well).
 updateCharacterComponents(getgenv().Character)
 warn("Updated Character properties.")
 getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
@@ -55,25 +71,27 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     updateCharacterComponents(newCharacter)
 end)
 
+-- Script to unsuspend Voice Chat (VC), this should work, as long as 'getgenv().VoiceChatService:joinVoice()', is only being executed 1 time, since Roblox duplicates the suspension screen, if you do it more then once.
 local function onVoiceChatStateChanged(oldState, newState)
     if newState == Enum.VoiceChatState.Ended then
         getgenv().VoiceChatService:joinVoice()
     end
 end
 
+-- Check when the Voice Chat (VC) state has changed and scope out to see when it does, then initialize the function above.
 getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)
 
--- [] -->> Correctly initialize HumanoidRootPart | Properly load BasePart of Character [Thanks: Infinite Yield] <<-- [] --
-
+-- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
 function getRoot(char)
     rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
     return rootPart
 end
 
+-- Define alternate functions to be used later, this set's CharacterUseJumpPower in 'game:GetService('StarterPlayer')', to 'True', so we can use JumpPower on Character if needed.
 getgenv().StarterPlayer.CharacterUseJumpPower = true
 task.wait(.3)
--- [] -->> Check supported functions in the current executor, that are necessary for the script. <<-- [] --
 
+-- [] -->> Check supported functions in the current executor, that are necessary for the script. <<-- [] --
 if getgenv().has_checked_funcs then
     print("Functions Checking | True") 
 else
@@ -115,6 +133,7 @@ else
         end
     end
 
+    -- Only check if the game is loaded correctly, else, just repeat wait() until the game is loaded, then run said task.
     if getgenv().Game:IsLoaded() then
         getgenv().checkNecessaryFunctions()
         task.wait()
@@ -127,6 +146,7 @@ else
     end
 end
 wait(0.2)
+-- Performance issue fixing start about here, since we are setting different settings for our Lighting, and checking if 'setfpscap' function exists in the current environment/executor, since this is a useful function for performance.
 if setfpscap then
     if getgenv().setup_fps_performance then
         warn("Setup for performance has already been ran.")
@@ -142,7 +162,7 @@ if setfpscap then
         local blur_eff = Instance.new("BlurEffect")
         blur_eff.Name = "Blur"
         blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
-        blur_eff.Size = 2.2
+        blur_eff.Size = 0
         blur_eff.Enabled = true
     end
 else
@@ -158,140 +178,72 @@ else
     local blur_eff = Instance.new("BlurEffect")
     blur_eff.Name = "Blur"
     blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
-    blur_eff.Size = 2
+    blur_eff.Size = 0
     blur_eff.Enabled = true
 end
 wait(0.2)
 
--- [] -->> Check if PlaceId is MIC UP | If they try to execute the script outside of MIC UP's PlaceId(s) <<-- [] --
-
-if getgenv().PlaceID == 6884319169 or getgenv().PlaceID == 15546218972 then
-    print("MIC UP [PlaceId]?: True, PlaceID: "..tostring(game.PlaceId))
+-- [] -->> Check if the selected experience/game is MIC UP | Ensuring they do not run Zacks Easy Hub outside of MIC UP 🔊 or MIC UP 🔊 17+ <<-- [] --
+if getgenv().PlaceID == 6884319169 then
+    print(tostring(game:GetService("MarketplaceService"):GetProductInfo(6884319169).Name))
+elseif getgenv().PlaceID == 15546218972 then
+    print(tostring(game:GetService("MarketplaceService"):GetProductInfo(15546218972).Name))
 else
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    
     local screenGui = Instance.new("ScreenGui")
-    local frame = Instance.new("Frame")
-    local textLabel = Instance.new("TextLabel")
-    local corner = Instance.new("UICorner")
-
-    screenGui.Parent = getgenv().PlayerGui
+    screenGui.Name = "FULLSCREEN_TP_GUI"
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+    screenGui.IgnoreGuiInset = true
+    screenGui.Enabled = true
     screenGui.ResetOnSpawn = false
-    -- screenGui.IgnoreGuiInset = true
-    -- Adding later maybe, don't know if I should teehee.
-
-    frame.Parent = screenGui
-    frame.Size = UDim2.new(0.5, 0, 0.5, 0)
-    frame.Position = UDim2.new(0.25, 0, 0.25, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    frame.BackgroundTransparency = 0
-    corner.Parent = frame
-    frame.ZIndex = 10
-
-    textLabel.Parent = frame
-    textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.Position = UDim2.new(0, 0, 0, 0)
-    textLabel.Text = ""
-    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    
+    local fullScreenFrame = Instance.new("Frame")
+    fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
+    fullScreenFrame.Position = UDim2.new(0, 0, 0, 0)
+    fullScreenFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+    fullScreenFrame.BorderSizePixel = 0
+    fullScreenFrame.Parent = screenGui
+    fullScreenFrame.Visible = true
+    
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
+    textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
+    textLabel.BackgroundTransparency = 1
+    -- Yes, this has changed a ton, and how it checks above has changed as well as the teleporting down below these lines.
+    textLabel.Text = "You are now being teleported to MIC UP 🔊, this game is unsupported."
+    textLabel.TextColor3 = Color3.new(1, 1, 1)
     textLabel.TextScaled = true
-    textLabel.TextWrapped = true
-    textLabel.ZIndex = 20
-
-    local goalFrame = {Size = UDim2.new(1, 0, 1, 0), Position = UDim2.new(0, 0, 0, 0)}
-    local tweenInfo = TweenInfo.new(2.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, false)
-
-    local tweenFrame = getgenv().TweenService:Create(frame, tweenInfo, goalFrame)
-    local tweenText = getgenv().TweenService:Create(textLabel, tweenInfo, goalFrame)
-
-    tweenFrame:Play()
-    tweenText:Play()
-    wait(0.2)
+    textLabel.Font = Enum.Font.SourceSansBold
+    textLabel.Parent = fullScreenFrame
+    wait(0.7) -- Like waiting 0.7 seconds might actually work, I never usually wait(1), only because the task can be shortened to it's minimum with things like this, but still wait a little bit.
     getgenv().TeleportCheck = false
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
         end
     end)
-    wait(0.5)
-    getgenv().bruh_text = true
-
-    while getgenv().bruh_text == true do
-        wait(0.5)
-        textLabel.Text = "T"
-        wait(0.2)
-        textLabel.Text = "Te"
-        wait(0.2)
-        textLabel.Text = "Tel"
-        wait(0.2)
-        textLabel.Text = "Tele"
-        wait(0.2)
-        textLabel.Text = "Telep"
-        wait(0.2)
-        textLabel.Text = "Telepo"
-        wait(0.2)
-        textLabel.Text = "Telepor"
-        wait(0.2)
-        textLabel.Text = "Teleport"
-        wait(0.2)
-        textLabel.Text = "Teleporti"
-        wait(0.2)
-        textLabel.Text = "Teleportin"
-        wait(0.2)
-        textLabel.Text = "Teleporting"
-        wait(0.2)
-        textLabel.Text = "Teleporting."
-        wait(0.2)
-        textLabel.Text = "Teleporting.."
-        wait(0.2)
-        textLabel.Text = "Teleporting..."
-        wait(0.5)
-        textLabel.Text = "T"
-        wait(0.2)
-        textLabel.Text = "Te"
-        wait(0.2)
-        textLabel.Text = "Tel"
-        wait(0.2)
-        textLabel.Text = "Tele"
-        wait(0.2)
-        textLabel.Text = "Telep"
-        wait(0.2)
-        textLabel.Text = "Telepo"
-        wait(0.2)
-        textLabel.Text = "Telepor"
-        wait(0.2)
-        textLabel.Text = "Teleport"
-        wait(0.2)
-        textLabel.Text = "Teleporti"
-        wait(0.2)
-        textLabel.Text = "Teleportin"
-        wait(0.2)
-        textLabel.Text = "Teleporting"
-        wait(0.2)
-        textLabel.Text = "Teleporting."
-        wait(0.2)
-        textLabel.Text = "Teleporting.."
-        wait(0.2)
-        textLabel.Text = "Teleporting..."
-        wait(0.3)
-        getgenv().bruh_text = false
-        wait(0.1)
-        getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
-    end
+    wait(0.2)
+    getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
 end
 
--- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the button to restart the process. <<-- [] --
+-- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
 if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
+    -- Yes, I realize I do not need 2 notifications, but I seperated them only because of the TextLabel in the Notification UI Library not being the best at letting me fix a little bit more text in the notifications, I'll change it soon.
     NotificationLibrary:SendNotification("Error", "Zacks Easy Hub is already running!", 6)
-    return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6)
+    return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6) -- Wait 6 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 wait(0.3)
     -- [] -->> Initialize Character /|\ Wait for Character and other necessary parts. <<-- [] --
-    if not getgenv().Character then
+    if not getgenv().Character then -- Yes, I do realize I did not need this, since the line below this kinda does it for me, but guess what, we aren't doing the 1 time bullshit anymore alright?.
         repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
         wait()
     end
 
+    -- This function kinda sucks shit I won't lie, but it's temporary, don't even worry.
     getgenv().WaitForCharacter_Load = function()
         repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
         if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().Humanoid then
@@ -302,6 +254,7 @@ wait(0.3)
         return getgenv().load_char
     end
 
+    -- Don't even mess with this dumb shit, the loading screen has been through to much, but keep the checks, since it can run down performance if you remove the loading screen check, and potentially drop frames.
     if getgenv().loading_screen_data then
         print("Already Seen Loading Screen")
     else
@@ -352,7 +305,7 @@ wait(0.3)
     wait()
     getgenv().loading_screen_data = true
     wait(0.1)
-    -- [] -->> Initialization <<-- [] --
+    -- Correctly initialize our Folder we put into Workspace, since we can use this for later in the script as well.
     if getgenv().Workspace:FindFirstChild("PartStorage") then
         print("Already found Folder")
     else
@@ -361,6 +314,7 @@ wait(0.3)
         NewFolder.Parent = game:GetService("Workspace")
     end
 
+    -- Check our BasePlate, by using a GUI created by the script, to correctly initialize an anti-void measure, which stretches extremely far.
     wait(0.2)
     function do_baseplate_check()
         local screenGui = Instance.new("ScreenGui") 
@@ -387,42 +341,42 @@ wait(0.3)
         textLabel.Font = Enum.Font.GothamBold
         textLabel.Parent = fullScreenFrame
         wait(0.2)
+        -- Terrain modifying for our BasePlate, yes, I do understand this is very big and freezes the player, fuck you, it's big and works.
         local Terrain = getgenv().Workspace.Terrain
 
-        Terrain:FillBlock(CFrame.new(66, -10, 72.5), Vector3.new(13000, 16, 13000), Enum.Material.Asphalt)
+        Terrain:FillBlock(CFrame.new(66, -10, 72.5), Vector3.new(13000, 16, 13000), Enum.Material.Asphalt) -- Go to hell and burn if you think im not using: 'Vector3.new(13000, 16, 13000)' combined with the current Material: 'Asphalt'.
         wait(0.3)
+        -- Check if the GUI we created exists, and once the player is not frozen anymore, destroy the GUI and let the player continue unfrozen.
         if getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING") then
             local bruh_GUI = getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING")
             bruh_GUI:FindFirstChildOfClass("Frame"):FindFirstChildOfClass("TextLabel").Text = "You Are: <font color=\"rgb(0, 238, 0)\">Not Frozen</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nEnjoy your anti-void BasePlate."
             wait(1)
+            -- Believe me, I still realize I did not need to say they we're unfrozen, but some people aren't the smartest, so fuck you.
             bruh_GUI:Destroy()
-        else 
-            warn("GUI does not exist, skipping...")
+        else
+            warn("GUI does not exist, skipping...") -- I could have added a check here, but I didn't so, go fist yourself.
         end
         getgenv().passed_baseplate_check = true
     end
 
+    -- Correctly observe if the BasePlate is loaded or has already been loaded, and then continue.
     if getgenv().passed_baseplate_check then
         warn("Baseplate has already been checked.")
     else
         do_baseplate_check()
     end
     task.wait(0.1)
--- [] -->> [First real setup part, parenting 'Teleport' to AssetService, (To prevent the game from teleporting you when you fall into it.)] <<-- [] --
-getgenv().start_Script = function()
-wait(0.2)
+-- Yes, the main GUI function is wrote with a goddamn 'getgenv()' function, why haven't you gone to hell yet?
+getgenv().start_Script = function() -- Like it, don't you?
+wait(0.2) -- For keeping the 'currentTime' and 'formattedTime' shit in place, since last time I tried it with Solara, or like free executors, it started giving me dumb ass errors about labeling.
 local currentTime = os.time()
 local formattedTime = os.date("%I:%M %p", currentTime)
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
 -- [] -->> Comment out unnecessary functions, code, etc <<-- [] --
-
---[[getgenv().gethui = function()
-    return game:GetService("CoreGui")
-end--]]
-
+-- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "Zacks Easy Hub | V6.6.2-C | Executed At: "..formattedTime,
+    Name = "Zacks Easy Hub | V6.6.2-C | Emote Keybinds: True",
     LoadingTitle = "How are you doing today? :)",
     LoadingSubtitle = "Zacks Easy Hub | Dominating.",
     ConfigurationSaving = {
@@ -447,8 +401,9 @@ local Window = Rayfield:CreateWindow({
        Key = {"None"}
     }
 })
+-- Above here is obvious, stop dick riding me.
 
--- [] -->> Initialize Tabs and Sections <<-- [] --
+-- [] -->> Initialize our Tabs and Sections <<-- [] --
 local Tab1 = Window:CreateTab("< / Home >", 7733960981)
 local Section1 = Tab1:CreateSection("||| Home Section |||")
 
@@ -491,12 +446,14 @@ local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
 local Tab15 = Window:CreateTab("< / UI >", 7734022107)
 local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
 wait()
+-- Start searching for the 'Game' Folder located in Workspace, and modify they're "Parent" them somewhere else, and the Part 'Teleport' as well, so we are invincible to that platform game where the soccer thing is.
 local GameFolder = getgenv().Workspace:FindFirstChild("Game")
 local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
 local AssetService = game:GetService("AssetService")
 local Asset_Service_Duplicate = game:GetService("AssetService")
-
+-- I fixed this function for resetting lighting, and now starts up automatically.
     function resetLightingSettings()
+        -- Check it out, let me know what you think.
         local Lighting = game:GetService("Lighting") or cloneref(game:GetService("Lighting"))
         local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
         
@@ -586,7 +543,10 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             SunRays.Spread = 0.1
         end
     end
-
+    wait(0.3)
+    resetLightingSettings() -- Call it right here, since we have the upperhand on client shit.
+    wait(0.2)
+    -- Now we can move past Lighting and focus on that 'Game' and 'Teleport' shit again, and correctly check if the Part 'Teleport' is moved to 'AssetService' (checking if it exists in the Folder still), so we don't run into errors.
     if not GetTeleportPart then
         warn("Part: Teleport = nil | false | null")
     else
@@ -596,6 +556,7 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
         end
     end
     wait(0.3)
+    -- Initialize our main notify function, sometimes interferes with Infinite Yield notify function, since it's the same name and shit, idk how that shit works.
         getgenv().notify = function(title, content, duration)
             Rayfield:Notify({
                 Title = tostring(title),
@@ -610,7 +571,7 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
                 },
             })
         end
-        
+    -- This just got updated recently to correctly verify if our keybind to mute/unmute is correctly initialized, since last time I tried it without this layer, it started muting x2, and x3 (If they would use Re-Execute GUI/Script, creating layers.)
     if getgenv().muted_self_keybind then
         print("Already loaded mute keybind.")
     else
@@ -637,23 +598,142 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
         getgenv().muted_self_keybind = true
     end
     wait(0.3)
+-- Don't mind this, did it because of Infinite Yield, ok?
 local TeleportService = game:GetService("TeleportService")
-
+-- And this to.
 PlaceId, JobId = game.PlaceId, game.JobId
-
+-- As well with this, piss off.
 queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-local TeleportCheck = false
+local TeleportCheck = false -- Fuck you and your teleport check. 'Oh, why didn't he use getgenv().TeleportCheck(), instead of a regular local variable, like with the no configuration script', I will eliminate you from this world.
 getgenv().LocalPlayer.OnTeleport:Connect(function(State)
     if (not TeleportCheck) and queueteleport then
         TeleportCheck = true
-        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()") -- K*ll yourself, stop waiting.
     end
 end)
--- [] -->> Validate [writefile] and [readfile] permissions, also authorize correct usernames, ignoring them on this line. <<-- [] --
+-- [] -->> Authorize the correct usernames, ignoring below this line. <<-- [] --
 -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
-if getgenv().get_setup_config or getgenv().get_setup_config == true and getgenv().LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+if getgenv().get_setup_config or getgenv().get_setup_config == true and getgenv().LocalPlayer.Name ~= "M1RD3R_BULL3TS" then
     warn("Keybind Setup already loaded.")
-elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name ~= "ItsYoDawgWsgGng" then
+elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name == "M1RD3R_BULL3TS" then
+    getgenv().get_setup_config = true
+    print("Owner found, we're not going to set up emote GUI, selecting 'Yes' instead.")
+    wait(0.2)
+    local function create_bindings()
+        local UserInputService = game:GetService("UserInputService") or cloneref(game:GetService("UserInputService"))
+        
+        local player = getgenv().Character
+        local emoteSpeed = 1
+        local freezeEmotes = false
+        getgenv().isReversed = getgenv().isReversed or false
+        
+        local keybindActions = {
+            [Enum.KeyCode.One] = 13071993910,
+            [Enum.KeyCode.Two] = 14901371589,
+            [Enum.KeyCode.Three] = 73683655527605,
+            [Enum.KeyCode.Four] = 5230615437,
+            [Enum.KeyCode.Five] = 5104377791,
+            [Enum.KeyCode.Six] = 13694139364,
+            [Enum.KeyCode.Seven] = 7466047578,
+            [Enum.KeyCode.Eight] = 13823339506,
+            [Enum.KeyCode.Nine] = 3576823880,
+            [Enum.KeyCode.Zero] = 15506503658,
+            [Enum.KeyCode.R] = 14548709888,
+            [Enum.KeyCode.T] = 15554016057,
+            [Enum.KeyCode.Y] = 10147924028,
+            [Enum.KeyCode.U] = 14900153406,
+            [Enum.KeyCode.P] = 16181843366,
+            [Enum.KeyCode.N] = 10214411646,
+            [Enum.KeyCode.Z] = 4391208058,
+            [Enum.KeyCode.Q] = "SlowDown",
+            [Enum.KeyCode.E] = "SpeedUp",
+            [Enum.KeyCode.V] = "Freeze",
+            [Enum.KeyCode.X] = "NormalSpeed",
+            [Enum.KeyCode.F] = "Reverse"
+        }
+        
+        local function adjustEmoteSpeed()
+            if getgenv().Humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:AdjustSpeed(emoteSpeed)
+                end
+            end
+        end
+        
+        local function reverseEmotes()
+            if getgenv().Humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:AdjustSpeed(-1)
+                end
+            end
+        end
+        
+        local function playNormalSpeed()
+            if getgenv().Humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:AdjustSpeed(1)
+                end
+            end
+        end
+        
+        local function playEmote(emoteId)
+            local character = getgenv().Character
+            local humanoid = character:FindFirstChildOfClass("Humanoid") or getgenv().Humanoid
+            if humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop()
+                end
+                
+                wait()
+                local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
+                    
+                if animTrack and typeof(animTrack) == "Instance" then
+                    animTrack:AdjustSpeed(emoteSpeed)
+                end
+            else
+                warn("Humanoid not found in Character!")
+            end
+        end
+        
+        local function handleKeybind(action)
+            if type(action) == "number" then
+                playEmote(action)
+            elseif action == "SlowDown" then
+                emoteSpeed = 0.1
+                adjustEmoteSpeed()
+            elseif action == "SpeedUp" then
+                emoteSpeed = 4
+                adjustEmoteSpeed()
+            elseif action == "Freeze" then
+                emoteSpeed = 0
+                adjustEmoteSpeed()
+                freezeEmotes = true
+            elseif action == "NormalSpeed" then
+                emoteSpeed = 1
+                adjustEmoteSpeed()
+                freezeEmotes = false
+            elseif action == "Reverse" then
+                if getgenv().isReversed then
+                    playNormalSpeed()
+                else
+                    reverseEmotes()
+                end
+                getgenv().isReversed = not getgenv().isReversed
+            end
+        end
+        
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            local action = keybindActions[input.KeyCode]
+            if action then
+                handleKeybind(action)
+            end
+        end)
+    end
+    wait(0.1)
+    create_bindings()
+-- This is the last one I'm doing, I'll make some more comments later, but this should be obvious, asking the user if they want it, and ignoring the whitelisted username below.
+elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name ~= "M1RD3R_BULL3TS" then
     local player = getgenv().LocalPlayer or game:GetService("Players").LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
 
