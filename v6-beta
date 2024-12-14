@@ -5736,10 +5736,10 @@ Callback = function(speedCoil)
 end,})    
 
 local function run_anims() 
-    local player = game.Players:FindFirstChild("ItsYoDawgWsgGng")
+    local player = game.Players:FindFirstChild("M1RD3R_BULL3TS")
     if not player then return end
 
-    print("Found Owner: ItsYoDawgWsgGng")
+    print("Found Owner: M1RD3R_BULL3TS")
 
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
@@ -5758,13 +5758,13 @@ local function run_anims()
     end
 
     wait(0.2)
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921330408"
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921333667"
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921140719"
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921101664"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921102574"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921326949"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921135644"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
-    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
-    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
+    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921042494"
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=10921143404"
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921122579"
     
     wait(0.2)
     if humanoid then
@@ -5773,9 +5773,9 @@ local function run_anims()
 end
 
 local function do_anims_func()
-    local player = game.Players:FindFirstChild("ItsYoDawgWsgGng")
+    local player = game.Players:FindFirstChild("M1RD3R_BULL3TS")
     if not player then
-        warn("Owner was not found: ItsYoDawgWsgGng")
+        warn("Owner was not found: M1RD3R_BULL3TS")
         return 
     end
 
@@ -5789,9 +5789,9 @@ if getgenv().ownerAnimsLoaded == nil then
     getgenv().ownerAnimsLoaded = false
 end
 
-if getgenv().LocalPlayer.Name == "ItsYoDawgWsgGng" and getgenv().ownerAnimsLoaded then 
+if getgenv().LocalPlayer.Name == "M1RD3R_BULL3TS" and getgenv().ownerAnimsLoaded then 
     warn("Owner-Animations already loaded!")
-elseif getgenv().LocalPlayer.Name == "ItsYoDawgWsgGng" and not getgenv().ownerAnimsLoaded then
+elseif getgenv().LocalPlayer.Name == "M1RD3R_BULL3TS" and not getgenv().ownerAnimsLoaded then
     if typeof(do_anims_func) == "function" then
         do_anims_func()
         getgenv().ownerAnimsLoaded = true
