@@ -1093,9 +1093,7 @@ local player = getgenv().LocalPlayer
 getgenv().whitelist = {}
 
 getgenv().ownerWhitelist = {
-    "M1RD3RCAUGHT",
-    "STK_kets4eki",
-    "ItsYoDawgWsgGng",
+    "M1RD3R_BULL3TS",
     "Laylay_4kla"
 }
 wait()
@@ -1442,7 +1440,7 @@ end,})
 local TPOwnerBruh = Tab1:CreateButton({
 Name = "Teleport To: Owner Of Script",
 Callback = function()
-    local OwnerName = "ItsYoDawgWsgGng"
+    local OwnerName = "M1RD3R_BULL3TS"
     if not game.Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
 
     if game.Players:FindFirstChild(OwnerName) then
@@ -1464,7 +1462,7 @@ Flag = "viewOwner",
 Callback = function(viewingOwner)
     if viewingOwner then
         getgenv().spectateOwner = true
-        local OwnerName = "ItsYoDawgWsgGng"
+        local OwnerName = "M1RD3R_BULL3TS"
         local Workspace = getgenv().Workspace
         local Camera = Workspace:FindFirstChild("Camera")
         if not getgenv().Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
@@ -2141,7 +2139,7 @@ Callback = function(beAnyAvatar)
     local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
 
     local args = {
-        [1] = "ItsYoDawgWsgGng"
+        [1] = "M1RD3R_BULL3TS"
     }
             
     ModifyUser_Remote:FireServer(unpack(args))
@@ -5810,7 +5808,6 @@ Flag = "SpeedCoilAlt",
 Callback = function(speedCoil)
     if speedCoil then
         getgenv().runningEnabled = true
-        getgenv().run_Shift_Speed = 16
         
         local player = game.Players.LocalPlayer
         local walkSpeed = 16
@@ -5842,7 +5839,7 @@ Callback = function(speedCoil)
         
         if player.Character then
             setupCharacter(player.Character)
-        end        
+        end
     else
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
