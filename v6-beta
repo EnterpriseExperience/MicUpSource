@@ -3327,9 +3327,9 @@ local flashBackRewindScript = Tab16:CreateButton({
 Name = "Flashback Rewind",
 Callback = function()
     if getgenv().flashbacks then
-        return notify("Failed", "Flashback Rewind is already running!", 7)
+        return getgenv().notify("Failed", "Flashback Rewind is already running!", 7)
     else
-        local key = settings_keybind.Keybind
+        local key = settings_flashback.Keybind
         local flashbackLength = 80
         local flashbackSpeed = tonumber(settings_flashback.Speed)
 
@@ -3337,6 +3337,8 @@ Callback = function()
         local uis = game:GetService("UserInputService")
         local player = game:GetService("Players").LocalPlayer
         local runService = game:GetService("RunService")
+        local humanoid = getgenv().Humanoid
+        local humanoidRootPart = getgenv().HumanoidRootPart
 
         local function getCharacter()
             return player.Character or player.CharacterAdded:Wait()
