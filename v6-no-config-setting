@@ -4420,6 +4420,7 @@ end,})
 local PrivRoomFloor = Tab10:CreateButton({
 Name = "TP To Private Room (Inside)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4436,6 +4437,7 @@ end,})
 local NextToBathrooms = Tab10:CreateButton({
 Name = "TP To Room Next To Bathrooms",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4452,6 +4454,7 @@ end,})
 local TPToBathrooms = Tab10:CreateButton({
 Name = "TP To Bathrooms",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4468,6 +4471,7 @@ end,})
 local TPToChilling = Tab10:CreateButton({
 Name = "TP To Chill Spot",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4484,6 +4488,7 @@ end,})
 local TPPicnicFirst = Tab10:CreateButton({
 Name = "TP To Picnic (Seat 1)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4500,6 +4505,7 @@ end,})
 local TPPicnicSecond = Tab10:CreateButton({
 Name = "TP To Picnic (Seat 2)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4516,6 +4522,7 @@ end,})
 local TPMicFirst = Tab10:CreateButton({
 Name = "TP To Stage (Mic 1)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4530,6 +4537,7 @@ end,})
 local TPMicSecond = Tab10:CreateButton({
 Name = "TP To Stage (Mic 2)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4546,6 +4554,7 @@ end,})
 local TPMiddleRoomArea = Tab10:CreateButton({
 Name = "TP To Middle Room (Tent)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4562,6 +4571,7 @@ end,})
 local TPBoothRows = Tab10:CreateButton({
 Name = "TP To Booth Rows (Table)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4578,6 +4588,7 @@ end,})
 local TPToTowerFloatPart = Tab10:CreateButton({
 Name = "TP To Tower (Float Up Part)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4594,6 +4605,7 @@ end,})
 local TPToTowerTop = Tab10:CreateButton({
 Name = "TP To Tower (Top)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4610,6 +4622,7 @@ end,})
 local TPToHighestPoint = Tab10:CreateButton({
 Name = "TP To Tower (Highest Part)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4626,6 +4639,7 @@ end,})
 local TPBooth1 = Tab10:CreateButton({
 Name = "TP To Booth-1",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4646,6 +4660,7 @@ end,})
 local TPBooth2 = Tab10:CreateButton({
 Name = "TP To Booth-2",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4666,6 +4681,7 @@ end,})
 local TPBooth3 = Tab10:CreateButton({
 Name = "TP To Booth-3",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4686,6 +4702,7 @@ end,})
 local TPBooth4 = Tab10:CreateButton({
 Name = "TP To Booth-4",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4706,6 +4723,7 @@ end,})
 local TPBooth5 = Tab10:CreateButton({
 Name = "TP To Booth-5",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4726,6 +4744,7 @@ end,})
 local TPToDonutShop = Tab10:CreateButton({
 Name = "TP To Donut Shop",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4742,6 +4761,7 @@ end,})
 local TPSeat1Donut = Tab10:CreateButton({
 Name = "TP To Donut Shop (Seat 1)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4758,6 +4778,7 @@ end,})
 local TPSeat1Donut = Tab10:CreateButton({
 Name = "TP To Donut Shop (Seat 2)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4774,6 +4795,7 @@ end,})
 local TPTableSeat1 = Tab10:CreateButton({
 Name = "TP To Donut Shop (Table Seat 1)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4790,6 +4812,7 @@ end,})
 local TPTableSeat2 = Tab10:CreateButton({
 Name = "TP To Donut Shop (Table, Seat 2)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4806,6 +4829,7 @@ end,})
 local TPBehindCounter = Tab10:CreateButton({
 Name = "TP To Donut Shop (Behind Counter)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4822,6 +4846,7 @@ end,})
 local TPAboveRelax = Tab10:CreateButton({
 Name = "TP Above Relaxing Room",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4838,6 +4863,7 @@ end,})
 local TPSubmitNoteBoard = Tab10:CreateButton({
 Name = "TP To Submit Note Board",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4854,6 +4880,7 @@ end,})
 local TPStageMic = Tab10:CreateButton({
 Name = "TP To Stage Mic",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
@@ -4870,6 +4897,7 @@ end,})
 local TPPrivRoomRoof = Tab10:CreateButton({
 Name = "TP To Private Room (Roof)",
 Callback = function()
+    wait(0.4)
     if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
         getgenv().Humanoid:ChangeState(3)
         task.wait(.2)
