@@ -3002,7 +3002,7 @@ Callback = function(toggleBool)
 end,})
 
 local settings_flashback = {
-    Keybind = "C",
+    Keybind = Enum.KeyCode.C,
     Speed = 0.9
 }
 
@@ -3012,7 +3012,11 @@ CurrentKeybind = tostring(settings_flashback.Keybind),
 HoldToInteract = false,
 Flag = "flashbackKeybindSet",
 Callback = function(keyPressedFlash)
-    settings_flashback.Keybind = tostring(keyPressedFlash)
+    if keyPressedFlash == Enum.KeyCode[keyPressedFlash] then
+        settings_flashback.Keybind = Enum.KeyCode[keyPressedFlash]
+    else
+        return getgenv().notify("Invalid input!", "Invalid keybind entered, please try again.", 7)
+    end
 end,})
 
 local FlashbackSpeed = Tab16:CreateSlider({
@@ -3042,6 +3046,7 @@ Callback = function()
         local runService = game:GetService("RunService")
         local humanoid = getgenv().Humanoid
         local humanoidRootPart = getgenv().HumanoidRootPart
+        local character = getgenv().Character
 
         local function getCharacter()
             return player.Character or player.CharacterAdded:Wait()
@@ -3092,7 +3097,7 @@ Callback = function()
             local humanoidRootPart = getHumanoidRootPart(character)
             local humanoid = character:FindFirstChildWhichIsA("Humanoid")
 
-            if uis:IsKeyDown(Enum.KeyCode[key]) then
+            if uis:IsKeyDown(key) then
                 flashback:Revert(character, humanoidRootPart, humanoid)
             else
                 flashback:Advance(character, humanoidRootPart, humanoid)
