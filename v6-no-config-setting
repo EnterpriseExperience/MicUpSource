@@ -10,6 +10,13 @@
 
 -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
+-- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
+if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
+    -- Yes, I realize I do not need 2 notifications, but I seperated them only because of the TextLabel in the Notification UI Library not being the best at letting me fix a little bit more text in the notifications, I'll change it soon.
+    NotificationLibrary:SendNotification("Error", "Zacks Easy Hub is already running!", 6)
+    return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6) -- Wait 6 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
+end
+pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 
 -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
 getgenv().Game = game
@@ -228,14 +235,6 @@ else
     wait(0.2)
     getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
 end
-
--- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
-if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
-    -- Yes, I realize I do not need 2 notifications, but I seperated them only because of the TextLabel in the Notification UI Library not being the best at letting me fix a little bit more text in the notifications, I'll change it soon.
-    NotificationLibrary:SendNotification("Error", "Zacks Easy Hub is already running!", 6)
-    return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6) -- Wait 6 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
-end
-pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 wait(0.3)
     -- [] -->> Initialize Character /|\ Wait for Character and other necessary parts. <<-- [] --
     if not getgenv().Character then -- Yes, I do realize I did not need this, since the line below this kinda does it for me, but guess what, we aren't doing the 1 time bullshit anymore alright?.
