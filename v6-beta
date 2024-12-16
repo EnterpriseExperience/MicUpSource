@@ -3305,17 +3305,13 @@ CurrentKeybind = tostring(settings_flashback.Keybind),
 HoldToInteract = false,
 Flag = "flashbackKeybindSet",
 Callback = function(keyPressedFlash)
-    if keyPressedFlash == Enum.KeyCode[keyPressedFlash] then
-        settings_flashback.Keybind = keyPressedFlash
-    else
-        return notify("Invalid!", "Invalid keybind/input was entered, please try again.", 7)
-    end
+    settings_flashback.Keybind = tostring(keyPressedFlash)
 end,})
 
 local FlashbackSpeed = Tab16:CreateSlider({
 Name = "Flashback Speed",
-Range = {0.8, 5},
-Increment = 0.9,
+Range = {0.7, 5},
+Increment = 0.1,
 Suffix = "",
 CurrentValue = tonumber(settings_flashback.Speed),
 Flag = "flashSpeed",
