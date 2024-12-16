@@ -2928,6 +2928,7 @@ CurrentValue = false,
 Flag = "quickAvChange",
 Callback = function(quickAv)
     if quickAv then
+        local players = game:GetService("Players")
         getgenv().ava_switch = true
 
         local usernames = {
