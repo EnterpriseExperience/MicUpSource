@@ -612,9 +612,9 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
 end)
 -- [] -->> Authorize the correct usernames, ignoring below this line. <<-- [] --
 -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
-if getgenv().get_setup_config or getgenv().get_setup_config == true and getgenv().LocalPlayer.Name ~= "M1RD3R_BULL3TS" then
+if getgenv().get_setup_config or getgenv().get_setup_config == true and getgenv().LocalPlayer.Name ~= "L0CKED_1N1" then
     warn("Keybind Setup already loaded.")
-elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name == "M1RD3R_BULL3TS" then
+elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name == "L0CKED_1N1" then
     getgenv().get_setup_config = true
     print("Owner found, we're not going to set up emote GUI, selecting 'Yes' instead.")
     wait(0.2)
@@ -732,7 +732,7 @@ elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and
     wait(0.1)
     create_bindings()
 -- This is the last one I'm doing, I'll make some more comments later, but this should be obvious, asking the user if they want it, and ignoring the whitelisted username below.
-elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name ~= "M1RD3R_BULL3TS" then
+elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name ~= "L0CKED_1N1" then
     local player = getgenv().LocalPlayer or game:GetService("Players").LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
 
@@ -1109,7 +1109,7 @@ local player = getgenv().LocalPlayer
 getgenv().whitelist = {}
 
 getgenv().ownerWhitelist = {
-    "M1RD3R_BULL3TS",
+    "L0CKED_1N1",
     "Laylay_4kla"
 }
 wait()
@@ -1468,7 +1468,7 @@ end,})
 local TPOwnerBruh = Tab1:CreateButton({
 Name = "Teleport To: Owner Of Script",
 Callback = function()
-    local OwnerName = "M1RD3R_BULL3TS"
+    local OwnerName = "L0CKED_1N1"
     if not game.Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
 
     if game.Players:FindFirstChild(OwnerName) then
@@ -1490,7 +1490,7 @@ Flag = "viewOwner",
 Callback = function(viewingOwner)
     if viewingOwner then
         getgenv().spectateOwner = true
-        local OwnerName = "M1RD3R_BULL3TS"
+        local OwnerName = "L0CKED_1N1"
         local Workspace = getgenv().Workspace
         local Camera = Workspace:FindFirstChild("Camera")
         if not getgenv().Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
@@ -2144,98 +2144,6 @@ Callback = function()
         getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
     end
 end,})
-
---[[local CharIntoAnyAvatar = Tab13:CreateInput({
-Name = "Be Any Avatar",
-PlaceholderText = "User Here",
-RemoveTextAfterFocusLost = true,
-Callback = function(beAnyAvatar)
-    local Replicated_Storage = game:GetService("ReplicatedStorage")
-    local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
-
-    local args = {
-        [1] = tostring(beAnyAvatar)
-    }
-    
-    ModifyUser_Remote:FireServer(unpack(args))
-end,})
-
-local BeOwnerOfScript = Tab13:CreateButton({
-Name = "Char Into: Owner Of Script",
-Callback = function(beAnyAvatar)
-    local Replicated_Storage = game:GetService("ReplicatedStorage")
-    local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
-
-    local args = {
-        [1] = "M1RD3R_BULL3TS"
-    }
-            
-    ModifyUser_Remote:FireServer(unpack(args))
-    wait(0.2)
-    local player = getgenv().LocalPlayer
-
-    local character = player.Character or player.CharacterAdded:Wait()
-    local Animate = character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
-
-    if not Animate then return end
-
-    Animate.Disabled = true
-    wait(0.1)
-    Animate.Disabled = false
-
-    local humanoid = character:FindFirstChildWhichIsA("Humanoid")
-    if humanoid then
-        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-            track:Stop()
-        end
-    end
-    wait(0.2)
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
-    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
-    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
-    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
-
-    wait(0.2)
-    if humanoid then
-        humanoid:ChangeState(3)
-    end
-    wait()
-    Animate.Disabled = false
-end,})
-
-local BeOwnerOfScript = Tab13:CreateButton({
-Name = "Char Into: Creator Of MIC UP",
-Callback = function(beAnyAvatar)
-    local Replicated_Storage = game:GetService("ReplicatedStorage")
-    local ModifyUser_Remote = Replicated_Storage:WaitForChild("ModifyUsername")
-
-    local function get_creator_of_game()
-        local ownerUserId = 25335555
-        
-
-        local success, ownerUsername = pcall(function()
-            return Players:GetNameFromUserIdAsync(ownerUserId)
-        end)
-
-        if success then
-            return ownerUsername
-        else
-            print("Failed to get the owner's username: ", ownerUsername)
-        end
-        return nil
-    end
-
-    local owners_name = get_creator_of_game()
-    
-    local args = {
-        [1] = tostring(owners_name)
-    }
-                
-    ModifyUser_Remote:FireServer(unpack(args))
-end,})--]]
 
 local AutoReclaimToggle = Tab11:CreateToggle({
 Name = "Anti Booth Stealer",
@@ -6099,7 +6007,7 @@ Callback = function(getAUser)
                             Callback = function()
                                 print("...")
                             end
-                        },
+                            },
                         },
                     })
                 end
@@ -6185,8 +6093,6 @@ Name = "Re-Execute GUI",
 Callback = function()
     local Humanoid = getgenv().Humanoid
     getgenv().getLoopKick = false
-    wait()
-    getgenv().getLoopKick = false
     wait(0.2)
     getgenv().SCRIPT_EXECUTED = false
     getgenv().SCRIPT_EXECUTED = false
@@ -6204,8 +6110,6 @@ end,})
 local DestroyGUIScript = Tab15:CreateButton({
 Name = "Destroy GUI/Script",
 Callback = function()
-    getgenv().getLoopKick = false
-    wait()
     getgenv().getLoopKick = false
     wait(0.2)
     getgenv().SCRIPT_EXECUTED = false
@@ -6345,10 +6249,10 @@ Callback = function(speedCoil)
 end,})    
 
 local function run_anims() 
-    local player = game.Players:FindFirstChild("M1RD3R_BULL3TS")
+    local player = game.Players:FindFirstChild("L0CKED_1N1")
     if not player then return end
 
-    print("Found Owner: M1RD3R_BULL3TS")
+    print("Found Owner: L0CKED_1N1")
 
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
@@ -6382,9 +6286,9 @@ local function run_anims()
 end
 
 local function do_anims_func()
-    local player = game.Players:FindFirstChild("M1RD3R_BULL3TS")
+    local player = game.Players:FindFirstChild("L0CKED_1N1")
     if not player then
-        warn("Owner was not found: M1RD3R_BULL3TS")
+        warn("Owner was not found: L0CKED_1N1")
         return 
     end
 
@@ -6398,9 +6302,9 @@ if getgenv().ownerAnimsLoaded == nil then
     getgenv().ownerAnimsLoaded = false
 end
 
-if getgenv().LocalPlayer.Name == "M1RD3R_BULL3TS" and getgenv().ownerAnimsLoaded then 
+if getgenv().LocalPlayer.Name == "L0CKED_1N1" and getgenv().ownerAnimsLoaded then 
     warn("Owner-Animations already loaded!")
-elseif getgenv().LocalPlayer.Name == "M1RD3R_BULL3TS" and not getgenv().ownerAnimsLoaded then
+elseif getgenv().LocalPlayer.Name == "L0CKED_1N1" and not getgenv().ownerAnimsLoaded then
     if typeof(do_anims_func) == "function" then
         do_anims_func()
         getgenv().ownerAnimsLoaded = true
@@ -7036,29 +6940,29 @@ end)
 SystemBroken = Tab5:CreateButton({
 Name = "System Broken",
 Callback = function()
-if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
-else
-    Rayfield:Notify({
-        Title = "Error!",
-        Content = "This is NOT Mic Up, Exiting...",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
-    wait(1)
-    getgenv().LocalPlayer:Kick("This is not MIC UP, Please join MIC UP.")
-end
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
+    else
+        Rayfield:Notify({
+            Title = "Error!",
+            Content = "This is NOT Mic Up, Exiting...",
+            Duration = 7,
+            Image = 4483362458,
+            Actions = {
+            Ignore = {
+                Name = "Okay!",
+                Callback = function()
+                    print("...")
+                end
+            },
+            },
+        })
+        wait(1)
+        getgenv().LocalPlayer:Kick("This is not MIC UP, Please join MIC UP.")
+    end
 end,})
 
-ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDatDawgWsgGng | [Main Account Now.]"})
+ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDawgWsgGng | [Deleted]"})
 wait()
 MadeEasy = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Scripting Made Easy"})
 YouTube_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://www.youtube.com/@AnonymousExploiting"})
@@ -7085,7 +6989,7 @@ end
 wait(0.2)
 print("Getting Requirements... [1 moment.]")
 wait(0.3)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/Symmetrical-System/refs/heads/main/HelloWorld", true))()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PrivateBecauseYes/refs/heads/main/armsConvert.js", true))()
 wait(0.4)
 if getgenv().Has_Died_Func then
     warn("Already setup death function.")
@@ -7101,7 +7005,7 @@ task.wait()
 print("YEAH! Zacks Easy Hub [ON TOP!]")
 wait(0.5)
 if getgenv().performance_stats then
-warn("Performance stats checked.")
+    warn("Performance stats checked.")
 else    
     loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/expert-octo-telegram/refs/heads/main/expressive_contacting_ai.lua"))()
     getgenv().performance_stats = true
