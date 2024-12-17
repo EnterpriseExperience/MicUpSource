@@ -6701,7 +6701,26 @@ print("YEAH! Zacks Easy Hub [ON TOP!]")
 wait(0.5)
 if getgenv().performance_stats then
     warn("Performance stats checked.")
-else    
+else
     loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/expert-octo-telegram/refs/heads/main/expressive_contacting_ai.lua"))()
+    wait(0.2)
+    local coreGuiTypeNames = {
+        ["inventory"] = Enum.CoreGuiType.Backpack,
+        ["leaderboard"] = Enum.CoreGuiType.PlayerList,
+        ["emotes"] = Enum.CoreGuiType.EmotesMenu
+    }
+    
+    for _, enumItem in ipairs(Enum.CoreGuiType:GetEnumItems()) do
+        if enumItem == Enum.CoreGuiType.Health and enumItem ~= Enum.CoreGuiType.SelfView then
+            game:GetService("StarterGui"):SetCoreGuiEnabled(enumItem, false)
+        end
+    end
+    wait(0.1)
+    if game:GetService("StarterGui"):GetCoreGuiEnabled(Enum.CoreGuiType.Health) then
+        print("Health CoreGuiType.Enabled: True")
+    else
+        warn("Health CoreGuiType.Enabled: False")
+    end
+    wait(0.1)
     getgenv().performance_stats = true
 end
