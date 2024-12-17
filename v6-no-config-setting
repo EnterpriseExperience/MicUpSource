@@ -375,7 +375,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "Zacks Easy Hub | V6.2.5.6 | Emote Keybinds: True",
+    Name = "Zacks Easy Hub | V6.2.5.6 | Emote Keybinds: False",
     LoadingTitle = "Enjoy ruling the game.",
     LoadingSubtitle = "Zacks Easy Hub | Dominating.",
     ConfigurationSaving = {
