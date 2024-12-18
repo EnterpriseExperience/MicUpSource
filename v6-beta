@@ -3202,6 +3202,32 @@ Callback = function()
     end
 end,})
 
+local FlyNoclip = Tab16:CreateToggle({
+Name = "Noclip Toggle For Fly",
+CurrentValue = false,
+Flag = "toggleNoclipForFly",
+Callback = function(noclipToggleFly)
+    function reset_collide(reset_bool)
+        if reset_bool == true then
+            getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
+            getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
+            getgenv().HumanoidRootPart.CanCollide = true
+        elseif reset_bool == false then
+            getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
+            getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
+            getgenv().HumanoidRootPart.CanCollide = false
+        else
+            return warn("Invalid input BoolValue.")
+        end
+    end
+
+    if noclipToggleFly then
+        reset_collide(false)
+    else
+        reset_collide(true)
+    end
+end,})
+
 getgenv().flyspeed = 1
 getgenv().vehicleflyspeed = 1
 local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
