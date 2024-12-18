@@ -375,7 +375,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "Zacks Easy Hub | V6.2.5.6 | Emote Keybinds: False",
+    Name = "Zacks Easy Hub | V6.2.5.6 | Emote Keybinds: True",
     LoadingTitle = "Enjoy ruling the game.",
     LoadingSubtitle = "Zacks Easy Hub | Dominating.",
     ConfigurationSaving = {
@@ -401,22 +401,23 @@ local Window = Rayfield:CreateWindow({
     }
 })
 wait(0.1)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if game.Players.LocalPlayer.Name == "L0CKED_1N1" then
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if getgenv().passed_loaded_jobid_joiner then
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            warn("Already loaded job_id joiner.")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/prisonLifeAdminScript/refs/heads/main/file.js'))()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            wait(0.1)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            getgenv().passed_loaded_jobid_joiner = true
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        end
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        warn("Action denied.")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if game.Players.LocalPlayer.Name == "L0CKED_1N1" then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if getgenv().passed_loaded_jobid_joiner then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            warn("Already loaded job_id joiner.")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/prisonLifeAdminScript/refs/heads/main/file.js'))()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            wait(0.1)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            getgenv().passed_loaded_jobid_joiner = true
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        warn("Action denied.")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    end
 -- Above here is obvious, stop dick riding me.
+
 -- [] -->> Initialize our Tabs and Sections <<-- [] --
 local Tab1 = Window:CreateTab("< / Home >", 7733960981)
 local Section1 = Tab1:CreateSection("||| Home Section |||")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
 local Tab11 = Window:CreateTab("< / Booths >", 7733914390)
 local Section11 = Tab11:CreateSection("||| Booths Section |||")
 
@@ -621,6 +622,317 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()") -- K*ll yourself, stop waiting.
     end
 end)
+-- [] -->> Authorize the correct usernames, ignoring below this line. <<-- [] --
+-- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
+if getgenv().get_setup_config or getgenv().get_setup_config == true and getgenv().LocalPlayer.Name ~= "L0CKED_1N1" then
+    warn("Keybind Setup already loaded.")
+elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name == "L0CKED_1N1" then
+    getgenv().get_setup_config = true
+    print("Owner found, we're not going to set up emote GUI, selecting 'Yes' instead.")
+    wait(0.2)
+    local function create_bindings()
+        local UserInputService = game:GetService("UserInputService") or cloneref(game:GetService("UserInputService"))
+        
+        local player = getgenv().Character
+        local emoteSpeed = 1
+        local freezeEmotes = false
+        getgenv().isReversed = getgenv().isReversed or false
+        
+        local keybindActions = {
+            [Enum.KeyCode.One] = 13071993910,
+            [Enum.KeyCode.Two] = 14901371589,
+            [Enum.KeyCode.Three] = 73683655527605,
+            [Enum.KeyCode.Four] = 5230615437,
+            [Enum.KeyCode.Five] = 5104377791,
+            [Enum.KeyCode.Six] = 13694139364,
+            [Enum.KeyCode.Seven] = 7466047578,
+            [Enum.KeyCode.Eight] = 13823339506,
+            [Enum.KeyCode.Nine] = 3576823880,
+            [Enum.KeyCode.Zero] = 15506503658,
+            [Enum.KeyCode.R] = 14548709888,
+            [Enum.KeyCode.T] = 15554016057,
+            [Enum.KeyCode.Y] = 10147924028,
+            [Enum.KeyCode.U] = 14900153406,
+            [Enum.KeyCode.P] = 16181843366,
+            [Enum.KeyCode.N] = 10214411646,
+            [Enum.KeyCode.Z] = 4391208058,
+            [Enum.KeyCode.Q] = "SlowDown",
+            [Enum.KeyCode.E] = "SpeedUp",
+            [Enum.KeyCode.V] = "Freeze",
+            [Enum.KeyCode.X] = "NormalSpeed",
+            [Enum.KeyCode.F] = "Reverse"
+        }
+        
+        local function adjustEmoteSpeed()
+            if getgenv().Humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:AdjustSpeed(emoteSpeed)
+                end
+            end
+        end
+        
+        local function reverseEmotes()
+            if getgenv().Humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:AdjustSpeed(-1)
+                end
+            end
+        end
+        
+        local function playNormalSpeed()
+            if getgenv().Humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:AdjustSpeed(1)
+                end
+            end
+        end
+        
+        local function playEmote(emoteId)
+            local character = getgenv().Character
+            local humanoid = character:FindFirstChildOfClass("Humanoid") or getgenv().Humanoid
+            if humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop()
+                end
+                
+                wait()
+                local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
+                    
+                if animTrack and typeof(animTrack) == "Instance" then
+                    animTrack:AdjustSpeed(emoteSpeed)
+                end
+            else
+                warn("Humanoid not found in Character!")
+            end
+        end
+        
+        local function handleKeybind(action)
+            if type(action) == "number" then
+                playEmote(action)
+            elseif action == "SlowDown" then
+                emoteSpeed = 0.1
+                adjustEmoteSpeed()
+            elseif action == "SpeedUp" then
+                emoteSpeed = 4
+                adjustEmoteSpeed()
+            elseif action == "Freeze" then
+                emoteSpeed = 0
+                adjustEmoteSpeed()
+                freezeEmotes = true
+            elseif action == "NormalSpeed" then
+                emoteSpeed = 1
+                adjustEmoteSpeed()
+                freezeEmotes = false
+            elseif action == "Reverse" then
+                if getgenv().isReversed then
+                    playNormalSpeed()
+                else
+                    reverseEmotes()
+                end
+                getgenv().isReversed = not getgenv().isReversed
+            end
+        end
+        
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            local action = keybindActions[input.KeyCode]
+            if action then
+                handleKeybind(action)
+            end
+        end)
+    end
+    wait(0.1)
+    create_bindings()
+-- This is the last one I'm doing, I'll make some more comments later, but this should be obvious, asking the user if they want it, and ignoring the whitelisted username below.
+elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name ~= "L0CKED_1N1" then
+    local player = getgenv().LocalPlayer or game:GetService("Players").LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = playerGui
+    screenGui.ResetOnSpawn = false
+
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(1, 0, 1, 0)
+    mainFrame.Position = UDim2.new(0, 0, 0, 0)
+    mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+    mainFrame.BackgroundTransparency = 0.5
+    mainFrame.Parent = screenGui
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(0.5, 0, 0.2, 0)
+    label.Position = UDim2.new(0.25, 0, 0.2, 0)
+    label.BackgroundTransparency = 1
+    label.Text = "Would you like an emote/rizz config?"
+    label.TextColor3 = Color3.new(1, 1, 1)
+    label.TextScaled = true
+    label.Font = Enum.Font.SourceSansBold
+    label.Parent = mainFrame
+
+    local yesButton = Instance.new("TextButton")
+    yesButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+    yesButton.Position = UDim2.new(0.2, 0, 0.5, 0)
+    yesButton.Text = "Yes"
+    yesButton.BackgroundColor3 = Color3.new(0, 1, 0)
+    yesButton.TextColor3 = Color3.new(1, 1, 1)
+    yesButton.TextScaled = true
+    yesButton.Font = Enum.Font.SourceSansBold
+    yesButton.Parent = mainFrame
+
+    local noButton = Instance.new("TextButton")
+    noButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+    noButton.Position = UDim2.new(0.6, 0, 0.5, 0)
+    noButton.Text = "No"
+    noButton.BackgroundColor3 = Color3.new(1, 0, 0)
+    noButton.TextColor3 = Color3.new(1, 1, 1)
+    noButton.TextScaled = true
+    noButton.Font = Enum.Font.SourceSansBold
+    noButton.Parent = mainFrame
+
+    local userSelected = false
+    local selection = nil
+
+    function selected_Yes()
+        local function create_bindings()
+            local UserInputService = game:GetService("UserInputService") or cloneref(game:GetService("UserInputService"))
+            
+            local player = getgenv().Character
+            local emoteSpeed = 1
+            local freezeEmotes = false
+            getgenv().isReversed = getgenv().isReversed or false
+            
+            local keybindActions = {
+                [Enum.KeyCode.One] = 13071993910,
+                [Enum.KeyCode.Two] = 14901371589,
+                [Enum.KeyCode.Three] = 73683655527605,
+                [Enum.KeyCode.Four] = 5230615437,
+                [Enum.KeyCode.Five] = 5104377791,
+                [Enum.KeyCode.Six] = 13694139364,
+                [Enum.KeyCode.Seven] = 7466047578,
+                [Enum.KeyCode.Eight] = 13823339506,
+                [Enum.KeyCode.Nine] = 3576823880,
+                [Enum.KeyCode.Zero] = 15506503658,
+                [Enum.KeyCode.R] = 14548709888,
+                [Enum.KeyCode.T] = 15554016057,
+                [Enum.KeyCode.Y] = 10147924028,
+                [Enum.KeyCode.U] = 14900153406,
+                [Enum.KeyCode.P] = 16181843366,
+                [Enum.KeyCode.N] = 10214411646,
+                [Enum.KeyCode.Z] = 4391208058,
+                [Enum.KeyCode.Q] = "SlowDown",
+                [Enum.KeyCode.E] = "SpeedUp",
+                [Enum.KeyCode.V] = "Freeze",
+                [Enum.KeyCode.X] = "NormalSpeed",
+                [Enum.KeyCode.F] = "Reverse"
+            }
+            
+            local function adjustEmoteSpeed()
+                if getgenv().Humanoid then
+                    for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                        track:AdjustSpeed(emoteSpeed)
+                    end
+                end
+            end
+            
+            local function reverseEmotes()
+                if getgenv().Humanoid then
+                    for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                        track:AdjustSpeed(-1)
+                    end
+                end
+            end
+            
+            local function playNormalSpeed()
+                if getgenv().Humanoid then
+                    for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                        track:AdjustSpeed(1)
+                    end
+                end
+            end
+            
+            local function playEmote(emoteId)
+                local character = getgenv().Character
+                local humanoid = character:FindFirstChildOfClass("Humanoid") or getgenv().Humanoid
+                if humanoid then
+                    for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                        track:Stop()
+                    end
+                    
+                    wait()
+                    local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
+                        
+                    if animTrack and typeof(animTrack) == "Instance" then
+                        animTrack:AdjustSpeed(emoteSpeed)
+                    end
+                else
+                    warn("Humanoid not found in Character!")
+                end
+            end
+            
+            local function handleKeybind(action)
+                if type(action) == "number" then
+                    playEmote(action)
+                elseif action == "SlowDown" then
+                    emoteSpeed = 0.1
+                    adjustEmoteSpeed()
+                elseif action == "SpeedUp" then
+                    emoteSpeed = 4
+                    adjustEmoteSpeed()
+                elseif action == "Freeze" then
+                    emoteSpeed = 0
+                    adjustEmoteSpeed()
+                    freezeEmotes = true
+                elseif action == "NormalSpeed" then
+                    emoteSpeed = 1
+                    adjustEmoteSpeed()
+                    freezeEmotes = false
+                elseif action == "Reverse" then
+                    if getgenv().isReversed then
+                        playNormalSpeed()
+                    else
+                        reverseEmotes()
+                    end
+                    getgenv().isReversed = not getgenv().isReversed
+                end
+            end
+            
+            UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+                local action = keybindActions[input.KeyCode]
+                if action then
+                    handleKeybind(action)
+                end
+            end)
+        end
+        create_bindings()
+    end
+
+    function selected_No()
+        warn(tostring(getgenv().LocalPlayer.Name)..", selected 'No'")
+    end
+
+    yesButton.MouseButton1Click:Connect(function()
+        selected_Yes()
+        task.wait()
+        selection = "Yes"
+        userSelected = true
+        getgenv().get_setup_config = true
+    end)
+
+    noButton.MouseButton1Click:Connect(function()
+        selected_No()
+        wait()
+        selection = "No"
+        userSelected = true
+        getgenv().get_setup_config = true
+    end)
+
+    repeat
+        task.wait()
+    until userSelected
+
+    screenGui:Destroy()
+end
 wait(0.5)
 local TeleportService = game:GetService("TeleportService")
 
@@ -2890,8 +3202,259 @@ Callback = function()
     end
 end,})
 
+getgenv().flyspeed = 1
+getgenv().vehicleflyspeed = 1
+local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+local SPEED = 0
+wait(0.1)
+local flySpeedGet = Tab16:CreateSlider({
+Name = "Fly Speed",
+Range = {1, 50},
+Increment = 1,
+Suffix = "",
+CurrentValue = 1,
+Flag = "getflyspeed",
+Callback = function(doflyspeed)
+    local fly_speed_get = tonumber(doflyspeed)
+
+    getgenv().flyspeed = fly_speed_get
+    getgenv().vehicleflyspeed = fly_speed_get
+end,})
+wait(0.1)
+local FlyScript = Tab16:CreateToggle({
+Name = "Fly",
+CurrentValue = false,
+Flag = "flyScriptToggle",
+Callback = function(toggleTheFly)
+    getgenv().FLYING = false
+    getgenv().QEfly = true
+    wait(0.1)
+    local Players = game:GetService("Players")
+    local UserInputService = game:GetService("UserInputService")
+    local RunService = game:GetService("RunService")
+    if toggleTheFly then
+        getgenv().FLYING = true
+        getgenv().QEfly = true
+        getgenv().flyConnectionRender = nil
+        getgenv().flyKeyDownConnection = nil
+        getgenv().flyKeyUpConnection = nil
+
+        local function getRoot(character)
+            return character:FindFirstChild("HumanoidRootPart") or character:FindFirstChildOfClass("BasePart")
+        end
+
+        local function sFLY(vfly)
+            local RunService = game:GetService("RunService")
+            local Players = game:GetService("Players")
+            local player = Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local rootPart = getRoot(character)
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+            if not rootPart or not humanoid then
+                return 
+            end
+
+            if getgenv().flyKeyDownConnection then getgenv().flyKeyDownConnection:Disconnect() end
+            if getgenv().flyKeyUpConnection then getgenv().flyKeyUpConnection:Disconnect() end
+
+            local function FLY()
+                getgenv().FLYING = true
+                local BG = Instance.new("BodyGyro", rootPart)
+                local BV = Instance.new("BodyVelocity", rootPart)
+
+                BG.Name = "Gyro-Fly"
+                BV.Name = "Velocity-Fly"
+                BG.P = 9e4
+                BG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+                BG.cframe = rootPart.CFrame
+
+                BV.velocity = Vector3.zero
+                BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
+
+                getgenv().flyConnectionRender = RunService.RenderStepped:Connect(function()
+                    if not getgenv().FLYING then return end
+
+                    if not vfly and humanoid then
+                        humanoid.PlatformStand = true
+                    end
+
+                    if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
+                        SPEED = 50
+                    elseif SPEED ~= 0 then
+                        SPEED = 0
+                    end
+
+                    if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
+                        BV.velocity = ((workspace.CurrentCamera.CFrame.LookVector * (CONTROL.F + CONTROL.B))
+                            + ((workspace.CurrentCamera.CFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p)
+                            - workspace.CurrentCamera.CFrame.p)) * SPEED
+
+                        lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R, Q = CONTROL.Q, E = CONTROL.E}
+                    else
+                        BV.velocity = Vector3.zero
+                    end
+
+                    BG.cframe = workspace.CurrentCamera.CFrame
+                end)
+            end
+
+            getgenv().flyKeyDownConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+
+                local key = input.KeyCode
+                if key == Enum.KeyCode.W then
+                    CONTROL.F = (vfly and getgenv().vehicleflyspeed or getgenv().flyspeed)
+                elseif key == Enum.KeyCode.S then
+                    CONTROL.B = -(vfly and getgenv().vehicleflyspeed or getgenv().flyspeed)
+                elseif key == Enum.KeyCode.A then
+                    CONTROL.L = -(vfly and getgenv().vehicleflyspeed or getgenv().flyspeed)
+                elseif key == Enum.KeyCode.D then
+                    CONTROL.R = (vfly and getgenv().vehicleflyspeed or getgenv().flyspeed)
+                elseif getgenv().QEfly and key == Enum.KeyCode.E then
+                    CONTROL.Q = (vfly and getgenv().vehicleflyspeed or getgenv().flyspeed) * 2
+                elseif getgenv().QEfly and key == Enum.KeyCode.Q then
+                    CONTROL.E = -(vfly and getgenv().vehicleflyspeed or getgenv().flyspeed) * 2
+                end
+            end)
+
+            getgenv().flyKeyUpConnection = UserInputService.InputEnded:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+
+                local key = input.KeyCode
+                if key == Enum.KeyCode.W then
+                    CONTROL.F = 0
+                elseif key == Enum.KeyCode.S then
+                    CONTROL.B = 0
+                elseif key == Enum.KeyCode.A then
+                    CONTROL.L = 0
+                elseif key == Enum.KeyCode.D then
+                    CONTROL.R = 0
+                elseif key == Enum.KeyCode.E then
+                    CONTROL.Q = 0
+                elseif key == Enum.KeyCode.Q then
+                    CONTROL.E = 0
+                end
+            end)
+
+            FLY()
+        end
+
+        sFLY(false)
+    else
+        local player = game:GetService("Players").LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+        local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+
+        if getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly") then
+            getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly"):Destroy()
+        else
+            warn("nil - BodyGyro")
+        end
+        wait(0.1)
+        if getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly") then
+            getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly"):Destroy()
+        else
+            warn("nil - BodyVelocity")
+        end
+        wait(0.2)
+        rootPart.Velocity = Vector3.zero
+        rootPart.AssemblyLinearVelocity = Vector3.zero
+        rootPart.AssemblyAngularVelocity = Vector3.zero
+
+        rootPart.CFrame = CFrame.new(rootPart.Position - Vector3.new(0, 5, 0))
+
+        if humanoid then
+            humanoid.PlatformStand = false
+            humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end
+
+        task.wait(0.1)
+        if rootPart then
+            rootPart.Velocity = Vector3.zero
+        end
+        wait(0.3)
+        getgenv().FLYING = false
+        getgenv().QEfly = false
+
+        if getgenv().flyConnectionRender then
+            getgenv().flyConnectionRender:Disconnect()
+            getgenv().flyConnectionRender = nil
+        end
+
+        if getgenv().flyKeyDownConnection then
+            getgenv().flyKeyDownConnection:Disconnect()
+            getgenv().flyKeyDownConnection = nil
+        end
+
+        if getgenv().flyKeyUpConnection then
+            getgenv().flyKeyUpConnection:Disconnect()
+            getgenv().flyKeyUpConnection = nil
+        end
+    end
+end,})
+
+local default_distance = 20
+local teleportDistance = 20
+local default_speed = 0.1
+local tp_speed = 0.1
+wait(0.1)
+local glitchSideToSideSpeed = Tab16:CreateSlider({
+Name = "Glitch Speed (Less = Faster)",
+Range = {0.1, 3},
+Increment = 0.1,
+Suffix = "",
+CurrentValue = 0.5,
+Flag = "sideToSpeed",
+Callback = function(gotSideSpeed)
+    function convert(input)
+        local dist = tonumber(input)
+        if dist then
+            return dist
+        else
+            return warn("Invalid Input,\n Usage: convert(string) <-- 'string' is where the string is supposed to go.")
+        end
+    end
+
+    local converted_num = convert(DistanceNum)
+
+    if converted_num and converted_num ~= "" then
+        tp_speed = converted_num
+    else
+        tp_speed = default_speed
+    end
+end,})
+
+local glitchScriptDistance = Tab16:CreateInput({
+Name = "SideToSide Script Distance",
+CurrentValue = "20",
+PlaceholderText = "Distance Here",
+RemoveTextAfterFocusLost = true,
+Flag = "TPSideToSideDist",
+Callback = function(DistanceNum)
+    function convert(input)
+        local dist = tonumber(input)
+        if dist then
+            return dist
+        else
+            return warn("Invalid Input,\n Usage: convert(string) <-- 'string' is where the string is supposed to go.")
+        end
+    end
+
+    local converted_num = convert(DistanceNum)
+    wait(0.1)
+    if converted_num and converted_num ~= "" then
+        teleportDistance = converted_num
+    else
+        teleportDistance = default_distance
+    end
+end,})
+
 local glitchingSide = Tab16:CreateToggle({
-Name = "Glitch SideToSide",
+Name = "Glitch Side To Side Script",
 CurrentValue = false,
 Flag = "GlitchyScript",
 Callback = function(toggleBool)
@@ -2902,8 +3465,8 @@ Callback = function(toggleBool)
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
         local runService = game:GetService("RunService")
-        local teleportDistance = 20
-        local teleportSpeed = 0.01
+        local tp_distance = teleportDistance
+        local teleportSpeed = tp_speed
         local toggleConnection
     
         local function toggleTeleportEffect()
@@ -2911,7 +3474,7 @@ Callback = function(toggleBool)
                 getgenv().toggleConnection = runService.RenderStepped:Connect(function()
                     local direction = math.random(1, 2) == 1 and -1 or 1
                     local rightVector = humanoidRootPart.CFrame.RightVector
-                    local offset = rightVector * (direction * teleportDistance)
+                    local offset = rightVector * (direction * tp_distance)
                     humanoidRootPart.CFrame = humanoidRootPart.CFrame + offset
                     task.wait(teleportSpeed)
                     humanoidRootPart.CFrame = humanoidRootPart.CFrame - offset
