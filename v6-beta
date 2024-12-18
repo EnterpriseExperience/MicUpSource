@@ -3410,21 +3410,12 @@ Suffix = "",
 CurrentValue = 0.5,
 Flag = "sideToSpeed",
 Callback = function(gotSideSpeed)
-    function convert(input)
-        local dist = tonumber(input)
-        if dist then
-            return dist
-        else
-            return warn("Invalid Input,\n Usage: convert(string) <-- 'string' is where the string is supposed to go.")
-        end
-    end
+    local converted_num = tonumber(gotSideSpeed)
 
-    local converted_num = convert(DistanceNum)
-
-    if converted_num and converted_num ~= "" then
+    if converted_num then
         tp_speed = converted_num
     else
-        tp_speed = default_speed
+        tp_speed = tonumber(default_speed)
     end
 end,})
 
