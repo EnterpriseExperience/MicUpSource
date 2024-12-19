@@ -375,9 +375,9 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "Zacks Easy Hub | V6.6.4-C | Emote Keybinds: True",
-    LoadingTitle = "Enjoy ruling the game.",
-    LoadingSubtitle = "Zacks Easy Hub | Dominating.",
+    Name = "🎄 Zacks Easy Hub 🎄 | V6.6.7-C | Emote Keybinds: True",
+    LoadingTitle = "Enjoy ruling MIC UP 🔊",
+    LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
        Enabled = false,
        FolderName = nil,
@@ -1392,27 +1392,29 @@ local claimRandomBooth = Tab11:CreateButton({
 Name = "Claim Random Booth",
 Callback = function()
     getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
-    task.wait(.2)
+    task.wait(0.2)
+    
     local Folder = getgenv().Workspace:FindFirstChild("Booth")
     local Character = getgenv().Character
-
+    
     local function getStall()
-        for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
-            if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(LocalPlayer.Name) then
+        for _, v in pairs(Folder:GetChildren()) do
+            local usernameGui = v:FindFirstChild("Username") and v.Username:FindFirstChild("BillboardGui")
+            if usernameGui and usernameGui.TextLabel.Text == "Owned by: " .. tostring(LocalPlayer.Name) then
                 return v
             end
         end
         return nil
     end
-
+    
     local plr_booth = getStall()
-
+    
     if plr_booth then
         return 
     end
     
     local OldCF = getgenv().HumanoidRootPart.CFrame
-
+    
     local stalls = {
         Folder:FindFirstChild("Booth01"),
         Folder:FindFirstChild("Booth02"),
@@ -1420,61 +1422,68 @@ Callback = function()
         Folder:FindFirstChild("Booth04"),
         Folder:FindFirstChild("Booth05")
     }
-
+    
     local function setupProximityPrompt(stall)
-        local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-        if ProximityPrompt then
-            ProximityPrompt.Enabled = true
-            ProximityPrompt.ClickablePrompt = true
-            ProximityPrompt.MaxActivationDistance = 15
-            ProximityPrompt.RequiresLineOfSight = false
-            ProximityPrompt.HoldDuration = 0
-        end
-    end
-
-    local function Claim_A_Booth()
-        local OldCF = getgenv().HumanoidRootPart.CFrame
-
-        local function getStall()
-            for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
-                if v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(LocalPlayer.Name) then
-                    return v
+        if stall then
+            local activatePart = stall:FindFirstChild("Activate")
+            if activatePart then
+                local ProximityPrompt = activatePart:FindFirstChildOfClass("ProximityPrompt")
+                if ProximityPrompt then
+                    ProximityPrompt.Enabled = true
+                    ProximityPrompt.ClickablePrompt = true
+                    ProximityPrompt.MaxActivationDistance = 15
+                    ProximityPrompt.RequiresLineOfSight = false
+                    ProximityPrompt.HoldDuration = 0
                 end
             end
-            return nil
+        end
+    end
+    
+    local function Claim_A_Booth()
+        local OldCF = getgenv().HumanoidRootPart.CFrame
+    
+        local plr_booth = getStall()
+        if plr_booth then
+            return
         end
 
-        local plr_booth = getStall()
-
         local stall = stalls[math.random(1, #stalls)]
-        local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
         if stall then
             setupProximityPrompt(stall)
-            wait(0.3)
+            task.wait(0.1)
+
             Character:PivotTo(stall:GetPivot())
-            wait(0.3)
-            fireproximityprompt(ProximityPrompt)
-            wait(0.2)
+            task.wait(0.3)
+    
+            local ProximityPrompt = stall:FindFirstChild("Activate") and stall.Activate:FindFirstChildOfClass("ProximityPrompt")
+            if ProximityPrompt then
+                fireproximityprompt(ProximityPrompt)
+            end
+    
+            task.wait(0.2)
+    
             local args = {
                 [1] = "",
                 [2] = "Gray",
                 [3] = "SourceSans"
             }
-            
             getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
-            wait(0.2)
+
+            task.wait(0.2)
             getgenv().HumanoidRootPart.CFrame = OldCF
-            wait(.1)
+            task.wait(0.1)
+
+            plr_booth = getStall()
             if plr_booth then
-                return 
+                return
             end
         end
     end
-    wait(0.2)
+
     local stall = stalls[math.random(1, #stalls)]
     setupProximityPrompt(stall)
-    wait(0.3)
-    Claim_A_Booth()
+    task.wait(0.3)
+    Claim_A_Booth()    
 end,})
 
 local TPOwnerBruh = Tab1:CreateButton({
@@ -1903,6 +1912,187 @@ Callback = function(Cussing)
     else
         getgenv().Cuss = false
     end
+end,})
+
+getgenv().bangSpeed = 1
+wait(0.1)
+local bangPlrSpeedSlider = Tab13:CreateSlider({
+Name = "Bang Player Speed",
+Range = {0.1, 110},
+Increment = 0.1,
+Suffix = "",
+CurrentValue = 1,
+Flag = "bangThatPlayerSpeed",
+Callback = function(speedOfPlayerBang)
+    getgenv().bangSpeed = tonumber(speedOfPlayerBang)
+end,})
+
+local BangPlrInputBox = Tab13:CreateInput({
+Name = "Bang Player (Bypassed)",
+PlaceholderText = "Target Here",
+RemoveTextAfterFocusLost = true,
+Callback = function(bangPlayerTarget)
+    local real_target_bang = findplr(bangPlayerTarget)
+    if getgenv().bangScriptLoaded then
+        return 
+    end
+    
+    getgenv().bangScriptLoaded = true
+    
+    getgenv().enabled = true
+    getgenv().unload = false
+    wait(0.1)
+    local Players = game:GetService("Players")
+    local RunService = game:GetService("RunService")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local humanoid = Character:WaitForChild("Humanoid")
+    local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+    
+    local VOID_THRESHOLD = -50
+    local UNVOID_THRESHOLD = 0
+    
+    local function noSitFunc()
+        if humanoid and humanoid.Sit then
+            humanoid.Sit = false
+        end
+    end
+    
+    local function setupNoSit()
+        if getgenv().noSit then getgenv().noSit:Disconnect() end
+        if getgenv().nositDied then getgenv().nositDied:Disconnect() end
+        
+        local humanoid = LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
+        if humanoid then
+            getgenv().noSit = humanoid:GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
+        end
+        
+        local function nositDiedFunc()
+            repeat task.wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            setupNoSit()
+        end
+        
+        getgenv().nositDied = LocalPlayer.CharacterAdded:Connect(nositDiedFunc)
+    end
+    
+    local function antiVoidLoop()
+        if HumanoidRootPart then
+            if HumanoidRootPart.Position.Y < VOID_THRESHOLD then
+                HumanoidRootPart.Anchored = true
+            elseif HumanoidRootPart.Position.Y > UNVOID_THRESHOLD then
+                HumanoidRootPart.Anchored = false
+            end
+        end
+    end
+    
+    local function NoclipLoop()
+        if getgenv().Clip == false and LocalPlayer.Character then
+            for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
+                if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= getgenv().floatName then
+                    child.CanCollide = false
+                end
+            end
+        elseif getgenv().Clip == true and LocalPlayer.Character then
+            for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
+                if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= getgenv().floatName then
+                    child.CanCollide = true
+                end
+            end
+        end
+    end
+    
+    local function cleanupConnections()
+        if getgenv().noSit then getgenv().noSit:Disconnect() end
+        if getgenv().nositDied then getgenv().nositDied:Disconnect() end
+        if getgenv().bangDied then getgenv().bangDied:Disconnect() end
+        if getgenv().bangLoop then getgenv().bangLoop:Disconnect() end
+        if getgenv().Noclipping then getgenv().Noclipping:Disconnect() end
+        if getgenv().antiVoidLoop then getgenv().antiVoidLoop:Disconnect() end
+    end
+    
+    function bang_plr_bypass(target)
+        cleanupConnections()
+    
+        local RunService = game:GetService("RunService")
+    
+        setupNoSit()
+    
+        getgenv().Clip = false
+        getgenv().enabled = true
+        getgenv().Noclipping = RunService.Stepped:Connect(NoclipLoop)
+        getgenv().antiVoidLoop = RunService.Stepped:Connect(antiVoidLoop)
+    
+        local bangAnim = Instance.new("Animation")
+        bangAnim.AnimationId = "rbxassetid://5918726674"
+        local bang = humanoid:LoadAnimation(bangAnim)
+
+        getgenv().bangAnimation = bang
+        
+        bang:Play(0.1, 1, 1)
+    
+        getgenv().bangLoop = RunService.Stepped:Connect(function()
+            if getgenv().unload then
+                cleanupConnections()
+                bang:Stop()
+                bangAnim:Destroy()
+                getgenv().bangScriptLoaded = false
+                return 
+            end
+    
+            if bang.Speed ~= getgenv().bangSpeed then
+                bang:AdjustSpeed(getgenv().bangSpeed)
+            end
+    
+            if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+                local bang_char_root = target.Character:FindFirstChild("HumanoidRootPart")
+                HumanoidRootPart.CFrame = bang_char_root.CFrame * CFrame.new(0, 0, 1.1)
+            end
+        end)
+
+        getgenv().bangDied = humanoid.Died:Connect(function()
+            bang:Stop()
+            bangAnim:Destroy()
+            cleanupConnections()
+        end)
+    end    
+
+    bang_plr_bypass(real_target_bang)
+end,})
+wait(0.1)
+local UnloadBangPlr = Tab13:CreateButton({
+Name = "Unload Bang Script (Stop Script)",
+Callback = function()
+    local function cleanupConnections()
+        if getgenv().noSit then getgenv().noSit:Disconnect() end
+        if getgenv().nositDied then getgenv().nositDied:Disconnect() end
+        if getgenv().bangDied then getgenv().bangDied:Disconnect() end
+        if getgenv().bangLoop then getgenv().bangLoop:Disconnect() end
+        if getgenv().Noclipping then getgenv().Noclipping:Disconnect() end
+        if getgenv().antiVoidLoop then getgenv().antiVoidLoop:Disconnect() end
+    
+        if getgenv().bangAnimation then
+            getgenv().bangAnimation:Stop()
+            getgenv().bangAnimation:Destroy()
+            getgenv().bangAnimation = nil
+        end
+    end
+    
+    function bang_plr_bypass_off()
+        cleanupConnections()
+
+        if HumanoidRootPart then
+            HumanoidRootPart.Anchored = false
+        end
+
+        getgenv().bangActive = false
+        getgenv().Clip = true
+        getgenv().bangScriptLoaded = false
+        getgenv().unload = nil
+        getgenv().enabled = false
+    end
+
+    wait(0.1)
+    bang_plr_bypass_off()    
 end,})
 
 local SpinCharBox = Tab2:CreateInput({
