@@ -4,6 +4,35 @@
 
 -- ]]
 
+if getgenv().SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED == true then
+	getgenv().getLoopKick = false
+    wait(0.2)
+    getgenv().SCRIPT_EXECUTED = false
+    getgenv().SCRIPT_EXECUTED = false
+    getgenv().Invis_Loaded = false
+    getgenv().GetLoopRunning = false
+    getgenv().GetLoopRunning = false
+    getgenv().LmaoGetMuted = false
+    getgenv().css_digital = false
+    wait(.3)
+    local CoreGui = game:GetService("CoreGui")
+
+	if CoreGui:FindFirstChild("HiddenUI") then
+		local Hide = CoreGui:FindFirstChild("HiddenUI")
+		local Rayfield = Hide:FindFirstChild("Rayfield")
+		if Hide and Rayfield then
+			Rayfield:Destroy()
+		end
+	elseif CoreGui:FindFirstChild("Rayfield") then
+		local rayfield = CoreGui:FindFirstChild("Rayfield")
+		if rayfield then
+			rayfield:Destroy()
+		end
+	elseif not CoreGui:FindFirstChild("HiddenUI") then
+		warn("HiddenUI is not directly accessible or it may be a function.")
+	end
+end
+
 local function run_emote_config()
 	httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
@@ -139,6 +168,8 @@ Button2.Font = Enum.Font.SourceSansBold
 Button2.Parent = Frame
 
 Button1.MouseButton1Click:Connect(function()
+	run_emote_config()
+	wait(0.3)
 	local fileName = "zacks_easy_hub_config.lua"
 	local success, fileContent = pcall(readfile, fileName)
 
@@ -156,6 +187,8 @@ Button1.MouseButton1Click:Connect(function()
 end)
 
 Button2.MouseButton1Click:Connect(function()
+	run_no_keybind_config()
+	wait(0.3)
 	local fileName = "zacks_easy_hub_no_config.lua"
 	local success, fileContent = pcall(readfile, fileName)
 
