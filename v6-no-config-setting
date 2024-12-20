@@ -78,15 +78,20 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     updateCharacterComponents(newCharacter)
 end)
 
--- Script to unsuspend Voice Chat (VC), this should work, as long as 'getgenv().VoiceChatService:joinVoice()', is only being executed 1 time, since Roblox duplicates the suspension screen, if you do it more then once.
-local function onVoiceChatStateChanged(oldState, newState)
-    if newState == Enum.VoiceChatState.Ended then
-        getgenv().VoiceChatService:joinVoice()
+if getgenv().voiceChat_Check then
+    warn("Already checked VC")
+else
+    -- Script to unsuspend Voice Chat (VC), this should work, as long as 'getgenv().VoiceChatService:joinVoice()', is only being executed 1 time, since Roblox duplicates the suspension screen, if you do it more then once.
+    local function onVoiceChatStateChanged(oldState, newState)
+        if newState == Enum.VoiceChatState.Ended then
+            getgenv().VoiceChatService:joinVoice()
+        end
     end
-end
 
--- Check when the Voice Chat (VC) state has changed and scope out to see when it does, then initialize the function above.
-getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)
+    -- Check when the Voice Chat (VC) state has changed and scope out to see when it does, then initialize the function above.
+    getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)
+    getgenv().voiceChat_Check = true
+end
 
 -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
 function getRoot(char)
