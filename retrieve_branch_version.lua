@@ -168,6 +168,7 @@ Button2.Font = Enum.Font.SourceSansBold
 Button2.Parent = Frame
 
 Button1.MouseButton1Click:Connect(function()
+	Button1.Text = "Loading Keybinds Script..."
 	run_emote_config()
 	wait(0.3)
 	local fileName = "zacks_easy_hub_config.lua"
@@ -187,6 +188,7 @@ Button1.MouseButton1Click:Connect(function()
 end)
 
 Button2.MouseButton1Click:Connect(function()
+	Button2.Text = "Loading No Keybinds Version..."
 	run_no_keybind_config()
 	wait(0.3)
 	local fileName = "zacks_easy_hub_no_config.lua"
