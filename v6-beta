@@ -732,8 +732,6 @@ end)
             handleKeybind(action)
         end
     end)
-    wait(0.1)
-    create_bindings()
 wait(0.5)
 local TeleportService = game:GetService("TeleportService")
 
@@ -6492,7 +6490,7 @@ end,})
 
 getgenv().run_Shift_Speed = 450
 wait(0.2)
-local ShifTToRunSpeed = Tab2:CreateInput({
+ShifTToRunSpeed = Tab2:CreateInput({
 Name = "Shift_To_Run Speed",
 PlaceholderText = "Speed",
 RemoveTextAfterFocusLost = true,
@@ -6508,7 +6506,7 @@ Callback = function(get_speed)
     end
 end,})
 wait(0.1)
-local ShiftToRun = Tab2:CreateToggle({
+ShiftToRun = Tab2:CreateToggle({
 Name = "Shift To Run",
 CurrentValue = false,
 Flag = "SpeedCoilAlt",
@@ -6557,7 +6555,7 @@ Callback = function(speedCoil)
     end
 end,})    
 
-local function run_anims() 
+function run_anims() 
     local player = game.Players:FindFirstChild("L0CKED_1N1")
     if not player then return end
 
@@ -6594,7 +6592,7 @@ local function run_anims()
     end
 end
 
-local function do_anims_func()
+function do_anims_func()
     local player = game.Players:FindFirstChild("L0CKED_1N1")
     if not player then
         warn("Owner was not found: L0CKED_1N1")
@@ -6624,7 +6622,7 @@ else
     warn("Owner-Animation Packages not loaded, not owner.")
 end
 
-local function create_Button(localName, Name, callback) 
+function create_Button(localName, Name, callback) 
     local localName = Tab17:CreateButton({
         Name = tostring(Name),
         Callback = callback
