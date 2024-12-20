@@ -624,9 +624,9 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
 end)
 -- [] -->> Authorize the correct usernames, ignoring below this line. <<-- [] --
 -- [] -->> Question the user about setting up Emote/Rizz Configuration. <<-- [] --
-if getgenv().get_setup_config or getgenv().get_setup_config == true and getgenv().LocalPlayer.Name ~= "L0CKED_1N1" then
+if getgenv().LocalPlayer.Name ~= "L0CKED_1N1" and getgenv().get_setup_config then
     warn("Keybind Setup already loaded.")
-elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name == "L0CKED_1N1" then
+elseif getgenv().LocalPlayer.Name == "L0CKED_1N1" and getgenv().get_setup_config == false then
     getgenv().get_setup_config = true
     print("Owner found, we're not going to set up emote GUI, selecting 'Yes' instead.")
     wait(0.2)
@@ -744,7 +744,7 @@ elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and
     wait(0.1)
     create_bindings()
 -- This is the last one I'm doing, I'll make some more comments later, but this should be obvious, asking the user if they want it, and ignoring the whitelisted username below.
-elseif not getgenv().get_setup_config or getgenv().get_setup_config == false and getgenv().LocalPlayer.Name ~= "L0CKED_1N1" then
+elseif getgenv().LocalPlayer.Name ~= "L0CKED_1N1" and getgenv().get_setup_config == false then
     local player = getgenv().LocalPlayer or game:GetService("Players").LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
 
@@ -2368,7 +2368,7 @@ Callback = function(boothStolen)
         getgenv().AutoClaimEnabled = true
         getgenv().Booth = nil
         getgenv().OwnershipConnection = nil
-    
+        
         function notify(title, content, duration)
             Rayfield:Notify({
                 Title = tostring(title or "Notification:"),
@@ -2385,77 +2385,72 @@ Callback = function(boothStolen)
                 },
             })
         end
-    
+        
         local function getStall()
             for _, v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                if v.Username.BillboardGui.TextLabel.Text == "Owned by: "..LocalPlayer.Name then
+                if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. LocalPlayer.Name then
                     return v
                 end
             end
             return nil
         end
+        
+        local function claimStall(stall)
+            if stall then
+                local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
+        
+                repeat
+                    Character:PivotTo(stall:GetPivot() + Vector3.new(0, 3, 0))
+                    task.wait(0.5)
+        
+                    local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+                    if proximityPrompt then
+                        fireproximityprompt(proximityPrompt, 25)
+                    else
+                        warn("ProximityPrompt not found for the booth!")
+                    end
+        
+                    task.wait(0.5)
+                until stall.Username.BillboardGui.TextLabel.Text == "Owned by: " .. LocalPlayer.Name or not getgenv().AutoClaimEnabled
 
-        local get_plr_stall = getStall()
-
-        if not get_plr_stall then
-            notify("Error:", "You do not own a booth, claim one!", 6)
-            getgenv().AutoClaimEnabled = false
-            return 
+                Character:PivotTo(OldCF)
+            end
         end
-    
+        
         local function monitorOwnership()
             while getgenv().AutoClaimEnabled == true do
                 local stall = getStall()
                 if stall then
                     getgenv().Booth = stall
-
+        
                     if not getgenv().OwnershipConnection then
                         getgenv().OwnershipConnection = stall.Username.BillboardGui.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
                             if stall.Username.BillboardGui.TextLabel.Text ~= "Owned by: " .. LocalPlayer.Name then
-                                
-                                local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
-    
-                                Character:PivotTo(stall:GetPivot())
-                                task.wait(0.5)
-                                fireproximityprompt(stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
-                                task.wait(0.5)
-                                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer("", "Gray", "SourceSans")
-                                task.wait()
-                                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer("", "Gray", "SourceSans")
-                                task.wait()
-                                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer("", "Gray", "SourceSans")
-                                task.wait()
-                                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer("", "Gray", "SourceSans")
-                                task.wait()
-                                game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer("", "Gray", "SourceSans")
-
-                                Character:PivotTo(OldCF)
+                                claimStall(stall)
                             end
                         end)
                     end
                 else
                     print("Reclaiming Stall...")
-                    task.wait()
-                    Character:PivotTo(get_plr_stall:GetPivot())
-                    task.wait(0.5)
-                    fireproximityprompt(get_plr_stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt"), 25)
-                    task.wait(0.5)
-                    for _ = 1, 3 do
-                        game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer("", "Gray", "SourceSans")
-                        task.wait(0.2)
-                    end
+                    local newStall = getStall()
+                    claimStall(newStall)
                 end
-    
+        
                 task.wait(0.6)
             end
-        end
 
+            if getgenv().OwnershipConnection then
+                getgenv().OwnershipConnection:Disconnect()
+                getgenv().OwnershipConnection = nil
+            end
+        end
+        
         local plr_booth = getStall()
         if plr_booth and getgenv().AutoClaimEnabled == true then
             monitorOwnership()
         else
-            notify("Error:", "No booth found! Claim a booth and toggle this on.", 7.5)
-        end
+            getgenv().notify("Error:", "No booth found! Claim a booth and toggle this on.", 7.5)
+        end        
     else
         getgenv().AutoClaimEnabled = false
         if getgenv().OwnershipConnection then
@@ -5702,11 +5697,18 @@ wait(0.3)
 local ClickingAllBoards = Tab5:CreateButton({
 Name = "Click All TicTacToe Boards",
 Callback = function()
-    if game:GetService("Workspace"):FindFirstChild("PartStorage") then
-        click_all_alt()
-    else
-        clickAllTheDetectors()
-    end    
+    local PartStorage = game.Workspace.PartStorage
+    local TicTacToeBoards = PartStorage:GetChildren()
+    
+    for _, board in ipairs(TicTacToeBoards) do
+        if board.Name == "Tic Tac Toe" then
+            for _, v in ipairs(board:GetDescendants()) do
+                if v:IsA("ClickDetector") then
+                    fireclickdetector(v, 999)
+                end
+            end
+        end
+    end
 end,})
 
 local LoopClickAllBoards = Tab5:CreateToggle({
@@ -5717,8 +5719,19 @@ Callback = function(ClickAll)
     if ClickAll then
         getgenv().doAllClicks = true
         while getgenv().doAllClicks do
-            wait(1.1)
-            click_all_alt()
+            wait(0.9)
+            local PartStorage = game.Workspace.PartStorage
+            local TicTacToeBoards = PartStorage:GetChildren()
+
+            for _, board in ipairs(TicTacToeBoards) do
+                if board.Name == "Tic Tac Toe" then
+                    for _, v in ipairs(board:GetDescendants()) do
+                        if v:IsA("ClickDetector") then
+                            fireclickdetector(v, 999)
+                        end
+                    end
+                end
+            end
         end
     else
         getgenv().doAllClicks = false
