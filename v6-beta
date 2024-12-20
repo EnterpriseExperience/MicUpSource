@@ -3706,7 +3706,7 @@ Callback = function(toggleBool)
 end,})
 
 getgenv().settings_flashback = {
-    Keybind = "C",
+    Keybind = string.upper("C"),
     Speed = 0.9
 }
 
@@ -3717,11 +3717,11 @@ PlaceholderText = "Key Here",
 RemoveTextAfterFocusLost = true,
 Flag = "KeybindFlashback",
 Callback = function(keyPressedFlash)
-    if getgenv().flashbacks_script then
+    if getgenv().flashbacks_script then 
         getgenv().notify("Alert!", "Unloading Flashback Rewind to save changes...", 7)
         wait(0.3)
         local runService = game:GetService("RunService") 
-
+    
         if getgenv().flashbacks_script then
             pcall(function()
                 runService:UnbindFromRenderStep("FlashbackStep")
@@ -3732,19 +3732,19 @@ Callback = function(keyPressedFlash)
         end
         wait(0.4)
         if getgenv().flashback == nil and getgenv().flashbacks_script == false then
-            getgenv().settings_flashback.Keybind = keyPressedFlash
+            getgenv().settings_flashback.Keybind = string.upper(keyPressedFlash)
             wait(0.1)
             getgenv().notify("Success!", "We unloaded Flashback Rewind and updated keybind!", 7)
             wait(0.2)
-            getgenv().notify("Changed.", "New Keybind: "..tostring(keyPressedFlash), 6.8)
+            getgenv().notify("Changed.", "New Keybind: "..tostring(string.upper(keyPressedFlash)), 6.8)
         else
             getgenv().notify("Failed!", "Unable to complete process, please reset.", 6)
         end
     else
-        getgenv().settings_flashback.Keybind = keyPressedFlash
+        getgenv().settings_flashback.Keybind = string.upper(keyPressedFlash)
         wait(0.1)
-        getgenv().notify("Success!", "Flashback Rewind Updated To: "..tostring(keyPressedFlash), 7)
-    end
+        getgenv().notify("Success!", "Flashback Rewind Updated To: "..tostring(string.upper(keyPressedFlash)), 7)
+    end    
 end,})
 
 local FlashbackSpeed = Tab16:CreateSlider({
@@ -3758,6 +3758,7 @@ Callback = function(gotSpeedFlashback)
     getgenv().settings_flashback.Speed = tonumber(gotSpeedFlashback)
 end,})
 
+-- >> Big Thanks to: sa.ya (Discord)
 local flashBackRewindScript = Tab16:CreateButton({
 Name = "Flashback Rewind",
 Callback = function()
