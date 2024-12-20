@@ -1069,11 +1069,23 @@ Callback = function(claimAnyBooth)
     end
 end,})
 
-local DeletePlrBooth = Tab11:CreateButton({
+local FixGlitchedScreenBooth = Tab11:CreateButton({
 Name = "Fix Glitched Booth Screen (GUI)",
 Callback = function()
-    for i = 1, 2000 do
+    for i = 1, 1000 do
         getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
+    end
+    wait(1.2)
+    if getgenv().PlayerGui:FindFirstChild("Booth") then
+        for _, v in pairs(game.Players.LocalPlayer:FindFirstChild("PlayerGui"):GetChildren()) do
+            if v:IsA("ScreenGui") and v.Name == "Booth" then
+                print("Found GUI: "..tostring(v.Name)..", Removing...")
+                wait(0.1)
+                v:Destroy()
+            end
+        end
+    else
+        warn(".. - nil")
     end
 end,})
 
