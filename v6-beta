@@ -234,10 +234,16 @@ else
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            if writefile and readfile and readfile("zacks_easy_hub.lua") then
+                getgenv().TeleportCheck = true
+                queueteleport("readfile('zacks_easy_hub_config.lua')")
+            else
+                getgenv().TeleportCheck = true
+                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            end
         end
     end)
-    wait(0.2)
+    wait()
     getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
 end
 wait(0.3)
@@ -556,6 +562,20 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             SunRays.Spread = 0.1
         end
     end
+    wait()
+    getgenv().LocalPlayer.OnTeleport:Connect(function(State)
+        if (not getgenv().TeleportCheck) and getgenv().queueteleport then
+            getgenv().TeleportCheck = true
+            if writefile and readfile and readfile("zacks_easy_hub.lua") then
+                getgenv().TeleportCheck = true
+                queueteleport("readfile('zacks_easy_hub_config.lua')")
+            else
+                getgenv().TeleportCheck = true
+                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            end
+        end
+    end)
+    wait()
     wait(0.3)
     resetLightingSettings() -- Call it right here, since we have the upperhand on client shit.
     wait(0.2)
@@ -7319,7 +7339,7 @@ wait(0.5)
 if getgenv().performance_stats then
     warn("Performance stats checked.")
 else
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/expert-octo-telegram/refs/heads/main/expressive_contacting_ai.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
     wait(0.2)
     local coreGuiTypeNames = {
         ["inventory"] = Enum.CoreGuiType.Backpack,
