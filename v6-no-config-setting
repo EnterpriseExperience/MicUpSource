@@ -815,12 +815,12 @@ getgenv().ownerWhitelist = {
 }
 wait()
 -- [] -->> Functions <<-- [] --
-local cmdp = getgenv().Players
+local cmdp = game.Players
 local cmdlp = cmdp.LocalPlayer
 
 function findplr(args, tbl)
     if tbl == nil then
-        local tbl = cmdp:GetPlayers()
+        local tbl = game:GetService("Players"):GetPlayers()
         if args == "me" then
             return cmdlp
         elseif args == "random" then 
@@ -886,16 +886,20 @@ function findplr(args, tbl)
             end
             return vAges[math.random(1,#vAges)]
         elseif args == "near" then
-            local vAges = {} 
-            for _,v in pairs(tbl) do
-                if v ~= cmdlp then
-                    local math = (v.Character:FindFirstChild("HumanoidRootPart").Position - cmdlp.Character.HumanoidRootPart.Position).magnitude
-                    if math < 30 then
-                        vAges[#vAges+1] = v
+            local vAges = {}
+            for _, v in pairs(tbl) do
+                if v and v ~= cmdlp and v.Character and cmdlp.Character then
+                    local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
+                    local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+                    if vRootPart and cmdlpRootPart then
+                        local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
+                        if distance < 30 then
+                            vAges[#vAges + 1] = v
+                        end
                     end
                 end
             end
-            return vAges[math.random(1,#vAges)]
+            return vAges[math.random(1, #vAges)]
         elseif args == "far" then
             local vAges = {} 
             for _,v in pairs(tbl) do
