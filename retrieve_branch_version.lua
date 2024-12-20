@@ -5,7 +5,7 @@
 -- ]]
 
 if getgenv().SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED == true then
-    getgenv().getLoopKick = false
+	getgenv().getLoopKick = false
     wait(0.2)
     getgenv().SCRIPT_EXECUTED = false
     getgenv().SCRIPT_EXECUTED = false
@@ -16,6 +16,7 @@ if getgenv().SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED == true then
     getgenv().css_digital = false
     wait(.3)
     local CoreGui = game:GetService("CoreGui")
+
 	if CoreGui:FindFirstChild("HiddenUI") then
 		local Hide = CoreGui:FindFirstChild("HiddenUI")
 		local Rayfield = Hide:FindFirstChild("Rayfield")
@@ -37,7 +38,7 @@ local function run_emote_config()
 
 	local updated_build_config = "https://cdn.jsdelivr.net/gh/EnterpriseExperience/MicUpSource@main/v6-beta"
 
-	if not syn and not http and not request then
+	if not httprequest then
 		warn("Your executor does not support HTTP requests. Use Solara, Synapse Z, Swift, or another compatible executor.")
 		wait(0.3)
 		loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta'))()
@@ -80,7 +81,7 @@ local function run_no_keybind_config()
 
 	local updated_no_config_build = "https://cdn.jsdelivr.net/gh/EnterpriseExperience/MicUpSource@main/v6-no-config-setting"
 
-	if not syn and not http and not request then
+	if not httprequest then
 		warn("Your executor does not support HTTP requests. Use Solara, Synapse Z, Swift, or another compatible executor.")
 		wait(0.3)
 		loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting'))()
