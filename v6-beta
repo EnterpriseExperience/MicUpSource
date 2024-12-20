@@ -2765,10 +2765,6 @@ Callback = function()
     copyAnimations()
 end,})
 
-local Walking_Paragraph_Label = Tab14:CreateParagraph({Title = "Current Problem:", Content = "Walking In Place."})
-wait()
-local Walking_Fix_Label = Tab14:CreateParagraph({Title = "Current Fix:", Content = "Just reset, though, it's only visible to you."})
-wait()
 local LoopCopyTheEmotePlr = Tab14:CreateToggle({
 Name = "Loop CopyAnim Whitelist Plr",
 CurrentValue = false,
@@ -2787,51 +2783,28 @@ Callback = function(getLoopCopyAnim)
         end
         
         local thePlayer = getThatPlr()
+        local Character = getgenv().Character
+        local Humanoid = getgenv().Humanoid
+        local HumanoidRootPart = getgenv().HumanoidRootPart
+        local LocalPlayer = getgenv().LocalPlayer
+        local player = LocalPlayer
+        local Players = getgenv().Players
+        local Workspace = getgenv().Workspace
         
         if thePlayer then
             print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
         else
             getgenv().copyAllWhitelistedAnims = false
-            return Rayfield:Notify({
-                Title = "[ERROR]: 0",
-                Content = "Player was not found!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
+            return getgenv().notify("Error:", "Player was not found!", 7)
         end
-        
-        
-        
-        
-        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+
         local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
         local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
         
         if thePlayer then
             print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
         else
-            return Rayfield:Notify({
-                Title = "[ERROR]: 0",
-                Content = "Player was not found!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
+            return getgenv().notify("Error:", "Player not found!", 7)
         end
         
         for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
@@ -2841,7 +2814,17 @@ Callback = function(getLoopCopyAnim)
         local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
         local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
         
+        local function getAnimationScript(character)
+            return character:FindFirstChild("Animate")
+        end
+        
+        local defaultAnimationScript = getAnimationScript(Character)
+        
         local function copyAnimations()
+            if defaultAnimationScript then
+                defaultAnimationScript.Disabled = true
+            end
+        
             for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
                 animTrack:Stop()
             end
@@ -2863,18 +2846,27 @@ Callback = function(getLoopCopyAnim)
         
         getgenv().copyAllWhitelistedAnims = true
         while getgenv().copyAllWhitelistedAnims == true do
-        wait(.4)
+        wait(0.1)
             copyAnimations()
         end
     else
+        local thePlayer = getThatPlr()
+        local Character = getgenv().Character
+        local Humanoid = getgenv().Humanoid
+        local HumanoidRootPart = getgenv().HumanoidRootPart
+        local LocalPlayer = getgenv().LocalPlayer
+        local player = LocalPlayer
+        local Players = getgenv().Players
+        local Workspace = getgenv().Workspace
+        
         getgenv().copyAllWhitelistedAnims = false
         wait()
+        
         repeat wait() until getgenv().copyAllWhitelistedAnims == false
         wait(0.3)
-        getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
         
+        getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
         function getThatPlr()
-            
             for i, v in pairs(Players:GetChildren()) do
                 if getgenv().singlePlayerTable[v.Name] then
                     return v
@@ -2882,26 +2874,13 @@ Callback = function(getLoopCopyAnim)
             end
             return nil
         end
-    
+        
         local thePlayer = getThatPlr()
         
         if thePlayer then
-            print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+            print("Found Player: " .. tostring(thePlayer.Name) .. ", DisplayName: " .. tostring(thePlayer.DisplayName) .. ", UserID: " .. tostring(thePlayer.UserId))
         else
-            return Rayfield:Notify({
-                Title = "[ERROR]: 0",
-                Content = "Player was not found!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
+            return getgenv().notify("Error:", "Player was not found!", 7)
         end
         
         local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
@@ -2909,33 +2888,17 @@ Callback = function(getLoopCopyAnim)
         local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
         
         if thePlayer then
-            print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+            print("Found Player: " .. tostring(thePlayer.Name) .. ", DisplayName: " .. tostring(thePlayer.DisplayName) .. ", UserID: " .. tostring(thePlayer.UserId))
         else
-            return Rayfield:Notify({
-                Title = "[ERROR]: 0",
-                Content = "Player was not found!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
+            return getgenv().notify("Error:", "Player was not found!", 7)
         end
         
         for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
             animTrack:Stop()
         end
         
-        local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
-        local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
-        
         local function stopAnimations()
-            for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+            for _, animTrack in pairs(GetTheirHumanoid:GetPlayingAnimationTracks()) do
                 animTrack:Stop()
             end
         end
@@ -2943,6 +2906,17 @@ Callback = function(getLoopCopyAnim)
         for i = 1, 10 do
             stopAnimations()
         end
+
+        local function resetDefaultAnimations()
+            local animateScript = Character:FindFirstChild("Animate")
+            if animateScript then
+                animateScript.Disabled = true
+                wait(0.1)
+                animateScript.Disabled = false
+            end
+        end
+        
+        resetDefaultAnimations()        
     end
 end,})
 
@@ -2982,10 +2956,7 @@ Callback = function()
         })
     end
     
-    
-    
-    
-    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
     local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
     local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
     
