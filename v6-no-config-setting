@@ -427,9 +427,6 @@ local Section2 = Tab2:CreateSection("||| Character [1] Section |||")
 local Tab13 = Window:CreateTab("< / Players >", 7743871002)
 local Section13 = Tab13:CreateSection("||| Character [2] Section |||")
 
-local Tab18 = Window:CreateTab("< / Avatar >", 7733954760)
-local Section18 = Tab18:CreateSection("||| Avatar Section |||")
-
 local Tab10 = Window:CreateTab("< / Teleports >", 7733764327)
 local Section10 = Tab10:CreateSection("||| Teleports Section |||")
 
