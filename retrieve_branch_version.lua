@@ -5,7 +5,7 @@
 -- ]]
 
 if getgenv().SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED == true then
-	getgenv().getLoopKick = false
+    getgenv().getLoopKick = false
     wait(0.2)
     getgenv().SCRIPT_EXECUTED = false
     getgenv().SCRIPT_EXECUTED = false
