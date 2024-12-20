@@ -375,9 +375,9 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "🎄 Zacks Easy Hub 🎄 | V6.2.6.1 | Emote Keybinds: False",
+    Name = "🎄 Zacks Easy Hub 🎄 | V6.2.6.2 | Emote Keybinds: False",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
-    LoadingSubtitle = "Zacks Easy Hub | Dominating.",
+    LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
        Enabled = false,
        FolderName = nil,
@@ -2155,7 +2155,12 @@ end,})
 local RemoveBooths = Tab11:CreateButton({
 Name = "Remove Every Booth",
 Callback = function()
-    local GetWorkspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace")) or workspace or game.Workspace or game:FindService("Workspace")
+    local Players = getgenv().Players
+    local LocalPlayer = getgenv().LocalPlayer
+    local Character = getgenv().Character
+    local Humanoid = getgenv().Humanoid
+    local HumanoidRootPart = getgenv().HumanoidRootPart
+    local GetWorkspace = game:GetService("Workspace")
     local Folder = GetWorkspace:FindFirstChild("Booth") or GetWorkspace:WaitForChild("Booth") 
     
     local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
@@ -2221,6 +2226,12 @@ Name = "Add CopyAnim Whitelist",
 PlaceholderText = "User",
 RemoveTextAfterFocusLost = true,
 Callback = function(thisUserGet)
+    local Players = getgenv().Players
+    local LocalPlayer = getgenv().LocalPlayer
+    local Character = getgenv().Character
+    local Humanoid = getgenv().Humanoid
+    local HumanoidRootPart = getgenv().HumanoidRootPart
+    local Workspace = game:GetService("Workspace")
     getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
     local bruhUser = findplr(thisUserGet)
@@ -2302,6 +2313,13 @@ Name = "Remove CopyAnim Whitelist",
 PlaceholderText = "User",
 RemoveTextAfterFocusLost = true,
 Callback = function(CopyAnimPlr)
+    local Players = getgenv().Players
+    local LocalPlayer = getgenv().LocalPlayer
+    local Character = getgenv().Character
+    local Humanoid = getgenv().Humanoid
+    local HumanoidRootPart = getgenv().HumanoidRootPart
+    local Workspace = game:GetService("Workspace")
+
     getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
     local dawgUser = findplr(CopyAnimPlr)
@@ -2365,6 +2383,12 @@ end,})
 local CopyAnimButtonPlr = Tab14:CreateButton({
 Name = "CopyAnim Whitelisted Plr",
 Callback = function()
+    local Players = getgenv().Players
+    local LocalPlayer = getgenv().LocalPlayer
+    local Character = getgenv().Character
+    local Humanoid = getgenv().Humanoid
+    local HumanoidRootPart = getgenv().HumanoidRootPart
+    local Workspace = game:GetService("Workspace")
     getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
     function getThatPlr()
@@ -2397,10 +2421,7 @@ Callback = function()
             },
         })
     end
-    
-    
-    
-    
+
     local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
     local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
     local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
@@ -2605,7 +2626,7 @@ Callback = function(getLoopCopyAnim)
             end
         end
         
-        resetDefaultAnimations()
+        resetDefaultAnimations()        
     end
 end,})
 
@@ -2645,10 +2666,7 @@ Callback = function()
         })
     end
     
-    
-    
-    
-    local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
     local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
     local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
     
@@ -3369,7 +3387,7 @@ Callback = function(toggleBool)
 end,})
 
 getgenv().settings_flashback = {
-    Keybind = "C",
+    Keybind = string.upper("C"),
     Speed = 0.9
 }
 
@@ -3383,7 +3401,7 @@ Callback = function(keyPressedFlash)
     if getgenv().flashbacks_script then 
         getgenv().notify("Alert!", "Unloading Flashback Rewind to save changes...", 7)
         wait(0.3)
-        local runService = game:GetService("RunService")
+        local runService = game:GetService("RunService") 
     
         if getgenv().flashbacks_script then
             pcall(function()
@@ -3407,7 +3425,7 @@ Callback = function(keyPressedFlash)
         getgenv().settings_flashback.Keybind = string.upper(keyPressedFlash)
         wait(0.1)
         getgenv().notify("Success!", "Flashback Rewind Updated To: "..tostring(string.upper(keyPressedFlash)), 7)
-    end
+    end    
 end,})
 
 local FlashbackSpeed = Tab16:CreateSlider({
@@ -6362,7 +6380,7 @@ end,})
 
 getgenv().run_Shift_Speed = 450
 wait(0.2)
-local ShifTToRunSpeed = Tab2:CreateInput({
+ShifTToRunSpeed = Tab2:CreateInput({
 Name = "Shift_To_Run Speed",
 PlaceholderText = "Speed",
 RemoveTextAfterFocusLost = true,
@@ -6378,7 +6396,7 @@ Callback = function(get_speed)
     end
 end,})
 wait(0.1)
-local ShiftToRun = Tab2:CreateToggle({
+ShiftToRun = Tab2:CreateToggle({
 Name = "Shift To Run",
 CurrentValue = false,
 Flag = "SpeedCoilAlt",
@@ -6427,7 +6445,7 @@ Callback = function(speedCoil)
     end
 end,})    
 
-local function run_anims() 
+function run_anims() 
     local player = game.Players:FindFirstChild("L0CKED_1N1")
     if not player then return end
 
@@ -6464,7 +6482,7 @@ local function run_anims()
     end
 end
 
-local function do_anims_func()
+function do_anims_func()
     local player = game.Players:FindFirstChild("L0CKED_1N1")
     if not player then
         warn("Owner was not found: L0CKED_1N1")
@@ -6494,7 +6512,7 @@ else
     warn("Owner-Animation Packages not loaded, not owner.")
 end
 
-local function create_Button(localName, Name, callback) 
+function create_Button(localName, Name, callback) 
     local localName = Tab17:CreateButton({
         Name = tostring(Name),
         Callback = callback
