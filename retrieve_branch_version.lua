@@ -16,7 +16,6 @@ if getgenv().SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED == true then
     getgenv().css_digital = false
     wait(.3)
     local CoreGui = game:GetService("CoreGui")
-
 	if CoreGui:FindFirstChild("HiddenUI") then
 		local Hide = CoreGui:FindFirstChild("HiddenUI")
 		local Rayfield = Hide:FindFirstChild("Rayfield")
