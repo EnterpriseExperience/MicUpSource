@@ -3948,6 +3948,26 @@ local function Notify_User(title, content, time)
     })
 end
 
+local Stop_Music_Player = Tab1:CreateButton({
+Name = "Stop In-Game Music",
+Callback = function()
+    local Local_Player = game:GetService("Players").LocalPlayer
+    local Stop_Music_Frame = getgenv().PlayerGui:FindFirstChild("Menu"):FindFirstChild("Background"):FindFirstChild("Music"):FindFirstChild("Stop")
+    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+
+    if firesignal then
+        for _,v in pairs(Stop_Music_Frame:GetDescendants()) do
+            if v:IsA("ImageButton") or v:IsA("TextButton") then
+                for i,Signal in pairs(Signals) do
+                    firesignal(v[Signal])
+                end
+            end
+        end
+    else
+        return Notify_User("Error:", "Your executor does not support 'firesignal'!", 6)
+    end
+end,})
+
 local Music_Player = Tab1:CreateButton({
 Name = "Shuffle In-Game Music",
 Callback = function()
@@ -6222,16 +6242,16 @@ Callback = function()
     getgenv().StarterGui = getgenv().StarterGui
 
     local function sendNotification(title, text, duration)
-        StarterGui:SetCore("SendNotification", {
+        getgenv().StarterGui:SetCore("SendNotification", {
             Title = title,
             Text = text,
             Duration = duration,
         })
     end
 
-    sendNotification("Free Emotes:", "Press , [comma] to open Free Emotes GUI", 4)
+    getgenv().notify("Free Emotes:", "Press , [comma] to open Free Emotes GUI", 5)
     task.wait(.1)
-    sendNotification("Open Button:", "Or use the button on the left side of your screen.", 4)
+    getgenv().notify("Open Button:", "Or use the button on the left side of your screen.", 4)
     task.wait()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
 end,})
