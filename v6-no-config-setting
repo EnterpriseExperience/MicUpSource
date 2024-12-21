@@ -236,10 +236,16 @@ else
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
+            if writefile and readfile and readfile("zacks_easy_hub.lua") then
+                getgenv().TeleportCheck = true
+                queueteleport("readfile('zacks_easy_hub_config.lua')")
+            else
+                getgenv().TeleportCheck = true
+                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
+            end
         end
     end)
-    wait(0.2)
+    wait()
     getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
 end
 wait(0.3)
@@ -382,7 +388,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "🎄 Zacks Easy Hub 🎄 | V6.2.6.2 | Emote Keybinds: False",
+    Name = "🎄 Zacks Easy Hub 🎄 | V6.2.6.4 | Emote Keybinds: False",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -564,13 +570,14 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             getgenv().TeleportCheck = true
             if writefile and readfile and readfile("zacks_easy_hub.lua") then
                 getgenv().TeleportCheck = true
-                queueteleport("readfile('zacks_easy_hub_no_config.lua')")
+                queueteleport("readfile('zacks_easy_hub_config.lua')")
             else
                 getgenv().TeleportCheck = true
                 queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
             end
         end
     end)
+    wait()
     wait(0.3)
     resetLightingSettings() -- Call it right here, since we have the upperhand on client shit.
     wait(0.2)
@@ -2734,7 +2741,6 @@ Callback = function(getTheIDForEmote)
     local getNumberID = tonumber(getTheIDForEmote) or getTheIDForEmote
     local Humanoid = getgenv().Humanoid
     
-    
     local succ, err = pcall(function()
         Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
     end)
@@ -3570,48 +3576,54 @@ Callback = function()
     end
 end,})
 
-getgenv().Elevator = getgenv().Workspace:FindFirstChild("Elevator")
-getgenv().Obby_Folder = game:GetService("Workspace"):FindFirstChild("Obby")
-getgenv().Low_Model = getgenv().Obby_Folder:WaitForChild("Low")
-getgenv().reparent_part = function(part, parent)
-    local part = game:GetService("Workspace"):FindFirstChild(part) or game:GetService("Workspace"):WaitForChild(part)
-    local parent = game:GetService("Workspace"):FindFirstChild(parent)
+if getgenv().checked_function_elevator then
+    warn("We checked elevator stuff")
+else
+    local Elevator = workspace:FindFirstChild("Elevator")
+    local Obby_Folder = game:GetService("Workspace"):FindFirstChild("Obby")
+    local Low_Model = Obby_Folder:FindFirstChild("Low")
+    local function resize_part(part, size, position)
+        local position = position
+        local size = size
+        local part = game:GetService("Workspace"):FindFirstChild(part)
 
-    part.Parent = parent
+        part.CFrame = position
+        part.Size = size
+    end
+    resize_part("Elevator", Vector3.new(45, 284, 34), CFrame.new(58.5813599, 139.712708, 225, -1, 0, 0, 0, 1, 0, 0, 0, -1))
+    wait(0.3)
+    local obby_clone = Low_Model:Clone()
+    obby_clone.Parent = game:GetService("Workspace"):FindFirstChild("PartStorage")
+    Elevator.Parent = game:GetService("Workspace"):FindFirstChild("PartStorage")
+    wait(0.3)
+    if game:GetService("Workspace"):FindFirstChild("PartStorage"):FindFirstChild("Elevator") then
+        Elevator = game:GetService("Workspace"):FindFirstChild("PartStorage"):FindFirstChild("Elevator")
+    else
+        warn("Didn't find 'Elevator' in PartStorage [game.Workspace/workspace], Falling back.")
+        task.wait()
+        Elevator = game:GetService("Workspace"):FindFirstChild("Elevator")
+    end
+    wait(0.2)
+    getgenv().checked_function_elevator = true
 end
-getgenv().resize_part = function(part, size, position)
-    local position = position
-    local size = size
-    local part = game:GetService("Workspace"):FindFirstChild(part) or game:GetService("Workspace"):WaitForChild(part)
-
-    part.CFrame = position
-    part.Size = size
+wait(0.3)
+local elevator
+wait(0.2)
+if game:GetService("Workspace"):FindFirstChild("PartStorage"):FindFirstChild("Elevator") then
+    elevator = game:GetService("Workspace"):FindFirstChild("PartStorage"):FindFirstChild("Elevator")
+else
+    elevator = game:GetService("Workspace"):FindFirstChild("Elevator")
 end
 wait(0.2)
-getgenv().resize_part("Elevator", Vector3.new(45, 284, 34), CFrame.new(58.5813599, 139.712708, 225, -1, 0, 0, 0, 1, 0, 0, 0, -1))
-local obby_clone = getgenv().Low_Model:Clone()
-getgenv().reparent_part("obby_clone", "PartStorage")
-getgenv().reparent_part("Elevator", "PartStorage")
-wait(0.4)
-if game:GetService("Workspace"):FindFirstChild("PartStorage"):FindFirstChild("Elevator") then
-    local Elevator = game:GetService("Workspace"):FindFirstChild("PartStorage"):FindFirstChild("Elevator")
-    getgenv().Elevator = Elevator
-else
-    warn("Didn't find 'Elevator' in PartStorage [game.Workspace/workspace], Falling back.")
-    task.wait()
-    local Elevator = game:GetService("Workspace"):FindFirstChild("Elevator")
-    getgenv().Elevator = Elevator
-end
-task.wait(0.3)
 local elevatorModifier = Tab1:CreateToggle({
 Name = "Visible Elevator (Tower - Float Up Part)",
 CurrentValue = false,
 Flag = "toggleElevatorVisibility",
 Callback = function(elevToggle)
     if elevToggle then
-        getgenv().Elevator.Transparency = 0
+        elevator.Transparency = 0
     else
-        getgenv().Elevator.Transparency = 1
+        elevator.Transparency = 1
     end
 end,})
 
@@ -3621,13 +3633,12 @@ CurrentValue = false,
 Flag = "toggleElevatorCollide",
 Callback = function(elevatorCollide)
     if elevatorCollide then
-        getgenv().Elevator.CanCollide = true
-        getgenv().Elevator.CanTouch = true
-        getgenv().Elevator.CanQuery = true
+        elevator.CanTouch = true
+        elevator.CanQuery = true
     else
-        getgenv().Elevator.CanCollide = false
-        getgenv().Elevator.CanQuery = false
-        getgenv().Elevator.CanTouch = false
+        elevator.CanCollide = false
+        elevator.CanQuery = false
+        elevator.CanTouch = false
     end
 end,})
 
@@ -3658,7 +3669,7 @@ local getHoverboardFlyInput = Tab13:CreateInput({
             end
             wait(0.5)
             local player = getgenv().LocalPlayer
-            local character = player.Character or player.CharacterAdded:Wait()
+            local character = getgenv().Character
             local humanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
             getgenv().flying = false
             getgenv().speed = tonumber(GetSpeed)
@@ -6313,22 +6324,7 @@ Callback = function(getAUser)
     end
 end,})
 
-for _, k in pairs(game:GetService("CoreGui"):GetChildren()) do
-    if k:IsA("ScreenGui") and k:FindFirstChild("Rayfield") or k.Name == "Rayfield" then
-        print(tostring(k.Parent))
-        setclipboard(tostring(k.Parent))
-    end
-end
-
-local UIColorPicker = Tab15:CreateColorPicker({
-Name = "UI Color Designer",
-Color = Color3.fromRGB(255,255,255),
-Flag = "ColorChangerForUI",
-Callback = function(colorPicked)
-
-end,})
-
-local ResetButton = Tab15:CreateButton({
+ResetButton = Tab15:CreateButton({
 Name = "Reset",
 Callback = function()
     local Humanoid = getgenv().Humanoid
@@ -6338,7 +6334,7 @@ Callback = function()
     end
 end,})
 
-local RejoinButton = Tab15:CreateButton({
+RejoinButton = Tab15:CreateButton({
 Name = "Rejoin",
 Callback = function()
     local TeleportService = getgenv().TeleportService
@@ -6348,7 +6344,7 @@ Callback = function()
     TeleportService:TeleportToPlaceInstance(PlaceId, JobId, getgenv().LocalPlayer)
 end,})
 
-local ServerHopButton = Tab15:CreateButton({
+ServerHopButton = Tab15:CreateButton({
 Name = "Server Hop (Roblox broke this!)",
 Callback = function()
     -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
@@ -6382,7 +6378,7 @@ Callback = function()
     end
 end,})
 
-local ReExecuteGUI = Tab15:CreateButton({
+ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute GUI",
 Callback = function()
     local Humanoid = getgenv().Humanoid
@@ -6401,7 +6397,7 @@ Callback = function()
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()
 end,})
 
-local DestroyGUIScript = Tab15:CreateButton({
+DestroyGUIScript = Tab15:CreateButton({
 Name = "Destroy GUI/Script",
 Callback = function()
     getgenv().getLoopKick = false
@@ -6417,7 +6413,7 @@ Callback = function()
     Rayfield:Destroy()
 end,})
 
-local UnmuteAPlayer = Tab1:CreateInput({
+UnmuteAPlayer = Tab1:CreateInput({
 Name = "Unmute Player",
 PlaceholderText = "User",
 RemoveTextAfterFocusLost = true,
