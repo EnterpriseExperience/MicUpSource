@@ -51,6 +51,8 @@ local function run_emote_config()
 		return
 	end
 
+	getgenv().setup_loaded_already_script = false
+
 	local function fetchSource(url)
 		local response
 		if httprequest then
@@ -93,6 +95,8 @@ local function run_no_keybind_config()
 		loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting'))()
 		return
 	end
+
+	getgenv().setup_loaded_already_script = false
 
 	local function fetchSource(url)
 		local response
@@ -176,6 +180,7 @@ Button2.Parent = Frame
 Button1.MouseButton1Click:Connect(function()
 	Button1.Text = "Loading Keybinds Script..."
 	run_emote_config()
+	getgenv().setup_loaded_already_script = false
 	wait(0.3)
 	Button1.Text = "Done!"
 	task.wait(0.2)
@@ -193,12 +198,12 @@ Button1.MouseButton1Click:Connect(function()
 	else
 		warn("Failed to read the file:", fileName)
 	end
-	getgenv().setup_loaded_already_script = false
 end)
 
 Button2.MouseButton1Click:Connect(function()
 	Button2.Text = "Loading No Keybinds Version..."
 	run_no_keybind_config()
+	getgenv().setup_loaded_already_script = false
 	wait(0.3)
 	Button2.Text = "Done!"
 	task.wait(0.2)
@@ -216,7 +221,6 @@ Button2.MouseButton1Click:Connect(function()
 	else
 		warn("Failed to read the file:", fileName)
 	end
-	getgenv().setup_loaded_already_script = false
 end)
 wait()
 getgenv().setup_loaded_already_script = true
