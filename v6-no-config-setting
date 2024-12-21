@@ -9,12 +9,14 @@
 --]]
 
 -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
-local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
+local notif = loadstring(game:HttpGet("https://raw.githubusercontent.com/insanedude59/notiflib/main/main"))()
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
 if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     -- Yes, I realize I do not need 2 notifications, but I seperated them only because of the TextLabel in the Notification UI Library not being the best at letting me fix a little bit more text in the notifications, I'll change it soon.
-    NotificationLibrary:SendNotification("Error", "Zacks Easy Hub is already running!", 6)
-    return NotificationLibrary:SendNotification("Warning", "Try doing Re-Execute GUI, instead!", 6) -- Wait 6 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
+    notif:Notification("Error:","Zacks Easy Hub is already running!","GothamSemibold","Gotham",6)
+    notif:Notification("Notification:","Try doing Re-Execute GUI instead!","GothamSemibold","Gotham",6)
+    return
+    -- Wait 6 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 
@@ -3568,6 +3570,67 @@ Callback = function()
     end
 end,})
 
+getgenv().Elevator = getgenv().Workspace:FindFirstChild("Elevator")
+getgenv().Obby_Folder = game:GetService("Workspace"):FindFirstChild("Obby")
+getgenv().Low_Model = getgenv().Obby_Folder:WaitForChild("Low")
+getgenv().reparent_part = function(part, parent)
+    local part = game:GetService("Workspace"):FindFirstChild(part) or game:GetService("Workspace"):WaitForChild(part)
+    local parent = game:GetService("Workspace"):FindFirstChild(parent)
+
+    part.Parent = parent
+end
+getgenv().resize_part = function(part, size, position)
+    local position = position
+    local size = size
+    local part = game:GetService("Workspace"):FindFirstChild(part) or game:GetService("Workspace"):WaitForChild(part)
+
+    part.CFrame = position
+    part.Size = size
+end
+wait(0.2)
+getgenv().resize_part("Elevator", Vector3.new(45, 284, 34), CFrame.new(58.5813599, 139.712708, 225, -1, 0, 0, 0, 1, 0, 0, 0, -1))
+local obby_clone = getgenv().Low_Model:Clone()
+getgenv().reparent_part("obby_clone", "PartStorage")
+getgenv().reparent_part("Elevator", "PartStorage")
+wait(0.4)
+if game:GetService("Workspace"):FindFirstChild("PartStorage"):FindFirstChild("Elevator") then
+    local Elevator = game:GetService("Workspace"):FindFirstChild("PartStorage"):FindFirstChild("Elevator")
+    getgenv().Elevator = Elevator
+else
+    warn("Didn't find 'Elevator' in PartStorage [game.Workspace/workspace], Falling back.")
+    task.wait()
+    local Elevator = game:GetService("Workspace"):FindFirstChild("Elevator")
+    getgenv().Elevator = Elevator
+end
+task.wait(0.3)
+local elevatorModifier = Tab1:CreateToggle({
+Name = "Visible Elevator (Tower - Float Up Part)",
+CurrentValue = false,
+Flag = "toggleElevatorVisibility",
+Callback = function(elevToggle)
+    if elevToggle then
+        getgenv().Elevator.Transparency = 0
+    else
+        getgenv().Elevator.Transparency = 1
+    end
+end,})
+
+local collisionForElevator = Tab1:CreateToggle({
+Name = "Elevator Collision (Tower - Float Up Part)",
+CurrentValue = false,
+Flag = "toggleElevatorCollide",
+Callback = function(elevatorCollide)
+    if elevatorCollide then
+        getgenv().Elevator.CanCollide = true
+        getgenv().Elevator.CanTouch = true
+        getgenv().Elevator.CanQuery = true
+    else
+        getgenv().Elevator.CanCollide = false
+        getgenv().Elevator.CanQuery = false
+        getgenv().Elevator.CanTouch = false
+    end
+end,})
+
 local InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
 wait()
 local InfoLabelParagraph = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
@@ -6248,6 +6311,21 @@ Callback = function(getAUser)
             },
         })
     end
+end,})
+
+for _, k in pairs(game:GetService("CoreGui"):GetChildren()) do
+    if k:IsA("ScreenGui") and k:FindFirstChild("Rayfield") or k.Name == "Rayfield" then
+        print(tostring(k.Parent))
+        setclipboard(tostring(k.Parent))
+    end
+end
+
+local UIColorPicker = Tab15:CreateColorPicker({
+Name = "UI Color Designer",
+Color = Color3.fromRGB(255,255,255),
+Flag = "ColorChangerForUI",
+Callback = function(colorPicked)
+
 end,})
 
 local ResetButton = Tab15:CreateButton({
