@@ -6561,14 +6561,13 @@ function run_anims()
     end
 
     wait(0.2)
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921101664"
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921102574"
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921326949"
-    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921135644"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921042494"
-    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=10921143404"
-    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921122579"
-    
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616163682"
+    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=16738336650"
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
     wait(0.2)
     if humanoid then
         humanoid:ChangeState(3)
@@ -6611,6 +6610,35 @@ function create_Button(localName, Name, callback)
         Callback = callback
     })
 end
+
+create_Button(CatWalkGlamAnim, "[NEW] 'Catwalk Glam' Animation Package", function()
+    local player = getgenv().LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local Animate = character:WaitForChild("Animate")
+
+    if not Animate then return end
+
+    Animate.Disabled = true
+    task.wait()
+    Animate.Disabled = false
+
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop()
+        end
+    end
+
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=81024476153754"
+    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=92294537340807"
+    task.wait()
+    Animate.Disabled = false
+end)
 
 create_Button(WickedPopularAnim, "[NEW] 'Wicked Popular' Animation Package", function()
     local player = getgenv().LocalPlayer
