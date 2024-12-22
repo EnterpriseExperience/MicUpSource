@@ -6671,14 +6671,13 @@ function run_anims()
     end
 
     wait(0.2)
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921101664"
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921102574"
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921326949"
-    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921135644"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921042494"
-    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=10921143404"
-    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921122579"
-    
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616163682"
+    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=16738336650"
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
     wait(0.2)
     if humanoid then
         humanoid:ChangeState(3)
@@ -6722,6 +6721,35 @@ function create_Button(localName, Name, callback)
     })
 end
 
+create_Button(CatWalkGlamAnim, "[NEW] 'Catwalk Glam' Animation Package", function()
+    local player = getgenv().LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local Animate = character:WaitForChild("Animate")
+
+    if not Animate then return end
+
+    Animate.Disabled = true
+    task.wait()
+    Animate.Disabled = false
+
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop()
+        end
+    end
+
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=81024476153754"
+    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=92294537340807"
+    task.wait()
+    Animate.Disabled = false
+end)
+
 create_Button(WickedPopularAnim, "[NEW] 'Wicked Popular' Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -6751,7 +6779,7 @@ create_Button(WickedPopularAnim, "[NEW] 'Wicked Popular' Animation Package", fun
     Animate.Disabled = false
 end)
 
-create_Button(adidasAnim, "[NEW] Adidas Animation Package", function()
+create_Button(adidasAnim, "Adidas Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:WaitForChild("Animate")
@@ -6780,7 +6808,7 @@ create_Button(adidasAnim, "[NEW] Adidas Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(NFLAnim, "[NEW] NFL Animation Package", function()
+create_Button(NFLAnim, "NFL Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:WaitForChild("Animate")
@@ -6809,7 +6837,7 @@ create_Button(NFLAnim, "[NEW] NFL Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(BoldAnim, "[NEW] Bold Animation Package", function()
+create_Button(BoldAnim, "Bold Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:WaitForChild("Animate")
@@ -6838,7 +6866,7 @@ create_Button(BoldAnim, "[NEW] Bold Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(noBoundariesAnim, "[NEW] No Boundaries Animation Package", function()
+create_Button(noBoundariesAnim, "No Boundaries Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:WaitForChild("Animate")
@@ -6980,7 +7008,7 @@ create_Button(mageAnim, "Mage Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(ghostAnim, "Ghost (FE) Animation Package", function()
+create_Button(ghostAnim, "(FE) Ghost Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7148,7 +7176,7 @@ create_Button(PirateAnim, "Pirate Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(SneakyFEAnim, "Sneaky (FE) Animation Package", function()
+create_Button(SneakyFEAnim, "(FE) Sneaky Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7211,7 +7239,7 @@ create_Button(KnightAnim, "Knight Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(ConfidentFEAnim, "Confident (FE) Animation Package", function()
+create_Button(ConfidentFEAnim, "(FE) Confident Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7232,7 +7260,7 @@ create_Button(ConfidentFEAnim, "Confident (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(PopstarFEAnim, "Popstar (FE) Animation Package", function()
+create_Button(PopstarFEAnim, "(FE) Popstar Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7253,7 +7281,7 @@ create_Button(PopstarFEAnim, "Popstar (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(PrincessFEAnim, "Princess (FE) Animation Package", function()
+create_Button(PrincessFEAnim, "(FE) Princess Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7274,7 +7302,7 @@ create_Button(PrincessFEAnim, "Princess (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(CowboyFEAnim, "Cowboy (FE) Animation Package", function()
+create_Button(CowboyFEAnim, "(FE) Cowboy Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7295,7 +7323,7 @@ create_Button(CowboyFEAnim, "Cowboy (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(PatrolFEAnim, "Patrol (FE) Animation Package", function()
+create_Button(PatrolFEAnim, "(FE) Patrol Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7316,7 +7344,7 @@ create_Button(PatrolFEAnim, "Patrol (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(ZombieFEAnim, "Zombie (FE) Animation Package", function()
+create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
