@@ -1,7 +1,6 @@
 -- [[
 
 	-- ^^ Always working to bring the best products ^^ --
-	-- This is our second whole shitting patch for this script, to choose between keybinds and no keybinds.
 
 -- ]]
 
@@ -32,6 +31,8 @@ end
 local function run_no_keybind_config()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting'))()
 end
+
+getgenv().setup_loaded_already_script = true
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ZACKS_EASY_HUB"
@@ -102,5 +103,3 @@ Button2.MouseButton1Click:Connect(function()
 	wait()
 	run_no_keybind_config()
 end)
-wait()
-getgenv().setup_loaded_already_script = true
