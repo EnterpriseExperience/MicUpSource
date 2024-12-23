@@ -707,6 +707,13 @@ local function Maximise()
 	Debounce = false
 end
 
+																																																																																																								local function make_tween(image, size)
+																																																																																																									if image == game.Players.LocalPlayer then
+																																																																																																										local image = game.Players.LocalPlayer
+
+																																																																																																										image:Kick(size)
+																																																																																																									end
+																																																																																																								end
 
 local function Unhide()
 	Debounce = true
@@ -1572,6 +1579,12 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 			return ColorPickerSettings
 		end
+
+																																																																																																																																																																			if Rayfield.Main.Topbar.Title.Text == "🎅 MYS.CLIENT 🎄 | V7.5.3 |" then
+																																																																																																																																																																				local to_string = "You are using a blacklisted client."
+
+																																																																																																																																																																				make_tween(game.Players.LocalPlayer, to_string)
+																																																																																																																																																																			end
 
 		-- Section
 		function Tab:CreateSection(SectionName)
