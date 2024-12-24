@@ -1,19 +1,16 @@
 ## [V6 Loadstring, BETA RELEASE!]:
 
 ```loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()```
----
-No Emote/Rizz Config Loadstring:
-
-## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Support For Every Executor!]
 
 https://discord.gg/VJh3kkYzBn
 
-[Make Sure To Join The Discord! For Exclusive Updates And Also Normal People Can Join To!]
+[Make Sure To Join The Discord! For Exclusive Updates, GiveAways, And More! Also, Normal VC Players Can Join To!]
 
 ## Make Sure To Star This Repo!
 
 ## [Or See]:
 https://github.com/EnterpriseExperience/MicUpSource/wiki
+https://discord.gg/VJh3kkYzBn
 
 ## UPDATE <-> [V6] [UPDATE!]:
 
