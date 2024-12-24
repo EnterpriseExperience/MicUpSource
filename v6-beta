@@ -9,13 +9,23 @@
 --]]
 
 -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
-local notif = loadstring(game:HttpGet("https://raw.githubusercontent.com/insanedude59/notiflib/main/main"))()
+local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/rwetyrweyeywy/refs/heads/main/get_notify.lua"))()
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
 if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
-    -- Yes, I realize I do not need 2 notifications, but I seperated them only because of the TextLabel in the Notification UI Library not being the best at letting me fix a little bit more text in the notifications, I'll change it soon.
-    notif:Notification("Error:","Zacks Easy Hub is already running!","GothamSemibold","Gotham",6)
-    notif:Notification("Notification:","Try doing Re-Execute GUI instead!","GothamSemibold","Gotham",6)
-    return
+    -- I want to keep the 2 notifications, it make's it more easier for observing details without trying to compact it into 1 big title screen.
+    Notification.Notify("Heads Up!", "Zacks Easy Hub is already running!", "rbxassetid://74294167835237", {
+        Duration = 7.5,       
+        Main = {
+            Rounding = true,
+        }
+    });
+    wait(0.2)
+    Notification.Notify("Notification:", "Try clicking Re-Execute GUI instead.", "rbxassetid://74294167835237", {
+        Duration = 7.5,       
+        Main = {
+            Rounding = true,
+        }
+    });
     -- Wait 6 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
 end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
@@ -79,20 +89,21 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     warn("Fixing Character issues.")
     updateCharacterComponents(newCharacter)
 end)
-
+-- Voice chat already loaded check, keeping performance as stable as possible, as sometimes the check can duplicate, so we do not want our performance being unstabilized by 1 singular line of code.
 if getgenv().voiceChat_Check then
     warn("Already checked VC")
 else
+    getgenv().voiceChat_Check = true
     -- Script to unsuspend Voice Chat (VC), this should work, as long as 'getgenv().VoiceChatService:joinVoice()', is only being executed 1 time, since Roblox duplicates the suspension screen, if you do it more then once.
     local function onVoiceChatStateChanged(oldState, newState)
         if newState == Enum.VoiceChatState.Ended then
+            wait(0.9)
             getgenv().VoiceChatService:joinVoice()
         end
     end
 
     -- Check when the Voice Chat (VC) state has changed and scope out to see when it does, then initialize the function above.
     getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)
-    getgenv().voiceChat_Check = true
 end
 
 -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
