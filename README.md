@@ -1,10 +1,9 @@
 ## [V6 Loadstring, BETA RELEASE!]:
 
-https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/new-loadstring
+```loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()```
 ---
 No Emote/Rizz Config Loadstring:
 
-https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-loadstring
 ## [NOW HAS INFINITE YIELD CUSTOM CONFIG FOR YOU TO USE!] [Support For Every Executor!]
 
 https://discord.gg/VJh3kkYzBn
