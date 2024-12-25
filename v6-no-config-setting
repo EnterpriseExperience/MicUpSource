@@ -90,19 +90,25 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     updateCharacterComponents(newCharacter)
 end)
 
+-- Voice chat already loaded check, keeping performance as stable as possible, as sometimes the check can duplicate, so we do not want our performance being unstabilized by 1 singular line of code.
 if getgenv().voiceChat_Check then
     warn("Already checked VC")
 else
     -- Script to unsuspend Voice Chat (VC), this should work, as long as 'getgenv().VoiceChatService:joinVoice()', is only being executed 1 time, since Roblox duplicates the suspension screen, if you do it more then once.
+    local reconnecting = false
+
     local function onVoiceChatStateChanged(oldState, newState)
-        if newState == Enum.VoiceChatState.Ended then
-            wait(0.9)
-            getgenv().VoiceChatService:joinVoice()
+        if newState == Enum.VoiceChatState.Ended and not reconnecting then
+            reconnecting = true -- Set an actual boolean flag to prevent that screen from popping up again and again.
+            wait()
+            pcall(function()
+                getgenv().VoiceChatService:joinVoice()
+            end)
+            reconnecting = false -- Reset that same flag after attempting to rejoin 1 time.
         end
     end
-
-    -- Check when the Voice Chat (VC) state has changed and scope out to see when it does, then initialize the function above.
-    getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)
+    
+    getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)    
     getgenv().voiceChat_Check = true
 end
 
@@ -4082,77 +4088,6 @@ Callback = function(myFriendsLiked)
     end
 end,})
 
-local SoMuchLagInVC = Tab1:CreateToggle({
-Name = "Laggy Voice (Broken)",
-CurrentValue = false,
-Flag = "LaggyAssVoice",
-Callback = function(voices)
-    local Rep_Storage = game:GetService("ReplicatedStorage")
-    local V_Effect_Remote = Rep_Storage:FindFirstChild("VEffect") or Rep_Storage:WaitForChild("VEffect")
-
-    if voices then
-        getgenv().shuffleVoices = true
-        while getgenv().shuffleVoices == true do
-        wait()
-            for i = 1, 5 do
-                local args = {
-                    [1] = "Normal"
-                }
-                
-                V_Effect_Remote:FireServer(unpack(args))
-                local args = {
-                    [1] = "Chorus"
-                }
-                
-                V_Effect_Remote:FireServer(unpack(args))
-                local args = {
-                    [1] = "Darling"
-                }
-                
-                V_Effect_Remote:FireServer(unpack(args))
-                local args = {
-                    [1] = "Demon"
-                }
-                
-                V_Effect_Remote:FireServer(unpack(args))
-                local args = {
-                    [1] = "Elf"
-                }
-                
-                V_Effect_Remote:FireServer(unpack(args))
-                local args = {
-                    [1] = "Fun"
-                }
-                
-                V_Effect_Remote:FireServer(unpack(args))
-                local args = {
-                    [1] = "Low"
-                }
-                
-                V_Effect_Remote:FireServer(unpack(args))
-                local args = {
-                    [1] = "Reverb"
-                }
-                
-                V_Effect_Remote:FireServer(unpack(args))
-            end
-        end
-    else
-        local Rep_Storage = game:GetService("ReplicatedStorage")
-        local V_Effect_Remote = Rep_Storage:FindFirstChild("VEffect") or Rep_Storage:WaitForChild("VEffect")
-
-        getgenv().shuffleVoices = false
-        wait(1.5)
-        for i = 1, 150 do
-            local args = {
-                [1] = "Normal"
-            }
-            
-            V_Effect_Remote:FireServer(unpack(args))
-        end
-    end
-end,})
-
 local GotoPlayerBox = Tab13:CreateInput({
 Name = "Goto/TP Player",
 CurrentValue = "",
@@ -4208,6 +4143,29 @@ Callback = function()
 
     Camera.CameraSubject = getgenv().Character
 end,})
+
+if setfpscap then
+    local settingFPSSetting = Tab1:CreateSlider({
+    Name = "Set FPS Cap",
+    Range = {0, 999},
+    Increment = 1,
+    Suffix = "",
+    CurrentValue = 10,
+    Flag = "FPSSetterSliding",
+    Callback = function(fps_to_set)
+        local exec = identifyexecutor()
+        local fps_cap = setfpscap
+    
+        if fps_cap and exec then
+            setfpscap(fps_to_set)
+        end
+    end,})
+elseif identifyexecutor then
+    local exec = identifyexecutor()
+    warn(exec.." does not support 'setfpscap'")
+else
+    warn("Your executor does not support 'identifyexecutor', and it does not support 'setfpscap' [Garbage Executor.]")
+end
 
 local MutingMyself = Tab1:CreateToggle({
 Name = "Mute Yourself",
