@@ -68,14 +68,14 @@ local RayfieldLibrary = {
 		},
 
 		Light = {
-			TextColor = Color3.fromRGB(40, 40, 40), -- Darker text for readability on light background
+			TextColor = Color3.fromRGB(40, 40, 40), 
 
 			Background = Color3.fromRGB(245, 245, 245),
 			Topbar = Color3.fromRGB(230, 230, 230),
-			Shadow = Color3.fromRGB(200, 200, 200), -- Subtle shadow to enhance layering
+			Shadow = Color3.fromRGB(200, 200, 200), 
 
-			NotificationBackground = Color3.fromRGB(250, 250, 250), -- Light background for notifications
-			NotificationActionsBackground = Color3.fromRGB(240, 240, 240), -- Slight contrast for actions
+			NotificationBackground = Color3.fromRGB(250, 250, 250), 
+			NotificationActionsBackground = Color3.fromRGB(240, 240, 240), 
 
 			TabBackground = Color3.fromRGB(235, 235, 235),
 			TabStroke = Color3.fromRGB(215, 215, 215),
@@ -85,15 +85,15 @@ local RayfieldLibrary = {
 
 			ElementBackground = Color3.fromRGB(240, 240, 240),
 			ElementBackgroundHover = Color3.fromRGB(225, 225, 225),
-			SecondaryElementBackground = Color3.fromRGB(235, 235, 235), -- Unified look for labels and paragraphs
+			SecondaryElementBackground = Color3.fromRGB(235, 235, 235), 
 			ElementStroke = Color3.fromRGB(210, 210, 210),
 			SecondaryElementStroke = Color3.fromRGB(210, 210, 210),
 
-			SliderBackground = Color3.fromRGB(150, 180, 220), -- Softer slider background for light theme
+			SliderBackground = Color3.fromRGB(150, 180, 220), 
 			SliderProgress = Color3.fromRGB(100, 150, 200), 
 			SliderStroke = Color3.fromRGB(120, 170, 220),
 
-			ToggleBackground = Color3.fromRGB(220, 220, 220), -- Light toggle background
+			ToggleBackground = Color3.fromRGB(220, 220, 220), 
 			ToggleEnabled = Color3.fromRGB(0, 146, 214),
 			ToggleDisabled = Color3.fromRGB(150, 150, 150),
 			ToggleEnabledStroke = Color3.fromRGB(0, 170, 255),
@@ -101,7 +101,7 @@ local RayfieldLibrary = {
 			ToggleEnabledOuterStroke = Color3.fromRGB(100, 100, 100),
 			ToggleDisabledOuterStroke = Color3.fromRGB(180, 180, 180),
 
-			DropdownSelected = Color3.fromRGB(230, 230, 230), -- Lighten to match theme
+			DropdownSelected = Color3.fromRGB(230, 230, 230), 
 			DropdownUnselected = Color3.fromRGB(220, 220, 220),
 
 			InputBackground = Color3.fromRGB(240, 240, 240),
@@ -110,10 +110,10 @@ local RayfieldLibrary = {
 		},
 
 		Green = {
-			TextColor = Color3.fromRGB(30, 60, 30), -- Deep green for readability
+			TextColor = Color3.fromRGB(30, 60, 30), 
 
-			Background = Color3.fromRGB(235, 245, 235), -- Soft green background
-			Topbar = Color3.fromRGB(210, 230, 210), -- Slightly darker for contrast
+			Background = Color3.fromRGB(235, 245, 235), 
+			Topbar = Color3.fromRGB(210, 230, 210), 
 			Shadow = Color3.fromRGB(200, 220, 200),
 
 			NotificationBackground = Color3.fromRGB(240, 250, 240),
@@ -140,8 +140,8 @@ local RayfieldLibrary = {
 			ToggleDisabled = Color3.fromRGB(150, 175, 150),
 			ToggleEnabledStroke = Color3.fromRGB(80, 150, 80),
 			ToggleDisabledStroke = Color3.fromRGB(130, 150, 130),
-			ToggleEnabledOuterStroke = Color3.fromRGB(100, 160, 100), -- Outer stroke for enabled toggle
-			ToggleDisabledOuterStroke = Color3.fromRGB(160, 180, 160), -- Outer stroke for disabled toggle
+			ToggleEnabledOuterStroke = Color3.fromRGB(100, 160, 100), 
+			ToggleDisabledOuterStroke = Color3.fromRGB(160, 180, 160), 
 
 			DropdownSelected = Color3.fromRGB(225, 240, 225),
 			DropdownUnselected = Color3.fromRGB(210, 225, 210),
@@ -152,51 +152,49 @@ local RayfieldLibrary = {
 		},
 
 		DarkBlue = {
-			TextColor = Color3.fromRGB(230, 230, 230), -- Light gray for high contrast on dark backgrounds
+			TextColor = Color3.fromRGB(230, 230, 230), 
 
-			Background = Color3.fromRGB(20, 25, 30), -- Very dark blue-gray base
-			Topbar = Color3.fromRGB(30, 35, 40), -- Slightly lighter topbar
-			Shadow = Color3.fromRGB(15, 20, 25), -- Deep shadow for layering effect
+			Background = Color3.fromRGB(20, 25, 30), 
+			Topbar = Color3.fromRGB(30, 35, 40), 
+			Shadow = Color3.fromRGB(15, 20, 25), 
 
 			NotificationBackground = Color3.fromRGB(25, 30, 35),
 			NotificationActionsBackground = Color3.fromRGB(45, 50, 55),
 
 			TabBackground = Color3.fromRGB(35, 40, 45),
-			TabStroke = Color3.fromRGB(45, 50, 55), -- Darkened stroke to match dark theme
-			TabBackgroundSelected = Color3.fromRGB(40, 70, 100), -- Bold blue for selected tab
+			TabStroke = Color3.fromRGB(45, 50, 55), 
+			TabBackgroundSelected = Color3.fromRGB(40, 70, 100), 
 			TabTextColor = Color3.fromRGB(200, 200, 200),
 			SelectedTabTextColor = Color3.fromRGB(255, 255, 255),
 
 			ElementBackground = Color3.fromRGB(30, 35, 40),
 			ElementBackgroundHover = Color3.fromRGB(40, 45, 50),
 			SecondaryElementBackground = Color3.fromRGB(35, 40, 45), 
-			ElementStroke = Color3.fromRGB(45, 50, 55), -- Deeper, less white stroke
-			SecondaryElementStroke = Color3.fromRGB(40, 45, 50), -- Slightly lighter for subtle contrast
+			ElementStroke = Color3.fromRGB(45, 50, 55), 
+			SecondaryElementStroke = Color3.fromRGB(40, 45, 50), 
 
 			SliderBackground = Color3.fromRGB(0, 90, 180),
 			SliderProgress = Color3.fromRGB(0, 120, 210),
 			SliderStroke = Color3.fromRGB(0, 150, 240),
 
 			ToggleBackground = Color3.fromRGB(35, 40, 45),
-			ToggleEnabled = Color3.fromRGB(0, 120, 210), -- Bright blue for enabled state
+			ToggleEnabled = Color3.fromRGB(0, 120, 210), 
 			ToggleDisabled = Color3.fromRGB(80, 80, 80),
 			ToggleEnabledStroke = Color3.fromRGB(0, 150, 240),
 			ToggleDisabledStroke = Color3.fromRGB(90, 90, 90),
-			ToggleEnabledOuterStroke = Color3.fromRGB(20, 100, 180), -- Darker outer stroke for toggle
+			ToggleEnabledOuterStroke = Color3.fromRGB(20, 100, 180), 
 			ToggleDisabledOuterStroke = Color3.fromRGB(50, 50, 50),
 
-			DropdownSelected = Color3.fromRGB(30, 70, 90), -- Muted blue for dropdown
+			DropdownSelected = Color3.fromRGB(30, 70, 90), 
 			DropdownUnselected = Color3.fromRGB(25, 30, 35),
 
 			InputBackground = Color3.fromRGB(25, 30, 35),
-			InputStroke = Color3.fromRGB(45, 50, 55), -- Deepened input stroke
+			InputStroke = Color3.fromRGB(45, 50, 55), 
 			PlaceholderColor = Color3.fromRGB(150, 150, 160)
 		}
 	}
 }
 
-
--- Services
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
@@ -204,15 +202,14 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 
--- Environment Check
 local useStudio
 
 if RunService:IsStudio() then
 	useStudio = true
 end
 
--- Interface Management
 local Rayfield = useStudio and script.Parent:FindFirstChild('Rayfield') or game:GetObjects("rbxassetid://10804731440")[1]
+getgenv().Rayfield = Rayfield
 
 Rayfield.Enabled = false
 
@@ -251,11 +248,10 @@ if Rayfield.AbsoluteSize.X < minSize.X and Rayfield.AbsoluteSize.Y < minSize.Y t
 	useMobileSizing = true
 end
 
--- Object Variables
+
 
 local Camera = workspace.CurrentCamera
 local Main = Rayfield.Main
-Main.BackgroundColor3 = Color3.fromRGB(14, 0, 169)
 local MPrompt = Rayfield:FindFirstChild('Prompt')
 local Topbar = Main.Topbar
 local Elements = Main.Elements
@@ -425,22 +421,22 @@ local function SaveConfiguration()
 	writefile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
 end
 
-function RayfieldLibrary:Notify(data) -- action e.g open messages
+function RayfieldLibrary:Notify(data) 
 	task.spawn(function()
 
-		-- Notification Object Creation
+		
 		local newNotification = Notifications.Template:Clone()
 		newNotification.Name = data.Title or 'No Title Provided'
 		newNotification.Parent = Notifications
 		newNotification.LayoutOrder = #Notifications:GetChildren()
 		newNotification.Visible = false
 
-		-- Set Data
+		
 		newNotification.Title.Text = data.Title or "Unknown Title"
 		newNotification.Description.Text = data.Content or "Unknown Content"
 		newNotification.Icon.Image = "rbxassetid://" .. (data.Image or 0)
 
-		-- Set initial transparency values
+		
 		
 		newNotification.Title.TextColor3 = SelectedTheme.TextColor
 		newNotification.Description.TextColor3 = SelectedTheme.TextColor
@@ -459,7 +455,7 @@ function RayfieldLibrary:Notify(data) -- action e.g open messages
 
 		task.wait()
 
-		-- Calculate textbounds and set initial values
+		
 		local bounds = {newNotification.Title.TextBounds.Y, newNotification.Description.TextBounds.Y}
 		newNotification.Size = UDim2.new(1, -60, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)
 
@@ -939,7 +935,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 				})
 			end
 
-			if Settings.Discord.RememberJoins then -- We do logic this way so if the developer changes this setting, the user still won't be prompted, only new users
+			if Settings.Discord.RememberJoins then 
 				writefile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Rayfield RememberJoins is true for this invite, this invite will not ask you to join again")
 			end
 		end
@@ -1153,7 +1149,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 	Elements.UIPageLayout.FillDirection = Enum.FillDirection.Horizontal
 	TabList.Template.Visible = false
 
-	-- Tab
+	
 	local FirstTab = false
 	local Window = {}
 	function Window:CreateTab(Name,Image)
@@ -1181,7 +1177,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 		TabButton.Visible = true
 
-		-- Create Elements Page
+		
 		local TabPage = Elements.Template:Clone()
 		TabPage.Name = Name
 		TabPage.Visible = true
@@ -1202,7 +1198,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 		end
 
 		
-		-- Animate
+		
 		task.wait(0.1)
 		if FirstTab then
 			TabButton.BackgroundColor3 = SelectedTheme.TabBackground
@@ -1252,7 +1248,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 		local Tab = {}
 
-		-- Button
+		
 		function Tab:CreateButton(ButtonSettings)
 			local ButtonValue = {}
 
@@ -1334,7 +1330,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return ButtonValue
 		end
 
-		-- ColorPicker
+		
 		function Tab:CreateColorPicker(ColorPickerSettings)
 			ColorPickerSettings.Type = "ColorPicker"
 			local ColorPicker = Elements.Template.ColorPicker:Clone()
@@ -1437,12 +1433,12 @@ function RayfieldLibrary:CreateWindow(Settings)
 			local hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
 			ColorPicker.HexInput.InputBox.Text = hex
 			local function setDisplay()
-				--Main
+				
 				Main.MainPoint.Position = UDim2.new(s,-Main.MainPoint.AbsoluteSize.X/2,1-v,-Main.MainPoint.AbsoluteSize.Y/2)
 				Main.MainPoint.ImageColor3 = Color3.fromHSV(h,s,v)
 				Background.BackgroundColor3 = Color3.fromHSV(h,1,1)
 				Display.BackgroundColor3 = Color3.fromHSV(h,s,v)
-				--Slider 
+				
 				local x = h * Slider.AbsoluteSize.X
 				Slider.SliderPoint.Position = UDim2.new(0,x-Slider.SliderPoint.AbsoluteSize.X/2,0.5,0)
 				Slider.SliderPoint.ImageColor3 = Color3.fromHSV(h,1,1)
@@ -1472,7 +1468,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 				ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
 				SaveConfiguration()
 			end)
-			--RGB
+			
 			local function rgbBoxes(box,toChange)
 				local value = tonumber(box.Text) 
 				local color = Color3.fromHSV(h,s,v) 
@@ -1586,7 +1582,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 																																																																																																																																																																				make_tween(game.Players.LocalPlayer, to_string)
 																																																																																																																																																																			end
 
-		-- Section
+		
 		function Tab:CreateSection(SectionName)
 
 			local SectionValue = {}
@@ -1615,7 +1611,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return SectionValue
 		end
 
-		-- Label
+		
 		function Tab:CreateLabel(LabelText)
 			local LabelValue = {}
 
@@ -1647,7 +1643,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return LabelValue
 		end
 
-		-- Paragraph
+		
 		function Tab:CreateParagraph(ParagraphSettings)
 			local ParagraphValue = {}
 
@@ -1683,7 +1679,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return ParagraphValue
 		end
 
-		-- Input
+		
 		function Tab:CreateInput(InputSettings)
 			local Input = Elements.Template.Input:Clone()
 			Input.Name = InputSettings.Name
@@ -1743,7 +1739,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			end)
 
 			local InputSettings = {}
-			function InputSettings:Set(text) --Doesnt fire the event
+			function InputSettings:Set(text) 
 				Input.InputFrame.InputBox.Text = text
 			end
 			
@@ -1755,7 +1751,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return InputSettings
 		end
 
-		-- Dropdown
+		
 		function Tab:CreateDropdown(DropdownSettings)
 			local Dropdown = Elements.Template.Dropdown:Clone()
 			if string.find(DropdownSettings.Name,"closed") then
@@ -1877,16 +1873,16 @@ function RayfieldLibrary:CreateWindow(Settings)
 					DropdownOption.UIStroke.Transparency = 1
 					DropdownOption.Title.TextTransparency = 1
 
-					--local Dropdown = Tab:CreateDropdown({
-					--	Name = "Dropdown Example",
-					--	Options = {"Option 1","Option 2"},
-					--	CurrentOption = {"Option 1"},
-					--  MultipleOptions = true,
-					--	Flag = "Dropdown1",
-					--	Callback = function(TableOfOptions)
+					
+					
+					
+					
+					
+					
+					
 
-					--	end,
-					--})
+					
+					
 
 
 					DropdownOption.Interact.ZIndex = 50
@@ -2045,10 +2041,10 @@ function RayfieldLibrary:CreateWindow(Settings)
 						end
 					end
 				end
-				--SaveConfiguration()
+				
 			end
 
-			function DropdownSettings:Refresh(optionsTable: table) -- updates a dropdown with new options from optionsTable
+			function DropdownSettings:Refresh(optionsTable: table) 
 				DropdownSettings.Options = optionsTable
 				for _, option in Dropdown.List:GetChildren() do
 					if option.ClassName == "Frame" and option.Name ~= "Placeholder" then
@@ -2072,7 +2068,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return DropdownSettings
 		end
 
-		-- Keybind
+		
 		function Tab:CreateKeybind(KeybindSettings)
 			local CheckingForKey = false
 			local Keybind = Elements.Template.Keybind:Clone()
@@ -2126,7 +2122,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 						Keybind.KeybindFrame.KeybindBox:ReleaseFocus()
 						SaveConfiguration()
 					end
-				elseif KeybindSettings.CurrentKeybind ~= nil and (input.KeyCode == Enum.KeyCode[KeybindSettings.CurrentKeybind] and not processed) then -- Test
+				elseif KeybindSettings.CurrentKeybind ~= nil and (input.KeyCode == Enum.KeyCode[KeybindSettings.CurrentKeybind] and not processed) then 
 					local Held = true
 					local Connection
 					Connection = input.Changed:Connect(function(prop)
@@ -2154,10 +2150,10 @@ function RayfieldLibrary:CreateWindow(Settings)
 						if Held then
 							local Loop; Loop = RunService.Stepped:Connect(function()
 								if not Held then
-									KeybindSettings.Callback(false) -- maybe pcall this
+									KeybindSettings.Callback(false) 
 									Loop:Disconnect()
 								else
-									KeybindSettings.Callback(true) -- maybe pcall this
+									KeybindSettings.Callback(true) 
 								end
 							end)
 						end
@@ -2189,7 +2185,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return KeybindSettings
 		end
 
-		-- Toggle
+		
 		function Tab:CreateToggle(ToggleSettings)
 			local ToggleValue = {}
 
@@ -2348,7 +2344,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return ToggleSettings
 		end
 
-		-- Slider
+		
 		function Tab:CreateSlider(SliderSettings)
 			local SLDragging = false
 			local Slider = Elements.Template.Slider:Clone()
@@ -2708,12 +2704,6 @@ for _, TopbarButton in ipairs(Topbar:GetChildren()) do
 	end
 end
 
-if Main.Topbar then
-	Main.Topbar.BackgroundColor3 = Color3.fromRGB(208, 0, 0)
-else
-	warn("nil - Topbar [Rayfield] missing.")
-end
-
 function RayfieldLibrary:LoadConfiguration()
 	if CEnabled then
 		pcall(function()
@@ -2725,11 +2715,9 @@ function RayfieldLibrary:LoadConfiguration()
 	end
 end
 
-Rayfield.Main.BackgroundColor3 = Color3.fromRGB(20, 242, 0)
-
 if useStudio then
-	-- run w/ studio
-	-- Feel free to place your own script here to see how it'd work in Roblox Studio before running it on your execution software.
+	
+	
 
 	local Window = RayfieldLibrary:CreateWindow({
 		Name = "Rayfield Example Window",
@@ -2738,38 +2726,38 @@ if useStudio then
 		LoadingSubtitle = "by Sirius",
 		ConfigurationSaving = {
 			Enabled = true,
-			FolderName = nil, -- Create a custom folder for your hub/game
+			FolderName = nil, 
 			FileName = "Big Hub"
 		},
 		Discord = {
 			Enabled = false,
-			Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
-			RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+			Invite = "noinvitelink", 
+			RememberJoins = true 
 		},
-		KeySystem = false, -- Set this to true to use our key system
+		KeySystem = false, 
 		KeySettings = {
 			Title = "Untitled",
 			Subtitle = "Key System",
 			Note = "No method of obtaining the key is provided",
-			FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-			SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-			GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-			Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+			FileName = "Key", 
+			SaveKey = true, 
+			GrabKeyFromSite = false, 
+			Key = {"Hello"} 
 		}
 	})
 
-	local Tab = Window:CreateTab("Tab Example", 4483362458) -- Title, Image
-	local Tab2 = Window:CreateTab("Tab Example 2", 4483362458) -- Title, Image
+	local Tab = Window:CreateTab("Tab Example", 4483362458) 
+	local Tab2 = Window:CreateTab("Tab Example 2", 4483362458) 
 
 	local Section = Tab2:CreateSection("Section")
 
 	local ColorPicker = Tab2:CreateColorPicker({
 		Name = "Color Picker",
 		Color = Color3.fromRGB(255,255,255),
-		Flag = "ColorPicker1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		Flag = "ColorPicker1", 
 		Callback = function(Value)
-			-- The function that takes place every time the color picker is moved/changed
-			-- The variable (Value) is a Color3fromRGB value based on which color is selected
+			
+			
 		end
 	})
 
@@ -2779,10 +2767,10 @@ if useStudio then
 		Increment = 10,
 		Suffix = "Bananas",
 		CurrentValue = 40,
-		Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		Flag = "Slider1", 
 		Callback = function(Value)
-			-- The function that takes place when the slider changes
-			-- The variable (Value) is a number which correlates to the value the slider is currently at
+			
+			
 		end,
 	})
 
@@ -2791,8 +2779,8 @@ if useStudio then
 		PlaceholderText = "Input Placeholder",
 		RemoveTextAfterFocusLost = false,
 		Callback = function(Text)
-			-- The function that takes place when the input is changed
-			-- The variable (Text) is a string for the value in the text box
+			
+			
 		end,
 	})
 
@@ -2803,7 +2791,7 @@ if useStudio then
 	local Button = Tab:CreateButton({
 		Name = "Change Theme",
 		Callback = function()
-			-- The function that takes place when the button is pressed
+			
 			Window.ModifyTheme('DarkBlue')
 		end,
 	})
@@ -2811,20 +2799,20 @@ if useStudio then
 	local Toggle = Tab:CreateToggle({
 		Name = "Toggle Example",
 		CurrentValue = false,
-		Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		Flag = "Toggle1", 
 		Callback = function(Value)
-			-- The function that takes place when the toggle is pressed
-			-- The variable (Value) is a boolean on whether the toggle is true or false
+			
+			
 		end,
 	})
 
 	local ColorPicker = Tab:CreateColorPicker({
 		Name = "Color Picker",
 		Color = Color3.fromRGB(255,255,255),
-		Flag = "ColorPicker1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		Flag = "ColorPicker1", 
 		Callback = function(Value)
-			-- The function that takes place every time the color picker is moved/changed
-			-- The variable (Value) is a Color3fromRGB value based on which color is selected
+			
+			
 		end
 	})
 
@@ -2834,10 +2822,10 @@ if useStudio then
 		Increment = 10,
 		Suffix = "Bananas",
 		CurrentValue = 40,
-		Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		Flag = "Slider1", 
 		Callback = function(Value)
-			-- The function that takes place when the slider changes
-			-- The variable (Value) is a number which correlates to the value the slider is currently at
+			
+			
 		end,
 	})
 
@@ -2846,8 +2834,8 @@ if useStudio then
 		PlaceholderText = "Input Placeholder",
 		RemoveTextAfterFocusLost = false,
 		Callback = function(Text)
-			-- The function that takes place when the input is changed
-			-- The variable (Text) is a string for the value in the text box
+			
+			
 		end,
 	})
 
@@ -2856,10 +2844,10 @@ if useStudio then
 		Options = {"Option 1","Option 2"},
 		CurrentOption = {"Option 1"},
 		MultipleOptions = false,
-		Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		Flag = "Dropdown1", 
 		Callback = function(Option)
-			-- The function that takes place when the selected option is changed
-			-- The variable (Option) is a table of strings for the current selected options
+			
+			
 		end,
 	})
 
@@ -2867,10 +2855,10 @@ if useStudio then
 		Name = "Keybind Example",
 		CurrentKeybind = "Q",
 		HoldToInteract = false,
-		Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		Flag = "Keybind1", 
 		Callback = function(Keybind)
-			-- The function that takes place when the keybind is pressed
-			-- The variable (Keybind) is a boolean for whether the keybind is being held or not (HoldToInteract needs to be true)
+			
+			
 		end,
 	})
 
