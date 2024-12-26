@@ -8,8 +8,37 @@
     E. We are advancing soon to new game's and products. 
 --]]
 
+local vc_service = game:GetService("VoiceChatService")
+local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
+wait(1.2)
 -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/rwetyrweyeywy/refs/heads/main/get_notify.lua"))()
+
+if enabled_vc == true then
+    Notification.Notify("Success!", "Connected with VoiceChat successfully!", "rbxassetid://74294167835237", {
+        Duration = 5,       
+        Main = {
+            Rounding = true,
+        }
+    });
+    print("[Zacks_Easy_Hub_OUTPUT]: "..game.Players.LocalPlayer.Name.." has Voice Chat.")
+else
+    Notification.Notify("Unable to load.", "VoiceChat is not enabled on this account!", "rbxassetid://74294167835237", {
+        Duration = 5,
+        Main = {
+            Rounding = true,
+        }
+    });
+    wait(0.2)
+    Notification.Notify("Heads Up!", "The game will kick you!", "rbxassetid://74294167835237", {
+        Duration = 5,
+        Main = {
+            Rounding = true,
+        }
+    });
+    return 
+end
+wait(0.3)
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
 if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     -- I want to keep the 2 notifications, it make's it more easier for observing details without trying to compact it into 1 big title screen.
@@ -85,7 +114,7 @@ end
 -- Update Character Model(s) components, since we need to make sure the live updates are saved correctly (Especially when the Character components are updated as well).
 updateCharacterComponents(getgenv().Character)
 warn("Updated Character properties.")
-getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+game.Players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     warn("Fixing Character issues.")
     updateCharacterComponents(newCharacter)
 end)
@@ -187,14 +216,7 @@ if setfpscap then
         getgenv().Lighting.GlobalShadows = false
         getgenv().Lighting.Brightness = 2
         getgenv().Lighting.Technology = Enum.Technology.Compatibility
-        getgenv().Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
-        getgenv().Lighting.Ambient = Color3.new(0, 0, 0)
         getgenv().Lighting.ClockTime = 12
-        local blur_eff = Instance.new("BlurEffect")
-        blur_eff.Name = "Blur"
-        blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
-        blur_eff.Size = 0
-        blur_eff.Enabled = true
     end
 else
     warn("setfpscap is unsupported, alternating...")
@@ -203,17 +225,9 @@ else
     getgenv().Lighting.GlobalShadows = false
     getgenv().Lighting.Brightness = 2
     getgenv().Lighting.Technology = Enum.Technology.Compatibility
-    getgenv().Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
-    getgenv().Lighting.Ambient = Color3.new(0, 0, 0)
     getgenv().Lighting.ClockTime = 11
-    local blur_eff = Instance.new("BlurEffect")
-    blur_eff.Name = "Blur"
-    blur_eff.Parent = getgenv().Workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
-    blur_eff.Size = 0
-    blur_eff.Enabled = true
 end
 wait(0.2)
-
 -- [] -->> Check if the selected experience/game is MIC UP | Ensuring they do not run Zacks Easy Hub outside of MIC UP 🔊 or MIC UP 🔊 17+ <<-- [] --
 if getgenv().PlaceID == 6884319169 then
     print(tostring(game:GetService("MarketplaceService"):GetProductInfo(6884319169).Name))
@@ -405,7 +419,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "🎄 Zacks Easy Hub 🎄 | V6.2.6.4 | Emote Keybinds: False",
+    Name = "✨ Zacks Easy Hub ✨ | V6.2.6.8 | Emote Keybinds: False",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -1287,13 +1301,25 @@ CurrentValue = false,
 Flag = "moveColoredBooth",
 Callback = function(boothColors)
     if boothColors then
+        local fontsList = {
+            "DenkOne",
+            "GrenzeGotisch",
+            "SourceSans",
+            "Creepster",
+        }
+    
+        local function pickRandomFont()
+            local randomIndex = math.random(1, #fontsList)
+            return fontsList[randomIndex]
+        end
+
         getgenv().lmao_colors = true
         while getgenv().lmao_colors == true do
         wait(0.2)
             local args = {
                 [1] = "",
                 [2] = "Teal",
-                [3] = "SourceSans"
+                [3] = tostring(pickRandomFont())
             }
 
             getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
@@ -1301,7 +1327,7 @@ Callback = function(boothColors)
             local args = {
                 [1] = "",
                 [2] = "Red",
-                [3] = "SourceSans"
+                [3] = tostring(pickRandomFont())
             }
 
             getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
@@ -1309,9 +1335,41 @@ Callback = function(boothColors)
             local args = {
                 [1] = "",
                 [2] = "Gray",
-                [3] = "SourceSans"
+                [3] = tostring(pickRandomFont())
             }
 
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            wait(0.2)
+            local args = {
+                [1] = "",
+                [2] = "Cinder",
+                [3] = tostring(pickRandomFont())
+            }
+            
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            wait(0.2)
+            local args = {
+                [1] = "",
+                [2] = "Lace",
+                [3] = tostring(pickRandomFont())
+            }
+            
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            wait(0.2)
+            local args = {
+                [1] = "",
+                [2] = "Sun",
+                [3] = tostring(pickRandomFont())
+            }
+            
+            getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            wait(0.2)
+            local args = {
+                [1] = "",
+                [2] = "Teal",
+                [3] = tostring(pickRandomFont())
+            }
+            
             getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
         end
     else
@@ -1490,13 +1548,12 @@ Callback = function(unclaimTheirBooth)
             }
             
             getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
-            wait(0.2)
+            wait(0.6)
             getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
             wait(0.2)
             getgenv().HumanoidRootPart.CFrame = OldCF
             wait(0.2)
             notify("Success:", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
-            wait(.1)
             if plr_booth then
                 return 
             end
@@ -4150,7 +4207,7 @@ if setfpscap then
     Range = {0, 999},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 10,
+    CurrentValue = 60,
     Flag = "FPSSetterSliding",
     Callback = function(fps_to_set)
         local exec = identifyexecutor()
@@ -6347,6 +6404,34 @@ Callback = function()
     end
 end,})
 
+ChangeUILibColor = Tab15:CreateColorPicker({
+Name = "Change UI Color",
+Color = Color3.fromRGB(255,255,255),
+Flag = "UIColoringFunc",
+Callback = function(UIColor)
+    local rayfield = getgenv().Rayfield
+
+    local function changeColors(object, frameColor, textColor)
+        if object and object:IsA("ScreenGui") then
+            for _, descendant in pairs(object:GetDescendants()) do
+                if descendant:IsA("Frame") or descendant.Name == "Main" then
+                    descendant.BackgroundColor3 = frameColor
+                elseif descendant:IsA("TextButton") or descendant:IsA("TextLabel") then
+                    descendant.BackgroundColor3 = frameColor
+                    descendant.TextColor3 = textColor
+                end
+            end
+        else
+            warn("Rayfield ScreenGui not found!")
+        end
+    end
+
+    local newFrameColor = UIColor
+    local newTextColor = UIColor
+
+    changeColors(rayfield, newFrameColor, newTextColor)
+end,})
+
 ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute GUI",
 Callback = function()
@@ -6638,7 +6723,7 @@ create_Button(WickedPopularAnim, "[NEW] 'Wicked Popular' Animation Package", fun
     Animate.Disabled = false
 end)
 
-create_Button(adidasAnim, "[NEW] Adidas Animation Package", function()
+create_Button(adidasAnim, "Adidas Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:WaitForChild("Animate")
@@ -6667,7 +6752,7 @@ create_Button(adidasAnim, "[NEW] Adidas Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(NFLAnim, "[NEW] NFL Animation Package", function()
+create_Button(NFLAnim, "NFL Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:WaitForChild("Animate")
@@ -6696,7 +6781,7 @@ create_Button(NFLAnim, "[NEW] NFL Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(BoldAnim, "[NEW] Bold Animation Package", function()
+create_Button(BoldAnim, "Bold Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:WaitForChild("Animate")
@@ -6725,7 +6810,7 @@ create_Button(BoldAnim, "[NEW] Bold Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(noBoundariesAnim, "[NEW] No Boundaries Animation Package", function()
+create_Button(noBoundariesAnim, "No Boundaries Animation Package", function()
     local player = getgenv().LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local Animate = character:WaitForChild("Animate")
@@ -6867,7 +6952,7 @@ create_Button(mageAnim, "Mage Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(ghostAnim, "Ghost (FE) Animation Package", function()
+create_Button(ghostAnim, "(FE) Ghost Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7035,7 +7120,7 @@ create_Button(PirateAnim, "Pirate Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(SneakyFEAnim, "Sneaky (FE) Animation Package", function()
+create_Button(SneakyFEAnim, "(FE) Sneaky Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7098,7 +7183,7 @@ create_Button(KnightAnim, "Knight Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(ConfidentFEAnim, "Confident (FE) Animation Package", function()
+create_Button(ConfidentFEAnim, "(FE) Confident Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7119,7 +7204,7 @@ create_Button(ConfidentFEAnim, "Confident (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(PopstarFEAnim, "Popstar (FE) Animation Package", function()
+create_Button(PopstarFEAnim, "(FE) Popstar Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7140,7 +7225,7 @@ create_Button(PopstarFEAnim, "Popstar (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(PrincessFEAnim, "Princess (FE) Animation Package", function()
+create_Button(PrincessFEAnim, "(FE) Princess Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7161,7 +7246,7 @@ create_Button(PrincessFEAnim, "Princess (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(CowboyFEAnim, "Cowboy (FE) Animation Package", function()
+create_Button(CowboyFEAnim, "(FE) Cowboy Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7182,7 +7267,7 @@ create_Button(CowboyFEAnim, "Cowboy (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(PatrolFEAnim, "Patrol (FE) Animation Package", function()
+create_Button(PatrolFEAnim, "(FE) Patrol Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
@@ -7203,7 +7288,7 @@ create_Button(PatrolFEAnim, "Patrol (FE) Animation Package", function()
     Animate.Disabled = false
 end)
 
-create_Button(ZombieFEAnim, "Zombie (FE) Animation Package", function()
+create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
     local Animate = getgenv().LocalPlayer.Character.Animate
     Animate.Disabled = true
     wait()
