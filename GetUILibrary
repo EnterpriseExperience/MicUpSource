@@ -67,6 +67,8 @@ local RayfieldLibrary = {
 			PlaceholderColor = Color3.fromRGB(178, 178, 178)
 		},
 
+		getgenv().Default_Theme_Setting = Default
+
 		Light = {
 			TextColor = Color3.fromRGB(40, 40, 40), 
 
