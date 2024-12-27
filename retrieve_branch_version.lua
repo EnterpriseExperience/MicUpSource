@@ -6,6 +6,7 @@
 
 local version_build_config = "V6.6.7-C"
 local no_config_build = "V6.2.6.2"
+getgenv().setup_loaded_already_script = true
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
 task.wait()
 if getgenv().setup_loaded_already_script then
