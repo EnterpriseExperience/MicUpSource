@@ -4,15 +4,15 @@
 
 -- ]]
 
-local version_build_config = "V6.6.7-C"
-local no_config_build = "V6.2.6.2"
-getgenv().setup_loaded_already_script = true
+local version_build_config = "V6.7.1-C"
+local no_config_build = "V6.2.6.8"
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
 task.wait()
 if getgenv().setup_loaded_already_script then
 	return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
 end
-wait(0.2)
+wait(0.3)
+getgenv().setup_loaded_already_script = true
 if getgenv().SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED == true then
 	getgenv().getLoopKick = false
     wait(0.2)
@@ -88,7 +88,7 @@ Button1.MouseButton1Click:Connect(function()
 	getgenv().setup_loaded_already_script = false
 	wait(0.2)
 	Button1.Text = "Done!"
-	wait(0.4)
+	wait(0.3)
 	ScreenGui:Destroy()
 	wait()
 	run_emote_config()
@@ -99,7 +99,7 @@ Button2.MouseButton1Click:Connect(function()
 	getgenv().setup_loaded_already_script = false
 	wait(0.2)
 	Button2.Text = "Done!"
-	wait(0.4)
+	wait(0.3)
 	ScreenGui:Destroy()
 	wait()
 	run_no_keybind_config()
