@@ -3176,8 +3176,34 @@ Callback = function()
     if getgenv().loaded_face_bang then
         return notify("Notification:", "Already loaded face f*ck script!", 7.5)
     else
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/saya420/Mic-Up/main/facefuck'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/face_bang_script.lua'))()
         getgenv().loaded_face_bang = true
+    end
+end,})
+
+local noclipToggle = Tab2:CreateToggle({
+Name = "Noclip",
+CurrentValue =  false,
+Flag = "toggleNoclipChar",
+Callback = function(noclip_toggle)
+    function reset_collide(reset_bool)
+        if reset_bool == true then
+            getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
+            getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
+            getgenv().HumanoidRootPart.CanCollide = true
+        elseif reset_bool == false then
+            getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
+            getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
+            getgenv().HumanoidRootPart.CanCollide = false
+        else
+            return warn("Invalid input BoolValue.")
+        end
+    end
+
+    if noclip_toggle then
+        reset_collide(false)
+    else
+        reset_collide(true)
     end
 end,})
 
@@ -6292,6 +6318,8 @@ Callback = function(TheMuteAll)
     end
 end,})
 
+
+
 local MuteAPlayerSpecific = Tab1:CreateInput({
 Name = "Mute Player",
 PlaceholderText = "User",
@@ -6373,18 +6401,13 @@ end,})
 ServerHopButton = Tab15:CreateButton({
 Name = "Server Hop (Roblox broke this!)",
 Callback = function()
-    -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
+    -- Thanks 'Infinite Yield', this is not something I want to remake, does not work on Solara :/ (FIX YOUR TELEPORT SOLARA!)
     httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-    local PlaceId = game.PlaceId
-    
-    local JobId = game.JobId
-    local TeleportService = game:GetService("TeleportService")
-    local HttpService = game:GetService("HttpService")
-    
+    PlaceId = getgenv().PlaceID
     if httprequest then
         local servers = {}
         local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", PlaceId)})
-        local body = HttpService:JSONDecode(req.Body)
+        local body = getgenv().HttpService:JSONDecode(req.Body)
 
         if body and body.data then
             for i, v in next, body.data do
@@ -6393,14 +6416,14 @@ Callback = function()
                 end
             end
         end
-    else
-        return print("Serverhop", "httprequest is unsupported.")
-    end
 
-    if #servers > 0 then
-        getgenv().TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
+        if #servers > 0 then
+            getgenv().TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
+        else
+            return notify("Serverhop", "Couldn't find a server.", 6)
+        end
     else
-        return print("Serverhop", "Couldn't find a server.")
+        notify("Unsupported.", "Your exploit does not support 'httprequest'.", 6)
     end
 end,})
 
