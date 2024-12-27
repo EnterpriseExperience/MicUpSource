@@ -3286,8 +3286,34 @@ Callback = function()
     if getgenv().loaded_face_bang then
         return notify("Notification:", "Already loaded face f*ck script!", 7.5)
     else
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/saya420/Mic-Up/main/facefuck'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/face_bang_script.lua'))()
         getgenv().loaded_face_bang = true
+    end
+end,})
+
+local noclipToggle = Tab2:CreateToggle({
+Name = "Noclip",
+CurrentValue =  false,
+Flag = "toggleNoclipChar",
+Callback = function(noclip_toggle)
+    function reset_collide(reset_bool)
+        if reset_bool == true then
+            getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
+            getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
+            getgenv().HumanoidRootPart.CanCollide = true
+        elseif reset_bool == false then
+            getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
+            getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
+            getgenv().HumanoidRootPart.CanCollide = false
+        else
+            return warn("Invalid input BoolValue.")
+        end
+    end
+
+    if noclip_toggle then
+        reset_collide(false)
+    else
+        reset_collide(true)
     end
 end,})
 
