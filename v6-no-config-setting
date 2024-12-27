@@ -8,6 +8,7 @@
     E. We are advancing soon to new game's and products. 
 --]]
 
+wait(0.8)
 local vc_service = game:GetService("VoiceChatService")
 local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
 wait(1.2)
@@ -267,13 +268,7 @@ else
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            if writefile and readfile and readfile("zacks_easy_hub.lua") then
-                getgenv().TeleportCheck = true
-                queueteleport("readfile('zacks_easy_hub_config.lua')")
-            else
-                getgenv().TeleportCheck = true
-                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
-            end
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
         end
     end)
     wait()
@@ -599,13 +594,7 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            if writefile and readfile and readfile("zacks_easy_hub.lua") then
-                getgenv().TeleportCheck = true
-                queueteleport("readfile('zacks_easy_hub_config.lua')")
-            else
-                getgenv().TeleportCheck = true
-                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
-            end
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
         end
     end)
     wait()
@@ -6318,8 +6307,6 @@ Callback = function(TheMuteAll)
     end
 end,})
 
-
-
 local MuteAPlayerSpecific = Tab1:CreateInput({
 Name = "Mute Player",
 PlaceholderText = "User",
@@ -6401,13 +6388,18 @@ end,})
 ServerHopButton = Tab15:CreateButton({
 Name = "Server Hop (Roblox broke this!)",
 Callback = function()
-    -- Thanks 'Infinite Yield', this is not something I want to remake, does not work on Solara :/ (FIX YOUR TELEPORT SOLARA!)
+    -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
     httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-    PlaceId = getgenv().PlaceID
+    local PlaceId = game.PlaceId
+    
+    local JobId = game.JobId
+    local TeleportService = game:GetService("TeleportService")
+    local HttpService = game:GetService("HttpService")
+    
     if httprequest then
         local servers = {}
         local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", PlaceId)})
-        local body = getgenv().HttpService:JSONDecode(req.Body)
+        local body = HttpService:JSONDecode(req.Body)
 
         if body and body.data then
             for i, v in next, body.data do
@@ -6416,20 +6408,20 @@ Callback = function()
                 end
             end
         end
-
-        if #servers > 0 then
-            getgenv().TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
-        else
-            return notify("Serverhop", "Couldn't find a server.", 6)
-        end
     else
-        notify("Unsupported.", "Your exploit does not support 'httprequest'.", 6)
+        return print("Serverhop", "httprequest is unsupported.")
+    end
+
+    if #servers > 0 then
+        getgenv().TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
+    else
+        return print("Serverhop", "Couldn't find a server.")
     end
 end,})
 
 ChangeUILibColor = Tab15:CreateColorPicker({
 Name = "Change UI Color",
-Color = Color3.fromRGB(255,255,255),
+Color = Color3.fromRGB(30, 30, 30),
 Flag = "UIColoringFunc",
 Callback = function(UIColor)
     local rayfield = getgenv().Rayfield
