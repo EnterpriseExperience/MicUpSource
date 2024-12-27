@@ -67,8 +67,6 @@ local RayfieldLibrary = {
 			PlaceholderColor = Color3.fromRGB(178, 178, 178)
 		},
 
-		getgenv().Default_Theme_Setting = Default
-
 		Light = {
 			TextColor = Color3.fromRGB(40, 40, 40), 
 
@@ -196,6 +194,8 @@ local RayfieldLibrary = {
 		}
 	}
 }
+
+getgenv().Default_Theme_Setting = RayfieldLibrary.Theme.Default
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
