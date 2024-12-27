@@ -8,6 +8,7 @@
     E. We are advancing soon to new game's and products. 
 --]]
 
+wait(0.8)
 local vc_service = game:GetService("VoiceChatService")
 local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
 wait(1.2)
@@ -267,13 +268,7 @@ else
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            if writefile and readfile and readfile("zacks_easy_hub.lua") then
-                getgenv().TeleportCheck = true
-                queueteleport("readfile('zacks_easy_hub_config.lua')")
-            else
-                getgenv().TeleportCheck = true
-                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
-            end
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
         end
     end)
     wait()
@@ -599,13 +594,7 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            if writefile and readfile and readfile("zacks_easy_hub.lua") then
-                getgenv().TeleportCheck = true
-                queueteleport("readfile('zacks_easy_hub_config.lua')")
-            else
-                getgenv().TeleportCheck = true
-                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
-            end
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
         end
     end)
     wait()
