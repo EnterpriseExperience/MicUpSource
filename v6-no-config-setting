@@ -4222,7 +4222,7 @@ if setfpscap then
     Range = {0, 999},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 60,
+    CurrentValue = 180,
     Flag = "FPSSetterSliding",
     Callback = function(fps_to_set)
         local exec = identifyexecutor()
