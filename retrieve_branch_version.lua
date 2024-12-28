@@ -13,17 +13,6 @@ if getgenv().setup_loaded_already_script then
 end
 wait(0.3)
 getgenv().setup_loaded_already_script = true
-if getgenv().SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED == true then
-	getgenv().getLoopKick = false
-    wait(0.2)
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().Invis_Loaded = false
-    getgenv().GetLoopRunning = false
-    getgenv().GetLoopRunning = false
-    getgenv().LmaoGetMuted = false
-    getgenv().css_digital = false
-end
 
 local function run_emote_config()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta'))()
@@ -36,59 +25,84 @@ end
 getgenv().setup_loaded_already_script = true
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "ZACKS_EASY_HUB"
+ScreenGui.Name = "Version_Selector_ScreenGui"
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ResetOnSpawn = false
 
 ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
 local Frame = Instance.new("Frame")
-Frame.Name = "ZACKS_EASY_HUB"
+Frame.Name = "Version_Selector_Frame"
 Frame.Size = UDim2.new(1, 0, 1, 0)
 Frame.Position = UDim2.new(0, 0, 0, 0)
-Frame.BackgroundTransparency = 0.2
+Frame.BackgroundTransparency = 0.1
 Frame.BackgroundColor3 = Color3.new(0, 0, 0)
 Frame.Parent = ScreenGui
 
 local Label = Instance.new("TextLabel")
-Label.Name = "ZACKS_EASY_HUB"
-Label.Text = "Select Your Config"
-Label.Size = UDim2.new(0.5, 0, 0.1, 0)
-Label.Position = UDim2.new(0.25, 0, 0.2, 0)
-Label.BackgroundTransparency = 1
-Label.TextColor3 = Color3.fromRGB(237, 0, 0)
+Label.Name = "Version_Selector"
+Label.Text = "Select Version"
+Label.Size = UDim2.new(0.5, 0, 0.100000001, 0)
+Label.Position = UDim2.new(0.25, 0, 0.200000003, 0)
+Label.BackgroundTransparency = 0.5
+Label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Label.TextColor3 = Color3.fromRGB(255, 255, 255)
 Label.TextScaled = true
 Label.Font = Enum.Font.SourceSansBold
 Label.Parent = Frame
 
+local Label1 = Instance.new("TextLabel")
+Label1.Name = "Config_Build"
+Label1.Text = "Build Version: V6.7.1-C\n[Status: ✅-⚒️]"
+Label1.Size = UDim2.new(0.5, 0, 0.100000001, 0)
+Label1.Position = UDim2.new(0.25, 0, 0.300000012, 0)
+Label1.BackgroundTransparency = 1
+Label1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Label1.TextColor3 = Color3.fromRGB(255, 255, 255)
+Label1.TextScaled = true
+Label1.Font = Enum.Font.SourceSansBold
+Label1.Parent = Frame
+
+local Label2 = Instance.new("TextLabel")
+Label2.Name = "No_Config_Build"
+Label2.Text = "Build Version: V6.2.6.8\n[Status: ✅-⚒️]"
+Label2.Size = UDim2.new(0.5, 0, 0.100000001, 0)
+Label2.Position = UDim2.new(0.25, 0, 0.5, 0)
+Label2.BackgroundTransparency = 1
+Label2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Label2.TextColor3 = Color3.fromRGB(255, 255, 255)
+Label2.TextScaled = true
+Label2.Font = Enum.Font.SourceSansBold
+Label2.Parent = Frame
+
 local Button1 = Instance.new("TextButton")
-Button1.Name = "ZACKS_EASY_HUB"
-Button1.Text = "Emotes/Keybinds Included"
-Button1.Size = UDim2.new(0.4, 0, 0.1, 0)
-Button1.Position = UDim2.new(0.3, 0, 0.4, 0)
+Button1.Name = "Run_Config_Build"
+Button1.Text = "Run Keybinds Build."
+Button1.Size = UDim2.new(0.400000006, 0, 0.100000001, 0)
+Button1.Position = UDim2.new(0.300000012, 0, 0.400000006, 0)
+Button1.BackgroundTransparency = 0.5
 Button1.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Button1.TextColor3 = Color3.fromRGB(7, 238, 0)
+Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
 Button1.TextScaled = true
 Button1.Font = Enum.Font.SourceSansBold
 Button1.Parent = Frame
 
 local Button2 = Instance.new("TextButton")
-Button2.Name = "ZACKS_EASY_HUB"
-Button2.Text = "I do not want emote/keybinds"
-Button2.Size = UDim2.new(0.4, 0, 0.1, 0)
-Button2.Position = UDim2.new(0.3, 0, 0.55, 0)
+Button2.Name = "Run_No_Config_Build"
+Button2.Text = "Run No-Keybinds Build."
+Button2.Size = UDim2.new(0.400000006, 0, 0.100000001, 0)
+Button2.Position = UDim2.new(0.300000012, 0, 0.600000024, 0)
+Button2.BackgroundTransparency = 0.5
 Button2.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Button2.TextColor3 = Color3.fromRGB(12, 0, 220)
+Button2.TextColor3 = Color3.fromRGB(255, 255, 255)
 Button2.TextScaled = true
 Button2.Font = Enum.Font.SourceSansBold
 Button2.Parent = Frame
 
 Button1.MouseButton1Click:Connect(function()
-	Button1.Text = "Loading Keybinds Script..."
-	getgenv().setup_loaded_already_script = false
+	Button1.Text = "Loading Keybinds Version..."
 	wait(0.2)
-	Button1.Text = "Done!"
-	wait(0.3)
+	getgenv().setup_loaded_already_script = false
 	ScreenGui:Destroy()
 	wait()
 	run_emote_config()
@@ -96,10 +110,8 @@ end)
 
 Button2.MouseButton1Click:Connect(function()
 	Button2.Text = "Loading No Keybinds Version..."
-	getgenv().setup_loaded_already_script = false
 	wait(0.2)
-	Button2.Text = "Done!"
-	wait(0.3)
+	getgenv().setup_loaded_already_script = false
 	ScreenGui:Destroy()
 	wait()
 	run_no_keybind_config()
