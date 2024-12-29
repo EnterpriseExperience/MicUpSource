@@ -642,9 +642,9 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
                 isMuted = not isMuted
                 Audio_Device_Input.Muted = isMuted
                 if isMuted then
-                    notify("Success!", "Muted Microphone", 2)
+                    getgenv().notify("Success!", "Muted Microphone", 3)
                 else
-                    notify("Success!", "Unmuted Microphone", 2)
+                    getgenv().notify("Success!", "Unmuted Microphone", 3)
                 end
             end
         end
