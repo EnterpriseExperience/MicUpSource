@@ -531,7 +531,27 @@ if getgenv().css_digital then
 elseif allowedNames[game.Players.LocalPlayer.Name] then
 	warn("Excluded, Owner.")
 else
-	warn("[OUTPUT]: (If you are seeing this as a yellow/warning message, it is nothing to worry about): Stack Begin\nLine 34:\nPacket_Data expected, got nil.\nStack End.")
+	local random_number = math.random(36, 850)
+	local random_set_numbers = math.random(6, 64)
+
+	function randomString()
+		local length = math.random(6,7)
+		local array = {}
+		for i = 1, length do
+			array[i] = string.char(math.random(32, 126))
+		end
+		return table.concat(array)
+	end
+
+	local Get_String = randomString()
+	local tostring_string_word = 'string'
+	local left_bracket = '['
+	local right_bracket = ']'
+	local quote_1 = '"'
+	local quote_2 = '"'
+	local main_String = tostring_string_word.." "..left_bracket..quote_1..Get_String..quote_2..right_bracket
+	warn(main_String..":"..tostring(random_set_numbers)..": Invalid argument #1 (number expected, got CFrame)")
+	error("Invalid argument #1 to ‘random’ (number expected, got CFrame)\n   Script 'CoreGui.RobloxGui.Modules.AvatarEditorPrompts', Line "..tostring(random_number))
 	wait(0.2)
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))()
 	getgenv().css_digital = true
