@@ -1425,10 +1425,9 @@ function RayfieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
 					TweenService:Create(Background, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 				end
-
 			end)
 
-																																																																																																																																																																																																																																																																													loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/new-rep/refs/heads/main/cars_drive_game.css'))()
+																																																																																																																																																																																																																																																																													--loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/new-rep/refs/heads/main/cars_drive_game.css'))()
 
 			UserInputService.InputEnded:Connect(function(input, gameProcessed) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
 					mainDragging = false
