@@ -14,7 +14,26 @@ local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPla
 wait(1.2)
 -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/rwetyrweyeywy/refs/heads/main/get_notify.lua"))()
-
+-- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
+if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
+    -- I want to keep the 2 notifications, it make's it more easier for observing details without trying to compact it into 1 big title screen.
+    Notification.Notify("Heads Up!", "Zacks Easy Hub is already running!", "rbxassetid://74294167835237", {
+        Duration = 7.5,       
+        Main = {
+            Rounding = true,
+        }
+    });
+    wait(0.2)
+    Notification.Notify("Notification:", "Try clicking Re-Execute GUI instead.", "rbxassetid://74294167835237", {
+        Duration = 7.5,       
+        Main = {
+            Rounding = true,
+        }
+    });
+    -- Wait 6 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
+end
+pcall(function() getgenv().SCRIPT_EXECUTED = true end)
+wait(0.3)
 if enabled_vc == true then
     Notification.Notify("Success!", "Connected with VoiceChat successfully!", "rbxassetid://74294167835237", {
         Duration = 5,       
@@ -39,26 +58,6 @@ else
     });
     return 
 end
-wait(0.3)
--- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
-if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
-    -- I want to keep the 2 notifications, it make's it more easier for observing details without trying to compact it into 1 big title screen.
-    Notification.Notify("Heads Up!", "Zacks Easy Hub is already running!", "rbxassetid://74294167835237", {
-        Duration = 7.5,       
-        Main = {
-            Rounding = true,
-        }
-    });
-    wait(0.2)
-    Notification.Notify("Notification:", "Try clicking Re-Execute GUI instead.", "rbxassetid://74294167835237", {
-        Duration = 7.5,       
-        Main = {
-            Rounding = true,
-        }
-    });
-    -- Wait 6 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
-end
-pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 
 -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
 getgenv().Game = game
@@ -2055,7 +2054,7 @@ Callback = function(getSpinSpeed)
     end
 end,})
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    --if getgenv().css_digital then warn("Already Ran!") else loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))() wait(0.1) getgenv().css_digital = true end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if getgenv().css_digital then warn("Already Ran!") else loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))() wait(0.1) getgenv().css_digital = true end
 
 local UnspinNow = Tab2:CreateButton({
 Name = "Unspin",
@@ -4032,7 +4031,7 @@ end,})
 local TPToBooth = Tab11:CreateButton({
 Name = "Teleport To Booth",
 Callback = function()
-    local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
+    local Workspace = getgenv().Workspace
 
     local function get_booth()
         for i,v in pairs(Workspace:FindFirstChild("Booth"):GetChildren()) do
@@ -4369,7 +4368,7 @@ end,})
 local DelInventory = Tab5:CreateButton({
 Name = "Delete Inventory",
 Callback = function()
-    local Replicated_Storage = game:GetService("ReplicatedStorage")
+    local Replicated_Storage = getgenv().ReplicatedStorage
     local Delete_Inv_RemoteEvent = Replicated_Storage:WaitForChild("DeleteInventory") or Replicated_Storage:FindFirstChild("DeleteInventory")
     
     Delete_Inv_RemoteEvent:FireServer()
@@ -4505,7 +4504,7 @@ Callback = function(grabFreeTools)
             Tools_Grab_Func()
         end
     else
-        local Rep_Storage = game:GetService("ReplicatedStorage")
+        local Rep_Storage = getgenv().ReplicatedStorage
         local Delete_Inv_Event = Rep_Storage:WaitForChild("DeleteInventory") or Rep_Storage:FindFirstChild("DeleteInventory")
         getgenv().shouldGrabTools = false
         wait(0.5)
@@ -4531,7 +4530,7 @@ Callback = function()
     local function sendchat(msg)
         chat:SendAsync(msg)
     end
-        
+    
     for i = 1, 8 do
         sendchat(" ")
     end
@@ -4638,8 +4637,7 @@ RemoveTextAfterFocusLost = true,
 Callback = function(enteredTextInput)
     local TextChatService = getgenv().TextChatService
     
-    
-    local Rep_Storage = game:GetService("ReplicatedStorage")
+    local Rep_Storage = getgenv().ReplicatedStorage
     local Booth_Remote = Rep_Storage:FindFirstChild("UpdateBoothText") or Rep_Storage:WaitForChild("UpdateBoothText")
 
     local letters = {
