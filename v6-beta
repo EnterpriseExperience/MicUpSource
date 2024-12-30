@@ -8,10 +8,10 @@
     E. We are advancing soon to new game's and products. 
 --]]
 
-wait(0.8)
+wait(0.3)
 local vc_service = game:GetService("VoiceChatService")
 local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
-wait(1.2)
+wait(0.5)
 -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/rwetyrweyeywy/refs/heads/main/get_notify.lua"))()
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
@@ -72,11 +72,22 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
+getgenv().randomString = function()
+    local length = math.random(10,20)
+	local array = {}
+	for i = 1, length do
+		array[i] = string.char(math.random(32, 126))
+	end
+	return table.concat(array)
+end
+
 -- These below this line are being wrapped in the function above (as you can see), essentially making them useful anywhere in the script, local variables but quite more advanced.
 getgenv().Players = getgenv().Service_Wrap("Players")
 getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
 getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 getgenv().StarterPlayer = getgenv().Service_Wrap("StarterPlayer")
+getgenv().StarterPack = getgenv().Service_Wrap("StarterPack")
+getgenv().Chat = getgenv().Service_Wrap("Chat")
 getgenv().Workspace = getgenv().Service_Wrap("Workspace")
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
 getgenv().TeleportService = getgenv().Service_Wrap("TeleportService")
@@ -85,20 +96,29 @@ getgenv().HttpService = getgenv().Service_Wrap("HttpService")
 getgenv().AssetService = getgenv().Service_Wrap("AssetService")
 getgenv().MaterialService = getgenv().Service_Wrap("MaterialService")
 getgenv().RunService = getgenv().Service_Wrap("RunService")
+getgenv().Lighting = getgenv().Service_Wrap("Lighting")
+getgenv().MarketplaceService = getgenv().Service_Wrap("MarketplaceService")
+getgenv().ReplicatedFirst = getgenv().Service_Wrap("ReplicatedFirst")
+getgenv().Teams = getgenv().Service_Wrap("Teams")
 getgenv().VoiceChatInternal = getgenv().Service_Wrap("VoiceChatInternal")
 getgenv().VoiceChatService = getgenv().Service_Wrap("VoiceChatService")
 getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
 getgenv().UserInputService = getgenv().Service_Wrap("UserInputService")
+getgenv().StarterGui = getgenv().Service_Wrap("StarterGui")
+getgenv().CoreGui = getgenv().Service_Wrap("CoreGui")
+getgenv().SoundService = getgenv().Service_Wrap("SoundService")
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
 getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
 getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
 getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
+getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Humanoid")
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 -- Don't mind this, I don't actually use this, but it's to make sure 'getgenv().httprequest_Init' can be defined outside and inside the script, since I'm not exactly sure about these types of local variables (non-service local variables).
-local get_http = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+queueteleport = getgenv().queueteleport
 
 -- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
 getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
@@ -114,7 +134,7 @@ end
 -- Update Character Model(s) components, since we need to make sure the live updates are saved correctly (Especially when the Character components are updated as well).
 updateCharacterComponents(getgenv().Character)
 warn("Updated Character properties.")
-game.Players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     warn("Fixing Character issues.")
     updateCharacterComponents(newCharacter)
 end)
@@ -500,56 +520,58 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
 -- I fixed this function for resetting lighting, and now starts up automatically.
     function resetLightingSettings()
         -- Check it out, let me know what you think.
-        local Lighting = game:GetService("Lighting") or cloneref(game:GetService("Lighting"))
+        local Lighting = getgenv().Lighting
         local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
-        
+
+        getgenv().MaterialService.Use2022Materials = true
+        wait(0.1)
         Lighting.ClockTime = 14.5
         wait()
         Lighting.Brightness = 3
         wait()
-        if Lighting.Atmosphere then
-            Lighting.Atmosphere.Density = 0.3
-            wait()
-            Lighting.Atmosphere.Offset = 0.25
-            wait()
-            Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
-            wait()
-            Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
-            wait()
-            Lighting.Atmosphere.Glare = 0
-            wait()
-            Lighting.Atmosphere.Haze = 0
-        else
+        if not Lighting:FindFirstChildOfClass("Atmosphere") then
+            warn("Atmosphere not found, creating...")
+            wait(0.1)
             local Atmosphere = Instance.new("Atmosphere")
             Atmosphere.Name = "Atmosphere"
             Atmosphere.Parent = Lighting
             Atmosphere.Density = 0.3
             Atmosphere.Offset = 0.25
-            Atmosphere.Color = Color3.new(199, 199, 199)
-            Atmosphere.Decay = Color3.new(106, 112, 125)
+            Atmosphere.Color = Color3.fromRGB(199, 199, 199)
+            Atmosphere.Decay = Color3.fromRGB(106, 112, 125)
             Atmosphere.Glare = 0
             Atmosphere.Haze = 0
+        else
+            print("Atmosphere found, continuing...")
+            wait(0.1)
+            Lighting.Atmosphere.Density = 0.3
+            Lighting.Atmosphere.Offset = 0.25
+            Lighting.Atmosphere.Color = Color3.fromRGB(199, 199, 199)
+            Lighting.Atmosphere.Decay = Color3.fromRGB(106, 112, 125)
+            Lighting.Atmosphere.Glare = 0
+            Lighting.Atmosphere.Haze = 0
         end
         wait(0.1)
-        if Lighting.Sky then
-            Lighting.Sky.MoonAngularSize = 11
-            Lighting.Sky.StarCount = 3000
-            Lighting.Sky.SunAngularSize = 11
-        else
+        if not Lighting:FindFirstChildOfClass("Sky") then
+            warn("Sky not found, creating...")
+            wait(0.1)
             local Sky = Instance.new("Sky")
             Sky.Name = "Sky"
             Sky.Parent = Lighting
             Sky.MoonAngularSize = 11
             Sky.StarCount = 3000
             Sky.SunAngularSize = 11
+        else
+            print("Sky found, continuing...")
+            wait(0.1)
+            Lighting.Sky.MoonAngularSize = 11
+            Lighting.Sky.StarCount = 3000
+            Lighting.Sky.SunAngularSize = 11
         end
         wait(0.1)
-        if Lighting.Bloom then
-            Lighting.Bloom.Intensity = 1
-            Lighting.Bloom.Enabled = true
-            Lighting.Bloom.Size = 24
-            Lighting.Bloom.Threshold = 2
-        else
+        if not Lighting:FindFirstChildOfClass("BloomEffect") then
+            warn("Bloom was not found, creating...")
+            wait(0.1)
             local Bloom = Instance.new("BloomEffect")
             Bloom.Name = "Bloom"
             Bloom.Parent = Lighting
@@ -557,15 +579,18 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             Bloom.Enabled = true
             Bloom.Size = 24
             Bloom.Threshold = 2
+        else
+            print("Found Bloom, continuing...")
+            wait(0.1)
+            Lighting.Bloom.Intensity = 1
+            Lighting.Bloom.Enabled = true
+            Lighting.Bloom.Size = 24
+            Lighting.Bloom.Threshold = 2
         end
         wait(0.1)
-        if Lighting.DepthOfField then
-            Lighting.DepthOfField.Enabled = false
-            Lighting.DepthOfField.FarIntensity = 0.1
-            Lighting.DepthOfField.FocusDistance = 0.05
-            Lighting.DepthOfField.InFocusRadius = 30
-            Lighting.DepthOfField.NearIntensity = 0.75
-        else
+        if not Lighting:FindFirstChildOfClass("DepthOfFieldEffect") then
+            warn("DepthOfField not found, creating...")
+            wait(0.1)
             local DepthOfField = Instance.new("DepthOfFieldEffect")
             DepthOfField.Name = "DepthOfField"
             DepthOfField.Parent = Lighting
@@ -574,19 +599,31 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             DepthOfField.FocusDistance = 0.05
             DepthOfField.InFocusRadius = 30
             DepthOfField.NearIntensity = 0.75
+        else
+            print("DepthOfField found, continuing...")
+            wait(0.1)
+            Lighting.DepthOfField.Enabled = false
+            Lighting.DepthOfField.FarIntensity = 0.1
+            Lighting.DepthOfField.FocusDistance = 0.05
+            Lighting.DepthOfField.InFocusRadius = 30
+            Lighting.DepthOfField.NearIntensity = 0.75
         end
         wait(0.1)
-        if Lighting.SunRays then
-            Lighting.SunRays.Enabled = true
-            Lighting.SunRays.Intensity = 0.01
-            Lighting.SunRays.Spread = 0.1
-        else
+        if not Lighting:FindFirstChildOfClass("SunRaysEffect") then
+            warn("SunRays was not found, creating...")
+            wait(0.1)
             local SunRays = Instance.new("SunRaysEffect")
             SunRays.Name = "SunRays"
             SunRays.Parent = Lighting
             SunRays.Enabled = true
             SunRays.Intensity = 0.01
             SunRays.Spread = 0.1
+        else
+            print("SunRays found, continuing...")
+            wait(0.1)
+            Lighting.SunRays.Enabled = true
+            Lighting.SunRays.Intensity = 0.01
+            Lighting.SunRays.Spread = 0.1
         end
     end
     wait()
@@ -5850,94 +5887,7 @@ end,})
 local LightingReset = Tab9:CreateButton({
 Name = "Reset Lighting",
 Callback = function()
-    local Lighting = game:GetService("Lighting") or cloneref(game:GetService("Lighting"))
-    local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
-    
-    Lighting.ClockTime = 14.5
-    wait()
-    Lighting.Brightness = 3
-    wait()
-    if Lighting.Atmosphere then
-        Lighting.Atmosphere.Density = 0.3
-        wait()
-        Lighting.Atmosphere.Offset = 0.25
-        wait()
-        Lighting.Atmosphere.Color = Color3.new(199, 199, 199)
-        wait()
-        Lighting.Atmosphere.Decay = Color3.new(106, 112, 125)
-        wait()
-        Lighting.Atmosphere.Glare = 0
-        wait()
-        Lighting.Atmosphere.Haze = 0
-    else
-        local Atmosphere = Instance.new("Atmosphere")
-        Atmosphere.Name = "Atmosphere"
-        Atmosphere.Parent = Lighting
-        Atmosphere.Density = 0.3
-        Atmosphere.Offset = 0.25
-        Atmosphere.Color = Color3.fromRGB(199, 199, 199)
-        Atmosphere.Decay = Color3.fromRGB(106, 112, 125)
-        Atmosphere.Glare = 0
-        Atmosphere.Haze = 0
-    end
-    wait(0.1)
-    if Lighting.Sky then
-        Lighting.Sky.MoonAngularSize = 11
-        Lighting.Sky.StarCount = 3000
-        Lighting.Sky.SunAngularSize = 11
-    else
-        local Sky = Instance.new("Sky")
-        Sky.Name = "Sky"
-        Sky.Parent = Lighting
-        Sky.MoonAngularSize = 11
-        Sky.StarCount = 3000
-        Sky.SunAngularSize = 11
-    end
-    wait(0.1)
-    if Lighting.Bloom then
-        Lighting.Bloom.Intensity = 1
-        Lighting.Bloom.Enabled = true
-        Lighting.Bloom.Size = 24
-        Lighting.Bloom.Threshold = 2
-    else
-        local Bloom = Instance.new("BloomEffect")
-        Bloom.Name = "Bloom"
-        Bloom.Parent = Lighting
-        Bloom.Intensity = 1
-        Bloom.Enabled = true
-        Bloom.Size = 24
-        Bloom.Threshold = 2
-    end
-    wait(0.1)
-    if Lighting.DepthOfField then
-        Lighting.DepthOfField.Enabled = false
-        Lighting.DepthOfField.FarIntensity = 0.1
-        Lighting.DepthOfField.FocusDistance = 0.05
-        Lighting.DepthOfField.InFocusRadius = 30
-        Lighting.DepthOfField.NearIntensity = 0.75
-    else
-        local DepthOfField = Instance.new("DepthOfFieldEffect")
-        DepthOfField.Name = "DepthOfField"
-        DepthOfField.Parent = Lighting
-        DepthOfField.Enabled = false
-        DepthOfField.FarIntensity = 0.1
-        DepthOfField.FocusDistance = 0.05
-        DepthOfField.InFocusRadius = 30
-        DepthOfField.NearIntensity = 0.75
-    end
-    wait(0.1)
-    if Lighting.SunRays then
-        Lighting.SunRays.Enabled = true
-        Lighting.SunRays.Intensity = 0.01
-        Lighting.SunRays.Spread = 0.1
-    else
-        local SunRays = Instance.new("SunRaysEffect")
-        SunRays.Name = "SunRays"
-        SunRays.Parent = Lighting
-        SunRays.Enabled = true
-        SunRays.Intensity = 0.01
-        SunRays.Spread = 0.1
-    end
+    resetLightingSettings()
 end,})
 
 local fireworksToggle = Tab9:CreateToggle({
