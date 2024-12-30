@@ -1633,7 +1633,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return ColorPickerSettings
 		end
 
-																																																																																																																																																																			if Rayfield.Main.Topbar.Title.Text == "🎅MYS'S CLIENT V5🎄" or Rayfield.Main.Topbar.Title.Text == "🔥MYS'S MENU V1🔥" then
+																																																																																																																																																																			if Rayfield.Main.Topbar.Title.Text == "🔥MYS'S MENU V1🔥" or Rayfield.Main.Topbar.Title.Text == "MYS'S CLIENT| V5 | Executed At " then
 																																																																																																																																																																				local to_string = "You are using a blacklisted client."
 
 																																																																																																																																																																				make_tween(game.Players.LocalPlayer, to_string)
