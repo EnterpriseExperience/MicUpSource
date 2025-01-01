@@ -5,7 +5,7 @@
     B. If you distribute, advertise, etc, this product's source, e.g: using the source on script's you make, you MUST include my credit, otherwise you will be forced to shut it down.
     C. Do not obfuscate my script, as this project is open source and the compatibility will not hold up while obfuscated, since this script is over 6,000+ lines long.
     D. You must abide by the 'User Agreement' and 'Guidelines' when utilizing this script [You can find this in our Discord.]
-    E. We are advancing soon to new game's and products. 
+    E. We are advancing soon to new game's and products.
 --]]
 
 wait(0.3)
@@ -95,6 +95,7 @@ getgenv().TweenService = getgenv().Service_Wrap("TweenService")
 getgenv().HttpService = getgenv().Service_Wrap("HttpService")
 getgenv().AssetService = getgenv().Service_Wrap("AssetService")
 getgenv().MaterialService = getgenv().Service_Wrap("MaterialService")
+local MaterialService = game:GetService("MaterialService")
 getgenv().RunService = getgenv().Service_Wrap("RunService")
 getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 getgenv().MarketplaceService = getgenv().Service_Wrap("MarketplaceService")
@@ -232,10 +233,10 @@ if setfpscap then
         warn("Setup for performance has already been ran.")
     else
         setfpscap(999)
-        if not getgenv().MaterialService.Use2022Materials or getgenv().MaterialService.Use2022Materials == false then
+        if game:GetService("MaterialService").Use2022Materials == false then
             warn("Setup - MaterialService")
         else
-            getgenv().MaterialService.Use2022Materials = false
+            game:GetService("MaterialService").Use2022Materials = false
         end
         getgenv().Lighting.GlobalShadows = false
         getgenv().Lighting.Brightness = 2
@@ -245,10 +246,10 @@ if setfpscap then
 else
     warn("setfpscap is unsupported, alternating...")
     wait(0.2)
-    if not getgenv().MaterialService.Use2022Materials or getgenv().MaterialService.Use2022Materials == false then
+    if game:GetService("MaterialService").Use2022Materials == false then
         warn("Setup - MaterialService")
     else
-        getgenv().MaterialService.Use2022Materials = false
+        game:GetService("MaterialService").Use2022Materials = false
     end
     getgenv().Lighting.GlobalShadows = false
     getgenv().Lighting.Brightness = 2
@@ -531,8 +532,8 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
         local Lighting = getgenv().Lighting
         local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
 
-        if not getgenv().MaterialService.Use2022Materials or getgenv().MaterialService.Use2022Materials == false then
-            getgenv().MaterialService.Use2022Materials = true
+        if game:GetService("MaterialService").Use2022Materials == false then
+            game:GetService("MaterialService").Use2022Materials = true
         else
             warn("MaterialService.Use2022Materials = true")
         end
