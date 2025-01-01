@@ -233,10 +233,10 @@ if setfpscap then
         warn("Setup for performance has already been ran.")
     else
         setfpscap(999)
-        if not getgenv().MaterialService.Use2022Materials or getgenv().MaterialService.Use2022Materials == false then
-            warn("Setup - MaterialService")
+        if game:GetService("MaterialService").Use2022Materials == true then
+            warn("MaterialService.Use2022Materials = false")
         else
-            getgenv().MaterialService.Use2022Materials = false
+            game:GetService("MaterialService").Use2022Materials = false
         end
         getgenv().Lighting.GlobalShadows = false
         getgenv().Lighting.Brightness = 2
@@ -246,10 +246,10 @@ if setfpscap then
 else
     warn("setfpscap is unsupported, alternating...")
     wait(0.2)
-    if not getgenv().MaterialService.Use2022Materials or getgenv().MaterialService.Use2022Materials == false then
+    if game:GetService("MaterialService").Use2022Materials == false then
         warn("Setup - MaterialService")
     else
-        getgenv().MaterialService.Use2022Materials = false
+        game:GetService("MaterialService").Use2022Materials = false
     end
     getgenv().Lighting.GlobalShadows = false
     getgenv().Lighting.Brightness = 2
@@ -532,8 +532,8 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
         local Lighting = getgenv().Lighting
         local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
 
-        if not getgenv().MaterialService.Use2022Materials or getgenv().MaterialService.Use2022Materials == false then
-            getgenv().MaterialService.Use2022Materials = true
+        if game:GetService("MaterialService").Use2022Materials == false then
+            game:GetService("MaterialService").Use2022Materials = true
         else
             warn("MaterialService.Use2022Materials = true")
         end
