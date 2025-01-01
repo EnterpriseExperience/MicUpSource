@@ -18,14 +18,14 @@ local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
 if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     -- I want to keep the 2 notifications, it make's it more easier for observing details without trying to compact it into 1 big title screen.
-    Notification.Notify("Heads Up!", "Zacks Easy Hub is already running!", "rbxassetid://74294167835237", {
+    Notification.Notify("Heads Up!", "Zacks Easy Hub is already running!", "rbxassetid://93594537601787", {
         Duration = 7.5,       
         Main = {
             Rounding = true,
         }
     });
     wait(0.2)
-    Notification.Notify("Notification:", "Try clicking Re-Execute GUI instead.", "rbxassetid://74294167835237", {
+    Notification.Notify("Notification:", "Try clicking Re-Execute GUI instead.", "rbxassetid://93594537601787", {
         Duration = 7.5,       
         Main = {
             Rounding = true,
@@ -36,7 +36,7 @@ end
 pcall(function() getgenv().SCRIPT_EXECUTED = true end)
 wait(0.3)
 if enabled_vc == true then
-    Notification.Notify("Success!", "Connected with VoiceChat successfully!", "rbxassetid://74294167835237", {
+    Notification.Notify("Success!", "Connected with VoiceChat successfully!", "rbxassetid://93594537601787", {
         Duration = 5,       
         Main = {
             Rounding = true,
@@ -44,14 +44,14 @@ if enabled_vc == true then
     });
     print("[Zacks_Easy_Hub_OUTPUT]: "..game.Players.LocalPlayer.Name.." has Voice Chat.")
 else
-    Notification.Notify("Unable to load.", "VoiceChat is not enabled on this account!", "rbxassetid://74294167835237", {
+    Notification.Notify("Unable to load.", "VoiceChat is not enabled on this account!", "rbxassetid://93594537601787", {
         Duration = 5,
         Main = {
             Rounding = true,
         }
     });
     wait(0.2)
-    Notification.Notify("Heads Up!", "The game will kick you!", "rbxassetid://74294167835237", {
+    Notification.Notify("Heads Up!", "The game will kick you!", "rbxassetid://93594537601787", {
         Duration = 5,
         Main = {
             Rounding = true,
@@ -343,7 +343,7 @@ wait(0.3)
         image.Size = UDim2.new(0.25, 0, 0.25, 0)
         image.Position = UDim2.new(0.5, 0, 0.5, 0)
         image.AnchorPoint = Vector2.new(0.5, 0.5)
-        image.Image = "rbxassetid://74294167835237"
+        image.Image = "rbxassetid://93594537601787"
         image.BackgroundTransparency = 1
         image.Parent = loadingFrame
         
@@ -532,12 +532,6 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
         local Lighting = getgenv().Lighting
         local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
 
-        if game:GetService("MaterialService").Use2022Materials == false then
-            game:GetService("MaterialService").Use2022Materials = true
-        else
-            warn("MaterialService.Use2022Materials = true")
-        end
-        wait(0.1)
         Lighting.ClockTime = 14.5
         wait()
         Lighting.Brightness = 3
@@ -646,10 +640,7 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
         end
     end)
-    wait()
     wait(0.3)
-    resetLightingSettings() -- Call it right here, since we have the upperhand on client shit.
-    wait(0.2)
     -- Now we can move past Lighting and focus on that 'Game' and 'Teleport' shit again, and correctly check if the Part 'Teleport' is moved to 'AssetService' (checking if it exists in the Folder still), so we don't run into errors.
     if not GetTeleportPart then
         warn("Part: Teleport = nil | false | null")
