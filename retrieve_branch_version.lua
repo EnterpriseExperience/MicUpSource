@@ -1,12 +1,18 @@
 -- [[
 
-	-- ^^ Always working to bring the best products ^^ --
+	-- #FREEPRODUCTSONTOP --
+	-- THIS IS MY SOURCE CODE BITCH, FUCKING CREDITS HERE: https://discord.gg/VJh3kkYzBn --
+	-- Now shout out the script that gave yall what you wanted, TURN THE HOLY FUCK UP FOR 2025 WITH YO BITCH ASS! --
 
 -- ]]
+local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
+
+if game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("Version_Selector_ScreenGui") then
+	return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
+end
 
 local version_build_config = "V6.7.1-C"
 local no_config_build = "V6.2.6.8"
-local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
 task.wait()
 if getgenv().setup_loaded_already_script then
 	return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
@@ -28,7 +34,6 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "Version_Selector_ScreenGui"
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ResetOnSpawn = false
-
 ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
 local Frame = Instance.new("Frame")
@@ -53,7 +58,7 @@ Label.Parent = Frame
 
 local Label1 = Instance.new("TextLabel")
 Label1.Name = "Config_Build"
-Label1.Text = "Build Version: V6.7.1-C\n[Status: ✅-⚒️]"
+Label1.Text = "Build Version: V6.7.1-C\n[Status: ✅]"
 Label1.Size = UDim2.new(0.5, 0, 0.100000001, 0)
 Label1.Position = UDim2.new(0.25, 0, 0.300000012, 0)
 Label1.BackgroundTransparency = 1
@@ -65,7 +70,7 @@ Label1.Parent = Frame
 
 local Label2 = Instance.new("TextLabel")
 Label2.Name = "No_Config_Build"
-Label2.Text = "Build Version: V6.2.6.8\n[Status: ✅-⚒️]"
+Label2.Text = "Build Version: V6.2.6.8\n[Status: ✅]"
 Label2.Size = UDim2.new(0.5, 0, 0.100000001, 0)
 Label2.Position = UDim2.new(0.25, 0, 0.5, 0)
 Label2.BackgroundTransparency = 1
