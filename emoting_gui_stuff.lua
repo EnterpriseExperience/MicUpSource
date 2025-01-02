@@ -34,6 +34,9 @@ local EmoteID_5 = Instance.new("TextButton")
 local EmoteID_4 = Instance.new("TextButton")
 local EmoteID_3 = Instance.new("TextButton")
 local EmoteID_1 = Instance.new("TextButton")
+local Load_Cfg = Instance.new("TextButton")
+local Save_Cfg = Instance.new("TextButton")
+local Del_Cfg = Instance.new("TextButton")
 
 EmotesConfiguration.Name = "Emotes-Configuration"
 EmotesConfiguration.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -47,7 +50,6 @@ Emotes_Frame.BackgroundTransparency = 1.000
 Emotes_Frame.BorderColor3 = Color3.fromRGB(27, 42, 53)
 Emotes_Frame.Position = UDim2.new(0.240302265, 0, 0.206030145, 0)
 Emotes_Frame.Size = UDim2.new(0, 368, 0, 533)
-Emotes_Frame.Visible = false
 Emotes_Frame.Image = "rbxassetid://3570695787"
 Emotes_Frame.ImageColor3 = Color3.fromRGB(30, 30, 30)
 Emotes_Frame.ScaleType = Enum.ScaleType.Slice
@@ -270,8 +272,7 @@ Settings_Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Settings_Frame.BackgroundTransparency = 1.000
 Settings_Frame.BorderColor3 = Color3.fromRGB(27, 42, 53)
 Settings_Frame.Position = UDim2.new(0.486146092, 0, 0.316582918, 0)
-Settings_Frame.Size = UDim2.new(0, 460, 0, 356)
-Settings_Frame.Visible = false
+Settings_Frame.Size = UDim2.new(0, 642, 0, 356)
 Settings_Frame.Image = "rbxassetid://3570695787"
 Settings_Frame.ImageColor3 = Color3.fromRGB(30, 30, 30)
 Settings_Frame.ScaleType = Enum.ScaleType.Slice
@@ -436,7 +437,7 @@ Close_2.Parent = Settings_Frame
 Close_2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Close_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 Close_2.BorderSizePixel = 0
-Close_2.Position = UDim2.new(0.91630435, 0, 0, 0)
+Close_2.Position = UDim2.new(0.939668715, 0, 0, 0)
 Close_2.Size = UDim2.new(0, 38, 0, 32)
 Close_2.Font = Enum.Font.SourceSansBold
 Close_2.Text = "X"
@@ -450,7 +451,7 @@ EmoteID_2.Parent = Settings_Frame
 EmoteID_2.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_2.BorderSizePixel = 0
-EmoteID_2.Position = UDim2.new(0.495652169, 0, 0.129213482, 0)
+EmoteID_2.Position = UDim2.new(0.388175607, 0, 0.129213482, 0)
 EmoteID_2.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_2.Font = Enum.Font.SourceSansBold
 EmoteID_2.Text = "Update Emote \"2\" ID"
@@ -465,7 +466,7 @@ EmoteID_9.Parent = Settings_Frame
 EmoteID_9.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_9.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_9.BorderSizePixel = 0
-EmoteID_9.Position = UDim2.new(0.495652169, 0, 0.8820225, 0)
+EmoteID_9.Position = UDim2.new(0.388175607, 0, 0.8820225, 0)
 EmoteID_9.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_9.Font = Enum.Font.SourceSansBold
 EmoteID_9.Text = "Update Emote \"9\" ID"
@@ -480,7 +481,7 @@ EmoteID_8.Parent = Settings_Frame
 EmoteID_8.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_8.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_8.BorderSizePixel = 0
-EmoteID_8.Position = UDim2.new(0.495652169, 0, 0.772471905, 0)
+EmoteID_8.Position = UDim2.new(0.388175607, 0, 0.772471905, 0)
 EmoteID_8.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_8.Font = Enum.Font.SourceSansBold
 EmoteID_8.Text = "Update Emote \"8\" ID"
@@ -495,7 +496,7 @@ EmoteID_7.Parent = Settings_Frame
 EmoteID_7.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_7.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_7.BorderSizePixel = 0
-EmoteID_7.Position = UDim2.new(0.495652169, 0, 0.660112381, 0)
+EmoteID_7.Position = UDim2.new(0.388175607, 0, 0.660112381, 0)
 EmoteID_7.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_7.Font = Enum.Font.SourceSansBold
 EmoteID_7.Text = "Update Emote \"7\" ID"
@@ -510,7 +511,7 @@ EmoteID_6.Parent = Settings_Frame
 EmoteID_6.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_6.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_6.BorderSizePixel = 0
-EmoteID_6.Position = UDim2.new(0.495652169, 0, 0.547752798, 0)
+EmoteID_6.Position = UDim2.new(0.388175607, 0, 0.547752798, 0)
 EmoteID_6.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_6.Font = Enum.Font.SourceSansBold
 EmoteID_6.Text = "Update Emote \"6\" ID"
@@ -525,7 +526,7 @@ EmoteID_5.Parent = Settings_Frame
 EmoteID_5.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_5.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_5.BorderSizePixel = 0
-EmoteID_5.Position = UDim2.new(0.495652169, 0, 0.44101125, 0)
+EmoteID_5.Position = UDim2.new(0.388175607, 0, 0.438202262, 0)
 EmoteID_5.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_5.Font = Enum.Font.SourceSansBold
 EmoteID_5.Text = "Update Emote \"5\" ID"
@@ -540,7 +541,7 @@ EmoteID_4.Parent = Settings_Frame
 EmoteID_4.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_4.BorderSizePixel = 0
-EmoteID_4.Position = UDim2.new(0.495652169, 0, 0.337078661, 0)
+EmoteID_4.Position = UDim2.new(0.388175607, 0, 0.334269673, 0)
 EmoteID_4.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_4.Font = Enum.Font.SourceSansBold
 EmoteID_4.Text = "Update Emote \"4\" ID"
@@ -555,7 +556,7 @@ EmoteID_3.Parent = Settings_Frame
 EmoteID_3.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_3.BorderSizePixel = 0
-EmoteID_3.Position = UDim2.new(0.495652169, 0, 0.233146071, 0)
+EmoteID_3.Position = UDim2.new(0.388175607, 0, 0.233146071, 0)
 EmoteID_3.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_3.Font = Enum.Font.SourceSansBold
 EmoteID_3.Text = "Update Emote \"3\" ID"
@@ -570,7 +571,7 @@ EmoteID_1.Parent = Settings_Frame
 EmoteID_1.BackgroundColor3 = Color3.fromRGB(26, 255, 0)
 EmoteID_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
 EmoteID_1.BorderSizePixel = 0
-EmoteID_1.Position = UDim2.new(0.495652169, 0, 0.0224719103, 0)
+EmoteID_1.Position = UDim2.new(0.388175607, 0, 0.0224719103, 0)
 EmoteID_1.Size = UDim2.new(0, 174, 0, 31)
 EmoteID_1.Font = Enum.Font.SourceSansBold
 EmoteID_1.Text = "Update Emote \"1\" ID"
@@ -580,7 +581,49 @@ EmoteID_1.TextSize = 14.000
 EmoteID_1.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
 EmoteID_1.TextWrapped = true
 
-local function XEJPA_fake_script() 
+Load_Cfg.Name = "Load_Cfg"
+Load_Cfg.Parent = Settings_Frame
+Load_Cfg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Load_Cfg.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Load_Cfg.BorderSizePixel = 0
+Load_Cfg.Position = UDim2.new(0.722741425, 0, 0.205528006, 0)
+Load_Cfg.Size = UDim2.new(0, 146, 0, 36)
+Load_Cfg.Font = Enum.Font.SourceSansBold
+Load_Cfg.Text = "Load Config"
+Load_Cfg.TextColor3 = Color3.fromRGB(255, 255, 0)
+Load_Cfg.TextScaled = true
+Load_Cfg.TextSize = 14.000
+Load_Cfg.TextWrapped = true
+
+Save_Cfg.Name = "Save_Cfg"
+Save_Cfg.Parent = Settings_Frame
+Save_Cfg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Save_Cfg.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Save_Cfg.BorderSizePixel = 0
+Save_Cfg.Position = UDim2.new(0.722741425, 0, 0.433056086, 0)
+Save_Cfg.Size = UDim2.new(0, 146, 0, 36)
+Save_Cfg.Font = Enum.Font.SourceSansBold
+Save_Cfg.Text = "Save Config"
+Save_Cfg.TextColor3 = Color3.fromRGB(0, 255, 0)
+Save_Cfg.TextScaled = true
+Save_Cfg.TextSize = 14.000
+Save_Cfg.TextWrapped = true
+
+Del_Cfg.Name = "Del_Cfg"
+Del_Cfg.Parent = Settings_Frame
+Del_Cfg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Del_Cfg.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Del_Cfg.BorderSizePixel = 0
+Del_Cfg.Position = UDim2.new(0.722741425, 0, 0.669011176, 0)
+Del_Cfg.Size = UDim2.new(0, 146, 0, 36)
+Del_Cfg.Font = Enum.Font.SourceSansBold
+Del_Cfg.Text = "Delete Config"
+Del_Cfg.TextColor3 = Color3.fromRGB(255, 0, 0)
+Del_Cfg.TextScaled = true
+Del_Cfg.TextSize = 14.000
+Del_Cfg.TextWrapped = true
+
+local function DOAHXLG_fake_script() 
 	local script = Instance.new('LocalScript', Speed_Up_Speed)
 
 	local textBox = script.Parent
@@ -595,8 +638,8 @@ local function XEJPA_fake_script()
 		end
 	end)
 end
-coroutine.wrap(XEJPA_fake_script)()
-local function UAUHEN_fake_script() 
+coroutine.wrap(DOAHXLG_fake_script)()
+local function VLPBLII_fake_script() 
 	local script = Instance.new('LocalScript', Slow_Down_Speed)
 
 	local textBox = script.Parent
@@ -611,8 +654,8 @@ local function UAUHEN_fake_script()
 		end
 	end)
 end
-coroutine.wrap(UAUHEN_fake_script)()
-local function DIRHT_fake_script() 
+coroutine.wrap(VLPBLII_fake_script)()
+local function SKIYRB_fake_script() 
 	local script = Instance.new('LocalScript', Freeze_Keybind)
 
 	local textBox = script.Parent
@@ -647,8 +690,8 @@ local function DIRHT_fake_script()
 		end
 	end)
 end
-coroutine.wrap(DIRHT_fake_script)()
-local function RQMAMJ_fake_script() 
+coroutine.wrap(SKIYRB_fake_script)()
+local function GLBPIYO_fake_script() 
 	local script = Instance.new('LocalScript', Speed_Keybind)
 
 	local textBox = script.Parent
@@ -683,8 +726,8 @@ local function RQMAMJ_fake_script()
 		end
 	end)
 end
-coroutine.wrap(RQMAMJ_fake_script)()
-local function HTDQB_fake_script() 
+coroutine.wrap(GLBPIYO_fake_script)()
+local function YOVBD_fake_script() 
 	local script = Instance.new('LocalScript', Enabled_Status)
 
 	getgenv().watch_dog_status = true
@@ -692,18 +735,18 @@ local function HTDQB_fake_script()
 		wait(0.5)
 		if getgenv().scriptEnabled or getgenv().scriptEnabled == true then
 			script.Parent.TextColor3 = Color3.fromRGB(34, 255, 0)
-			script.Parent.Text = "Status: Attached ✅"
+			script.Parent.Text = "Status: Enabled ✅"
 		elseif getgenv().scriptEnabled == false then
 			script.Parent.TextColor3 = Color3.fromRGB(255, 0, 0)
-			script.Parent.Text = "Status: Not Attached ❌"
+			script.Parent.Text = "Status: Disabled ❌"
 		else
 			script.Parent.TextColor3 = Color3.fromRGB(255, 170, 0)
-			script.Parent.Text = "Status: Unknown Status❓"
+			script.Parent.Text = "Status: Unknown ❓"
 		end
 	end
 end
-coroutine.wrap(HTDQB_fake_script)()
-local function VPSRD_fake_script() 
+coroutine.wrap(YOVBD_fake_script)()
+local function ZOBVLZ_fake_script() 
 	local script = Instance.new('LocalScript', Normal_Keybind)
 
 	local textBox = script.Parent
@@ -738,8 +781,8 @@ local function VPSRD_fake_script()
 		end
 	end)
 end
-coroutine.wrap(VPSRD_fake_script)()
-local function DKKAO_fake_script() 
+coroutine.wrap(ZOBVLZ_fake_script)()
+local function WUGOP_fake_script() 
 	local script = Instance.new('LocalScript', Close)
 
 	script.Parent.MouseButton1Click:Connect(function()
@@ -751,8 +794,8 @@ local function DKKAO_fake_script()
 		end
 	end)
 end
-coroutine.wrap(DKKAO_fake_script)()
-local function YLRIKG_fake_script() 
+coroutine.wrap(WUGOP_fake_script)()
+local function JROQEP_fake_script() 
 	local script = Instance.new('LocalScript', Emotes_Frame)
 
 	local UIS = game:GetService('UserInputService')
@@ -790,8 +833,8 @@ local function YLRIKG_fake_script()
 		end
 	end)
 end
-coroutine.wrap(YLRIKG_fake_script)()
-local function WBMAV_fake_script() 
+coroutine.wrap(JROQEP_fake_script)()
+local function RJIF_fake_script() 
 	local script = Instance.new('LocalScript', Emotes_Frame)
 
 	local Main_Frame = script.Parent
@@ -807,8 +850,8 @@ local function WBMAV_fake_script()
 		end
 	end)
 end
-coroutine.wrap(WBMAV_fake_script)()
-local function ZOLBSR_fake_script() 
+coroutine.wrap(RJIF_fake_script)()
+local function OJUDNOL_fake_script() 
 	local script = Instance.new('LocalScript', Alternate_Title)
 
 	local label = script.Parent
@@ -857,8 +900,8 @@ local function ZOLBSR_fake_script()
 		end
 	end
 end
-coroutine.wrap(ZOLBSR_fake_script)()
-local function LNWLQDA_fake_script() 
+coroutine.wrap(OJUDNOL_fake_script)()
+local function QSOGUZO_fake_script() 
 	local script = Instance.new('LocalScript', Settings_Menu)
 
 	script.Parent.MouseButton1Click:Connect(function()
@@ -867,8 +910,8 @@ local function LNWLQDA_fake_script()
 		Frame_Vis.Visible = not Frame_Vis.Visible
 	end)
 end
-coroutine.wrap(LNWLQDA_fake_script)()
-local function HFXJ_fake_script() 
+coroutine.wrap(QSOGUZO_fake_script)()
+local function HCQYDY_fake_script() 
 	local script = Instance.new('LocalScript', Toggle_GUI)
 
 	script.Parent.MouseButton1Click:Connect(function()
@@ -882,16 +925,16 @@ local function HFXJ_fake_script()
 		end
 	end)
 end
-coroutine.wrap(HFXJ_fake_script)()
-local function BSWOSF_fake_script() 
+coroutine.wrap(HCQYDY_fake_script)()
+local function TZJEYD_fake_script() 
 	local script = Instance.new('LocalScript', Close_2)
 
 	script.Parent.MouseButton1Click:Connect(function()
 		script.Parent.Parent.Visible = false
 	end)
 end
-coroutine.wrap(BSWOSF_fake_script)()
-local function MIII_fake_script() 
+coroutine.wrap(TZJEYD_fake_script)()
+local function AGMPVKP_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_2)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_2")
@@ -911,8 +954,8 @@ local function MIII_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(MIII_fake_script)()
-local function OGQVJTP_fake_script() 
+coroutine.wrap(AGMPVKP_fake_script)()
+local function RRGT_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_9)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_9")
@@ -932,8 +975,8 @@ local function OGQVJTP_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(OGQVJTP_fake_script)()
-local function FIGH_fake_script() 
+coroutine.wrap(RRGT_fake_script)()
+local function QPMMUDN_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_8)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_8")
@@ -953,8 +996,8 @@ local function FIGH_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(FIGH_fake_script)()
-local function UEYZQY_fake_script() 
+coroutine.wrap(QPMMUDN_fake_script)()
+local function ZYIK_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_7)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_7")
@@ -974,8 +1017,8 @@ local function UEYZQY_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(UEYZQY_fake_script)()
-local function ALQT_fake_script() 
+coroutine.wrap(ZYIK_fake_script)()
+local function LZQGC_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_6)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_6")
@@ -995,8 +1038,8 @@ local function ALQT_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(ALQT_fake_script)()
-local function UGWFZ_fake_script() 
+coroutine.wrap(LZQGC_fake_script)()
+local function PGSDSL_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_5)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_5")
@@ -1016,8 +1059,8 @@ local function UGWFZ_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(UGWFZ_fake_script)()
-local function JGXTHA_fake_script() 
+coroutine.wrap(PGSDSL_fake_script)()
+local function VIALO_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_4)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_4")
@@ -1037,8 +1080,8 @@ local function JGXTHA_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(JGXTHA_fake_script)()
-local function ROXC_fake_script() 
+coroutine.wrap(VIALO_fake_script)()
+local function FSZEYQH_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_3)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_3")
@@ -1058,8 +1101,8 @@ local function ROXC_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(ROXC_fake_script)()
-local function SOQP_fake_script() 
+coroutine.wrap(FSZEYQH_fake_script)()
+local function TIPLWKP_fake_script() 
 	local script = Instance.new('LocalScript', EmoteID_1)
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_1")
@@ -1079,8 +1122,8 @@ local function SOQP_fake_script()
 		TextBox.Text = ""
 	end)
 end
-coroutine.wrap(SOQP_fake_script)()
-local function WZBK_fake_script() 
+coroutine.wrap(TIPLWKP_fake_script)()
+local function UCINRE_fake_script() 
 	local script = Instance.new('LocalScript', Settings_Frame)
 
 	local UIS = game:GetService('UserInputService')
@@ -1118,4 +1161,110 @@ local function WZBK_fake_script()
 		end
 	end)
 end
-coroutine.wrap(WZBK_fake_script)()
+coroutine.wrap(UCINRE_fake_script)()
+local function WKALQI_fake_script() 
+	local script = Instance.new('LocalScript', Load_Cfg)
+
+	script.Parent.MouseButton1Click:Connect(function()
+		if not writefile or readfile then return end
+		
+		local function Load_Config()
+			local TextBoxParent = script.Parent.Parent
+			local ConfigFileName = "EmoteConfig.json"
+			local HttpService = game:GetService("HttpService")
+			
+			if not isfile(ConfigFileName) then
+				warn("Configuration file not found!")
+				return
+			end
+	
+			local json = readfile(ConfigFileName)
+			local config = HttpService:JSONDecode(json)
+	
+			for _, entry in ipairs(config) do
+				local keyCode = Enum.KeyCode[entry.Key]
+				if keyCode then
+					getgenv().keybindActions[keyCode] = entry.EmoteID
+				end
+			end
+			
+			getgenv().notify("Success!", "Loaded Configuration File!", 7)
+		end
+	
+		local function populateTextBoxes()
+			local TextBoxParent = script.Parent.Parent
+			for keyCode, emoteID in pairs(getgenv().keybindActions) do
+				local textBox = TextBoxParent:FindFirstChild(tostring(keyCode.Name))
+				if textBox and textBox:IsA("TextBox") then
+					textBox.Text = tostring(emoteID)
+				end
+			end
+		end
+	
+		local function updateKeybindsFromTextBoxes()
+			for _, textBox in ipairs(script.Parent.Parent:GetChildren()) do
+				if textBox:IsA("TextBox") then
+					local keyCode = Enum.KeyCode[textBox.Name]
+					if keyCode and tonumber(textBox.Text) then
+						getgenv().keybindActions[keyCode] = tonumber(textBox.Text)
+					end
+				end
+			end
+		end
+		
+		Load_Config()
+	end)
+end
+coroutine.wrap(WKALQI_fake_script)()
+local function JRMAQZ_fake_script() 
+	local script = Instance.new('LocalScript', Save_Cfg)
+
+	script.Parent.MouseButton1Click:Connect(function()
+		if not writefile or readfile then return end
+		local HttpService = game:GetService("HttpService")
+		local ConfigFileName = "EmoteConfig.json"
+	
+		getgenv().keybindActions = getgenv().keybindActions or {}
+	
+		local function Save_Config()
+			local config = {}
+			for keyCode, emoteID in pairs(getgenv().keybindActions) do
+				table.insert(config, { Key = tostring(keyCode), EmoteID = emoteID })
+			end
+	
+			local json = HttpService:JSONEncode(config)
+			writefile(ConfigFileName, json)
+			
+			getgenv().notify("Success!", "Saved Configuration File!", 7)
+		end
+		
+		Save_Config()
+	end)
+end
+coroutine.wrap(JRMAQZ_fake_script)()
+local function OZWQWOC_fake_script() 
+	local script = Instance.new('LocalScript', Del_Cfg)
+
+	script.Parent.MouseButton1Click:Connect(function()
+		local function Delete_Config()
+			local TextBoxParent = script.Parent.Parent
+			local ConfigFileName = "EmoteConfig.json"
+			local HttpService = game:GetService("HttpService")
+	
+			if not isfile(ConfigFileName) then
+				getgenv().notify("Failed!", "Configuration file not found!", 7)
+				return
+			end
+	
+			local json = readfile(ConfigFileName)
+			local config = HttpService:JSONDecode(json)
+			
+			delfile(ConfigFileName)
+			wait(0.1)
+			getgenv().notify("Success!", "Deleted Configuration File!", 7)
+		end
+		
+		Delete_Config()
+	end)
+end
+coroutine.wrap(OZWQWOC_fake_script)()
