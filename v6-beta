@@ -715,8 +715,8 @@ end)
     getgenv().freezeEmotes = getgenv().freezeEmotes or false
     getgenv().isReversed = getgenv().isReversed or false
     getgenv().scriptEnabled = getgenv().scriptEnabled or false
-
-    local keybindActions = {
+    
+    getgenv().keybindActions = getgenv().keybindActions or {
         [Enum.KeyCode.One] = 13071993910,
         [Enum.KeyCode.Two] = 14901371589,
         [Enum.KeyCode.Three] = 73683655527605,
@@ -740,7 +740,7 @@ end)
         [Enum.KeyCode.X] = "NormalSpeed",
         [Enum.KeyCode.F] = "Reverse"
     }
-
+    
     local function adjustEmoteSpeed()
         if getgenv().Humanoid then
             for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
@@ -772,7 +772,7 @@ end)
             for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
                 track:Stop()
             end
-            task.wait()
+            wait()
             local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
     
             if animTrack and typeof(animTrack) == "Instance" then
@@ -810,41 +810,13 @@ end)
         end
     end
     
-    local function toggleScript()
-        if getgenv().scriptEnabled then
-            getgenv().scriptEnabled = false
-            getgenv().keybindConnection:Disconnect()
-            getgenv().keybindConnection = nil
-            getgenv().emoteSpeed = 1
-            getgenv().freezeEmotes = false
-
-            if getgenv().Humanoid then
-                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
-                    track:AdjustSpeed(1)
-                end
-            end
-            wait()
-            getgenv().notify("Success!", "Turned off emotes keybind script.", 7)
-        else
-            getgenv().scriptEnabled = true
-
-            getgenv().keybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-                if gameProcessed or not getgenv().scriptEnabled then return end
-                local action = keybindActions[input.KeyCode]
-                if action then
-                    handleKeybind(action)
-                end
-            end)
-    
-            getgenv().notify("Success!", "Enabled emotes keybind script.", 7)
+    getgenv().keybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        local action = getgenv().keybindActions[input.KeyCode]
+        if action then
+            handleKeybind(action)
         end
-    end
-
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if not gameProcessed and input.KeyCode == Enum.KeyCode.Equals then
-            toggleScript()
-        end
-    end)    
+    end)
 wait(0.4)
 local TeleportService = game:GetService("TeleportService")
 
