@@ -10,6 +10,7 @@ https://discord.gg/VJh3kkYzBn
 
 ## [Or See]:
 https://github.com/EnterpriseExperience/MicUpSource/wiki
+
 https://discord.gg/VJh3kkYzBn
 
 ## UPDATE <-> [V6] [UPDATE!]:
