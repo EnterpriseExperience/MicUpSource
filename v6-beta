@@ -400,7 +400,7 @@ wait(0.3)
         textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
         textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
         textLabel.BackgroundTransparency = 1
-        textLabel.Text = "You Are: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nIs creating a Baseplate,\n\nWait until this screen disappears."
+        textLabel.Text = "Current Status: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nIs creating a Baseplate,\n\nPlease wait until this screen disappears."
         textLabel.RichText = true
         textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
         textLabel.TextScaled = true
@@ -415,8 +415,8 @@ wait(0.3)
         -- Check if the GUI we created exists, and once the player is not frozen anymore, destroy the GUI and let the player continue unfrozen.
         if getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING") then
             local bruh_GUI = getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING")
-            bruh_GUI:FindFirstChildOfClass("Frame"):FindFirstChildOfClass("TextLabel").Text = "You Are: <font color=\"rgb(0, 238, 0)\">Not Frozen</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nEnjoy your anti-void BasePlate."
-            wait(1)
+            bruh_GUI:FindFirstChildOfClass("Frame"):FindFirstChildOfClass("TextLabel").Text = "Current Status: <font color=\"rgb(0, 238, 0)\">Not Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nEnjoy your anti-void/BasePlate."
+            wait(0.7) -- We'll make this slightly faster, just to preserve people's time [I guess.]
             -- Believe me, I still realize I did not need to say they we're unfrozen, but some people aren't the smartest, so fuck you.
             bruh_GUI:Destroy()
         else
@@ -442,7 +442,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "🔥 Zacks Easy Hub 🔥 | V6.7.1-C | Emote Keybinds: True",
+    Name = "🔥 Zacks Easy Hub 🔥 | V6.7.3-C | Emote Keybinds: True",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -710,12 +710,12 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
 end)
     -- [] -->> Set up emote/rizz configuration automatically. <<-- [] --
     local UserInputService = game:GetService("UserInputService")
-    
-    local player = getgenv().Character
-    local emoteSpeed = 1
-    local freezeEmotes = false
+
+    getgenv().emoteSpeed = getgenv().emoteSpeed or 1
+    getgenv().freezeEmotes = getgenv().freezeEmotes or false
     getgenv().isReversed = getgenv().isReversed or false
-    
+    getgenv().scriptEnabled = getgenv().scriptEnabled or false
+
     local keybindActions = {
         [Enum.KeyCode.One] = 13071993910,
         [Enum.KeyCode.Two] = 14901371589,
@@ -740,11 +740,11 @@ end)
         [Enum.KeyCode.X] = "NormalSpeed",
         [Enum.KeyCode.F] = "Reverse"
     }
-    
+
     local function adjustEmoteSpeed()
         if getgenv().Humanoid then
             for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
-                track:AdjustSpeed(emoteSpeed)
+                track:AdjustSpeed(getgenv().emoteSpeed)
             end
         end
     end
@@ -767,17 +767,16 @@ end)
     
     local function playEmote(emoteId)
         local character = getgenv().Character
-        local humanoid = character:FindFirstChildOfClass("Humanoid") or getgenv().Humanoid
+        local humanoid = getgenv().Humanoid
         if humanoid then
-            for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
                 track:Stop()
             end
-            
-            wait()
+            task.wait()
             local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-                
+    
             if animTrack and typeof(animTrack) == "Instance" then
-                animTrack:AdjustSpeed(emoteSpeed)
+                animTrack:AdjustSpeed(getgenv().emoteSpeed)
             end
         else
             warn("Humanoid not found in Character!")
@@ -788,19 +787,19 @@ end)
         if type(action) == "number" then
             playEmote(action)
         elseif action == "SlowDown" then
-            emoteSpeed = 0.1
+            getgenv().emoteSpeed = 0.1
             adjustEmoteSpeed()
         elseif action == "SpeedUp" then
-            emoteSpeed = 4
+            getgenv().emoteSpeed = 4
             adjustEmoteSpeed()
         elseif action == "Freeze" then
-            emoteSpeed = 0
+            getgenv().emoteSpeed = 0
             adjustEmoteSpeed()
-            freezeEmotes = true
+            getgenv().freezeEmotes = true
         elseif action == "NormalSpeed" then
-            emoteSpeed = 1
+            getgenv().emoteSpeed = 1
             adjustEmoteSpeed()
-            freezeEmotes = false
+            getgenv().freezeEmotes = false
         elseif action == "Reverse" then
             if getgenv().isReversed then
                 playNormalSpeed()
@@ -811,14 +810,42 @@ end)
         end
     end
     
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        local action = keybindActions[input.KeyCode]
-        if action then
-            handleKeybind(action)
+    local function toggleScript()
+        if getgenv().scriptEnabled then
+            getgenv().scriptEnabled = false
+            getgenv().keybindConnection:Disconnect()
+            getgenv().keybindConnection = nil
+            getgenv().emoteSpeed = 1
+            getgenv().freezeEmotes = false
+
+            if getgenv().Humanoid then
+                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    track:AdjustSpeed(1)
+                end
+            end
+            wait()
+            getgenv().notify("Success!", "Turned off emotes keybind script.", 7)
+        else
+            getgenv().scriptEnabled = true
+
+            getgenv().keybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed or not getgenv().scriptEnabled then return end
+                local action = keybindActions[input.KeyCode]
+                if action then
+                    handleKeybind(action)
+                end
+            end)
+    
+            getgenv().notify("Success!", "Enabled emotes keybind script.", 7)
         end
-    end)
-wait(0.5)
+    end
+
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode.Equals then
+            toggleScript()
+        end
+    end)    
+wait(0.4)
 local TeleportService = game:GetService("TeleportService")
 
 PlaceId, JobId = game.PlaceId, game.JobId
