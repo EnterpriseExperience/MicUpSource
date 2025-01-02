@@ -1,3 +1,7 @@
+if game.Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("Ask_GUI") then
+    return 
+end
+
 local Ask_GUI = Instance.new("ScreenGui")
 local FullScreen_Question = Instance.new("Frame")
 local Question = Instance.new("TextLabel")
