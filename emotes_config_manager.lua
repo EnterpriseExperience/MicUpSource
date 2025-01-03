@@ -206,7 +206,7 @@ Settings_Menu.Size = UDim2.new(0, 200, 0, 52)
 Settings_Menu.Font = Enum.Font.SourceSans
 Settings_Menu.TextColor3 = Color3.fromRGB(0, 0, 0)
 Settings_Menu.TextSize = 14.000
-Settings_Menu.Visible = true
+Settings_Menu.Visible = false
 
 Settings_Roundify_12px.Name = "Settings_Roundify_12px"
 Settings_Roundify_12px.Parent = Settings_Menu
