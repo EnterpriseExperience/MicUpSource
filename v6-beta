@@ -84,7 +84,6 @@ end
 -- These below this line are being wrapped in the function above (as you can see), essentially making them useful anywhere in the script, local variables but quite more advanced.
 getgenv().Players = getgenv().Service_Wrap("Players")
 getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
-getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 getgenv().StarterPlayer = getgenv().Service_Wrap("StarterPlayer")
 getgenv().StarterPack = getgenv().Service_Wrap("StarterPack")
 getgenv().Chat = getgenv().Service_Wrap("Chat")
@@ -173,6 +172,8 @@ function getRoot(char)
     rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
     return rootPart
 end
+
+
 
 -- Define alternate functions to be used later, this set's CharacterUseJumpPower in 'game:GetService('StarterPlayer')', to 'True', so we can use JumpPower on Character if needed.
 getgenv().StarterPlayer.CharacterUseJumpPower = true
@@ -309,23 +310,6 @@ else
     getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
 end
 wait(0.3)
-    -- [] -->> Initialize Character /|\ Wait for Character and other necessary parts. <<-- [] --
-    if not getgenv().Character then -- Yes, I do realize I did not need this, since the line below this kinda does it for me, but guess what, we aren't doing the 1 time bullshit anymore alright?.
-        repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
-        wait()
-    end
-
-    -- This function kinda sucks shit I won't lie, but it's temporary, don't even worry.
-    getgenv().WaitForCharacter_Load = function()
-        repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
-        if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().Humanoid then
-            getgenv().load_char = true
-            print("Loaded!")
-        end
-
-        return getgenv().load_char
-    end
-
     -- Don't even mess with this dumb shit, the loading screen has been through to much, but keep the checks, since it can run down performance if you remove the loading screen check, and potentially drop frames.
     if getgenv().loading_screen_data then
         print("Already Seen Loading Screen")
@@ -438,9 +422,8 @@ wait(0.3)
         do_baseplate_check()
     end
     task.wait(0.1)
--- Yes, the main GUI function is wrote with a goddamn 'getgenv()' function, why haven't you gone to hell yet?
-getgenv().start_Script = function() -- Like it, don't you?
-wait(0.2) -- For keeping the 'currentTime' and 'formattedTime' shit in place, since last time I tried it with Solara, or like free executors, it started giving me dumb ass errors about labeling.
+getgenv().start_Script = function()
+wait(0.2)
 local currentTime = os.time()
 local formattedTime = os.date("%I:%M %p", currentTime)
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
