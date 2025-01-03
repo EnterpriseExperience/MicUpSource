@@ -54,6 +54,7 @@ Emotes_Frame.ImageColor3 = Color3.fromRGB(30, 30, 30)
 Emotes_Frame.ScaleType = Enum.ScaleType.Slice
 Emotes_Frame.SliceCenter = Rect.new(100, 100, 100, 100)
 Emotes_Frame.SliceScale = 0.120
+Emotes_Frame.Visible = false
 
 ZEH_Title.Name = "ZEH_Title"
 ZEH_Title.Parent = Emotes_Frame
@@ -205,6 +206,7 @@ Settings_Menu.Size = UDim2.new(0, 200, 0, 52)
 Settings_Menu.Font = Enum.Font.SourceSans
 Settings_Menu.TextColor3 = Color3.fromRGB(0, 0, 0)
 Settings_Menu.TextSize = 14.000
+Settings_Menu.Visible = true
 
 Settings_Roundify_12px.Name = "Settings_Roundify_12px"
 Settings_Roundify_12px.Parent = Settings_Menu
