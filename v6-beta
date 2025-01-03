@@ -173,8 +173,6 @@ function getRoot(char)
     return rootPart
 end
 
-
-
 -- Define alternate functions to be used later, this set's CharacterUseJumpPower in 'game:GetService('StarterPlayer')', to 'True', so we can use JumpPower on Character if needed.
 getgenv().StarterPlayer.CharacterUseJumpPower = true
 task.wait(.3)
@@ -709,14 +707,11 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
 end)
     -- [] -->> Set up emote/rizz configuration automatically. <<-- [] --
     local UserInputService = game:GetService("UserInputService")
+    local HttpService = game:GetService("HttpService")
 
-    getgenv().emoteSpeed = getgenv().emoteSpeed or 1
-    getgenv().speedUpSpeed = getgenv().speedUpSpeed or 4
-    getgenv().slowDownSpeed = getgenv().slowDownSpeed or 0.1
-    getgenv().freezeEmotes = getgenv().freezeEmotes or false
-    getgenv().isReversed = getgenv().isReversed or false
-    
-    getgenv().keybindActions = getgenv().keybindActions or {
+    local emoteFilePath = "emoteFile.json"
+
+    local defaultKeybindActions = {
         [Enum.KeyCode.One] = 13071993910,
         [Enum.KeyCode.Two] = 14901371589,
         [Enum.KeyCode.Three] = 73683655527605,
@@ -733,6 +728,55 @@ end)
         [Enum.KeyCode.X] = "NormalSpeed",
         [Enum.KeyCode.F] = "Reverse"
     }
+
+    local function saveDefaultKeybinds(filePath)
+        local keybindList = {}
+        for keyCode, emoteID in pairs(defaultKeybindActions) do
+            table.insert(keybindList, { Key = tostring(keyCode), EmoteID = emoteID })
+        end
+        local success, result = pcall(function()
+            return HttpService:JSONEncode(keybindList)
+        end)
+        if success then
+            writefile(filePath, result)
+            print("Default emote configuration file created at: " .. filePath)
+        else
+            warn("Failed to create default emote configuration file.")
+        end
+    end
+
+    local function loadKeybinds(filePath)
+        if isfile(filePath) then
+            local success, result = pcall(function()
+                return HttpService:JSONDecode(readfile(filePath))
+            end)
+            if success then
+                local loadedKeybinds = {}
+                for _, bind in ipairs(result) do
+                    if bind.Key and bind.Key:find("Enum.KeyCode") then
+                        local keyCode = Enum.KeyCode[tostring(bind.Key):match("Enum.KeyCode%.(%w+)")]
+                        if keyCode and (tonumber(bind.EmoteID) or type(bind.EmoteID) == "string") then
+                            loadedKeybinds[keyCode] = tonumber(bind.EmoteID) or bind.EmoteID
+                        end
+                    end
+                end
+                return loadedKeybinds
+            else
+                warn("Failed to parse emote configuration file. Using empty configuration.")
+            end
+        else
+            saveDefaultKeybinds(filePath)
+        end
+        return {}
+    end
+
+    getgenv().keybindActions = loadKeybinds(emoteFilePath)
+
+    getgenv().emoteSpeed = getgenv().emoteSpeed or 1
+    getgenv().speedUpSpeed = getgenv().speedUpSpeed or 4
+    getgenv().slowDownSpeed = getgenv().slowDownSpeed or 0.1
+    getgenv().freezeEmotes = getgenv().freezeEmotes or false
+    getgenv().isReversed = getgenv().isReversed or false
 
     local function adjustEmoteSpeed()
         if getgenv().Humanoid then
@@ -759,7 +803,6 @@ end)
     end
 
     local function playEmote(emoteId)
-        local character = getgenv().Character
         local humanoid = getgenv().Humanoid
         if humanoid then
             for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
@@ -767,7 +810,6 @@ end)
             end
             wait()
             local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-    
             if animTrack and typeof(animTrack) == "Instance" then
                 animTrack:AdjustSpeed(getgenv().emoteSpeed)
             end
