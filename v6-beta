@@ -95,7 +95,6 @@ getgenv().TweenService = getgenv().Service_Wrap("TweenService")
 getgenv().HttpService = getgenv().Service_Wrap("HttpService")
 getgenv().AssetService = getgenv().Service_Wrap("AssetService")
 getgenv().MaterialService = getgenv().Service_Wrap("MaterialService")
-local MaterialService = game:GetService("MaterialService")
 getgenv().RunService = getgenv().Service_Wrap("RunService")
 getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 getgenv().MarketplaceService = getgenv().Service_Wrap("MarketplaceService")
@@ -141,25 +140,32 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 end)
 
 -- Voice chat already loaded check, keeping performance as stable as possible, as sometimes the check can duplicate, so we do not want our performance being unstabilized by 1 singular line of code.
-if getgenv().voiceChat_Check then
-    warn("Already checked VC")
-else
-    -- Script to unsuspend Voice Chat (VC), this should work, as long as 'getgenv().VoiceChatService:joinVoice()', is only being executed 1 time, since Roblox duplicates the suspension screen, if you do it more then once.
-    local reconnecting = false
+local vc_inter = game:GetService("VoiceChatInternal")
+local vc_service = game:GetService("VoiceChatService")
 
+if getgenv().voiceChat_Check then
+    warn("Voice Chat already initialized.")
+else
+    getgenv().voiceChat_Check = true
+    local reconnecting = false
+    local retryCooldown = 4
     local function onVoiceChatStateChanged(oldState, newState)
         if newState == Enum.VoiceChatState.Ended and not reconnecting then
-            reconnecting = true -- Set an actual boolean flag to prevent that screen from popping up again and again.
-            wait()
-            pcall(function()
-                getgenv().VoiceChatService:joinVoice()
+            reconnecting = true
+            task.spawn(function()
+                wait(retryCooldown)
+                local success, err = pcall(function()
+                    vc_service:joinVoice()
+                end)
+                if not success then
+                    warn("Error while rejoining voice chat:", err)
+                end
+                reconnecting = false
             end)
-            reconnecting = false -- Reset that same flag after attempting to rejoin 1 time.
         end
     end
-    
-    getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)    
-    getgenv().voiceChat_Check = true
+
+    vc_inter.StateChanged:Connect(onVoiceChatStateChanged)
 end
 
 -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
@@ -521,6 +527,16 @@ local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
 local Tab15 = Window:CreateTab("< / UI >", 7734022107)
 local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
 wait()
+getgenv().material_toggle = function(boolean)
+    if boolean == true then
+        game:GetService("MaterialService").Use2022Materials = true
+    elseif boolean == false then
+        game:GetService("MaterialService").Use2022Materials = false
+    else
+        return getgenv().notify("Failed!", "Not a valid boolean toggle/action.", 6.5)
+    end
+end
+wait()
 -- Start searching for the 'Game' Folder located in Workspace, and modify they're "Parent" them somewhere else, and the Part 'Teleport' as well, so we are invincible to that platform game where the soccer thing is.
 local GameFolder = getgenv().Workspace:FindFirstChild("Game")
 local GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
@@ -712,9 +728,10 @@ end)
     local UserInputService = game:GetService("UserInputService")
 
     getgenv().emoteSpeed = getgenv().emoteSpeed or 1
+    getgenv().speedUpSpeed = getgenv().speedUpSpeed or 4
+    getgenv().slowDownSpeed = getgenv().slowDownSpeed or 0.1
     getgenv().freezeEmotes = getgenv().freezeEmotes or false
     getgenv().isReversed = getgenv().isReversed or false
-    getgenv().scriptEnabled = getgenv().scriptEnabled or false
     
     getgenv().keybindActions = getgenv().keybindActions or {
         [Enum.KeyCode.One] = 13071993910,
@@ -727,20 +744,13 @@ end)
         [Enum.KeyCode.Eight] = 13823339506,
         [Enum.KeyCode.Nine] = 3576823880,
         [Enum.KeyCode.Zero] = 15506503658,
-        [Enum.KeyCode.R] = 14548709888,
-        [Enum.KeyCode.T] = 15554016057,
-        [Enum.KeyCode.Y] = 10147924028,
-        [Enum.KeyCode.U] = 14900153406,
-        [Enum.KeyCode.P] = 16181843366,
-        [Enum.KeyCode.N] = 10214411646,
-        [Enum.KeyCode.Z] = 4391208058,
         [Enum.KeyCode.Q] = "SlowDown",
         [Enum.KeyCode.E] = "SpeedUp",
         [Enum.KeyCode.V] = "Freeze",
         [Enum.KeyCode.X] = "NormalSpeed",
         [Enum.KeyCode.F] = "Reverse"
     }
-    
+
     local function adjustEmoteSpeed()
         if getgenv().Humanoid then
             for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
@@ -748,7 +758,7 @@ end)
             end
         end
     end
-    
+
     local function reverseEmotes()
         if getgenv().Humanoid then
             for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
@@ -756,7 +766,7 @@ end)
             end
         end
     end
-    
+
     local function playNormalSpeed()
         if getgenv().Humanoid then
             for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
@@ -764,7 +774,7 @@ end)
             end
         end
     end
-    
+
     local function playEmote(emoteId)
         local character = getgenv().Character
         local humanoid = getgenv().Humanoid
@@ -782,15 +792,15 @@ end)
             warn("Humanoid not found in Character!")
         end
     end
-    
+
     local function handleKeybind(action)
         if type(action) == "number" then
             playEmote(action)
         elseif action == "SlowDown" then
-            getgenv().emoteSpeed = 0.1
+            getgenv().emoteSpeed = getgenv().slowDownSpeed
             adjustEmoteSpeed()
         elseif action == "SpeedUp" then
-            getgenv().emoteSpeed = 4
+            getgenv().emoteSpeed = getgenv().speedUpSpeed
             adjustEmoteSpeed()
         elseif action == "Freeze" then
             getgenv().emoteSpeed = 0
@@ -809,7 +819,7 @@ end)
             getgenv().isReversed = not getgenv().isReversed
         end
     end
-    
+
     getgenv().keybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         local action = getgenv().keybindActions[input.KeyCode]
@@ -817,6 +827,8 @@ end)
             handleKeybind(action)
         end
     end)
+    wait(0.2)
+    getgenv().scriptEnabled = true
 wait(0.4)
 local TeleportService = game:GetService("TeleportService")
 
@@ -5889,10 +5901,14 @@ Callback = function(getLoopTpToVoid)
     end
 end,})
 
+getgenv().material_toggle(true)
+wait(0.2)
 local LightingReset = Tab9:CreateButton({
 Name = "Reset Lighting",
 Callback = function()
     resetLightingSettings()
+    wait(0.3)
+    getgenv().material_toggle(false)
 end,})
 
 local fireworksToggle = Tab9:CreateToggle({
@@ -6319,19 +6335,9 @@ Callback = function()
     end
 end,})
 
-local FreeEmotesGUI = Tab14:CreateButton({
+local FreeEmotesGUI = Tab12:CreateButton({
 Name = "Free Emotes GUI",
 Callback = function()
-    getgenv().StarterGui = getgenv().StarterGui
-
-    local function sendNotification(title, text, duration)
-        getgenv().StarterGui:SetCore("SendNotification", {
-            Title = title,
-            Text = text,
-            Duration = duration,
-        })
-    end
-
     getgenv().notify("Free Emotes:", "Press , [comma] to open Free Emotes GUI", 5)
     task.wait(.1)
     getgenv().notify("Open Button:", "Or use the button on the left side of your screen.", 4)
@@ -6507,9 +6513,7 @@ end,})
 ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute GUI",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
     getgenv().getLoopKick = false
-    wait(0.2)
     getgenv().SCRIPT_EXECUTED = false
     getgenv().SCRIPT_EXECUTED = false
     getgenv().Invis_Loaded = false
@@ -6517,9 +6521,8 @@ Callback = function()
     getgenv().GetLoopRunning = false
     getgenv().LmaoGetMuted = false
     getgenv().css_digital = false
-    wait(0.2)
     Rayfield:Destroy()
-    wait(1)
+    wait(0.5)
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
 end,})
 
@@ -7361,11 +7364,11 @@ create_Button(PatrolFEAnim, "(FE) Patrol Animation Package", function()
 end)
 
 create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
-    local Animate = getgenv().LocalPlayer.Character.Animate
+    local Animate = getgenv().Character:FindFirstChild("Animate")
     Animate.Disabled = true
     wait()
     Animate.Disabled = false
-    local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+    local animtrack = getgenv().Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
     for i, track in pairs (animtrack) do
         track:Stop()
     end
@@ -7426,7 +7429,7 @@ if getgenv().camera_zoom_data then
 else
     getgenv().camera_zoom_data = false
     wait(0.5)
-    LocalPlayer.CameraMaxZoomDistance = 800000
+    getgenv().LocalPlayer.CameraMaxZoomDistance = 800000
     getgenv().camera_zoom_data = true
     wait(0.1)
 end
