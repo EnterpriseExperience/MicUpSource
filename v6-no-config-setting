@@ -85,7 +85,6 @@ end
 -- These below this line are being wrapped in the function above (as you can see), essentially making them useful anywhere in the script, local variables but quite more advanced.
 getgenv().Players = getgenv().Service_Wrap("Players")
 getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
-getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 getgenv().StarterPlayer = getgenv().Service_Wrap("StarterPlayer")
 getgenv().StarterPack = getgenv().Service_Wrap("StarterPack")
 getgenv().Chat = getgenv().Service_Wrap("Chat")
