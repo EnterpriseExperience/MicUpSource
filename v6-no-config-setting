@@ -141,25 +141,32 @@ game.Players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 end)
 
 -- Voice chat already loaded check, keeping performance as stable as possible, as sometimes the check can duplicate, so we do not want our performance being unstabilized by 1 singular line of code.
-if getgenv().voiceChat_Check then
-    warn("Already checked VC")
-else
-    -- Script to unsuspend Voice Chat (VC), this should work, as long as 'getgenv().VoiceChatService:joinVoice()', is only being executed 1 time, since Roblox duplicates the suspension screen, if you do it more then once.
-    local reconnecting = false
+local vc_inter = game:GetService("VoiceChatInternal")
+local vc_service = game:GetService("VoiceChatService")
 
+if getgenv().voiceChat_Check then
+    warn("Voice Chat already initialized.")
+else
+    getgenv().voiceChat_Check = true
+    local reconnecting = false
+    local retryCooldown = 4
     local function onVoiceChatStateChanged(oldState, newState)
         if newState == Enum.VoiceChatState.Ended and not reconnecting then
-            reconnecting = true -- Set an actual boolean flag to prevent that screen from popping up again and again.
-            wait()
-            pcall(function()
-                getgenv().VoiceChatService:joinVoice()
+            reconnecting = true
+            task.spawn(function()
+                wait(retryCooldown)
+                local success, err = pcall(function()
+                    vc_service:joinVoice()
+                end)
+                if not success then
+                    warn("Error while rejoining voice chat:", err)
+                end
+                reconnecting = false
             end)
-            reconnecting = false -- Reset that same flag after attempting to rejoin 1 time.
         end
     end
-    
-    getgenv().VoiceChatInternal.StateChanged:Connect(onVoiceChatStateChanged)    
-    getgenv().voiceChat_Check = true
+
+    vc_inter.StateChanged:Connect(onVoiceChatStateChanged)
 end
 
 -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
@@ -6209,19 +6216,9 @@ Callback = function()
     end
 end,})
 
-local FreeEmotesGUI = Tab14:CreateButton({
+local FreeEmotesGUI = Tab12:CreateButton({
 Name = "Free Emotes GUI",
 Callback = function()
-    getgenv().StarterGui = getgenv().StarterGui
-
-    local function sendNotification(title, text, duration)
-        getgenv().StarterGui:SetCore("SendNotification", {
-            Title = title,
-            Text = text,
-            Duration = duration,
-        })
-    end
-
     getgenv().notify("Free Emotes:", "Press , [comma] to open Free Emotes GUI", 5)
     task.wait(.1)
     getgenv().notify("Open Button:", "Or use the button on the left side of your screen.", 4)
