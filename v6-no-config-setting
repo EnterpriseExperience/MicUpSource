@@ -5,16 +5,15 @@
     B. If you distribute, advertise, etc, this product's source, e.g: using the source on script's you make, you MUST include my credit, otherwise you will be forced to shut it down.
     C. Do not obfuscate my script, as this project is open source and the compatibility will not hold up while obfuscated, since this script is over 6,000+ lines long.
     D. You must abide by the 'User Agreement' and 'Guidelines' when utilizing this script [You can find this in our Discord.]
-    E. We are advancing soon to new game's and products. 
+    E. We are advancing soon to new game's and products.
 --]]
 
-wait(0.8)
+wait(0.3)
 local vc_service = game:GetService("VoiceChatService")
 local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
-wait(1.2)
+wait(0.5)
 -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/rwetyrweyeywy/refs/heads/main/get_notify.lua"))()
-
 -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
 if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then
     -- I want to keep the 2 notifications, it make's it more easier for observing details without trying to compact it into 1 big title screen.
@@ -134,7 +133,7 @@ end
 -- Update Character Model(s) components, since we need to make sure the live updates are saved correctly (Especially when the Character components are updated as well).
 updateCharacterComponents(getgenv().Character)
 warn("Updated Character properties.")
-game.Players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     warn("Fixing Character issues.")
     updateCharacterComponents(newCharacter)
 end)
@@ -239,8 +238,8 @@ if setfpscap then
         warn("Setup for performance has already been ran.")
     else
         setfpscap(999)
-        if game:GetService("MaterialService").Use2022Materials == true then
-            warn("MaterialService.Use2022Materials = false")
+        if game:GetService("MaterialService").Use2022Materials == false then
+            warn("Setup - MaterialService")
         else
             game:GetService("MaterialService").Use2022Materials = false
         end
@@ -309,23 +308,6 @@ else
     getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
 end
 wait(0.3)
-    -- [] -->> Initialize Character /|\ Wait for Character and other necessary parts. <<-- [] --
-    if not getgenv().Character then -- Yes, I do realize I did not need this, since the line below this kinda does it for me, but guess what, we aren't doing the 1 time bullshit anymore alright?.
-        repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
-        wait()
-    end
-
-    -- This function kinda sucks shit I won't lie, but it's temporary, don't even worry.
-    getgenv().WaitForCharacter_Load = function()
-        repeat wait() until getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().HumanoidRootPart and getgenv().Humanoid
-        if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().Humanoid then
-            getgenv().load_char = true
-            print("Loaded!")
-        end
-
-        return getgenv().load_char
-    end
-
     -- Don't even mess with this dumb shit, the loading screen has been through to much, but keep the checks, since it can run down performance if you remove the loading screen check, and potentially drop frames.
     if getgenv().loading_screen_data then
         print("Already Seen Loading Screen")
@@ -406,7 +388,7 @@ wait(0.3)
         textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
         textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
         textLabel.BackgroundTransparency = 1
-        textLabel.Text = "You Are: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nIs creating a Baseplate,\n\nWait until this screen disappears."
+        textLabel.Text = "Current Status: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nIs creating a Baseplate,\n\nPlease wait until this screen disappears."
         textLabel.RichText = true
         textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
         textLabel.TextScaled = true
@@ -421,8 +403,8 @@ wait(0.3)
         -- Check if the GUI we created exists, and once the player is not frozen anymore, destroy the GUI and let the player continue unfrozen.
         if getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING") then
             local bruh_GUI = getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING")
-            bruh_GUI:FindFirstChildOfClass("Frame"):FindFirstChildOfClass("TextLabel").Text = "You Are: <font color=\"rgb(0, 238, 0)\">Not Frozen</font>\n--------------\n🎄 Zacks Easy Hub 🎄\n----------------------------\nEnjoy your anti-void BasePlate."
-            wait(1)
+            bruh_GUI:FindFirstChildOfClass("Frame"):FindFirstChildOfClass("TextLabel").Text = "Current Status: <font color=\"rgb(0, 238, 0)\">Not Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nEnjoy your anti-void/BasePlate."
+            wait(0.7) -- We'll make this slightly faster, just to preserve people's time [I guess.]
             -- Believe me, I still realize I did not need to say they we're unfrozen, but some people aren't the smartest, so fuck you.
             bruh_GUI:Destroy()
         else
@@ -438,9 +420,8 @@ wait(0.3)
         do_baseplate_check()
     end
     task.wait(0.1)
--- Yes, the main GUI function is wrote with a goddamn 'getgenv()' function, why haven't you gone to hell yet?
-getgenv().start_Script = function() -- Like it, don't you?
-wait(0.2) -- For keeping the 'currentTime' and 'formattedTime' shit in place, since last time I tried it with Solara, or like free executors, it started giving me dumb ass errors about labeling.
+getgenv().start_Script = function()
+wait(0.2)
 local currentTime = os.time()
 local formattedTime = os.date("%I:%M %p", currentTime)
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
@@ -448,7 +429,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "✨ Zacks Easy Hub ✨ | V6.2.6.8 | Emote Keybinds: False",
+    Name = "📗 Zacks Success Hub 📗 | V6.3.8.2 | Emote Keybinds: False",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -488,44 +469,54 @@ wait(0.1)
 -- Above here is obvious, stop dick riding me.
 
 -- [] -->> Initialize our Tabs and Sections <<-- [] --
-local Tab1 = Window:CreateTab("< / Home >", 7733960981)
-local Section1 = Tab1:CreateSection("||| Home Section |||")
+local Tab1 = Window:CreateTab("-<-Home->-", 7733960981)
+local Section1 = Tab1:CreateSection("||| / Home Section |||")
 
-local Tab11 = Window:CreateTab("< / Booths >", 7733914390)
-local Section11 = Tab11:CreateSection("||| Booths Section |||")
+local Tab11 = Window:CreateTab("-<-Booths->-", 7733914390)
+local Section11 = Tab11:CreateSection("||| / Booths Section |||")
 
-local Tab2 = Window:CreateTab("< / Character >", 7743871002)
-local Section2 = Tab2:CreateSection("||| Character [1] Section |||")
+local Tab2 = Window:CreateTab("-<-Character->-", 7743871002)
+local Section2 = Tab2:CreateSection("||| / Character [1] Section |||")
 
-local Tab13 = Window:CreateTab("< / Players >", 7743871002)
-local Section13 = Tab13:CreateSection("||| Character [2] Section |||")
+local Tab13 = Window:CreateTab("-<-Players->-", 7743871002)
+local Section13 = Tab13:CreateSection("||| / Character [2] Section |||")
 
-local Tab10 = Window:CreateTab("< / Teleports >", 7733764327)
-local Section10 = Tab10:CreateSection("||| Teleports Section |||")
+local Tab10 = Window:CreateTab("-<-Teleports->-", 7733764327)
+local Section10 = Tab10:CreateSection("||| / Teleports Section |||")
 
-local Tab4 = Window:CreateTab("< / Chat >", 7734021300)
-local Section4 = Tab4:CreateSection("||| Chatting Section |||")
+local Tab4 = Window:CreateTab("-<-Chat->-", 7734021300)
+local Section4 = Tab4:CreateSection("||| / Chatting Section |||")
 
-local Tab5 = Window:CreateTab("< / Misc >", 7733954760)
-local Section5 = Tab5:CreateSection("||| Extras Section |||")
+local Tab5 = Window:CreateTab("-<-Misc->-", 7733954760)
+local Section5 = Tab5:CreateSection("||| / Extras Section |||")
 
-local Tab16 = Window:CreateTab("< / Universal >", 7733954760)
-local Section16 = Tab16:CreateSection("||| Universal Section |||")
+local Tab16 = Window:CreateTab("-<-Universal->-", 7733954760)
+local Section16 = Tab16:CreateSection("||| / Universal Section |||")
 
-local Tab17 = Window:CreateTab("< / Animations >", 7733954760)
-local Section17 = Tab17:CreateSection("||| Animation Packages Section |||")
+local Tab17 = Window:CreateTab("-<-Animations->-", 7733954760)
+local Section17 = Tab17:CreateSection("||| / Animation Packages Section |||")
 
-local Tab9 = Window:CreateTab("< / Lighting >", 7734068495)
-local Section9 = Tab9:CreateSection("||| Lighting Section |||")
+local Tab9 = Window:CreateTab("-<-Lighting->-", 7734068495)
+local Section9 = Tab9:CreateSection("||| / Lighting Section |||")
 
-local Tab12 = Window:CreateTab("< / Emotes >", 7743871002)
+local Tab12 = Window:CreateTab("-<-Emotes->-", 7743871002)
 local Section12 = Tab12:CreateSection("||| / Emoting Section |||")
 
-local Tab14 = Window:CreateTab("< / Copy Anim >", 7743871002)
+local Tab14 = Window:CreateTab("-<-Copy Anim->-", 7743871002)
 local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
 
-local Tab15 = Window:CreateTab("< / UI >", 7734022107)
+local Tab15 = Window:CreateTab("-<-UI->-", 7734022107)
 local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
+wait()
+getgenv().material_toggle = function(boolean)
+    if boolean == true then
+        game:GetService("MaterialService").Use2022Materials = true
+    elseif boolean == false then
+        game:GetService("MaterialService").Use2022Materials = false
+    else
+        return getgenv().notify("Failed!", "Not a valid boolean toggle/action.", 6.5)
+    end
+end
 wait()
 -- Start searching for the 'Game' Folder located in Workspace, and modify they're "Parent" them somewhere else, and the Part 'Teleport' as well, so we are invincible to that platform game where the soccer thing is.
 local GameFolder = getgenv().Workspace:FindFirstChild("Game")
@@ -647,6 +638,8 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
         end
     end)
     wait(0.3)
+    resetLightingSettings() -- Call it right here, since we have the upperhand on client shit.
+    wait(0.2)
     -- Now we can move past Lighting and focus on that 'Game' and 'Teleport' shit again, and correctly check if the Part 'Teleport' is moved to 'AssetService' (checking if it exists in the Folder still), so we don't run into errors.
     if not GetTeleportPart then
         warn("Part: Teleport = nil | false | null")
@@ -712,7 +705,7 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()") -- K*ll yourself, stop waiting.
     end
 end)
-wait(0.5)
+wait(0.3)
 local TeleportService = game:GetService("TeleportService")
 
 PlaceId, JobId = game.PlaceId, game.JobId
@@ -1071,6 +1064,9 @@ for _, model in pairs(workspace:GetDescendants()) do
         end
     end
 end
+wait(0.3)
+local ZEH_Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))()
+getgenv().Module_For_ZEH = ZEH_Module
 
 local StallClaimToggle = Tab11:CreateToggle({
 Name = "Claim Any Booth",
@@ -3006,7 +3002,6 @@ Callback = function(crazy)
             "Zacks Easy Hub V6, POWERFUL!",
             "Powering Automation | Scripting",
             "Zacks Easy Hub | WE OP!",
-            "Zacks Easy Hub | V6-BETA",
             "Zacks Easy Hub | WE SIGMA",
             "BEST FREE SCRIPT RN!",
             "WE ARE TAKING OVER, JOIN US!",
@@ -3966,7 +3961,7 @@ end,})
 local TPToBooth = Tab11:CreateButton({
 Name = "Teleport To Booth",
 Callback = function()
-    local Workspace = game:GetService("Workspace") or cloneref(game:GetService("Workspace"))
+    local Workspace = getgenv().Workspace
 
     local function get_booth()
         for i,v in pairs(Workspace:FindFirstChild("Booth"):GetChildren()) do
@@ -4303,7 +4298,7 @@ end,})
 local DelInventory = Tab5:CreateButton({
 Name = "Delete Inventory",
 Callback = function()
-    local Replicated_Storage = game:GetService("ReplicatedStorage")
+    local Replicated_Storage = getgenv().ReplicatedStorage
     local Delete_Inv_RemoteEvent = Replicated_Storage:WaitForChild("DeleteInventory") or Replicated_Storage:FindFirstChild("DeleteInventory")
     
     Delete_Inv_RemoteEvent:FireServer()
@@ -4439,7 +4434,7 @@ Callback = function(grabFreeTools)
             Tools_Grab_Func()
         end
     else
-        local Rep_Storage = game:GetService("ReplicatedStorage")
+        local Rep_Storage = getgenv().ReplicatedStorage
         local Delete_Inv_Event = Rep_Storage:WaitForChild("DeleteInventory") or Rep_Storage:FindFirstChild("DeleteInventory")
         getgenv().shouldGrabTools = false
         wait(0.5)
@@ -4465,9 +4460,9 @@ Callback = function()
     local function sendchat(msg)
         chat:SendAsync(msg)
     end
-        
-    for i = 1, 8 do
-        sendchat(" ")
+    
+    for i = 1, 19 do
+        sendchat("")
     end
 end,})
 
@@ -4572,8 +4567,7 @@ RemoveTextAfterFocusLost = true,
 Callback = function(enteredTextInput)
     local TextChatService = getgenv().TextChatService
     
-    
-    local Rep_Storage = game:GetService("ReplicatedStorage")
+    local Rep_Storage = getgenv().ReplicatedStorage
     local Booth_Remote = Rep_Storage:FindFirstChild("UpdateBoothText") or Rep_Storage:WaitForChild("UpdateBoothText")
 
     local letters = {
@@ -5632,73 +5626,30 @@ Suffix = "",
 CurrentValue = 16,
 Flag = "walkSpeedValue",
 Callback = function(wsVal)
-    local Humanoid = getgenv().Humanoid
-    
-    if Humanoid then
-        Humanoid.WalkSpeed = wsVal
-    end
+    ZEH_Module:WalkSpeed_Update(wsVal)
 end,})
 
-if getgenv().Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == true then
-    Rayfield:Notify({
-        Title = "Success!",
-        Content = "JumpPower is enabled, continuing...",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
-    wait()
-    local JumpPowerSliding = Tab2:CreateSlider({
-    Name = "JumpPower (Default): 50",
-    Range = {50, 500},
+if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
+    local JumpPowerSlider = Tab2:CreateSlider({
+    Name = "JumpPower",
+    Range = {16, 750},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 50,
+    CurrentValue = 16,
     Flag = "jpValue",
     Callback = function(jpVal)
-        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-    
-        if Humanoid then
-            Humanoid.JumpPower = jpVal
-        end
+        ZEH_Module:JumpPower_JumpHeight_Update(jpVal)
     end,})
-    wait()
 else
-    Rayfield:Notify({
-        Title = "Detection!",
-        Content = "UseJumpPower is disabled, switching...",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
-    wait(.2)
-    local JumpingHeightSliding = Tab2:CreateSlider({
-    Name = "JumpHeight (Default): 7",
-    Range = {7, 400},
+    local HeightJumpPowerSliding = Tab2:CreateSlider({
+    Name = "JumpHeight",
+    Range = {16, 450},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 7,
-    Flag = "JumpingHeightValue",
-    Callback = function(jumpHeight)
-        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:WaitForChild("Humanoid")
-    
-        if Humanoid then
-            Humanoid.JumpHeight = jumpHeight
-        end
+    CurrentValue = 16,
+    Flag = "jumpHeightValue",
+    Callback = function(jumpHVal)
+        ZEH_Module:JumpPower_JumpHeight_Update(jumpHVal)
     end,})
 end
 
@@ -5710,8 +5661,7 @@ Suffix = "",
 CurrentValue = 196.2,
 Flag = "GravityValue",
 Callback = function(gravVal)
-    local GetWorkspace = getgenv().Workspace
-    GetWorkspace.Gravity = gravVal
+    ZEH_Module:Gravity_Update(gravVal)
 end,})
 
 local antiBangTPLoop = Tab2:CreateToggle({
@@ -5785,10 +5735,18 @@ Callback = function(getLoopTpToVoid)
     end
 end,})
 
+getgenv().material_toggle(true)
+wait(0.2)
 local LightingReset = Tab9:CreateButton({
 Name = "Reset Lighting",
 Callback = function()
     resetLightingSettings()
+    wait(0.3)
+    if game:GetService("MaterialService").Use2022Materials or game:GetService("MaterialService").Use2022Materials == true then
+        getgenv().material_toggle(false)
+    else
+        getgenv().notify("Passed", "Did not detect 'Use2022Materials' to be enabled [false].", 7)
+    end
 end,})
 
 local fireworksToggle = Tab9:CreateToggle({
@@ -6393,36 +6351,13 @@ end,})
 ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute GUI",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    getgenv().getLoopKick = false
-    wait(0.2)
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().Invis_Loaded = false
-    getgenv().GetLoopRunning = false
-    getgenv().GetLoopRunning = false
-    getgenv().LmaoGetMuted = false
-    getgenv().css_digital = false
-    wait(0.2)
-    Rayfield:Destroy()
-    wait(1)
-    loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()
+    ZEH_Module:Patch_Update("v6-no-config-setting")
 end,})
 
 DestroyGUIScript = Tab15:CreateButton({
 Name = "Destroy GUI/Script",
 Callback = function()
-    getgenv().getLoopKick = false
-    wait(0.2)
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().Invis_Loaded = false
-    getgenv().GetLoopRunning = false
-    getgenv().GetLoopRunning = false
-    getgenv().LmaoGetMuted = false
-    getgenv().css_digital = false
-    wait(.3)
-    Rayfield:Destroy()
+    ZEH_Module:Destroy_Script()
 end,})
 
 UnmuteAPlayer = Tab1:CreateInput({
@@ -7247,11 +7182,11 @@ create_Button(PatrolFEAnim, "(FE) Patrol Animation Package", function()
 end)
 
 create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
-    local Animate = getgenv().LocalPlayer.Character.Animate
+    local Animate = getgenv().Character:FindFirstChild("Animate")
     Animate.Disabled = true
     wait()
     Animate.Disabled = false
-    local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+    local animtrack = getgenv().Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
     for i, track in pairs (animtrack) do
         track:Stop()
     end
@@ -7312,7 +7247,7 @@ if getgenv().camera_zoom_data then
 else
     getgenv().camera_zoom_data = false
     wait(0.5)
-    LocalPlayer.CameraMaxZoomDistance = 800000
+    getgenv().LocalPlayer.CameraMaxZoomDistance = 800000
     getgenv().camera_zoom_data = true
     wait(0.1)
 end
