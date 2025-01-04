@@ -429,7 +429,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "🔥 Zacks Easy Hub 🔥 | V6.7.3-C | Emote Keybinds: True",
+    Name = "🍏 Zacks Strong Hub 🍏 | V6.7.9-C | Emote Keybinds: True",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -469,43 +469,43 @@ wait(0.1)
 -- Above here is obvious, stop dick riding me.
 
 -- [] -->> Initialize our Tabs and Sections <<-- [] --
-local Tab1 = Window:CreateTab("< / Home >", 7733960981)
-local Section1 = Tab1:CreateSection("||| Home Section |||")
+local Tab1 = Window:CreateTab("-<-Home->-", 7733960981)
+local Section1 = Tab1:CreateSection("||| / Home Section |||")
 
-local Tab11 = Window:CreateTab("< / Booths >", 7733914390)
-local Section11 = Tab11:CreateSection("||| Booths Section |||")
+local Tab11 = Window:CreateTab("-<-Booths->-", 7733914390)
+local Section11 = Tab11:CreateSection("||| / Booths Section |||")
 
-local Tab2 = Window:CreateTab("< / Character >", 7743871002)
-local Section2 = Tab2:CreateSection("||| Character [1] Section |||")
+local Tab2 = Window:CreateTab("-<-Character->-", 7743871002)
+local Section2 = Tab2:CreateSection("||| / Character [1] Section |||")
 
-local Tab13 = Window:CreateTab("< / Players >", 7743871002)
-local Section13 = Tab13:CreateSection("||| Character [2] Section |||")
+local Tab13 = Window:CreateTab("-<-Players->-", 7743871002)
+local Section13 = Tab13:CreateSection("||| / Character [2] Section |||")
 
-local Tab10 = Window:CreateTab("< / Teleports >", 7733764327)
-local Section10 = Tab10:CreateSection("||| Teleports Section |||")
+local Tab10 = Window:CreateTab("-<-Teleports->-", 7733764327)
+local Section10 = Tab10:CreateSection("||| / Teleports Section |||")
 
-local Tab4 = Window:CreateTab("< / Chat >", 7734021300)
-local Section4 = Tab4:CreateSection("||| Chatting Section |||")
+local Tab4 = Window:CreateTab("-<-Chat->-", 7734021300)
+local Section4 = Tab4:CreateSection("||| / Chatting Section |||")
 
-local Tab5 = Window:CreateTab("< / Misc >", 7733954760)
-local Section5 = Tab5:CreateSection("||| Extras Section |||")
+local Tab5 = Window:CreateTab("-<-Misc->-", 7733954760)
+local Section5 = Tab5:CreateSection("||| / Extras Section |||")
 
-local Tab16 = Window:CreateTab("< / Universal >", 7733954760)
-local Section16 = Tab16:CreateSection("||| Universal Section |||")
+local Tab16 = Window:CreateTab("-<-Universal->-", 7733954760)
+local Section16 = Tab16:CreateSection("||| / Universal Section |||")
 
-local Tab17 = Window:CreateTab("< / Animations >", 7733954760)
-local Section17 = Tab17:CreateSection("||| Animation Packages Section |||")
+local Tab17 = Window:CreateTab("-<-Animations->-", 7733954760)
+local Section17 = Tab17:CreateSection("||| / Animation Packages Section |||")
 
-local Tab9 = Window:CreateTab("< / Lighting >", 7734068495)
-local Section9 = Tab9:CreateSection("||| Lighting Section |||")
+local Tab9 = Window:CreateTab("-<-Lighting->-", 7734068495)
+local Section9 = Tab9:CreateSection("||| / Lighting Section |||")
 
-local Tab12 = Window:CreateTab("< / Emotes >", 7743871002)
+local Tab12 = Window:CreateTab("-<-Emotes->-", 7743871002)
 local Section12 = Tab12:CreateSection("||| / Emoting Section |||")
 
-local Tab14 = Window:CreateTab("< / Copy Anim >", 7743871002)
+local Tab14 = Window:CreateTab("-<-Copy Anim->-", 7743871002)
 local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
 
-local Tab15 = Window:CreateTab("< / UI >", 7734022107)
+local Tab15 = Window:CreateTab("-<-UI->-", 7734022107)
 local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
 wait()
 getgenv().material_toggle = function(boolean)
@@ -3159,7 +3159,6 @@ Callback = function(crazy)
             "Zacks Easy Hub V6, POWERFUL!",
             "Powering Automation | Scripting",
             "Zacks Easy Hub | WE OP!",
-            "Zacks Easy Hub | V6-BETA",
             "Zacks Easy Hub | WE SIGMA",
             "BEST FREE SCRIPT RN!",
             "WE ARE TAKING OVER, JOIN US!",
@@ -6507,35 +6506,15 @@ Callback = function(UIColor)
 end,})
 
 ReExecuteGUI = Tab15:CreateButton({
-Name = "Re-Execute GUI",
+Name = "Re-Execute/Reload Script/GUI",
 Callback = function()
-    getgenv().getLoopKick = false
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().Invis_Loaded = false
-    getgenv().GetLoopRunning = false
-    getgenv().GetLoopRunning = false
-    getgenv().LmaoGetMuted = false
-    getgenv().css_digital = false
-    Rayfield:Destroy()
-    wait(0.5)
-    loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
+    ZEH_Module:Patch_Update("v6-beta")
 end,})
 
 DestroyGUIScript = Tab15:CreateButton({
 Name = "Destroy GUI/Script",
 Callback = function()
-    getgenv().getLoopKick = false
-    wait(0.2)
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().Invis_Loaded = false
-    getgenv().GetLoopRunning = false
-    getgenv().GetLoopRunning = false
-    getgenv().LmaoGetMuted = false
-    getgenv().css_digital = false
-    wait(.3)
-    Rayfield:Destroy()
+    ZEH_Module:Destroy_Script()
 end,})
 
 UnmuteAPlayer = Tab1:CreateInput({
