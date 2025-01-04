@@ -705,7 +705,7 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()") -- K*ll yourself, stop waiting.
     end
 end)
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
+--loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
 wait(0.3)
     -- [] -->> Set up emote/rizz configuration automatically. <<-- [] --
     local UserInputService = game:GetService("UserInputService")
@@ -747,39 +747,45 @@ wait(0.3)
         end
     end
 
-    local function loadKeybinds(filePath)
+    local function loadKeybinds(filePath)  
         if isfile(filePath) then
             local success, result = pcall(function()
                 return HttpService:JSONDecode(readfile(filePath))
             end)
             if success then
-                local loadedKeybinds = {}
+                getgenv().loadedActions = {}
                 for _, bind in ipairs(result) do
                     if bind.Key and bind.Key:find("Enum.KeyCode") then
                         local keyCode = Enum.KeyCode[tostring(bind.Key):match("Enum.KeyCode%.(%w+)")]
                         if keyCode and (tonumber(bind.EmoteID) or type(bind.EmoteID) == "string") then
-                            loadedKeybinds[keyCode] = tonumber(bind.EmoteID) or bind.EmoteID
+                            getgenv().loadedActions[keyCode] = tonumber(bind.EmoteID) or bind.EmoteID
                         end
                     end
                 end
-                return loadedKeybinds
+                return print("Loaded Keybinds:", getgenv().loadedActions)
             else
                 warn("Failed to parse emote configuration file. Using empty configuration.")
             end
         else
             saveDefaultKeybinds(filePath)
         end
-        return {}
+        getgenv().loadedActions = {}
     end
-
-    getgenv().keybindActions = loadKeybinds(emoteFilePath)
-
-    getgenv().emoteSpeed = getgenv().emoteSpeed or 1
-    getgenv().speedUpSpeed = getgenv().speedUpSpeed or 4
-    getgenv().slowDownSpeed = getgenv().slowDownSpeed or 0.1
-    getgenv().freezeEmotes = getgenv().freezeEmotes or false
-    getgenv().isReversed = getgenv().isReversed or false
-
+    wait(0.2)
+    loadKeybinds("emoteFile.json")
+    wait(0.4)
+    getgenv().emoteSpeed = getgenv().emoteSpeed
+    getgenv().speedUpSpeed = getgenv().speedUpSpeed
+    getgenv().slowDownSpeed = getgenv().slowDownSpeed
+    getgenv().freezeEmotes = getgenv().freezeEmotes
+    getgenv().isReversed = getgenv().isReversed
+    wait(0.2)
+    getgenv().emoteSpeed = 1
+    getgenv().speedUpSpeed = 4
+    getgenv().slowDownSpeed = 0.1
+    getgenv().freezeEmotes = false
+    getgenv().isReversed = false
+    wait(0.2)
     local function adjustEmoteSpeed()
         if getgenv().Humanoid then
             for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
@@ -849,7 +855,7 @@ wait(0.3)
 
     getgenv().keybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
-        local action = getgenv().keybindActions[input.KeyCode]
+        local action = getgenv().loadedActions[input.KeyCode]
         if action then
             handleKeybind(action)
         end
