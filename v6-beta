@@ -705,7 +705,7 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()") -- K*ll yourself, stop waiting.
     end
 end)
---loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
 wait(0.3)
     -- [] -->> Set up emote/rizz configuration automatically. <<-- [] --
     local UserInputService = game:GetService("UserInputService")
