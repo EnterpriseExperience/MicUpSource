@@ -1221,6 +1221,9 @@ for _, model in pairs(workspace:GetDescendants()) do
         end
     end
 end
+wait(0.3)
+local ZEH_Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))()
+getgenv().Module_For_ZEH = ZEH_Module
 
 local StallClaimToggle = Tab11:CreateToggle({
 Name = "Claim Any Booth",
@@ -4616,8 +4619,8 @@ Callback = function()
         chat:SendAsync(msg)
     end
     
-    for i = 1, 8 do
-        sendchat(" ")
+    for i = 1, 19 do
+        sendchat("")
     end
 end,})
 
@@ -5781,73 +5784,30 @@ Suffix = "",
 CurrentValue = 16,
 Flag = "walkSpeedValue",
 Callback = function(wsVal)
-    local Humanoid = getgenv().Humanoid
-    
-    if Humanoid then
-        Humanoid.WalkSpeed = wsVal
-    end
+    ZEH_Module:WalkSpeed_Update(wsVal)
 end,})
 
-if getgenv().Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == true then
-    Rayfield:Notify({
-        Title = "Success!",
-        Content = "JumpPower is enabled, continuing...",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
-    wait()
-    local JumpPowerSliding = Tab2:CreateSlider({
-    Name = "JumpPower (Default): 50",
-    Range = {50, 500},
+if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
+    local JumpPowerSlider = Tab2:CreateSlider({
+    Name = "JumpPower",
+    Range = {16, 750},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 50,
+    CurrentValue = 16,
     Flag = "jpValue",
     Callback = function(jpVal)
-        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-    
-        if Humanoid then
-            Humanoid.JumpPower = jpVal
-        end
+        ZEH_Module:JumpPower_JumpHeight_Update(jpVal)
     end,})
-    wait()
 else
-    Rayfield:Notify({
-        Title = "Detection!",
-        Content = "UseJumpPower is disabled, switching...",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
-    wait(.2)
-    local JumpingHeightSliding = Tab2:CreateSlider({
-    Name = "JumpHeight (Default): 7",
-    Range = {7, 400},
+    local HeightJumpPowerSliding = Tab2:CreateSlider({
+    Name = "JumpHeight",
+    Range = {16, 450},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 7,
-    Flag = "JumpingHeightValue",
-    Callback = function(jumpHeight)
-        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:WaitForChild("Humanoid")
-    
-        if Humanoid then
-            Humanoid.JumpHeight = jumpHeight
-        end
+    CurrentValue = 16,
+    Flag = "jumpHeightValue",
+    Callback = function(jumpHVal)
+        ZEH_Module:JumpPower_JumpHeight_Update(jumpHVal)
     end,})
 end
 
@@ -5859,8 +5819,7 @@ Suffix = "",
 CurrentValue = 196.2,
 Flag = "GravityValue",
 Callback = function(gravVal)
-    local GetWorkspace = getgenv().Workspace
-    GetWorkspace.Gravity = gravVal
+    ZEH_Module:Gravity_Update(gravVal)
 end,})
 
 local antiBangTPLoop = Tab2:CreateToggle({
@@ -5941,7 +5900,11 @@ Name = "Reset Lighting",
 Callback = function()
     resetLightingSettings()
     wait(0.3)
-    getgenv().material_toggle(false)
+    if game:GetService("MaterialService").Use2022Materials or game:GetService("MaterialService").Use2022Materials == true then
+        getgenv().material_toggle(false)
+    else
+        getgenv().notify("Passed", "Did not detect 'Use2022Materials' to be enabled [false].", 7)
+    end
 end,})
 
 local fireworksToggle = Tab9:CreateToggle({
