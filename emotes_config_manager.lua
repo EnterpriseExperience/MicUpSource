@@ -1222,21 +1222,33 @@ local function JRMAQZ_fake_script()
 		end
 
 		local emoteFilePath = "emoteFile.json"
+
+		local function getKeyForAction(action)
+			for keyCode, boundAction in pairs(getgenv().loadedActions) do
+				if boundAction == action then
+					return tostring(keyCode)
+				end
+			end
+			return nil
+		end
+		
+		local keyForSlowDown = getKeyForAction("SlowDown")
+		local keyForSpeedUp = getKeyForAction("SpeedUp")
+		local keyForFreeze = getKeyForAction("Freeze")
 		
 		local keybindActions = {
-			[Enum.KeyCode.One] = 13071993910,
-			[Enum.KeyCode.Two] = 14901371589,
-			[Enum.KeyCode.Three] = 73683655527605,
-			[Enum.KeyCode.Four] = 5230615437,
-			[Enum.KeyCode.Five] = 5104377791,
-			[Enum.KeyCode.Six] = 13694139364,
-			[Enum.KeyCode.Seven] = 7466047578,
-			[Enum.KeyCode.Eight] = 13823339506,
-			[Enum.KeyCode.Nine] = 3576823880,
-			[Enum.KeyCode.Zero] = 15506503658,
-			[Enum.KeyCode.Q] = "SlowDown",
-			[Enum.KeyCode.E] = "SpeedUp",
-			[Enum.KeyCode.V] = "Freeze",
+			[Enum.KeyCode.One] = tonumber(getgenv().loadedActions[Enum.KeyCode.One]),
+			[Enum.KeyCode.Two] = tonumber(getgenv().loadedActions[Enum.KeyCode.Two]),
+			[Enum.KeyCode.Three] = tonumber(getgenv().loadedActions[Enum.KeyCode.Three]),
+			[Enum.KeyCode.Four] = tonumber(getgenv().loadedActions[Enum.KeyCode.Four]),
+			[Enum.KeyCode.Five] = tonumber(getgenv().loadedActions[Enum.KeyCode.Five]),
+			[Enum.KeyCode.Six] = tonumber(getgenv().loadedActions[Enum.KeyCode.Six]),
+			[Enum.KeyCode.Seven] = tonumber(getgenv().loadedActions[Enum.KeyCode.Seven]),
+			[Enum.KeyCode.Eight] = tonumber(getgenv().loadedActions[Enum.KeyCode.Eight]),
+			[Enum.KeyCode.Nine] = tonumber(getgenv().loadedActions[Enum.KeyCode.Nine]),
+			[keyForSlowDown] = "SlowDown",
+			[keyForSpeedUp] = "SpeedUp",
+			[keyForFreeze] = "Freeze",
 			[Enum.KeyCode.X] = "NormalSpeed",
 			[Enum.KeyCode.F] = "Reverse"
 		}
