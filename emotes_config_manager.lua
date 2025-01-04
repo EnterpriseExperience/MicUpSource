@@ -206,7 +206,6 @@ Settings_Menu.Size = UDim2.new(0, 200, 0, 52)
 Settings_Menu.Font = Enum.Font.SourceSans
 Settings_Menu.TextColor3 = Color3.fromRGB(0, 0, 0)
 Settings_Menu.TextSize = 14.000
-Settings_Menu.Visible = false
 
 Settings_Roundify_12px.Name = "Settings_Roundify_12px"
 Settings_Roundify_12px.Parent = Settings_Menu
@@ -279,6 +278,7 @@ Settings_Frame.ImageColor3 = Color3.fromRGB(30, 30, 30)
 Settings_Frame.ScaleType = Enum.ScaleType.Slice
 Settings_Frame.SliceCenter = Rect.new(100, 100, 100, 100)
 Settings_Frame.SliceScale = 0.120
+Settings_Frame.Visible = false
 
 Emote_1.Name = "Emote_1"
 Emote_1.Parent = Settings_Frame
@@ -651,7 +651,7 @@ local function SKIYRB_fake_script()
 		if enterPressed then
 			local inputText = string.upper(textBox.Text)
 			local newKeyEnum = Enum.KeyCode[inputText]
-	
+			
 			if newKeyEnum then
 				local function getKeyForAction(action)
 					for key, value in pairs(getgenv().keybindActions) do
@@ -661,18 +661,35 @@ local function SKIYRB_fake_script()
 					end
 					return nil
 				end
-	
+
 				local freezeKey = getKeyForAction("Freeze")
+		
 				if freezeKey then
 					getgenv().keybindActions[newKeyEnum] = getgenv().keybindActions[freezeKey]
 					getgenv().keybindActions[freezeKey] = nil
+
+					local keybindList = {}
+					for keyCode, action in pairs(getgenv().keybindActions) do
+						table.insert(keybindList, { Key = tostring(keyCode), EmoteID = action })
+					end
+		
+					local success, result = pcall(function()
+						return game:GetService("HttpService"):JSONEncode(keybindList)
+					end)
+					if success then
+						writefile("emoteFile.json", result)
+						getgenv().notify("Success!", "Keybind for 'Freeze' updated successfully.", 7)
+					else
+						warn("Failed to save updated keybinds.")
+					end
+		
 					textBox.Text = ""
 				else
-					getgenv().notify("Failed!", "Keybind 'Freeze' was not found, or does not exist", 7)
+					getgenv().notify("Failed!", "Keybind 'Freeze' was not found. Please check your configuration.", 7)
 				end
 			else
 				textBox.Text = ""
-				getgenv().notify("Failed!", "Invalid Keybind entered: "..tostring(inputText), 7)
+				getgenv().notify("Failed!", "Invalid Keybind entered: " .. tostring(inputText), 7)
 			end
 		end
 	end)
@@ -1153,36 +1170,50 @@ local function JRMAQZ_fake_script()
 	local script = Instance.new('LocalScript', Save_Cfg)
 
 	script.Parent.MouseButton1Click:Connect(function()
-        if not writefile or not readfile then
-            print("File functions are not supported in this executor.")
-            return
-        end
-        
-        local HttpService = game:GetService("HttpService")
-        local ConfigFileName = "emoteFile.json"
-        
-        getgenv().keybindActions = getgenv().keybindActions or {}
-        
-        local function Save_Config()
-            print("Saving config...")
-            local config = {}
-            for keyCode, emoteID in pairs(getgenv().keybindActions) do
-                print("KeyCode:", tostring(keyCode), "EmoteID:", emoteID)
-                table.insert(config, { Key = tostring(keyCode), EmoteID = emoteID })
-            end
-        
-            local json = HttpService:JSONEncode(config)
-            writefile(ConfigFileName, json)
-            print("Config saved to file:", ConfigFileName)
-            
-            if getgenv().notify then
-                getgenv().notify("Success!", "Saved Configuration File!", 7)
-            else
-                print("Success! Saved Configuration File!")
-            end
-        end
-        
-        Save_Config()
+		local HttpService = game:GetService("HttpService")
+
+		local function saveKeybinds(filePath, keybindActions)
+			local keybindList = {}
+			for keyCode, emoteID in pairs(keybindActions) do
+				table.insert(keybindList, { Key = tostring(keyCode), EmoteID = emoteID })
+			end
+
+			local success, result = pcall(function()
+				return HttpService:JSONEncode(keybindList)
+			end)
+			if success then
+				if writefile then
+					writefile(filePath, result)
+					print("Keybind configuration saved to: " .. filePath)
+				else
+					warn("Executor does not support 'writefile'. Unable to save keybinds.")
+				end
+			else
+				warn("Failed to save keybind configuration: " .. tostring(result))
+			end
+		end
+
+		local emoteFilePath = "emoteFile.json"
+		
+		local keybindActions = {
+			[Enum.KeyCode.One] = 13071993910,
+			[Enum.KeyCode.Two] = 14901371589,
+			[Enum.KeyCode.Three] = 73683655527605,
+			[Enum.KeyCode.Four] = 5230615437,
+			[Enum.KeyCode.Five] = 5104377791,
+			[Enum.KeyCode.Six] = 13694139364,
+			[Enum.KeyCode.Seven] = 7466047578,
+			[Enum.KeyCode.Eight] = 13823339506,
+			[Enum.KeyCode.Nine] = 3576823880,
+			[Enum.KeyCode.Zero] = 15506503658,
+			[Enum.KeyCode.Q] = "SlowDown",
+			[Enum.KeyCode.E] = "SpeedUp",
+			[Enum.KeyCode.V] = "Freeze",
+			[Enum.KeyCode.X] = "NormalSpeed",
+			[Enum.KeyCode.F] = "Reverse"
+		}
+
+		saveKeybinds(emoteFilePath, keybindActions)		
 	end)
 end
 coroutine.wrap(JRMAQZ_fake_script)()
