@@ -654,35 +654,36 @@ local function SKIYRB_fake_script()
 			
 			if newKeyEnum then
 				local function getKeyForAction(action)
-					for key, value in pairs(getgenv().keybindActions) do
+					for key, value in pairs(getgenv().loadedActions) do
 						if value == action then
 							return key
 						end
 					end
 					return nil
 				end
-
+			
 				local freezeKey = getKeyForAction("Freeze")
-		
 				if freezeKey then
-					getgenv().keybindActions[newKeyEnum] = getgenv().keybindActions[freezeKey]
-					getgenv().keybindActions[freezeKey] = nil
+					getgenv().loadedActions[newKeyEnum] = getgenv().loadedActions[freezeKey]
+					getgenv().loadedActions[freezeKey] = nil
 
 					local keybindList = {}
-					for keyCode, action in pairs(getgenv().keybindActions) do
+					for keyCode, action in pairs(getgenv().loadedActions) do
 						table.insert(keybindList, { Key = tostring(keyCode), EmoteID = action })
 					end
-		
+			
 					local success, result = pcall(function()
 						return game:GetService("HttpService"):JSONEncode(keybindList)
 					end)
+			
 					if success then
-						writefile("emoteFile.json", result)
+						writefile(emoteFilePath, result)
+						loadKeybinds(emoteFilePath)
 						getgenv().notify("Success!", "Keybind for 'Freeze' updated successfully.", 7)
 					else
 						warn("Failed to save updated keybinds.")
 					end
-		
+			
 					textBox.Text = ""
 				else
 					getgenv().notify("Failed!", "Keybind 'Freeze' was not found. Please check your configuration.", 7)
@@ -707,7 +708,7 @@ local function GLBPIYO_fake_script()
 	
 			if newKeyEnum then
 				local function getKeyForAction(action)
-					for key, value in pairs(getgenv().keybindActions) do
+					for key, value in pairs(getgenv().loadedActions) do
 						if value == action then
 							return key
 						end
@@ -717,8 +718,8 @@ local function GLBPIYO_fake_script()
 	
 				local freezeKey = getKeyForAction("SpeedUp")
 				if freezeKey then
-					getgenv().keybindActions[newKeyEnum] = getgenv().keybindActions[freezeKey]
-					getgenv().keybindActions[freezeKey] = nil
+					getgenv().loadedActions[newKeyEnum] = getgenv().loadedActions[freezeKey]
+					getgenv().loadedActions[freezeKey] = nil
 					textBox.Text = ""
 				else
 					getgenv().notify("Failed!", "Keybind 'Freeze' was not found, or does not exist", 7)
@@ -762,7 +763,7 @@ local function ZOBVLZ_fake_script()
 	
 			if newKeyEnum then
 				local function getKeyForAction(action)
-					for key, value in pairs(getgenv().keybindActions) do
+					for key, value in pairs(getgenv().loadedActions) do
 						if value == action then
 							return key
 						end
@@ -772,8 +773,8 @@ local function ZOBVLZ_fake_script()
 	
 				local freezeKey = getKeyForAction("NormalSpeed")
 				if freezeKey then
-					getgenv().keybindActions[newKeyEnum] = getgenv().keybindActions[freezeKey]
-					getgenv().keybindActions[freezeKey] = nil
+					getgenv().loadedActions[newKeyEnum] = getgenv().loadedActions[freezeKey]
+					getgenv().loadedActions[freezeKey] = nil
 					textBox.Text = ""
 				else
 					getgenv().notify("Failed!", "Keybind 'Freeze' was not found, or does not exist", 7)
@@ -943,11 +944,14 @@ local function AGMPVKP_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_2")
 	local selectedKeyCode = Enum.KeyCode.Two
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
@@ -964,11 +968,14 @@ local function RRGT_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_9")
 	local selectedKeyCode = Enum.KeyCode.Nine
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
@@ -985,11 +992,14 @@ local function QPMMUDN_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_8")
 	local selectedKeyCode = Enum.KeyCode.Eight
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
@@ -1006,11 +1016,14 @@ local function ZYIK_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_7")
 	local selectedKeyCode = Enum.KeyCode.Seven
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
@@ -1027,11 +1040,14 @@ local function LZQGC_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_6")
 	local selectedKeyCode = Enum.KeyCode.Six
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
@@ -1048,11 +1064,14 @@ local function PGSDSL_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_5")
 	local selectedKeyCode = Enum.KeyCode.Five
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
@@ -1069,11 +1088,14 @@ local function VIALO_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_4")
 	local selectedKeyCode = Enum.KeyCode.Four
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
@@ -1090,11 +1112,14 @@ local function FSZEYQH_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_3")
 	local selectedKeyCode = Enum.KeyCode.Three
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
@@ -1111,11 +1136,14 @@ local function TIPLWKP_fake_script()
 
 	local TextBox = script.Parent.Parent:FindFirstChild("Emote_1")
 	local selectedKeyCode = Enum.KeyCode.One
+
+	getgenv().loadedActions = getgenv().loadedActions or {}
 	
 	local function processInput(inputText)
 		local emoteID = tonumber(inputText)
 		if emoteID then
-			getgenv().keybindActions[selectedKeyCode] = emoteID
+			getgenv().loadedActions[selectedKeyCode] = emoteID
+			getgenv().notify("Success!", "Emote updated successfully!", 7)
 		else
 			getgenv().notify("Failed!", "Please enter a valid number emote ID.", 7)
 		end
