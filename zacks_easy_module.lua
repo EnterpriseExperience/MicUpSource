@@ -175,7 +175,9 @@ function Main_Module:Chat_Bypass(String)
         local escaped_find_str = find_str:gsub("[%-%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0")
         return str:gsub(escaped_find_str, replace_str)
     end
-    
+
+    local RBXGeneral = TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
+
     local letters = {
         ["a"] = "Α", ["A"] = "α",
         ["b"] = "Β", ["B"] = "b",
@@ -212,7 +214,7 @@ function Main_Module:Chat_Bypass(String)
         return message
     end
     wait()
-    TextChatService:SendAsync(filter(String))
+    RBXGeneral:SendAsync(filter(String))
 end
 
 function Main_Module:Fly(Speed, Toggle)
