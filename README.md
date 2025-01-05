@@ -10,7 +10,7 @@ https://discord.gg/VJh3kkYzBn
 
 ```Be sure to check out our Discord for more content! We also welcome non-exploiters to!```
 
-# Make Sure To Star This Repo!
+# Star this repo and save it for later!
 
 # [Alternatively, see]:
 ```lua
