@@ -12,14 +12,14 @@ https://discord.gg/VJh3kkYzBn
 
 # Make Sure To Star This Repo!
 
-## [Or See]:
+# [Alternatively, see]:
 ```lua
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 ```
 
 ## UPDATE <-> [V6] [UPDATE!]:
 
-## V6 New Features:
+# V6 New Features:
 `Check out the Discord server linked above for every feature!`
 
 # [Custom Exclusive Features With: Zacks Easy Hub V6 | MIC UP 🔊/17+]:
