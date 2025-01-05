@@ -8,7 +8,7 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience
 https://discord.gg/VJh3kkYzBn
 ```
 
-```[Be sure to check out our Discord for more content! We also welcome non-exploiters to!]```
+```Be sure to check out our Discord for more content! We also welcome non-exploiters to!```
 
 # Make Sure To Star This Repo!
 
