@@ -2826,7 +2826,7 @@ do
 			Topbar.Title.Text = ("%s Zacks Easy Hub %s | %s | Emote Keybinds: False"):format(currentEmoji, currentEmoji, holidayName)
 		elseif not currentEmoji and getgenv().keybinds_version or getgenv().keybinds_version == true then
 			Topbar.Title.Text = "⭐ Zacks Easy Hub ⭐ |"..tostring(Version_Config).."| Emote Keybinds: True"
-		elseif not currentEmoji and getgetgenv().no_keybinds_version or getgenv().no_config_version == true then
+		elseif not currentEmoji and getgenv().no_keybinds_version or getgenv().no_config_version == true then
 			Topbar.Title.Text = "⭐ Zacks Easy Hub ⭐ |"..tostring(Version_No_Config).."| Emote Keybinds: False"
 		end
 	end
@@ -2835,9 +2835,6 @@ do
 end
 
 if useStudio then
-	
-	
-
 	local Window = RayfieldLibrary:CreateWindow({
 		Name = "Rayfield Example Window",
 		LoadingTitle = "Rayfield Interface Suite",
