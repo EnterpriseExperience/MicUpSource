@@ -20,6 +20,7 @@ function Notify(titletxt, text, time)
     title.Text = titletxt
     title.TextColor3 = Color3.new(1, 1, 1)
     title.TextSize = 17
+    title.TextScaled = true
     
     message.BackgroundColor3 = Color3.new(0, 0, 0)
     message.BackgroundTransparency = 1
@@ -29,6 +30,7 @@ function Notify(titletxt, text, time)
     message.Text = text
     message.TextColor3 = Color3.new(1, 1, 1)
     message.TextSize = 16
+    message.TextScaled = true
 
     wait(0.1)
     Main:TweenPosition(UDim2.new(1, -330, 0, 50), "Out", "Sine", 0.5)
@@ -44,8 +46,8 @@ if everyClipboard then
     Notify("Alert!", "Outdated loadstring detected, join Discord for new loadstring.", 4)
     wait()
     Notify("Notification:", "Copied Discord invite link to your clipboard.", 5)
-    wait(0.5)
+    wait(2)
     Notify("Note:", "This loadstring contains the right script, but always use the new one.")
 end
-wait()
+wait(1.5)
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
