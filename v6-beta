@@ -429,7 +429,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "🍏 Zacks Strong Hub 🍏 | V6.7.9-C | Emote Keybinds: True",
+    Name = "⭐ Zacks Crazy Hub ⭐ | V6.8.2-C | Emote Keybinds: True",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -466,14 +466,9 @@ wait(0.1)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     else
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         warn("Action denied.")
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     end
-if getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS" and getgenv().ownerAnimsLoaded then 
-    warn("Owner-Animations already loaded!")
-elseif getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS" and not getgenv().ownerAnimsLoaded then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-    getgenv().ownerAnimsLoaded = true
-else
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
-end
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+getgenv().notify("Heads Up!", "We have now defaulted to a new Infinite Yield script [mine].", 7)
 
 -- [] -->> Initialize our Tabs and Sections <<-- [] --
 local Tab1 = Window:CreateTab("-<-Home->-", 7733960981)
@@ -2820,13 +2815,19 @@ Callback = function(getLoopCopyAnim)
         local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
         
         local function getAnimationScript(character)
-            return character:FindFirstChild("Animate")
+            if not character:FindFirstChild("Animate") then
+                return warn("Did not find Animate script for: "..tostring(character))
+            else
+                return character:FindFirstChild("Animate")
+            end
         end
         
         local defaultAnimationScript = getAnimationScript(Character)
         
         local function copyAnimations()
-            if defaultAnimationScript then
+            if not defaultAnimationScript then
+                warn("Unable to allocate Animate LocalScript.")
+            else
                 defaultAnimationScript.Disabled = true
             end
         
@@ -5899,8 +5900,6 @@ Callback = function(getLoopTpToVoid)
     end
 end,})
 
-getgenv().material_toggle(true)
-wait(0.2)
 local LightingReset = Tab9:CreateButton({
 Name = "Reset Lighting",
 Callback = function()
@@ -5918,75 +5917,75 @@ Name = "FireWorks (Sky)",
 CurrentValue = false,
 Flag = "FireworksInSkyLoop",
 Callback = function(FireWorksCrazy)
-if FireWorksCrazy then
-    local Lighting = game:GetService("Lighting") or cloneref(game:GetService("Lighting"))
-    Lighting.ClockTime = 1
-    wait()
-    Lighting.Brightness = 2
-    wait()
-    getgenv().setFireWorksOn = true
-    while getgenv().setFireWorksOn == true do
-    wait()
-    local player = getgenv().LocalPlayer
-    local Lighting = game:GetService("Lighting")
-    
-    local function createFirework(position)
-        local firework = Instance.new("Part")
-        firework.Size = Vector3.new(1, 1, 1)
-        firework.Position = position
-        firework.Anchored = true
-        firework.CanCollide = false
-        firework.Material = Enum.Material.Neon
-        firework.Parent = workspace
-    
-        local explosion = Instance.new("ParticleEmitter")
-        explosion.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.new(math.random(), math.random(), math.random())),
-            ColorSequenceKeypoint.new(0.5, Color3.new(math.random(), math.random(), math.random())),
-            ColorSequenceKeypoint.new(1, Color3.new(0, 0, 0))
-        })
-        explosion.Size = NumberSequence.new(2, 0)
-        explosion.Lifetime = NumberRange.new(0.5, 1)
-        explosion.Rate = 150
-        explosion.Speed = NumberRange.new(75, 150)
-        explosion.SpreadAngle = Vector2.new(180, 180)
-        explosion.Parent = firework
-    
-        local light = Instance.new("PointLight")
-        light.Brightness = 300
-        light.Range = 200
-        light.Color = Color3.new(1, 1, 1)
-        light.Parent = firework
-    
-        local sound = Instance.new("Sound")
-        sound.SoundId = "rbxassetid://272537961"
-        sound.Volume = 2.5
-        sound.Parent = firework
-        sound:Play()
-    
-        wait(0.1)
-        explosion:Emit(200)
-        wait(1)
-        firework:Destroy()
+    if FireWorksCrazy then
+        local Lighting = game:GetService("Lighting") or cloneref(game:GetService("Lighting"))
+        Lighting.ClockTime = 1
+        wait()
+        Lighting.Brightness = 2
+        wait()
+        getgenv().setFireWorksOn = true
+        while getgenv().setFireWorksOn == true do
+        wait()
+            local player = getgenv().LocalPlayer
+            local Lighting = game:GetService("Lighting")
+            
+            local function createFirework(position)
+                local firework = Instance.new("Part")
+                firework.Size = Vector3.new(1, 1, 1)
+                firework.Position = position
+                firework.Anchored = true
+                firework.CanCollide = false
+                firework.Material = Enum.Material.Neon
+                firework.Parent = workspace
+            
+                local explosion = Instance.new("ParticleEmitter")
+                explosion.Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color3.new(math.random(), math.random(), math.random())),
+                    ColorSequenceKeypoint.new(0.5, Color3.new(math.random(), math.random(), math.random())),
+                    ColorSequenceKeypoint.new(1, Color3.new(0, 0, 0))
+                })
+                explosion.Size = NumberSequence.new(2, 0)
+                explosion.Lifetime = NumberRange.new(0.5, 1)
+                explosion.Rate = 150
+                explosion.Speed = NumberRange.new(75, 150)
+                explosion.SpreadAngle = Vector2.new(180, 180)
+                explosion.Parent = firework
+            
+                local light = Instance.new("PointLight")
+                light.Brightness = 300
+                light.Range = 200
+                light.Color = Color3.new(1, 1, 1)
+                light.Parent = firework
+            
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://272537961"
+                sound.Volume = 2.5
+                sound.Parent = firework
+                sound:Play()
+            
+                wait(0.1)
+                explosion:Emit(200)
+                wait(1)
+                firework:Destroy()
+            end
+            
+            local function launchFireworks()
+                local xOffset = math.random(-50, 50)
+                local yOffset = math.random(50, 100)
+                local zOffset = math.random(-50, 50)
+                local position = Vector3.new(xOffset, 50 + yOffset, zOffset)
+            
+                createFirework(position)
+                wait(math.random(1, 2))
+            end
+            
+            launchFireworks()
+        end
+    else
+        getgenv().setFireWorksOn = false
+        wait(0.5)
+        resetLightingSettings()
     end
-    
-    local function launchFireworks()
-        local xOffset = math.random(-50, 50)
-        local yOffset = math.random(50, 100)
-        local zOffset = math.random(-50, 50)
-        local position = Vector3.new(xOffset, 50 + yOffset, zOffset)
-    
-        createFirework(position)
-        wait(math.random(1, 2))
-    end
-    
-    launchFireworks()
-end
-else
-    getgenv().setFireWorksOn = false
-    wait(0.5)
-    resetLightingSettings()
-end
 end,})
 
 local NightTimeButton = Tab9:CreateButton({
@@ -6009,18 +6008,18 @@ end,})
 local NightTimeWithLight = Tab9:CreateButton({
 Name = "NightTime (With Night-Light)",
 Callback = function()
-local Lighting = game:GetService("Lighting")
-if Lighting.ClockTime <= 2 then
-    Lighting.ClockTime = 1
-    wait()
-    Lighting.Brightness = 2
-else
-    resetLightingSettings()
-    wait(0.2)
-    Lighting.ClockTime = 0
-    wait()
-    Lighting.Brightness = 0
-end
+    local Lighting = game:GetService("Lighting")
+    if Lighting.ClockTime <= 2 then
+        Lighting.ClockTime = 1
+        wait()
+        Lighting.Brightness = 2
+    else
+        resetLightingSettings()
+        wait(0.2)
+        Lighting.ClockTime = 0
+        wait()
+        Lighting.Brightness = 0
+    end
 end,})
 
 local DayTimeReset = Tab9:CreateButton({
@@ -6038,45 +6037,45 @@ CurrentValue = false,
 Flag = "SpookyMoonLooping",
 Callback = function(moonCrazy)
 local Lighting = game:GetService("Lighting") 
-if moonCrazy then
-    getgenv().SpookyMoon = true
-    local sky = Lighting:FindFirstChildOfClass("Sky")
+    if moonCrazy then
+        getgenv().SpookyMoon = true
+        local sky = Lighting:FindFirstChildOfClass("Sky")
 
-    local function smoothTransition()
-        local Lighting = game:GetService("Lighting") 
-        Lighting.ClockTime = 0
-        for i = 1, 60, 0.5 do
-            sky.MoonAngularSize = i
-            wait(0.05)
+        local function smoothTransition()
+            local Lighting = game:GetService("Lighting") 
+            Lighting.ClockTime = 0
+            for i = 1, 60, 0.5 do
+                sky.MoonAngularSize = i
+                wait(0.05)
+            end
+            for i = 60, 1, -0.5 do
+                sky.MoonAngularSize = i
+                wait(0.05)
+            end
         end
-        for i = 60, 1, -0.5 do
-            sky.MoonAngularSize = i
-            wait(0.05)
-        end
-    end
 
-    while getgenv().SpookyMoon == true do
-        wait()
-        smoothTransition()
+        while getgenv().SpookyMoon == true do
+            wait()
+            smoothTransition()
+        end
+    else
+        local Lighting = game:GetService("Lighting")
+        local sky = Lighting:FindFirstChildOfClass("Sky")
+        wait(0.5)
+        getgenv().SpookyMoon = false
+        wait(1)
+        getgenv().SpookyMoon = false
+        wait(1)
+        getgenv().SpookyMoon = false
+        wait(3)
+        resetLightingSettings()
+        wait(0.3)
+        sky.MoonAngularSize = 11
+        wait(0.6)
+        Lighting.ClockTime = 5
+        wait(0.5)
+        Lighting.ClockTime = 14
     end
-else
-    local Lighting = game:GetService("Lighting")
-    local sky = Lighting:FindFirstChildOfClass("Sky")
-    wait(0.5)
-    getgenv().SpookyMoon = false
-    wait(1)
-    getgenv().SpookyMoon = false
-    wait(1)
-    getgenv().SpookyMoon = false
-    wait(3)
-    resetLightingSettings()
-    wait(0.3)
-    sky.MoonAngularSize = 11
-    wait(0.6)
-    Lighting.ClockTime = 5
-    wait(0.5)
-    Lighting.ClockTime = 14
-end
 end,})
 
 local SpookySunLoop = Tab9:CreateToggle({
@@ -6084,42 +6083,42 @@ Name = "Spooky Sun",
 CurrentValue = false,
 Flag = "SpookySunDayTime",
 Callback = function(sunSpooky)
-if sunSpooky then
-    getgenv().SpookSun = true
-    local Lighting = game:GetService("Lighting") 
-    local sky = Lighting:FindFirstChildOfClass("Sky")
-
-    local function smoothTransition()
+    if sunSpooky then
+        getgenv().SpookSun = true
         local Lighting = game:GetService("Lighting") 
         local sky = Lighting:FindFirstChildOfClass("Sky")
-        Lighting.ClockTime = 14
 
-        for i = 1, 60, 0.5 do
-            sky.SunAngularSize = i
-            wait(0.05)
+        local function smoothTransition()
+            local Lighting = game:GetService("Lighting") 
+            local sky = Lighting:FindFirstChildOfClass("Sky")
+            Lighting.ClockTime = 14
+
+            for i = 1, 60, 0.5 do
+                sky.SunAngularSize = i
+                wait(0.05)
+            end
+            for i = 60, 1, -0.5 do
+                sky.SunAngularSize = i
+                wait(0.05)
+            end
         end
-        for i = 60, 1, -0.5 do
-            sky.SunAngularSize = i
-            wait(0.05)
+        
+        while getgenv().SpookSun == true do
+            wait()
+            smoothTransition()
         end
+    else
+        local Lighting = game:GetService("Lighting")
+        local sky = Lighting:FindFirstChildOfClass("Sky")
+        wait(0.5)
+        getgenv().SpookSun = false
+        wait(1)
+        getgenv().SpookSun = false
+        wait(0.5)
+        getgenv().SpookSun = false
+        wait(1.5)
+        resetLightingSettings()
     end
-    
-    while getgenv().SpookSun == true do
-        wait()
-        smoothTransition()
-    end
-else
-    local Lighting = game:GetService("Lighting")
-    local sky = Lighting:FindFirstChildOfClass("Sky")
-    wait(0.5)
-    getgenv().SpookSun = false
-    wait(1)
-    getgenv().SpookSun = false
-    wait(0.5)
-    getgenv().SpookSun = false
-    wait(1.5)
-    resetLightingSettings()
-end
 end,})
 
 local SpookyNightTimeHalloween = Tab9:CreateButton({
