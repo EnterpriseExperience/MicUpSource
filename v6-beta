@@ -468,7 +468,12 @@ wait(0.1)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     end
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-getgenv().notify("Heads Up!", "We have now defaulted to a new Infinite Yield script [mine].", 7)
+Rayfield:Notify({
+    Title = "Heads Up!",
+    Content = "We have now defaulted to a new Infinite Yield script [mine].",
+    Duration = 7,
+    Image = 93594537601787,
+})
 
 -- [] -->> Initialize our Tabs and Sections <<-- [] --
 local Tab1 = Window:CreateTab("-<-Home->-", 7733960981)
