@@ -301,7 +301,7 @@ else
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
         end
     end)
     wait()
@@ -429,7 +429,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ente
 -- Current UI is automatically hidden, shoutout to Rayfield.
 -- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
 local Window = Rayfield:CreateWindow({
-    Name = "🍏 Zacks Strong Hub 🍏 | V6.7.9-C | Emote Keybinds: True",
+    Name = "📗 Zacks Success Hub 📗 | V6.3.8.2 | Emote Keybinds: False",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -634,7 +634,7 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
         end
     end)
     wait(0.3)
@@ -702,167 +702,10 @@ local TeleportCheck = false -- Fuck you and your teleport check. 'Oh, why didn't
 getgenv().LocalPlayer.OnTeleport:Connect(function(State)
     if (not TeleportCheck) and queueteleport then
         TeleportCheck = true
-        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()") -- K*ll yourself, stop waiting.
+        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()") -- K*ll yourself, stop waiting.
     end
 end)
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
 wait(0.3)
-    -- [] -->> Set up emote/rizz configuration automatically. <<-- [] --
-    local UserInputService = game:GetService("UserInputService")
-    local HttpService = game:GetService("HttpService")
-
-    local emoteFilePath = "emoteFile.json"
-
-    local defaultKeybindActions = {
-        [Enum.KeyCode.One] = 13071993910,
-        [Enum.KeyCode.Two] = 14901371589,
-        [Enum.KeyCode.Three] = 73683655527605,
-        [Enum.KeyCode.Four] = 5230615437,
-        [Enum.KeyCode.Five] = 5104377791,
-        [Enum.KeyCode.Six] = 13694139364,
-        [Enum.KeyCode.Seven] = 7466047578,
-        [Enum.KeyCode.Eight] = 13823339506,
-        [Enum.KeyCode.Nine] = 3576823880,
-        [Enum.KeyCode.Zero] = 15506503658,
-        [Enum.KeyCode.Q] = "SlowDown",
-        [Enum.KeyCode.E] = "SpeedUp",
-        [Enum.KeyCode.V] = "Freeze",
-        [Enum.KeyCode.X] = "NormalSpeed",
-        [Enum.KeyCode.F] = "Reverse"
-    }
-
-    local function saveDefaultKeybinds(filePath)
-        local keybindList = {}
-        for keyCode, emoteID in pairs(defaultKeybindActions) do
-            table.insert(keybindList, { Key = tostring(keyCode), EmoteID = emoteID })
-        end
-        local success, result = pcall(function()
-            return HttpService:JSONEncode(keybindList)
-        end)
-        if success then
-            writefile(filePath, result)
-            print("Default emote configuration file created at: " .. filePath)
-        else
-            warn("Failed to create default emote configuration file.")
-        end
-    end
-
-    local function loadKeybinds(filePath)  
-        if isfile(filePath) then
-            local success, result = pcall(function()
-                return HttpService:JSONDecode(readfile(filePath))
-            end)
-            if success then
-                getgenv().loadedActions = {}
-                for _, bind in ipairs(result) do
-                    if bind.Key and bind.Key:find("Enum.KeyCode") then
-                        local keyCode = Enum.KeyCode[tostring(bind.Key):match("Enum.KeyCode%.(%w+)")]
-                        if keyCode and (tonumber(bind.EmoteID) or type(bind.EmoteID) == "string") then
-                            getgenv().loadedActions[keyCode] = tonumber(bind.EmoteID) or bind.EmoteID
-                        end
-                    end
-                end
-                return print("Loaded Keybinds:", getgenv().loadedActions)
-            else
-                warn("Failed to parse emote configuration file. Using empty configuration.")
-            end
-        else
-            saveDefaultKeybinds(filePath)
-        end
-        getgenv().loadedActions = {}
-    end
-    wait(0.2)
-    loadKeybinds("emoteFile.json")
-    wait(0.4)
-    getgenv().emoteSpeed = getgenv().emoteSpeed
-    getgenv().speedUpSpeed = getgenv().speedUpSpeed
-    getgenv().slowDownSpeed = getgenv().slowDownSpeed
-    getgenv().freezeEmotes = getgenv().freezeEmotes
-    getgenv().isReversed = getgenv().isReversed
-    wait(0.2)
-    getgenv().emoteSpeed = 1
-    getgenv().speedUpSpeed = 4
-    getgenv().slowDownSpeed = 0.1
-    getgenv().freezeEmotes = false
-    getgenv().isReversed = false
-    wait(0.2)
-    local function adjustEmoteSpeed()
-        if getgenv().Humanoid then
-            for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
-                track:AdjustSpeed(getgenv().emoteSpeed)
-            end
-        end
-    end
-
-    local function reverseEmotes()
-        if getgenv().Humanoid then
-            for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
-                track:AdjustSpeed(-1)
-            end
-        end
-    end
-
-    local function playNormalSpeed()
-        if getgenv().Humanoid then
-            for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
-                track:AdjustSpeed(1)
-            end
-        end
-    end
-
-    local function playEmote(emoteId)
-        local humanoid = getgenv().Humanoid
-        if humanoid then
-            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                track:Stop()
-            end
-            wait()
-            local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-            if animTrack and typeof(animTrack) == "Instance" then
-                animTrack:AdjustSpeed(getgenv().emoteSpeed)
-            end
-        else
-            warn("Humanoid not found in Character!")
-        end
-    end
-
-    local function handleKeybind(action)
-        if type(action) == "number" then
-            playEmote(action)
-        elseif action == "SlowDown" then
-            getgenv().emoteSpeed = getgenv().slowDownSpeed
-            adjustEmoteSpeed()
-        elseif action == "SpeedUp" then
-            getgenv().emoteSpeed = getgenv().speedUpSpeed
-            adjustEmoteSpeed()
-        elseif action == "Freeze" then
-            getgenv().emoteSpeed = 0
-            adjustEmoteSpeed()
-            getgenv().freezeEmotes = true
-        elseif action == "NormalSpeed" then
-            getgenv().emoteSpeed = 1
-            adjustEmoteSpeed()
-            getgenv().freezeEmotes = false
-        elseif action == "Reverse" then
-            if getgenv().isReversed then
-                playNormalSpeed()
-            else
-                reverseEmotes()
-            end
-            getgenv().isReversed = not getgenv().isReversed
-        end
-    end
-
-    getgenv().keybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        local action = getgenv().loadedActions[input.KeyCode]
-        if action then
-            handleKeybind(action)
-        end
-    end)
-    wait(0.2)
-    getgenv().scriptEnabled = true
-wait(0.4)
 local TeleportService = game:GetService("TeleportService")
 
 PlaceId, JobId = game.PlaceId, game.JobId
@@ -6506,9 +6349,9 @@ Callback = function(UIColor)
 end,})
 
 ReExecuteGUI = Tab15:CreateButton({
-Name = "Re-Execute/Reload Script/GUI",
+Name = "Re-Execute GUI",
 Callback = function()
-    ZEH_Module:Patch_Update("v6-beta")
+    ZEH_Module:Patch_Update("v6-no-config-setting")
 end,})
 
 DestroyGUIScript = Tab15:CreateButton({
@@ -6665,13 +6508,13 @@ function run_anims()
     end
 
     wait(0.2)
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921101664"
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921102574"
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921140719"
-    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921135644"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921294559"
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616163682"
+    Animate.jump["!ID!"].AnimationId = "http://www.roblox.com/asset/?id=16738336650"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
-    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921040576"
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
     wait(0.2)
     if humanoid then
         humanoid:ChangeState(3)
@@ -6733,13 +6576,13 @@ create_Button(CatWalkGlamAnim, "[NEW] 'Catwalk Glam' Animation Package", functio
         end
     end
 
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
-    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=81024476153754"
-    Animate.jump["!ID!"].AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
-    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
-    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=92294537340807"
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921101664"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921102574"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921140719"
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921135644"
+    Animate.jump["!ID!"].AnimationId = "http://www.roblox.com/asset/?id=10921294559"
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921040576"
     task.wait()
     Animate.Disabled = false
 end)
@@ -7362,7 +7205,26 @@ end)
 SystemBroken = Tab5:CreateButton({
 Name = "System Broken",
 Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
+    else
+        Rayfield:Notify({
+            Title = "Error!",
+            Content = "This is NOT Mic Up, Exiting...",
+            Duration = 7,
+            Image = 4483362458,
+            Actions = {
+            Ignore = {
+                Name = "Okay!",
+                Callback = function()
+                    print("...")
+                end
+            },
+            },
+        })
+        wait(1)
+        getgenv().LocalPlayer:Kick("This is not MIC UP, Please join MIC UP.")
+    end
 end,})
 
 ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDawgWsgGng | [Deleted]"})
