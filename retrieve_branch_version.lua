@@ -11,8 +11,8 @@ if game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChi
 	return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
 end
 
-local version_build_config = "V6.7.9-C"
-local no_config_build = "V6.3.8.2"
+local version_build_config = "V6.8.2-C"
+local no_config_build = "V6.3.8.3"
 task.wait()
 if getgenv().setup_loaded_already_script then
 	return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
@@ -21,10 +21,14 @@ wait(0.3)
 getgenv().setup_loaded_already_script = true
 
 local function run_emote_config()
+    getgenv().keybinds_version = true
+    getgenv().no_keybinds_version = false
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta'))()
 end
 
 local function run_no_keybind_config()
+    getgenv().no_keybinds_version = true
+    getgenv().keybinds_version = false
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting'))()
 end
 
@@ -58,7 +62,7 @@ Label.Parent = Frame
 
 local Label1 = Instance.new("TextLabel")
 Label1.Name = "Config_Build"
-Label1.Text = "Build Version: V6.7.9-C\n[Status: ✅]"
+Label1.Text = "Build Version:"..version_build_config.."\n[Status: ✅]"
 Label1.Size = UDim2.new(0.5, 0, 0.100000001, 0)
 Label1.Position = UDim2.new(0.25, 0, 0.300000012, 0)
 Label1.BackgroundTransparency = 1
@@ -70,7 +74,7 @@ Label1.Parent = Frame
 
 local Label2 = Instance.new("TextLabel")
 Label2.Name = "No_Config_Build"
-Label2.Text = "Build Version: V6.3.8.2\n[Status: ✅]"
+Label2.Text = "Build Version:"..no_config_build.."\n[Status: ✅]"
 Label2.Size = UDim2.new(0.5, 0, 0.100000001, 0)
 Label2.Position = UDim2.new(0.25, 0, 0.5, 0)
 Label2.BackgroundTransparency = 1
