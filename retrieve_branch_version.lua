@@ -23,13 +23,13 @@ getgenv().setup_loaded_already_script = true
 local function run_emote_config()
     getgenv().keybinds_version = true
     getgenv().no_keybinds_version = false
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta'))()
 end
 
 local function run_no_keybind_config()
     getgenv().no_keybinds_version = true
     getgenv().keybinds_version = false
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting'))()
 end
 
 getgenv().setup_loaded_already_script = true
