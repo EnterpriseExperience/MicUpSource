@@ -2820,14 +2820,14 @@ do
 		local currentEmoji = emoji[os.date("%m %d")]
 		if currentEmoji and getgenv().keybinds_version or getgenv().keybinds_version == true then
 			local holidayName = holidayNames[currentEmoji] or "Holiday"
-			Topbar.Title.Text = ("%s Zacks Easy Hub %s | %s | Emote Keybinds: True"):format(currentEmoji, currentEmoji, holidayName)
+			Main.Topbar.Title.Text = ("%s Zacks Easy Hub %s | %s | Emote Keybinds: True"):format(currentEmoji, currentEmoji, holidayName)
 		elseif currentEmoji and getgenv().no_keybinds_version or getgenv().no_keybinds_version == true then
 			local holidayName = holidayNames[currentEmoji] or "Holiday"
-			Topbar.Title.Text = ("%s Zacks Easy Hub %s | %s | Emote Keybinds: False"):format(currentEmoji, currentEmoji, holidayName)
+			Main.Topbar.Title.Text = ("%s Zacks Easy Hub %s | %s | Emote Keybinds: False"):format(currentEmoji, currentEmoji, holidayName)
 		elseif not currentEmoji and getgenv().keybinds_version or getgenv().keybinds_version == true then
-			Topbar.Title.Text = "⭐ Zacks Easy Hub ⭐ |"..tostring(Version_Config).."| Emote Keybinds: True"
+			Main.Topbar.Title.Text = "⭐ Zacks Easy Hub ⭐ |"..tostring(Version_Config).."| Emote Keybinds: True"
 		elseif not currentEmoji and getgenv().no_keybinds_version or getgenv().no_config_version == true then
-			Topbar.Title.Text = "⭐ Zacks Easy Hub ⭐ |"..tostring(Version_No_Config).."| Emote Keybinds: False"
+			Main.Topbar.Title.Text = "⭐ Zacks Easy Hub ⭐ |"..tostring(Version_No_Config).."| Emote Keybinds: False"
 		end
 	end
 
