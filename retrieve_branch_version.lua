@@ -2,20 +2,20 @@
 
 	-- #FREEPRODUCTSONTOP --
 	-- THIS IS MY SOURCE CODE BITCH, FUCKING CREDITS HERE: https://discord.gg/VJh3kkYzBn --
-	-- Now shout out the script that gave yall what you wanted, TURN THE HOLY FUCK UP FOR 2025 WITH YO BITCH ASS! --
+	-- Now shout out the script that gave yall what ya wanted! Let's get this shit rollin! --
 
 -- ]]
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
 
 if game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("Version_Selector_ScreenGui") then
-	return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
+    return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
 end
 
 local version_build_config = "V6.8.2-C"
 local no_config_build = "V6.3.8.3"
 task.wait()
 if getgenv().setup_loaded_already_script then
-	return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
+    return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
 end
 wait(0.3)
 getgenv().setup_loaded_already_script = true
