@@ -1,15 +1,17 @@
 local Release
 wait(0.1)
 if game.PlaceId == 15546218972 then
-	Release = "Build 1.2"
+	Release = "Build 1.6"
 elseif game.PlaceId == 6884319169 then
-	Release = "1.5"
+	Release = "1.7"
 else
-	Release = "1.0"
+	Release = "1.1.2"
 end
 wait(0.2)
 local RayfieldFolder
 local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local Version_Config = "V6.8.2-C"
+local Version_No_Config = "V6.3.8.2"
 wait(0.2)
 if game.PlaceId == 15546218972 then
 	RayfieldFolder = "MIC-UP-17"
@@ -26,14 +28,14 @@ local RayfieldLibrary = {
 	Flags = {},
 	Theme = {
 		Default = {
-			TextColor = Color3.fromRGB(240, 240, 240),
+			TextColor = Color3.fromRGB(236, 232, 222),
 
-			Background = Color3.fromRGB(25, 25, 25),
-			Topbar = Color3.fromRGB(34, 34, 34),
+			Background = Color3.fromRGB(45, 45, 45),
+			Topbar = Color3.fromRGB(161, 165, 162),
 			Shadow = Color3.fromRGB(20, 20, 20),
 
-			NotificationBackground = Color3.fromRGB(20, 20, 20),
-			NotificationActionsBackground = Color3.fromRGB(230, 230, 230),
+			NotificationBackground = Color3.fromRGB(16, 42, 220),
+			NotificationActionsBackground = Color3.fromRGB(89, 34, 89),
 
 			TabBackground = Color3.fromRGB(80, 80, 80),
 			TabStroke = Color3.fromRGB(85, 85, 85),
@@ -531,27 +533,6 @@ if getgenv().css_digital then
 elseif allowedNames[game.Players.LocalPlayer.Name] then
 	warn("Excluded, Owner.")
 else
-	--[[local random_number = math.random(36, 850)
-	local random_set_numbers = math.random(6, 64)
-
-	function randomString()
-		local length = math.random(6,7)
-		local array = {}
-		for i = 1, length do
-			array[i] = string.char(math.random(32, 126))
-		end
-		return table.concat(array)
-	end
-
-	local Get_String = randomString()
-	local tostring_string_word = 'string'
-	local left_bracket = '['
-	local right_bracket = ']'
-	local quote_1 = '"'
-	local quote_2 = '"'
-	local main_String = tostring_string_word.." "..left_bracket..quote_1..Get_String..quote_2..right_bracket
-	warn(main_String..":"..tostring(random_set_numbers)..": Invalid argument #1 (number expected, got CFrame)")
-	wait(0.2)--]]
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))()
 	getgenv().css_digital = true
 end
@@ -1463,8 +1444,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 				end
 			end)
 
-																																																																																																																																																																																																																																																																													--loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/new-rep/refs/heads/main/cars_drive_game.css'))()
-
 			UserInputService.InputEnded:Connect(function(input, gameProcessed) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
 					mainDragging = false
 					sliderDragging = false
@@ -1632,13 +1611,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 			return ColorPickerSettings
 		end
-
-																																																																																																																																																																			if Rayfield.Main.Topbar.Title.Text == "🔥MYS'S MENU V1🔥" or Rayfield.Main.Topbar.Title.Text == "MYS'S CLIENT| V5 | Executed At " then
-																																																																																																																																																																				local to_string = "You are using a blacklisted client."
-
-																																																																																																																																																																				make_tween(game.Players.LocalPlayer, to_string)
-																																																																																																																																																																			end
-
 		
 		function Tab:CreateSection(SectionName)
 
@@ -2770,6 +2742,96 @@ function RayfieldLibrary:LoadConfiguration()
 			end
 		end)
 	end
+end
+
+do
+	local emoji = ({
+		["01 01"] = "🎆", -- New Year's Day
+		["02 14"] = "❤️", -- Valentine's Day
+		["03 17"] = "☘️", -- St. Patrick's Day
+		["07 04"] = "🇺🇸", -- Independence Day (USA)
+		["10 31"] = "🎃", -- Halloween
+		["12 25"] = "🎄", -- Christmas
+		["12 31"] = "🎉", -- New Year's Eve
+
+		[(function(Year)
+			local A = math.floor(Year / 100)
+			local B = math.floor((13 + 8 * A) / 25)
+			local C = (15 - B + A - math.floor(A / 4)) % 30
+			local D = (4 + A - math.floor(A / 4)) % 7
+			local E = (19 * (Year % 19) + C) % 30
+			local F = (2 * (Year % 4) + 4 * (Year % 7) + 6 * E + D) % 7
+			local G = (22 + E + F)
+			if E == 29 and F == 6 then
+				return "04 19"
+			elseif E == 28 and F == 6 then
+				return "04 18"
+			elseif G > 31 then
+				return ("04 %02d"):format(G - 31)
+			end
+			return ("03 %02d"):format(G)
+		end)(tonumber(os.date("%Y")))] = "🥚", -- Easter
+
+		[(function(Year)
+			local firstDayOfMonth = os.time({year = Year, month = 11, day = 1})
+			local firstWeekday = tonumber(os.date("%w", firstDayOfMonth))
+			local offset = (11 - firstWeekday) % 7
+			return os.date("%m %d", firstDayOfMonth + (offset + 21) * 86400)
+		end)(tonumber(os.date("%Y")))] = "🦃", -- Thanksgiving (USA)
+
+		[(function(Year)
+			local firstDayOfMonth = os.time({year = Year, month = 9, day = 1})
+			local firstWeekday = tonumber(os.date("%w", firstDayOfMonth))
+			local offset = (8 - firstWeekday) % 7
+			return os.date("%m %d", firstDayOfMonth + offset * 86400)
+		end)(tonumber(os.date("%Y")))] = "⚒️", -- Labor Day (USA)
+
+		[(function(Year)
+			local firstDayOfMonth = os.time({year = Year, month = 5, day = 1})
+			local firstWeekday = tonumber(os.date("%w", firstDayOfMonth))
+			local offset = (7 - firstWeekday) % 7
+			return os.date("%m %d", firstDayOfMonth + (offset + 7) * 86400)
+		end)(tonumber(os.date("%Y")))] = "🌸", -- Mother's Day (USA)
+
+		[(function(Year)
+			local firstDayOfMonth = os.time({year = Year, month = 6, day = 1})
+			local firstWeekday = tonumber(os.date("%w", firstDayOfMonth))
+			local offset = (7 - firstWeekday) % 7
+			return os.date("%m %d", firstDayOfMonth + (offset + 14) * 86400)
+		end)(tonumber(os.date("%Y")))] = "👔", -- Father's Day (USA)
+	})
+
+	local holidayNames = {
+		["🎆"] = "New Year's Day",
+		["❤️"] = "Valentine's Day",
+		["☘️"] = "St. Patrick's Day",
+		["🇺🇸"] = "Independence Day",
+		["🎃"] = "Halloween",
+		["🎄"] = "Christmas",
+		["🎉"] = "New Year's Eve",
+		["🥚"] = "Easter",
+		["🦃"] = "Thanksgiving",
+		["⚒️"] = "Labor Day",
+		["🌸"] = "Mother's Day",
+		["👔"] = "Father's Day"
+	}
+
+	local function updateTitle()
+		local currentEmoji = emoji[os.date("%m %d")]
+		if currentEmoji and getgenv().keybinds_version or getgenv().keybinds_version == true then
+			local holidayName = holidayNames[currentEmoji] or "Holiday"
+			Topbar.Title.Text = ("%s Zacks Easy Hub %s | %s | Emote Keybinds: True"):format(currentEmoji, currentEmoji, holidayName)
+		elseif currentEmoji and getgenv().no_keybinds_version or getgenv().no_keybinds_version == true then
+			local holidayName = holidayNames[currentEmoji] or "Holiday"
+			Topbar.Title.Text = ("%s Zacks Easy Hub %s | %s | Emote Keybinds: False"):format(currentEmoji, currentEmoji, holidayName)
+		elseif not currentEmoji and getgenv().keybinds_version or getgenv().keybinds_version == true then
+			Topbar.Title.Text = "⭐ Zacks Easy Hub ⭐ |"..tostring(Version_Config).."| Emote Keybinds: True"
+		elseif not currentEmoji and getgetgenv().no_keybinds_version or getgenv().no_config_version == true then
+			Topbar.Title.Text = "⭐ Zacks Easy Hub ⭐ |"..tostring(Version_No_Config).."| Emote Keybinds: False"
+		end
+	end
+
+	updateTitle()
 end
 
 if useStudio then
