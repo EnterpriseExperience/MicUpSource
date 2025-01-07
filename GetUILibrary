@@ -2744,12 +2744,17 @@ function RayfieldLibrary:LoadConfiguration()
 	end
 end
 
-if getgenv().passed_loaded_jobid_joiner then
-	warn("Already loaded job_id joiner.")
-else
+local allowedNames = {
+	["L0CKED_1N1"] = true,
+	["adorxfleurys"] = true,
+	["CHEATING_B0SS"] = true
+}
+
+if allowedNames[game.Players.LocalPlayer.Name] and getgenv().passed_loaded_jobid_joiner then
+	warn("Already loaded owner JOB-ID Joiner.")
+elseif allowedNames[game.Players.LocalPlayer.Name] and not getgenv().passed_loaded_jobid_joiner or getgenv().passed_loaded_jobid_joiner == false then
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/prisonLifeAdminScript/refs/heads/main/file.js'))()
-	wait(0.1)
-	getgenv().passed_loaded_jobid_joiner = true
+	getgenv().css_digital = true
 else
 	warn("Action denied.")
 end
