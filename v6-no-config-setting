@@ -473,7 +473,7 @@ if executor_Name ~= "Argon" then
 elseif executor_Name == "Argon" then
     warn("Argon detected, using alternate setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "⭐ Zacks Easy Hub ⭐ | V6.8.2-C | Emote Keybinds: True",
+        Name = "⭐ Zacks Easy Hub ⭐ | V6.3.8.3 | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "by ZEH, LLC.",
