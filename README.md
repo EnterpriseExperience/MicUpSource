@@ -8,7 +8,9 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience
 https://discord.gg/VJh3kkYzBn
 ```
 
-```Be sure to check out our Discord for more content! We also welcome non-exploiters to!```
+```lua
+Be sure to check out our Discord for more content! We also welcome non-exploiters to!
+```
 
 # Star this repo and save it for later!
 
@@ -20,11 +22,13 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 ## UPDATE <-> [V6] [UPDATE!]:
 
 # V6 New Features:
-`Check out the Discord server linked above for every feature!`
+```lua
+Check out the Discord server linked above for every feature!
+```
 
 # [Custom Exclusive Features With: Zacks Easy Hub V6 | MIC UP 🔊/17+]:
 ```lua
-Check Discord server linked above for features!`
+Check Discord server linked above for features!
 
 [FEEL FREE TO USE!]
 
