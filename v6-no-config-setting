@@ -336,7 +336,7 @@ wait(0.3)
     end
 
     -- Check our BasePlate, by using a GUI created by the script, to correctly initialize an anti-void measure, which stretches extremely far.
-    --[[wait(0.2)
+    wait(0.2)
     function do_baseplate_check()
         local screenGui = Instance.new("ScreenGui") 
         screenGui.IgnoreGuiInset = true
@@ -385,7 +385,7 @@ wait(0.3)
         warn("Baseplate has already been checked.")
     else
         do_baseplate_check()
-    end--]]
+    end
     task.wait(0.1)
 getgenv().start_Script = function()
 local function getExecutor()
