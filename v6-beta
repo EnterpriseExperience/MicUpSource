@@ -72,6 +72,21 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
+local function getExecutor()
+    local name
+    if identifyexecutor then
+        name = identifyexecutor()
+    end
+    return { Name = name or "Unknown Executor"}
+end
+
+local function detectExecutor()
+    local executorDetails = getExecutor()
+    return string.format("%s", executorDetails.Name)
+end
+wait(0.1)
+local executor_Name = detectExecutor()
+
 getgenv().randomString = function()
     local length = math.random(10,20)
 	local array = {}
@@ -111,7 +126,7 @@ getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
 getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
 getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
-getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Humanoid")
+getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 -- Don't mind this, I don't actually use this, but it's to make sure 'getgenv().httprequest_Init' can be defined outside and inside the script, since I'm not exactly sure about these types of local variables (non-service local variables).
@@ -120,11 +135,11 @@ getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport o
 queueteleport = getgenv().queueteleport
 
 -- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
-getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").Position
 
 -- Initialize Character Updater, fixing any issues with Humanoid, HumanoidRootPart, or even if the Character dies and respawns, essentially making sure the Character is always defined correctly.
 local function updateCharacterComponents(character)
-    warn("Resolving Character problems.")
+    print("Refreshing Character: "..tostring(character))
     getgenv().Character = character
     getgenv().HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
     getgenv().Humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
@@ -132,11 +147,18 @@ end
 
 -- Update Character Model(s) components, since we need to make sure the live updates are saved correctly (Especially when the Character components are updated as well).
 updateCharacterComponents(getgenv().Character)
-warn("Updated Character properties.")
+print("Refreshed Character Model!: "..tostring(getgenv().Character))
 getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-    warn("Fixing Character issues.")
+    print("New Character Detected: "..tostring(newCharacter))
     updateCharacterComponents(newCharacter)
 end)
+
+if executor_Name == "Argon" then
+    print("Argon detected, using bypass method. [To actually bypass the security context (a little bit) without running into security errors/issues].")
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua'))()
+elseif executor_Name ~= "Argon" then
+    warn("Argon not detected, skipping..")
+end
 
 -- Voice chat already loaded check, keeping performance as stable as possible, as sometimes the check can duplicate, so we do not want our performance being unstabilized by 1 singular line of code.
 local vc_inter = game:GetService("VoiceChatInternal")
@@ -147,7 +169,7 @@ if getgenv().voiceChat_Check then
 else
     getgenv().voiceChat_Check = true
     local reconnecting = false
-    local retryCooldown = 4
+    local retryCooldown = 2.5
     local function onVoiceChatStateChanged(oldState, newState)
         if newState == Enum.VoiceChatState.Ended and not reconnecting then
             reconnecting = true
@@ -181,92 +203,36 @@ task.wait(.3)
 if getgenv().has_checked_funcs then
     print("Functions Checking | True") 
 else
-    getgenv().checkNecessaryFunctions = function()
-        if cloneref then
-            print("cloneref [Success]")
+    getgenv().checkNecessaryFunctions = function(function_checked)
+        if function_checked then
+            print("[Zacks_Easy_Hub::OUTPUT_HOOKED]: "..tostring(function_checked).." ||| Success ✅")
+        elseif not function_checked then
+            warn("[Zacks_Easy_Hub::OUTPUT_HOOKED]: "..tostring(function_checked).." ||| Failure ❌")
         else
-            warn("cloneref [Failed]")
-        end
-        
-        if writefile then
-            print("writefile [Success]")
-        else
-            warn("writefile [Failed]")
-        end
-
-        if readfile then
-            print("readfile [Success]")
-        else
-            warn("readfile [Failed]")
-        end
-
-        if delfile then
-            print("delfile [delete-file] [Success]")
-        else
-            warn("delfile [delete-file] [Failed]")
-        end
-
-        if AllClipboards then
-            print("setclipboard [Success]")
-        else
-            warn("setclipboard [Failed]")
-        end
-
-        if httprequest_Init then
-            print("httprequest [Success]")
-        else
-            warn("httprequest [Failed]")
+            warn("[Zacks_Easy_Hub::OUTPUT_HOOKED]: "..tostring(function_checked).." ||| Unknown ❓")
         end
     end
 
-    -- Only check if the game is loaded correctly, else, just repeat wait() until the game is loaded, then run said task.
-    if getgenv().Game:IsLoaded() then
-        getgenv().checkNecessaryFunctions()
-        task.wait()
-        getgenv().has_checked_funcs = true
-    else
-        repeat wait() until getgenv().Game:IsLoaded()
-        getgenv().checkNecessaryFunctions()
-        task.wait()
-        getgenv().has_checked_funcs = true
-    end
-end
-wait(0.2)
--- Performance issue fixing start about here, since we are setting different settings for our Lighting, and checking if 'setfpscap' function exists in the current environment/executor, since this is a useful function for performance.
-if setfpscap then
-    if getgenv().setup_fps_performance then
-        warn("Setup for performance has already been ran.")
-    else
-        setfpscap(999)
-        if game:GetService("MaterialService").Use2022Materials == false then
-            warn("Setup - MaterialService")
-        else
-            game:GetService("MaterialService").Use2022Materials = false
-        end
-        getgenv().Lighting.GlobalShadows = false
-        getgenv().Lighting.Brightness = 2
-        getgenv().Lighting.Technology = Enum.Technology.Compatibility
-        getgenv().Lighting.ClockTime = 12
-    end
-else
-    warn("setfpscap is unsupported, alternating...")
+    getgenv().checkNecessaryFunctions(cloneref)
+    wait()
+    getgenv().checkNecessaryFunctions(httprequest_Init)
+    wait()
+    getgenv().checkNecessaryFunctions(writefile)
+    wait()
+    getgenv().checkNecessaryFunctions(readfile)
+    wait()
+    getgenv().checkNecessaryFunctions(delfile)
+    wait()
+    getgenv().checkNecessaryFunctions(getgenv().AllClipboards)
     wait(0.2)
-    if game:GetService("MaterialService").Use2022Materials == false then
-        warn("Setup - MaterialService")
-    else
-        game:GetService("MaterialService").Use2022Materials = false
-    end
-    getgenv().Lighting.GlobalShadows = false
-    getgenv().Lighting.Brightness = 2
-    getgenv().Lighting.Technology = Enum.Technology.Compatibility
-    getgenv().Lighting.ClockTime = 11
+    getgenv().has_checked_funcs = true
 end
 wait(0.2)
 -- [] -->> Check if the selected experience/game is MIC UP | Ensuring they do not run Zacks Easy Hub outside of MIC UP 🔊 or MIC UP 🔊 17+ <<-- [] --
 if getgenv().PlaceID == 6884319169 then
-    print(tostring(game:GetService("MarketplaceService"):GetProductInfo(6884319169).Name))
+    print(tostring(game:GetService("MarketplaceService"):GetProductInfo(6884319169).Name).." ||| Connected On MIC UP 🔊")
 elseif getgenv().PlaceID == 15546218972 then
-    print(tostring(game:GetService("MarketplaceService"):GetProductInfo(15546218972).Name))
+    print(tostring(game:GetService("MarketplaceService"):GetProductInfo(15546218972).Name).." ||| Connected On MIC UP 🔊 17+")
 else
     local Players = game:GetService("Players")
     local player = Players.LocalPlayer
@@ -281,7 +247,7 @@ else
     local fullScreenFrame = Instance.new("Frame")
     fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
     fullScreenFrame.Position = UDim2.new(0, 0, 0, 0)
-    fullScreenFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+    fullScreenFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     fullScreenFrame.BorderSizePixel = 0
     fullScreenFrame.Parent = screenGui
     fullScreenFrame.Visible = true
@@ -292,8 +258,9 @@ else
     textLabel.BackgroundTransparency = 1
     -- Yes, this has changed a ton, and how it checks above has changed as well as the teleporting down below these lines.
     textLabel.Text = "You are now being teleported to MIC UP 🔊, this game is unsupported."
-    textLabel.TextColor3 = Color3.new(1, 1, 1)
-    textLabel.TextScaled = true
+    textLabel.TextColor3 = Color3.fromRGB(7, 0, 255)
+    textLabel.TextScaled = false
+    textLabel.TextSize = 75
     textLabel.Font = Enum.Font.SourceSansBold
     textLabel.Parent = fullScreenFrame
     wait(0.7) -- Like waiting 0.7 seconds might actually work, I never usually wait(1), only because the task can be shortened to it's minimum with things like this, but still wait a little bit.
@@ -369,7 +336,7 @@ wait(0.3)
     end
 
     -- Check our BasePlate, by using a GUI created by the script, to correctly initialize an anti-void measure, which stretches extremely far.
-    wait(0.2)
+    --[[wait(0.2)
     function do_baseplate_check()
         local screenGui = Instance.new("ScreenGui") 
         screenGui.IgnoreGuiInset = true
@@ -418,103 +385,178 @@ wait(0.3)
         warn("Baseplate has already been checked.")
     else
         do_baseplate_check()
-    end
+    end--]]
     task.wait(0.1)
 getgenv().start_Script = function()
+local function getExecutor()
+    local name
+    if identifyexecutor then
+        name = identifyexecutor()
+    end
+    return { Name = name or "Unknown Executor"}
+end
+
+local function detectExecutor()
+    local executorDetails = getExecutor()
+    return string.format("%s", executorDetails.Name)
+end
+wait(0.1)
+local executor_Name = detectExecutor()
 wait(0.2)
 local currentTime = os.time()
 local formattedTime = os.date("%I:%M %p", currentTime)
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
--- [] -->> Comment out unnecessary functions, code, etc <<-- [] --
--- Current UI is automatically hidden, shoutout to Rayfield.
--- [] -->> Initialize Library (Rayfield, BRAND NEW!) <<-- [] --
-local Window = Rayfield:CreateWindow({
-    Name = "⭐ Zacks Crazy Hub ⭐ | V6.8.2-C | Emote Keybinds: True",
-    LoadingTitle = "Enjoy ruling MIC UP 🔊",
-    LoadingSubtitle = "Zacks Easy Hub | Success.",
-    ConfigurationSaving = {
-       Enabled = false,
-       FolderName = nil,
-       FileName = "Zacks Easy Hub"
-    },
-    -- [] -->> Discord invite feature is neat. <<-- [] --
-    Discord = {
-       Enabled = true,
-       Invite = "VJh3kkYzBn",
-       RememberJoins = true
-    },
-    KeySystem = false,
-    KeySettings = {
-       Title = "False | No Key System",
-       Subtitle = "No Key System",
-       Note = "No method of obtaining the key is provided",
-       FileName = "Key",
-       SaveKey = true,
-       GrabKeyFromSite = false,
-       Key = {"None"}
-    }
-})
+wait(0.2)
+local Rayfield
+wait(0.2)
+if not executor_Name == "Argon" or executor_Name ~= "Argon" then
+    print("Your executor is not Argon, using custom UI.")
+    Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
+elseif executor_Name == "Argon" then
+    warn("Argon detected, using alternate UI.")
+    Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/newest_rayfield_build.lua'))()
+end
+wait(0.4)
+if Rayfield then
+    print(tostring(Rayfield))
+else
+    getgenv().SCRIPT_EXECUTED = false
+    return warn("No UI was loaded.")
+end
+wait(0.3)
+getgenv().notify = function(title, content, duration)
+    Rayfield:Notify({
+        Title = tostring(title),
+        Content = tostring(content),
+        Duration = tonumber(duration),
+        Image = 93594537601787,
+        Actions = {
+            Ignore = {
+                Name = "Okay.",
+                Callback = function() print("...") end
+            },
+        },
+    })
+end
+local image_id_zacks = 93594537601787
+getgenv().image_use_zacks = image_id_zacks
+local ZEH_Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))()
+getgenv().Module_For_ZEH = ZEH_Module
+-- Current UI is automatically hidden, shoutout to Rayfield (and the hiddenUI function.).
+local Window
+if executor_Name ~= "Argon" then
+    print("Your executor is not Argon, using custom setup [for UI].")
+    Window = Rayfield:CreateWindow({
+        Name = "⭐ Zacks Easy Hub ⭐ | V6.8.2-C | Emote Keybinds: True",
+        LoadingTitle = "Enjoy ruling MIC UP 🔊",
+        LoadingSubtitle = "Zacks Easy Hub | Success.",
+        ConfigurationSaving = {
+            Enabled = false,
+            FolderName = nil,
+            FileName = "Zacks Easy Hub"
+        },
+        Discord = {
+            Enabled = true,
+            Invite = "VJh3kkYzBn",
+            RememberJoins = true
+        },
+        KeySystem = false,
+        KeySettings = {
+            Title = "False | No Key System",
+            Subtitle = "No Key System",
+            Note = "No method of obtaining the key is provided",
+            FileName = "Key",
+            SaveKey = true,
+            GrabKeyFromSite = false,
+            Key = {"None"}
+        }
+    })
+elseif executor_Name == "Argon" then
+    warn("Argon detected, using alternate setup [for UI].")
+    Window = Rayfield:CreateWindow({
+        Name = "⭐ Zacks Easy Hub ⭐ | V6.8.2-C | Emote Keybinds: True",
+        Icon = getgenv().image_use_zacks,
+        LoadingTitle = "Enjoy ruling MIC UP 🔊",
+        LoadingSubtitle = "by ZEH, LLC.",
+        Theme = "Default",
+        DisableRayfieldPrompts = false,
+        DisableBuildWarnings = false,
+        ConfigurationSaving = {
+            Enabled = true,
+            FolderName = "ZACKS_EASY_HUB_CONFIG_FOLDER",
+            FileName = "Zacks Easy Hub"
+        },
+        Discord = {
+            Enabled = true,
+            Invite = "VJh3kkYzBn",
+            RememberJoins = true
+        },
+        KeySystem = false,
+        KeySettings = {
+            Title = "False | No Key System",
+            Subtitle = "No Key System",
+            Note = "No method of obtaining the key is provided",
+            FileName = "Key",
+            SaveKey = true,
+            GrabKeyFromSite = false,
+            Key = {"None"}
+        }
+    })
+end
+
+if not Window then
+    getgenv().SCRIPT_EXECUTED = false
+    return warn("No Window was created.")
+end
 wait(0.1)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if game.Players.LocalPlayer.Name == "L0CKED_1N1" then
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if getgenv().passed_loaded_jobid_joiner then
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            warn("Already loaded job_id joiner.")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/prisonLifeAdminScript/refs/heads/main/file.js'))()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            wait(0.1)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            getgenv().passed_loaded_jobid_joiner = true
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        end
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        warn("Action denied.")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    end
-
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
-Rayfield:Notify({
-    Title = "Heads Up!",
-    Content = "We have now defaulted to a new Infinite Yield script [mine].",
-    Duration = 7,
-    Image = 93594537601787,
-})
-
+if getgenv().inf_yield_side then
+    getgenv().notify("Alert!", "Infinite Premium (IY-Premium) has already been loaded.", 7)
+else
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+    getgenv().notify("Heads Up!", "We have now defaulted to a new Infinite Yield script [mine].", 7)
+end
+wait()
+getgenv().notify("Heads Up!", "We have now defaulted to a new Infinite Yield script [mine].", 7)
+wait(0.1)
 -- [] -->> Initialize our Tabs and Sections <<-- [] --
-local Tab1 = Window:CreateTab("-<-Home->-", 7733960981)
+local Tab1 = Window:CreateTab("-<-Home->-", getgenv().image_use_zacks)
 local Section1 = Tab1:CreateSection("||| / Home Section |||")
 
-local Tab11 = Window:CreateTab("-<-Booths->-", 7733914390)
+local Tab11 = Window:CreateTab("-<-Booths->-", getgenv().image_use_zacks)
 local Section11 = Tab11:CreateSection("||| / Booths Section |||")
 
-local Tab2 = Window:CreateTab("-<-Character->-", 7743871002)
+local Tab2 = Window:CreateTab("-<-Character->-", getgenv().image_use_zacks)
 local Section2 = Tab2:CreateSection("||| / Character [1] Section |||")
 
-local Tab13 = Window:CreateTab("-<-Players->-", 7743871002)
+local Tab13 = Window:CreateTab("-<-Players->-", getgenv().image_use_zacks)
 local Section13 = Tab13:CreateSection("||| / Character [2] Section |||")
 
-local Tab10 = Window:CreateTab("-<-Teleports->-", 7733764327)
+local Tab10 = Window:CreateTab("-<-Teleports->-", getgenv().image_use_zacks)
 local Section10 = Tab10:CreateSection("||| / Teleports Section |||")
 
-local Tab4 = Window:CreateTab("-<-Chat->-", 7734021300)
+local Tab4 = Window:CreateTab("-<-Chat->-", getgenv().image_use_zacks)
 local Section4 = Tab4:CreateSection("||| / Chatting Section |||")
 
-local Tab5 = Window:CreateTab("-<-Misc->-", 7733954760)
+local Tab5 = Window:CreateTab("-<-Misc->-", getgenv().image_use_zacks)
 local Section5 = Tab5:CreateSection("||| / Extras Section |||")
 
-local Tab16 = Window:CreateTab("-<-Universal->-", 7733954760)
+local Tab16 = Window:CreateTab("-<-Universal->-", getgenv().image_use_zacks)
 local Section16 = Tab16:CreateSection("||| / Universal Section |||")
 
-local Tab17 = Window:CreateTab("-<-Animations->-", 7733954760)
+local Tab17 = Window:CreateTab("-<-Animations->-", getgenv().image_use_zacks)
 local Section17 = Tab17:CreateSection("||| / Animation Packages Section |||")
 
-local Tab9 = Window:CreateTab("-<-Lighting->-", 7734068495)
+local Tab9 = Window:CreateTab("-<-Lighting->-", getgenv().image_use_zacks)
 local Section9 = Tab9:CreateSection("||| / Lighting Section |||")
 
-local Tab12 = Window:CreateTab("-<-Emotes->-", 7743871002)
+local Tab12 = Window:CreateTab("-<-Emotes->-", getgenv().image_use_zacks)
 local Section12 = Tab12:CreateSection("||| / Emoting Section |||")
 
-local Tab14 = Window:CreateTab("-<-Copy Anim->-", 7743871002)
+local Tab14 = Window:CreateTab("-<-Copy Anim->-", getgenv().image_use_zacks)
 local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
 
-local Tab15 = Window:CreateTab("-<-UI->-", 7734022107)
+local Tab15 = Window:CreateTab("-<-UI->-", getgenv().image_use_zacks)
 local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
-wait()
+wait(0.2)
 getgenv().material_toggle = function(boolean)
     if boolean == true then
         game:GetService("MaterialService").Use2022Materials = true
@@ -656,22 +698,6 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             TeleportPart.Parent = AssetService
         end
     end
-    wait(0.3)
-    -- Initialize our main notify function, sometimes interferes with Infinite Yield notify function, since it's the same name and shit, idk how that shit works.
-        getgenv().notify = function(title, content, duration)
-            Rayfield:Notify({
-                Title = tostring(title),
-                Content = tostring(content),
-                Duration = tonumber(duration),
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function() print("...") end
-                    },
-                },
-            })
-        end
     -- This just got updated recently to correctly verify if our keybind to mute/unmute is correctly initialized, since last time I tried it without this layer, it started muting x2, and x3 (If they would use Re-Execute GUI/Script, creating layers.)
     if getgenv().muted_self_keybind then
         print("Already loaded mute keybind.")
@@ -888,19 +914,7 @@ else
         for i, v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
             if v["Disable"] then
                 v["Disable"](v)
-                wait()
-                Rayfield:Notify({
-                    Title = "Idled!",
-                    Content = "Disabling Event...",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                        Ignore = {
-                            Name = "Okay!",
-                            Callback = function() print("...") end
-                        },
-                    },
-                })
+                getgenv().notify("Idled!", "Disabling Event...", 7)
             end
         end
     else
@@ -1051,7 +1065,6 @@ else
     end
 end
 wait()
-
 local player = getgenv().LocalPlayer
 
 getgenv().whitelist = {}
@@ -1179,43 +1192,6 @@ function isNumber(str)
         return true
     end
 end
-wait()
-getgenv().notify = function(title, content, duration, image, level)
-    if not image then
-        image = tonumber(4483362458)
-    end
-
-    if not duration then
-        duration = tonumber(6)
-    end
-
-    if not title then
-        title = "Notification: "
-    end
-
-    if not content then
-        content = "DEFAULT_MESSAGE_CONTENT"
-    end
-
-    if not level or level == 0 then
-        title = "Notification:"
-    end
-
-    Rayfield:Notify({
-        Title = tostring(title),
-        Content = tostring(content),
-        Duration = tonumber(duration),
-        Image = 4483362458,
-        Actions = {
-            Ignore = {
-            Name = "Alright",
-            Callback = function()
-                print("...")
-            end
-            },
-        },
-    })
-end
 wait(0.2)
 for _, model in pairs(workspace:GetDescendants()) do
     if model:IsA("Model") and model.Name == "AvatarUI" then
@@ -1228,9 +1204,6 @@ for _, model in pairs(workspace:GetDescendants()) do
         end
     end
 end
-wait(0.3)
-local ZEH_Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))()
-getgenv().Module_For_ZEH = ZEH_Module
 
 local StallClaimToggle = Tab11:CreateToggle({
 Name = "Claim Any Booth",
@@ -4304,6 +4277,7 @@ Callback = function(ingame_music)
         local Background = Menu:WaitForChild("Background")
         local Music = Background:WaitForChild("Music")
         local Stop = Music:WaitForChild("Stop")
+        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
         getgenv().plr_music_menu = false
         task.wait(0.3)
         if firesignal then
@@ -4315,7 +4289,7 @@ Callback = function(ingame_music)
                 end
             end
         else
-            return 
+            return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
         end
     end
 end,})
@@ -4475,88 +4449,17 @@ Callback = function()
 end,})
 
 function Tools_Grab_Func()
-    -- [[ <> Old Method <> [In Use.] ]] --
-    ----------------------------
-    if firesignal then
-        
-        getgenv().PlayerGui = getgenv().PlayerGui or getgenv().LocalPlayer:WaitForChild("PlayerGui")
-        local Menu_Frame = Player_Gui:WaitForChild("Menu") or Player_Gui:FindFirstChild("Menu")
-        local Background_Frame = Menu_Frame:WaitForChild("Background") or Menu_Frame:FindFirstChild("Background")
-        local Tool_Frame = Background_Frame:WaitForChild("Tool") or Background_Frame:FindFirstChild("Tool")
-        local Scrolling_Frame_Tool_Menu = Tool_Frame:WaitForChild("ScrollingFrame") or Tool_Frame:FindFirstChild("ScrollingFrame")
-
-        function send_signal_connection(signal_parent)
-            if not firesignal then return warn("'firesignal' is unsupported on this executor! [missing: 'firesignal']") end
-
-            local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-
-            for _,v in pairs(signal_parent:GetDescendants()) do
-                if v:IsA("ImageButton") or v:IsA("TextButton") then
-                    for i,Signal in pairs(Signals) do
-                        firesignal(v[Signal])
-                    end
-                else
-                    return 
-                end
-            end
-        end
-
-        for i, v in pairs(Scrolling_Frame_Tool_Menu:GetDescendants()) do
-            if v:IsA("Frame") or v:FindFirstChildOfClass("Frame") or v:FindFirstChildWhichIsA("Frame") or v.ClassName == "Frame" then
-                send_signal_connection(v)
-            end
-        end
-    else
-        --[[local gamePassId = 951459548
-
-        local function verify_pass()
-            local success, hasPass = pcall(function()
-                return game:GetService("MarketplaceService"):UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, gamePassId)
-            end)
-            if success then
-                return hasPass
-            else
-                warn("Error checking game pass ownership:", hasPass)
-                return false
-            end
-        end
-
-        local check_gamepass = verify_pass()
-
-        if not check_gamepass then
-            getgenv().shouldGrabTools = false
-            return Notify_User("Error:", "You don't have the required 'Admin' GamePass!", 6)
-        end--]]
-
-        local Rep_Storage = game:GetService("ReplicatedStorage")
-        local Tool_Event = Rep_Storage:FindFirstChild("ToolEvent") or Rep_Storage:WaitForChild("ToolEvent")
-
-        Tool_Event:FireServer("Bag")
-        Tool_Event:FireServer("Brick")
-        Tool_Event:FireServer("Camera")
-        Tool_Event:FireServer("Coil")
-        Tool_Event:FireServer("Doll")
-        Tool_Event:FireServer("Fit")
-        Tool_Event:FireServer("Gun")
-        Tool_Event:FireServer("Horrible")
-        Tool_Event:FireServer("Hoverboard")
-        Tool_Event:FireServer("Knife")
-        Tool_Event:FireServer("Motor")
-        Tool_Event:FireServer("Pistol")
-        Tool_Event:FireServer("Spray")
-        Tool_Event:FireServer("Suitbag")
-        Tool_Event:FireServer("Tele")
-        Tool_Event:FireServer("Torch")
-        Tool_Event:FireServer("Vehicle")
-        Tool_Event:FireServer("Wand")
-
-        Notify_User("Alert!:", "If this did not work, you are affected by MIC UP's new changes.", 7)
-    end
     ----------------------------
     -- [[ <> New Method <> ]] --
     ----------------------------
-    --[[ or game.Players
-    
+    local Players
+    if cloneref then
+        Players = cloneref(game:GetService("Players"))
+    else
+        Players = game:GetService("Players")
+    end
+    wait(0.2)
+    local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
     local Player_Gui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChild("PlayerGui")
     local Menu_Frame = Player_Gui:WaitForChild("Menu") or Player_Gui:FindFirstChild("Menu")
     local Background_Frame = Menu_Frame:WaitForChild("Background") or Menu_Frame:FindFirstChild("Background")
@@ -4583,7 +4486,7 @@ function Tools_Grab_Func()
         if v:IsA("Frame") or v:FindFirstChildOfClass("Frame") or v:FindFirstChildWhichIsA("Frame") or v.ClassName == "Frame" then
             send_signal_connection(v)
         end
-    end--]]
+    end
 end
 
 local GrabEverything = Tab5:CreateButton({
@@ -5785,7 +5688,17 @@ end,})
 local InfYield = Tab5:CreateButton({
 Name = "Infinite Yield",
 Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    if getgenv().inf_yield_side then
+        return getgenv().notify("Alert!", "Infinite Premium (IY-Premium) has already been loaded.", 7)
+    else
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+        Rayfield:Notify({
+            Title = "Heads Up!",
+            Content = "We have now defaulted to a new Infinite Yield script [mine].",
+            Duration = 7,
+            Image = 93594537601787,
+        })
+    end
 end,})
 
 local WalkSpeedSliding = Tab2:CreateSlider({
@@ -6519,13 +6432,36 @@ end,})
 ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute/Reload Script/GUI",
 Callback = function()
-    ZEH_Module:Patch_Update("v6-beta")
+    if executor_Name == "Argon" then
+        getgenv().getLoopKick = false
+        getgenv().SCRIPT_EXECUTED = false
+        getgenv().Invis_Loaded = false
+        getgenv().GetLoopRunning = false
+        getgenv().GetLoopRunning = false
+        getgenv().LmaoGetMuted = false
+        getgenv().css_digital = false
+        Rayfield:Destroy()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
+    elseif executor_Name ~= "Argon" then
+        ZEH_Module:Patch_Update("v6-beta")
+    end
 end,})
 
 DestroyGUIScript = Tab15:CreateButton({
 Name = "Destroy GUI/Script",
 Callback = function()
-    ZEH_Module:Destroy_Script()
+    if executor_Name == "Argon" then
+        getgenv().getLoopKick = false
+        getgenv().SCRIPT_EXECUTED = false
+        getgenv().Invis_Loaded = false
+        getgenv().GetLoopRunning = false
+        getgenv().GetLoopRunning = false
+        getgenv().LmaoGetMuted = false
+        getgenv().css_digital = false
+        Rayfield:Destroy()
+    elseif executor_Name ~= "Argon" then
+        ZEH_Module:Destroy_Script()
+    end
 end,})
 
 UnmuteAPlayer = Tab1:CreateInput({
@@ -7418,6 +7354,7 @@ print("Successfully ran!")
 task.wait()
 print("YEAH! Zacks Easy Hub [ON TOP!]")
 wait(0.5)
+getgenv().SimpleSpyShutdown()
 if getgenv().performance_stats then
     warn("Performance stats checked.")
 else
