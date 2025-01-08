@@ -5689,9 +5689,9 @@ local InfYield = Tab5:CreateButton({
 Name = "Infinite Yield",
 Callback = function()
     if getgenv().inf_yield_side then
-        return getgenv().notify("Alert!", "Infinite Premium (IY-Premium) has already been loaded.", 7)
+        return getgenv().notify("Alert!", "Infinite Yield has already been loaded.", 7)
     else
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
         Rayfield:Notify({
             Title = "Heads Up!",
             Content = "We have now defaulted to a new Infinite Yield script [mine].",
