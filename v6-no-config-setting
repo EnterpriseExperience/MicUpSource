@@ -4267,7 +4267,7 @@ Flag = "TPToPlayerBo",
 Callback = function(get_player_func)
     local tp_pivot_plr = findplr(get_player_func)
     if not tp_pivot_plr then
-        return Notify_User("Error:", "Player not found or does not exist!", 6)
+        return getgenv().notify("Error:", "Player not found or does not exist!", 6)
     end
     task.wait(.2)
 
@@ -4291,7 +4291,7 @@ Callback = function(do_plr_func)
     
     if not tp_pivot_plr then
         getgenv().Camera.CameraSubject = getgenv().Character
-        return Notify_User("Error:", "Player not found or does not exist!", 6)
+        return getgenv().notify("Error:", "Player not found or does not exist!", 6)
     end
     task.wait(.2)
 
@@ -4430,8 +4430,8 @@ local ChatBypassBest = Tab4:CreateButton({
 Name = "Chat Bypass (UserCreation, not up rn)",
 Callback = function()
     --loadstring(game:HttpGet("https://raw.githubusercontent.com/1price/usercreation/refs/heads/main/UserCreation.lua", true))()
-    Notify_User("Error:", "The library would close and you would have to rejoin.", 6)
-    return Notify_User("[Read]:", "Usercreation bypassing is temporarily disabled.", 6)
+    getgenv().notify("Error:", "The library would close and you would have to rejoin.", 6)
+    return getgenv().notify("[Read]:", "Usercreation bypassing is temporarily disabled.", 6)
 end,})
 
 local ClearChatMsgs = Tab4:CreateButton({
@@ -4766,7 +4766,7 @@ local GetInvis = Tab2:CreateButton({
 Name = "Invisible",
 Callback = function()
     if getgenv().Invis_Loaded == true or Invis_Loaded and not getgenv().INVIS_DEBUG == true then
-        return Notify_User("Error:", "Invisible Is Already Loaded!", 6.5)
+        return getgenv().notify("Error:", "Invisible Is Already Loaded!", 6.5)
     end
 
     local UserIds = {
@@ -4944,9 +4944,9 @@ Callback = function()
     local Sound = Instance.new("Sound",Sound_Service)
     Sound.SoundId = "rbxassetid://232127604"
     Sound:Play()
-    Notify_User("Success!", "Invisible Has Been Loaded!", 7)
+    getgenv().notify("Success!", "Invisible Has Been Loaded!", 7)
     task.wait(.3)
-    Notify_User("Info:", "Press "..tostring(Settings.Keybind).." to change visibility.", 10)
+    getgenv().notify("Info:", "Press "..tostring(Settings.Keybind).." to change visibility.", 10)
 end,})
 
 local PrivRoomFloor = Tab10:CreateButton({
@@ -5446,7 +5446,7 @@ end,})
 local invisKeybindSet = Tab2:CreateInput({
 Name = "Invisible Keybind",
 PlaceholderText = "Keybind Here",
-RemoveTextAfterFocusLost = false,
+RemoveTextAfterFocusLost = true,
 Callback = function(TheBind)
     Settings.Keybind = tostring(TheBind)
     local Humanoid = getgenv().Humanoid
