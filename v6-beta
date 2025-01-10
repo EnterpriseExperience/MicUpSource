@@ -614,6 +614,7 @@ if getgenv().inf_yield_side then
     getgenv().notify("Alert!", "Infinite Premium (IY-Premium) has already been loaded.", 5)
 elseif getgenv().inf_yield_side and executor_Name ~= "Nihon" then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+    getgenv().inf_yield_side = true
 elseif not getgenv().inf_yield_side or getgenv().inf_yield_side == false and executor_Name == "Nihon" then
     print("Nihon detected, using alternate method to load Infinite Premium (IY-Premium).")
     wait()
@@ -632,6 +633,7 @@ elseif not getgenv().inf_yield_side or getgenv().inf_yield_side == false and exe
     end
 
     load_iy_prem()
+    getgenv().inf_yield_side = true
 end
 wait()
 getgenv().notify("Heads Up!", "We have now defaulted to Infinite Premium [mine].", 7)
@@ -5731,13 +5733,14 @@ Callback = function()
     if getgenv().inf_yield_side then
         return getgenv().notify("Alert!", "Infinite Yield has already been loaded.", 7)
     else
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
         Rayfield:Notify({
             Title = "Heads Up!",
             Content = "We have now defaulted to a new Infinite Yield script [mine].",
             Duration = 7,
             Image = 93594537601787,
         })
+        getgenv().inf_yield_side = true
     end
 end,})
 
