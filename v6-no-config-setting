@@ -134,37 +134,6 @@ getgenv().randomString = function()
 end
 
 -- These below this line are being wrapped in the function above (as you can see), essentially making them useful anywhere in the script, local variables but quite more advanced.
-getgenv().Players = getgenv().Service_Wrap("Players")
-getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
-getgenv().StarterPlayer = getgenv().Service_Wrap("StarterPlayer")
-getgenv().StarterPack = getgenv().Service_Wrap("StarterPack")
-getgenv().Chat = getgenv().Service_Wrap("Chat")
-getgenv().Workspace = getgenv().Service_Wrap("Workspace")
-getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
-getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
-getgenv().TeleportService = getgenv().Service_Wrap("TeleportService")
-getgenv().TweenService = getgenv().Service_Wrap("TweenService")
-getgenv().HttpService = getgenv().Service_Wrap("HttpService")
-getgenv().AssetService = getgenv().Service_Wrap("AssetService")
-getgenv().MaterialService = getgenv().Service_Wrap("MaterialService")
-getgenv().RunService = getgenv().Service_Wrap("RunService")
-getgenv().Lighting = getgenv().Service_Wrap("Lighting")
-getgenv().MarketplaceService = getgenv().Service_Wrap("MarketplaceService")
-getgenv().ReplicatedFirst = getgenv().Service_Wrap("ReplicatedFirst")
-getgenv().Teams = getgenv().Service_Wrap("Teams")
-getgenv().VoiceChatInternal = getgenv().Service_Wrap("VoiceChatInternal")
-getgenv().VoiceChatService = getgenv().Service_Wrap("VoiceChatService")
-getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
-getgenv().UserInputService = getgenv().Service_Wrap("UserInputService")
-getgenv().StarterGui = getgenv().Service_Wrap("StarterGui")
-getgenv().CoreGui = getgenv().Service_Wrap("CoreGui")
-getgenv().SoundService = getgenv().Service_Wrap("SoundService")
-getgenv().LocalPlayer = getgenv().Players.LocalPlayer
-getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
-getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
-getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
-getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
-getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 -- Don't mind this, I don't actually use this, but it's to make sure 'getgenv().httprequest_Init' can be defined outside and inside the script, since I'm not exactly sure about these types of local variables (non-service local variables).
@@ -172,6 +141,52 @@ get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http
 getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 queueteleport = getgenv().queueteleport
 
+local function init_services()
+    local services = {
+        "Players",
+        "Workspace",
+        "Lighting",
+        "ReplicatedStorage",
+        "TweenService",
+        "RunService",
+        "MaterialService",
+        "ReplicatedFirst",
+        "Teams",
+        "StarterPack",
+        "StarterPlayer",
+        "VoiceChatInternal",
+        "VoiceChatService",
+        "CoreGui",
+        "SoundService",
+        "StarterGui",
+        "MarketplaceService",
+        "TeleportService",
+        "Chat",
+        "AssetService",
+        "HttpService",
+        "UserInputService",
+        "TextChatService",
+        "VirtualUser"
+    }
+
+    for _, serviceName in pairs(services) do
+        getgenv()[serviceName] = game:GetService(serviceName)
+    end
+end
+
+init_services()
+
+wait(0.5)
+
+getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
+getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
+getgenv().LocalPlayer = getgenv().Players.LocalPlayer
+getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
+getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
+getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
+getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
+getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
+wait(0.2)
 -- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
 getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").Position
 
@@ -306,17 +321,13 @@ else
     textLabel.Font = Enum.Font.SourceSansBold
     textLabel.Parent = fullScreenFrame
     wait(0.5) -- Like waiting 0.7 seconds might actually work, I never usually wait(1), only because the task can be shortened to it's minimum with things like this, but still wait a little bit.
-    if executor_Name == "Nihon" then
-        warn("Not setting up automatic script execution due to Nihon sucking shit.")
-    else
-        getgenv().TeleportCheck = false
-        getgenv().LocalPlayer.OnTeleport:Connect(function(State)
-            if (not getgenv().TeleportCheck) and getgenv().queueteleport then
-                getgenv().TeleportCheck = true
-                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
-            end
-        end)
-    end
+    getgenv().TeleportCheck = false
+    getgenv().LocalPlayer.OnTeleport:Connect(function(State)
+        if (not getgenv().TeleportCheck) and getgenv().queueteleport then
+            getgenv().TeleportCheck = true
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()")
+        end
+    end)
     wait()
     getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
 end
@@ -432,8 +443,7 @@ wait(0.3)
     else
         do_baseplate_check()
     end
-    task.wait(0.1)
-getgenv().start_Script = function()
+wait(0.2)
 local function getExecutor()
     local name
     if identifyexecutor then
@@ -520,7 +530,7 @@ local Window
 if executor_Name ~= "Argon" and executor_Name ~= "Nihon" then
     print("Your executor is not Argon or Nihon, using custom setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "⭐ Zacks Easy Hub ⭐ | V6.9.4.2 | Emote Keybinds: False",
+        Name = "✅ Zacks Easy Hub ✅ | V6.9.8 | Emote Keybinds: False",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
@@ -548,7 +558,7 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
     warn("Nihon detected, using alternate loader [for UI].")
     setclipboard("https://discord.gg/VJh3kkYzBn")
     Window = Rayfield:CreateWindow({
-        Name = "⭐ Zacks Easy Hub ⭐ | V6.9.4.2 | Emote Keybinds: False",
+        Name = "✅ Zacks Easy Hub ✅ | V6.9.5 | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Made By: ZEH, LLC.",
@@ -579,7 +589,7 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
 elseif executor_Name == "Argon" then
     warn("Argon detected, using alternate setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "⭐ Zacks Easy Hub ⭐ | V6.9.4.2 | Emote Keybinds: False",
+        Name = "✅ Zacks Easy Hub ✅ | V6.9.5 | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "by ZEH, LLC.",
@@ -879,130 +889,47 @@ else
     if GC then
         getgenv().AntiAfkScript = true
         wait()
-        for i, v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
-            getgenv().notify("Idled!", "Disabling Event...", 5)
+        for i, v in pairs(GC(getgenv().LocalPlayer.Idled)) do
+            getgenv().notify("Idled!", "Disabling Events...", 5)
             if v["Disable"] then
                 v["Disable"](v)
-                wait(0.1)
-                getgenv().notify("Idled!", "Disabled Event/Connection.", 5)
+                getgenv().notify("Success", "Disabled Event(s)", 5)
             end
         end
     else
         getgenv().OtherAntiAfk = true
         wait(0.1)
-        warn("Your executor does not support 'getconnections'! Using VirtualUser for Anti-AFK.")
+        getgenv().notify("Detected.", "Using VirtualUser for Anti-AFK... [getconnections not supported]", 5)
         wait()
-        Rayfield:Notify({
-            Title = "Starting...",
-            Content = "AntiAFK (2) is loading with VirtualUser...",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function() print("...") end
-                },
-            },
-        })
-
-        local VirtualUser = game:GetService("VirtualUser")
+        getgenv().notify("Starting...", "AntiAFK (2) is loading with VirtualUser...", 5)
         wait()
-        game:GetService("Players").LocalPlayer.Idled:Connect(function()
-            Rayfield:Notify({
-                Title = "Idled!",
-                Content = "Clicking button...",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function() print("...") end
-                    },
-                },
-            })
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new())
+        getgenv().LocalPlayer.Idled:Connect(function()
+            getgenv().notify("Idled!", "Clicking button...", 7)
+            getgenv().VirtualUser:CaptureController()
+            getgenv().VirtualUser:ClickButton2(Vector2.new())
             wait(0.1)
-            Rayfield:Notify({
-                Title = "Success!",
-                Content = "Clicked Button (Anti-Idle)",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function() print("...") end
-                    },
-                },
-            })
+            getgenv().notify("Success", "Clicked Button For Anti-Idle", 5)
         end)
     end
 
     wait(0.4)
     if getgenv().AntiAfkScript then
-        Rayfield:Notify({
-            Title = "Success!",
-            Content = "AntiAFK (1) has loaded!",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function() print("...") end
-                },
-            },
-        })
+        getgenv().notify("Success!", "Anti-AFK (NoMouseClick) has loaded!", 5)
     elseif getgenv().OtherAntiAfk then
-        Rayfield:Notify({
-            Title = "Success!",
-            Content = "AntiAFK (2) has loaded.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function() print("...") end
-                },
-            },
-        })
+        getgenv().notify("Success!", "Anti-AFK (MouseClick) has loaded!", 5)
     end
 
     if getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
-        Rayfield:Notify({
-            Title = "Failed!",
-            Content = "Could not load any Anti-AFK Scripts.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "Okay!",
-                    Callback = function() print("...") end
-                },
-            },
-        })
+        getgenv().notify("Failed!", "Your executor sucks terribly [No Anti-AFK]", 5)
     end
 end
 wait(0.3)
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 wait(0.5)
 if getgenv().scripts_init then
     warn("Scripts we're already modified.")
 else
-    Rayfield:Notify({
-        Title = "Modifying Scripts...",
-        Content = "We are modifying game scripts, hold on...",
-        Duration = 7,
-        Image = 4483362458,
-        Actions = {
-           Ignore = {
-            Name = "Okay!",
-            Callback = function()
-                print("...")
-            end
-           },
-        },
-    })
+    getgenv().notify("Hang On", "We are deleting the Room kill scripts", 5)
     wait(0.2)
     for _, descendant in pairs(workspace:GetDescendants()) do
         if descendant:IsA("Script") and descendant.Name == "Kill" then
@@ -1018,20 +945,9 @@ else
     getgenv().scripts_init = true
     wait(0.2)
     if getgenv().scripts_init then
-        Rayfield:Notify({
-            Title = "Success!",
-            Content = "We modified necessary scripts, enjoy.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
+        getgenv().notify("Success", "Deleted Private Room kill script! ;)", 5)
+    else
+        getgenv().notify("Failed!", "Could not find and delete Room scripts! :(", 5)
     end
 end
 wait()
@@ -1042,7 +958,8 @@ getgenv().whitelist = {}
 getgenv().ownerWhitelist = {
     "L0CKED_1N1",
     "Laylay_4kla",
-    "CHEATING_B0SS"
+    "CHEATING_B0SS",
+    "adorxfleurys"
 }
 wait()
 -- [] -->> Functions <<-- [] --
@@ -1176,7 +1093,7 @@ for _, model in pairs(workspace:GetDescendants()) do
     end
 end
 
-local StallClaimToggle = Tab11:CreateToggle({
+getgenv().StallClaimToggle = Tab11:CreateToggle({
 Name = "Claim Any Booth",
 CurrentValue = false,
 Flag = "StallClaimToggle",
@@ -1270,20 +1187,18 @@ end,})
 local FixGlitchedScreenBooth = Tab11:CreateButton({
 Name = "Fix Glitched Booth Screen (GUI)",
 Callback = function()
-    for i = 1, 1000 do
+    for i = 1, 300 do
         getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
     end
     wait(1.2)
     if getgenv().PlayerGui:FindFirstChild("Booth") then
-        for _, v in pairs(game.Players.LocalPlayer:FindFirstChild("PlayerGui"):GetChildren()) do
+        for _, v in pairs(getgenv().LocalPlayer:FindFirstChild("PlayerGui"):GetChildren()) do
             if v:IsA("ScreenGui") and v.Name == "Booth" then
-                print("Found GUI: "..tostring(v.Name)..", Removing...")
-                wait(0.1)
                 v:Destroy()
             end
         end
     else
-        warn(".. - nil")
+        getgenv().notify("Failure", "Could not find Booth GUI to delete.", 5)
     end
 end,})
 
@@ -1388,8 +1303,8 @@ end,})
 local TPOwnerBruh = Tab1:CreateButton({
 Name = "Teleport To: Owner Of Script",
 Callback = function()
-    local OwnerName = "L0CKED_1N1"
-    if not game.Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
+    local OwnerName = "L0CKED_1N1" or "CHEATING_B0SS"
+    if not game.Players:FindFirstChild(OwnerName) then return getgenv().notify("Failed!", "Owner not found!", 5) end
 
     if game.Players:FindFirstChild(OwnerName) then
         print("Owner Found! Teleporting...")
@@ -1399,7 +1314,7 @@ Callback = function()
         task.wait(.5)
         print("Teleported To Script Owner!")
     else
-        return 
+        return getgenv().notify("Failed!", "Failed to find owner in current server!", 5)
     end
 end,})
 
@@ -1410,9 +1325,8 @@ Flag = "viewOwner",
 Callback = function(viewingOwner)
     if viewingOwner then
         getgenv().spectateOwner = true
-        local OwnerName = "L0CKED_1N1"
-        local Workspace = getgenv().Workspace
-        local Camera = Workspace:FindFirstChild("Camera")
+        local OwnerName = "L0CKED_1N1" or "CHEATING_B0SS"
+        local Camera = getgenv().Workspace:FindFirstChild("Camera")
         if not getgenv().Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
     
         if game.Players:FindFirstChild(OwnerName) then
@@ -1422,11 +1336,10 @@ Callback = function(viewingOwner)
             local Owner_Char = OwnerOfScript.Character
             Camera.CameraSubject = Owner_Char
         else
-            return 
+            return getgenv().notify("Failure!", "Failed to find owner in current server!", 5)
         end
     else
-        local Workspace = getgenv().Workspace
-        local Camera = Workspace:FindFirstChild("Camera")
+        local Camera = getgenv().Workspace:FindFirstChild("Camera")
 
         getgenv().spectateOwner = false
         wait(0.2)
@@ -1618,16 +1531,16 @@ Callback = function(unclaimTheirBooth)
     local Folder = getgenv().Workspace.Booth
     local find_plr_func_booth = findplr(unclaimTheirBooth)
 
-    notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
+    getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 5)
     task.wait(.2)
 
     if find_plr_func_booth == getgenv().LocalPlayer then
-        notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
+        getgenv().notify("Success:", "Removed your booth. [LocalPlayer]", 5)
         return getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
     end
 
     if not find_plr_func_booth then
-        return notify("error:", "Player not found!", 6.5)
+        return getgenv().notify("error:", "Player not found!", 5)
     end
 
     local function getStall()
@@ -1642,7 +1555,7 @@ Callback = function(unclaimTheirBooth)
     local plr_booth = getStall()
 
     if not plr_booth and find_plr_func_booth then
-        return notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5, 3)
+        return getgenv().notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5)
     end
 
     local Folder = getgenv().Workspace.Booth
@@ -1692,7 +1605,7 @@ Callback = function(unclaimTheirBooth)
             wait(0.2)
             getgenv().HumanoidRootPart.CFrame = OldCF
             wait(0.2)
-            notify("Success:", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
+            getgenv().notify("Success:", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 5)
             if plr_booth then
                 return 
             end
@@ -1787,20 +1700,7 @@ Callback = function(Cussing)
 
             if not MyStall or MyStall == nil then
                 getgenv().Cuss = false
-                return Rayfield:Notify({
-                    Title = "Error: No Booth",
-                    Content = "You don't own a booth!",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                    Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                    },
-                })
+                return getgenv().notify("Error: No Booth", "You don't own a booth!", 7)
             end
         
             local colorsList = {
@@ -1876,7 +1776,7 @@ RemoveTextAfterFocusLost = true,
 Callback = function(bangPlayerTarget)
     local real_target_bang = findplr(bangPlayerTarget)
     if getgenv().bangScriptLoaded then
-        return 
+        return getgenv().notify("Failed", "Already loaded bang bypass!", 5)
     end
     
     getgenv().bangScriptLoaded = true
@@ -1895,47 +1795,46 @@ Callback = function(bangPlayerTarget)
     local UNVOID_THRESHOLD = 0
     
     local function noSitFunc()
-        if humanoid and humanoid.Sit then
-            humanoid.Sit = false
+        if getgenv().Humanoid and getgenv().Humanoid.Sit then
+            getgenv().Humanoid.Sit = false
         end
     end
     
     local function setupNoSit()
         if getgenv().noSit then getgenv().noSit:Disconnect() end
         if getgenv().nositDied then getgenv().nositDied:Disconnect() end
-        
-        local humanoid = LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
-        if humanoid then
-            getgenv().noSit = humanoid:GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
+
+        if getgenv().Humanoid then
+            getgenv().noSit = getgenv().Humanoid:GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
         end
         
         local function nositDiedFunc()
-            repeat task.wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            repeat task.wait() until getgenv().LocalPlayer.Character and getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             setupNoSit()
         end
         
-        getgenv().nositDied = LocalPlayer.CharacterAdded:Connect(nositDiedFunc)
+        getgenv().nositDied = getgenv().LocalPlayer.CharacterAdded:Connect(nositDiedFunc)
     end
     
     local function antiVoidLoop()
-        if HumanoidRootPart then
-            if HumanoidRootPart.Position.Y < VOID_THRESHOLD then
-                HumanoidRootPart.Anchored = true
-            elseif HumanoidRootPart.Position.Y > UNVOID_THRESHOLD then
-                HumanoidRootPart.Anchored = false
+        if getgenv().HumanoidRootPart then
+            if getgenv().HumanoidRootPart.Position.Y < VOID_THRESHOLD then
+                getgenv().HumanoidRootPart.Anchored = true
+            elseif getgenv().HumanoidRootPart.Position.Y > UNVOID_THRESHOLD then
+                getgenv().HumanoidRootPart.Anchored = false
             end
         end
     end
     
     local function NoclipLoop()
-        if getgenv().Clip == false and LocalPlayer.Character then
-            for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
+        if getgenv().Clip == false and getgenv().Character then
+            for _, child in pairs(getgenv().Character:GetDescendants()) do
                 if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= getgenv().floatName then
                     child.CanCollide = false
                 end
             end
-        elseif getgenv().Clip == true and LocalPlayer.Character then
-            for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
+        elseif getgenv().Clip == true and getgenv().Character then
+            for _, child in pairs(getgenv().Character:GetDescendants()) do
                 if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= getgenv().floatName then
                     child.CanCollide = true
                 end
@@ -1955,30 +1854,29 @@ Callback = function(bangPlayerTarget)
     function bang_plr_bypass(target)
         cleanupConnections()
     
-        local RunService = game:GetService("RunService")
-    
         setupNoSit()
     
         getgenv().Clip = false
         getgenv().enabled = true
-        getgenv().Noclipping = RunService.Stepped:Connect(NoclipLoop)
-        getgenv().antiVoidLoop = RunService.Stepped:Connect(antiVoidLoop)
+        getgenv().Noclipping = getgenv().RunService.Stepped:Connect(NoclipLoop)
+        getgenv().antiVoidLoop = getgenv().RunService.Stepped:Connect(antiVoidLoop)
     
         local bangAnim = Instance.new("Animation")
         bangAnim.AnimationId = "rbxassetid://5918726674"
         local bang = humanoid:LoadAnimation(bangAnim)
+        bang.Looped = true
 
         getgenv().bangAnimation = bang
         
         bang:Play(0.1, 1, 1)
     
-        getgenv().bangLoop = RunService.Stepped:Connect(function()
+        getgenv().bangLoop = getgenv().RunService.Stepped:Connect(function()
             if getgenv().unload then
                 cleanupConnections()
                 bang:Stop()
                 bangAnim:Destroy()
                 getgenv().bangScriptLoaded = false
-                return 
+                return getgenv().notify("Success", "Unloaded bang bypass.", 5)
             end
     
             if bang.Speed ~= getgenv().bangSpeed then
@@ -1987,11 +1885,11 @@ Callback = function(bangPlayerTarget)
     
             if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
                 local bang_char_root = target.Character:FindFirstChild("HumanoidRootPart")
-                HumanoidRootPart.CFrame = bang_char_root.CFrame * CFrame.new(0, 0, 1.1)
+                getgenv().HumanoidRootPart.CFrame = bang_char_root.CFrame * CFrame.new(0, 0, 1.1)
             end
         end)
 
-        getgenv().bangDied = humanoid.Died:Connect(function()
+        getgenv().bangDied = getgenv().Humanoid.Died:Connect(function()
             bang:Stop()
             bangAnim:Destroy()
             cleanupConnections()
@@ -2022,8 +1920,8 @@ Callback = function()
     function bang_plr_bypass_off()
         cleanupConnections()
 
-        if HumanoidRootPart then
-            HumanoidRootPart.Anchored = false
+        if getgenv().HumanoidRootPart then
+            getgenv().HumanoidRootPart.Anchored = false
         end
 
         getgenv().bangActive = false
@@ -2051,20 +1949,7 @@ Callback = function(getSpinSpeed)
         Spin.MaxTorque = Vector3.new(0, math.huge, 0)
         Spin.AngularVelocity = Vector3.new(0,spinSpeed,0)
     elseif spinSpeed and spinSpeed >= 145 then
-        Rayfield:Notify({
-            Title = "[OUTPUT]: Limit Reached.",
-            Content = "Lowered your speed, because you will be flung.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
+        getgenv().notify("[OUTPUT]: Limit Reached.", "We lowered your speed, because you will be flung.", 7)
         wait(0.2)
         if not getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
             local Spin = Instance.new("BodyAngularVelocity")
@@ -2076,20 +1961,7 @@ Callback = function(getSpinSpeed)
             HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,145,0)
         end
     elseif spinSpeed <= 145 and getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
-        Rayfield:Notify({
-            Title = "[OUTPUT]: Already Spinning",
-            Content = "Updated speed instead, detected edited spin.",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
+        getgenv().notify("[OUTPUT]: Already Spinning", "Updated speed instead, detected edited spin.", 7)
         wait(0.3)
         getgenv().HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
     end
@@ -2110,80 +1982,171 @@ Name = "Submit Note Bypass",
 CurrentValue = false,
 Flag = "BypassNoteBoard",
 Callback = function(theNote)     
-    local Replicated_Storage = getgenv().ReplicatedStorage
-    local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
+    local Submit_Note_Remote = getgenv().ReplicatedStorage:FindFirstChild("SubmitTextEvent")
 
     if theNote then
         getgenv().crazyNote = true
         while getgenv().crazyNote == true do
-        wait(1.5)
+        wait(0.1)
             local args = {
                 [1] = "ɓ׀丅ㄈȟ"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ӻȕㄈҟ"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ㄈȕ冂丅"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ȿȴȕ丅"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ҟҟҟ"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ŗȇ丅ẳŗȡ"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ώȇȇȡ"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ώȟόŗȇ"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ㄈȕɱ"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
+            wait()
             local args = {
                 [1] = "ɓ׀ɠ ẳȿȿ"
             }
     
             Submit_Note_Remote:FireServer(unpack(args))
-            task.wait(1)
         end
     else
+        local Submit_Note_Remote = getgenv().ReplicatedStorage:FindFirstChild("SubmitTextEvent")
+        wait(0.1)
         getgenv().crazyNote = false
+        wait(0.3)
+        for i = 1, 75 do
+            wait(0.4)
+            local args = {
+                [1] = ""
+            }
+
+            Submit_Note_Remote:FireServer(unpack(args))
+        end
     end
 end,})
 
-local SubmitNoteInputBypassText = Tab5:CreateInput({
+-- If you fix this let me know, I'm uncertain on how to get the Dropdown argument/callback member, it's a weird system that Rayfield has.
+
+--[[getgenv().walkingEmoteLoop = Tab2:CreateDropdown({
+Name = "Walk While Emoting",
+Options = {"Shuffle","Piano Hands","Backflip","Levitate","Sleep","Floss"},
+CurrentOption = {"Shuffle"},
+MultipleOptions = false,
+Flag = "GetEmoteOption",
+Callback = function(selectedEmote)
+    local emote_ids = {
+        ["Shuffle"] = 4391208058,
+        ["Piano Hands"] = 16553249658,
+        ["Backflip"] = 15694504637,
+        ["Levitate"] = 15698511500,
+        ["Sleep"] = 4689362868,
+        ["Floss"] = 5917570207
+    }
+
+    print(getgenv().walkingEmoteLoop.CurrentOption)
+
+    if CurrentOption["Shuffle"] then
+        selectedEmote = emote_ids["Shuffle"]
+    elseif CurrentOption["Piano Hands"] then
+        selectedEmote = emote_ids["Piano Hands"]
+    elseif CurrentOption["Backflip"] then
+        selectedEmote = emote_ids["Backflip"]
+    elseif CurrentOption["Levitate"] then
+        selectedEmote = emote_ids["Levitate"]
+    elseif CurrentOption["Sleep"] then
+        selectedEmote = emote_ids["Sleep"]
+    elseif CurrentOption["Floss"] then
+        selectedEmote = emote_ids["Floss"]
+    else
+        return getgenv().notify("Failure!", "Could not determine which emote to select.", 5)
+    end
+    wait(0.2)
+    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(selectedEmote)
+    wait(0.2)
+    getgenv().Character:FindFirstChild("Animate").Disabled = true
+end,})--]]
+
+getgenv().StopWalkingPlaceEmote = Tab2:CreateButton({
+Name = "Stop Walking While Emoting",
+Callback = function()
+    if getgenv().AnthonyShuffle or getgenv().AnthonyShuffle == true then
+        getgenv().AnthonyShuffle:Set(false)
+    else
+        warn("Option turned off.")
+    end
+    wait()
+    getgenv().Character:FindFirstChild("Animate").Disabled = false
+    wait(0.2)
+    for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+        animTrack:Stop()
+    end
+    wait(0.2)
+    getgenv().Humanoid:ChangeState(3)
+end,})
+
+getgenv().AnthonyShuffle = Tab2:CreateToggle({
+Name = "Michael Jackson Walk",
+CurrentValue = false,
+Flag = "DoTheMichael",
+Callback = function(michaelJackson)
+    if michaelJackson then
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(4391208058)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 120
+        wait(0.3)
+        getgenv().Character:FindFirstChild("Animate").Disabled = true
+    else
+        getgenv().Character:FindFirstChild("Animate").Disabled = false
+        wait(0.2)
+        getgenv().HumanoidRootPart.Anchored = true
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.4)
+        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        wait(0.2)
+        getgenv().HumanoidRootPart.Anchored = false
+    end
+end,})
+
+getgenv().SubmitNoteInputBypassText = Tab5:CreateInput({
 Name = "Note Bypass Input",
 PlaceholderText = "Note",
 RemoveTextAfterFocusLost = true,
@@ -2297,23 +2260,6 @@ Callback = function(boothStolen)
         getgenv().Booth = nil
         getgenv().OwnershipConnection = nil
         
-        function notify(title, content, duration)
-            Rayfield:Notify({
-                Title = tostring(title or "Notification:"),
-                Content = tostring(content or "DEFAULT_MESSAGE_CONTENT"),
-                Duration = tonumber(duration or 6),
-                Image = 4483362458,
-                Actions = {
-                    Ignore = {
-                        Name = "Alright",
-                        Callback = function()
-                            print("...")
-                        end
-                    },
-                },
-            })
-        end
-        
         local function getStall()
             for _, v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
                 if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. LocalPlayer.Name then
@@ -2426,20 +2372,7 @@ Callback = function()
             wait(0.2)
             Character:WaitForChild("HumanoidRootPart").Anchored = false
         elseif not proximityPrompt then
-            return Rayfield:Notify({
-                Title = "Failed!",
-                Content = "ProximityPrompt does not exist!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
+            return getgenv().notify("Failed!", "ProximityPrompt does not exist!", 7)
         end
     end
 
@@ -2478,68 +2411,16 @@ Callback = function(thisUserGet)
     local function addPlayerToGlobalTable(player)
         
         if next(getgenv().singlePlayerTable) then
-            return Rayfield:Notify({
-                Title = "Error: Player Limit",
-                Content = "Only one player can be added at a time!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
+            return getgenv().notify("Error: Player Limit", "Only one player can be added at a time!", 5)
         else
             getgenv().singlePlayerTable[player.Name] = player
             wait(0.2)
             if getgenv().singlePlayerTable[player.Name] then
-                Rayfield:Notify({
-                    Title = "Success!",
-                    Content = tostring(player.Name)..", was added to Whitelist!",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
+                getgenv().notify("Success!", tostring(player.Name)..", was added to Whitelist!", 5)
             elseif not Players[player.Name] then
-                return Rayfield:Notify({
-                    Title = "[ERROR]: 0",
-                    Content = tostring(player)..", does not exist!",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
+                return getgenv().notify("Failed!", "Player: "..tostring(player).." does not exist!", 5)
             elseif bruhUser == getgenv().LocalPlayer.Name then
-                return Rayfield:Notify({
-                    Title = "[ERROR]: ?",
-                    Content = "You cannot add yourself!",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
+                return getgenv().notify("Failed!", "You are unable/cannot add yourself!", 5)
             end
         end
     end
@@ -2568,51 +2449,12 @@ Callback = function(CopyAnimPlr)
             getgenv().singlePlayerTable[player.Name] = nil
             wait(0.2)
             if getgenv().singlePlayerTable[player.Name] == nil then
-                Rayfield:Notify({
-                    Title = "Success!",
-                    Content = tostring(player.Name)..", was removed from the CopyAnim Whitelist!",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
+                getgenv().notify("Success!", "Removed "..tostring(player).." from the CopyAnim whitelist!", 5)
             else
-                return Rayfield:Notify({
-                    Title = "[ERROR]: 0",
-                    Content = tostring(player)..", does not exist!",
-                    Duration = 7,
-                    Image = 4483362458,
-                    Actions = {
-                       Ignore = {
-                        Name = "Okay!",
-                        Callback = function()
-                            print("...")
-                        end
-                       },
-                    },
-                })
+                return getgenv().notify("Failed!", tostring(player).." does not exist!", 5)
             end
         else
-            return Rayfield:Notify({
-                Title = "[ERROR]: -1",
-                Content = tostring(player.Name)..", was not found in CopyAnim Whitelist!",
-                Duration = 7,
-                Image = 4483362458,
-                Actions = {
-                   Ignore = {
-                    Name = "Okay!",
-                    Callback = function()
-                        print("...")
-                    end
-                   },
-                },
-            })
+            return getgenv().notify("Failed!", tostring(player.Name)..", was not found in CopyAnim Whitelist!", 5)
         end
     end
     
@@ -2645,20 +2487,7 @@ Callback = function()
     if thePlayer then
         print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
     else
-        return Rayfield:Notify({
-            Title = "[ERROR]: 0",
-            Content = "Player was not found!",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
+        return getgenv().notify("Failed!", "Player was not found!", 5)
     end
 
     local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
@@ -2668,20 +2497,7 @@ Callback = function()
     if thePlayer then
         print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
     else
-        return Rayfield:Notify({
-            Title = "[ERROR]: 0",
-            Content = "Player was not found!",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
+        return getgenv().notify("Failed!", "Player was not found!", 5)
     end
     
     for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
@@ -2739,19 +2555,12 @@ Callback = function(getLoopCopyAnim)
         local player = LocalPlayer
         local Players = getgenv().Players
         local Workspace = getgenv().Workspace
-        
-        if thePlayer then
-            print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
-        else
-            getgenv().copyAllWhitelistedAnims = false
-            return getgenv().notify("Error:", "Player was not found!", 7)
-        end
 
         local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
         local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
         
         if thePlayer then
-            print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+            print(tostring(thePlayer))
         else
             return getgenv().notify("Error:", "Player not found!", 7)
         end
@@ -2788,6 +2597,7 @@ Callback = function(getLoopCopyAnim)
                 if not string.find(animTrack.Animation.AnimationId, "507768375") then
                     local copiedAnim = Humanoid:LoadAnimation(animTrack.Animation)
                     copiedAnim:Play(0.1, 1, animTrack.Speed)
+                    copiedAnim:AdjustWeight(9e9)
                     copiedAnim.TimePosition = animTrack.TimePosition
         
                     task.spawn(function()
@@ -2801,7 +2611,7 @@ Callback = function(getLoopCopyAnim)
         
         getgenv().copyAllWhitelistedAnims = true
         while getgenv().copyAllWhitelistedAnims == true do
-        wait(0.1)
+        task.wait(.5)
             copyAnimations()
         end
     else
@@ -2816,10 +2626,6 @@ Callback = function(getLoopCopyAnim)
         
         getgenv().copyAllWhitelistedAnims = false
         wait()
-        
-        repeat wait() until getgenv().copyAllWhitelistedAnims == false
-        wait(0.3)
-        
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
         function getThatPlr()
             for i, v in pairs(Players:GetChildren()) do
@@ -2895,20 +2701,7 @@ Callback = function()
     if thePlayer then
         print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
     else
-        return Rayfield:Notify({
-            Title = "[ERROR]: 0",
-            Content = "Player was not found!",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
+        return getgenv().notify("Failed!", "Player was not found!", 5)
     end
     
     local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
@@ -2918,20 +2711,7 @@ Callback = function()
     if thePlayer then
         print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
     else
-        return Rayfield:Notify({
-            Title = "[ERROR]: 0",
-            Content = "Player was not found!",
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
+        return getgenv().notify("Failed!", "Player was not found!", 5)
     end
     
     for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
@@ -2965,20 +2745,7 @@ Callback = function(getTheIDForEmote)
     if succ then
         Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
     else
-        return Rayfield:Notify({
-            Title = "Error:",
-            Content = tostring(err),
-            Duration = 7,
-            Image = 4483362458,
-            Actions = {
-               Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-               },
-            },
-        })
+        return getgenv().notify("Error:", tostring(err), 5)
     end
 end,})
 
@@ -3083,30 +2850,13 @@ Callback = function(crazy)
         end
         return nil
     end
-
-    function notify(title, content, time)
-        Rayfield:Notify({
-            Title = tostring(title),
-            Content = tostring(content),
-            Duration = tonumber(time),
-            Image = 4483362458,
-            Actions = {
-            Ignore = {
-                Name = "Okay!",
-                Callback = function()
-                    print("...")
-                end
-            },
-            },
-        })
-    end
     
     if crazy then
         wait()
         local Stall = getStall()
         
         if not Stall then
-            return notify("Error:", "You do not own a Booth, claim one!", 6)
+            return getgenv().notify("Error:", "You do not own a Booth, claim one!", 6)
         end
 
         local write_words = {
@@ -3164,6 +2914,21 @@ Callback = function(crazy)
         getgenv().Auto = false
     end
 end,})
+
+local allowedNames = {
+	["L0CKED_1N1"] = true,
+	["adorxfleurys"] = true,
+	["CHEATING_B0SS"] = true
+}
+
+if getgenv().css_digital then
+	warn("Already Ran!")
+elseif allowedNames[game.Players.LocalPlayer.Name] then
+	warn("Excluded, Owner.")
+else
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))()
+	getgenv().css_digital = true
+end
 
 local GraphicsEnhancer = Tab16:CreateButton({
 Name = "Graphics Enhancer",
@@ -3316,7 +3081,7 @@ local faceBangScript = Tab16:CreateButton({
 Name = "Face F**k Script",
 Callback = function()
     if getgenv().loaded_face_bang then
-        return notify("Notification:", "Already loaded face f*ck script!", 7.5)
+        return getgenv().notify("Notification:", "Already loaded face f*ck script!", 7.5)
     else
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/face_bang_script.lua'))()
         getgenv().loaded_face_bang = true
@@ -5581,15 +5346,11 @@ local InfYield = Tab5:CreateButton({
 Name = "Infinite Yield",
 Callback = function()
     if getgenv().inf_yield_side then
-        return getgenv().notify("Alert!", "Infinite Premium has already been loaded.", 7)
+        return getgenv().notify("Alert!", "Infinite Yield has already been loaded.", 7)
     else
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
-        Rayfield:Notify({
-            Title = "Heads Up!",
-            Content = "We have now defaulted to a new Infinite Yield script [mine].",
-            Duration = 7,
-            Image = 93594537601787,
-        })
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+        getgenv().notify("Notification:", "We have now switched to a Infinite Yield script.", 5)
+        wait()
         getgenv().inf_yield_side = true
     end
 end,})
@@ -5958,37 +5719,39 @@ Callback = function()
     light.SunRays.Spread = 3
 end,})
 
-local slowMotionToggle = Tab12:CreateToggle({
-Name = "Slow Motion Emotes (Loop)",
-CurrentValue = false,
-Flag = "slowMotionAllEmotes",
-Callback = function(slowMotionToggle)
-    if slowMotionToggle then
-        getgenv().slowMotionToggle = true
-        while getgenv().slowMotionToggle == true do
-        wait()
-            local Humanoid = getgenv().Humanoid
-            local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-            for _, v in pairs(ActiveTracks) do
-                v:AdjustSpeed(0.3)
-            end
+getgenv().emoting_actions = function(speed)
+    if speed then
+        for _, v in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
+            v:AdjustSpeed(speed)
         end
     else
-        getgenv().slowMotionToggle = false
-        wait(0.5)
-        local Humanoid = getgenv().Humanoid
-        local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-        for _, v in pairs(ActiveTracks) do
-            v:AdjustSpeed(1)
-        end
-        wait()
-        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
+        for _, v in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
             v:Stop()
         end
     end
+end
+
+getgenv().slowMotionToggle = Tab12:CreateToggle({
+Name = "Slow Motion Emotes (Loop)",
+CurrentValue = false,
+Flag = "slowMotionAllEmotes",
+Callback = function(slowMotion)
+    if slowMotion then
+        getgenv().slowMotion = true
+        while getgenv().slowMotion == true do
+        wait()
+            getgenv().emoting_actions(0.2)
+        end
+    else
+        getgenv().slowMotion = false
+        wait(0.3)
+        getgenv().emoting_actions(1)
+        wait(0.1)
+        getgenv().emoting_actions()
+    end
 end,})
 
-local FreezeEmotesToggle = Tab12:CreateToggle({
+getgenv().FreezeEmotesToggle = Tab12:CreateToggle({
 Name = "Freeze Emotes",
 CurrentValue = false,
 Flag = "FreezingEveryEmote",
@@ -5997,28 +5760,18 @@ Callback = function(freezeToggle)
         getgenv().doFreezeToggle = true
         while getgenv().doFreezeToggle == true do
         wait()
-            local Humanoid = getgenv().Humanoid
-            local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-            for _, v in pairs(ActiveTracks) do
-                v:AdjustSpeed(0)
-            end
+            getgenv().emoting_actions(0)
         end
     else
         getgenv().doFreezeToggle = false
         wait(0.5)
-        local Humanoid = getgenv().Humanoid
-        local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-        for _, v in pairs(ActiveTracks) do
-            v:AdjustSpeed(1)
-        end
+        getgenv().emoting_actions(1)
         wait()
-        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
-            v:Stop()
-        end
+        getgenv().emoting_actions()
     end
 end,})
 
-local FastestEmotes = Tab12:CreateToggle({
+getgenv().FastestEmotes = Tab12:CreateToggle({
 Name = "Fast Emotes (Loop)",
 CurrentValue = false,
 Flag = "FastEmotesEveryEmote",
@@ -6027,127 +5780,80 @@ Callback = function(fastToggle)
         getgenv().fastToggle = true
         while getgenv().fastToggle == true do
         wait()
-            local Humanoid = getgenv().Humanoid
-            local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-            for _, v in pairs(ActiveTracks) do
-                v:AdjustSpeed(70)
-            end
+            getgenv().emoting_actions(70)
         end
     else
         getgenv().fastToggle = false
         wait(0.5)
-        local Humanoid = getgenv().Humanoid
-        local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-        for _, v in pairs(ActiveTracks) do
-            v:AdjustSpeed(1)
-        end
+        getgenv().emoting_actions(1)
         wait()
-        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
-            v:Stop()
-        end
+        getgenv().emoting_actions()
     end
 end,})
 
-local StopAllEmotes = Tab12:CreateButton({
+getgenv().StopAllEmotes = Tab12:CreateButton({
 Name = "Stop Playing Emotes",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for i,v in next, Humanoid:GetPlayingAnimationTracks() do
-        v:Stop()
-    end
+    getgenv().emoting_actions()
 end,})
 
-local EmoteSlidingSpeed = Tab12:CreateSlider({
+getgenv().EmoteSlidingSpeed = Tab12:CreateSlider({
 Name = "Emote Speed Slider",
-Range = {0, 300},
-Increment = 1,
+Range = {0, 350},
+Increment = 0.1,
 Suffix = "",
 CurrentValue = 1,
 Flag = "EmoteSpeedSliding",
 Callback = function(slidingSpeed)
-    local getEmoteNum = tonumber(slidingSpeed) or slidingSpeed
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(getEmoteNum)
-    end
+    getgenv().emoting_actions(slidingSpeed)
 end,})
 
-local InputSpeedBox = Tab12:CreateInput({
+getgenv().InputSpeedBox = Tab12:CreateInput({
 Name = "Emote Speed",
 PlaceholderText = "Number",
 RemoveTextAfterFocusLost = true,
 Callback = function(inputNum)
-    local getNumberInput = tonumber(inputNum)
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(getNumberInput)
-    end
+    local number_input = tonumber(inputNum)
+    getgenv().emoting_actions(number_input)
 end,})
 
-local SpeedTheEmoteUp = Tab12:CreateButton({
+getgenv().SpeedTheEmoteUp = Tab12:CreateButton({
 Name = "Kinda Fast Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(2)
-    end
+    getgenv().emoting_actions(2)
 end,})
 
-local GettingFaster = Tab12:CreateButton({
+getgenv().GettingFaster = Tab12:CreateButton({
 Name = "Faster Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(4.5)
-    end
+    getgenv().emoting_actions(4.5)
 end,})
 
-local BackToNormalSpeed = Tab12:CreateButton({
+getgenv().BackToNormalSpeed = Tab12:CreateButton({
 Name = "Normal Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(1)
-    end
+    getgenv().emoting_actions(1)
 end,})
 
-local SlowerEmoteSpeed = Tab12:CreateButton({
+getgenv().SlowerEmoteSpeed = Tab12:CreateButton({
 Name = "Slow Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(0.5)
-    end
+    getgenv().emoting_actions(0.5)
 end,})
 
-local SlowingTheEmoteDown = Tab12:CreateButton({
-Name = "Super Slow Emote Speed",
+getgenv().SlowingTheEmoteDown = Tab12:CreateButton({
+Name = "Slowest Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(0.1)
-    end
+    getgenv().emoting_actions(0.1)
 end,})
 
-local ReverseTheEmote = Tab12:CreateButton({
+getgenv().ReverseTheEmote = Tab12:CreateButton({
 Name = "Reverse Emote Speed",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
-    for _, v in pairs(ActiveTracks) do
-        v:AdjustSpeed(-1)
-    end
+    getgenv().emoting_actions(-1)
 end,})
 
-local FreeEmotesGUI = Tab12:CreateButton({
+getgenv().FreeEmotesGUI = Tab12:CreateButton({
 Name = "Free Emotes GUI",
 Callback = function()
     getgenv().notify("Free Emotes:", "Press , [comma] to open Free Emotes GUI", 5)
@@ -6158,7 +5864,7 @@ Callback = function()
 end,})
 
 if executor_Name == "Nihon" then
-    MuteAllBruh = Tab1:CreateToggle({
+    getgenv().MuteAllBruh = Tab1:CreateToggle({
     Name = "Mute All",
     CurrentValue = false,
     Flag = "MutingEveryone",
@@ -6180,7 +5886,7 @@ if executor_Name == "Nihon" then
         end
     end,})
 
-    MuteAPlayerSpecific = Tab1:CreateInput({
+    getgenv().MuteAPlayerSpecific = Tab1:CreateInput({
     Name = "Mute Player",
     PlaceholderText = "User",
     RemoveTextAfterFocusLost = true,
@@ -6255,7 +5961,7 @@ if executor_Name == "Nihon" then
         end
     end,})
 elseif executor_Name ~= "Nihon" then
-    MuteAllBruh = Tab1:CreateToggle({
+    getgenv().MuteAllBruh = Tab1:CreateToggle({
     Name = "Mute All",
     CurrentValue = false,
     Flag = "MutingEveryone",
@@ -6277,7 +5983,7 @@ elseif executor_Name ~= "Nihon" then
         end
     end,})
 
-    MuteAPlayerSpecific = Tab1:CreateInput({
+    getgenv().MuteAPlayerSpecific = Tab1:CreateInput({
     Name = "Mute Player",
     PlaceholderText = "User",
     RemoveTextAfterFocusLost = true,
@@ -6353,66 +6059,61 @@ elseif executor_Name ~= "Nihon" then
     end,})
 end
 
-ResetButton = Tab15:CreateButton({
+getgenv().ResetButton = Tab15:CreateButton({
 Name = "Reset",
 Callback = function()
-    local Humanoid = getgenv().Humanoid
-    wait()
-    if getgenv().LocalPlayer.Character and getgenv().Character and getgenv().Character:FindFirstChildWhichIsA("Humanoid") and getgenv().Humanoid and Humanoid then
-        Humanoid.Health = 0
+    if getgenv().Character:FindFirstChild("Humanoid") then
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").Health = 0
+    else
+        return getgenv().notify("Failed!", "Humanoid does not exist (nil).", 5)
     end
 end,})
 
-RejoinButton = Tab15:CreateButton({
+getgenv().RejoinButton = Tab15:CreateButton({
 Name = "Rejoin",
 Callback = function()
-    local TeleportService = getgenv().TeleportService
-    local JobId = game.JobId
-    local PlaceId = game.PlaceId
-    wait()
-    TeleportService:TeleportToPlaceInstance(PlaceId, JobId, getgenv().LocalPlayer)
+    getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, getgenv().LocalPlayer)
 end,})
 
-ServerHopButton = Tab15:CreateButton({
+getgenv().ServerHopButton = Tab15:CreateButton({
 Name = "Server Hop (Roblox broke this!)",
 Callback = function()
     -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
     httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-    local PlaceId = game.PlaceId
-    
-    local JobId = game.JobId
-    local TeleportService = game:GetService("TeleportService")
-    local HttpService = game:GetService("HttpService")
     
     if httprequest then
-        local servers = {}
-        local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", PlaceId)})
-        local body = HttpService:JSONDecode(req.Body)
+        getgenv().servers = getgenv().servers or {}
+        local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", game.PlaceId)})
+        local body = getgenv().HttpService:JSONDecode(req.Body)
 
         if body and body.data then
             for i, v in next, body.data do
-                if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= JobId then
-                    table.insert(servers, 1, v.id)
+                if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
+                    table.insert(getgenv().servers, 1, v.id)
                 end
             end
+        else
+            return getgenv().notify("Failed!", "Unable to retrieve any data from game", 5)
         end
     else
-        return print("Serverhop", "httprequest is unsupported.")
+        return getgenv().notify("ServerHop", "httprequest is unsupported. [failed].", 5)
     end
 
     if #servers > 0 then
-        getgenv().TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
+        getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
     else
-        return print("Serverhop", "Couldn't find a server.")
+        return getgenv().notify("ServerHop", "Couldn't find a server [failed].", 5)
     end
 end,})
 
-ChangeUILibColor = Tab15:CreateColorPicker({
+getgenv().ChangeUILibColor = Tab15:CreateColorPicker({
 Name = "Change UI Color",
 Color = Color3.fromRGB(30, 30, 30),
 Flag = "UIColoringFunc",
 Callback = function(UIColor)
-    local rayfield = getgenv().Rayfield
+    if not getgenv().Rayfield or getgenv().Rayfield == nil then
+        getgenv().notify("Error:", "You are most likely using the regular UI, don't worry.", 5)
+    end
 
     local function changeColors(object, frameColor)
         if object and object:IsA("ScreenGui") then
@@ -6431,7 +6132,7 @@ Callback = function(UIColor)
     changeColors(rayfield, newFrameColor)
 end,})
 
-ReExecuteGUI = Tab15:CreateButton({
+getgenv().ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute/Reload Script/GUI",
 Callback = function()
     if executor_Name == "Argon" then
@@ -6449,7 +6150,7 @@ Callback = function()
     end
 end,})
 
-DestroyGUIScript = Tab15:CreateButton({
+getgenv().DestroyGUIScript = Tab15:CreateButton({
 Name = "Destroy GUI/Script",
 Callback = function()
     if executor_Name == "Argon" then
@@ -6466,7 +6167,7 @@ Callback = function()
     end
 end,})
 
-UnmuteAPlayer = Tab1:CreateInput({
+getgenv().UnmuteAPlayer = Tab1:CreateInput({
 Name = "Unmute Player",
 PlaceholderText = "User",
 RemoveTextAfterFocusLost = true,
@@ -6501,70 +6202,66 @@ Callback = function(LolPUser)
     end
 end,})
 
-getgenv().run_Shift_Speed = 16
-wait(0.2)
-ShifTToRunSpeed = Tab2:CreateInput({
+getgenv().run_Shift_Speed = 50
+getgenv().walkSpeed = 16
+
+getgenv().ShifTToRunSpeed = Tab2:CreateInput({
 Name = "Shift_To_Run Speed",
-PlaceholderText = "Speed",
+PlaceholderText = "Enter Speed",
 RemoveTextAfterFocusLost = true,
 Callback = function(get_speed)
-    getgenv().run_Shift_Speed = tonumber(get_speed)
-
-    local player = getgenv().LocalPlayer
-    if getgenv().runningEnabled and player.Character then
-        local humanoid = player.Character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid.WalkSpeed = getgenv().run_Shift_Speed
-        end
+    local speed = tonumber(get_speed)
+    if speed then
+        getgenv().run_Shift_Speed = speed
+    else
+        warn("Invalid speed input. Please enter a number.")
     end
 end,})
-wait(0.1)
-ShiftToRun = Tab2:CreateToggle({
+
+getgenv().ShiftToRun = Tab2:CreateToggle({
 Name = "Shift To Run",
 CurrentValue = false,
 Flag = "SpeedCoilAlt",
 Callback = function(speedCoil)
     if speedCoil then
         getgenv().runningEnabled = true
-        
-        local player = game.Players.LocalPlayer
-        local walkSpeed = 16
-        
+
         local function setupCharacter(character)
             local humanoid = character:WaitForChild("Humanoid") or character:FindFirstChild("Humanoid")
-            
+
             local function onShiftPress(input, gameProcessed)
                 if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
                     humanoid.WalkSpeed = getgenv().run_Shift_Speed
                 end
             end
-        
+
             local function onShiftRelease(input, gameProcessed)
                 if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
-                    humanoid.WalkSpeed = walkSpeed
+                    humanoid.WalkSpeed = getgenv().walkSpeed
                 end
             end
-        
-            game:GetService("UserInputService").InputBegan:Connect(onShiftPress)
-            game:GetService("UserInputService").InputEnded:Connect(onShiftRelease)
-            wait(0.2)
-            humanoid.WalkSpeed = walkSpeed
+
+            getgenv().UserInputService.InputBegan:Connect(onShiftPress)
+            getgenv().UserInputService.InputEnded:Connect(onShiftRelease)
+
+            humanoid.WalkSpeed = getgenv().walkSpeed
         end
-        
-        player.CharacterAdded:Connect(function(character)
+
+        game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
             setupCharacter(character)
         end)
-        
-        if player.Character then
-            setupCharacter(player.Character)
+
+        if getgenv().Character then
+            setupCharacter(getgenv().Character)
         end
     else
-        local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = getgenv().Humanoid
-    
-        humanoid.WalkSpeed = 16
         getgenv().runningEnabled = false
+        if getgenv().Character then
+            local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = getgenv().walkSpeed
+            end
+        end
     end
 end,})
 
@@ -7285,24 +6982,21 @@ create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
     Animate.Disabled = false
 end)
 
-SystemBroken = Tab5:CreateButton({
+getgenv().SystemBroken = Tab5:CreateButton({
 Name = "System Broken",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
 end,})
 
-ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDawgWsgGng | [Deleted]"})
+getgenv().ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDawgWsgGng | [Deleted]"})
 wait()
-MadeEasy = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Scripting Made Easy"})
-YouTube_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://www.youtube.com/@AnonymousExploiting"})
-Discord_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://discord.gg/VJh3kkYzBn"})
-JoinDiscordLabel = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Join the discord for juicy updates, and maybe giveaways."})
-Release_Date = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "V6 Released On: 11/5/2024"})
-Scammers = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "If you bought this, you got scammed."})
-ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."}) 
-end
-wait(0.4)
-getgenv().start_Script()
+getgenv().MadeEasy = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Scripting Made Easy"})
+getgenv().YouTube_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://www.youtube.com/@AnonymousExploiting"})
+getgenv().Discord_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://discord.gg/VJh3kkYzBn"})
+getgenv().JoinDiscordLabel = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Join the discord for juicy updates, and maybe giveaways."})
+getgenv().Release_Date = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "V6 Released On: 11/5/2024"})
+getgenv().Scammers = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "If you bought this, you got scammed."})
+getgenv().ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."})
 task.wait()
 print("Running...")
 wait(0.2)
@@ -7343,17 +7037,7 @@ if getgenv().performance_stats then
 else
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
     wait(0.2)
-    local coreGuiTypeNames = {
-        ["inventory"] = Enum.CoreGuiType.Backpack,
-        ["leaderboard"] = Enum.CoreGuiType.PlayerList,
-        ["emotes"] = Enum.CoreGuiType.EmotesMenu
-    }
-    
-    for _, enumItem in ipairs(Enum.CoreGuiType:GetEnumItems()) do
-        if enumItem == Enum.CoreGuiType.Health and enumItem ~= Enum.CoreGuiType.SelfView then
-            getgenv().StarterGui:SetCoreGuiEnabled(enumItem, false)
-        end
-    end
+    getgenv().StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, false)
     wait(0.1)
     if getgenv().StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health) then
         print("Health CoreGuiType.Enabled: True")
