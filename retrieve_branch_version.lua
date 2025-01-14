@@ -1,8 +1,8 @@
 -- [[
 
 	-- #FREEPRODUCTSONTOP --
-	-- THIS IS MY SOURCE CODE BITCH, FUCKING CREDITS HERE: https://discord.gg/VJh3kkYzBn --
-	-- Now shout out the script that gave yall what ya wanted! Let's get this shit rollin! --
+	-- Releasing more content soon --
+	-- Check out our Neighbors (VC) script in our Discord Server: https://discord.gg/VJh3kkYzBn
 
 -- ]]
 local NotificationLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lobox920/Notification-Library/Main/Library.lua"))()
@@ -11,8 +11,8 @@ if game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChi
     return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
 end
 
-local version_build_config = "V6.8.2-C"
-local no_config_build = "V6.3.8.3"
+local version_build_config = "V6.9.1-CC"
+local no_config_build = "V6.9.8"
 task.wait()
 if getgenv().setup_loaded_already_script then
     return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
@@ -62,7 +62,7 @@ Label.Parent = Frame
 
 local Label1 = Instance.new("TextLabel")
 Label1.Name = "Config_Build"
-Label1.Text = "Build Version:"..version_build_config.."\n[Status: ✅]"
+Label1.Text = "Build Version: "..version_build_config.."\n[Status: ✅]"
 Label1.Size = UDim2.new(0.5, 0, 0.100000001, 0)
 Label1.Position = UDim2.new(0.25, 0, 0.300000012, 0)
 Label1.BackgroundTransparency = 1
@@ -74,7 +74,7 @@ Label1.Parent = Frame
 
 local Label2 = Instance.new("TextLabel")
 Label2.Name = "No_Config_Build"
-Label2.Text = "Build Version:"..no_config_build.."\n[Status: ✅]"
+Label2.Text = "Build Version: "..no_config_build.."\n[Status: ✅]"
 Label2.Size = UDim2.new(0.5, 0, 0.100000001, 0)
 Label2.Position = UDim2.new(0.25, 0, 0.5, 0)
 Label2.BackgroundTransparency = 1
