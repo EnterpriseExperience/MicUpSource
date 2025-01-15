@@ -2746,7 +2746,6 @@ end
 
 local allowedNames = {
 	["L0CKED_1N1"] = true,
-	["adorxfleurys"] = true,
 	["CHEATING_B0SS"] = true
 }
 
@@ -2994,8 +2993,6 @@ if useStudio then
 
 	local Paragraph = Tab:CreateParagraph({Title = "Paragraph Example", Content = "Paragraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph Example"})
 end
-
-
 
 task.delay(3.5, RayfieldLibrary.LoadConfiguration, RayfieldLibrary)
 
