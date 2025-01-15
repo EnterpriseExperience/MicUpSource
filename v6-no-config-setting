@@ -2485,7 +2485,7 @@ Callback = function(getLoopCopyAnim)
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
         
         function getThatPlr()
-            for i, v in pairs(Players:GetChildren()) do
+            for i, v in pairs(game.Players:GetChildren()) do
                 if getgenv().singlePlayerTable[v.Name] then
                     return v
                 end
