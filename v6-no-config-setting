@@ -469,8 +469,7 @@ wait(0.2)
 local Rayfield
 wait(0.2)
 if executor_Name ~= "Argon" then
-    print("Your executor is not Argon, using custom UI.")
-    Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
+    Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 elseif executor_Name == "Argon" then
     warn("Argon detected, using alternate UI.")
     Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
