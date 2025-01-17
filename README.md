@@ -10,24 +10,22 @@ https://discord.gg/VJh3kkYzBn
 
 ```lua
 Be sure to check out our Discord for more content! We also welcome non-exploiters to!
-```
 
-# Star this repo and save it for later!
+Star this repo and save it for later!
 
-# [Alternatively, see]:
-```lua
+[Alternatively, see]:
+
 https://github.com/EnterpriseExperience/MicUpSource/wiki
-```
+
 
 ## UPDATE <-> [V6] [UPDATE!]:
 
 # V6 New Features:
-```lua
-Check out the Discord server linked above for every feature!
-```
 
-# [Custom Exclusive Features With: Zacks Easy Hub V6 | MIC UP 🔊/17+]:
-```lua
+Check out the Discord server linked above for every feature!
+
+[Custom Exclusive Features With: Zacks Easy Hub V6 | MIC UP 🔊/17+]:
+
 Check Discord server linked above for features!
 
 [FEEL FREE TO USE!]
@@ -46,4 +44,5 @@ Check Discord server linked above for features!
 
 [HAS AN AUTOMATIC SYSTEM FOR CONFIGURATING SCRIPTING ABILITIES! (and for compatibility to!)]
 
-[RELEASED EMOTE/RIZZ CONFIG! NO MORE INFINITE YIELD!]```
+[RELEASED EMOTE/RIZZ CONFIG! NO MORE INFINITE YIELD!]
+```
