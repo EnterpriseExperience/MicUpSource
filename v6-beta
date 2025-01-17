@@ -3065,7 +3065,27 @@ Callback = function()
     end
 end,})
 
-if getgenv().MarketplaceService:UserOwnsGamepassAsync(getgenv().LocalPlayer.UserId, 951459548) then
+function check_GamePass(id)
+    local MarketplaceService = game:GetService("MarketplaceService")
+    local player = getgenv().LocalPlayer
+    local gamePassId = tonumber(id)
+
+    local success, hasPass = pcall(function()
+        return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamePassId)
+    end)
+
+    if success then
+        if hasPass then
+            print("Player owns the Game Pass! Loading :: Action")
+        else
+            print("Player does not own the GamePass! Not loading :: Action")
+        end
+    else
+        warn("Error checking Game Pass ownership:", hasPass)
+    end
+end
+
+if check_GamePass(951459548) then
     local quickAvChange = Tab13:CreateToggle({
     Name = "Change Avatar Quick [WILL Lag!⚠️]",
     CurrentValue = false,
@@ -6320,7 +6340,7 @@ Callback = function()
         getgenv().GetLoopRunning = false
         getgenv().LmaoGetMuted = false
         getgenv().css_digital = false
-        Rayfield:Destroy()
+        getgenv().Rayfield:Destroy()
     elseif executor_Name ~= "Argon" then
         ZEH_Module:Destroy_Script()
     end
@@ -7155,9 +7175,7 @@ else
     getgenv().camera_zoom_data = true
 end
 wait(0.2)
-print("Getting Requirements... [1 moment.]")
-wait(0.3)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PrivateBecauseYes/refs/heads/main/armsConvert.js", true))()
+print("Getting Requirements... [1 moment.]")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PrivateBecauseYes/refs/heads/main/armsConvert.js", true))()
 wait(0.4)
 if getgenv().Has_Died_Func then
     warn("Already setup death function.")
