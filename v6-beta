@@ -2988,6 +2988,46 @@ Callback = function(Map_Color)
     end
 end,})
 
+getgenv().BasePlate_ColorChange = Tab18:CreateColorPicker({
+Name = "Change BasePlate Color",
+Color = Color3.fromRGB(255, 0, 0),
+Flag = "PickingColorForMap",
+Callback = function(Base_Color)
+    local BasePlate_Texture = game:GetService("Workspace"):FindFirstChild("Baseplate"):FindFirstChild("Texture")
+
+    if BasePlate_Texture.Transparency == 1 then
+        BasePlate_Texture.Transparency = 0
+    end
+    wait(0.2)
+    BasePlate_Texture.Color3 = Base_Color
+end,})
+
+getgenv().Baseplate_Size = Tab18:CreateSlider({
+Name = "MIC UP BasePlate Size X",
+Range = {50, 2048},
+Increment = 1,
+Suffix = "",
+CurrentValue = 400,
+Flag = "ChangingBasePlateSized",
+Callback = function(Size_New)
+    local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+
+    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
+end,})
+
+getgenv().Baseplate_Size = Tab18:CreateSlider({
+Name = "MIC UP BasePlate Size Z",
+Range = {50, 2048},
+Increment = 1,
+Suffix = "",
+CurrentValue = 400,
+Flag = "ChangingBaseSize",
+Callback = function(Sized_Z)
+    local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+
+    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
+end,})
+
 getgenv().StopTheEmotes = Tab14:CreateButton({
 Name = "Stop All Emotes",
 Callback = function()
