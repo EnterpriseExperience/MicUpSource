@@ -603,7 +603,7 @@ local Window
 if executor_Name ~= "Argon" and executor_Name ~= "Nihon" then
     print("Your executor is not Argon or Nihon, using custom setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.4-E | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.6-E | Emote Keybinds: False",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
@@ -631,7 +631,7 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
     warn("Nihon detected, using alternate loader [for UI].")
     setclipboard("https://discord.gg/VJh3kkYzBn")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.4-E | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.6-E | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Made By: ZEH, LLC.",
@@ -662,7 +662,7 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
 elseif executor_Name == "Argon" then
     warn("Argon detected, using alternate setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.4-E | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.6-E | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "by ZEH, LLC.",
@@ -2826,6 +2826,46 @@ Callback = function(Map_Color)
             descendant.Color = Map_Color
         end
     end
+end,})
+
+getgenv().BasePlate_ColorChange = Tab18:CreateColorPicker({
+Name = "Change BasePlate Color",
+Color = Color3.fromRGB(255, 0, 0),
+Flag = "PickingColorForMap",
+Callback = function(Base_Color)
+    local BasePlate_Texture = game:GetService("Workspace"):FindFirstChild("Baseplate"):FindFirstChild("Texture")
+
+    if BasePlate_Texture.Transparency == 1 then
+        BasePlate_Texture.Transparency = 0
+    end
+    wait(0.2)
+    BasePlate_Texture.Color3 = Base_Color
+end,})
+
+getgenv().Baseplate_Size = Tab18:CreateSlider({
+Name = "MIC UP BasePlate Size X",
+Range = {50, 2048},
+Increment = 1,
+Suffix = "",
+CurrentValue = 400,
+Flag = "ChangingBasePlateSized",
+Callback = function(Size_New)
+    local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+
+    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
+end,})
+
+getgenv().Baseplate_Size = Tab18:CreateSlider({
+Name = "MIC UP BasePlate Size Z",
+Range = {50, 2048},
+Increment = 1,
+Suffix = "",
+CurrentValue = 400,
+Flag = "ChangingBaseSize",
+Callback = function(Sized_Z)
+    local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+
+    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
 end,})
 
 getgenv().StopTheEmotes = Tab14:CreateButton({
