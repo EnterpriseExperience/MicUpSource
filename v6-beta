@@ -603,7 +603,7 @@ local Window
 if executor_Name ~= "Argon" and executor_Name ~= "Nihon" then
     print("Your executor is not Argon or Nihon, using custom setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V6.9.1-CC | Emote Keybinds: True",
+        Name = "📜 Zacks Easy Hub 📜 | V6.9.6-CC | Emote Keybinds: True",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
@@ -631,7 +631,7 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
     warn("Nihon detected, using alternate loader [for UI].")
     setclipboard("https://discord.gg/VJh3kkYzBn")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V6.9.1-CC | Emote Keybinds: True",
+        Name = "📜 Zacks Easy Hub 📜 | V6.9.6-CC | Emote Keybinds: True",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Made By: ZEH, LLC.",
@@ -662,7 +662,7 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
 elseif executor_Name == "Argon" then
     warn("Argon detected, using alternate setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V6.9.1-CC | Emote Keybinds: True",
+        Name = "📜 Zacks Easy Hub 📜 | V6.9.6-CC | Emote Keybinds: True",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "by ZEH, LLC.",
