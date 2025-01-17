@@ -603,13 +603,13 @@ local Window
 if executor_Name ~= "Argon" and executor_Name ~= "Nihon" then
     print("Your executor is not Argon or Nihon, using custom setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-E | Emote Keybinds: False",
-        LoadingTitle = "DESTROY THIS GAME!",
-        LoadingSubtitle = "Zacks Easy Hub, Inc.",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.4-E | Emote Keybinds: False",
+        LoadingTitle = "Enjoy ruling MIC UP 🔊",
+        LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
-            Enabled = true,
-            FolderName = "Zacks_Easy_Hub_nil",
-            FileName = "ZacksEasyHub"
+            Enabled = false,
+            FolderName = nil,
+            FileName = "Zacks Easy Hub"
         },
         Discord = {
             Enabled = true,
@@ -631,16 +631,16 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
     warn("Nihon detected, using alternate loader [for UI].")
     setclipboard("https://discord.gg/VJh3kkYzBn")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-E | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.4-E | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
-        LoadingTitle = "DESTROY THIS GAME!",
-        LoadingSubtitle = "Zacks Easy Hub, Inc.",
+        LoadingTitle = "Enjoy ruling MIC UP 🔊",
+        LoadingSubtitle = "Made By: ZEH, LLC.",
         Theme = "Default",
         DisableRayfieldPrompts = true,
         DisableBuildWarnings = true,
         ConfigurationSaving = {
             Enabled = false,
-            FolderName = "ConfigurationZacksEasyHub",
+            FolderName = "ConfigurationZacskEasyHub",
             FileName = "ZacksEasyHub"
         },
         Discord = {
@@ -662,10 +662,10 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
 elseif executor_Name == "Argon" then
     warn("Argon detected, using alternate setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-E | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.4-E | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "Zacks Easy Hub, Inc.",
+        LoadingSubtitle = "by ZEH, LLC.",
         Theme = "Default",
         DisableRayfieldPrompts = false,
         DisableBuildWarnings = false,
@@ -2905,7 +2905,27 @@ Callback = function()
     end
 end,})
 
-if getgenv().MarketplaceService:UserOwnsGamepassAsync(getgenv().LocalPlayer.UserId, 951459548) then
+function check_GamePass(id)
+    local MarketplaceService = game:GetService("MarketplaceService")
+    local player = getgenv().LocalPlayer
+    local gamePassId = tonumber(id)
+
+    local success, hasPass = pcall(function()
+        return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamePassId)
+    end)
+
+    if success then
+        if hasPass then
+            print("Player owns the Game Pass! Loading :: Action")
+        else
+            print("Player does not own the GamePass! Not loading :: Action")
+        end
+    else
+        warn("Error checking Game Pass ownership:", hasPass)
+    end
+end
+
+if check_GamePass(951459548) then
     local quickAvChange = Tab13:CreateToggle({
     Name = "Change Avatar Quick [WILL Lag!⚠️]",
     CurrentValue = false,
@@ -6142,7 +6162,7 @@ Callback = function()
         getgenv().GetLoopRunning = false
         getgenv().LmaoGetMuted = false
         getgenv().css_digital = false
-        getgenv().Rayfield:Destroy()
+        Rayfield:Destroy()
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()
     elseif executor_Name ~= "Argon" then
         ZEH_Module:Patch_Update("v6-no-config-setting")
