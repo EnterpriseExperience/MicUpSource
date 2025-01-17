@@ -18,9 +18,9 @@ Star this repo and save it for later!
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 
-## UPDATE <-> [V6] [UPDATE!]:
+UPDATE <-> [V6] [UPDATE!]:
 
-# V6 New Features:
+V6 New Features:
 
 Check out the Discord server linked above for every feature!
 
