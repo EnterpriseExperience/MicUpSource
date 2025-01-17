@@ -508,7 +508,76 @@ getgenv().notify = function(title, content, duration)
         },
     })
 end
+wait(0.2)
+local Workspace
+local Players
+local ReplicatedStorage
 
+if cloneref then
+    Workspace = cloneref(game:GetService("Workspace"))
+    Players = cloneref(game:GetService("Players"))
+    ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+else
+    Workspace = game:GetService("Workspace")
+    Players = game:GetService("Players")
+    ReplicatedStorage = game:GetService("ReplicatedStorage")
+end
+wait(0.2)
+local Storage = Workspace:FindFirstChild("PartStorage")
+local CFrames = {
+    ["Conveyer_1"] = CFrame.new(203.401642, 12.8743448, -100.937836, 1.4424324e-05, -0.70705986, -0.707153797, 5.9902668e-06, 0.707153738, -0.70705986, 1, 5.9902668e-06, 1.4424324e-05),
+    ["Conveyer_2"] = CFrame.new(221.043793, 28.0164795, -104.937843, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    ["Conveyer_3"] = CFrame.new(217.043793, 28.0164833, -113.937866, -1.1920929e-07, 0, 1.00000012, 0, 1, 0, -1.00000012, 0, -1.1920929e-07),
+    ["Conveyer_4"] = CFrame.new(196.330627, 43.4307442, -113.937851, -3.23057175e-05, 0.707153201, 0.707060337, 1.33812428e-05, 0.707060337, -0.707153201, -1, -1.33812428e-05, -3.23057175e-05)
+}
+wait(0.2)
+for name, cf in pairs(CFrames) do
+    for _, v in ipairs(Workspace:GetChildren()) do
+        if v:IsA("BasePart") and v.CFrame == cf then
+            v.Name = name
+            v.Parent = Storage
+        end
+    end
+    wait(0.1)
+end
+wait(0.3)
+for _, v in ipairs(Storage:GetChildren()) do
+    if v.Name == "Conveyer_1" then
+        v.Transparency = 0.3
+        v.BrickColor = BrickColor.new("Really black")
+    end
+end
+wait(0.1)
+for _, v in ipairs(Storage:GetChildren()) do
+    if v.Name == "Conveyer_2" then
+        v.Transparency = 0.3
+        v.BrickColor = BrickColor.new("Really black")
+    end
+end
+wait(0.1)
+for _, v in ipairs(Storage:GetChildren()) do
+    if v.Name == "Conveyer_3" then
+        v.Transparency = 0.3
+        v.BrickColor = BrickColor.new("Really black")
+    end
+end
+wait(0.1)
+for _, v in ipairs(Storage:GetChildren()) do
+    if v.Name == "Conveyer_4" then
+        v.Transparency = 0.3
+        v.BrickColor = BrickColor.new("Really black")
+    end
+end
+wait(0.2)
+for _, v in ipairs(Workspace:GetChildren()) do
+    if v:IsA("MeshPart") and v.CFrame == CFrame.new(170.998001, 58, -113.500031, -1, 0, 0, 0, 1, 0, 0, 0, -1) then
+        v.Name = "MeshPart_Floor_Conveyers"
+        v.Parent = Workspace:FindFirstChild("PartStorage")
+        v.Transparency = 0.3
+        v.BrickColor = BrickColor.new("Really black")
+    end
+end
+wait(0.2)
 local image_id_zacks = 93594537601787
 getgenv().image_use_zacks = image_id_zacks
 local ZEH_Module
@@ -534,13 +603,13 @@ local Window
 if executor_Name ~= "Argon" and executor_Name ~= "Nihon" then
     print("Your executor is not Argon or Nihon, using custom setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V6.9.8 | Emote Keybinds: False",
-        LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "Zacks Easy Hub | Success.",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-E | Emote Keybinds: False",
+        LoadingTitle = "DESTROY THIS GAME!",
+        LoadingSubtitle = "Zacks Easy Hub, Inc.",
         ConfigurationSaving = {
-            Enabled = false,
-            FolderName = nil,
-            FileName = "Zacks Easy Hub"
+            Enabled = true,
+            FolderName = "Zacks_Easy_Hub_nil",
+            FileName = "ZacksEasyHub"
         },
         Discord = {
             Enabled = true,
@@ -562,16 +631,16 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
     warn("Nihon detected, using alternate loader [for UI].")
     setclipboard("https://discord.gg/VJh3kkYzBn")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V6.9.8 | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-E | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
-        LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "Made By: ZEH, LLC.",
+        LoadingTitle = "DESTROY THIS GAME!",
+        LoadingSubtitle = "Zacks Easy Hub, Inc.",
         Theme = "Default",
         DisableRayfieldPrompts = true,
         DisableBuildWarnings = true,
         ConfigurationSaving = {
             Enabled = false,
-            FolderName = "ConfigurationZacskEasyHub",
+            FolderName = "ConfigurationZacksEasyHub",
             FileName = "ZacksEasyHub"
         },
         Discord = {
@@ -593,10 +662,10 @@ elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
 elseif executor_Name == "Argon" then
     warn("Argon detected, using alternate setup [for UI].")
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V6.9.8 | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-E | Emote Keybinds: False",
         Icon = getgenv().image_use_zacks,
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "by ZEH, LLC.",
+        LoadingSubtitle = "Zacks Easy Hub, Inc.",
         Theme = "Default",
         DisableRayfieldPrompts = false,
         DisableBuildWarnings = false,
@@ -657,44 +726,47 @@ wait()
 getgenv().notify("Heads Up!", "We have now defaulted to Infinite Premium [mine].", 7)
 wait(0.1)
 -- [] -->> Initialize our Tabs and Sections <<-- [] --
-local Tab1 = Window:CreateTab("-<-Home->-", getgenv().image_use_zacks)
-local Section1 = Tab1:CreateSection("||| / Home Section |||")
+local Tab1 = Window:CreateTab("> Main", getgenv().image_use_zacks)
+local Section1 = Tab1:CreateSection("||| / Main Section |||")
 
-local Tab11 = Window:CreateTab("-<-Booths->-", getgenv().image_use_zacks)
-local Section11 = Tab11:CreateSection("||| / Booths Section |||")
+local Tab11 = Window:CreateTab("> Booths", getgenv().image_use_zacks)
+local Section11 = Tab11:CreateSection("||| Booths Section |||")
 
-local Tab2 = Window:CreateTab("-<-Character->-", getgenv().image_use_zacks)
-local Section2 = Tab2:CreateSection("||| / Character [1] Section |||")
+local Tab2 = Window:CreateTab("> LocalPlayer", getgenv().image_use_zacks)
+local Section2 = Tab2:CreateSection("||| LocalPlayer Section |||")
 
-local Tab13 = Window:CreateTab("-<-Players->-", getgenv().image_use_zacks)
-local Section13 = Tab13:CreateSection("||| / Character [2] Section |||")
+local Tab13 = Window:CreateTab("> Players", getgenv().image_use_zacks)
+local Section13 = Tab13:CreateSection("||| Players Section |||")
 
-local Tab10 = Window:CreateTab("-<-Teleports->-", getgenv().image_use_zacks)
-local Section10 = Tab10:CreateSection("||| / Teleports Section |||")
+local Tab10 = Window:CreateTab("> Teleports", getgenv().image_use_zacks)
+local Section10 = Tab10:CreateSection("||| Teleports Section |||")
 
-local Tab4 = Window:CreateTab("-<-Chat->-", getgenv().image_use_zacks)
-local Section4 = Tab4:CreateSection("||| / Chatting Section |||")
+local Tab18 = Window:CreateTab("> Map", getgenv().image_use_zacks)
+local Section18 = Tab18:CreateSection("||| Map Section |||")
 
-local Tab5 = Window:CreateTab("-<-Misc->-", getgenv().image_use_zacks)
-local Section5 = Tab5:CreateSection("||| / Extras Section |||")
+local Tab4 = Window:CreateTab("> Chat", getgenv().image_use_zacks)
+local Section4 = Tab4:CreateSection("||| Chatting Section |||")
 
-local Tab16 = Window:CreateTab("-<-Universal->-", getgenv().image_use_zacks)
-local Section16 = Tab16:CreateSection("||| / Universal Section |||")
+local Tab5 = Window:CreateTab("> Exploits", getgenv().image_use_zacks)
+local Section5 = Tab5:CreateSection("||| Misc Section |||")
 
-local Tab17 = Window:CreateTab("-<-Animations->-", getgenv().image_use_zacks)
-local Section17 = Tab17:CreateSection("||| / Animation Packages Section |||")
+local Tab16 = Window:CreateTab("> Universal", getgenv().image_use_zacks)
+local Section16 = Tab16:CreateSection("||| Universal Section |||")
 
-local Tab9 = Window:CreateTab("-<-Lighting->-", getgenv().image_use_zacks)
-local Section9 = Tab9:CreateSection("||| / Lighting Section |||")
+local Tab17 = Window:CreateTab("> Anims", getgenv().image_use_zacks)
+local Section17 = Tab17:CreateSection("||| Animation Packages Section |||")
 
-local Tab12 = Window:CreateTab("-<-Emotes->-", getgenv().image_use_zacks)
-local Section12 = Tab12:CreateSection("||| / Emoting Section |||")
+local Tab9 = Window:CreateTab("> Lighting", getgenv().image_use_zacks)
+local Section9 = Tab9:CreateSection("||| Lighting Section |||")
 
-local Tab14 = Window:CreateTab("-<-Copy Anim->-", getgenv().image_use_zacks)
-local Section14 = Tab14:CreateSection("||| / Copy Animation Section |||")
+local Tab12 = Window:CreateTab("> Emotes", getgenv().image_use_zacks)
+local Section12 = Tab12:CreateSection("||| Emoting Section |||")
 
-local Tab15 = Window:CreateTab("-<-UI->-", getgenv().image_use_zacks)
-local Section15 = Tab15:CreateSection("||| / UI Control Section |||")
+local Tab14 = Window:CreateTab("> CopyAnim", getgenv().image_use_zacks)
+local Section14 = Tab14:CreateSection("||| Copy Animation Section |||")
+
+local Tab15 = Window:CreateTab("> Settings", getgenv().image_use_zacks)
+local Section15 = Tab15:CreateSection("||| UI Settings Section |||")
 wait(0.2)
 getgenv().material_toggle = function(boolean)
     if boolean == true then
@@ -877,7 +949,7 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()") -- K*ll yourself, stop waiting.
     end
 end)
-task.wait(0.1)
+wait(0.4)
 local TeleportService = game:GetService("TeleportService")
 
 PlaceId, JobId = game.PlaceId, game.JobId
@@ -2069,15 +2141,34 @@ Callback = function()
     getgenv().Humanoid:ChangeState(3)
 end,})
 
+local MichaelJackson_Speed = 120
+local michaelJacksonActive = false
+
+getgenv().SetWalkSpeedShuffle = Tab2:CreateSlider({
+Name = "Michael Jackson Walk-Speed",
+Range = {5, 500},
+Increment = 1,
+Suffix = "",
+CurrentValue = 120,
+Flag = "MichaelJacksonSpeed",
+Callback = function(get_michael_shuffle_speed)
+    MichaelJackson_Speed = get_michael_shuffle_speed
+    if michaelJacksonActive then
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = MichaelJackson_Speed
+    end
+end,})
+
 getgenv().AnthonyShuffle = Tab2:CreateToggle({
 Name = "Michael Jackson Walk",
 CurrentValue = false,
 Flag = "DoTheMichael",
 Callback = function(michaelJackson)
+    michaelJacksonActive = michaelJackson
     if michaelJackson then
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = MichaelJackson_Speed
+        wait(0.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(4391208058)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 120
-        wait(0.3)
+        wait(0.2)
         getgenv().Character:FindFirstChild("Animate").Disabled = true
     else
         getgenv().Character:FindFirstChild("Animate").Disabled = false
@@ -2086,7 +2177,6 @@ Callback = function(michaelJackson)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.4)
         getgenv().Humanoid.WalkSpeed = 16
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid")
         wait(0.2)
         getgenv().HumanoidRootPart.Anchored = false
     end
@@ -2192,7 +2282,7 @@ local DeletePlrBooth = Tab11:CreateButton({
 Name = "Delete Current Booth",
 Callback = function()
     for i = 1, 80 do
-        getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
+        getgenv().ReplicatedStorage:FindFirstChild("DeleteBoothOwnership"):FireServer()
     end
 end,})
 
@@ -2205,6 +2295,7 @@ Callback = function(boothStolen)
         getgenv().AutoClaimEnabled = true
         getgenv().Booth = nil
         getgenv().OwnershipConnection = nil
+        local Character = getgenv().Character
         
         local function getStall()
             for _, v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
@@ -2217,10 +2308,10 @@ Callback = function(boothStolen)
         
         local function claimStall(stall)
             if stall then
-                local OldCF = Character:WaitForChild("HumanoidRootPart").CFrame
+                local OldCF = getgenv().Character:WaitForChild("HumanoidRootPart").CFrame
         
                 repeat
-                    Character:PivotTo(stall:GetPivot() + Vector3.new(0, 3, 0))
+                    getgenv().Character:PivotTo(stall:GetPivot() + Vector3.new(0, 3, 0))
                     task.wait(0.5)
         
                     local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
@@ -2233,7 +2324,7 @@ Callback = function(boothStolen)
                     task.wait(0.5)
                 until stall.Username.BillboardGui.TextLabel.Text == "Owned by: " .. LocalPlayer.Name or not getgenv().AutoClaimEnabled
 
-                Character:PivotTo(OldCF)
+                getgenv().Character:PivotTo(OldCF)
             end
         end
         
@@ -2251,7 +2342,6 @@ Callback = function(boothStolen)
                         end)
                     end
                 else
-                    print("Reclaiming Stall...")
                     local newStall = getStall()
                     claimStall(newStall)
                 end
@@ -2296,9 +2386,8 @@ Callback = function()
     
     local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
     local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
-    
-    
-    local OldCF = getgenv().HumanoidRootPart.CFrame
+
+    local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
     local function fireAndUnclaimStall(stall)
         local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
@@ -2334,9 +2423,7 @@ Callback = function()
     wait(0.2)
     unclaimStalls()
     wait(0.3)
-    Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
-    wait(0.2)
-    print("Finished Unclaiming ALL Booths.")
+    getgenv().Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
 end,})
 
 local CopyAnimAddUser = Tab14:CreateInput({
@@ -2627,14 +2714,127 @@ Callback = function(getLoopCopyAnim)
     end
 end,})
 
-local StopTheEmotes = Tab14:CreateButton({
+getgenv().MaterialForMap = Tab18:CreateDropdown({
+Name = "Map Material",
+Options = {
+    "Plastic",
+    "Wood",
+    "Slate",
+    "Concrete",
+    "CorrodedMetal",
+    "DiamondPlate",
+    "Foil",
+    "Grass",
+    "Ice",
+    "Marble",
+    "Granite",
+    "Brick",
+    "Pebble",
+    "Sand",
+    "Fabric",
+    "SmoothPlastic",
+    "Metal",
+    "WoodPlanks",
+    "Cobblestone",
+    "Air",
+    "Water",
+    "Rock",
+    "Glacier",
+    "Snow",
+    "Sandstone",
+    "Mud",
+    "Basalt",
+    "Ground",
+    "CrackedLava",
+    "Asphalt",
+    "LeafyGrass",
+    "Salt"
+},
+CurrentOption = "Plastic",
+MultipleOptions = false,
+Flag = "select_materials",
+Callback = function(selected_material)
+    if typeof(selected_material) == "table" then
+        selected_material = selected_material[1]
+    end
+
+    if typeof(selected_material) ~= "string" then
+        return warn("Invalid material selected. Expected a string, got: "..typeof(selected_material))
+    end
+
+    local materialEnum = Enum.Material[selected_material]
+    if not materialEnum then
+        return warn("Invalid material: "..tostring(selected_material))
+    end
+
+    local function isPartOfCharacter(part)
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player.Character and part:IsDescendantOf(player.Character) then
+                return true
+            end
+        end
+        return false
+    end
+    wait(0.2)
+    for _, descendant in ipairs(workspace:GetDescendants()) do
+        if (descendant:IsA("BasePart") or descendant:IsA("MeshPart") or descendant:IsA("UnionOperation")) and not isPartOfCharacter(descendant) then
+            descendant.Material = materialEnum
+        end
+    end
+end,})
+
+getgenv().Change_Map_Transparency = Tab18:CreateSlider({
+Name = "Map Transparency",
+Range = {0, 1},
+Increment = 0.1,
+Suffix = "",
+CurrentValue = 0,
+Flag = "MapTransparency",
+Callback = function(Transparent_Map)
+    local function isPartOfCharacter(part)
+        for _, player in ipairs(getgenv().Players:GetPlayers()) do
+            if player.Character and part:IsDescendantOf(player.Character) then
+                return true
+            end
+        end
+        return false
+    end
+    wait(0.2)
+    for _, descendant in ipairs(getgenv().Workspace:GetDescendants()) do
+        if (descendant:IsA("BasePart") or descendant:IsA("MeshPart") or descendant:IsA("UnionOperation")) and not isPartOfCharacter(descendant) then
+            descendant.Transparency = Transparent_Map
+        end
+    end
+end,})
+
+getgenv().Change_Map_Color = Tab18:CreateColorPicker({
+Name = "Change Map Color",
+Color = Color3.fromRGB(45, 45, 45),
+Flag = "PickingColorForMap",
+Callback = function(Map_Color)
+    local function isPartOfCharacter(part)
+        for _, player in ipairs(getgenv().Players:GetPlayers()) do
+            if player.Character and part:IsDescendantOf(player.Character) then
+                return true
+            end
+        end
+        return false
+    end
+    wait(0.2)
+    for _, descendant in ipairs(getgenv().Workspace:GetDescendants()) do
+        if (descendant:IsA("BasePart") or descendant:IsA("MeshPart") or descendant:IsA("UnionOperation")) and not isPartOfCharacter(descendant) then
+            descendant.Color = Map_Color
+        end
+    end
+end,})
+
+getgenv().StopTheEmotes = Tab14:CreateButton({
 Name = "Stop All Emotes",
 Callback = function()
     getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
     function getThatPlr()
-        
-        for i, v in pairs(Players:GetChildren()) do
+        for i, v in pairs(getgenv().Players:GetChildren()) do
             if getgenv().singlePlayerTable[v.Name] then
                 return v
             end
@@ -2705,80 +2905,84 @@ Callback = function()
     end
 end,})
 
-local quickAvChange = Tab13:CreateToggle({
-Name = "Change Avatar Quick [WILL Lag!⚠️]",
-CurrentValue = false,
-Flag = "quickAvChange",
-Callback = function(quickAv)
-    if quickAv then
-        local players = game:GetService("Players")
-        getgenv().ava_switch = true
+if getgenv().MarketplaceService:UserOwnsGamepassAsync(getgenv().LocalPlayer.UserId, 951459548) then
+    local quickAvChange = Tab13:CreateToggle({
+    Name = "Change Avatar Quick [WILL Lag!⚠️]",
+    CurrentValue = false,
+    Flag = "quickAvChange",
+    Callback = function(quickAv)
+        if quickAv then
+            local players = game:GetService("Players")
+            getgenv().ava_switch = true
 
-        local usernames = {
-            "DenisDaily",
-            "ItsFunneh",
-            "Flamingo",
-            "KreekCraft",
-            "GamingWithKev",
-            "RussoTalks",
-            "Tofuu",
-            "Sketch",
-            "AshleytheUnicorn",
-            "TanqR",
-            "LeahAshe",
-            "Thinknoodles",
-            "iamSanna",
-            "FGTEEV",
-            "ZacharyZaxor",
-            "Builderman",
-            "Roblox",
-            "Minitoon",
-            "Asimo3089",
-            "Badcc",
-            "Callmehbob",
-            "Loleris",
-            "Beeism",
-            "MeganPlays",
-            "ChadAlly",
-            "AussieVixen",
-            "Thinknoodles",
-            "GDad",
-            "SuperShiftery",
-            "SimplyBlox",
-            "MeganPlays",
-            "GoldenGlove",
-            "TeraBrite",
-        }
+            local usernames = {
+                "DenisDaily",
+                "ItsFunneh",
+                "Flamingo",
+                "KreekCraft",
+                "GamingWithKev",
+                "RussoTalks",
+                "Tofuu",
+                "Sketch",
+                "AshleytheUnicorn",
+                "TanqR",
+                "LeahAshe",
+                "Thinknoodles",
+                "iamSanna",
+                "FGTEEV",
+                "ZacharyZaxor",
+                "Builderman",
+                "Roblox",
+                "Minitoon",
+                "Asimo3089",
+                "Badcc",
+                "Callmehbob",
+                "Loleris",
+                "Beeism",
+                "MeganPlays",
+                "ChadAlly",
+                "AussieVixen",
+                "Thinknoodles",
+                "GDad",
+                "SuperShiftery",
+                "SimplyBlox",
+                "MeganPlays",
+                "GoldenGlove",
+                "TeraBrite",
+            }
 
-        local function gatherCurrentPlayers()
-            
-            for _, player in ipairs(players:GetPlayers()) do
-                table.insert(usernames, player.Name)
-            end
-        end
-
-        gatherCurrentPlayers()
-
-        while getgenv().ava_switch == true do
-            wait()
-            for _, username in ipairs(usernames) do
-                local args = {
-                    [1] = username
-                }
+            local function gatherCurrentPlayers()
                 
-                game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                for _, player in ipairs(players:GetPlayers()) do
+                    table.insert(usernames, player.Name)
+                end
             end
+
+            gatherCurrentPlayers()
+
+            while getgenv().ava_switch == true do
+                wait()
+                for _, username in ipairs(usernames) do
+                    local args = {
+                        [1] = username
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                end
+            end
+        else
+            getgenv().ava_switch = false
+            wait(0.3)
+            local args = {
+                [1] = tostring(getgenv().LocalPlayer.Name)
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
         end
-    else
-        getgenv().ava_switch = false
-        wait(0.3)
-        local args = {
-            [1] = tostring(getgenv().LocalPlayer.Name)
-        }
-        
-        game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
-    end
-end,})
+    end,})
+else
+    warn("User does not own GamePass - Not loading this option.")
+end
 
 local AutoChangingBooth = Tab11:CreateToggle({
 Name = "Quick Changing Booth",
@@ -3026,10 +3230,12 @@ Flag = "toggleNoclipChar",
 Callback = function(noclip_toggle)
     function reset_collide(reset_bool)
         if reset_bool == true then
+            getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = true
             getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
             getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
             getgenv().HumanoidRootPart.CanCollide = true
         elseif reset_bool == false then
+            getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
             getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
             getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
             getgenv().HumanoidRootPart.CanCollide = false
@@ -3499,7 +3705,7 @@ Callback = function()
     getgenv().flashbacks_script = true
 end,})
 
-local stopFlashbackScript = Tab16:CreateButton({
+getgenv().stopFlashbackScript = Tab16:CreateButton({
 Name = "Unload Flashback (Stop Running/Quit)",
 Callback = function()
     local runService = game:GetService("RunService") 
@@ -3553,7 +3759,7 @@ else
     elevator = game:GetService("Workspace"):FindFirstChild("Elevator")
 end
 wait(0.2)
-local elevatorModifier = Tab1:CreateToggle({
+getgenv().elevatorModifier = Tab1:CreateToggle({
 Name = "Visible Elevator (Tower - Float Up Part)",
 CurrentValue = false,
 Flag = "toggleElevatorVisibility",
@@ -3565,7 +3771,7 @@ Callback = function(elevToggle)
     end
 end,})
 
-local collisionForElevator = Tab1:CreateToggle({
+getgenv().collisionForElevator = Tab1:CreateToggle({
 Name = "Elevator Collision (Tower - Float Up Part)",
 CurrentValue = false,
 Flag = "toggleElevatorCollide",
@@ -3580,11 +3786,11 @@ Callback = function(elevatorCollide)
     end
 end,})
 
-local InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
+getgenv().InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
 wait()
-local InfoLabelParagraph = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
+getgenv().InfoLabelParagraph = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
 wait()
-local getHoverboardFlyInput = Tab13:CreateInput({
+getgenv().getHoverboardFlyInput = Tab13:CreateInput({
     Name = "Hoverboard Fly",
     PlaceholderText = "Speed",
     RemoveTextAfterFocusLost = true,
@@ -3703,7 +3909,7 @@ local getHoverboardFlyInput = Tab13:CreateInput({
     end
 end,})
 
-local viewBooth = Tab11:CreateToggle({
+getgenv().viewBooth = Tab11:CreateToggle({
 Name = "View Your Booth",
 CurrentValue = false,
 Flag = "theBoothView",
@@ -3733,7 +3939,7 @@ Callback = function(specBooth)
     end
 end,})
 
-local TPToBooth = Tab11:CreateButton({
+getgenv().TPToBooth = Tab11:CreateButton({
 Name = "Teleport To Booth",
 Callback = function()
     local function get_booth()
@@ -3754,7 +3960,7 @@ Callback = function()
     getgenv().Character:PivotTo(plr_booth:GetPivot())
 end,})
 
-local tpToAvatarUI = Tab1:CreateButton({
+getgenv().tpToAvatarUI = Tab1:CreateButton({
 Name = "Teleport To Avatar-UI",
 Callback = function()
     local Folder = getgenv().Workspace:FindFirstChild("PartStorage")
@@ -3763,7 +3969,7 @@ Callback = function()
     getgenv().Character:PivotTo(Avatar_UI:GetPivot())
 end,})
 
-local AutoLikingPlayer = Tab1:CreateToggle({
+getgenv().AutoLikingPlayer = Tab1:CreateToggle({
 Name = "[Avatar-UI]: Auto Like Player",
 CurrentValue = false,
 Flag = "likingPlayerAuto",
@@ -3788,7 +3994,7 @@ Callback = function(likeLol)
     end
 end,})
 
-local dislikePlayersAvatar = Tab1:CreateToggle({
+getgenv().dislikePlayersAvatar = Tab1:CreateToggle({
 Name = "[Avatar-UI]: Auto Dislike Player",
 CurrentValue = false,
 Flag = "dislikingEverybody",
@@ -3813,88 +4019,16 @@ Callback = function(dislikeButton)
     end
 end,})
 
-local Stop_Music_Player = Tab1:CreateButton({
-Name = "Stop In-Game Music",
-Callback = function()
-    local Local_Player = game:GetService("Players").LocalPlayer
-    local Stop_Music_Frame = getgenv().PlayerGui:FindFirstChild("Menu"):FindFirstChild("Background"):FindFirstChild("Music"):FindFirstChild("Stop")
-    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-
-    if firesignal then
-        for _,v in pairs(Stop_Music_Frame:GetDescendants()) do
-            if v:IsA("ImageButton") or v:IsA("TextButton") then
-                for i,Signal in pairs(Signals) do
-                    firesignal(v[Signal])
-                end
-            end
-        end
-    else
-        return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
-    end
-end,})
-
-local Music_Player = Tab1:CreateButton({
-Name = "Shuffle In-Game Music",
-Callback = function()
-    local Local_Player = game:GetService("Players").LocalPlayer
-    local Shuffle_Music_Frame = Local_Player:WaitForChild("PlayerGui"):WaitForChild("Menu"):WaitForChild("Background"):WaitForChild("Music"):WaitForChild("Shuffle")
-    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-
-    if firesignal then
-        for _,v in pairs(Shuffle_Music_Frame:GetDescendants()) do
-            if v:IsA("ImageButton") or v:IsA("TextButton") then
-                for i,Signal in pairs(Signals) do
-                    firesignal(v[Signal])
-                end
-            end
-        end
-    else
-        return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
-    end
-end,})
-
-local Music_Player = Tab1:CreateToggle({
-Name = "Loop Shuffle In-Game Music",
-CurrentValue = false,
-Flag = "ToggleInGameMusic",
-Callback = function(ingame_music)
-    if ingame_music then
-        getgenv().plr_music_menu = true
+if firesignal then
+    getgenv().Stop_Music_Player = Tab1:CreateButton({
+    Name = "Stop In-Game Music",
+    Callback = function()
         local Local_Player = game:GetService("Players").LocalPlayer
-        local PlayerGui = Local_Player:WaitForChild("PlayerGui")
-        local Menu = PlayerGui:WaitForChild("Menu")
-        local Background = Menu:WaitForChild("Background")
-        local Music = Background:WaitForChild("Music")
-        local Stop = Music:WaitForChild("Stop")
-        local Shuffle_Music_Frame = Music:WaitForChild("Shuffle")
+        local Stop_Music_Frame = getgenv().PlayerGui:FindFirstChild("Menu"):FindFirstChild("Background"):FindFirstChild("Music"):FindFirstChild("Stop")
         local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-        
+
         if firesignal then
-            while getgenv().plr_music_menu == true do
-            task.wait(1)
-                for _,v in pairs(Shuffle_Music_Frame:GetDescendants()) do
-                    if v:IsA("ImageButton") or v:IsA("TextButton") then
-                        for i,Signal in pairs(Signals) do
-                            firesignal(v[Signal])
-                        end
-                    end
-                end
-            end
-        else
-            return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
-        end
-    else
-        local Local_Player = game:GetService("Players").LocalPlayer
-        local PlayerGui = Local_Player:WaitForChild("PlayerGui")
-        local Menu = PlayerGui:WaitForChild("Menu")
-        local Background = Menu:WaitForChild("Background")
-        local Music = Background:WaitForChild("Music")
-        local Stop = Music:WaitForChild("Stop")
-        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-        getgenv().plr_music_menu = false
-        task.wait(0.3)
-        if firesignal then
-            for _,v in pairs(Stop:GetDescendants()) do
+            for _,v in pairs(Stop_Music_Frame:GetDescendants()) do
                 if v:IsA("ImageButton") or v:IsA("TextButton") then
                     for i,Signal in pairs(Signals) do
                         firesignal(v[Signal])
@@ -3904,10 +4038,86 @@ Callback = function(ingame_music)
         else
             return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
         end
-    end
-end,})
+    end,})
 
-local WhitelistFriendPlr = Tab1:CreateToggle({
+    getgenv().Music_Player = Tab1:CreateButton({
+    Name = "Shuffle In-Game Music",
+    Callback = function()
+        local Local_Player = game:GetService("Players").LocalPlayer
+        local Shuffle_Music_Frame = Local_Player:WaitForChild("PlayerGui"):WaitForChild("Menu"):WaitForChild("Background"):WaitForChild("Music"):WaitForChild("Shuffle")
+        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+
+        if firesignal then
+            for _,v in pairs(Shuffle_Music_Frame:GetDescendants()) do
+                if v:IsA("ImageButton") or v:IsA("TextButton") then
+                    for i,Signal in pairs(Signals) do
+                        firesignal(v[Signal])
+                    end
+                end
+            end
+        else
+            return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
+        end
+    end,})
+
+    getgenv().Music_Player = Tab1:CreateToggle({
+    Name = "Loop Shuffle In-Game Music",
+    CurrentValue = false,
+    Flag = "ToggleInGameMusic",
+    Callback = function(ingame_music)
+        if ingame_music then
+            getgenv().plr_music_menu = true
+            local Local_Player = game:GetService("Players").LocalPlayer
+            local PlayerGui = Local_Player:WaitForChild("PlayerGui")
+            local Menu = PlayerGui:WaitForChild("Menu")
+            local Background = Menu:WaitForChild("Background")
+            local Music = Background:WaitForChild("Music")
+            local Stop = Music:WaitForChild("Stop")
+            local Shuffle_Music_Frame = Music:WaitForChild("Shuffle")
+            local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+            
+            if firesignal then
+                while getgenv().plr_music_menu == true do
+                task.wait(1)
+                    for _,v in pairs(Shuffle_Music_Frame:GetDescendants()) do
+                        if v:IsA("ImageButton") or v:IsA("TextButton") then
+                            for i,Signal in pairs(Signals) do
+                                firesignal(v[Signal])
+                            end
+                        end
+                    end
+                end
+            else
+                return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
+            end
+        else
+            local Local_Player = game:GetService("Players").LocalPlayer
+            local PlayerGui = Local_Player:WaitForChild("PlayerGui")
+            local Menu = PlayerGui:WaitForChild("Menu")
+            local Background = Menu:WaitForChild("Background")
+            local Music = Background:WaitForChild("Music")
+            local Stop = Music:WaitForChild("Stop")
+            local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+            getgenv().plr_music_menu = false
+            task.wait(0.3)
+            if firesignal then
+                for _,v in pairs(Stop:GetDescendants()) do
+                    if v:IsA("ImageButton") or v:IsA("TextButton") then
+                        for i,Signal in pairs(Signals) do
+                            firesignal(v[Signal])
+                        end
+                    end
+                end
+            else
+                return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
+            end
+        end
+    end,})
+else
+    warn("'firesignal' unsupported, not loading In-Game music functions.")
+end
+
+getgenv().WhitelistFriendPlr = Tab1:CreateToggle({
 Name = "[Avatar-UI]: Only Like Friend",
 CurrentValue = false,
 Flag = "LikingOnlyFriends",
@@ -3956,7 +4166,7 @@ Callback = function(myFriendsLiked)
     end
 end,})
 
-local GotoPlayerBox = Tab13:CreateInput({
+getgenv().GotoPlayerBox = Tab13:CreateInput({
 Name = "Goto/TP Player",
 CurrentValue = "",
 PlaceholderText = "User Here",
@@ -3978,7 +4188,7 @@ Callback = function(get_player_func)
     end
 end,})
 
-local ViewPlrBox = Tab13:CreateInput({
+getgenv().ViewPlrBox = Tab13:CreateInput({
 Name = "View/Spectate Player",
 CurrentValue = "",
 PlaceholderText = "User Here",
@@ -4002,14 +4212,14 @@ Callback = function(do_plr_func)
     end
 end,})
 
-local UnviewPlr = Tab13:CreateButton({
+getgenv().UnviewPlr = Tab13:CreateButton({
 Name = "Unview/Unspectate Player",
 Callback = function()
     getgenv().Camera.CameraSubject = getgenv().Character
 end,})
 
 if setfpscap then
-    local settingFPSSetting = Tab1:CreateSlider({
+    getgenv().settingFPSSetting = Tab1:CreateSlider({
     Name = "Set FPS Cap",
     Range = {0, 999},
     Increment = 1,
@@ -4031,7 +4241,7 @@ else
     getgenv().notify("Failure!", "Your executor does is garbage and does not support 2 ez functions.", 5)
 end
 
-local MutingMyself = Tab1:CreateToggle({
+getgenv().MutingMyself = Tab1:CreateToggle({
 Name = "Mute Yourself",
 CurrentValue = false,
 Flag = "IJustMutedMyself",
@@ -4048,7 +4258,7 @@ Callback = function(muteYou)
     end
 end,})
 
-local DelInventory = Tab5:CreateButton({
+getgenv().DelInventory = Tab5:CreateButton({
 Name = "Delete Inventory",
 Callback = function()
     local Replicated_Storage = getgenv().ReplicatedStorage
@@ -4098,13 +4308,13 @@ function Tools_Grab_Func()
     end
 end
 
-local GrabEverything = Tab5:CreateButton({
+getgenv().GrabEverything = Tab5:CreateButton({
 Name = "Grab All Tools",
 Callback = function()
     Tools_Grab_Func()
 end,})
 
-local getEverything = Tab5:CreateToggle({
+getgenv().getEverything = Tab5:CreateToggle({
 Name = "Loop Grab All Tools",
 CurrentValue = false,
 Flag = "grabbedAllThat",
@@ -4124,7 +4334,7 @@ Callback = function(grabFreeTools)
     end
 end,})
 
-local ChatBypassBest = Tab4:CreateButton({
+getgenv().ChatBypassBest = Tab4:CreateButton({
 Name = "Chat Bypass (UserCreation, not up rn)",
 Callback = function()
     --loadstring(game:HttpGet("https://raw.githubusercontent.com/1price/usercreation/refs/heads/main/UserCreation.lua", true))()
@@ -4132,7 +4342,7 @@ Callback = function()
     return getgenv().notify("[Read]:", "Usercreation bypassing is temporarily disabled.", 6)
 end,})
 
-local ClearChatMsgs = Tab4:CreateButton({
+getgenv().ClearChatMsgs = Tab4:CreateButton({
 Name = "Clear Chat Messages",
 Callback = function()
     local chat = getgenv().TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
@@ -4141,18 +4351,18 @@ Callback = function()
         chat:SendAsync(msg)
     end
     
-    for i = 1, 19 do
+    for i = 1, 9 do
         sendchat("")
     end
 end,})
 
-local GetFakeChatGUI = Tab4:CreateButton({
+getgenv().GetFakeChatGUI = Tab4:CreateButton({
 Name = "Fake Chat GUI",
 Callback = function()
     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
 end,})
 
-local ChatBypassTextInput = Tab4:CreateInput({
+getgenv().ChatBypassTextInput = Tab4:CreateInput({
 Name = "Chat Bypass Input",
 PlaceholderText = "Text",
 RemoveTextAfterFocusLost = true,
@@ -4240,7 +4450,7 @@ Callback = function(saveInputFilter)
     sendchat(saveInputFilter)
 end,})
 
-local inputBypassTextBooth = Tab11:CreateInput({
+getgenv().inputBypassTextBooth = Tab11:CreateInput({
 Name = "Booth Text Bypass",
 PlaceholderText = "Text",
 RemoveTextAfterFocusLost = true,
@@ -4434,8 +4644,6 @@ else
             local Local_Plr_Name = Local_Player.Name or tostring(Local_Player.Name)
 
             getgenv().CharFlick = false
-            wait(1)
-            repeat wait() until not getgenv().CharFlick or getgenv().CharFlick == false
             wait(0.3)
             local args = {
                 [1] = tostring(Local_Plr_Name)
@@ -4470,7 +4678,7 @@ local Settings = {
     Keybind = "C"
 }
 
-local GetInvis = Tab2:CreateButton({
+getgenv().GetInvis = Tab2:CreateButton({
 Name = "Invisible",
 Callback = function()
     if getgenv().Invis_Loaded == true or Invis_Loaded and not getgenv().INVIS_DEBUG == true then
@@ -4657,7 +4865,7 @@ Callback = function()
     getgenv().notify("Info:", "Press "..tostring(Settings.Keybind).." to change visibility.", 10)
 end,})
 
-local PrivRoomFloor = Tab10:CreateButton({
+getgenv().PrivRoomFloor = Tab10:CreateButton({
 Name = "TP To Private Room (Inside)",
 Callback = function()
     wait(0.4)
@@ -4674,7 +4882,7 @@ Callback = function()
     end
 end,})
 
-local NextToBathrooms = Tab10:CreateButton({
+getgenv().NextToBathrooms = Tab10:CreateButton({
 Name = "TP To Room Next To Bathrooms",
 Callback = function()
     wait(0.4)
@@ -4691,7 +4899,7 @@ Callback = function()
     end
 end,})
 
-local TPToBathrooms = Tab10:CreateButton({
+getgenv().TPToBathrooms = Tab10:CreateButton({
 Name = "TP To Bathrooms",
 Callback = function()
     wait(0.4)
@@ -4708,7 +4916,7 @@ Callback = function()
     end
 end,})
 
-local TPToChilling = Tab10:CreateButton({
+getgenv().TPToChilling = Tab10:CreateButton({
 Name = "TP To Chill Spot",
 Callback = function()
     wait(0.4)
@@ -4725,7 +4933,7 @@ Callback = function()
     end
 end,})
 
-local TPPicnicFirst = Tab10:CreateButton({
+getgenv().TPPicnicFirst = Tab10:CreateButton({
 Name = "TP To Picnic (Seat 1)",
 Callback = function()
     wait(0.4)
@@ -4742,7 +4950,7 @@ Callback = function()
     end
 end,})
 
-local TPPicnicSecond = Tab10:CreateButton({
+getgenv().TPPicnicSecond = Tab10:CreateButton({
 Name = "TP To Picnic (Seat 2)",
 Callback = function()
     wait(0.4)
@@ -4759,7 +4967,7 @@ Callback = function()
     end
 end,})
 
-local TPMicFirst = Tab10:CreateButton({
+getgenv().TPMicFirst = Tab10:CreateButton({
 Name = "TP To Stage (Mic 1)",
 Callback = function()
     wait(0.4)
@@ -4774,7 +4982,7 @@ Callback = function()
     end
 end,})
 
-local TPMicSecond = Tab10:CreateButton({
+getgenv().TPMicSecond = Tab10:CreateButton({
 Name = "TP To Stage (Mic 2)",
 Callback = function()
     wait(0.4)
@@ -4791,7 +4999,7 @@ Callback = function()
     end
 end,})
 
-local TPMiddleRoomArea = Tab10:CreateButton({
+getgenv().TPMiddleRoomArea = Tab10:CreateButton({
 Name = "TP To Middle Room (Tent)",
 Callback = function()
     wait(0.4)
@@ -4808,7 +5016,7 @@ Callback = function()
     end
 end,})
 
-local TPBoothRows = Tab10:CreateButton({
+getgenv().TPBoothRows = Tab10:CreateButton({
 Name = "TP To Booth Rows (Table)",
 Callback = function()
     wait(0.4)
@@ -4821,7 +5029,7 @@ Callback = function()
     end
 end,})
 
-local TPToTowerFloatPart = Tab10:CreateButton({
+getgenv().TPToTowerFloatPart = Tab10:CreateButton({
 Name = "TP To Tower (Float Up Part)",
 Callback = function()
     wait(0.4)
@@ -4834,7 +5042,7 @@ Callback = function()
     end
 end,})
 
-local TPToTowerTop = Tab10:CreateButton({
+getgenv().TPToTowerTop = Tab10:CreateButton({
 Name = "TP To Tower (Top)",
 Callback = function()
     wait(0.4)
@@ -4847,7 +5055,7 @@ Callback = function()
     end
 end,})
 
-local TPToHighestPoint = Tab10:CreateButton({
+getgenv().TPToHighestPoint = Tab10:CreateButton({
 Name = "TP To Tower (Highest Part)",
 Callback = function()
     wait(0.4)
@@ -4860,7 +5068,7 @@ Callback = function()
     end
 end,})
 
-local TPBooth1 = Tab10:CreateButton({
+getgenv().TPBooth1 = Tab10:CreateButton({
 Name = "TP To Booth-1",
 Callback = function()
     wait(0.4)
@@ -4877,7 +5085,7 @@ Callback = function()
     end
 end,})
 
-local TPBooth2 = Tab10:CreateButton({
+getgenv().TPBooth2 = Tab10:CreateButton({
 Name = "TP To Booth-2",
 Callback = function()
     wait(0.4)
@@ -4894,7 +5102,7 @@ Callback = function()
     end
 end,})
 
-local TPBooth3 = Tab10:CreateButton({
+getgenv().TPBooth3 = Tab10:CreateButton({
 Name = "TP To Booth-3",
 Callback = function()
     wait(0.4)
@@ -4911,7 +5119,7 @@ Callback = function()
     end
 end,})
 
-local TPBooth4 = Tab10:CreateButton({
+getgenv().TPBooth4 = Tab10:CreateButton({
 Name = "TP To Booth-4",
 Callback = function()
     wait(0.4)
@@ -4928,7 +5136,7 @@ Callback = function()
     end
 end,})
 
-local TPBooth5 = Tab10:CreateButton({
+getgenv().TPBooth5 = Tab10:CreateButton({
 Name = "TP To Booth-5",
 Callback = function()
     wait(0.4)
@@ -4945,7 +5153,7 @@ Callback = function()
     end
 end,})
 
-local TPToDonutShop = Tab10:CreateButton({
+getgenv().TPToDonutShop = Tab10:CreateButton({
 Name = "TP To Donut Shop",
 Callback = function()
     wait(0.4)
@@ -4958,7 +5166,7 @@ Callback = function()
     end
 end,})
 
-local TPSeat1Donut = Tab10:CreateButton({
+getgenv().TPSeat1Donut = Tab10:CreateButton({
 Name = "TP To Donut Shop (Seat 1)",
 Callback = function()
     wait(0.4)
@@ -4971,7 +5179,7 @@ Callback = function()
     end
 end,})
 
-local TPSeat1Donut = Tab10:CreateButton({
+getgenv().TPSeat1Donut = Tab10:CreateButton({
 Name = "TP To Donut Shop (Seat 2)",
 Callback = function()
     wait(0.4)
@@ -4984,7 +5192,7 @@ Callback = function()
     end
 end,})
 
-local TPTableSeat1 = Tab10:CreateButton({
+getgenv().TPTableSeat1 = Tab10:CreateButton({
 Name = "TP To Donut Shop (Table Seat 1)",
 Callback = function()
     wait(0.4)
@@ -4997,7 +5205,7 @@ Callback = function()
     end
 end,})
 
-local TPTableSeat2 = Tab10:CreateButton({
+getgenv().TPTableSeat2 = Tab10:CreateButton({
 Name = "TP To Donut Shop (Table, Seat 2)",
 Callback = function()
     wait(0.4)
@@ -5010,7 +5218,7 @@ Callback = function()
     end
 end,})
 
-local TPBehindCounter = Tab10:CreateButton({
+getgenv().TPBehindCounter = Tab10:CreateButton({
 Name = "TP To Donut Shop (Behind Counter)",
 Callback = function()
     wait(0.4)
@@ -5023,7 +5231,7 @@ Callback = function()
     end
 end,})
 
-local TPAboveRelax = Tab10:CreateButton({
+getgenv().TPAboveRelax = Tab10:CreateButton({
 Name = "TP Above Relaxing Room",
 Callback = function()
     wait(0.4)
@@ -5036,7 +5244,7 @@ Callback = function()
     end
 end,})
 
-local TPSubmitNoteBoard = Tab10:CreateButton({
+getgenv().TPSubmitNoteBoard = Tab10:CreateButton({
 Name = "TP To Submit Note Board",
 Callback = function()
     wait(0.4)
@@ -5053,7 +5261,7 @@ Callback = function()
     end
 end,})
 
-local TPStageMic = Tab10:CreateButton({
+getgenv().TPStageMic = Tab10:CreateButton({
 Name = "TP To Stage Mic",
 Callback = function()
     wait(0.4)
@@ -5070,7 +5278,7 @@ Callback = function()
     end
 end,})
 
-local TPPrivRoomRoof = Tab10:CreateButton({
+getgenv().TPPrivRoomRoof = Tab10:CreateButton({
 Name = "TP To Private Room (Roof)",
 Callback = function()
     wait(0.4)
@@ -5087,7 +5295,7 @@ Callback = function()
     end
 end,})
 
-local invisKeybindSet = Tab2:CreateInput({
+getgenv().invisKeybindSet = Tab2:CreateInput({
 Name = "Invisible Keybind",
 PlaceholderText = "Keybind Here",
 RemoveTextAfterFocusLost = true,
@@ -5175,7 +5383,7 @@ function click_all_alt()
 end
 -- Validate for dear god, I hate the Tic Tac Toe shit, and I hate the No Rizz Config version of this script to.
 wait(0.3)
-local ClickingAllBoards = Tab5:CreateButton({
+getgenv().ClickingAllBoards = Tab5:CreateButton({
 Name = "Click All TicTacToe Boards",
 Callback = function()
     local PartStorage = game.Workspace.PartStorage
@@ -5192,7 +5400,7 @@ Callback = function()
     end
 end,})
 
-local LoopClickAllBoards = Tab5:CreateToggle({
+getgenv().LoopClickAllBoards = Tab5:CreateToggle({
 Name = "Click All TicTacToe Boards (Loop)",
 CurrentValue = false,
 Flag = "loopClickingAllBoards",
@@ -5219,7 +5427,7 @@ Callback = function(ClickAll)
     end
 end,})
 
-local InfYield = Tab5:CreateButton({
+getgenv().InfYield = Tab5:CreateButton({
 Name = "Infinite Yield",
 Callback = function()
     if getgenv().inf_yield_side then
@@ -5231,7 +5439,7 @@ Callback = function()
     end
 end,})
 
-local WalkSpeedSliding = Tab2:CreateSlider({
+getgenv().WalkSpeedSliding = Tab2:CreateSlider({
 Name = "WalkSpeed (Default): 16",
 Range = {16, 450},
 Increment = 1,
@@ -5266,7 +5474,7 @@ else
     end,})
 end
 
-local GravSliding = Tab2:CreateSlider({
+getgenv().GravSliding = Tab2:CreateSlider({
 Name = "Gravity (Default): 196.2",
 Range = {1, 200},
 Increment = 1,
@@ -5277,7 +5485,7 @@ Callback = function(gravVal)
     ZEH_Module:Gravity_Update(gravVal)
 end,})
 
-local antiBangTPLoop = Tab2:CreateToggle({
+getgenv().antiBangTPLoop = Tab2:CreateToggle({
 Name = "Anti Bang/TP (Loop Method)",
 CurrentValue = false,
 Flag = "AntiBangTPLooping",
@@ -5314,7 +5522,7 @@ Callback = function(doAntiTP)
     end
 end,})
 
-local bruhAntiTPMethod3 = Tab2:CreateButton({
+getgenv().bruhAntiTPMethod3 = Tab2:CreateButton({
 Name = "Anti Bang/TP (Method 3, You Die To)",
 Callback = function()
     local voidPosition = Vector3.new(-499, -499, -499)
@@ -5325,7 +5533,7 @@ Callback = function()
     HumanoidRP.CFrame = CFrame.new(voidPosition)
 end,})
 
-local MethodFourAntiTP = Tab2:CreateToggle({
+getgenv().MethodFourAntiTP = Tab2:CreateToggle({
 Name = "Anti Bang/TP (Method 4, Void Method)",
 CurrentValue = false,
 Flag = "AntiTPMethod4",
@@ -5348,7 +5556,7 @@ Callback = function(getLoopTpToVoid)
     end
 end,})
 
-local LightingReset = Tab9:CreateButton({
+getgenv().LightingReset = Tab9:CreateButton({
 Name = "Reset Lighting",
 Callback = function()
     resetLightingSettings()
@@ -5360,13 +5568,13 @@ Callback = function()
     end
 end,})
 
-local fireworksToggle = Tab9:CreateToggle({
+getgenv().fireworksToggle = Tab9:CreateToggle({
 Name = "FireWorks (Sky)",
 CurrentValue = false,
 Flag = "FireworksInSkyLoop",
 Callback = function(FireWorksCrazy)
     if FireWorksCrazy then
-        local Lighting = game:GetService("Lighting") or cloneref(game:GetService("Lighting"))
+        local Lighting = cloneref and cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
         Lighting.ClockTime = 1
         wait()
         Lighting.Brightness = 2
@@ -5436,7 +5644,7 @@ Callback = function(FireWorksCrazy)
     end
 end,})
 
-local NightTimeButton = Tab9:CreateButton({
+getgenv().NightTimeButton = Tab9:CreateButton({
 Name = "NightTime",
 Callback = function()
     local Lighting = game:GetService("Lighting")
@@ -5453,7 +5661,7 @@ Callback = function()
     end
 end,})
 
-local NightTimeWithLight = Tab9:CreateButton({
+getgenv().NightTimeWithLight = Tab9:CreateButton({
 Name = "NightTime (With Night-Light)",
 Callback = function()
     local Lighting = game:GetService("Lighting")
@@ -5470,7 +5678,7 @@ Callback = function()
     end
 end,})
 
-local DayTimeReset = Tab9:CreateButton({
+getgenv().DayTimeReset = Tab9:CreateButton({
 Name = "DayTime",
 Callback = function()
     local Lighting = game:GetService("Lighting")
@@ -5479,7 +5687,7 @@ Callback = function()
     Lighting.Brightness = 1.5
 end,})
 
-local SpookyMoonToggle = Tab9:CreateToggle({
+getgenv().SpookyMoonToggle = Tab9:CreateToggle({
 Name = "Spooky Moon",
 CurrentValue = false,
 Flag = "SpookyMoonLooping",
@@ -5526,7 +5734,7 @@ local Lighting = game:GetService("Lighting")
     end
 end,})
 
-local SpookySunLoop = Tab9:CreateToggle({
+getgenv().SpookySunLoop = Tab9:CreateToggle({
 Name = "Spooky Sun",
 CurrentValue = false,
 Flag = "SpookySunDayTime",
@@ -5569,7 +5777,7 @@ Callback = function(sunSpooky)
     end
 end,})
 
-local SpookyNightTimeHalloween = Tab9:CreateButton({
+getgenv().SpookyNightTimeHalloween = Tab9:CreateButton({
 Name = "Spooky NightTime (Halloween Style)",
 Callback = function()
     local light = game:GetService("Lighting")
@@ -5920,7 +6128,7 @@ Callback = function(UIColor)
 
     local newFrameColor = UIColor
 
-    changeColors(rayfield, newFrameColor)
+    changeColors(getgenv().Rayfield, newFrameColor)
 end,})
 
 getgenv().ReExecuteGUI = Tab15:CreateButton({
@@ -5934,7 +6142,7 @@ Callback = function()
         getgenv().GetLoopRunning = false
         getgenv().LmaoGetMuted = false
         getgenv().css_digital = false
-        Rayfield:Destroy()
+        getgenv().Rayfield:Destroy()
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()
     elseif executor_Name ~= "Argon" then
         ZEH_Module:Patch_Update("v6-no-config-setting")
@@ -5952,7 +6160,7 @@ Callback = function()
         getgenv().GetLoopRunning = false
         getgenv().LmaoGetMuted = false
         getgenv().css_digital = false
-        Rayfield:Destroy()
+        getgenv().Rayfield:Destroy()
     elseif executor_Name ~= "Argon" then
         ZEH_Module:Destroy_Script()
     end
@@ -6087,14 +6295,12 @@ getgenv().ownerAnimsEnabled = false
 wait(0.2)
 function do_anims_func()
     if not getgenv().ownerAnimsEnabled then
-        warn("Owner-Animations are disabled.")
-        return
+        return warn("Owner-Animations are disabled.")
     end
 
     local player = game.Players:FindFirstChild("L0CKED_1N1") or game.Players:FindFirstChild("CHEATING_B0SS")
     if not player then
-        warn("Owner was not found: L0CKED_1N1")
-        return
+        return warn("Owner was not found: L0CKED_1N1")
     end
 
     player.CharacterAdded:Connect(run_anims)
