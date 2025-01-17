@@ -17,7 +17,6 @@ Star this repo and save it for later!
 
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 
-
 UPDATE <-> [V6] [UPDATE!]:
 
 V6 New Features:
