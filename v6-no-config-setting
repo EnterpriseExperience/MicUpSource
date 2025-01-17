@@ -397,55 +397,120 @@ wait(0.3)
     end
 
     -- Check our BasePlate, by using a GUI created by the script, to correctly initialize an anti-void measure, which stretches extremely far.
-    wait(0.2)
-    function do_baseplate_check()
-        local screenGui = Instance.new("ScreenGui") 
-        screenGui.IgnoreGuiInset = true
-        screenGui.Name = "BASEPLATE_LOADING"
-        screenGui.Parent = getgenv().LocalPlayer:WaitForChild("PlayerGui")
-        
-        local fullScreenFrame = Instance.new("Frame")
-        fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
-        fullScreenFrame.Position = UDim2.new(0, 0, 0, 0)
-        fullScreenFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        fullScreenFrame.BackgroundTransparency = 0.3
-        fullScreenFrame.Parent = screenGui
-        
-        local textLabel = Instance.new("TextLabel")
-        textLabel.Name = "LABEL_BASEPLATE"
-        textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-        textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
-        textLabel.BackgroundTransparency = 1
-        textLabel.Text = "Current Status: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nIs creating a Baseplate,\n\nPlease wait until this screen disappears."
-        textLabel.RichText = true
-        textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
-        textLabel.TextScaled = true
-        textLabel.Font = Enum.Font.GothamBold
-        textLabel.Parent = fullScreenFrame
-        wait(0.2)
-        -- Terrain modifying for our BasePlate, yes, I do understand this is very big and freezes the player, fuck you, it's big and works.
-        local Terrain = getgenv().Workspace.Terrain
-
-        Terrain:FillBlock(CFrame.new(66, -10, 72.5), Vector3.new(13000, 16, 13000), Enum.Material.Asphalt) -- Go to hell and burn if you think im not using: 'Vector3.new(13000, 16, 13000)' combined with the current Material: 'Asphalt'.
-        wait(0.3)
-        -- Check if the GUI we created exists, and once the player is not frozen anymore, destroy the GUI and let the player continue unfrozen.
-        if getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING") then
-            local bruh_GUI = getgenv().PlayerGui:FindFirstChild("BASEPLATE_LOADING")
-            bruh_GUI:FindFirstChildOfClass("Frame"):FindFirstChildOfClass("TextLabel").Text = "Current Status: <font color=\"rgb(0, 238, 0)\">Not Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nEnjoy your anti-void/BasePlate."
-            wait(0.7) -- We'll make this slightly faster, just to preserve people's time [I guess.]
-            -- Believe me, I still realize I did not need to say they we're unfrozen, but some people aren't the smartest, so fuck you.
-            bruh_GUI:Destroy()
-        else
-            warn("GUI does not exist, skipping...") -- I could have added a check here, but I didn't so, go fist yourself.
-        end
-        getgenv().passed_baseplate_check = true
-    end
-
-    -- Correctly observe if the BasePlate is loaded or has already been loaded, and then continue.
     if getgenv().passed_baseplate_check then
-        warn("Baseplate has already been checked.")
+        warn("Already loaded BasePlate check.")
     else
-        do_baseplate_check()
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+        screenGui.Name = "BASEPLATE_QUESTION"
+        screenGui.ResetOnSpawn = false
+        screenGui.IgnoreGuiInset = true
+    
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(1, 0, 1, 0)
+        frame.Position = UDim2.new(0, 0, 0, 0)
+        frame.BackgroundColor3 = Color3.new(0, 0, 0)
+        frame.BackgroundTransparency = 0.4
+        frame.BorderSizePixel = 0
+        frame.Parent = screenGui
+    
+        local title = Instance.new("TextLabel")
+        title.Size = UDim2.new(1, 0, 0.2, 0)
+        title.Position = UDim2.new(0, 0, 0.1, 0)
+        title.BackgroundTransparency = 1
+        title.Text = "Would you like us to load our huge BasePlate?"
+        title.TextColor3 = Color3.new(1, 1, 1)
+        title.Font = Enum.Font.SourceSansBold
+        title.TextScaled = true
+        title.Parent = frame
+    
+        local yesButton = Instance.new("TextButton")
+        yesButton.Size = UDim2.new(0.3, 0, 0.1, 0)
+        yesButton.Position = UDim2.new(0.15, 0, 0.7, 0)
+        yesButton.BackgroundColor3 = Color3.new(0.2, 0.8, 0.2)
+        yesButton.Text = "Yes"
+        yesButton.TextColor3 = Color3.new(1, 1, 1)
+        yesButton.Font = Enum.Font.SourceSansBold
+        yesButton.TextScaled = true
+        yesButton.Parent = frame
+    
+        local noButton = Instance.new("TextButton")
+        noButton.Size = UDim2.new(0.3, 0, 0.1, 0)
+        noButton.Position = UDim2.new(0.55, 0, 0.7, 0)
+        noButton.BackgroundColor3 = Color3.new(0.8, 0.2, 0.2)
+        noButton.Text = "No"
+        noButton.TextColor3 = Color3.new(1, 1, 1)
+        noButton.Font = Enum.Font.SourceSansBold
+        noButton.TextScaled = true
+        noButton.Parent = frame
+    
+        yesButton.MouseButton1Click:Connect(function()
+            wait(0.2)
+            getgenv().passed_baseplate_check = true
+            wait()
+            local find_gui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("BASEPLATE_QUESTION")
+            local find_frame = find_gui:FindFirstChildOfClass("Frame")
+            local label_frame = find_frame:FindFirstChildOfClass("TextLabel")
+    
+            label_frame.Text = "Ok, Please Wait..."
+            wait(0.5)
+            function do_baseplate_check()
+                local screenGui = Instance.new("ScreenGui") 
+                screenGui.IgnoreGuiInset = true
+                screenGui.Name = "BASEPLATE_LOADING"
+                screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+                
+                local fullScreenFrame = Instance.new("Frame")
+                fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
+                fullScreenFrame.Position = UDim2.new(0, 0, 0, 0)
+                fullScreenFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                fullScreenFrame.BackgroundTransparency = 0.3
+                fullScreenFrame.Parent = screenGui
+                
+                local textLabel = Instance.new("TextLabel")
+                textLabel.Name = "LABEL_BASEPLATE"
+                textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
+                textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
+                textLabel.BackgroundTransparency = 1
+                textLabel.Text = "Current Status: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nIs creating a Baseplate,\n\nPlease wait until this screen disappears."
+                textLabel.RichText = true
+                textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
+                textLabel.TextScaled = true
+                textLabel.Font = Enum.Font.GothamBold
+                textLabel.Parent = fullScreenFrame
+                wait(0.2)
+                local Terrain = game:GetService("Workspace").Terrain
+    
+                Terrain:FillBlock(CFrame.new(66, -10, 72.5), Vector3.new(13000, 16, 13000), Enum.Material.Asphalt)
+                wait(0.3)
+                if game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("BASEPLATE_LOADING") then
+                    local bruh_GUI = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("BASEPLATE_LOADING")
+                    bruh_GUI:FindFirstChildOfClass("Frame"):FindFirstChildOfClass("TextLabel").Text = "Current Status: <font color=\"rgb(0, 238, 0)\">Not Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nEnjoy your anti-void/BasePlate."
+                    wait(0.7)
+                    bruh_GUI:Destroy()
+                else
+                    warn("GUI does not exist, skipping...")
+                end
+                getgenv().passed_baseplate_check = true
+            end
+    
+            do_baseplate_check()
+            wait(0.3)
+            local find_gui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("BASEPLATE_QUESTION")
+            
+            find_gui:Destroy()
+        end)
+    
+        noButton.MouseButton1Click:Connect(function()
+            local find_gui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("BASEPLATE_QUESTION")
+            local find_frame = find_gui:FindFirstChildOfClass("Frame")
+            local label_frame = find_frame:FindFirstChildOfClass("TextLabel")
+    
+            label_frame.Text = "We are not loading the Baseplate, enjoy the script anyways."
+            getgenv().passed_baseplate_check = true
+            wait(0.7)
+            find_gui:Destroy()
+        end)
     end
 wait(0.2)
 local function getExecutor()
@@ -949,6 +1014,166 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-no-config-setting')))()") -- K*ll yourself, stop waiting.
     end
 end)
+if getgenv().scriptEnabled then
+    warn("Already loaded Emotes Configuration Manager.")
+else
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
+    wait(0.3)
+    -- [] -->> Set up emote/rizz configuration automatically. <<-- [] --
+    local UserInputService = game:GetService("UserInputService")
+    local HttpService = game:GetService("HttpService")
+
+    local emoteFilePath = "emoteFile.json"
+
+    local defaultKeybindActions = {
+        [Enum.KeyCode.One] = 13071993910,
+        [Enum.KeyCode.Two] = 14901371589,
+        [Enum.KeyCode.Three] = 73683655527605,
+        [Enum.KeyCode.Four] = 5230615437,
+        [Enum.KeyCode.Five] = 5104377791,
+        [Enum.KeyCode.Six] = 13694139364,
+        [Enum.KeyCode.Seven] = 7466047578,
+        [Enum.KeyCode.Eight] = 13823339506,
+        [Enum.KeyCode.Nine] = 3576823880,
+        [Enum.KeyCode.Q] = "SlowDown",
+        [Enum.KeyCode.E] = "SpeedUp",
+        [Enum.KeyCode.V] = "Freeze",
+        [Enum.KeyCode.X] = "NormalSpeed",
+        [Enum.KeyCode.F] = "Reverse"
+    }
+
+    local function saveDefaultKeybinds(filePath)
+        local keybindList = {}
+        for keyCode, emoteID in pairs(defaultKeybindActions) do
+            table.insert(keybindList, { Key = tostring(keyCode), EmoteID = emoteID })
+        end
+        local success, result = pcall(function()
+            return HttpService:JSONEncode(keybindList)
+        end)
+        if success then
+            writefile(filePath, result)
+            print("Default emote configuration file created at: " .. filePath)
+        else
+            warn("Failed to create default emote configuration file.")
+        end
+    end
+
+    local function loadKeybinds(filePath)  
+        if isfile(filePath) then
+            local success, result = pcall(function()
+                return HttpService:JSONDecode(readfile(filePath))
+            end)
+            if success then
+                getgenv().loadedActions = {}
+                for _, bind in ipairs(result) do
+                    if bind.Key and bind.Key:find("Enum.KeyCode") then
+                        local keyCode = Enum.KeyCode[tostring(bind.Key):match("Enum.KeyCode%.(%w+)")]
+                        if keyCode and (tonumber(bind.EmoteID) or type(bind.EmoteID) == "string") then
+                            getgenv().loadedActions[keyCode] = tonumber(bind.EmoteID) or bind.EmoteID
+                        end
+                    end
+                end
+                return print("Loaded Keybinds:", getgenv().loadedActions)
+            else
+                warn("Failed to parse emote configuration file. Using empty configuration.")
+            end
+        else
+            saveDefaultKeybinds(filePath)
+        end
+        getgenv().loadedActions = {}
+    end
+    wait(0.2)
+    loadKeybinds("emoteFile.json")
+    wait(0.4)
+    getgenv().emoteSpeed = getgenv().emoteSpeed
+    getgenv().speedUpSpeed = getgenv().speedUpSpeed
+    getgenv().slowDownSpeed = getgenv().slowDownSpeed
+    getgenv().freezeEmotes = getgenv().freezeEmotes
+    getgenv().isReversed = getgenv().isReversed
+    wait(0.2)
+    getgenv().emoteSpeed = 1
+    getgenv().speedUpSpeed = 4
+    getgenv().slowDownSpeed = 0.1
+    getgenv().freezeEmotes = false
+    getgenv().isReversed = false
+    wait(0.2)
+    local function adjustEmoteSpeed()
+        if getgenv().Humanoid then
+            for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                track:AdjustSpeed(getgenv().emoteSpeed)
+            end
+        end
+    end
+
+    local function reverseEmotes()
+        if getgenv().Humanoid then
+            for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                track:AdjustSpeed(-1)
+            end
+        end
+    end
+
+    local function playNormalSpeed()
+        if getgenv().Humanoid then
+            for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                track:AdjustSpeed(1)
+            end
+        end
+    end
+
+    local function playEmote(emoteId)
+        local humanoid = getgenv().Humanoid
+        if humanoid then
+            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+            wait()
+            local animTrack = humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
+            if animTrack and typeof(animTrack) == "Instance" then
+                animTrack:AdjustSpeed(getgenv().emoteSpeed)
+            end
+        else
+            warn("Humanoid not found in Character!")
+        end
+    end
+
+    local function handleKeybind(action)
+        if type(action) == "number" then
+            playEmote(action)
+        elseif action == "SlowDown" then
+            getgenv().emoteSpeed = getgenv().slowDownSpeed
+            adjustEmoteSpeed()
+        elseif action == "SpeedUp" then
+            getgenv().emoteSpeed = getgenv().speedUpSpeed
+            adjustEmoteSpeed()
+        elseif action == "Freeze" then
+            getgenv().emoteSpeed = 0
+            adjustEmoteSpeed()
+            getgenv().freezeEmotes = true
+        elseif action == "NormalSpeed" then
+            getgenv().emoteSpeed = 1
+            adjustEmoteSpeed()
+            getgenv().freezeEmotes = false
+        elseif action == "Reverse" then
+            if getgenv().isReversed then
+                playNormalSpeed()
+            else
+                reverseEmotes()
+            end
+            getgenv().isReversed = not getgenv().isReversed
+        end
+    end
+
+    getgenv().keybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        local action = getgenv().loadedActions[input.KeyCode]
+        if action then
+            handleKeybind(action)
+        end
+    end)
+    wait(0.2)
+    getgenv().scriptEnabled = true
+end
 wait(0.4)
 local TeleportService = game:GetService("TeleportService")
 
@@ -2807,6 +3032,21 @@ Callback = function(Transparent_Map)
     end
 end,})
 
+getgenv().BasePlate_ColorChange = Tab18:CreateSlider({
+Name = "MIC UP BasePlate Transparency",
+Range = {0, 1},
+Increment = 0.1,
+Suffix = "",
+CurrentValue = 0,
+Flag = "MICUPTransparency",
+Callback = function(BasePlateMICUPTransparency)
+    local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+    local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+    BasePlate.Transparency = BasePlateMICUPTransparency
+    Texture_Bruh.Transparency = BasePlateMICUPTransparency
+end,})
+
 getgenv().Change_Map_Color = Tab18:CreateColorPicker({
 Name = "Change Map Color",
 Color = Color3.fromRGB(45, 45, 45),
@@ -2829,17 +3069,19 @@ Callback = function(Map_Color)
 end,})
 
 getgenv().BasePlate_ColorChange = Tab18:CreateColorPicker({
-Name = "Change BasePlate Color",
+Name = "MIC UP BasePlate Color",
 Color = Color3.fromRGB(255, 0, 0),
 Flag = "PickingColorForMap",
 Callback = function(Base_Color)
-    local BasePlate_Texture = game:GetService("Workspace"):FindFirstChild("Baseplate"):FindFirstChild("Texture")
+    local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+    local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
 
-    if BasePlate_Texture.Transparency == 1 then
-        BasePlate_Texture.Transparency = 0
+    if Texture_Bruh.Transparency == 1 then
+        Texture_Bruh.Transparency = 0
     end
     wait(0.2)
-    BasePlate_Texture.Color3 = Base_Color
+    BasePlate.Color = Base_Color
+    Texture_Bruh.Color3 = Base_Color
 end,})
 
 getgenv().Baseplate_Size = Tab18:CreateSlider({
@@ -2852,6 +3094,7 @@ Flag = "ChangingBasePlateSized",
 Callback = function(Size_New)
     local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
 
+    BasePlate_Normal.CanCollide = true
     BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
 end,})
 
@@ -2865,6 +3108,7 @@ Flag = "ChangingBaseSize",
 Callback = function(Sized_Z)
     local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
 
+    BasePlate_Normal.CanCollide = true
     BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
 end,})
 
