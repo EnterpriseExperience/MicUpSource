@@ -498,7 +498,11 @@ wait(0.3)
             wait(0.3)
             local find_gui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("BASEPLATE_QUESTION")
             
-            find_gui:Destroy()
+            if find_gui then
+                find_gui:Destroy()
+            else
+                warn("BASEPLATE_QUESTION was not found within PlayerGui.")
+            end
         end)
     
         noButton.MouseButton1Click:Connect(function()
@@ -509,7 +513,11 @@ wait(0.3)
             label_frame.Text = "We are not loading the Baseplate, enjoy the script anyways."
             getgenv().passed_baseplate_check = true
             wait(0.7)
-            find_gui:Destroy()
+            if find_gui then
+                find_gui:Destroy()
+            else
+                warn("BASEPLATE_QUESTION was not found within PlayerGui.")
+            end
         end)
     end
 wait(0.2)
@@ -665,79 +673,45 @@ wait()
 getgenv().Module_For_ZEH = ZEH_Module
 -- Current UI is automatically hidden, shoutout to Rayfield (and the hiddenUI function.).
 local Window
-if executor_Name ~= "Argon" and executor_Name ~= "Nihon" then
-    print("Your executor is not Argon or Nihon, using custom setup [for UI].")
+
+getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
+wait(0.1)
+if game.Players.LocalPlayer.Name == "Ixgale7530" then
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-CD | Emote Keybinds: True",
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.5-CD | Emote Keybinds: True",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
-            Enabled = false,
-            FolderName = nil,
-            FileName = "Zacks Easy Hub"
-        },
-        Discord = {
             Enabled = true,
-            Invite = "VJh3kkYzBn",
-            RememberJoins = true
-        },
-        KeySystem = false,
-        KeySettings = {
-            Title = "False | No Key System",
-            Subtitle = "No Key System",
-            Note = "No method of obtaining the key is provided",
-            FileName = "Key",
-            SaveKey = true,
-            GrabKeyFromSite = false,
-            Key = {"None"}
-        }
-    })
-elseif executor_Name ~= "Argon" and executor_Name == "Nihon" then
-    warn("Nihon detected, using alternate loader [for UI].")
-    setclipboard("https://discord.gg/VJh3kkYzBn")
-    Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-CD | Emote Keybinds: True",
-        Icon = getgenv().image_use_zacks,
-        LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "Made By: ZEH, LLC.",
-        Theme = "Default",
-        DisableRayfieldPrompts = true,
-        DisableBuildWarnings = true,
-        ConfigurationSaving = {
-            Enabled = false,
             FolderName = "ConfigurationZacskEasyHub",
             FileName = "ZacksEasyHub"
         },
         Discord = {
-            Enabled = false,
+            Enabled = true,
             Invite = "VJh3kkYzBn",
-            RememberJoins = false
+            RememberJoins = true
         },
-        KeySystem = false,
+        KeySystem = true,
         KeySettings = {
-            Title = "False | No Key System",
-            Subtitle = "No Key System",
-            Note = "No method of obtaining the key is provided",
-            FileName = "Key",
+            Title = "Admin Key System (copied link)",
+            Subtitle = "Your not gonna gain no extra powers either.",
+            Note = "Get key from: https://lootdest.org/s?t4SAKaij",
+            FileName = "ZacksEasyHub_Key",
             SaveKey = false,
-            GrabKeyFromSite = false,
-            Key = {"None"}
+            GrabKeyFromSite = true,
+            Key = {"RELEASEDFORMICUPIN2025BABYLETSGODAWG"}
         }
     })
-elseif executor_Name == "Argon" then
-    warn("Argon detected, using alternate setup [for UI].")
+    getgenv().AllClipboards("https://lootdest.org/s?t4SAKaij")
+else
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.2-CD | Emote Keybinds: True",
-        Icon = getgenv().image_use_zacks,
+        Name = "📜 Zacks Easy Hub 📜 | V7.0.5-CD | Emote Keybinds: True",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "by ZEH, LLC.",
-        Theme = "Default",
-        DisableRayfieldPrompts = false,
-        DisableBuildWarnings = false,
+        LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
             Enabled = true,
-            FolderName = "ZACKS_EASY_HUB_CONFIG_FOLDER",
-            FileName = "Zacks Easy Hub"
+            FolderName = "ConfigurationZacskEasyHub",
+            FileName = "ZacksEasyHub"
         },
         Discord = {
             Enabled = true,
@@ -746,11 +720,11 @@ elseif executor_Name == "Argon" then
         },
         KeySystem = false,
         KeySettings = {
-            Title = "False | No Key System",
-            Subtitle = "No Key System",
-            Note = "No method of obtaining the key is provided",
+            Title = "None",
+            Subtitle = "No key system is provided.",
+            Note = "...",
             FileName = "Key",
-            SaveKey = true,
+            SaveKey = false,
             GrabKeyFromSite = false,
             Key = {"None"}
         }
@@ -1221,7 +1195,7 @@ else
         getgenv().notify("Success!", "AntiAFK (2) has loaded.", 5)
     end
 
-    if not getgenv().AntiAfkScript or getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
+    if getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
         getgenv().notify("Failed!", "Could not load any Anti-AFK Scripts.", 5)
     end
 end
@@ -3040,11 +3014,19 @@ Suffix = "",
 CurrentValue = 0,
 Flag = "MICUPTransparency",
 Callback = function(BasePlateMICUPTransparency)
-    local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-    local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+    if game:GetService("Workspace"):FindFirstChild("SoccerField") then
+        local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+        local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
 
-    BasePlate.Transparency = BasePlateMICUPTransparency
-    Texture_Bruh.Transparency = BasePlateMICUPTransparency
+        BasePlate.Transparency = BasePlateMICUPTransparency
+        Texture_Bruh.Transparency = BasePlateMICUPTransparency
+    else
+        local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
+        local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+        BasePlate.Transparency = BasePlateMICUPTransparency
+        Texture_Bruh.Transparency = BasePlateMICUPTransparency
+    end
 end,})
 
 getgenv().Change_Map_Color = Tab18:CreateColorPicker({
@@ -3073,15 +3055,19 @@ Name = "MIC UP BasePlate Color",
 Color = Color3.fromRGB(255, 0, 0),
 Flag = "PickingColorForMap",
 Callback = function(Base_Color)
-    local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-    local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+    if game:GetService("Workspace"):FindFirstChild("SoccerField") then
+        local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+        local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
 
-    if Texture_Bruh.Transparency == 1 then
-        Texture_Bruh.Transparency = 0
+        BasePlate.Color = Base_Color
+        Texture_Bruh.Color3 = Base_Color
+    else
+        local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
+        local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+        BasePlate.Color = Base_Color
+        Texture_Bruh.Color3 = Base_Color
     end
-    wait(0.2)
-    BasePlate.Color = Base_Color
-    Texture_Bruh.Color3 = Base_Color
 end,})
 
 getgenv().Baseplate_Size = Tab18:CreateSlider({
@@ -6251,116 +6237,64 @@ Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
 end,})
 
-if executor_Name == "Nihon" then
-    getgenv().MuteAllBruh = Tab1:CreateToggle({
-    Name = "Mute All",
-    CurrentValue = false,
-    Flag = "MutingEveryone",
-    Callback = function(TheMuteAll)
-        if TheMuteAll then
-            getgenv().LmaoGetMuted = true
-            while getgenv().LmaoGetMuted == true do
-            wait()
-                getgenv().VoiceChatInternal:SubscribePauseAll(true)
-                getgenv().VoiceChatInternal:SubscribePauseAll(true)
-            end
-        else
-            getgenv().LmaoGetMuted = false
-            getgenv().LmaoGetMuted = false
-            getgenv().LmaoGetMuted = false
-            wait(0.3)
-            getgenv().VoiceChatInternal:SubscribePauseAll(false)
-            getgenv().VoiceChatInternal:SubscribePauseAll(false)
+getgenv().MuteAllBruh = Tab1:CreateToggle({
+Name = "Mute All",
+CurrentValue = false,
+Flag = "MutingEveryone",
+Callback = function(TheMuteAll)
+    if TheMuteAll then
+        getgenv().LmaoGetMuted = true
+        while getgenv().LmaoGetMuted == true do
+        wait()
+            getgenv().VoiceChatInternal:SubscribePauseAll(true)
+            getgenv().VoiceChatInternal:SubscribePauseAll(true)
         end
-    end,})
+    else
+        getgenv().LmaoGetMuted = false
+        getgenv().LmaoGetMuted = false
+        getgenv().LmaoGetMuted = false
+        wait(0.3)
+        getgenv().VoiceChatInternal:SubscribePauseAll(false)
+        getgenv().VoiceChatInternal:SubscribePauseAll(false)
+    end
+end,})
 
-    getgenv().MuteAPlayerSpecific = Tab1:CreateInput({
-    Name = "Mute Player",
-    PlaceholderText = "User",
-    RemoveTextAfterFocusLost = true,
-    Callback = function(getAUser)
-        local derUser = findplr(getAUser)
-        
-        if derUser then
-            getgenv().shouldMute = true
-            getgenv().MutedPlayers = getgenv().MutedPlayers or {}
-            getgenv().PlayerConnections = getgenv().PlayerConnections or {}
+getgenv().MuteAPlayerSpecific = Tab1:CreateInput({
+Name = "Mute Player",
+PlaceholderText = "User",
+RemoveTextAfterFocusLost = true,
+Callback = function(getAUser)
+    local derUser = findplr(getAUser)
 
-            function MutePlayer(userId)
-                getgenv().notify("Success!", "Player has been muted", 5)
-
-                while getgenv().shouldMute == true do
-                wait()
-                    getgenv().VoiceChatInternal:SubscribePause(userId, true)
-                end
-            end
-
-            local targets_user_id = derUser.UserId
-
-            if getgenv().shouldMute or getgenv().shouldMute == true then
-                getgenv().VoiceChatInternal:SubscribePause(userId, true)
-                getgenv().notify("Success", "Player has been muted!", 5)
-            else
-                MutePlayer(targets_user_id)
-            end
-        else
-            return getgenv().notify("Failure!", "Player was not found: "..tostring(getAUser), 5)
-        end
-    end,})
-elseif executor_Name ~= "Nihon" then
-    getgenv().MuteAllBruh = Tab1:CreateToggle({
-    Name = "Mute All",
-    CurrentValue = false,
-    Flag = "MutingEveryone",
-    Callback = function(TheMuteAll)
-        if TheMuteAll then
-            getgenv().LmaoGetMuted = true
-            while getgenv().LmaoGetMuted == true do
-            wait()
-                getgenv().VoiceChatInternal:SubscribePauseAll(true)
-                getgenv().VoiceChatInternal:SubscribePauseAll(true)
-            end
-        else
-            getgenv().LmaoGetMuted = false
-            getgenv().LmaoGetMuted = false
-            getgenv().LmaoGetMuted = false
-            wait(0.3)
-            getgenv().VoiceChatInternal:SubscribePauseAll(false)
-            getgenv().VoiceChatInternal:SubscribePauseAll(false)
-        end
-    end,})
-
+    if not derUser then
+        return getgenv().notify("Failure!", "User was not found.", 5)
+    end
+    
+    getgenv().shouldMute = true
     getgenv().MutedPlayers = getgenv().MutedPlayers or {}
+    getgenv().PlayerConnections = getgenv().PlayerConnections or {}
 
-    getgenv().MuteAPlayerSpecific = Tab1:CreateInput({
-    Name = "Mute Player",
-    PlaceholderText = "User",
-    RemoveTextAfterFocusLost = true,
-    Callback = function(getAUser)
-        local derUser = findplr(getAUser)
-        
-        if derUser then
-            getgenv().shouldMute = true
-            getgenv().MutedPlayers = getgenv().MutedPlayers or {}
-            getgenv().PlayerConnections = getgenv().PlayerConnections or {}
+    function MutePlayer(user)
+        getgenv().notify("Success!", "Player has been muted", 5)
 
-            function MutePlayer(user)
-                while getgenv().shouldMute == true do
-                wait()
-                    local AudioDeviceInput = user:FindFirstChildOfClass("AudioDeviceInput")
+        while getgenv().shouldMute == true do
+        wait()
+            local audiodeviceinput = user:FindFirstChild("AudioDeviceInput")
 
-                    if not AudioDeviceInput.Muted or AudioDeviceInput.Muted == false then
-                        AudioDeviceInput.Muted = true
-                    end
-                end
-            end
-
-            MutePlayer(derUser)
-        else
-            return getgenv().notify("Failure", "Player was not found", 5)
+            audiodeviceinput.Muted = true
         end
-    end,})
-end
+    end
+
+    if getgenv().shouldMute or getgenv().shouldMute == true then
+        local audiodeviceinput = derUser:FindFirstChild("AudioDeviceInput")
+
+        audiodeviceinput.Muted = true
+        wait(0.2)
+        getgenv().notify("Success", "Player has been muted!", 5)
+    else
+        MutePlayer(derUser)
+    end
+end,})
 
 getgenv().ResetButton = Tab15:CreateButton({
 Name = "Reset",
@@ -6446,7 +6380,7 @@ Callback = function()
         getgenv().GetLoopRunning = false
         getgenv().LmaoGetMuted = false
         getgenv().css_digital = false
-        Rayfield:Destroy()
+        getgenv().Rayfield:Destroy()
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
     elseif executor_Name ~= "Argon" then
         ZEH_Module:Patch_Update("v6-beta")
@@ -7311,9 +7245,14 @@ else
     wait(0.1)
     print("Died Func setup")
 end
-
-for i = 1, 100 do
-    print("Zacks Easy Hub :: WE ARE FUCKING LEADING FAT BITCH. [apologies].")
+wait()
+if getgenv().spammed_setup_print then
+    warn("Already did this print lol.")
+else
+    for i = 1, 100 do
+        print("Zacks Easy Hub :: WE ARE FUCKING LEADING FAT BITCH. [apologies].")
+    end
+    getgenv().spammed_setup_print = true
 end
 wait(0.3)
 if getgenv().SimpleSpyExecuted then
