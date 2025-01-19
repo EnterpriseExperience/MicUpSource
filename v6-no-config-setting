@@ -1063,7 +1063,7 @@ else
     getgenv().scripts_init = true
     wait(0.2)
     if getgenv().scripts_init or getgenv().scripts_init == true then
-        getgenv().notify("Success", "We have removed the Kill-Parts for Private Room")
+        getgenv().notify("Success", "We have removed the Kill-Parts for Private Room", 5)
     end
 end
 wait()
