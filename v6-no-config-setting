@@ -677,60 +677,31 @@ local Window
 
 getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
 wait(0.1)
-if game.Players.LocalPlayer.Name == "Ixgale7530" then
-    Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.7-E | Emote Keybinds: False",
-        LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "Zacks Easy Hub | Success.",
-        ConfigurationSaving = {
-            Enabled = true,
-            FolderName = "ConfigurationZacskEasyHub",
-            FileName = "ZacksEasyHub"
-        },
-        Discord = {
-            Enabled = true,
-            Invite = "VJh3kkYzBn",
-            RememberJoins = true
-        },
-        KeySystem = true,
-        KeySettings = {
-            Title = "Admin Key System (copied link)",
-            Subtitle = "Your not gonna gain no extra powers either.",
-            Note = "Get key from: https://lootdest.org/s?t4SAKaij",
-            FileName = "ZacksEasyHub_Key",
-            SaveKey = false,
-            GrabKeyFromSite = true,
-            Key = {"RELEASEDFORMICUPIN2025BABYLETSGODAWG"}
-        }
-    })
-    getgenv().AllClipboards("https://lootdest.org/s?t4SAKaij")
-else
-    Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.0.7-E | Emote Keybinds: False",
-        LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "Zacks Easy Hub | Success.",
-        ConfigurationSaving = {
-            Enabled = true,
-            FolderName = "ConfigurationZacskEasyHub",
-            FileName = "ZacksEasyHub"
-        },
-        Discord = {
-            Enabled = true,
-            Invite = "VJh3kkYzBn",
-            RememberJoins = true
-        },
-        KeySystem = false,
-        KeySettings = {
-            Title = "None",
-            Subtitle = "No key system is provided.",
-            Note = "...",
-            FileName = "Key",
-            SaveKey = false,
-            GrabKeyFromSite = false,
-            Key = {"None"}
-        }
-    })
-end
+local Window = Rayfield:CreateWindow({
+    Name = "📜 Zacks Easy Hub 📜 | V7.0.8-E | Emote Keybinds: False",
+    LoadingTitle = "Enjoy ruling MIC UP 🔊",
+    LoadingSubtitle = "Zacks Easy Hub | Success.",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "ConfigurationZacskEasyHub",
+        FileName = "ZacksEasyHub"
+    },
+    Discord = {
+        Enabled = true,
+        Invite = "VJh3kkYzBn",
+        RememberJoins = true
+    },
+    KeySystem = false,
+    KeySettings = {
+        Title = "None",
+        Subtitle = "No key system is provided.",
+        Note = "...",
+        FileName = "Key",
+        SaveKey = false,
+        GrabKeyFromSite = false,
+        Key = {"None"}
+    }
+})
 
 if not Window then
     getgenv().SCRIPT_EXECUTED = false
