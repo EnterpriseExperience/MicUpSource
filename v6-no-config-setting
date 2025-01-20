@@ -1054,109 +1054,100 @@ local cmdp = game.Players
 local cmdlp = cmdp.LocalPlayer
 
 function findplr(args, tbl)
-    if tbl == nil then
-        local tbl = game:GetService("Players"):GetPlayers()
-        if args == "me" then
-            return cmdlp
-        elseif args == "random" then 
-            return tbl[math.random(1,#tbl)]
-        elseif args == "new" then
-            local vAges = {} 
-            for _,v in pairs(tbl) do
-                if v.AccountAge < 30 and v ~= cmdlp then
-                    vAges[#vAges+1] = v
-                end
+    if args == "me" then
+        return cmdlp
+    elseif args == "random" then 
+        return tbl[math.random(1,#tbl)]
+    elseif args == "new" then
+        local vAges = {} 
+        for _,v in pairs(tbl) do
+            if v.AccountAge < 30 and v ~= cmdlp then
+                vAges[#vAges+1] = v
             end
-            return vAges[math.random(1,#vAges)]
-        elseif args == "old" then
-            local vAges = {} 
-            for _,v in pairs(tbl) do
-                if v.AccountAge > 30 and v ~= cmdlp then
-                    vAges[#vAges+1] = v
-                end
+        end
+        return vAges[math.random(1,#vAges)]
+    elseif args == "old" then
+        local vAges = {} 
+        for _,v in pairs(tbl) do
+            if v.AccountAge > 30 and v ~= cmdlp then
+                vAges[#vAges+1] = v
             end
-            return vAges[math.random(1,#vAges)]
-        elseif args == "bacon" then
-            local vAges = {} 
-            for _,v in pairs(tbl) do
-                if v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair") and v ~= cmdlp then
-                    vAges[#vAges+1] = v
-                end
+        end
+        return vAges[math.random(1,#vAges)]
+    elseif args == "bacon" then
+        local vAges = {} 
+        for _,v in pairs(tbl) do
+            if v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair") and v ~= cmdlp then
+                vAges[#vAges+1] = v
             end
-            return vAges[math.random(1,#vAges)]
-        elseif args == "friend" then
-            local vAges = {} 
-            for _, v in pairs(tbl) do
-                if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                    vAges[#vAges+1] = v
-                end
+        end
+        return vAges[math.random(1,#vAges)]
+    elseif args == "friend" then
+        local vAges = {} 
+        for _, v in pairs(tbl) do
+            if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
+                vAges[#vAges+1] = v
             end
-            if #vAges > 0 then
-                return vAges[math.random(1, #vAges)]
-            else
-                return nil
-            end
-        elseif args == "notfriend" then
-            local vAges = {} 
-            for _,v in pairs(tbl) do
-                if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                    vAges[#vAges+1] = v
-                end
-            end
-            return vAges[math.random(1,#vAges)]
-        elseif args == "ally" then
-            local vAges = {} 
-            for _,v in pairs(tbl) do
-                if v.Team == cmdlp.Team and v ~= cmdlp then
-                    vAges[#vAges+1] = v
-                end
-            end
-            return vAges[math.random(1,#vAges)]
-        elseif args == "enemy" then
-            local vAges = {} 
-            for _,v in pairs(tbl) do
-                if v.Team ~= cmdlp.Team then
-                    vAges[#vAges+1] = v
-                end
-            end
-            return vAges[math.random(1,#vAges)]
-        elseif args == "near" then
-            local vAges = {}
-            for _, v in pairs(tbl) do
-                if v and v ~= cmdlp and v.Character and cmdlp.Character then
-                    local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                    local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                    if vRootPart and cmdlpRootPart then
-                        local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                        if distance < 30 then
-                            vAges[#vAges + 1] = v
-                        end
-                    end
-                end
-            end
+        end
+        if #vAges > 0 then
             return vAges[math.random(1, #vAges)]
-        elseif args == "far" then
-            local vAges = {} 
-            for _,v in pairs(tbl) do
-                if v ~= cmdlp then
-                    local math = (v.Character:FindFirstChild("HumanoidRootPart").Position - cmdlp.Character.HumanoidRootPart.Position).magnitude
-                    if math > 30 then
-                        vAges[#vAges+1] = v
-                    end
-                end
+        else
+            return nil
+        end
+    elseif args == "notfriend" then
+        local vAges = {} 
+        for _,v in pairs(tbl) do
+            if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
+                vAges[#vAges+1] = v
             end
-            return vAges[math.random(1,#vAges)]
-        else 
-            for _,v in pairs(tbl) do
-                if v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower()) then
-                    return v
+        end
+        return vAges[math.random(1,#vAges)]
+    elseif args == "ally" then
+        local vAges = {} 
+        for _,v in pairs(tbl) do
+            if v.Team == cmdlp.Team and v ~= cmdlp then
+                vAges[#vAges+1] = v
+            end
+        end
+        return vAges[math.random(1,#vAges)]
+    elseif args == "enemy" then
+        local vAges = {} 
+        for _,v in pairs(tbl) do
+            if v.Team ~= cmdlp.Team then
+                vAges[#vAges+1] = v
+            end
+        end
+        return vAges[math.random(1,#vAges)]
+    elseif args == "near" then
+        local vAges = {}
+        for _, v in pairs(tbl) do
+            if v and v ~= cmdlp and v.Character and cmdlp.Character then
+                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
+                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+                if vRootPart and cmdlpRootPart then
+                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
+                    if distance < 30 then
+                        vAges[#vAges + 1] = v
+                    end
                 end
             end
         end
-    else
-        for _, plr in pairs(tbl) do
-            if plr.UserName:lower():find(args:lower()) or plr.DisplayName:lower():find(args:lower()) then
-                return plr
+        return vAges[math.random(1, #vAges)]
+    elseif args == "far" then
+        local vAges = {} 
+        for _,v in pairs(tbl) do
+            if v ~= cmdlp then
+                local math = (v.Character:FindFirstChild("HumanoidRootPart").Position - cmdlp.Character.HumanoidRootPart.Position).magnitude
+                if math > 30 then
+                    vAges[#vAges+1] = v
+                end
+            end
+        end
+        return vAges[math.random(1,#vAges)]
+    else 
+        for _,v in pairs(tbl) do
+            if v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower()) then
+                return v
             end
         end
     end
