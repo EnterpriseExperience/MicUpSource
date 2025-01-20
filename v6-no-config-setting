@@ -5683,6 +5683,63 @@ Callback = function(getLoopTpToVoid)
     end
 end,})
 
+getgenv().ClockTimeSlider = Tab9:CreateSlider({
+Name = "ClockTime Slider (Default: 14)",
+Range = {0, 24},
+Increment = 1,
+Suffix = "",
+CurrentValue = 14,
+Flag = "SlidingClockTimeSlider",
+Callback = function(slideClockTime)
+    local sliding_clocktime = tonumber(slideClockTime)
+
+    getgenv().Lighting.ClockTime = sliding_clocktime
+end,})
+
+getgenv().BrightnessSlider = Tab9:CreateSlider({
+Name = "Brightness Slider (Default: 3)",
+Range = {0, 50000},
+Increment = 1,
+Suffix = "",
+CurrentValue = 3,
+Flag = "SlidingBrightnessSlider",
+Callback = function(slideBrightnessVal)
+    local Value_Brightness = tonumber(slideBrightnessVal)
+
+    getgenv().Lighting.Brightness = Value_Brightness
+end,})
+
+getgenv().AmbientChooser = Tab9:CreateColorPicker({
+Name = "Ambient Color",
+Color = Color3.fromRGB(40, 40, 40),
+Flag = "AmbientChoosingColor",
+Callback = function(color_ambient)
+    getgenv().Lighting.Ambient = color_ambient
+end,})
+
+getgenv().ChooseLightingTechnology = Tab9:CreateDropdown({
+Name = "Lighting Technology",
+Options = {"Compatibility","Future","Legacy","ShadowMap","Unified","Voxel"},
+CurrentOption = {"ShadowMap"},
+MultipleOptions = false,
+Flag = "ChoosingTechnology",
+Callback = function(Tech_Lighting)
+    if typeof(Tech_Lighting) == "table" then
+        Tech_Lighting = Tech_Lighting[1]
+    end
+
+    if typeof(Tech_Lighting) ~= "string" then
+        return warn("Invalid Technology Option selected. Expected a string, got: "..typeof(Tech_Lighting))
+    end
+
+    local TechnologyEnum = Enum.Technology[Tech_Lighting]
+    if not TechnologyEnum then
+        return getgenv().notify("Error:", "Invalid material: "..tostring(TechnologyEnum), 5)
+    end
+
+    getgenv().Lighting.Technology = Enum.Technology[Tech_Lighting]
+end,})
+
 getgenv().LightingReset = Tab9:CreateButton({
 Name = "Reset Lighting",
 Callback = function()
