@@ -5905,10 +5905,10 @@ Name = "Reset Lighting",
 Callback = function()
     resetLightingSettings()
     wait(0.3)
-    if game:GetService("MaterialService").Use2022Materials or game:GetService("MaterialService").Use2022Materials == true then
-        getgenv().material_toggle(false)
+    if not game:GetService("MaterialService").Use2022Materials or game:GetService("MaterialService").Use2022Materials == false then
+        getgenv().material_toggle(true)
     else
-        getgenv().notify("Passed", "Did not detect 'Use2022Materials' to be enabled [false].", 7)
+        getgenv().notify("True", "'Use2022Materials' is enabled | Continue.", 7)
     end
 end,})
 
