@@ -673,16 +673,13 @@ wait()
 getgenv().Module_For_ZEH = ZEH_Module
 -- Current UI is automatically hidden, shoutout to Rayfield (and the hiddenUI function.).
 getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
-local Window
-
-getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
-wait(0.1)
+wait()
 local Window = Rayfield:CreateWindow({
-    Name = "📜 Zacks Easy Hub 📜 | V7.0.8-E | Emote Keybinds: False",
+    Name = "📜 Zacks Easy Hub 📜 | V7.0.6-E | Emote Keybinds: False",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
-        Enabled = true,
+        Enabled = false,
         FolderName = "ConfigurationZacskEasyHub",
         FileName = "ZacksEasyHub"
     },
@@ -1402,7 +1399,7 @@ Callback = function()
     end
 end,})
 
-local ViewOwnerBruh = Tab1:CreateToggle({
+getgenv().ViewOwnerBruh = Tab1:CreateToggle({
 Name = "View: Owner Of Script",
 CurrentValue = false,
 Flag = "viewOwner",
@@ -1421,7 +1418,7 @@ Callback = function(viewingOwner)
             local Owner_Char = OwnerOfScript.Character
             Camera.CameraSubject = Owner_Char
         else
-            return 
+            return getgenv().notify("Failure!", "Owner not found in current server", 5)
         end
     else
         local Workspace = getgenv().Workspace
@@ -3203,73 +3200,110 @@ end,})
 local Backflips = Tab16:CreateButton({
 Name = "Backflips (FE)",
 Callback = function()
-    local ver = "2.15"
+    if getgenv().loaded_face_bang then
+        return getgenv().notify("Failure", "Please switch off Face F**k before using this.", 5)
+    end
+    wait(0.2)
+    local ver = "2.15" 
     local scriptname = "feFlip"
-
+    
     local FrontflipKey = Enum.KeyCode.Z
     local BackflipKey = Enum.KeyCode.X
     local AirjumpKey = Enum.KeyCode.C
-
+    
     local ca = game:GetService("ContextActionService")
-    local zeezy = getgenv().LocalPlayer
-    local Humanoid = getgenv().Humanoid
+    getgenv().zeezyEnabled = true
     local h = 0.0174533
-    local antigrav
-
-    function zeezyFrontflip(act,inp,obj)
+    
+    function zeezyFrontflip(act, inp, obj)
+        if not getgenv().zeezyEnabled then return end
         if inp == Enum.UserInputState.Begin then
-            getgenv().Humanoid:ChangeState("Jumping")
+            getgenv().Humanoid:ChangeState(3)
             wait()
             getgenv().Humanoid.Sit = true
-            for i = 1,360 do 
-                delay(i/720,function()
+            for i = 1, 360 do 
+                delay(i / 720, function()
+                    if not getgenv().zeezyEnabled then return end
                     getgenv().Humanoid.Sit = true
-                    getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(-h,0,0)
+                    getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(-h, 0, 0)
                 end)
             end
             wait(0.55)
             getgenv().Humanoid.Sit = false
         end
     end
-
-    function zeezyBackflip(act,inp,obj)
+    
+    function zeezyBackflip(act, inp, obj)
+        if not getgenv().zeezyEnabled then return end
         if inp == Enum.UserInputState.Begin then
-            getgenv().Humanoid:ChangeState("Jumping")
+            getgenv().Humanoid:ChangeState(3)
             wait()
             getgenv().Humanoid.Sit = true
-            for i = 1,360 do
-                delay(i/720,function()
+            for i = 1, 360 do
+                delay(i / 720, function()
+                    if not getgenv().zeezyEnabled then return end
                     getgenv().Humanoid.Sit = true
-                    getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(h,0,0)
+                    getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(h, 0, 0)
                 end)
             end
             wait(0.55)
             getgenv().Humanoid.Sit = false
         end
     end
-
-    function zeezyAirjump(act,inp,obj)
+    
+    function zeezyAirjump(act, inp, obj)
+        if not getgenv().zeezyEnabled then return end
         if inp == Enum.UserInputState.Begin then
             getgenv().Humanoid:ChangeState("Seated")
             wait()
-            getgenv().Humanoid:ChangeState("Jumping")	
+            getgenv().Humanoid:ChangeState(3)	
         end
     end
-
-    ca:BindAction("zeezyFrontflip",zeezyFrontflip,false,FrontflipKey)
-    ca:BindAction("zeezyBackflip",zeezyBackflip,false,BackflipKey)
-    ca:BindAction("zeezyAirjump",zeezyAirjump,false,AirjumpKey)
-
-    local notifSound = Instance.new("Sound",workspace)
+    
+    ca:BindAction("zeezyFrontflip", zeezyFrontflip, false, FrontflipKey)
+    ca:BindAction("zeezyBackflip", zeezyBackflip, false, BackflipKey)
+    ca:BindAction("zeezyAirjump", zeezyAirjump, false, AirjumpKey)
+    
+    local notifSound = Instance.new("Sound", workspace)
     notifSound.PlaybackSpeed = 1.5
     notifSound.Volume = 0.25
     notifSound.SoundId = "rbxassetid://170765130"
     notifSound.PlayOnRemove = true
     notifSound:Destroy()
-    game.StarterGui:SetCore("SendNotification", {Title = "feFlip", Text = "FE Flip loaded successfully!", Icon = "rbxassetid://505845268", Duration = 8, Button1 = "Okay"})
+    wait(0.2)
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "feFlip", 
+        Text = "FE Flip loaded successfully!", 
+        Icon = "rbxassetid://505845268", 
+        Duration = 8, 
+        Button1 = "Okay"
+    })
 end,})
 
-local InfJumpDoFunc = Tab16:CreateToggle({
+getgenv().TurnOffBackflipsScript = Tab16:CreateButton({
+Name = "Disable Backflips Script",
+Callback = function()
+    if getgenv().zeezyEnabled == nil then
+        return getgenv().notify("Error:", "BackFlip is not loaded.", 5)
+    end
+    
+    getgenv().zeezyEnabled = false
+    
+    local ca = game:GetService("ContextActionService")
+    ca:UnbindAction("zeezyFrontflip")
+    ca:UnbindAction("zeezyBackflip")
+    ca:UnbindAction("zeezyAirjump")
+    wait(0.2)
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "feFlip",
+        Text = "FE Flip disabled successfully!",
+        Icon = "rbxassetid://505845268",
+        Duration = 8,
+        Button1 = "Okay"
+    })  
+end,})
+
+getgenv().InfJumpDoFunc = Tab16:CreateToggle({
 Name = "Infinite Jump",
 CurrentValue = false,
 Flag = "ConnectionInfiJump",
@@ -3305,8 +3339,8 @@ Callback = function(infJumpConnect)
     end
 end,})
 
-local faceBangScript = Tab16:CreateButton({
-Name = "Face F**k Script",
+getgenv().faceBangScript = Tab16:CreateButton({
+Name = "Face F**k Script (Press: Z)",
 Callback = function()
     if getgenv().loaded_face_bang then
         return getgenv().notify("Notification:", "Already loaded face f*ck script!", 7.5)
@@ -3316,7 +3350,7 @@ Callback = function()
     end
 end,})
 
-local noclipToggle = Tab2:CreateToggle({
+getgenv().noclipToggle = Tab2:CreateToggle({
 Name = "Noclip",
 CurrentValue =  false,
 Flag = "toggleNoclipChar",
