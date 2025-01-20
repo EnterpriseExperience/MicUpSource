@@ -675,7 +675,7 @@ getgenv().Module_For_ZEH = ZEH_Module
 getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
 wait()
 local Window = Rayfield:CreateWindow({
-    Name = "📜 Zacks Easy Hub 📜 | V7.0.6-E | Emote Keybinds: False",
+    Name = "📜 Zacks Easy Hub 📜 | V7.1.2-D | Emote Keybinds: False",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -5745,10 +5745,10 @@ Name = "Reset Lighting",
 Callback = function()
     resetLightingSettings()
     wait(0.3)
-    if game:GetService("MaterialService").Use2022Materials or game:GetService("MaterialService").Use2022Materials == true then
-        getgenv().material_toggle(false)
+    if not game:GetService("MaterialService").Use2022Materials or game:GetService("MaterialService").Use2022Materials == false then
+        getgenv().material_toggle(true)
     else
-        getgenv().notify("Passed", "Did not detect 'Use2022Materials' to be enabled [false].", 7)
+        getgenv().notify("True", "'Use2022Materials' is enabled | Continue.", 7)
     end
 end,})
 
