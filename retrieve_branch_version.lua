@@ -11,8 +11,8 @@ if game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChi
     return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
 end
 
-local version_build_config = "V6.9.1-CC"
-local no_config_build = "V6.9.8"
+local version_build_config = "V7.1.3-C"
+local no_config_build = "V7.1.4-D"
 task.wait()
 if getgenv().setup_loaded_already_script then
     return NotificationLibrary:SendNotification("Error", "Setup is already running!", 7)
