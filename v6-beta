@@ -675,7 +675,7 @@ getgenv().Module_For_ZEH = ZEH_Module
 getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
 wait()
 local Window = Rayfield:CreateWindow({
-    Name = "📜 Zacks Easy Hub 📜 | V7.0.5-CD | Emote Keybinds: True",
+    Name = "📜 Zacks Easy Hub 📜 | V7.1.1-C | Emote Keybinds: True",
     LoadingTitle = "Enjoy ruling MIC UP 🔊",
     LoadingSubtitle = "Zacks Easy Hub | Success.",
     ConfigurationSaving = {
@@ -822,23 +822,6 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             Lighting.Atmosphere.Decay = Color3.fromRGB(106, 112, 125)
             Lighting.Atmosphere.Glare = 0
             Lighting.Atmosphere.Haze = 0
-        end
-        wait(0.1)
-        if not Lighting:FindFirstChildOfClass("Sky") then
-            warn("Sky not found, creating...")
-            wait(0.1)
-            local Sky = Instance.new("Sky")
-            Sky.Name = "Sky"
-            Sky.Parent = Lighting
-            Sky.MoonAngularSize = 11
-            Sky.StarCount = 3000
-            Sky.SunAngularSize = 11
-        else
-            print("Sky found, continuing...")
-            wait(0.1)
-            Lighting.Sky.MoonAngularSize = 11
-            Lighting.Sky.StarCount = 3000
-            Lighting.Sky.SunAngularSize = 11
         end
         wait(0.1)
         if not Lighting:FindFirstChildOfClass("BloomEffect") then
