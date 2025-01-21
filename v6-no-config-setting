@@ -824,23 +824,6 @@ local Asset_Service_Duplicate = game:GetService("AssetService")
             Lighting.Atmosphere.Haze = 0
         end
         wait(0.1)
-        if not Lighting:FindFirstChildOfClass("Sky") then
-            warn("Sky not found, creating...")
-            wait(0.1)
-            local Sky = Instance.new("Sky")
-            Sky.Name = "Sky"
-            Sky.Parent = Lighting
-            Sky.MoonAngularSize = 11
-            Sky.StarCount = 3000
-            Sky.SunAngularSize = 11
-        else
-            print("Sky found, continuing...")
-            wait(0.1)
-            Lighting.Sky.MoonAngularSize = 11
-            Lighting.Sky.StarCount = 3000
-            Lighting.Sky.SunAngularSize = 11
-        end
-        wait(0.1)
         if not Lighting:FindFirstChildOfClass("BloomEffect") then
             warn("Bloom was not found, creating...")
             wait(0.1)
