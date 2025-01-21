@@ -179,9 +179,7 @@ local function init_services()
 end
 
 init_services()
-
 wait(0.5)
-
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
 getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
@@ -5753,24 +5751,24 @@ end,})
 if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
     local JumpPowerSlider = Tab2:CreateSlider({
     Name = "JumpPower",
-    Range = {16, 750},
+    Range = {50, 750},
     Increment = 1,
     Suffix = "",
     CurrentValue = 16,
     Flag = "jpValue",
     Callback = function(jpVal)
-        ZEH_Module:JumpPower_JumpHeight_Update(jpVal)
+        getgenv().Humanoid.JumpPower = jpVal
     end,})
 else
     local HeightJumpPowerSliding = Tab2:CreateSlider({
     Name = "JumpHeight",
-    Range = {16, 450},
+    Range = {7, 450},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 16,
+    CurrentValue = 7,
     Flag = "jumpHeightValue",
     Callback = function(jumpHVal)
-        ZEH_Module:JumpPower_JumpHeight_Update(jumpHVal)
+        getgenv().Humanoid.JumpHeight = jumpHVal
     end,})
 end
 
