@@ -674,31 +674,61 @@ getgenv().Module_For_ZEH = ZEH_Module
 -- Current UI is automatically hidden, shoutout to Rayfield (and the hiddenUI function.).
 getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
 wait()
-local Window = Rayfield:CreateWindow({
-    Name = "📜 Zacks Easy Hub 📜 | V7.1.1-C | Emote Keybinds: True",
-    LoadingTitle = "Enjoy ruling MIC UP 🔊",
-    LoadingSubtitle = "Zacks Easy Hub | Success.",
-    ConfigurationSaving = {
-        Enabled = false,
-        FolderName = "ConfigurationZacskEasyHub",
-        FileName = "ZacksEasyHub"
-    },
-    Discord = {
-        Enabled = true,
-        Invite = "VJh3kkYzBn",
-        RememberJoins = true
-    },
-    KeySystem = false,
-    KeySettings = {
-        Title = "None",
-        Subtitle = "No key system is provided.",
-        Note = "...",
-        FileName = "Key",
-        SaveKey = false,
-        GrabKeyFromSite = false,
-        Key = {"None"}
-    }
-})
+local Window
+wait(0.1)
+if executor_Name ~= "Solara" then
+    Window = Rayfield:CreateWindow({
+        Name = "📜 Zacks Easy Hub 📜 | V7.1.3-C | Emote Keybinds: True",
+        LoadingTitle = "Enjoy ruling MIC UP 🔊",
+        LoadingSubtitle = "Zacks Easy Hub | Success.",
+        ConfigurationSaving = {
+            Enabled = false,
+            FolderName = "ConfigurationZacskEasyHub",
+            FileName = "ZacksEasyHub"
+        },
+        Discord = {
+            Enabled = true,
+            Invite = "VJh3kkYzBn",
+            RememberJoins = true
+        },
+        KeySystem = false,
+        KeySettings = {
+            Title = "None",
+            Subtitle = "No key system is provided.",
+            Note = "...",
+            FileName = "Key",
+            SaveKey = false,
+            GrabKeyFromSite = false,
+            Key = {"None"}
+        }
+    })
+else
+    Window = Rayfield:CreateWindow({
+        Name = "📜 Zacks Easy Hub 📜 | V7.1.3-C | Emote Keybinds: True",
+        LoadingTitle = "Enjoy ruling MIC UP 🔊",
+        LoadingSubtitle = "Zacks Easy Hub | Success.",
+        ConfigurationSaving = {
+            Enabled = false,
+            FolderName = "ConfigurationZacskEasyHub",
+            FileName = "ZacksEasyHub"
+        },
+        Discord = {
+            Enabled = false,
+            Invite = "",
+            RememberJoins = false
+        },
+        KeySystem = false,
+        KeySettings = {
+            Title = "None",
+            Subtitle = "No key system is provided.",
+            Note = "...",
+            FileName = "Key",
+            SaveKey = false,
+            GrabKeyFromSite = false,
+            Key = {"None"}
+        }
+    })
+end
 
 if not Window then
     getgenv().SCRIPT_EXECUTED = false
