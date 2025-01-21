@@ -1296,7 +1296,7 @@ Callback = function()
     end
 end,})
 
-local claimRandomBooth = Tab11:CreateButton({
+getgenv().claimRandomBooth = Tab11:CreateButton({
 Name = "Claim Random Booth",
 Callback = function()
     getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
@@ -1394,7 +1394,7 @@ Callback = function()
     Claim_A_Booth()    
 end,})
 
-local TPOwnerBruh = Tab1:CreateButton({
+getgenv().TPOwnerBruh = Tab1:CreateButton({
 Name = "Teleport To: Owner Of Script",
 Callback = function()
     local OwnerName = "L0CKED_1N1"
@@ -1443,11 +1443,13 @@ Callback = function(viewingOwner)
     end
 end,})
 
-local coloredBooth = Tab11:CreateToggle({
+getgenv().coloredBooth = Tab11:CreateToggle({
 Name = "Booth Color Changer (FE)",
 CurrentValue = false,
 Flag = "moveColoredBooth",
 Callback = function(boothColors)
+
+
     if boothColors then
         local fontsList = {
             "DenkOne",
@@ -1714,7 +1716,7 @@ Callback = function(unclaimTheirBooth)
     Claim_A_Booth()
 end,})
 
-local FrozenChar = Tab2:CreateToggle({
+getgenv().FrozenChar = Tab2:CreateToggle({
 Name = "Freeze Your Character",
 CurrentValue = false,
 Flag = "AntiMovement",
@@ -1744,7 +1746,7 @@ Callback = function(hasFrozenChar)
     end
 end,})
 
-local WriteOutBooth = Tab11:CreateInput({
+getgenv().WriteOutBooth = Tab11:CreateInput({
 Name = "Booth Typing Effect (FE)",
 CurrentValue = "",
 PlaceholderText = "Text To Type",
@@ -1772,7 +1774,7 @@ Callback = function(TypeEffectStall)
 end,})
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/refs/heads/main/coding_stuff.lua')))()
 
-local ToggleBadWords = Tab11:CreateToggle({
+getgenv().ToggleBadWords = Tab11:CreateToggle({
 Name = "Bypassed Booth (FE)",
 CurrentValue = false,
 Flag = "ToggleBadWords",
@@ -1795,6 +1797,7 @@ Callback = function(Cussing)
             local MyStall = getStall()
 
             if not MyStall or MyStall == nil then
+                getgenv().ToggleBadWords:Set(false)
                 getgenv().Cuss = false
                 return getgenv().notify("Failed", "You do not own a Booth, claim one.", 5)
             end
@@ -1853,7 +1856,7 @@ Callback = function(Cussing)
 end,})
 
 getgenv().bangSpeed = 1
-local bangPlrSpeedSlider = Tab13:CreateSlider({
+getgenv().bangPlrSpeedSlider = Tab13:CreateSlider({
 Name = "Bang Player Speed",
 Range = {0.1, 110},
 Increment = 0.1,
@@ -1864,7 +1867,7 @@ Callback = function(speedOfPlayerBang)
     getgenv().bangSpeed = tonumber(speedOfPlayerBang)
 end,})
 
-local BangPlrInputBox = Tab13:CreateInput({
+getgenv().BangPlrInputBox = Tab13:CreateInput({
 Name = "Bang Player (Bypassed)",
 PlaceholderText = "Target Here",
 RemoveTextAfterFocusLost = true,
@@ -1994,7 +1997,7 @@ Callback = function(bangPlayerTarget)
     bang_plr_bypass(real_target_bang)
 end,})
 wait(0.1)
-local UnloadBangPlr = Tab13:CreateButton({
+getgenv().UnloadBangPlr = Tab13:CreateButton({
 Name = "Unload Bang Script (Stop Script)",
 Callback = function()
     local function cleanupConnections()
@@ -2030,7 +2033,7 @@ Callback = function()
     bang_plr_bypass_off()    
 end,})
 
-local SpinCharBox = Tab2:CreateInput({
+getgenv().SpinCharBox = Tab2:CreateInput({
 Name = "Spin Character",
 PlaceholderText = "Speed",
 RemoveTextAfterFocusLost = true,
@@ -2062,7 +2065,7 @@ Callback = function(getSpinSpeed)
     end
 end,})
 
-local UnspinNow = Tab2:CreateButton({
+getgenv().UnspinNow = Tab2:CreateButton({
 Name = "Unspin",
 Callback = function()
     for i,v in pairs(getgenv().HumanoidRootPart:GetChildren()) do
@@ -2072,7 +2075,7 @@ Callback = function()
     end
 end,})
 
-local SubmitNoteBypassToggle = Tab5:CreateToggle({
+getgenv().SubmitNoteBypassToggle = Tab5:CreateToggle({
 Name = "Submit Note Bypass",
 CurrentValue = false,
 Flag = "BypassNoteBoard",
@@ -5591,26 +5594,26 @@ Callback = function(wsVal)
 end,})
 
 if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
-    local JumpPowerSlider = Tab2:CreateSlider({
+    getgenv().JumpPowerSlider = Tab2:CreateSlider({
     Name = "JumpPower",
-    Range = {16, 750},
+    Range = {50, 750},
     Increment = 1,
     Suffix = "",
     CurrentValue = 16,
     Flag = "jpValue",
     Callback = function(jpVal)
-        ZEH_Module:JumpPower_JumpHeight_Update(jpVal)
+        getgenv().Humanoid.JumpPower = jpVal
     end,})
 else
-    local HeightJumpPowerSliding = Tab2:CreateSlider({
+    getgenv().HeightJumpPowerSliding = Tab2:CreateSlider({
     Name = "JumpHeight",
-    Range = {16, 450},
+    Range = {7, 450},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 16,
+    CurrentValue = 7,
     Flag = "jumpHeightValue",
     Callback = function(jumpHVal)
-        ZEH_Module:JumpPower_JumpHeight_Update(jumpHVal)
+        getgenv().Humanoid.JumpHeight = jumpHVal
     end,})
 end
 
