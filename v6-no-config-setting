@@ -100,7 +100,147 @@ else
     });
     return 
 end
+wait(0.5)
+if getgenv().clock_script_time then
+    warn("Clock-Time-Script already loaded.")
+else
+    local ClockGUI = Instance.new("ScreenGui")
+    local Clock_Frame = Instance.new("ImageLabel")
+    local time_label = Instance.new("TextLabel")
+    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local humanoidRootPart = Character and Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart", 1)
+    local HRP = humanoidRootPart
+    local HumanoidRootPart = humanoidRootPart
+    local hrp = humanoidRootPart
+    local Humanoid = Character and Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 1)
+    local human = Humanoid
+    local Human = Humanoid
+    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+    local COREGUI = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+    local hiddenUI = get_hidden_gui or gethui
 
+    function randomString()
+        local length = math.random(10,20)
+        local array = {}
+        for i = 1, length do
+            array[i] = string.char(math.random(32, 126))
+        end
+        return table.concat(array)
+    end
+
+    PARENT = ClockGUI.Parent
+    if get_hidden_gui or gethui then
+        local hiddenUI = get_hidden_gui or gethui
+        local Main = ClockGUI
+        Main.Name = randomString()
+        Main.Parent = hiddenUI()
+        PARENT = Main
+    elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
+        local Main = ClockGUI
+        Main.Name = randomString()
+        syn.protect_gui(Main)
+        Main.Parent = COREGUI
+        PARENT = Main
+    elseif COREGUI:FindFirstChild('RobloxGui') then
+        PARENT = COREGUI.RobloxGui
+    else
+        local Main = ClockGUI
+        Main.Name = randomString()
+        Main.Parent = COREGUI
+        PARENT = Main
+    end
+    wait(0.1)
+    ClockGUI.Name = randomString()
+    ClockGUI.ResetOnSpawn = false
+    ClockGUI.IgnoreGuiInset = true
+
+    Clock_Frame.Name = "Clock_Frame"
+    Clock_Frame.Parent = ClockGUI
+    Clock_Frame.Active = true
+    Clock_Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Clock_Frame.BackgroundTransparency = 1.000
+    Clock_Frame.BorderColor3 = Color3.fromRGB(27, 42, 53)
+    Clock_Frame.Position = UDim2.new(0.772566795, 0, 0.0113268606, 0)
+    Clock_Frame.Size = UDim2.new(0, 249, 0, 46)
+    Clock_Frame.Image = "rbxassetid://3570695787"
+    Clock_Frame.ImageColor3 = Color3.fromRGB(45, 45, 45)
+    Clock_Frame.ScaleType = Enum.ScaleType.Slice
+    Clock_Frame.SliceCenter = Rect.new(100, 100, 100, 100)
+    Clock_Frame.SliceScale = 0.120
+
+    time_label.Name = "time_label"
+    time_label.Parent = Clock_Frame
+    time_label.Active = true
+    time_label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    time_label.BackgroundTransparency = 1.000
+    time_label.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    time_label.BorderSizePixel = 0
+    time_label.Position = UDim2.new(0, 0, -0.00659200316, 0)
+    time_label.Size = UDim2.new(0, 249, 0, 46)
+    time_label.Font = Enum.Font.Unknown
+    time_label.Text = "Detecting Script Time..."
+    time_label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    time_label.TextScaled = true
+    time_label.TextSize = 14.000
+    time_label.TextWrapped = true
+
+    local function OMWZNSF_fake_script()
+        local hour = 6
+        local minute = 0
+        local isPM = false
+        getgenv().times_enabled_clock = true
+
+        local Lighting = game:GetService("Lighting")
+
+        local function formatTime(h, m, pm)
+            local period = pm and "PM" or "AM"
+            return string.format("%02d:%02d %s", h, m, period)
+        end
+
+        local function updateTime()
+            minute = minute + 1
+            if minute == 60 then
+                minute = 0
+                hour = hour + 1
+            end
+            if hour == 12 and minute == 0 then
+                isPM = not isPM
+            elseif hour == 13 then
+                hour = 1
+            end
+        end
+
+        local function updateLighting()
+            local clockHour = hour
+            if isPM and hour ~= 12 then
+                clockHour = clockHour + 12
+            elseif not isPM and hour == 12 then
+                clockHour = 0
+            end
+            Lighting.ClockTime = clockHour + (minute / 60)
+            
+            if Lighting.ClockTime >= 6 and Lighting.ClockTime <= 18 then
+                Lighting.Brightness = 2
+            else
+                Lighting.Brightness = 0.5
+            end
+        end
+
+        while getgenv().times_enabled_clock == true do
+            time_label.Text = formatTime(hour, minute, isPM)
+            wait(0.1)
+            updateLighting()
+            wait(1)
+            updateTime()
+        end
+    end
+    coroutine.wrap(OMWZNSF_fake_script)()
+    wait(0.1)
+    getgenv().clock_script_time = true
+end
+wait(0.5)
 -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
@@ -179,9 +319,7 @@ local function init_services()
 end
 
 init_services()
-
 wait(0.5)
-
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
 getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
@@ -576,7 +714,9 @@ getgenv().notify = function(title, content, duration)
         Actions = {
             Ignore = {
                 Name = "Okay.",
-                Callback = function() print("...") end
+                Callback = function() 
+                    print("...") 
+                end
             },
         },
     })
@@ -596,58 +736,62 @@ else
     ReplicatedStorage = game:GetService("ReplicatedStorage")
 end
 wait(0.2)
-local Storage = Workspace:FindFirstChild("PartStorage")
-local CFrames = {
-    ["Conveyer_1"] = CFrame.new(203.401642, 12.8743448, -100.937836, 1.4424324e-05, -0.70705986, -0.707153797, 5.9902668e-06, 0.707153738, -0.70705986, 1, 5.9902668e-06, 1.4424324e-05),
-    ["Conveyer_2"] = CFrame.new(221.043793, 28.0164795, -104.937843, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-    ["Conveyer_3"] = CFrame.new(217.043793, 28.0164833, -113.937866, -1.1920929e-07, 0, 1.00000012, 0, 1, 0, -1.00000012, 0, -1.1920929e-07),
-    ["Conveyer_4"] = CFrame.new(196.330627, 43.4307442, -113.937851, -3.23057175e-05, 0.707153201, 0.707060337, 1.33812428e-05, 0.707060337, -0.707153201, -1, -1.33812428e-05, -3.23057175e-05)
-}
-wait(0.2)
-for name, cf in pairs(CFrames) do
-    for _, v in ipairs(Workspace:GetChildren()) do
-        if v:IsA("BasePart") and v.CFrame == cf then
-            v.Name = name
-            v.Parent = Storage
+if getgenv().conveyer_stored then
+    warn("Already stored conveyer's")
+else
+    local Storage = Workspace:FindFirstChild("PartStorage")
+    local CFrames = {
+        ["Conveyer_1"] = CFrame.new(203.401642, 12.8743448, -100.937836, 1.4424324e-05, -0.70705986, -0.707153797, 5.9902668e-06, 0.707153738, -0.70705986, 1, 5.9902668e-06, 1.4424324e-05),
+        ["Conveyer_2"] = CFrame.new(221.043793, 28.0164795, -104.937843, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+        ["Conveyer_3"] = CFrame.new(217.043793, 28.0164833, -113.937866, -1.1920929e-07, 0, 1.00000012, 0, 1, 0, -1.00000012, 0, -1.1920929e-07),
+        ["Conveyer_4"] = CFrame.new(196.330627, 43.4307442, -113.937851, -3.23057175e-05, 0.707153201, 0.707060337, 1.33812428e-05, 0.707060337, -0.707153201, -1, -1.33812428e-05, -3.23057175e-05)
+    }
+    wait(0.2)
+    for name, cf in pairs(CFrames) do
+        for _, v in ipairs(Workspace:GetChildren()) do
+            if v:IsA("BasePart") and v.CFrame == cf then
+                v.Name = name
+                v.Parent = Storage
+            end
+        end
+        wait(0.1)
+    end
+    wait(0.3)
+    for _, v in ipairs(Storage:GetChildren()) do
+        if v.Name == "Conveyer_1" then
+            v.Transparency = 0.3
+            v.BrickColor = BrickColor.new("Really black")
         end
     end
     wait(0.1)
-end
-wait(0.3)
-for _, v in ipairs(Storage:GetChildren()) do
-    if v.Name == "Conveyer_1" then
-        v.Transparency = 0.3
-        v.BrickColor = BrickColor.new("Really black")
+    for _, v in ipairs(Storage:GetChildren()) do
+        if v.Name == "Conveyer_2" then
+            v.Transparency = 0.3
+            v.BrickColor = BrickColor.new("Really black")
+        end
     end
-end
-wait(0.1)
-for _, v in ipairs(Storage:GetChildren()) do
-    if v.Name == "Conveyer_2" then
-        v.Transparency = 0.3
-        v.BrickColor = BrickColor.new("Really black")
+    wait(0.1)
+    for _, v in ipairs(Storage:GetChildren()) do
+        if v.Name == "Conveyer_3" then
+            v.Transparency = 0.3
+            v.BrickColor = BrickColor.new("Really black")
+        end
     end
-end
-wait(0.1)
-for _, v in ipairs(Storage:GetChildren()) do
-    if v.Name == "Conveyer_3" then
-        v.Transparency = 0.3
-        v.BrickColor = BrickColor.new("Really black")
+    wait(0.1)
+    for _, v in ipairs(Storage:GetChildren()) do
+        if v.Name == "Conveyer_4" then
+            v.Transparency = 0.3
+            v.BrickColor = BrickColor.new("Really black")
+        end
     end
-end
-wait(0.1)
-for _, v in ipairs(Storage:GetChildren()) do
-    if v.Name == "Conveyer_4" then
-        v.Transparency = 0.3
-        v.BrickColor = BrickColor.new("Really black")
-    end
-end
-wait(0.2)
-for _, v in ipairs(Workspace:GetChildren()) do
-    if v:IsA("MeshPart") and v.CFrame == CFrame.new(170.998001, 58, -113.500031, -1, 0, 0, 0, 1, 0, 0, 0, -1) then
-        v.Name = "MeshPart_Floor_Conveyers"
-        v.Parent = Workspace:FindFirstChild("PartStorage")
-        v.Transparency = 0.3
-        v.BrickColor = BrickColor.new("Really black")
+    wait(0.2)
+    for _, v in ipairs(Workspace:GetChildren()) do
+        if v:IsA("MeshPart") and v.CFrame == CFrame.new(170.998001, 58, -113.500031, -1, 0, 0, 0, 1, 0, 0, 0, -1) then
+            v.Name = "MeshPart_Floor_Conveyers"
+            v.Parent = Workspace:FindFirstChild("PartStorage")
+            v.Transparency = 0.3
+            v.BrickColor = BrickColor.new("Really black")
+        end
     end
 end
 wait(0.2)
@@ -678,7 +822,7 @@ local Window
 wait(0.1)
 if executor_Name ~= "Solara" then
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.1.4-D | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.1.6-D | Emote Keybinds: False",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
@@ -704,7 +848,7 @@ if executor_Name ~= "Solara" then
     })
 else
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.1.4-D | Emote Keybinds: False",
+        Name = "📜 Zacks Easy Hub 📜 | V7.1.6-D | Emote Keybinds: False",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
@@ -1296,7 +1440,7 @@ Callback = function()
     end
 end,})
 
-getgenv().claimRandomBooth = Tab11:CreateButton({
+local claimRandomBooth = Tab11:CreateButton({
 Name = "Claim Random Booth",
 Callback = function()
     getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
@@ -1394,7 +1538,7 @@ Callback = function()
     Claim_A_Booth()    
 end,})
 
-getgenv().TPOwnerBruh = Tab1:CreateButton({
+local TPOwnerBruh = Tab1:CreateButton({
 Name = "Teleport To: Owner Of Script",
 Callback = function()
     local OwnerName = "L0CKED_1N1"
@@ -1443,13 +1587,11 @@ Callback = function(viewingOwner)
     end
 end,})
 
-getgenv().coloredBooth = Tab11:CreateToggle({
+local coloredBooth = Tab11:CreateToggle({
 Name = "Booth Color Changer (FE)",
 CurrentValue = false,
 Flag = "moveColoredBooth",
 Callback = function(boothColors)
-
-
     if boothColors then
         local fontsList = {
             "DenkOne",
@@ -1716,7 +1858,7 @@ Callback = function(unclaimTheirBooth)
     Claim_A_Booth()
 end,})
 
-getgenv().FrozenChar = Tab2:CreateToggle({
+local FrozenChar = Tab2:CreateToggle({
 Name = "Freeze Your Character",
 CurrentValue = false,
 Flag = "AntiMovement",
@@ -1746,7 +1888,7 @@ Callback = function(hasFrozenChar)
     end
 end,})
 
-getgenv().WriteOutBooth = Tab11:CreateInput({
+local WriteOutBooth = Tab11:CreateInput({
 Name = "Booth Typing Effect (FE)",
 CurrentValue = "",
 PlaceholderText = "Text To Type",
@@ -1774,7 +1916,7 @@ Callback = function(TypeEffectStall)
 end,})
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/refs/heads/main/coding_stuff.lua')))()
 
-getgenv().ToggleBadWords = Tab11:CreateToggle({
+local ToggleBadWords = Tab11:CreateToggle({
 Name = "Bypassed Booth (FE)",
 CurrentValue = false,
 Flag = "ToggleBadWords",
@@ -1797,7 +1939,6 @@ Callback = function(Cussing)
             local MyStall = getStall()
 
             if not MyStall or MyStall == nil then
-                getgenv().ToggleBadWords:Set(false)
                 getgenv().Cuss = false
                 return getgenv().notify("Failed", "You do not own a Booth, claim one.", 5)
             end
@@ -1856,7 +1997,7 @@ Callback = function(Cussing)
 end,})
 
 getgenv().bangSpeed = 1
-getgenv().bangPlrSpeedSlider = Tab13:CreateSlider({
+local bangPlrSpeedSlider = Tab13:CreateSlider({
 Name = "Bang Player Speed",
 Range = {0.1, 110},
 Increment = 0.1,
@@ -1867,7 +2008,7 @@ Callback = function(speedOfPlayerBang)
     getgenv().bangSpeed = tonumber(speedOfPlayerBang)
 end,})
 
-getgenv().BangPlrInputBox = Tab13:CreateInput({
+local BangPlrInputBox = Tab13:CreateInput({
 Name = "Bang Player (Bypassed)",
 PlaceholderText = "Target Here",
 RemoveTextAfterFocusLost = true,
@@ -1997,7 +2138,7 @@ Callback = function(bangPlayerTarget)
     bang_plr_bypass(real_target_bang)
 end,})
 wait(0.1)
-getgenv().UnloadBangPlr = Tab13:CreateButton({
+local UnloadBangPlr = Tab13:CreateButton({
 Name = "Unload Bang Script (Stop Script)",
 Callback = function()
     local function cleanupConnections()
@@ -2033,7 +2174,7 @@ Callback = function()
     bang_plr_bypass_off()    
 end,})
 
-getgenv().SpinCharBox = Tab2:CreateInput({
+local SpinCharBox = Tab2:CreateInput({
 Name = "Spin Character",
 PlaceholderText = "Speed",
 RemoveTextAfterFocusLost = true,
@@ -2065,7 +2206,7 @@ Callback = function(getSpinSpeed)
     end
 end,})
 
-getgenv().UnspinNow = Tab2:CreateButton({
+local UnspinNow = Tab2:CreateButton({
 Name = "Unspin",
 Callback = function()
     for i,v in pairs(getgenv().HumanoidRootPart:GetChildren()) do
@@ -2075,7 +2216,7 @@ Callback = function()
     end
 end,})
 
-getgenv().SubmitNoteBypassToggle = Tab5:CreateToggle({
+local SubmitNoteBypassToggle = Tab5:CreateToggle({
 Name = "Submit Note Bypass",
 CurrentValue = false,
 Flag = "BypassNoteBoard",
@@ -5594,7 +5735,7 @@ Callback = function(wsVal)
 end,})
 
 if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
-    getgenv().JumpPowerSlider = Tab2:CreateSlider({
+    local JumpPowerSlider = Tab2:CreateSlider({
     Name = "JumpPower",
     Range = {50, 750},
     Increment = 1,
@@ -5605,7 +5746,7 @@ if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true th
         getgenv().Humanoid.JumpPower = jpVal
     end,})
 else
-    getgenv().HeightJumpPowerSliding = Tab2:CreateSlider({
+    local HeightJumpPowerSliding = Tab2:CreateSlider({
     Name = "JumpHeight",
     Range = {7, 450},
     Increment = 1,
@@ -6400,6 +6541,31 @@ Callback = function(speedCoil)
     end
 end,})
 
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+local function findJumpAnimation()
+    local animateScript = Character:FindFirstChild("Animate")
+    if not animateScript or not animateScript:IsA("LocalScript") then
+        return warn("Animate script not found in the Character.")
+    end
+
+    local jumpObject = animateScript:FindFirstChild("jump")
+    if not jumpObject then
+        return warn("Jump object not found in the Animate script.")
+    end
+
+    local jumpAnim = jumpObject:FindFirstChildOfClass("Animation")
+    if jumpAnim and jumpAnim:IsA("Animation") then
+        return jumpAnim
+    else
+        return warn("Jump Animation not found inside the 'jump' object.")
+    end
+end
+
+local findJumpAnim = findJumpAnimation()
+wait(0.1)
 function run_anims()
     local player = game.Players:FindFirstChild("L0CKED_1N1") or game.Players:FindFirstChild("CHEATING_B0SS")
     if not player then return end
@@ -6407,7 +6573,7 @@ function run_anims()
     print("Found Owner: L0CKED_1N1/CHEATING_B0SS")
 
     local character = player.Character or player.CharacterAdded:Wait()
-    local Animate = character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
+    local Animate = character and character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
 
     if not Animate then return end
 
@@ -6415,7 +6581,7 @@ function run_anims()
     wait(0.1)
     Animate.Disabled = false
 
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
     if humanoid then
         for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
             track:Stop()
@@ -6427,7 +6593,7 @@ function run_anims()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921102574"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921140719"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921135644"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921294559"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921294559"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921040576"
     wait(0.2)
@@ -6497,7 +6663,7 @@ create_Button(CatWalkGlamAnim, "[NEW] 'Catwalk Glam' Animation Package", functio
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=81024476153754"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=92294537340807"
     task.wait()
@@ -6526,7 +6692,7 @@ create_Button(WickedPopularAnim, "[NEW] 'Wicked Popular' Animation Package", fun
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=76049494037641"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=92072849924640"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=72301599441680"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=131326830509784"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=121152442762481"
     task.wait()
@@ -6555,7 +6721,7 @@ create_Button(adidasAnim, "Adidas Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18537371272"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18537392113"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=18537384940"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=18537380791"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=18537380791"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=18537363391"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=18537367238"
     task.wait()
@@ -6584,7 +6750,7 @@ create_Button(NFLAnim, "NFL Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=74451233229259"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=110358958299415"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=117333533048078"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=134630013742019"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
     task.wait()
@@ -6613,7 +6779,7 @@ create_Button(BoldAnim, "Bold Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=16738334710"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=16738340646"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=16738337225"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=16738336650"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=16738336650"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=16738333171"
     task.wait()
@@ -6642,7 +6808,7 @@ create_Button(noBoundariesAnim, "No Boundaries Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18747063918"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18747074203"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=18747070484"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=18747069148"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=18747069148"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=18747060903"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=18747062535"
     task.wait()
@@ -6671,7 +6837,7 @@ create_Button(robotAnim, "Robot Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921248831"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921255446"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921250460"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921252123"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921252123"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=10921247141"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921251156"
     task.wait()
@@ -6692,7 +6858,7 @@ create_Button(zombieAnim, "Zombie Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616160636"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616163682"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476"
     wait()
@@ -6713,7 +6879,7 @@ create_Button(HeroAnim, "Hero Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616113536"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616122287"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616117076"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616104706"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616108001"
     wait()
@@ -6734,7 +6900,7 @@ create_Button(vampireAnim, "Vampire Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083450166"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083462077"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083455352"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083455352"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1083439238"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1083443587"
     wait()
@@ -6755,7 +6921,7 @@ create_Button(mageAnim, "Mage Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=707855907"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=707897309"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=707861613"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=707853694"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=707853694"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=707826056"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=707829716"
     wait()
@@ -6776,7 +6942,7 @@ create_Button(ghostAnim, "(FE) Ghost Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616003713"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616005863"
     wait()
@@ -6797,7 +6963,7 @@ create_Button(elderAnim, "Elder Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=845400520"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=845403856"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=845386501"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=845398858"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=845398858"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
     wait()
@@ -6818,7 +6984,7 @@ create_Button(LevitationAnim, "Levitation Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616003713"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616005863"
     wait()
@@ -6839,7 +7005,7 @@ create_Button(AstronautAnim, "Astronaut Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=891667138"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=891636393"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=891627522"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=891627522"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=891609353"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=891617961"
     wait()
@@ -6860,7 +7026,7 @@ create_Button(NinjaAnim, "Ninja Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=656118341"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=656121766"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=656118852"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=656117878"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=656117878"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=656114359"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=656115606"
     wait()
@@ -6881,7 +7047,7 @@ create_Button(WerewolfAnim, "Werewolf Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083214717"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083178339"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083218792"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083218792"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1083182000"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1083189019"
     wait()
@@ -6902,7 +7068,7 @@ create_Button(CartoonAnim, "Cartoon Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=742638445"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=742640026"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=742638842"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=742637942"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=742637942"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=742636889"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=742637151"
     wait()
@@ -6923,7 +7089,7 @@ create_Button(PirateAnim, "Pirate Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=750785693"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=750783738"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=750782230"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=750782230"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=750779899"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=750780242"
     wait()
@@ -6944,7 +7110,7 @@ create_Button(SneakyFEAnim, "(FE) Sneaky Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1132477671"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1132510133"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1132494274"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1132489853"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1132489853"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1132461372"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1132469004"
     wait()
@@ -6965,7 +7131,7 @@ create_Button(ToyAnim, "Toy Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=782845736"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=782843345"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=782842708"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=782847020"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=782847020"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
     wait()
@@ -6986,7 +7152,7 @@ create_Button(KnightAnim, "Knight Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=657568135"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=657552124"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=657564596"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=658409194"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=658409194"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=658360781"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=657600338"
     wait()
@@ -7007,7 +7173,7 @@ create_Button(ConfidentFEAnim, "(FE) Confident Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1069987858"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1070017263"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1070001516"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1069946257"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1069973677"
     wait()
@@ -7028,7 +7194,7 @@ create_Button(PopstarFEAnim, "(FE) Popstar Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980338"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980348"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1212954642"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1212954642"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1213044953"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1212900995"
     wait()
@@ -7049,7 +7215,7 @@ create_Button(PrincessFEAnim, "(FE) Princess Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=941013098"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=941028902"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=941015281"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=941008832"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=941008832"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=940996062"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=941000007"
     wait()
@@ -7070,7 +7236,7 @@ create_Button(CowboyFEAnim, "(FE) Cowboy Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1014398616"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1014421541"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1014401683"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1014394726"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1014394726"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1014380606"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1014384571"
     wait()
@@ -7091,7 +7257,7 @@ create_Button(PatrolFEAnim, "(FE) Patrol Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1150842221"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1151231493"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1150967949"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1150944216"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1150944216"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1148811837"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1148863382"
     wait()
@@ -7112,7 +7278,7 @@ create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=3489171152"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=3489174223"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=3489173414"
-    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476"
     wait()
