@@ -6593,8 +6593,6 @@ end
 
 getgenv().ownerAnimsLoaded = getgenv().ownerAnimsLoaded or false
 getgenv().ownerAnimsEnabled = getgenv().ownerAnimsEnabled or true
-wait(0.1)
-getgenv().ownerAnimsEnabled = false
 wait(0.2)
 function do_anims_func()
     if not getgenv().ownerAnimsEnabled then
