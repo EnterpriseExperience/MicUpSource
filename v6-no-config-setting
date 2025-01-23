@@ -107,7 +107,8 @@ else
     local screenGui = Instance.new("ScreenGui")
     screenGui.IgnoreGuiInset = true
     screenGui.Name = "CustomClockGUI"
-    screenGui.Parent = getgenv().PlayerGui
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    screenGui.ResetOnSpawn = false
 
     local mainFrame = Instance.new("Frame")
     mainFrame.Size = UDim2.new(0.5, 0, 0.3, 0)
