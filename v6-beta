@@ -5967,12 +5967,12 @@ Suffix = "",
 CurrentValue = 16,
 Flag = "walkSpeedValue",
 Callback = function(wsVal)
-    ZEH_Module:WalkSpeed_Update(wsVal)
+    getgenv().Humanoid = wsVal
 end,})
 
 if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
     local JumpPowerSlider = Tab2:CreateSlider({
-    Name = "JumpPower",
+    Name = "JumpPower (Default): 50",
     Range = {50, 750},
     Increment = 1,
     Suffix = "",
@@ -5983,7 +5983,7 @@ if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true th
     end,})
 else
     local HeightJumpPowerSliding = Tab2:CreateSlider({
-    Name = "JumpHeight",
+    Name = "JumpHeight (Default): 7",
     Range = {7, 450},
     Increment = 1,
     Suffix = "",
@@ -6002,7 +6002,7 @@ Suffix = "",
 CurrentValue = 196.2,
 Flag = "GravityValue",
 Callback = function(gravVal)
-    ZEH_Module:Gravity_Update(gravVal)
+    getgenv().Workspace.Gravity = gravVal
 end,})
 
 getgenv().antiBangTPLoop = Tab2:CreateToggle({
