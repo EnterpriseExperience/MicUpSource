@@ -242,6 +242,17 @@ else
         time_label.TextSize = 14.000
         time_label.TextWrapped = true
 
+        local Lighting = cloneref and cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+        local Sky = Lighting:FindFirstChildOfClass("Sky")
+
+        Sky.SkyboxBk = "rbxassetid://591058823"
+        Sky.SkyboxDn = "rbxassetid://591059876"
+        Sky.SkyboxFt = "rbxassetid://591058104"
+        Sky.SkyboxLf = "rbxassetid://591057861"
+        Sky.SkyboxRt = "rbxassetid://591057625"
+        Sky.SkyboxUp = "rbxassetid://591059642"
+        Sky.StarCount = 10000
+
         local function OMWZNSF_fake_script()
             local hour = 6
             local minute = 0
