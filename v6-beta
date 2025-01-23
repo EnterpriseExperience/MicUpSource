@@ -6579,6 +6579,8 @@ Callback = function(getAUser)
         wait(0.2)
         getgenv().notify("Success", "Player has been muted!", 5)
     else
+        getgenv().notify("Success!", "Loop was enabled already, new player muted.", 5)
+        wait(0.1)
         MutePlayer(derUser)
     end
 end,})
@@ -6698,6 +6700,10 @@ RemoveTextAfterFocusLost = true,
 Callback = function(LolPUser)
     local thisUser = findplr(LolPUser)
 
+    if not thisUser then
+        getgenv().notify("Failure", "Player was not found.", 5)
+    end
+
     if thisUser then
         function UnmutePlayer(user)
             local AudioDeviceInput = user:FindFirstChildOfClass("AudioDeviceInput")
@@ -6709,8 +6715,8 @@ Callback = function(LolPUser)
         wait()
         getgenv().shouldMute = false
         UnmutePlayer(thisUser)
-    else
-        return getgenv().notify("Failure!", "Player was not found.", 5)
+        wait(0.2)
+        getgenv().notify("Success", "Player has been unmuted", 5)
     end
 end,})
 
