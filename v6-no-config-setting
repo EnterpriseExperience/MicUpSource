@@ -1282,6 +1282,8 @@ local cmdp = game.Players
 local cmdlp = cmdp.LocalPlayer
 
 function findplr(args, tbl)
+    local tbl = game:GetService("Players"):GetPlayers() or game:GetService("Players"):GetChildren()
+    
     if args == "me" then
         return cmdlp
     elseif args == "random" then 
