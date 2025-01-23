@@ -293,14 +293,15 @@ else
             end
         end
         coroutine.wrap(OMWZNSF_fake_script)()
+        wait(0.3)
+        getgenv().clock_script_time = true
+        screenGui:Destroy()
     end)
 
     noButton.MouseButton1Click:Connect(function()
+        getgenv().clock_script_time = true
         screenGui:Destroy()
     end)
-    wait(0.3)
-    getgenv().clock_script_time = true
-    screenGui:Destroy()
 end
 wait(0.5)
 -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
