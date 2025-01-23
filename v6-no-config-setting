@@ -102,143 +102,204 @@ else
 end
 wait(0.5)
 if getgenv().clock_script_time then
-    warn("Clock-Time-Script already loaded.")
+    warn("Already loaded Clock GUI or user has already clicked 'No'")
 else
-    local ClockGUI = Instance.new("ScreenGui")
-    local Clock_Frame = Instance.new("ImageLabel")
-    local time_label = Instance.new("TextLabel")
-    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local humanoidRootPart = Character and Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart", 1)
-    local HRP = humanoidRootPart
-    local HumanoidRootPart = humanoidRootPart
-    local hrp = humanoidRootPart
-    local Humanoid = Character and Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 1)
-    local human = Humanoid
-    local Human = Humanoid
-    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-    local COREGUI = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-    local hiddenUI = get_hidden_gui or gethui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.IgnoreGuiInset = true
+    screenGui.Name = "CustomClockGUI"
+    screenGui.Parent = getgenv().PlayerGui
 
-    function randomString()
-        local length = math.random(10,20)
-        local array = {}
-        for i = 1, length do
-            array[i] = string.char(math.random(32, 126))
-        end
-        return table.concat(array)
-    end
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0.5, 0, 0.3, 0)
+    mainFrame.Position = UDim2.new(0.25, 0, 0.35, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Parent = screenGui
 
-    PARENT = ClockGUI.Parent
-    if get_hidden_gui or gethui then
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(0.05, 0)
+    uiCorner.Parent = mainFrame
+
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Text = "Load script time GUI?\n(Custom clock GUI for the script, includes day/night cycle)"
+    textLabel.Size = UDim2.new(1, 0, 0.6, 0)
+    textLabel.Position = UDim2.new(0, 0, 0, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.Gotham
+    textLabel.Parent = mainFrame
+
+    local yesButton = Instance.new("TextButton")
+    yesButton.Text = "Yes"
+    yesButton.Size = UDim2.new(0.4, 0, 0.25, 0)
+    yesButton.Position = UDim2.new(0.1, 0, 0.65, 0)
+    yesButton.BackgroundColor3 = Color3.fromRGB(34, 139, 34)
+    yesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    yesButton.TextScaled = true
+    yesButton.Font = Enum.Font.Gotham
+    yesButton.Parent = mainFrame
+
+    local yesButtonUICorner = Instance.new("UICorner")
+    yesButtonUICorner.CornerRadius = UDim.new(0.05, 0)
+    yesButtonUICorner.Parent = yesButton
+
+    local noButton = Instance.new("TextButton")
+    noButton.Text = "No"
+    noButton.Size = UDim2.new(0.4, 0, 0.25, 0)
+    noButton.Position = UDim2.new(0.5, 0, 0.65, 0)
+    noButton.BackgroundColor3 = Color3.fromRGB(139, 0, 0)
+    noButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    noButton.TextScaled = true
+    noButton.Font = Enum.Font.Gotham
+    noButton.Parent = mainFrame
+
+    local noButtonUICorner = Instance.new("UICorner")
+    noButtonUICorner.CornerRadius = UDim.new(0.05, 0)
+    noButtonUICorner.Parent = noButton
+
+    yesButton.MouseButton1Click:Connect(function()
+        local ClockGUI = Instance.new("ScreenGui")
+        local Clock_Frame = Instance.new("ImageLabel")
+        local time_label = Instance.new("TextLabel")
+        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local humanoidRootPart = Character and Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart", 1)
+        local HRP = humanoidRootPart
+        local HumanoidRootPart = humanoidRootPart
+        local hrp = humanoidRootPart
+        local Humanoid = Character and Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 1)
+        local human = Humanoid
+        local Human = Humanoid
+        local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+        local COREGUI = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
         local hiddenUI = get_hidden_gui or gethui
-        local Main = ClockGUI
-        Main.Name = randomString()
-        Main.Parent = hiddenUI()
-        PARENT = Main
-    elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
-        local Main = ClockGUI
-        Main.Name = randomString()
-        syn.protect_gui(Main)
-        Main.Parent = COREGUI
-        PARENT = Main
-    elseif COREGUI:FindFirstChild('RobloxGui') then
-        PARENT = COREGUI.RobloxGui
-    else
-        local Main = ClockGUI
-        Main.Name = randomString()
-        Main.Parent = COREGUI
-        PARENT = Main
-    end
-    wait(0.1)
-    ClockGUI.Name = randomString()
-    ClockGUI.ResetOnSpawn = false
-    ClockGUI.IgnoreGuiInset = true
 
-    Clock_Frame.Name = "Clock_Frame"
-    Clock_Frame.Parent = ClockGUI
-    Clock_Frame.Active = true
-    Clock_Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Clock_Frame.BackgroundTransparency = 1.000
-    Clock_Frame.BorderColor3 = Color3.fromRGB(27, 42, 53)
-    Clock_Frame.Position = UDim2.new(0.772566795, 0, 0.0113268606, 0)
-    Clock_Frame.Size = UDim2.new(0, 249, 0, 46)
-    Clock_Frame.Image = "rbxassetid://3570695787"
-    Clock_Frame.ImageColor3 = Color3.fromRGB(45, 45, 45)
-    Clock_Frame.ScaleType = Enum.ScaleType.Slice
-    Clock_Frame.SliceCenter = Rect.new(100, 100, 100, 100)
-    Clock_Frame.SliceScale = 0.120
-
-    time_label.Name = "time_label"
-    time_label.Parent = Clock_Frame
-    time_label.Active = true
-    time_label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    time_label.BackgroundTransparency = 1.000
-    time_label.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    time_label.BorderSizePixel = 0
-    time_label.Position = UDim2.new(0, 0, -0.00659200316, 0)
-    time_label.Size = UDim2.new(0, 249, 0, 46)
-    time_label.Font = Enum.Font.Unknown
-    time_label.Text = "Detecting Script Time..."
-    time_label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    time_label.TextScaled = true
-    time_label.TextSize = 14.000
-    time_label.TextWrapped = true
-
-    local function OMWZNSF_fake_script()
-        local hour = 6
-        local minute = 0
-        local isPM = false
-        getgenv().times_enabled_clock = true
-
-        local Lighting = game:GetService("Lighting")
-
-        local function formatTime(h, m, pm)
-            local period = pm and "PM" or "AM"
-            return string.format("%02d:%02d %s", h, m, period)
+        function randomString()
+            local length = math.random(10,20)
+            local array = {}
+            for i = 1, length do
+                array[i] = string.char(math.random(32, 126))
+            end
+            return table.concat(array)
         end
 
-        local function updateTime()
-            minute = minute + 1
-            if minute == 60 then
-                minute = 0
-                hour = hour + 1
-            end
-            if hour == 12 and minute == 0 then
-                isPM = not isPM
-            elseif hour == 13 then
-                hour = 1
-            end
+        PARENT = ClockGUI.Parent
+        if get_hidden_gui or gethui then
+            local hiddenUI = get_hidden_gui or gethui
+            local Main = ClockGUI
+            Main.Name = randomString()
+            Main.Parent = hiddenUI()
+            PARENT = Main
+        elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
+            local Main = ClockGUI
+            Main.Name = randomString()
+            syn.protect_gui(Main)
+            Main.Parent = COREGUI
+            PARENT = Main
+        elseif COREGUI:FindFirstChild('RobloxGui') then
+            PARENT = COREGUI.RobloxGui
+        else
+            local Main = ClockGUI
+            Main.Name = randomString()
+            Main.Parent = COREGUI
+            PARENT = Main
         end
+        wait(0.1)
+        ClockGUI.Name = randomString()
+        ClockGUI.ResetOnSpawn = false
+        ClockGUI.IgnoreGuiInset = true
 
-        local function updateLighting()
-            local clockHour = hour
-            if isPM and hour ~= 12 then
-                clockHour = clockHour + 12
-            elseif not isPM and hour == 12 then
-                clockHour = 0
-            end
-            Lighting.ClockTime = clockHour + (minute / 60)
-            
-            if Lighting.ClockTime >= 6 and Lighting.ClockTime <= 18 then
-                Lighting.Brightness = 2
-            else
-                Lighting.Brightness = 0.5
-            end
-        end
+        Clock_Frame.Name = "Clock_Frame"
+        Clock_Frame.Parent = ClockGUI
+        Clock_Frame.Active = true
+        Clock_Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        Clock_Frame.BackgroundTransparency = 1.000
+        Clock_Frame.BorderColor3 = Color3.fromRGB(27, 42, 53)
+        Clock_Frame.Position = UDim2.new(0.772566795, 0, 0.0113268606, 0)
+        Clock_Frame.Size = UDim2.new(0, 249, 0, 46)
+        Clock_Frame.Image = "rbxassetid://3570695787"
+        Clock_Frame.ImageColor3 = Color3.fromRGB(45, 45, 45)
+        Clock_Frame.ScaleType = Enum.ScaleType.Slice
+        Clock_Frame.SliceCenter = Rect.new(100, 100, 100, 100)
+        Clock_Frame.SliceScale = 0.120
 
-        while getgenv().times_enabled_clock == true do
-            time_label.Text = formatTime(hour, minute, isPM)
-            wait(0.1)
-            updateLighting()
-            wait(1)
-            updateTime()
+        time_label.Name = "time_label"
+        time_label.Parent = Clock_Frame
+        time_label.Active = true
+        time_label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        time_label.BackgroundTransparency = 1.000
+        time_label.BorderColor3 = Color3.fromRGB(0, 0, 0)
+        time_label.BorderSizePixel = 0
+        time_label.Position = UDim2.new(0, 0, -0.00659200316, 0)
+        time_label.Size = UDim2.new(0, 249, 0, 46)
+        time_label.Font = Enum.Font.Unknown
+        time_label.Text = "Detecting Script Time..."
+        time_label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        time_label.TextScaled = true
+        time_label.TextSize = 14.000
+        time_label.TextWrapped = true
+
+        local function OMWZNSF_fake_script()
+            local hour = 6
+            local minute = 0
+            local isPM = false
+            getgenv().times_enabled_clock = true
+
+            local Lighting = game:GetService("Lighting")
+
+            local function formatTime(h, m, pm)
+                local period = pm and "PM" or "AM"
+                return string.format("%02d:%02d %s", h, m, period)
+            end
+
+            local function updateTime()
+                minute = minute + 1
+                if minute == 60 then
+                    minute = 0
+                    hour = hour + 1
+                end
+                if hour == 12 and minute == 0 then
+                    isPM = not isPM
+                elseif hour == 13 then
+                    hour = 1
+                end
+            end
+
+            local function updateLighting()
+                local clockHour = hour
+                if isPM and hour ~= 12 then
+                    clockHour = clockHour + 12
+                elseif not isPM and hour == 12 then
+                    clockHour = 0
+                end
+                Lighting.ClockTime = clockHour + (minute / 60)
+                
+                if Lighting.ClockTime >= 6 and Lighting.ClockTime <= 18 then
+                    Lighting.Brightness = 2
+                else
+                    Lighting.Brightness = 0.5
+                end
+            end
+
+            while getgenv().times_enabled_clock == true do
+                time_label.Text = formatTime(hour, minute, isPM)
+                wait(0.1)
+                updateLighting()
+                wait(1)
+                updateTime()
+            end
         end
-    end
-    coroutine.wrap(OMWZNSF_fake_script)()
-    wait(0.1)
+        coroutine.wrap(OMWZNSF_fake_script)()
+    end)
+
+    noButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+    wait(0.3)
     getgenv().clock_script_time = true
+    screenGui:Destroy()
 end
 wait(0.5)
 -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
