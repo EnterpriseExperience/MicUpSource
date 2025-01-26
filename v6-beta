@@ -3107,7 +3107,7 @@ local jerking_off_speed = 1 or tonumber(1)
 wait(0.1)
 getgenv().JerkOffTimePos = Tab2:CreateSlider({
 Name = "Jerk Off Time Position",
-Range = {0.4, 5},
+Range = {0.1, 0.6},
 Increment = 0.1,
 Suffix = "TimePosition",
 CurrentValue = 0.6,
@@ -3118,7 +3118,7 @@ end,})
 
 getgenv().Jerking_Speed = Tab2:CreateSlider({
 Name = "Jerk Off Speed",
-Range = {0.4, 100},
+Range = {0.2, 3},
 Increment = 0.1,
 Suffix = "JerkTheSpeed",
 CurrentValue = 0.6,
@@ -3132,10 +3132,6 @@ Name = "Jerk Off",
 CurrentValue = false,
 Flag = "JerkingOffBruh",
 Callback = function(getJerkingScript)
-    if getgenv().Jerking then
-        return getgenv().notify("Failure", "Jerk Off Animation already loaded.", 5)
-    end
-
     if getJerkingScript then
         if getgenv().Jerking then
             return getgenv().notify("Failure", "Jerk Off Animation already loaded.", 5)
@@ -3169,6 +3165,8 @@ Callback = function(getJerkingScript)
         getgenv().Jerking = false
         wait(0.1)
         if getgenv().JerkAnim and getgenv().Jerk then
+            getgenv().Jerking = false
+            wait(0.1)
             getgenv().JerkAnim:Destroy()
             getgenv().Jerk:Destroy()
         else
