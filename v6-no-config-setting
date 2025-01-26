@@ -2971,13 +2971,9 @@ Name = "Jerk Off",
 CurrentValue = false,
 Flag = "JerkingOffBruh",
 Callback = function(getJerkingScript)
-    if getgenv().Jerking then
-        return getgenv().notify("Failure", "Jerk Off already loaded.", 5)
-    end
-
     if getJerkingScript then
         if getgenv().Jerking then
-            return getgenv().notify("Failure", "Jerk Off already loaded.", 5)
+            return getgenv().notify("Failure", "Jerk Off Animation already loaded.", 5)
         end
         wait(0.1)
         local LocalPlayer = getgenv().LocalPlayer
@@ -3008,6 +3004,8 @@ Callback = function(getJerkingScript)
         getgenv().Jerking = false
         wait(0.1)
         if getgenv().JerkAnim and getgenv().Jerk then
+            getgenv().Jerking = false
+            wait(0.1)
             getgenv().JerkAnim:Destroy()
             getgenv().Jerk:Destroy()
         else
