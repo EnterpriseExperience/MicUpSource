@@ -5865,7 +5865,7 @@ Suffix = "",
 CurrentValue = 16,
 Flag = "walkSpeedValue",
 Callback = function(wsVal)
-    getgenv().Humanoid = wsVal
+    getgenv().Humanoid.WalkSpeed = wsVal
 end,})
 
 if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
