@@ -3128,17 +3128,17 @@ Callback = function(jerk_speed)
 end,})
 
 getgenv().JerkOffTool = Tab2:CreateToggle({
-Name = "Jerk Off Tool",
+Name = "Jerk Off",
 CurrentValue = false,
 Flag = "JerkingOffBruh",
 Callback = function(getJerkingScript)
     if getgenv().Jerking then
-        return getgenv().notify("Failure", "Jerk Off Tool already loaded.", 5)
+        return getgenv().notify("Failure", "Jerk Off Animation already loaded.", 5)
     end
 
     if getJerkingScript then
         if getgenv().Jerking then
-            return getgenv().notify("Failure", "Jerk Off Tool already loaded.", 5)
+            return getgenv().notify("Failure", "Jerk Off Animation already loaded.", 5)
         end
         wait(0.1)
         local LocalPlayer = getgenv().LocalPlayer
