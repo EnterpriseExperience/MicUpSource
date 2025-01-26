@@ -896,7 +896,7 @@ local Window
 wait(0.1)
 if executor_Name ~= "Solara" then
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.2.1-C | Emote Keybinds: True",
+        Name = "📜 Zacks Easy Hub 📜 | V7.2.4-C | Emote Keybinds: True",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
@@ -922,7 +922,7 @@ if executor_Name ~= "Solara" then
     })
 else
     Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.2.1-C | Emote Keybinds: True",
+        Name = "📜 Zacks Easy Hub 📜 | V7.2.4-C | Emote Keybinds: True",
         LoadingTitle = "Enjoy ruling MIC UP 🔊",
         LoadingSubtitle = "Zacks Easy Hub | Success.",
         ConfigurationSaving = {
@@ -3101,7 +3101,82 @@ Callback = function(getLoopCopyAnim)
         resetDefaultAnimations()        
     end
 end,})
+wait(0.1)
+local time_pos_jerking = 0.6 or tonumber(0.6)
+local jerking_off_speed = 1 or tonumber(1)
+wait(0.1)
+getgenv().JerkOffTimePos = Tab2:CreateSlider({
+Name = "Jerk Off Time Position",
+Range = {0.4, 5},
+Increment = 0.1,
+Suffix = "TimePosition",
+CurrentValue = 0.6,
+Flag = "TimePositioningEditing",
+Callback = function(updateTimePosJerk)
+    time_pos_jerking = updateTimePosJerk
+end,})
 
+getgenv().Jerking_Speed = Tab2:CreateSlider({
+Name = "Jerk Off Speed",
+Range = {0.4, 100},
+Increment = 0.1,
+Suffix = "JerkTheSpeed",
+CurrentValue = 0.6,
+Flag = "SpeedJerkingSpeed",
+Callback = function(jerk_speed)
+    jerking_off_speed = jerk_speed
+end,})
+
+getgenv().JerkOffTool = Tab2:CreateToggle({
+Name = "Jerk Off Tool",
+CurrentValue = false,
+Flag = "JerkingOffBruh",
+Callback = function(getJerkingScript)
+    if getgenv().Jerking then
+        return getgenv().notify("Failure", "Jerk Off Tool already loaded.", 5)
+    end
+
+    if getJerkingScript then
+        if getgenv().Jerking then
+            return getgenv().notify("Failure", "Jerk Off Tool already loaded.", 5)
+        end
+        wait(0.1)
+        local LocalPlayer = getgenv().LocalPlayer
+        local Character = getgenv().Character
+        local Humanoid = getgenv().Humanoid
+        wait(0.1)
+        getgenv().Jerking = true
+        wait(0.1)
+        getgenv().JerkAnim = Instance.new("Animation")
+        getgenv().JerkAnim.AnimationId = "rbxassetid://698251653"
+        getgenv().Jerk = getgenv().Humanoid:LoadAnimation(getgenv().JerkAnim)
+
+        task.spawn(function()
+            while getgenv().Jerking == true do
+                task.wait()
+                if not getgenv().Jerking then return end
+                getgenv().Jerk:Play()
+                getgenv().Jerk:AdjustSpeed(jerking_off_speed)
+                getgenv().Jerk.TimePosition = time_pos_jerking
+                task.wait(.1)
+
+                while getgenv().Jerk.TimePosition < time_pos_jerking do task.wait(.1) end
+
+                getgenv().Jerk:Stop()
+            end
+        end)
+    else
+        getgenv().Jerking = false
+        wait(0.1)
+        if getgenv().JerkAnim and getgenv().Jerk then
+            getgenv().JerkAnim:Destroy()
+            getgenv().Jerk:Destroy()
+        else
+            return getgenv().notify("Failure!", "Jerk off Animation is not loaded!", 5)
+        end
+    end
+end,})
+wait(0.1)
 getgenv().MaterialForMap = Tab18:CreateDropdown({
 Name = "Map Material (Can Lag!)",
 Options = {
