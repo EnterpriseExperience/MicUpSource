@@ -6733,8 +6733,8 @@ function run_anims()
     wait(0.2)
     Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921344533"
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921345304"
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921140719"
-    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921135644"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921127095"
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921121197"
     findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921121197"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921040576"
