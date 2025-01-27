@@ -438,13 +438,15 @@ if getgenv().voiceChat_Check then
 else
     getgenv().voiceChat_Check = true
     local reconnecting = false
-    local retryCooldown = 3
+    local retryCooldown = 3.5
     local function onVoiceChatStateChanged(oldState, newState)
         if newState == Enum.VoiceChatState.Ended and not reconnecting then
             reconnecting = true
             task.spawn(function()
                 wait(retryCooldown)
                 local success, err = pcall(function()
+                    wait(0.5)
+                    print("Rejoining VoiceChat")
                     vc_service:joinVoice()
                 end)
                 if not success then
@@ -6890,11 +6892,11 @@ function run_anims()
     end
 
     wait(0.2)
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921101664"
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921102574"
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921344533"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921345304"
     Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921140719"
     Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921135644"
-    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921294559"
+    findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921121197"
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921040576"
     wait(0.2)
