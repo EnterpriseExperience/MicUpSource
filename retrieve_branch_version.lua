@@ -20,7 +20,7 @@
     Toy, NFL, No Boundaries, Oldschool,
     Pirate, Levitation, Bubbly, Robot,
     Wicked Popular, Bold, Stylish,
-    > Rthro [default Roblox Animation package]
+    Rthro [default Roblox Animation package]
 --]]
 
 -- Don't touch this for now, it's just the default for a fallback, not to be edited, because then you won't be able to revert your configuration to the base settings without losing all data.
@@ -1808,7 +1808,7 @@ else
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()")
         end
     end)
     wait()
@@ -2324,7 +2324,7 @@ wait()
 getgenv().LocalPlayer.OnTeleport:Connect(function(State)
     if (not getgenv().TeleportCheck) and getgenv().queueteleport then
         getgenv().TeleportCheck = true
-        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()")
+        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()")
     end
 end)
 wait(0.2)
@@ -2374,7 +2374,7 @@ local TeleportCheck = false -- Fuck you and your teleport check. 'Oh, why didn't
 getgenv().LocalPlayer.OnTeleport:Connect(function(State)
     if (not TeleportCheck) and queueteleport then
         TeleportCheck = true
-        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()") -- K*ll yourself, stop waiting.
+        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()") -- K*ll yourself, stop waiting.
     end
 end)
 wait(0.1)
@@ -7920,36 +7920,28 @@ end,})
 getgenv().ReExecuteGUI = Tab15:CreateButton({
 Name = "Re-Execute/Reload Script/GUI",
 Callback = function()
-    if executor_Name == "Argon" then
-        getgenv().getLoopKick = false
-        getgenv().SCRIPT_EXECUTED = false
-        getgenv().Invis_Loaded = false
-        getgenv().GetLoopRunning = false
-        getgenv().GetLoopRunning = false
-        getgenv().LmaoGetMuted = false
-        getgenv().css_digital = false
-        getgenv().Rayfield:Destroy()
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/v6-beta')))()
-    elseif executor_Name ~= "Argon" then
-        ZEH_Module:Patch_Update("v6-beta")
-    end
+    getgenv().getLoopKick = false
+    getgenv().SCRIPT_EXECUTED = false
+    getgenv().Invis_Loaded = false
+    getgenv().GetLoopRunning = false
+    getgenv().GetLoopRunning = false
+    getgenv().LmaoGetMuted = false
+    getgenv().css_digital = false
+    getgenv().Rayfield:Destroy()
+    loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
 end,})
 
 getgenv().DestroyGUIScript = Tab15:CreateButton({
 Name = "Destroy GUI/Script",
 Callback = function()
-    if executor_Name == "Argon" then
-        getgenv().getLoopKick = false
-        getgenv().SCRIPT_EXECUTED = false
-        getgenv().Invis_Loaded = false
-        getgenv().GetLoopRunning = false
-        getgenv().GetLoopRunning = false
-        getgenv().LmaoGetMuted = false
-        getgenv().css_digital = false
-        getgenv().Rayfield:Destroy()
-    elseif executor_Name ~= "Argon" then
-        ZEH_Module:Destroy_Script()
-    end
+    getgenv().getLoopKick = false
+    getgenv().SCRIPT_EXECUTED = false
+    getgenv().Invis_Loaded = false
+    getgenv().GetLoopRunning = false
+    getgenv().GetLoopRunning = false
+    getgenv().LmaoGetMuted = false
+    getgenv().css_digital = false
+    getgenv().Rayfield:Destroy()
 end,})
 
 getgenv().UnmuteAPlayer = Tab1:CreateInput({
