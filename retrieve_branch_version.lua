@@ -1782,15 +1782,11 @@ else
 end
 wait(0.2)
 -- [] -->> Check if the selected experience/game is MIC UP | Ensuring they do not run Zacks Easy Hub outside of MIC UP 🔊 or MIC UP 🔊 17+ <<-- [] --
-if getgenv().PlaceID == 6884319169 then
+--[[if getgenv().PlaceID == 6884319169 then
     print("\n<--------------------->\nConnected On MIC UP 🔊\n<--------------------->\n")
 elseif getgenv().PlaceID == 15546218972 then
     print("\n<--------------------->\nConnected On MIC UP 🔊 17+\n<--------------------->\n")
 else
-    print("> Loading Universal Mode...")
-end
-wait(0.3)
---[[else
     local Players = game:GetService("Players")
     local player = Players.LocalPlayer
     
@@ -2183,26 +2179,34 @@ wait(0.1)
 local Tab1 = Window:CreateTab("> Main", getgenv().image_use_zacks)
 local Section1 = Tab1:CreateSection("||| / Main Section |||")
 
-if workspace:FindFirstChild("Booth") then
-    local Tab11 = Window:CreateTab("> Booths", getgenv().image_use_zacks)
-    local Section11 = Tab11:CreateSection("||| Booths Section |||")
+local Tab10
+local Section10
+local Tab11
+local Section11
+wait(0.2)
+if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    Tab11 = Window:CreateTab("> Booths", getgenv().image_use_zacks)
+    Section11 = Tab11:CreateSection("||| Booths Section |||")
 else
-    warn("Booth's not found in Workspace.")
+    Tab11 = nil
+    Section11 = nil
 end
-
+wait(0.2)
 local Tab2 = Window:CreateTab("> LocalPlayer", getgenv().image_use_zacks)
 local Section2 = Tab2:CreateSection("||| LocalPlayer Section |||")
 
-Tab13 = Window:CreateTab("> Players", getgenv().image_use_zacks)
-Section13 = Tab13:CreateSection("||| Players Section |||")
+local Tab13 = Window:CreateTab("> Players", getgenv().image_use_zacks)
+local Section13 = Tab13:CreateSection("||| Players Section |||")
 
 if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
     Tab10 = Window:CreateTab("> Teleports", getgenv().image_use_zacks)
     Section10 = Tab10:CreateSection("||| Teleports Section |||")
 else
+    Tab10 = nil
+    Section10 = nil
     warn("Not loading Teleports, not MIC UP or MIC UP 17+.")
 end
-
+wait(0.2)
 Tab18 = Window:CreateTab("> Map", getgenv().image_use_zacks)
 Section18 = Tab18:CreateSection("||| Map Section |||")
 
@@ -2796,7 +2800,7 @@ else
     warn("AvatarUI wasn't found in Workspace, not loading.")
 end
 wait(0.1)
-if workspace:FindFirstChild("Booth") then
+if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
     getgenv().StallClaimToggle = Tab11:CreateToggle({
     Name = "Claim Any Booth",
     CurrentValue = false,
