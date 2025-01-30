@@ -8218,6 +8218,9 @@ end
 getgenv().ownerAnimsLoaded = getgenv().ownerAnimsLoaded or false
 getgenv().ownerAnimsEnabled = getgenv().ownerAnimsEnabled or true
 wait(0.2)
+getgenv().ownerAnimsEnabled = false
+getgenv().ownerAnimsLoaded = true
+wait(0.2)
 function do_anims_func()
     if not getgenv().ownerAnimsEnabled then
         return warn("Owner-Animations are disabled.")
