@@ -2780,7 +2780,7 @@ function isNumber(str)
     end
 end
 wait(0.2)
-if workspace:FindFirstChild("AvatarUI") then
+if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
     if getgenv().reparented_model then
         warn("Already reparented Avatar-UI Model")
     else
@@ -2797,7 +2797,7 @@ if workspace:FindFirstChild("AvatarUI") then
         end
     end
 else
-    warn("AvatarUI wasn't found in Workspace, not loading.")
+    warn("User isn't in MIC UP or MIC UP 17+, not loading.")
 end
 wait(0.1)
 if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
@@ -3469,7 +3469,7 @@ if workspace:FindFirstChild("Booth") then
                 local args = {
                     [1] = tostring(pickRandomWord()),
                     [2] = tostring(pickRandomColor()),
-                    [3] = tostring(pickRandomFont())
+                    [3] = "SourceSans"
                 }
                     
                 Booth_Remote:FireServer(unpack(args))
@@ -5826,7 +5826,7 @@ else
     warn("Did not load these Booth's [7].")
 end
 
-if workspace:FindFirstChild("AvatarUI") then
+if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
     getgenv().tpToAvatarUI = Tab1:CreateButton({
     Name = "Teleport To Avatar-UI",
     Callback = function()
@@ -5886,7 +5886,7 @@ if workspace:FindFirstChild("AvatarUI") then
         end
     end,})
 else
-    warn("AvatarUI not found in Workspace, not loading.")
+    warn("User is not in MIC UP or MIC UP 17+, not loading.")
 end
 
 if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
@@ -5938,8 +5938,9 @@ if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         Callback = function(ingame_music)
             if ingame_music then
                 getgenv().plr_music_menu = true
-                local Local_Player = game:GetService("Players").LocalPlayer
-                local PlayerGui = Local_Player:WaitForChild("PlayerGui")
+                local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+                local Local_Player = Players.LocalPlayer
+                local PlayerGui = Local_Player and Local_Player:WaitForChild("PlayerGui")
                 local Menu = PlayerGui:WaitForChild("Menu")
                 local Background = Menu:WaitForChild("Background")
                 local Music = Background:WaitForChild("Music")
@@ -5991,7 +5992,7 @@ else
     warn("Not MIC UP or MIC UP 17+, not loading In-Game music functions.")
 end
 
-if workspace:FindFirstChild("AvatarUI") then
+if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
     getgenv().WhitelistFriendPlr = Tab1:CreateToggle({
     Name = "[Avatar-UI]: Only Like Friend",
     CurrentValue = false,
@@ -6041,7 +6042,7 @@ if workspace:FindFirstChild("AvatarUI") then
         end
     end,})
 else
-    warn("AvatarUI not found in Workspace, not loading.")
+    warn("User is not in MIC UP or MIC UP 17+, not loading.")
 end
 
 getgenv().GotoPlayerBox = Tab13:CreateInput({
@@ -6454,7 +6455,7 @@ if workspace:FindFirstChild("Booth") then
             local args = {
                 [1] = tostring(convert(msg)),
                 [2] = tostring(color_selector()),
-                [3] = tostring(font_selector())
+                [3] = "SourceSans"
             }
                     
             Booth_Remote:FireServer(unpack(args))
@@ -8217,9 +8218,6 @@ end
 
 getgenv().ownerAnimsLoaded = getgenv().ownerAnimsLoaded or false
 getgenv().ownerAnimsEnabled = getgenv().ownerAnimsEnabled or true
-wait(0.2)
-getgenv().ownerAnimsEnabled = false
-getgenv().ownerAnimsLoaded = true
 wait(0.2)
 function do_anims_func()
     if not getgenv().ownerAnimsEnabled then
