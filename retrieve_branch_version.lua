@@ -247,8 +247,27 @@ function findJumpAnimation()
         return warn("Jump Animation not found inside the 'jump' object.")
     end
 end
+
+function findwalkAnimation()
+    local animateScript = LocalPlayer.Character:FindFirstChild("Animate") or Character and Character:FindFirstChild("Animate") or Character:WaitForChild("Animate", 3)
+    if not animateScript or not animateScript:IsA("LocalScript") then
+        return warn("Animate script not found in the Character.")
+    end
+
+    local walkObject = animateScript and animateScript:FindFirstChild("walk") or LocalPlayer.Character:FindFirstChild("Animate"):FindFirstChild("walk")
+    if not walkObject then
+        return warn("Walk object not found in the Animate script.")
+    end
+
+    local walkAnim = walkObject:FindFirstChildOfClass("Animation")
+    if walkAnim and walkAnim:IsA("Animation") then
+        return walkAnim
+    else
+        return warn("Jump Animation not found inside the 'jump' object.")
+    end
+end
 wait()
-findJumpAnim = findJumpAnimation()
+findwalkAnim = findWalkAnimation()
 wait(0.2)
 local function change_animation_load(idle, idle_2, walk, run, jump, climb, fall)
     local player = game.Players.LocalPlayer
@@ -324,7 +343,7 @@ function change_walk_anim(input)
         end
     end
 
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id="..input
+    findwalkAnim.AnimationId = "http://www.roblox.com/asset/?id="..input
     task.wait()
     Animate.Disabled = false
 end
