@@ -6248,14 +6248,32 @@ end,})
 getgenv().ClearChatMsgs = Tab4:CreateButton({
 Name = "Clear Chat Messages",
 Callback = function()
-    local chat = getgenv().TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
-        
+    local chat
+    if getgenv().TextChatService:FindFirstChild("TextChannels") then
+        chat = getgenv().TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
+    else
+        chat = getgenv().ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents"):FindFirstChild("SayMessageRequest")
+    end
+    wait(0.2)
     local function sendchat(msg)
-        chat:SendAsync(msg)
+        if getgenv().TextChatService:FindFirstChild("TextChannels") then
+            chat:SendAsync(msg)
+        else
+            chat:FireServer(msg)
+        end
     end
     
-    for i = 1, 9 do
-        sendchat("")
+    if getgenv().TextChatService:FindFirstChild("TextChannels") then
+        for i = 1, 9 do
+            sendchat(" ")
+            sendchat("/cls")
+        end
+    else
+        for i = 1, 5 do
+            sendchat(" ")
+            task.wait(.3)
+            sendchat(".")
+        end
     end
 end,})
 
@@ -6270,7 +6288,13 @@ Name = "Chat Bypass Input",
 PlaceholderText = "Text",
 RemoveTextAfterFocusLost = true,
 Callback = function(saveInputFilter)
-    local chat = getgenv().TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
+    local chat
+    wait(0.2)
+    if getgenv().TextChatService:FindFirstChild("TextChannels") then
+        chat = getgenv().TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
+    else
+        chat = getgenv().ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents"):FindFirstChild("SayMessageRequest")
+    end
 
     local letters = {
         set1 = {
@@ -6347,7 +6371,11 @@ Callback = function(saveInputFilter)
     end
     wait(.2)
     local function sendchat(msg)
-        chat:SendAsync(convert(msg))
+        if getgenv().TextChatService:FindFirstChild("TextChannels") then
+            chat:SendAsync(convert(msg))
+        else
+            chat:FireServer(convert(msg))
+        end
     end
 
     sendchat(saveInputFilter)
@@ -9000,9 +9028,18 @@ if getgenv().fully_loaded_message_script then
     warn("Already loaded fully loaded message.")
 else
     if getgenv().Easies_Configuration["Fully_Loaded_Messaging"] == true then
-        local RBXGeneral = getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
+        local Chat_Player
+        wait(0.1)
+        if getgenv().TextChatService:FindFirstChild("TextChannels") then
+            Chat_Player = getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
 
-        RBXGeneral:SendAsync(tostring(getgenv().Easies_Configuration["Fully_Loaded_Message"]))
-        getgenv().fully_loaded_message_script = true
+            Chat_Player:SendAsync(tostring(getgenv().Easies_Configuration["Fully_Loaded_Message"]))
+            getgenv().fully_loaded_message_script = true
+        else
+            Chat_Player = getgenv().ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents"):FindFirstChild("SayMessageRequest")
+
+            Chat_Player:SendAsync(tostring(getgenv().Easies_Configuration["Fully_Loaded_Message"]))
+            getgenv().fully_loaded_message_script = true
+        end
     end
 end
