@@ -290,7 +290,79 @@ function findRunAnimation()
     end
 end
 wait()
-local run_Anim = findRunAnimation()
+local fall_Anim = findFallAnimation()
+wait(0.2)
+function findFallAnimation()
+    local animateScript = LocalPlayer.Character:FindFirstChild("Animate") or Character and Character:FindFirstChild("Animate") or Character:WaitForChild("Animate", 3)
+    if not animateScript or not animateScript:IsA("LocalScript") then
+        return warn("Animate script not found in the Character.")
+    end
+
+    local FallObject = animateScript and animateScript:FindFirstChild("fall") or LocalPlayer.Character:FindFirstChild("Animate"):FindFirstChild("fall")
+    if not FallObject then
+        return warn("Fall object not found in the Animate script.")
+    end
+
+    local fallAnim = FallObject:FindFirstChildOfClass("Animation")
+    if fallAnim and fallAnim:IsA("Animation") then
+        return fallAnim
+    else
+        return warn("Fall Animation not found inside the 'fall' object.")
+    end
+end
+wait()
+local fall_Anim = findFallAnimation()
+wait(0.2)
+function findClimbAnimation()
+    local animateScript = LocalPlayer.Character:FindFirstChild("Animate") or Character and Character:FindFirstChild("Animate") or Character:WaitForChild("Animate", 3)
+    if not animateScript or not animateScript:IsA("LocalScript") then
+        return warn("Animate script not found in the Character.")
+    end
+
+    local ClimbObject = animateScript and animateScript:FindFirstChild("climb") or LocalPlayer.Character:FindFirstChild("Animate"):FindFirstChild("climb")
+    if not ClimbObject then
+        return warn("Climb object not found in the Animate script.")
+    end
+
+    local ClimbAnim = ClimbObject:FindFirstChildOfClass("Animation")
+    if ClimbAnim and ClimbAnim:IsA("Animation") then
+        return ClimbAnim
+    else
+        return warn("Climb Animation not found inside the 'climb' object.")
+    end
+end
+wait()
+local Climb_Anim = findClimbAnimation()
+wait(0.2)
+function findIdleAnimations()
+    local player = game:GetService("Players").LocalPlayer
+    if not player or not player.Character then
+        return warn("Character not found.")
+    end
+
+    local character = player.Character or player.CharacterAdded:Wait(0.3)
+    local animateScript = character and character:FindFirstChild("Animate") or character:WaitForChild("Animate", 3)
+    
+    if not animateScript or not animateScript:IsA("LocalScript") then
+        return warn("Animate script not found in the Character.")
+    end
+
+    local idleObject = animateScript:FindFirstChild("idle")
+    if not idleObject then
+        return warn("Idle object not found in the Animate script.")
+    end
+
+    local idleAnim1 = idleObject:FindFirstChild("Animation1")
+    local idleAnim2 = idleObject:FindFirstChild("Animation2")
+
+    if idleAnim1 and idleAnim1:IsA("Animation") and idleAnim2 and idleAnim2:IsA("Animation") then
+        return idleAnim1, idleAnim2
+    else
+        return warn("One or both idle animations not found.")
+    end
+end
+wait()
+local idleAnim1, idleAnim2 = findIdleAnimations()
 wait(0.2)
 local function change_animation_load(idle, idle_2, walk, run, jump, climb, fall)
     local player = game.Players.LocalPlayer
@@ -311,13 +383,13 @@ local function change_animation_load(idle, idle_2, walk, run, jump, climb, fall)
         end
     end
 
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..tostring(idle)
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..tostring(idle_2)
+    idleAnim1.AnimationId = "http://www.roblox.com/asset/?id="..tostring(idle)
+    idleAnim2.AnimationId = "http://www.roblox.com/asset/?id="..tostring(idle_2)
     findwalkAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(walk)
     run_Anim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(run)
     findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(jump)
-    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(climb)
-    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(fall)
+    Climb_Anim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(climb)
+    fall_Anim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(fall)
     task.wait()
     Animate.Disabled = false
 end
@@ -341,8 +413,8 @@ function change_idle_anim(input, input_2)
         end
     end
 
-    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..input
-    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..input_2
+    idleAnim1.AnimationId = "http://www.roblox.com/asset/?id="..input
+    idleAnim2.AnimationId = "http://www.roblox.com/asset/?id="..input_2
     task.wait()
     Animate.Disabled = false
 end
@@ -438,7 +510,7 @@ function change_climb_anim(input)
         end
     end
 
-    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id="..input
+    Climb_Anim.AnimationId = "http://www.roblox.com/asset/?id="..input
     task.wait()
     Animate.Disabled = false
 end
@@ -462,7 +534,7 @@ function change_fall_anim(input)
         end
     end
 
-    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(input)
+    fall_Anim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(input)
     task.wait()
     Animate.Disabled = false
 end
