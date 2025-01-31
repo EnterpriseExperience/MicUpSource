@@ -6184,7 +6184,10 @@ function Tools_Grab_Func()
     local Scrolling_Frame_Tool_Menu = Tool_Frame:WaitForChild("ScrollingFrame") or Tool_Frame:FindFirstChild("ScrollingFrame")
 
     function send_signal_connection(signal_parent)
-        if not firesignal then return getgenv().notify("Error:", "'firesignal' is unsupported on this executor!", 5) end
+        if not firesignal then
+            getgenv().getEverything:Set(false)
+            return getgenv().notify("Error:", "'firesignal' is unsupported on this executor!", 5)
+        end
 
         local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
 
