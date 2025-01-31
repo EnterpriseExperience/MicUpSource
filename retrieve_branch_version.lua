@@ -271,6 +271,27 @@ end
 wait()
 findwalkAnim = findWalkAnimation()
 wait(0.2)
+function findRunAnimation()
+    local animateScript = LocalPlayer.Character:FindFirstChild("Animate") or Character and Character:FindFirstChild("Animate") or Character:WaitForChild("Animate", 3)
+    if not animateScript or not animateScript:IsA("LocalScript") then
+        return warn("Animate script not found in the Character.")
+    end
+
+    local RunObject = animateScript and animateScript:FindFirstChild("run") or LocalPlayer.Character:FindFirstChild("Animate"):FindFirstChild("run")
+    if not RunObject then
+        return warn("Run object not found in the Animate script.")
+    end
+
+    local runAnim = RunObject:FindFirstChildOfClass("Animation")
+    if runAnim and runAnim:IsA("Animation") then
+        return runAnim
+    else
+        return warn("Run Animation not found inside the 'run' object.")
+    end
+end
+wait()
+local run_Anim = findRunAnimation()
+wait(0.2)
 local function change_animation_load(idle, idle_2, walk, run, jump, climb, fall)
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -292,8 +313,8 @@ local function change_animation_load(idle, idle_2, walk, run, jump, climb, fall)
 
     Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..tostring(idle)
     Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..tostring(idle_2)
-    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(walk)
-    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(run)
+    findwalkAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(walk)
+    run_Anim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(run)
     findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(jump)
     Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(climb)
     Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id="..tostring(fall)
@@ -313,7 +334,7 @@ function change_idle_anim(input, input_2)
     task.wait()
     Animate.Disabled = false
 
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local humanoid = character and character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid", 1)
     if humanoid then
         for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
             track:Stop()
@@ -369,7 +390,7 @@ function change_run_anim(input)
         end
     end
 
-    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id="..input
+    run_Anim.AnimationId = "http://www.roblox.com/asset/?id="..input
     task.wait()
     Animate.Disabled = false
 end
