@@ -1324,6 +1324,12 @@ if getgenv().Easies_Configuration["Default_Animation_Package_System"] == true th
         end
     end
     wait(0.2)
+    function r15(plr)
+        if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
+            return true
+        end
+    end
+    wait(0.2)
     game.Players.LocalPlayer.CharacterAdded:Connect(function()
         print("Character Added: "..game.Players.LocalPlayer.Name)
         if game.Players.LocalPlayer and game.Players.LocalPlayer.Character then
@@ -6187,8 +6193,13 @@ function Tools_Grab_Func()
 
     function send_signal_connection(signal_parent)
         if not firesignal then
+            getgenv().shouldGrabTools = false
+            getgenv().shouldGrabTools = false
+            getgenv().shouldGrabTools = false
             getgenv().getEverything:Set(false)
-            return getgenv().notify("Error:", "'firesignal' is unsupported on this executor!", 5)
+            getgenv().shouldGrabTools = false
+            getgenv().shouldGrabTools = false
+            getgenv().getEverything:Set(false)
         end
 
         local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
