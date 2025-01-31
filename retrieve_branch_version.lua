@@ -248,6 +248,8 @@ function findJumpAnimation()
     end
 end
 
+local findJumpAnim = findJumpAnimation()
+wait(0.2)
 function findWalkAnimation()
     local animateScript = LocalPlayer.Character:FindFirstChild("Animate") or Character and Character:FindFirstChild("Animate") or Character:WaitForChild("Animate", 3)
     if not animateScript or not animateScript:IsA("LocalScript") then
