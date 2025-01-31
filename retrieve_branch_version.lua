@@ -290,7 +290,7 @@ function findRunAnimation()
     end
 end
 wait()
-local fall_Anim = findFallAnimation()
+local run_Anim = findRunAnimation()
 wait(0.2)
 function findFallAnimation()
     local animateScript = LocalPlayer.Character:FindFirstChild("Animate") or Character and Character:FindFirstChild("Animate") or Character:WaitForChild("Animate", 3)
