@@ -8367,7 +8367,7 @@ Callback = function(speedCoil)
     end
 end,})
 
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+00[[local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
@@ -8427,7 +8427,7 @@ function run_anims()
         humanoid:ChangeState(3)
     end
 end
---[[wait(0.1)
+wait(0.1)
 getgenv().ownerAnimsLoaded = getgenv().ownerAnimsLoaded or false
 getgenv().ownerAnimsEnabled = getgenv().ownerAnimsEnabled or true
 wait(0.2)
