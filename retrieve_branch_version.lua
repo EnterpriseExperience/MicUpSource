@@ -6267,51 +6267,55 @@ Callback = function()
 end,})
 
 function Tools_Grab_Func()
-    ----------------------------
-    -- [[ <> New Method <> ]] --
-    ----------------------------
-    local Players
-    if cloneref then
-        Players = cloneref(game:GetService("Players"))
+    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local MarketplaceService = cloneref and cloneref(game:GetService("MarketplaceService")) or game:GetService("MarketplaceService")
+    local player = Players.LocalPlayer
+    local gamepassId = 951459548
+
+    local success, hasPass = pcall(function()
+        return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassId)
+    end)
+    if success and hasPass then
+        print(tostring(player.Name).." owns this GamePass, moving on.")
     else
-        Players = game:GetService("Players")
+        getgenv().shouldGrabTools = false
+        getgenv().shouldGrabTools = false
+        getgenv().getEverything:Set(false)
+        getgenv().getEverything:Set(false)
+        getgenv().getEverything:Set(false)
     end
     wait(0.2)
-    local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
-    local Player_Gui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChild("PlayerGui")
-    local Menu_Frame = Player_Gui:WaitForChild("Menu") or Player_Gui:FindFirstChild("Menu")
-    local Background_Frame = Menu_Frame:WaitForChild("Background") or Menu_Frame:FindFirstChild("Background")
-    local Tool_Frame = Background_Frame:WaitForChild("Tool") or Background_Frame:FindFirstChild("Tool")
-    local Scrolling_Frame_Tool_Menu = Tool_Frame:WaitForChild("ScrollingFrame") or Tool_Frame:FindFirstChild("ScrollingFrame")
+    local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage") or getgenv().ReplicatedStorage
+    local ToolEvent = ReplicatedStorage and ReplicatedStorage:FindFirstChild("ToolEvent") or ReplicatedStorage:WaitForChild("ToolEvent", 3)
+    local Randomizer = math.random(5, 9)
 
-    function send_signal_connection(signal_parent)
-        if not firesignal then
-            getgenv().shouldGrabTools = false
-            getgenv().shouldGrabTools = false
-            getgenv().shouldGrabTools = false
-            getgenv().getEverything:Set(false)
-            getgenv().shouldGrabTools = false
-            getgenv().shouldGrabTools = false
-            getgenv().getEverything:Set(false)
-        end
-
-        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-
-        for _,v in pairs(signal_parent:GetDescendants()) do
-            if v:IsA("ImageButton") or v:IsA("TextButton") then
-                for i,Signal in pairs(Signals) do
-                    firesignal(v[Signal])
-                end
-            else
-                return getgenv().notify("Error:", "ImageButton/TextButton not found in: "..tostring(signal_parent))
-            end
-        end
+    local function PickUp_Tool(Tool)
+        ToolEvent:FireServer(tostring(Tool))
     end
 
-    for i, v in pairs(Scrolling_Frame_Tool_Menu:GetDescendants()) do
-        if v:IsA("Frame") or v:FindFirstChildOfClass("Frame") or v:FindFirstChildWhichIsA("Frame") or v.ClassName == "Frame" then
-            send_signal_connection(v)
-        end
+    for i = 1, Randomizer do
+        PickUp_Tool("Announcer")
+        PickUp_Tool("Bag")
+        PickUp_Tool("BlowDryer")
+        PickUp_Tool("Brick")
+        PickUp_Tool("Camera")
+        PickUp_Tool("Coil")
+        PickUp_Tool("Design")
+        PickUp_Tool("Doll")
+        PickUp_Tool("FireworkLaunch")
+        PickUp_Tool("Firework")
+        PickUp_Tool("Fit")
+        PickUp_Tool("Gun")
+        PickUp_Tool("Horrible")
+        PickUp_Tool("Hoverboard")
+        PickUp_Tool("Knife")
+        PickUp_Tool("Motor")
+        PickUp_Tool("Pistol")
+        PickUp_Tool("Spray")
+        PickUp_Tool("Suitbag")
+        PickUp_Tool("Tele")
+        PickUp_Tool("Torch")
+        PickUp_Tool("Wand")
     end
 end
 
@@ -6335,6 +6339,7 @@ Callback = function(grabFreeTools)
     else
         local Rep_Storage = getgenv().ReplicatedStorage
         local Delete_Inv_Event = Rep_Storage:WaitForChild("DeleteInventory") or Rep_Storage:FindFirstChild("DeleteInventory")
+        getgenv().shouldGrabTools = false
         getgenv().shouldGrabTools = false
         wait(0.5)
         Delete_Inv_Event:FireServer()
