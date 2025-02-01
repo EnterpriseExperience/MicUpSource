@@ -8427,7 +8427,7 @@ function run_anims()
         humanoid:ChangeState(3)
     end
 end
-
+--[[wait(0.1)
 getgenv().ownerAnimsLoaded = getgenv().ownerAnimsLoaded or false
 getgenv().ownerAnimsEnabled = getgenv().ownerAnimsEnabled or true
 wait(0.2)
@@ -8458,7 +8458,7 @@ elseif not getgenv().ownerAnimsLoaded and (getgenv().LocalPlayer.Name == "L0CKED
     end
 else
     warn("Owner-Animation Packages not loaded, not owner.")
-end
+end--]]
 
 function create_Button(localName, Name, callback) 
     local localName = Tab17:CreateButton({
