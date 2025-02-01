@@ -4802,7 +4802,7 @@ Callback = function(idForEmoting)
     local number_id = tonumber(idForEmoting) or idForEmoting
 
     local succ, err = pcall(function()
-        getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
+        getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(number_id)
     end)
     wait(0.1)
     if succ then
@@ -7983,7 +7983,7 @@ getgenv().emoting_actions = function(speed)
         end
     end
 end
-
+wait(0.1)
 getgenv().slowMotionToggle = Tab12:CreateToggle({
 Name = "Slow Motion Emotes (Loop)",
 CurrentValue = false,
