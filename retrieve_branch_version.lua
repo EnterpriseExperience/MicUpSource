@@ -4794,6 +4794,58 @@ Callback = function()
     stopAnimations()
 end,})
 
+getgenv().PlayEmoteButFrozen = Tab12:CreateInput({
+Name = "Play Emote ID (Loop)",
+PlaceholderText = "Enter ID",
+RemoveTextAfterFocusLost = true,
+Callback = function(idForEmoting)
+    local number_id = tonumber(idForEmoting) or idForEmoting
+
+    local succ, err = pcall(function()
+        getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
+    end)
+    wait(0.1)
+    if succ then
+        getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(number_id)
+        task.wait(.3)
+        if getgenv().HumanoidRootPart.Anchored == false then
+            getgenv().HumanoidRootPart.Anchored = true
+            wait(0.2)
+            getgenv().Character:FindFirstChild("Animate").Disabled = true
+            wait(0.2)
+            getgenv().HumanoidRootPart.Anchored = false
+        else
+            getgenv().HumanoidRootPart.Anchored = false
+            wait(0.1)
+            getgenv().Character:FindFirstChild("Animate").Disabled = true
+        end
+    else
+        return getgenv().notify("Error:", tostring(err), 5)
+    end
+end,})
+
+getgenv().StopEmoteLooping = Tab12:CreateButton({
+Name = "Stop Loop Emoting",
+Callback = function()
+    getgenv().Character:FindFirstChild("Animate").Disabled = false
+    wait(0.2)
+    for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+        animTrack:Stop()
+    end
+    wait(0.1)
+    if getgenv().Humanoid.Sit or getgenv().Humanoid == true then
+        getgenv().Humanoid:ChangeState(3)
+        getgenv().Humanoid.Jumping = true
+    end
+    wait(0.2)
+    if getgenv().HumanoidRootPart.Anchored or getgenv().HumanoidRootPart.Anchored == true then
+        getgenv().FrozenChar:Set(false)
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.2)
+        getgenv().Humanoid:ChangeState(3)
+    end
+end,})
+
 getgenv().PlayEmoteWithIDNum = Tab12:CreateInput({
 Name = "Play Emote (ID)",
 PlaceholderText = "Enter ID",
@@ -7694,7 +7746,6 @@ Callback = function(FireWorksCrazy)
     if FireWorksCrazy then
         local Lighting = cloneref and cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
         Lighting.ClockTime = 1
-        wait()
         Lighting.Brightness = 2
         wait()
         getgenv().setFireWorksOn = true
