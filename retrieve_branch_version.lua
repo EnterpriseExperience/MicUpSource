@@ -368,19 +368,29 @@
     if getgenv().Easies_Configuration["Default_Animation_Package_System"] == true then 
         function connect_to_animations()
             local config = getgenv().Easies_Configuration
-            local packageName = config["Animation_Package_Idle"]
-    
-            if animationMappings[packageName] then
-                local anims = animationMappings[packageName]
-                change_idle_anim(anims.Idle[1], anims.Idle[2])
-                change_walk_anim(anims.Walk)
-                change_run_anim(anims.Run)
-                change_fall_anim(anims.Fall)
-                change_jump_anim(anims.Jump)
-                change_climb_anim(anims.Climb)
-                print("Applied animation package:", packageName)
-            else
-                warn("Unknown animation package:", packageName)
+            local animations_All = {
+                ["Animation_Package_Idle_1"] = config["Animation_Package_Idle_1"],
+                ["Animation_Package_Idle_2"] = config["Animation_Package_Idle_2"],
+                ["Animation_Package_Walk"] = config["Animation_Package_Walk"],
+                ["Animation_Package_Run"] = config["Animation_Package_Run"],
+                ["Animation_Package_Fall"] = config["Animation_Package_Fall"],
+                ["Animation_Package_Jump"] = config["Animation_Package_Jump"],
+                ["Animation_Package_Climb"] = config["Animation_Package_Climb"]
+            }
+            
+            for _, v in pairs(animations_All) do
+                if animationMappings[packageName] then
+                    local anims = v
+                    change_idle_anim(anims.Idle[1], anims.Idle[2])
+                    change_walk_anim(anims.Walk)
+                    change_run_anim(anims.Run)
+                    change_fall_anim(anims.Fall)
+                    change_jump_anim(anims.Jump)
+                    change_climb_anim(anims.Climb)
+                    print("Applied animation package:", packageName)
+                else
+                    warn("Unknown animation package:", packageName)
+                end
             end
         end
     
@@ -1214,31 +1224,61 @@
     -- Current UI is automatically hidden, shoutout to Rayfield (and the hiddenUI function.).
     getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
     wait()
-    local Window = Rayfield:CreateWindow({
-        Name = "📜 Zacks Easy Hub 📜 | V7.5.3 | "..tostring(executor_Name),
-        LoadingTitle = "Enjoy ruling MIC UP 🔊",
-        LoadingSubtitle = "Zacks Easy Hub | Success.",
-        ConfigurationSaving = {
-            Enabled = false,
-            FolderName = "ConfigurationZacskEasyHub",
-            FileName = "ZacksEasyHub"
-        },
-        Discord = {
-            Enabled = true,
-            Invite = "VJh3kkYzBn",
-            RememberJoins = true
-        },
-        KeySystem = false,
-        KeySettings = {
-            Title = "None",
-            Subtitle = "No key system is provided.",
-            Note = "...",
-            FileName = "Key",
-            SaveKey = false,
-            GrabKeyFromSite = false,
-            Key = {"None"}
-        }
-    })
+    local Window 
+    wait(0.2)
+    if executor_Name == "Solara" then
+        Window = Rayfield:CreateWindow({
+            Name = "📜 Zacks Easy Hub 📜 | V7.5.7 | "..tostring(executor_Name),
+            LoadingTitle = "Enjoy ruling MIC UP 🔊",
+            LoadingSubtitle = "Zacks Easy Hub | Success.",
+            ConfigurationSaving = {
+                Enabled = false,
+                FolderName = "ConfigurationZacskEasyHub",
+                FileName = "ZacksEasyHub"
+            },
+            Discord = {
+                Enabled = false,
+                Invite = "VJh3kkYzBn",
+                RememberJoins = false
+            },
+            KeySystem = false,
+            KeySettings = {
+                Title = "None",
+                Subtitle = "No key system is provided.",
+                Note = "...",
+                FileName = "Key",
+                SaveKey = false,
+                GrabKeyFromSite = false,
+                Key = {"None"}
+            }
+        })
+    else
+        Window = Rayfield:CreateWindow({
+            Name = "📜 Zacks Easy Hub 📜 | V7.5.7 | "..tostring(executor_Name),
+            LoadingTitle = "Enjoy ruling MIC UP 🔊",
+            LoadingSubtitle = "Zacks Easy Hub | Success.",
+            ConfigurationSaving = {
+                Enabled = false,
+                FolderName = "ConfigurationZacskEasyHub",
+                FileName = "ZacksEasyHub"
+            },
+            Discord = {
+                Enabled = true,
+                Invite = "VJh3kkYzBn",
+                RememberJoins = true
+            },
+            KeySystem = false,
+            KeySettings = {
+                Title = "None",
+                Subtitle = "No key system is provided.",
+                Note = "...",
+                FileName = "Key",
+                SaveKey = false,
+                GrabKeyFromSite = false,
+                Key = {"None"}
+            }
+        })
+    end
 
     if not Window then
         getgenv().SCRIPT_EXECUTED = false
@@ -1456,9 +1496,12 @@
         warn("Already loaded Emotes Configuration Manager.")
     else
         if getgenv().Easies_Configuration["Emote_Keybinds"] == true then
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
+            if executor_Name == "Solara" then
+                warn("Not loading, Solara's file system doesn't work correctly for some reason.")
+            else
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
+            end
             wait(0.3)
-    
             -- [] -->> Set up emote configuration automatically. <<-- [] --
             local Players = game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
