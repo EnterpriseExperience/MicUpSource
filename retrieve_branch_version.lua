@@ -1994,7 +1994,7 @@
         end
     end,})
 
-    if workspace:FindFirstChild("Booth") then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().coloredBooth = Tab11:CreateToggle({
         Name = "Booth Color Changer (FE)",
         CurrentValue = false,
@@ -2299,7 +2299,7 @@
         end
     end,})
 
-    if workspace:FindFirstChild("Booth") then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().WriteOutBooth = Tab11:CreateInput({
         Name = "Booth Typing Effect (FE)",
         CurrentValue = "",
@@ -2330,7 +2330,7 @@
         warn("Did not load this Booth tab [4].")
     end
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/refs/heads/main/coding_stuff.lua')))()
-    if workspace:FindFirstChild("Booth") then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().ToggleBadWords = Tab11:CreateToggle({
         Name = "Bypassed Booth (FE)",
         CurrentValue = false,
@@ -2852,7 +2852,7 @@
         send_Remote(noteToBypass)
     end,})
 
-    if workspace:FindFirstChild("Booth") then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().DeletePlrBooth = Tab11:CreateButton({
         Name = "Delete Current Booth",
         Callback = function()
@@ -4457,26 +4457,21 @@
 
         local key = Enum.KeyCode[getgenv().settings_flashback.Keybind]
         if not Enum.KeyCode[getgenv().settings_flashback.Keybind] then
-            return getgenv().notify("Invalid Key!", "KeyCode seems to be invalid, try another one", 7)
+            return getgenv().notify("Invalid Key!", "KeyCode seems to be invalid, try another one", 6)
         end
 
-        local flashbackLength = 80
+        local flashbackLength = 95
         local flashbackSpeed = tonumber(getgenv().settings_flashback.Speed)
         
         getgenv().frames = getgenv().frames or {}
         local frames = getgenv().frames
         
-        local uis = game:GetService("UserInputService")
-        local player = game:GetService("Players").LocalPlayer
-        local runService = game:GetService("RunService")
-        
-        local function getCharacter()
-            return player.Character or player.CharacterAdded:Wait()
-        end
-        
-        local function getHumanoidRootPart(character)
-            return character:FindFirstChild("HumanoidRootPart") or character.PrimaryPart
-        end
+        local uis = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+        local player = getgenv().LocalPlayer
+        local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+        local humanoid = getgenv().Humanoid
+        local character = getgenv().Character
+        local humanoidRootPart = getgenv().HumanoidRootPart
 
         getgenv().flashback = getgenv().flashback or {}
         local flashback = getgenv().flashback
@@ -4516,9 +4511,9 @@
         end
         
         local function onRenderStep()
-            local character = getCharacter()
-            local humanoidRootPart = getHumanoidRootPart(character)
-            local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+            local character = getgenv().Character
+            local humanoidRootPart = getgenv().HumanoidRootPart
+            local humanoid = getgenv().Humanoid
             
             if not key or typeof(key) ~= "EnumItem" then
                 pcall(function()
@@ -4537,7 +4532,10 @@
             end
         end        
         
-        runService:BindToRenderStep("FlashbackStep", 1, onRenderStep)      
+        repeat wait(1) until character and humanoid and humanoidRootPart
+        if character and humanoid and humanoidRootPart then
+            runService:BindToRenderStep("FlashbackStep", 1, onRenderStep)
+        end
         wait(.2)
         getgenv().flashbacks_script = true
     end,})
@@ -4545,7 +4543,7 @@
     getgenv().stopFlashbackScript = Tab16:CreateButton({
     Name = "Unload Flashback (Stop Running/Quit)",
     Callback = function()
-        local runService = game:GetService("RunService") 
+        local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 
         if getgenv().flashbacks_script then
             pcall(function()
@@ -4554,6 +4552,8 @@
                 getgenv().flashbacks_script = false
                 getgenv().flashback = nil
             end)
+        else
+            return getgenv().notify("Error:", "Flashback Rewind has not been loaded.", 5)
         end
     end,})
 
