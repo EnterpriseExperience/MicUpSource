@@ -546,31 +546,10 @@
                 end
                 return table.concat(array)
             end
-
-            PARENT = ClockGUI.Parent
-            if get_hidden_gui or gethui then
-                local hiddenUI = get_hidden_gui or gethui
-                local Main = ClockGUI
-                Main.Name = randomString()
-                Main.Parent = hiddenUI()
-                PARENT = Main
-            elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
-                local Main = ClockGUI
-                Main.Name = randomString()
-                syn.protect_gui(Main)
-                Main.Parent = COREGUI
-                PARENT = Main
-            elseif COREGUI:FindFirstChild('RobloxGui') then
-                PARENT = COREGUI.RobloxGui
-            else
-                local Main = ClockGUI
-                Main.Name = randomString()
-                Main.Parent = COREGUI
-                PARENT = Main
-            end
             wait(0.1)
-            ClockGUI.Name = randomString()
+            ClockGUI.Name = "Script_Clock_Time_Day_Night"
             ClockGUI.ResetOnSpawn = false
+            ClockGUI.Parent = PlayerGui
             ClockGUI.IgnoreGuiInset = true
 
             Clock_Frame.Name = "Clock_Frame"
