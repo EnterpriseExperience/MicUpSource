@@ -429,6 +429,15 @@
         warn("Not enabled in Configuration.")
     end--]]
 
+    if isfile and isfile("emoteFile.json") then
+        print("True - File Exists, deleting...")
+        delfile("emoteFile.json")
+        wait(0.4)
+        print("Deleted.")
+    else
+        warn("emoteFile.json does not exist. EXIT_STATUS:[0]")
+    end
+
     local function getExecutor()
         local name
         if identifyexecutor then
@@ -1473,178 +1482,7 @@
             TeleportPart.Parent = AssetService
         end
     end
-    --[[wait(0.1)
-    if getgenv().scriptEnabled then
-        warn("Already loaded Emotes Configuration Manager.")
-    else
-        if getgenv().Easies_Configuration["Emote_Keybinds"] == "on" or getgenv().Easies_Configuration["Emote_Keybinds"] == "On" or getgenv().Easies_Configuration["Emote_Keybinds"] == "Enabled" then
-            if executor_Name == "Solara" then
-                warn("Not loading, Solara's file system doesn't work correctly for some reason.")
-            else
-                loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/emotes_config_manager.lua'))()
-            end
-            wait(0.3)
-            -- [] -->> Set up emote configuration automatically. <<-- [] --
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players and Players.LocalPlayer or getgenv().LocalPlayer
-    
-            local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
-    
-            local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
-            local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-            local emoteFilePath = "emoteFile.json"
-            
-            local defaultKeybindActions = {
-                [Enum.KeyCode.One] = 13071993910,
-                [Enum.KeyCode.Two] = 14901371589,
-                [Enum.KeyCode.Three] = 73683655527605,
-                [Enum.KeyCode.Four] = 5230615437,
-                [Enum.KeyCode.Five] = 5104377791,
-                [Enum.KeyCode.Six] = 13694139364,
-                [Enum.KeyCode.Seven] = 7466047578,
-                [Enum.KeyCode.Eight] = 13823339506,
-                [Enum.KeyCode.Nine] = 3576823880,
-                [Enum.KeyCode.Q] = "SlowDown",
-                [Enum.KeyCode.E] = "SpeedUp",
-                [Enum.KeyCode.V] = "Freeze",
-                [Enum.KeyCode.X] = "NormalSpeed",
-                [Enum.KeyCode.F] = "Reverse"
-            }
-    
-            local function saveDefaultKeybinds(filePath)
-                local keybindList = {}
-                for keyCode, emoteID in pairs(defaultKeybindActions) do
-                    table.insert(keybindList, { Key = tostring(keyCode), EmoteID = emoteID })
-                end
-                local success, result = pcall(function()
-                    return HttpService:JSONEncode(keybindList)
-                end)
-                if success then
-                    writefile(filePath, result)
-                    print("Default emote configuration file created at: " .. filePath)
-                else
-                    warn("Failed to create default emote configuration file.")
-                end
-            end
-    
-            local function loadKeybinds(filePath)  
-                if isfile(filePath) then
-                    local success, result = pcall(function()
-                        return HttpService:JSONDecode(readfile(filePath))
-                    end)
-                    if success then
-                        getgenv().loadedActions = {}
-                        for _, bind in ipairs(result) do
-                            local keyCode = Enum.KeyCode[tostring(bind.Key):match("Enum.KeyCode%.(%w+)")]
-                            if keyCode and (tonumber(bind.EmoteID) or type(bind.EmoteID) == "string") then
-                                getgenv().loadedActions[keyCode] = tonumber(bind.EmoteID) or bind.EmoteID
-                            end
-                        end
-                        return print("Loaded Keybinds:", getgenv().loadedActions)
-                    else
-                        warn("Failed to parse emote configuration file. Using default configuration.")
-                    end
-                else
-                    saveDefaultKeybinds(filePath)
-                end
-                getgenv().loadedActions = {}
-            end
-    
-            wait(0.2)
-            loadKeybinds(emoteFilePath)
-            wait()
-            getgenv().emoteSpeed = 1
-            getgenv().speedUpSpeed = 4
-            getgenv().slowDownSpeed = 0.1
-            getgenv().freezeEmotes = false
-            getgenv().isReversed = false
-    
-            local function adjustEmoteSpeed()
-                if getgenv().Character and getgenv().Humanoid then
-                    for _, track in ipairs(Humanoid:GetPlayingAnimationTracks()) do
-                        track:AdjustSpeed(getgenv().emoteSpeed)
-                    end
-                end
-            end
-    
-            local function reverseEmotes()
-                if getgenv().Character and getgenv().Humanoid then
-                    for _, track in ipairs(Humanoid:GetPlayingAnimationTracks()) do
-                        track:AdjustSpeed(-1)
-                    end
-                end
-            end
-    
-            local function playNormalSpeed()
-                if getgenv().Character and getgenv().Humanoid then
-                    for _, track in ipairs(Humanoid:GetPlayingAnimationTracks()) do
-                        track:AdjustSpeed(1)
-                    end
-                end
-            end
-    
-            local function playEmote(emoteId)
-                if not getgenv().Character then
-                    return warn("Character missing!")
-                end
-                
-                if not getgenv().Humanoid then 
-                    return warn("Humanoid missing!")
-                end
-    
-                for _, track in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
-                    track:Stop()
-                end
-                wait()
-                local animTrack = getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-                if getgenv().Humanoid and animTrack and typeof(animTrack) == "Instance" then
-                    animTrack:AdjustSpeed(getgenv().emoteSpeed)
-                end
-            end
-    
-            local function handleKeybind(action)
-                if type(action) == "number" then
-                    playEmote(action)
-                elseif action == "SlowDown" then
-                    getgenv().emoteSpeed = getgenv().slowDownSpeed
-                    adjustEmoteSpeed()
-                elseif action == "SpeedUp" then
-                    getgenv().emoteSpeed = getgenv().speedUpSpeed
-                    adjustEmoteSpeed()
-                elseif action == "Freeze" then
-                    getgenv().emoteSpeed = 0
-                    adjustEmoteSpeed()
-                    getgenv().freezeEmotes = true
-                elseif action == "NormalSpeed" then
-                    getgenv().emoteSpeed = 1
-                    adjustEmoteSpeed()
-                    getgenv().freezeEmotes = false
-                elseif action == "Reverse" then
-                    if getgenv().isReversed then
-                        playNormalSpeed()
-                    else
-                        reverseEmotes()
-                    end
-                    getgenv().isReversed = not getgenv().isReversed
-                end
-            end
-    
-            getgenv().keybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-                if gameProcessed then return end
-                local action = getgenv().loadedActions[input.KeyCode]
-                if action then
-                    handleKeybind(action)
-                end
-            end)
-    
-            wait(0.2)
-            getgenv().scriptEnabled = true
-        else
-            warn("Not enabled in Configuration.")
-        end
-    end--]]
-    wait(0.4)
+    wait(0.3)
     local TeleportService = game:GetService("TeleportService")
 
     PlaceId, JobId = game.PlaceId, game.JobId
