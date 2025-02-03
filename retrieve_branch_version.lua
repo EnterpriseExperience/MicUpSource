@@ -1075,16 +1075,38 @@
     local Workspace
     local Players
     local ReplicatedStorage
-
+    local UserInputService
+    wait(0.1)
     if cloneref then
+        print("Using cloneref for Muted keybind.")
         Workspace = cloneref(game:GetService("Workspace"))
         Players = cloneref(game:GetService("Players"))
         ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+        UserInputService = cloneref(game:GetService("UserInputService"))
     else
+        warn("'cloneref' is unsupported, utilizing normal method of Services.")
         Workspace = game:GetService("Workspace")
         Players = game:GetService("Players")
         ReplicatedStorage = game:GetService("ReplicatedStorage")
+        UserInputService = game:GetService("UserInputService")
     end
+    wait(0.2)
+    local function toggle_mute()
+        local player = Players.LocalPlayer
+        if not player then return end
+
+        local audioInput = player:FindFirstChildOfClass("AudioDeviceInput")
+        if audioInput then
+            audioInput.Muted = not audioInput.Muted
+        end
+    end
+
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.KeyCode == Enum.KeyCode.RightControl or input.KeyCode == Enum.KeyCode.RightAlt then
+            toggle_mute()
+        end
+    end)
     wait(0.2)
     if getgenv().conveyer_stored then
         warn("Already stored conveyer's")
