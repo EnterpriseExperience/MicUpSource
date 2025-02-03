@@ -1098,6 +1098,11 @@
         local audioInput = player:FindFirstChildOfClass("AudioDeviceInput")
         if audioInput then
             audioInput.Muted = not audioInput.Muted
+            if audioInput.Muted or audioInput.Muted == true then
+                getgenv().notify("Success", "Muted Microphone.", 6)
+            elseif not audioInput.Muted or audioInput.Muted == false then
+                getgenv().notify("Success", "Unmuted Microphone.", 6.5)
+            end
         end
     end
 
