@@ -1056,7 +1056,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 		if not isfolder(RayfieldFolder.."/Discord Invites") then
 			makefolder(RayfieldFolder.."/Discord Invites")
 		end
-		
+
 		if not isfile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
 			local HttpService = game:GetService("HttpService")
 
@@ -2894,103 +2894,16 @@ else
 	warn("Action denied.")
 end
 
-do
-	local emoji = ({
-		["01 01"] = "🎆", -- New Year's Day
-		["02 14"] = "❤️", -- Valentine's Day
-		["03 17"] = "☘️", -- St. Patrick's Day
-		["07 04"] = "🇺🇸", -- Independence Day (USA)
-		["10 31"] = "🎃", -- Halloween
-		["12 25"] = "🎄", -- Christmas
-		["12 31"] = "🎉", -- New Year's Eve
-
-		[(function(Year)
-			local A = math.floor(Year / 100)
-			local B = math.floor((13 + 8 * A) / 25)
-			local C = (15 - B + A - math.floor(A / 4)) % 30
-			local D = (4 + A - math.floor(A / 4)) % 7
-			local E = (19 * (Year % 19) + C) % 30
-			local F = (2 * (Year % 4) + 4 * (Year % 7) + 6 * E + D) % 7
-			local G = (22 + E + F)
-			if E == 29 and F == 6 then
-				return "04 19"
-			elseif E == 28 and F == 6 then
-				return "04 18"
-			elseif G > 31 then
-				return ("04 %02d"):format(G - 31)
-			end
-			return ("03 %02d"):format(G)
-		end)(tonumber(os.date("%Y")))] = "🥚", -- Easter
-
-		[(function(Year)
-			local firstDayOfMonth = os.time({year = Year, month = 11, day = 1})
-			local firstWeekday = tonumber(os.date("%w", firstDayOfMonth))
-			local offset = (11 - firstWeekday) % 7
-			return os.date("%m %d", firstDayOfMonth + (offset + 21) * 86400)
-		end)(tonumber(os.date("%Y")))] = "🦃", -- Thanksgiving (USA)
-
-		[(function(Year)
-			local firstDayOfMonth = os.time({year = Year, month = 9, day = 1})
-			local firstWeekday = tonumber(os.date("%w", firstDayOfMonth))
-			local offset = (8 - firstWeekday) % 7
-			return os.date("%m %d", firstDayOfMonth + offset * 86400)
-		end)(tonumber(os.date("%Y")))] = "⚒️", -- Labor Day (USA)
-
-		[(function(Year)
-			local firstDayOfMonth = os.time({year = Year, month = 5, day = 1})
-			local firstWeekday = tonumber(os.date("%w", firstDayOfMonth))
-			local offset = (7 - firstWeekday) % 7
-			return os.date("%m %d", firstDayOfMonth + (offset + 7) * 86400)
-		end)(tonumber(os.date("%Y")))] = "🌸", -- Mother's Day (USA)
-
-		[(function(Year)
-			local firstDayOfMonth = os.time({year = Year, month = 6, day = 1})
-			local firstWeekday = tonumber(os.date("%w", firstDayOfMonth))
-			local offset = (7 - firstWeekday) % 7
-			return os.date("%m %d", firstDayOfMonth + (offset + 14) * 86400)
-		end)(tonumber(os.date("%Y")))] = "👔", -- Father's Day (USA)
-	})
-
-	local holidayNames = {
-		["🎆"] = "New Year's Day",
-		["❤️"] = "Valentine's Day",
-		["☘️"] = "St. Patrick's Day",
-		["🇺🇸"] = "Independence Day",
-		["🎃"] = "Halloween",
-		["🎄"] = "Christmas",
-		["🎉"] = "New Year's Eve",
-		["🥚"] = "Easter",
-		["🦃"] = "Thanksgiving",
-		["⚒️"] = "Labor Day",
-		["🌸"] = "Mother's Day",
-		["👔"] = "Father's Day"
-	}
-
-	local function updateTitle()
-		local currentEmoji = emoji[os.date("%m %d")]
-		if currentEmoji then
-			local holidayName = holidayNames[currentEmoji] or "Holiday"
-			Main.Topbar.Title.Text = ("%s Zacks Easy Hub %s | %s | Emote Keybinds: True"):format(currentEmoji, currentEmoji, holidayName)
-		elseif not currentEmoji and getgenv().no_keybinds_version or getgenv().no_keybinds_version == true then
-			Main.Topbar.Title.Text = "📍 Zacks Crazy Hub 📍 | "..tostring(Version_No_Config).." Emote Keybinds: False"
-		elseif not currentEmoji and getgenv().keybinds_version or getgenv().keybinds_version == true then
-			Main.Topbar.Title.Text = "📍 Zacks Crazy Hub 📍 | "..tostring(Version_Config).." Emote Keybinds: True"
-		end
-	end
-
-	updateTitle()
-end
-
 if useStudio then
 	local Window = RayfieldLibrary:CreateWindow({
 		Name = "Rayfield Example Window",
 		LoadingTitle = "Rayfield Interface Suite",
 		Theme = 'Light',
-		LoadingSubtitle = "by Sirius",
+		LoadingSubtitle = "by ???",
 		ConfigurationSaving = {
 			Enabled = true,
 			FolderName = nil, 
-			FileName = "Big Hub"
+			FileName = "ACK_SEND-PORT_FORWARD[window[65535::allocate_maximum_port_range_Function(65535)-?? 00 FF ?? 00 AC - debug.getupvalue(null, 0xFFFFFFFFFFFF).]nil-Hu??UNALLO_CATED_M?-?EMORY_STU00?BYTECKb_DIVIS?ENTRY_ACCESS??ION"
 		},
 		Discord = {
 			Enabled = false,
@@ -2999,9 +2912,9 @@ if useStudio then
 		},
 		KeySystem = false, 
 		KeySettings = {
-			Title = "Untitled",
-			Subtitle = "Key System",
-			Note = "No method of obtaining the key is provided",
+			Title = "The system could not find the file specified.",
+			Subtitle = "0xFFFFFFFFFFFFFFF",
+			Note = "debug.getconstant",
 			FileName = "Key", 
 			SaveKey = true, 
 			GrabKeyFromSite = false, 
@@ -3129,8 +3042,6 @@ if useStudio then
 
 	local Paragraph = Tab:CreateParagraph({Title = "Paragraph Example", Content = "Paragraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph Example"})
 end
-
-
 
 task.delay(3.5, RayfieldLibrary.LoadConfiguration, RayfieldLibrary)
 
