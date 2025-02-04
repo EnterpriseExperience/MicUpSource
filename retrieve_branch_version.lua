@@ -48,387 +48,7 @@
         System_Broken = "off",
         keep_tp_tool = "on",
     }
-
-    --[[Zombie_Idle_1 = "10921344533"
-    Zombie_Idle_2 = "10921345304"
-    Zombie_Walk = "10921355261"
-    Zombie_Run = "616163682"
-    Zombie_Jump = "10921351278"
-    Zombie_Climb = "10921343576"
-    Zombie_Fall = "10921350320"
-    Catwalk_Idle_1 = "133806214992291"
-    Catwalk_Idle_2 = "94970088341563"
-    Catwalk_Walk = "109168724482748"
-    Catwalk_Run = "81024476153754"
-    Catwalk_Jump = "116936326516985"
-    Catwalk_Climb = "119377220967554"
-    Catwalk_Fall = "92294537340807"
-    Elder_Idle_1 = "10921101664"
-    Elder_Idle_2 = "10921102574"
-    Elder_Walk = "10921111375"
-    Elder_Run = "10921104374"
-    Elder_Jump = "10921107367"
-    Elder_Climb = "10921100400"
-    Elder_Fall = "10921105765"
-    Cartoony_Idle_1 = "10921071918"
-    Cartoony_Idle_2 = "10921072875"
-    Cartoony_Walk = "10921082452"
-    Cartoony_Run = "10921076136"
-    Cartoony_Jump = "10921078135"
-    Cartoony_Climb = "10921070953"
-    Cartoony_Fall = "10921077030"
-    Adidas_Idle_1 = "18537376492"
-    Adidas_Idle_2 = "18537371272"
-    Adidas_Walk = "18537392113"
-    Adidas_Run = "18537384940"
-    Adidas_Jump = "18537380791"
-    Adidas_Climb = "18537363391"
-    Adidas_Fall = "18537367238"
-    Werewolf_Idle_1 = "10921330408"
-    Werewolf_Idle_2 = "10921333667"
-    Werewolf_Walk = "10921342074"
-    Werewolf_Run = "10921336997"
-    Werewolf_Jump = "1083218792"
-    Werewolf_Climb = "10921329322"
-    Werewolf_Fall = "10921337907"
-    Vampire_Idle_1 = "10921315373"
-    Vampire_Idle_2 = "10921316709"
-    Vampire_Walk = "10921326949"
-    Vampire_Run = "10921320299"
-    Vampire_Jump = "10921322186"
-    Vampire_Climb = "10921314188"
-    Vampire_Fall = "10921321317"
-    Astronaut_Idle_1 = "10921034824"
-    Astronaut_Idle_2 = "10921036806"
-    Astronaut_Walk = "10921046031"
-    Astronaut_Run = "10921039308"
-    Astronaut_Jump = "10921042494"
-    Astronaut_Climb = "10921032124"
-    Astronaut_Fall = "10921040576"
-    Superhero_Idle_1 = "10921288909"
-    Superhero_Idle_2 = "10921290167"
-    Superhero_Walk = "10921298616"
-    Superhero_Run = "10921291831"
-    Superhero_Jump = "10921294559"
-    Superhero_Climb = "10921286911"
-    Superhero_Fall = "10921293373"
-    Knight_Idle_1 = "10921117521"
-    Knight_Idle_2 = "10921118894"
-    Knight_Walk = "10921127095"
-    Knight_Run = "10921121197"
-    Knight_Jump = "10921123517"
-    Knight_Climb = "10921116196"
-    Knight_Fall = "10921122579"
-    Mage_Idle_1 = "10921144709"
-    Mage_Idle_2 = "10921145797"
-    Mage_Walk = "10921152678"
-    Mage_Run = "10921148209"
-    Mage_Jump = "10921149743"
-    Mage_Climb = "10921143404"
-    Mage_Fall = "10921148939"
-    Ninja_Idle_1 = "10921155160"
-    Ninja_Idle_2 = "10921155867"
-    Ninja_Walk = "10921162768"
-    Ninja_Run = "10921157929"
-    Ninja_Jump = "10921160088"
-    Ninja_Climb = "10921154678"
-    Ninja_Fall = "10921159222"
-    Toy_Idle_1 = "10921301576"
-    Toy_Idle_2 = "10921302207"
-    Toy_Walk = "10921312010"
-    Toy_Run = "10921306285"
-    Toy_Jump = "10921308158"
-    Toy_Climb = "10921300839"
-    Toy_Fall = "10921307241"
-    NFL_Idle_1 = "92080889861410"
-    NFL_Idle_2 = "74451233229259"
-    NFL_Walk = "110358958299415"
-    NFL_Run = "117333533048078"
-    NFL_Jump = "119846112151352"
-    NFL_Climb = "134630013742019"
-    NFL_Fall = "129773241321032"
-    NoBoundaries_Idle_1 = "18747067405"
-    NoBoundaries_Idle_2 = "18747063918"
-    NoBoundaries_Walk = "18747074203"
-    NoBoundaries_Run = "18747070484"
-    NoBoundaries_Jump = "18747069148"
-    NoBoundaries_Climb = "18747060903"
-    NoBoundaries_Fall = "18747062535"
-    Oldschool_Idle_1 = "10921230744"
-    Oldschool_Idle_2 = "10921232093"
-    Oldschool_Walk = "10921244891"
-    Oldschool_Run = "10921240218"
-    Oldschool_Jump = "10921242013"
-    Oldschool_Climb = "10921229866"
-    Oldschool_Fall = "10921241244"
-    Pirate_Idle_1 = "750781874"
-    Pirate_Idle_2 = "750782770"
-    Pirate_Walk = "750785693"
-    Pirate_Run = "750783738"
-    Pirate_Jump = "750782230"
-    Pirate_Climb = "750779899"
-    Pirate_Fall = "750780242"
-    Levitation_Idle_1 = "10921132962"
-    Levitation_Idle_2 = "10921133721"
-    Levitation_Walk = "10921140719"
-    Levitation_Run = "10921135644"
-    Levitation_Jump = "10921137402"
-    Levitation_Climb = "10921132092"
-    Levitation_Fall = "10921136539"
-    Bubbly_Idle_1 = "10921054344"
-    Bubbly_Idle_2 = "10921055107"
-    Bubbly_Walk = "10980888364"
-    Bubbly_Run = "10921057244"
-    Bubbly_Jump = "10921062673"
-    Bubbly_Climb = "10921053544"
-    Bubbly_Fall = "10921061530"
-    Robot_Idle_1 = "10921248039"
-    Robot_Idle_2 = "10921248831"
-    Robot_Walk = "10921255446"
-    Robot_Run = "10921250460"
-    Robot_Jump = "10921252123"
-    Robot_Climb = "10921247141"
-    Robot_Fall = "10921251156"
-    WickedPopular_Idle_1 = "118832222982049"
-    WickedPopular_Idle_2 = "76049494037641"
-    WickedPopular_Walk = "92072849924640"
-    WickedPopular_Run = "72301599441680"
-    WickedPopular_Jump = "104325245285198"
-    WickedPopular_Climb = "131326830509784"
-    WickedPopular_Fall = "121152442762481"
-    Bold_Idle_1 = "16738333868"
-    Bold_Idle_2 = "16738334710"
-    Bold_Walk = "16738340646"
-    Bold_Run = "16738337225"
-    Bold_Jump = "16738336650"
-    Bold_Climb = "16738332169"
-    Bold_Fall = "16738333171"
-    Stylish_Idle_1 = "10921272275"
-    Stylish_Idle_2 = "10921273958"
-    Stylish_Walk = "10921283326"
-    Stylish_Run = "10921276116"
-    Stylish_Jump = "10921279832"
-    Stylish_Climb = "10921271391"
-    Stylish_Fall = "10921278648"
-    Rthro_Idle_1 = "10921259953"
-    Rthro_Idle_2 = "10921258489"
-    Rthro_Walk = "10921269718"
-    Rthro_Run = "10921261968"
-    Rthro_Jump = "10921263860"
-    Rthro_Climb = "10921257536"
-    Rthro_Fall = "10921262864"
-    wait(0.1)
-    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    
-    local function findAnimation(animType)
-        local animateScript = Character and Character:FindFirstChild("Animate")
-        if not animateScript or not animateScript:IsA("LocalScript") then
-            return warn(animType .. " script not found in Character.")
-        end
-    
-        local animObject = animateScript:FindFirstChild(animType)
-        if not animObject then
-            return warn(animType .. " object not found in the Animate script.")
-        end
-    
-        local anim = animObject:FindFirstChildOfClass("Animation")
-        if anim and anim:IsA("Animation") then
-            print(animType .. " animation found: " .. tostring(anim))
-            return anim
-        else
-            return warn(animType .. " Animation not found inside '" .. animType .. "' object.")
-        end
-    end
-    
-    local findJumpAnim = findAnimation("jump")
-    local findWalkAnim = findAnimation("walk")
-    local run_Anim = findAnimation("run")
-    local fall_Anim = findAnimation("fall")
-    local Climb_Anim = findAnimation("climb")
-    
-    local function findIdleAnimations()
-        local animateScript = Character and Character:FindFirstChild("Animate")
-        if not animateScript then return warn("Animate script not found.") end
-    
-        local idleObject = animateScript:FindFirstChild("idle")
-        if not idleObject then return warn("Idle object not found in Animate script.") end
-    
-        local idleAnim1 = idleObject:FindFirstChild("Animation1")
-        local idleAnim2 = idleObject:FindFirstChild("Animation2")
-    
-        if idleAnim1 and idleAnim2 then
-            print("Idle animations found.")
-            return idleAnim1, idleAnim2
-        else
-            return warn("One or both idle animations missing."), nil
-        end
-    end
-    
-    local idleAnim1, idleAnim2 = findIdleAnimations()
-    
-    local function changeAnimationLoad(idle, idle_2, walk, run, jump, climb, fall)
-        local Animate = Character:FindFirstChild("Animate")
-        local humanoid = Character:FindFirstChild("Humanoid")
-        if not humanoid then return warn("[Animation_Package_System]: Humanoid is missing!") end
-        if not Animate then return end
-    
-        Animate.Disabled = true
-        wait(0.2)
-        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-            track:Stop()
-        end
-        
-        idleAnim1.AnimationId = "rbxassetid://" .. idle
-        idleAnim2.AnimationId = "rbxassetid://" .. idle_2
-        findWalkAnim.AnimationId = "rbxassetid://" .. walk
-        run_Anim.AnimationId = "rbxassetid://" .. run
-        findJumpAnim.AnimationId = "rbxassetid://" .. jump
-        Climb_Anim.AnimationId = "rbxassetid://" .. climb
-        fall_Anim.AnimationId = "rbxassetid://" .. fall
-        task.wait()
-        Animate.Disabled = false
-    end
-    
-    local function changeAnimation(animType, input)
-        local Animate = Character:FindFirstChild("Animate")
-        local humanoid = Character:FindFirstChild("Humanoid")
-        if not humanoid then return warn("[Animation_Package_System]: Humanoid is missing!") end
-        if not Animate then return end
-    
-        Animate.Disabled = true
-        wait(0.2)
-        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-            track:Stop()
-        end
-    
-        local anim = findAnimation(animType)
-        if anim then
-            anim.AnimationId = "rbxassetid://" .. input
-        end
-        wait()
-        Animate.Disabled = false
-    end
-    
-    function change_idle_anim(input, input_2)
-        changeAnimation("idle", input)
-        changeAnimation("idle", input_2)
-    end
-    
-    function change_walk_anim(input)
-        changeAnimation("walk", input)
-    end
-    
-    function change_run_anim(input)
-        changeAnimation("run", input)
-    end
-    
-    function change_jump_anim(input)
-        changeAnimation("jump", input)
-    end
-    
-    function change_climb_anim(input)
-        changeAnimation("climb", input)
-    end
-    
-    function change_fall_anim(input)
-        changeAnimation("fall", input)
-    end
-    task.wait(0.2)
-
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-
-    local animationMappings = {
-        Zombie = {Idle = {Zombie_Idle_1, Zombie_Idle_2}, Walk = Zombie_Walk, Run = Zombie_Run, Fall = Zombie_Fall, Jump = Zombie_Jump, Climb = Zombie_Climb},
-        ["Catwalk Glam"] = {Idle = {Catwalk_Idle_1, Catwalk_Idle_2}, Walk = Catwalk_Walk, Run = Catwalk_Run, Fall = Catwalk_Fall, Jump = Catwalk_Jump, Climb = Catwalk_Climb},
-        Elder = {Idle = {Elder_Idle_1, Elder_Idle_2}, Walk = Elder_Walk, Run = Elder_Run, Fall = Elder_Fall, Jump = Elder_Jump, Climb = Elder_Climb},
-        Cartoony = {Idle = {Cartoony_Idle_1, Cartoony_Idle_2}, Walk = Cartoony_Walk, Run = Cartoony_Run, Fall = Cartoony_Fall, Jump = Cartoony_Jump, Climb = Cartoony_Climb},
-        Adidas = {Idle = {Adidas_Idle_1, Adidas_Idle_2}, Walk = Adidas_Walk, Run = Adidas_Run, Fall = Adidas_Fall, Jump = Adidas_Jump, Climb = Adidas_Climb},
-        Werewolf = {Idle = {Werewolf_Idle_1, Werewolf_Idle_2}, Walk = Werewolf_Walk, Run = Werewolf_Run, Fall = Werewolf_Fall, Jump = Werewolf_Jump, Climb = Werewolf_Climb},
-        Vampire = {Idle = {Vampire_Idle_1, Vampire_Idle_2}, Walk = Vampire_Walk, Run = Vampire_Run, Fall = Vampire_Fall, Jump = Vampire_Jump, Climb = Vampire_Climb},
-        Astronaut = {Idle = {Astronaut_Idle_1, Astronaut_Idle_2}, Walk = Astronaut_Walk, Run = Astronaut_Run, Fall = Astronaut_Fall, Jump = Astronaut_Jump, Climb = Astronaut_Climb},
-        Superhero = {Idle = {Superhero_Idle_1, Superhero_Idle_2}, Walk = Superhero_Walk, Run = Superhero_Run, Fall = Superhero_Fall, Jump = Superhero_Jump, Climb = Superhero_Climb},
-        Knight = {Idle = {Knight_Idle_1, Knight_Idle_2}, Walk = Knight_Walk, Run = Knight_Run, Fall = Knight_Fall, Jump = Knight_Jump, Climb = Knight_Climb},
-        Mage = {Idle = {Mage_Idle_1, Mage_Idle_2}, Walk = Mage_Walk, Run = Mage_Run, Fall = Mage_Fall, Jump = Mage_Jump, Climb = Mage_Climb},
-        Ninja = {Idle = {Ninja_Idle_1, Ninja_Idle_2}, Walk = Ninja_Walk, Run = Ninja_Run, Fall = Ninja_Fall, Jump = Ninja_Jump, Climb = Ninja_Climb},
-        Toy = {Idle = {Toy_Idle_1, Toy_Idle_2}, Walk = Toy_Walk, Run = Toy_Run, Fall = Toy_Fall, Jump = Toy_Jump, Climb = Toy_Climb},
-        NFL = {Idle = {NFL_Idle_1, NFL_Idle_2}, Walk = NFL_Walk, Run = NFL_Run, Fall = NFL_Fall, Jump = NFL_Jump, Climb = NFL_Climb},
-        ["No Boundaries"] = {Idle = {NoBoundaries_Idle_1, NoBoundaries_Idle_2}, Walk = NoBoundaries_Walk, Run = NoBoundaries_Run, Fall = NoBoundaries_Fall, Jump = NoBoundaries_Jump, Climb = NoBoundaries_Climb},
-        Oldschool = {Idle = {Oldschool_Idle_1, Oldschool_Idle_2}, Walk = Oldschool_Walk, Run = Oldschool_Run, Fall = Oldschool_Fall, Jump = Oldschool_Jump, Climb = Oldschool_Climb},
-        Pirate = {Idle = {Pirate_Idle_1, Pirate_Idle_2}, Walk = Pirate_Walk, Run = Pirate_Run, Fall = Pirate_Fall, Jump = Pirate_Jump, Climb = Pirate_Climb},
-        Levitation = {Idle = {Levitation_Idle_1, Levitation_Idle_2}, Walk = Levitation_Walk, Run = Levitation_Run, Fall = Levitation_Fall, Jump = Levitation_Jump, Climb = Levitation_Climb},
-        Bubbly = {Idle = {Bubbly_Idle_1, Bubbly_Idle_2}, Walk = Bubbly_Walk, Run = Bubbly_Run, Fall = Bubbly_Fall, Jump = Bubbly_Jump, Climb = Bubbly_Climb},
-        Robot = {Idle = {Robot_Idle_1, Robot_Idle_2}, Walk = Robot_Walk, Run = Robot_Run, Fall = Robot_Fall, Jump = Robot_Jump, Climb = Robot_Climb},
-        ["Wicked Popular"] = {Idle = {WickedPopular_Idle_1, WickedPopular_Idle_2}, Walk = WickedPopular_Walk, Run = WickedPopular_Run, Fall = WickedPopular_Fall, Jump = WickedPopular_Jump, Climb = WickedPopular_Climb},
-        Bold = {Idle = {Bold_Idle_1, Bold_Idle_2}, Walk = Bold_Walk, Run = Bold_Run, Fall = Bold_Fall, Jump = Bold_Jump, Climb = Bold_Climb},
-        Stylish = {Idle = {Stylish_Idle_1, Stylish_Idle_2}, Walk = Stylish_Walk, Run = Stylish_Run, Fall = Stylish_Fall, Jump = Stylish_Jump, Climb = Stylish_Climb},
-    }
-    
-    if getgenv().Easies_Configuration["Default_Animation_Package_System"] == true then 
-        function connect_to_animations()
-            local config = getgenv().Easies_Configuration
-            local animations_All = {
-                ["Animation_Package_Idle_1"] = config["Animation_Package_Idle_1"],
-                ["Animation_Package_Idle_2"] = config["Animation_Package_Idle_2"],
-                ["Animation_Package_Walk"] = config["Animation_Package_Walk"],
-                ["Animation_Package_Run"] = config["Animation_Package_Run"],
-                ["Animation_Package_Fall"] = config["Animation_Package_Fall"],
-                ["Animation_Package_Jump"] = config["Animation_Package_Jump"],
-                ["Animation_Package_Climb"] = config["Animation_Package_Climb"]
-            }
-            
-            for _, v in pairs(animations_All) do
-                if animationMappings[packageName] then
-                    local anims = v
-                    change_idle_anim(anims.Idle[1], anims.Idle[2])
-                    change_walk_anim(anims.Walk)
-                    change_run_anim(anims.Run)
-                    change_fall_anim(anims.Fall)
-                    change_jump_anim(anims.Jump)
-                    change_climb_anim(anims.Climb)
-                    print("Applied animation package:", packageName)
-                else
-                    warn("Unknown animation package:", packageName)
-                end
-            end
-        end
-    
-        local function onCharacterAdded(newCharacter)
-            print("New Character detected:", tostring(newCharacter), "- Waiting for full load...")
-
-            local humanoid = newCharacter:WaitForChild("Humanoid", 10)
-            local animateScript = newCharacter:WaitForChild("Animate", 10)
-    
-            if humanoid and animateScript then
-                print("Humanoid & Animate found, applying animations...")
-                wait(1)
-                connect_to_animations()
-            else
-                warn("Failed to find Humanoid or Animate script in character.")
-            end
-        end
-    
-        local function connect_anims()
-            LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-
-            if LocalPlayer.Character then
-                onCharacterAdded(LocalPlayer.Character)
-            end
-        end
-    
-        if getgenv().animation_package_system then
-            warn("Already loaded Animation Package System")
-        else
-            connect_anims()
-            getgenv().animation_package_system = true
-        end
-    else
-        warn("Not enabled in Configuration.")
-    end--]]
-
+    wait(0.2)
     if isfile and isfile("emoteFile.json") then
         print("True - File Exists, deleting...")
         delfile("emoteFile.json")
@@ -743,10 +363,11 @@
             "HttpService",
             "UserInputService",
             "TextChatService",
+            "ContextActionService"
         }
 
         for _, serviceName in pairs(services) do
-            getgenv()[serviceName] = game:GetService(serviceName)
+            getgenv()[serviceName] = cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
         end
     end
 
@@ -1255,7 +876,7 @@
     wait(0.2)
     if executor_Name == "Solara" then
         Window = Rayfield:CreateWindow({
-            Name = "📜 Zacks Easy Hub 📜 | V7.5.7 | "..tostring(executor_Name),
+            Name = "📜 Zacks Easy Hub 📜 | V7.5.9 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy ruling MIC UP 🔊",
             LoadingSubtitle = "Zacks Easy Hub | Success.",
             ConfigurationSaving = {
@@ -1281,7 +902,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "📜 Zacks Easy Hub 📜 | V7.5.7 | "..tostring(executor_Name),
+            Name = "📜 Zacks Easy Hub 📜 | V7.5.9 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy ruling MIC UP 🔊",
             LoadingSubtitle = "Zacks Easy Hub | Success.",
             ConfigurationSaving = {
@@ -3789,7 +3410,7 @@
         warn("Not in MIC UP or MIC UP 17+, not loading this part.")
     end
 
-    if workspace:FindFirstChild("Booth") then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().AutoChangingBooth = Tab11:CreateToggle({
         Name = "Quick Changing Booth",
         CurrentValue = false,
@@ -3939,7 +3560,7 @@
         local BackflipKey = Enum.KeyCode.X
         local AirjumpKey = Enum.KeyCode.C
         
-        local ca = game:GetService("ContextActionService")
+        local ca = getgenv().ContextActionService
         getgenv().zeezyEnabled = true
         local h = 0.0174533
         
@@ -3999,6 +3620,8 @@
         notifSound.PlayOnRemove = true
         notifSound:Destroy()
         wait(0.2)
+        getgenv().notify("Success", "FE Flip loaded successfully!", 6)
+        wait()
         game.StarterGui:SetCore("SendNotification", {
             Title = "feFlip", 
             Text = "FE Flip loaded successfully!", 
@@ -4016,12 +3639,13 @@
         end
         
         getgenv().zeezyEnabled = false
-        
-        local ca = game:GetService("ContextActionService")
+        wait(0.2)
+        local ca = getgenv().ContextActionService
         ca:UnbindAction("zeezyFrontflip")
         ca:UnbindAction("zeezyBackflip")
         ca:UnbindAction("zeezyAirjump")
         wait(0.2)
+        getgenv().notify("Success", "FE Flip has been disabled successfully!", 6)
         game:GetService("StarterGui"):SetCore("SendNotification", {
             Title = "feFlip",
             Text = "FE Flip disabled successfully!",
@@ -4037,8 +3661,8 @@
     Flag = "ConnectionInfiJump",
     Callback = function(infJumpConnect)
         if infJumpConnect then
-            local Player = game:GetService('Players').LocalPlayer
-            local UIS = game:GetService('UserInputService')
+            local Player = getgenv().LocalPlayer
+            local UIS = getgenv().UserInputService
             
             _G.JumpHeight = 50
             
@@ -7790,11 +7414,11 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=81024476153754"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=92294537340807"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=81024476153754"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=92294537340807"
         task.wait()
         Animate.Disabled = false
     end)
@@ -7819,11 +7443,11 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=118832222982049"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=76049494037641"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=92072849924640"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=72301599441680"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=131326830509784"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=121152442762481"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=92072849924640"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=72301599441680"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=131326830509784"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=121152442762481"
         task.wait()
         Animate.Disabled = false
     end)
@@ -7848,11 +7472,11 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=18537376492"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18537371272"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18537392113"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=18537384940"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=18537380791"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=18537363391"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=18537367238"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18537392113"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537384940"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537380791"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537363391"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537367238"
         task.wait()
         Animate.Disabled = false
     end)
@@ -7877,11 +7501,11 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=92080889861410"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=74451233229259"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=110358958299415"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=117333533048078"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=134630013742019"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=110358958299415"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=117333533048078"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=134630013742019"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
         task.wait()
         Animate.Disabled = false
     end)
@@ -7906,11 +7530,11 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=16738333868"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=16738334710"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=16738340646"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=16738337225"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=16738336650"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=16738332169"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=16738333171"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=16738340646"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738337225"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738336650"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738332169"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738333171"
         task.wait()
         Animate.Disabled = false
     end)
@@ -7935,11 +7559,11 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=18747067405"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18747063918"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18747074203"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=18747070484"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=18747069148"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=18747060903"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=18747062535"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18747074203"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747070484"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747069148"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747060903"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747062535"
         task.wait()
         Animate.Disabled = false
     end)
@@ -7964,11 +7588,11 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921248039"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921248831"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921255446"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=10921250460"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=10921252123"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=10921247141"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=10921251156"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921255446"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921250460"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921252123"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921247141"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921251156"
         task.wait()
         Animate.Disabled = false
     end)
@@ -7985,11 +7609,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616158929"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616160636"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616163682"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616163682"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616161997"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616156119"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616157476"
         wait()
         Animate.Disabled = false
     end)
@@ -8006,11 +7630,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616111295"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616113536"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616122287"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616117076"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616104706"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616108001"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616122287"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616117076"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616115533"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616104706"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616108001"
         wait()
         Animate.Disabled = false
     end)
@@ -8027,11 +7651,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083445855"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083450166"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083462077"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083455352"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1083439238"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1083443587"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083462077"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083455352"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083439238"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083443587"
         wait()
         Animate.Disabled = false
     end)
@@ -8048,11 +7672,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=707742142"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=707855907"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=707897309"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=707861613"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=707853694"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=707826056"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=707829716"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=707897309"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707861613"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707853694"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707826056"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707829716"
         wait()
         Animate.Disabled = false
     end)
@@ -8069,11 +7693,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616003713"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616005863"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616013216"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616008936"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616003713"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616005863"
         wait()
         Animate.Disabled = false
     end)
@@ -8090,11 +7714,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=845397899"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=845400520"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=845403856"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=845386501"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=845398858"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=845403856"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845386501"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845398858"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845392038"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845396048"
         wait()
         Animate.Disabled = false
     end)
@@ -8111,11 +7735,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616003713"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616005863"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616010382"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616008936"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616003713"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616005863"
         wait()
         Animate.Disabled = false
     end)
@@ -8132,11 +7756,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=891667138"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=891636393"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=891627522"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=891609353"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=891617961"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=891667138"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891636393"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891627522"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891609353"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891617961"
         wait()
         Animate.Disabled = false
     end)
@@ -8153,11 +7777,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=656117400"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=656118341"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=656121766"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=656118852"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=656117878"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=656114359"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=656115606"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=656121766"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656118852"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656117878"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656114359"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656115606"
         wait()
         Animate.Disabled = false
     end)
@@ -8174,11 +7798,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083195517"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083214717"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083178339"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083218792"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1083182000"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1083189019"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083178339"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083216690"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083218792"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083182000"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083189019"
         wait()
         Animate.Disabled = false
     end)
@@ -8195,11 +7819,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=742637544"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=742638445"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=742640026"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=742638842"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=742637942"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=742636889"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=742637151"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=742640026"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742638842"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742637942"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742636889"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742637151"
         wait()
         Animate.Disabled = false
     end)
@@ -8216,11 +7840,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=750785693"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=750783738"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=750782230"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=750779899"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=750780242"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=750785693"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750783738"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750782230"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750779899"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750780242"
         wait()
         Animate.Disabled = false
     end)
@@ -8237,11 +7861,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1132473842"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1132477671"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1132510133"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1132494274"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1132489853"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1132461372"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1132469004"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1132510133"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132494274"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132489853"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132461372"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132469004"
         wait()
         Animate.Disabled = false
     end)
@@ -8258,11 +7882,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=782841498"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=782845736"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=782843345"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=782842708"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=782847020"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=782843345"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782842708"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782847020"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782843869"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782846423"
         wait()
         Animate.Disabled = false
     end)
@@ -8279,11 +7903,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=657595757"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=657568135"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=657552124"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=657564596"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=658409194"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=658360781"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=657600338"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=657552124"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=657564596"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=658409194"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=658360781"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=657600338"
         wait()
         Animate.Disabled = false
     end)
@@ -8300,11 +7924,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1069977950"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1069987858"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1070017263"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1070001516"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1069946257"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1069973677"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1070017263"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1070001516"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069984524"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069946257"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069973677"
         wait()
         Animate.Disabled = false
     end)
@@ -8321,11 +7945,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980338"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980348"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1212954642"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1213044953"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1212900995"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980338"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212980348"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212954642"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1213044953"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212900995"
         wait()
         Animate.Disabled = false
     end)
@@ -8342,11 +7966,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=941003647"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=941013098"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=941028902"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=941015281"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=941008832"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=940996062"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=941000007"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=941028902"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941015281"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941008832"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=940996062"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941000007"
         wait()
         Animate.Disabled = false
     end)
@@ -8363,11 +7987,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1014390418"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1014398616"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1014421541"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1014401683"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1014394726"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1014380606"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1014384571"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1014421541"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014401683"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014394726"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014380606"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014384571"
         wait()
         Animate.Disabled = false
     end)
@@ -8384,11 +8008,11 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1149612882"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1150842221"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1151231493"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1150967949"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1150944216"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1148811837"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1148863382"
+        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1151231493"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1150967949"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1150944216"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1148811837"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1148863382"
         wait()
         Animate.Disabled = false
     end)
@@ -8403,13 +8027,13 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=3489171152"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=3489171152"
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=3489174223"
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=3489173414"
-        findJumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119"
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476"
+        Animate.idle:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=3489171152"
+        Animate.idle:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=3489171152"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=3489174223"
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=3489173414"
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616161997"
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616156119"
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616157476"
         wait()
         Animate.Disabled = false
     end)
@@ -8420,14 +8044,78 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
     end,})
 
-    getgenv().ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDawgWsgGng | [Deleted]"})
+    --[[local defaultKeybindActions = { 
+        [Enum.KeyCode.One] = 13071993910,
+        [Enum.KeyCode.Two] = 14901371589,
+        [Enum.KeyCode.Three] = 73683655527605,
+        [Enum.KeyCode.Four] = 5230615437,
+        [Enum.KeyCode.Five] = 5104377791,
+        [Enum.KeyCode.Six] = 13694139364,
+        [Enum.KeyCode.Seven] = 7466047578,
+        [Enum.KeyCode.Eight] = 13823339506,
+        [Enum.KeyCode.Nine] = 3576823880,
+        [Enum.KeyCode.Q] = "SlowDown",
+        [Enum.KeyCode.E] = "SpeedUp",
+        [Enum.KeyCode.V] = "Freeze",
+        [Enum.KeyCode.X] = "NormalSpeed",
+        [Enum.KeyCode.F] = "Reverse"
+    }
+
+    getgenv().Keybind_Configuration = getgenv().Keybind_Configuration or {}
+
+    for key, value in pairs(defaultKeybindActions) do
+        if getgenv().Keybind_Configuration[tostring(key)] == nil then
+            getgenv().Keybind_Configuration[tostring(key)] = value
+        end
+    end
+    
+    wait(0.2)
+    getgenv().emote_configuration = function(argument, argument_2)
+        local character = getgenv().Character
+        local humanoid = getgenv().Humanoid
+        
+        if not (character and humanoid) then return end
+    
+        if argument == "adjust_speed" and tonumber(argument_2) then
+            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                pcall(function()
+                    track:AdjustSpeed(tonumber(argument_2))
+                end)
+            end
+        elseif argument == "stop" and not argument_2 then
+            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                pcall(function()
+                    track:Stop()
+                end)
+            end
+        elseif argument == "freeze" and not argument_2 then
+            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                pcall(function()
+                    track:AdjustSpeed(0)
+                end)
+            end
+        end
+    end    
+    wait(0.2)
+    getgenv().SpeedUpEmotesSliding = Tab15:CreateSlider({
+    Name = "Speed Up Emotes Slider",
+    Range = {0, 200},
+    Increment = 1,
+    Suffix = "",
+    CurrentValue = 1,
+    Flag = "SpeedingTheEmotesUp",
+    Callback = function(emotingSpeeding)
+        print(emotingSpeeding)
+    end,})--]]
+
+    --[[getgenv().ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDawgWsgGng | [Deleted]"})
     getgenv().MadeEasy = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Scripting Made Easy"})
     getgenv().YouTube_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://www.youtube.com/@AnonymousExploiting"})
     getgenv().Discord_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://discord.gg/VJh3kkYzBn"})
     getgenv().JoinDiscordLabel = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Join the discord for juicy updates, and maybe giveaways."})
     getgenv().Release_Date = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "V6 Released On: 11/5/2024"})
     getgenv().Scammers = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "If you bought this, you got scammed."})
-    getgenv().ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."})
+    getgenv().ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."})--]]
 
     if getgenv().camera_zoom_data then
         print("CameraMaxZoomDistance - Data | True")
