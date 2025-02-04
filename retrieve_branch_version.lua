@@ -7446,7 +7446,7 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=81024476153754"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
@@ -7475,7 +7475,7 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=118832222982049"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=76049494037641"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=92072849924640"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=92072849924640"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=72301599441680"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=131326830509784"
@@ -7504,7 +7504,7 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=18537376492"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18537371272"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18537392113"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537392113"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537384940"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537380791"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537363391"
@@ -7533,7 +7533,7 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=92080889861410"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=74451233229259"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=110358958299415"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=110358958299415"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=117333533048078"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=134630013742019"
@@ -7562,7 +7562,7 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=16738333868"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=16738334710"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=16738340646"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738340646"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738337225"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738336650"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738332169"
@@ -7591,7 +7591,7 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=18747067405"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18747063918"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=18747074203"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747074203"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747070484"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747069148"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747060903"
@@ -7620,7 +7620,7 @@
 
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921248039"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921248831"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=10921255446"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921255446"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921250460"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921252123"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921247141"
@@ -7641,7 +7641,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616158929"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616160636"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616168032"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616163682"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616161997"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616156119"
@@ -7662,7 +7662,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616111295"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616113536"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616122287"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616122287"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616117076"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616115533"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616104706"
@@ -7683,7 +7683,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083445855"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083450166"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083473930"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083462077"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083455352"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083439238"
@@ -7704,7 +7704,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=707742142"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=707855907"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=707897309"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707897309"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707861613"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707853694"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707826056"
@@ -7725,7 +7725,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616010382"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616013216"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616008936"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616003713"
@@ -7746,7 +7746,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=845397899"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=845400520"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=845403856"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845403856"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845386501"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845398858"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845392038"
@@ -7767,7 +7767,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616013216"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616010382"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616008936"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616003713"
@@ -7788,7 +7788,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=891667138"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891667138"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891636393"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891627522"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891609353"
@@ -7809,7 +7809,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=656117400"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=656118341"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=656121766"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656121766"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656118852"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656117878"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656114359"
@@ -7830,7 +7830,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083195517"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083214717"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083178339"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083178339"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083216690"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083218792"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083182000"
@@ -7851,7 +7851,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=742637544"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=742638445"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=742640026"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742640026"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742638842"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742637942"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742636889"
@@ -7872,7 +7872,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=750785693"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750785693"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750783738"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750782230"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750779899"
@@ -7893,7 +7893,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1132473842"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1132477671"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1132510133"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132510133"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132494274"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132489853"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132461372"
@@ -7914,7 +7914,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=782841498"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=782845736"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=782843345"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782843345"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782842708"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782847020"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782843869"
@@ -7935,7 +7935,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=657595757"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=657568135"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=657552124"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=657552124"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=657564596"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=658409194"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=658360781"
@@ -7956,7 +7956,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1069977950"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1069987858"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1070017263"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1070017263"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1070001516"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069984524"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069946257"
@@ -7977,7 +7977,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980338"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212980338"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212980348"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212954642"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1213044953"
@@ -7998,7 +7998,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=941003647"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=941013098"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=941028902"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941028902"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941015281"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941008832"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=940996062"
@@ -8019,7 +8019,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1014390418"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1014398616"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1014421541"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014421541"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014401683"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014394726"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014380606"
@@ -8040,7 +8040,7 @@
         wait()
         Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1149612882"
         Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1150842221"
-        Animate.walk:FindFirstChildOfClass("Animation").WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1151231493"
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1151231493"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1150967949"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1150944216"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1148811837"
