@@ -47,7 +47,5 @@ if everyClipboard then
     wait()
     Notify("Notification:", "Copied Discord invite link to your clipboard.", 5)
     wait(2)
-    Notify("Note:", "This loadstring contains the right script, but always use the new one.")
+    Notify("Note:", "You are now required to use the new Loadstring, exiting...")
 end
-wait(1.5)
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
