@@ -284,6 +284,7 @@ end
 
 local Camera = workspace.CurrentCamera
 local Main = Rayfield.Main
+getgenv().Main_Rayfield = Main
 local MPrompt = Rayfield:FindFirstChild('Prompt')
 local Topbar = Main.Topbar
 local Elements = Main.Elements
@@ -298,6 +299,76 @@ local TweenService = game:GetService("TweenService")
 
 local frame = Main or Rayfield:FindFirstChild("Main")
 
+local UserInputService = game:GetService("UserInputService")
+
+if getgenv().is_on_pc_check and UserInputService.TouchEnabled == false then
+	warn("Already ran check for PC - Toggle Rayfield GUI.")
+elseif getgenv().is_on_pc_check or getgenv().is_on_pc_check == true and UserInputService.TouchEnabled or UserInputService.TouchEnabled == true then
+	print("Already ran check for Mobile -Toggle Rayfield GUI.")
+elseif getgenv().is_on_pc_check == false and UserInputService.TouchEnabled or UserInputService.TouchEnabled == true then
+	local ToggleUIRayfield = Instance.new("ScreenGui")
+	local ToggleUI_Frames = Instance.new("ImageLabel")
+	local Toggled_UI = Instance.new("TextButton")
+
+	ToggleUIRayfield.Name = "ToggleUIRayfield"
+	ToggleUIRayfield.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	ToggleUIRayfield.ResetOnSpawn = false
+
+	ToggleUI_Frames.Name = "ToggleUI_Frames"
+	ToggleUI_Frames.Parent = ToggleUIRayfield
+	ToggleUI_Frames.Active = true
+	ToggleUI_Frames.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ToggleUI_Frames.BackgroundTransparency = 1.000
+	ToggleUI_Frames.BorderColor3 = Color3.fromRGB(27, 42, 53)
+	ToggleUI_Frames.Position = UDim2.new(0.482097834, 0, 0.0307443365, 0)
+	ToggleUI_Frames.Size = UDim2.new(0, 70, 0, 54)
+	ToggleUI_Frames.Image = "rbxassetid://3570695787"
+	ToggleUI_Frames.ImageColor3 = Color3.fromRGB(45, 45, 45)
+	ToggleUI_Frames.ScaleType = Enum.ScaleType.Slice
+	ToggleUI_Frames.SliceCenter = Rect.new(100, 100, 100, 100)
+	ToggleUI_Frames.SliceScale = 0.120
+
+	Toggled_UI.Name = "Toggled_UI"
+	Toggled_UI.Parent = ToggleUI_Frames
+	Toggled_UI.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	Toggled_UI.BackgroundTransparency = 1.000
+	Toggled_UI.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Toggled_UI.BorderSizePixel = 0
+	Toggled_UI.Size = UDim2.new(0, 70, 0, 54)
+	Toggled_UI.Font = Enum.Font.SourceSansBold
+	Toggled_UI.Text = "Open"
+	Toggled_UI.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Toggled_UI.TextScaled = true
+	Toggled_UI.TextSize = 14.000
+	Toggled_UI.TextWrapped = true
+
+	local function WXAGU_fake_script()
+		local script = Instance.new('LocalScript', Toggled_UI)
+
+		script.Parent.MouseButton1Click:Connect(function()
+			getgenv().Main_Rayfield.Visible = not getgenv().Main_Rayfield.Visible
+		end)
+	end
+	coroutine.wrap(WXAGU_fake_script)()
+	local function ZDDR_fake_script()
+		local script = Instance.new('LocalScript', Toggled_UI)
+
+		getgenv().Main_Rayfield:GetPropertyChangedSignal("Visible"):Connect(function()
+			if getgenv().Main_Rayfield.Visible or getgenv().Main_Rayfield.Visible == true then
+				script.Parent.Text = "Close"
+			elseif not getgenv().Main_Rayfield.Visible or getgenv().Main_Rayfield.Visible == false then
+				script.Parent.Text = "Open"
+			end
+		end)
+	end
+	coroutine.wrap(ZDDR_fake_script)()
+	wait()
+	getgenv().is_on_pc_check = true
+elseif not getgenv().is_on_pc_check or getgenv().is_on_pc_check == false and UserInputService.TouchEnabled == false then
+	warn("User isn't on a Mobile device, not creating toggle GUI.")
+	getgenv().is_on_pc_check = true
+end
+wait(0.2)
 local dragging
 local dragInput
 local dragStart
