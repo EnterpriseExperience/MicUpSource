@@ -1056,9 +1056,37 @@ function RayfieldLibrary:CreateWindow(Settings)
 		if not isfolder(RayfieldFolder.."/Discord Invites") then
 			makefolder(RayfieldFolder.."/Discord Invites")
 		end
+		
 		if not isfile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
-			if request then
-				request({
+			local HttpService = game:GetService("HttpService")
+
+			local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+
+			local function isDiscordRPCListening()
+				local success, response = pcall(function()
+					return httprequest({
+						Url = 'http://127.0.0.1:6463/',
+						Method = 'GET'
+					})
+				end)
+		
+				return success and response and response.StatusCode == 200
+			end
+			
+			local function startDiscordRPC()
+				local listening = isDiscordRPCListening()
+			
+				if listening then
+					print("Discord RPC is all good and up and running!")
+					return true
+				else
+					warn("Discord RPC is not running. Attempting to start...")
+					return false
+				end
+			end
+
+			if startDiscordRPC() then
+				local response = httprequest({
 					Url = 'http://127.0.0.1:6463/rpc?v=1',
 					Method = 'POST',
 					Headers = {
@@ -1068,10 +1096,16 @@ function RayfieldLibrary:CreateWindow(Settings)
 					Body = HttpService:JSONEncode({
 						cmd = 'INVITE_BROWSER',
 						nonce = HttpService:GenerateGUID(false),
-						args = {code = Settings.Discord.Invite}
+						args = { code = Settings.Discord.Invite }
 					})
 				})
-			end
+			
+				if response and response.Success then
+					print("Discord invite sent successfully!")
+				else
+					warn("Failed to send Discord invite. Response: ", response and response.Body or "No response")
+				end
+			end			
 
 			if Settings.Discord.RememberJoins then 
 				writefile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Rayfield RememberJoins is true for this invite, this invite will not ask you to join again")
