@@ -1,3 +1,18 @@
+local function getExecutor()
+	local name
+	if identifyexecutor then
+		 name = identifyexecutor()
+	end
+	return { Name = name or "Unknown Executor"}
+end
+
+local function detectExecutor()
+	local executorDetails = getExecutor()
+	return string.format("%s", executorDetails.Name)
+end
+wait(0.1)
+local executor_Name = detectExecutor()
+wait(0.2)
 local Release
 wait(0.1)
 if game.PlaceId == 15546218972 then
@@ -212,41 +227,53 @@ if RunService:IsStudio() then
 	useStudio = true
 end
 
+local hiddenUI = get_hidden_gui or gethui
 local Rayfield = useStudio and script.Parent:FindFirstChild('Rayfield') or game:GetObjects("rbxassetid://10804731440")[1]
 getgenv().Rayfield = Rayfield
-local hidden_ui = get_hidden_gui or gethui
 
 Rayfield.Enabled = false
-wait(0.1)
-if get_hidden_gui or gethui then
-	Rayfield.Parent = hidden_ui()
-elseif syn and syn.protect_gui then 
-	syn.protect_gui(Rayfield)
-	Rayfield.Parent = CoreGui
-elseif not useStudio and CoreGui:FindFirstChild("RobloxGui") then
-	Rayfield.Parent = CoreGui:FindFirstChild("RobloxGui")
-elseif not useStudio then
+wait(0.2)
+if executor_Name == "AWP" then
+	print("Detected you we're using 'AWP', returning CoreGui...")
+	wait(0.2)
 	Rayfield.Parent = CoreGui
 else
-   Rayfield.Parent = CoreGui or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	if executor_Name ~= "AWP" and hiddenUI() then
+		Rayfield.Parent = hiddenUI()
+	elseif syn and syn.protect_gui then 
+		syn.protect_gui(Rayfield)
+		Rayfield.Parent = CoreGui
+	elseif not useStudio and CoreGui:FindFirstChild("RobloxGui") then
+		Rayfield.Parent = CoreGui:FindFirstChild("RobloxGui")
+	elseif not useStudio then
+		Rayfield.Parent = CoreGui
+	end
 end
 
-if get_hidden_gui or gethui then
-	for _, Interface in ipairs(hidden_ui():GetChildren()) do
-		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
-			Interface.Enabled = false
-			Interface.Name = "Rayfield-Old"
-		end
-	end
-elseif not useStudio then
+if executor_Name == "AWP" then
 	for _, Interface in ipairs(CoreGui:GetChildren()) do
 		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
 			Interface.Enabled = false
 			Interface.Name = "Rayfield-Old"
 		end
 	end
+else
+	if executor_Name ~= "AWP" and get_hidden_gui or gethui then
+		for _, Interface in ipairs(hiddenUI():GetChildren()) do
+			if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
+				Interface.Enabled = false
+				Interface.Name = "Rayfield-Old"
+			end
+		end
+	elseif not useStudio then
+		for _, Interface in ipairs(CoreGui:GetChildren()) do
+			if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
+				Interface.Enabled = false
+				Interface.Name = "Rayfield-Old"
+			end
+		end
+	end
 end
-
 
 local minSize = Vector2.new(1024, 768)
 local useMobileSizing
@@ -257,7 +284,6 @@ end
 
 local Camera = workspace.CurrentCamera
 local Main = Rayfield.Main
-getgenv().Main_Rayfield = Main
 local MPrompt = Rayfield:FindFirstChild('Prompt')
 local Topbar = Main.Topbar
 local Elements = Main.Elements
@@ -271,74 +297,6 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
 local frame = Main or Rayfield:FindFirstChild("Main")
-wait(0.2)
-local UserInputService = game:GetService("UserInputService")
-
-if getgenv().is_on_pc_check then
-	warn("Already ran check for PC - Toggle Rayfield GUI.")
-else
-	if UserInputService.TouchEnabled then
-		local ToggleUIRayfield = Instance.new("ScreenGui")
-		local ToggleUI_Frames = Instance.new("ImageLabel")
-		local Toggled_UI = Instance.new("TextButton")
-
-		ToggleUIRayfield.Name = "ToggleUIRayfield"
-		ToggleUIRayfield.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-		ToggleUIRayfield.ResetOnSpawn = false
-
-		ToggleUI_Frames.Name = "ToggleUI_Frames"
-		ToggleUI_Frames.Parent = ToggleUIRayfield
-		ToggleUI_Frames.Active = true
-		ToggleUI_Frames.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		ToggleUI_Frames.BackgroundTransparency = 1.000
-		ToggleUI_Frames.BorderColor3 = Color3.fromRGB(27, 42, 53)
-		ToggleUI_Frames.Position = UDim2.new(0.482097834, 0, 0.0307443365, 0)
-		ToggleUI_Frames.Size = UDim2.new(0, 70, 0, 54)
-		ToggleUI_Frames.Image = "rbxassetid://3570695787"
-		ToggleUI_Frames.ImageColor3 = Color3.fromRGB(45, 45, 45)
-		ToggleUI_Frames.ScaleType = Enum.ScaleType.Slice
-		ToggleUI_Frames.SliceCenter = Rect.new(100, 100, 100, 100)
-		ToggleUI_Frames.SliceScale = 0.120
-
-		Toggled_UI.Name = "Toggled_UI"
-		Toggled_UI.Parent = ToggleUI_Frames
-		Toggled_UI.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Toggled_UI.BackgroundTransparency = 1.000
-		Toggled_UI.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Toggled_UI.BorderSizePixel = 0
-		Toggled_UI.Size = UDim2.new(0, 70, 0, 54)
-		Toggled_UI.Font = Enum.Font.SourceSansBold
-		Toggled_UI.Text = "Open"
-		Toggled_UI.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Toggled_UI.TextScaled = true
-		Toggled_UI.TextSize = 14.000
-		Toggled_UI.TextWrapped = true
-
-		local function WXAGU_fake_script()
-			local script = Instance.new('LocalScript', Toggled_UI)
-
-			script.Parent.MouseButton1Click:Connect(function()
-				getgenv().Main_Rayfield.Visible = not getgenv().Main_Rayfield.Visible
-			end)
-		end
-		coroutine.wrap(WXAGU_fake_script)()
-		local function ZDDR_fake_script()
-			local script = Instance.new('LocalScript', Toggled_UI)
-
-			getgenv().Main_Rayfield:GetPropertyChangedSignal("Visible"):Connect(function()
-				if getgenv().Main_Rayfield.Visible or getgenv().Main_Rayfield.Visible == true then
-					script.Parent.Text = "Close"
-				elseif not getgenv().Main_Rayfield.Visible or getgenv().Main_Rayfield.Visible == false then
-					script.Parent.Text = "Open"
-				end
-			end)
-		end
-		coroutine.wrap(ZDDR_fake_script)()
-	else
-		warn("User is on PC, not creating toggle GUI.")
-		getgenv().is_on_pc_check = true
-	end
-end
 
 local dragging
 local dragInput
@@ -346,10 +304,10 @@ local dragStart
 local startPos
 
 local function update(input)
-    local delta = input.Position - dragStart
-    local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    local tween = TweenService:Create(frame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = newPos})
-    tween:Play()
+	local delta = input.Position - dragStart
+	local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	local tween = TweenService:Create(frame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = newPos})
+	tween:Play()
 end
 
 frame.InputBegan:Connect(function(input)
@@ -1093,7 +1051,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			local KeyUI = game:GetObjects("rbxassetid://11380036235")[1]
 
 			if get_hidden_gui or gethui then
-				KeyUI.Parent = hidden_ui()
+				KeyUI.Parent = hiddenUI()
 			elseif syn.protect_gui then
 				syn.protect_gui(Rayfield)
 				KeyUI.Parent = CoreGui
@@ -1102,7 +1060,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			end
 
 			if get_hidden_gui or gethui then
-				for _, Interface in ipairs(hidden_ui():GetChildren()) do
+				for _, Interface in ipairs(hiddenUI():GetChildren()) do
 					if Interface.Name == KeyUI.Name and Interface ~= KeyUI then
 						Interface.Enabled = false
 						Interface.Name = "KeyUI-Old"
@@ -1224,7 +1182,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 				TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 				TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 				TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-				--TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+				TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 				TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 				TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
 				task.wait(0.51)
@@ -1381,19 +1339,10 @@ function RayfieldLibrary:CreateWindow(Settings)
 				local Success, Response = pcall(ButtonSettings.Callback)
 				if not Success then
 					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
-					if not Button:FindFirstChild("ElementIndicator") then
-                        warn("Button.ElementIndicator // nil")
-                    else
-                        wait(0.4)
+					if Button:FindFirstChild("ElementIndicator") then
 						TweenService:Create(Button:FindFirstChild("ElementIndicator"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 					end
-                    if not Button:FindFirstChild("UIStroke") then
-                        warn("Button.UIStroke // nil")
-                    else
-                        wait(0.4)
-					    TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-                    end
-                    wait(0.2)
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 					Button.Title.Text = "Callback Error"
 					print("Rayfield | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
 					task.wait(0.5)
@@ -1402,24 +1351,14 @@ function RayfieldLibrary:CreateWindow(Settings)
 					if not Button:FindFirstChild("ElementIndicator") then
 						warn("Button.ElementIndicator // nil")
 					else
-						wait(0.2)
+						wait(0.4)
 						TweenService:Create(Button:FindFirstChild("ElementIndicator"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 0.9}):Play()
 					end
-                    if not Button:FindFirstChild("UIStroke") then
-                        warn("Button.UIStroke // nil")
-                    else
-                        wait(0.4)
-					    TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
-                    end
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
 				else
 					SaveConfiguration()
-                    if not Button then
-                        warn("Button // nil")
-                    else
-                        wait(0.4)
-					    TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
-                    end
-					wait(0.2)
+					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
+					wait(0.4)
 					if not Button:FindFirstChild("ElementIndicator") then
 						warn("Button.ElementIndicator // nil")
 					else
@@ -1427,31 +1366,16 @@ function RayfieldLibrary:CreateWindow(Settings)
 						TweenService:Create(Button:FindFirstChild("ElementIndicator"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 					end
 					wait(0.3)
-                    if not Button:FindFirstChild("UIStroke") then
-                        warn("Button.UIStroke // nil")
-                    else
-                        wait(0.4)
-					    TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-                    end
-					wait(0.2)
-                    if not Button then
-                        warn("Button // nil")
-                    else
-                        wait(0.4)
-					    TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
-                    end
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					task.wait(0.2)
+					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
 					if not Button:FindFirstChild("ElementIndicator") then
 						warn("Button.ElementIndicator // nil")
 					else
 						wait(0.4)
 						TweenService:Create(Button:FindFirstChild("ElementIndicator"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 0.9}):Play()
 					end
-                    if not Button:FindFirstChild("UIStroke") then
-                        warn("Button.UIStroke // nil")
-                    else
-                        wait(0.4)
-					    TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
-                    end
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
 				end
 			end)
 
@@ -2852,6 +2776,7 @@ end
 
 local allowedNames = {
 	["L0CKED_1N1"] = true,
+	["adorxfleurys"] = true,
 	["CHEATING_B0SS"] = true
 }
 
@@ -3099,6 +3024,8 @@ if useStudio then
 
 	local Paragraph = Tab:CreateParagraph({Title = "Paragraph Example", Content = "Paragraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph Example"})
 end
+
+
 
 task.delay(3.5, RayfieldLibrary.LoadConfiguration, RayfieldLibrary)
 
