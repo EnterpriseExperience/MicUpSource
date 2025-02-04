@@ -214,11 +214,12 @@ end
 
 local Rayfield = useStudio and script.Parent:FindFirstChild('Rayfield') or game:GetObjects("rbxassetid://10804731440")[1]
 getgenv().Rayfield = Rayfield
+local hidden_ui = get_hidden_gui or gethui
 
 Rayfield.Enabled = false
-
-if gethui then
-	Rayfield.Parent = gethui()
+wait(0.1)
+if get_hidden_gui or gethui then
+	Rayfield.Parent = hidden_ui()
 elseif syn and syn.protect_gui then 
 	syn.protect_gui(Rayfield)
 	Rayfield.Parent = CoreGui
@@ -226,10 +227,12 @@ elseif not useStudio and CoreGui:FindFirstChild("RobloxGui") then
 	Rayfield.Parent = CoreGui:FindFirstChild("RobloxGui")
 elseif not useStudio then
 	Rayfield.Parent = CoreGui
+else
+   Rayfield.Parent = CoreGui or game.Players.LocalPlayer:WaitForChild("PlayerGui")
 end
 
-if gethui then
-	for _, Interface in ipairs(gethui():GetChildren()) do
+if get_hidden_gui or gethui then
+	for _, Interface in ipairs(hidden_ui():GetChildren()) do
 		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
 			Interface.Enabled = false
 			Interface.Name = "Rayfield-Old"
@@ -1089,8 +1092,8 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Rayfield.Enabled = false
 			local KeyUI = game:GetObjects("rbxassetid://11380036235")[1]
 
-			if gethui then
-				KeyUI.Parent = gethui()
+			if get_hidden_gui or gethui then
+				KeyUI.Parent = hidden_ui()
 			elseif syn.protect_gui then
 				syn.protect_gui(Rayfield)
 				KeyUI.Parent = CoreGui
@@ -1098,8 +1101,8 @@ function RayfieldLibrary:CreateWindow(Settings)
 				KeyUI.Parent = CoreGui
 			end
 
-			if gethui then
-				for _, Interface in ipairs(gethui():GetChildren()) do
+			if get_hidden_gui or gethui then
+				for _, Interface in ipairs(hidden_ui():GetChildren()) do
 					if Interface.Name == KeyUI.Name and Interface ~= KeyUI then
 						Interface.Enabled = false
 						Interface.Name = "KeyUI-Old"
