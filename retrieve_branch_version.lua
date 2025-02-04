@@ -674,7 +674,39 @@
     wait(0.1)
     local executor_Name = detectExecutor()
     wait(0.2)
-    local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
+    local function getExecutor()
+        local name
+        if identifyexecutor then
+            name = identifyexecutor()
+        end
+        return { Name = name or "Unknown Executor"}
+    end
+    
+    local function detectExecutor()
+        local executorDetails = getExecutor()
+        return string.format("%s", executorDetails.Name)
+    end
+    wait(0.1)
+    local executor_Name = detectExecutor()
+    wait(0.1)
+    local Rayfield
+    wait(0.1)
+    if executor_Name == "AWP" then
+        print("'AWP' detected, using custom/modified loadstring collector.")
+        local response = getgenv().httprequest_Init({
+            Url = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary",
+            Method = "GET"
+        })
+        
+        if response and response.StatusCode == 200 then
+            Rayfield = loadstring(response.Body)()
+        else
+            print("Failed to fetch script:", response.StatusCode)
+        end
+    else
+        warn("'AWP' not detected, using regular Loadstring collector.")
+        Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
+    end
     wait(0.2)
     getgenv().notify = function(title, content, duration)
         Rayfield:Notify({
