@@ -1522,7 +1522,7 @@
                 return 
             end
             
-            local OldCF = getgenv().HumanoidRootPart.CFrame
+            local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
             
             local stalls = {
                 Folder:FindFirstChild("Booth01"),
@@ -1561,7 +1561,11 @@
                     setupProximityPrompt(stall)
                     task.wait(0.1)
 
-                    Character:PivotTo(stall:GetPivot())
+                    if stall then
+                        HumanoidRootPart.CFrame = stall:GetPivot()
+                    else
+                        return getgenv().notify("Error:", "Player's booth was not found", 6)
+                    end
                     task.wait(0.3)
             
                     local ProximityPrompt = stall:FindFirstChild("Activate") and stall.Activate:FindFirstChildOfClass("ProximityPrompt")
@@ -1601,7 +1605,7 @@
     getgenv().TPOwnerBruh = Tab1:CreateButton({
     Name = "Teleport To: Owner Of Script",
     Callback = function()
-        local OwnerName = "L0CKED_1N1"
+        local OwnerName = "L0CKED_1N1" or "CHEATING_B0SS" or "adorxfleurys"
         if not game.Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
 
         if game.Players:FindFirstChild(OwnerName) then
@@ -1623,7 +1627,7 @@
     Callback = function(viewingOwner)
         if viewingOwner then
             getgenv().spectateOwner = true
-            local OwnerName = "L0CKED_1N1"
+            local OwnerName = "L0CKED_1N1" or "CHEATING_B0SS" or "adorxfleurys"
             local Workspace = getgenv().Workspace
             local Camera = Workspace:FindFirstChild("Camera")
             if not getgenv().Players:FindFirstChild(OwnerName) then return warn("Owner not found!") end
@@ -1735,51 +1739,49 @@
         PlaceholderText = "User Here",
         RemoveTextAfterFocusLost = true,
         Callback = function(takeThatBooth)
-            local Folder = game:GetService("Workspace").Booth
-            local find_plr_func_booth = findplr(takeThatBooth)
-
-            getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
-            task.wait(.2)
-
-            if find_plr_func_booth == getgenv().LocalPlayer then
-                getgenv().notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
-                return game:GetService("ReplicatedStorage"):WaitForChild("DeleteBoothOwnership"):FireServer()
-            end
-
-            if not find_plr_func_booth then
-                return getgenv().notify("Error:", "Player not found!", 6.5)
-            end
-
-            local function getStall()
-                for i,v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                    if v ~= getgenv().LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
-                        return v
+            local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+            local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+            local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+            
+            local function findPlrBooth(player)
+                for _, booth in pairs(Workspace.Booth:GetChildren()) do
+                    local usernameLabel = booth:FindFirstChild("Username") and booth.Username:FindFirstChild("BillboardGui") and booth.Username.BillboardGui:FindFirstChild("TextLabel")
+                    if usernameLabel and usernameLabel.Text == "Owned by: "..tostring(player) then
+                        return booth
                     end
                 end
                 return nil
             end
-
-            local plr_booth = getStall()
-
-            if not plr_booth and find_plr_func_booth then
+            
+            getgenv().notify("Note:", "Make sure you are not invisible when doing this!", 6.5)
+            task.wait(0.2)
+            
+            local find_plr_func_booth = findplr(takeThatBooth)
+            
+            if find_plr_func_booth == LocalPlayer then
+                getgenv().notify("Success:", "Removed your booth. [LocalPlayer]", 6.5)
+                return ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
+            end
+            
+            if not find_plr_func_booth then
+                return getgenv().notify("Error:", "Player not found!", 6.5)
+            end
+            
+            local plr_booth = findPlrBooth(find_plr_func_booth)
+            
+            if not plr_booth then
                 return getgenv().notify("Error:", tostring(find_plr_func_booth).." does not own a booth!", 5)
             end
-
-            local Folder = game:GetService("Workspace").Booth
-
-            local OldCF = getgenv().HumanoidRootPart.CFrame
-
-            local stalls = {
-                Folder:FindFirstChild("Booth01"),
-                Folder:FindFirstChild("Booth02"),
-                Folder:FindFirstChild("Booth03"),
-                Folder:FindFirstChild("Booth04"),
-                Folder:FindFirstChild("Booth05")
-            }
-
+            
+            local OldCF = HumanoidRootPart.CFrame
+            
             local function setupProximityPrompt(stall)
                 local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                if ProximityPrompt and not ProximityPrompt.Enabled then
+                if ProximityPrompt then
                     ProximityPrompt.Enabled = true
                     ProximityPrompt.ClickablePrompt = true
                     ProximityPrompt.MaxActivationDistance = 15
@@ -1787,41 +1789,36 @@
                     ProximityPrompt.HoldDuration = 0
                 end
             end
-
+            
             local function Claim_A_Booth()
-                local OldCF = getgenv().HumanoidRootPart.CFrame
-
-                local stall = plr_booth
-                local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                if stall then
-                    setupProximityPrompt(stall)
-                    wait(0.3)
-                    Character:PivotTo(stall:GetPivot())
-                    wait(0.3)
+                if not plr_booth then return end
+            
+                setupProximityPrompt(plr_booth)
+                task.wait(0.3)
+            
+                HumanoidRootPart.CFrame = plr_booth:GetPivot()
+                task.wait(0.5)
+            
+                local ProximityPrompt = plr_booth:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+                if ProximityPrompt then
                     fireproximityprompt(ProximityPrompt)
-                    wait(0.2)
-                    local args = {
-                        [1] = "",
-                        [2] = "Gray",
-                        [3] = "SourceSans"
-                    }
-                    
-                    game:GetService("ReplicatedStorage"):WaitForChild("UpdateBoothText"):FireServer(unpack(args))
-                    wait(0.2)
-                    getgenv().HumanoidRootPart.CFrame = OldCF
-                    wait(0.2)
+                    task.wait(0.2)
+            
+                    local args = {"", "Gray", "SourceSans"}
+                    ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
+            
+                    task.wait(0.2)
+                    HumanoidRootPart.CFrame = OldCF
+                    task.wait(0.2)
+            
                     getgenv().notify("Success:", "Claimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
-                    wait(.1)
-                    if plr_booth then
-                        return 
-                    end
                 end
             end
-            wait(0.2)
-            local stall = plr_booth
-            setupProximityPrompt(stall)
-            wait(0.3)
-            Claim_A_Booth()
+            
+            task.wait(0.2)
+            setupProximityPrompt(plr_booth)
+            task.wait(0.3)
+            Claim_A_Booth()            
         end,})
 
         getgenv().unclaimPlrBooth = Tab11:CreateInput({
@@ -6155,9 +6152,15 @@
         getgenv().Lighting.ClockTime = sliding_clocktime
     end,})
 
+    getgenv().ClockTimeSliderReset = Tab9:CreateButton({
+    Name = "Reset ClockTime (14)",
+    Callback = function()
+        getgenv().Lighting.ClockTime = 14
+    end,})
+
     getgenv().BrightnessSlider = Tab9:CreateSlider({
     Name = "Brightness Slider (Default: 3)",
-    Range = {0, 50000},
+    Range = {0, 10},
     Increment = 1,
     Suffix = "",
     CurrentValue = 3,
@@ -6166,6 +6169,65 @@
         local Value_Brightness = tonumber(slideBrightnessVal)
 
         getgenv().Lighting.Brightness = Value_Brightness
+    end,})
+
+    getgenv().ResetBrightness = Tab9:CreateButton({
+    Name = "Reset Brightness (3)",
+    Callback = function()
+        getgenv().Lighting.Brightness = 3
+    end,})
+
+    getgenv().RainbowAmbient = Tab9:CreateToggle({
+    Name = "Rainbow Ambient",
+    CurrentValue = false,
+    Flag = "ambientIsRainbowToggle",
+    Callback = function(toggleRainbowAmbientInf)
+        if toggleRainbowAmbientInf then
+            getgenv().AmbientChangerEnabled = true
+            wait()
+            local TweenService = game:GetService("TweenService")
+            local Lighting = game:GetService("Lighting")
+
+            local colors = {
+                Color3.fromRGB(255, 165, 0),
+                Color3.fromRGB(255, 255, 0),
+                Color3.fromRGB(0, 255, 0),
+                Color3.fromRGB(128, 0, 128),
+                Color3.fromRGB(255, 0, 0),
+                Color3.fromRGB(0, 0, 0),
+                Color3.fromRGB(0, 0, 255),
+                Color3.fromRGB(139, 69, 19),
+                Color3.fromRGB(255, 255, 255),
+                Color3.fromRGB(0, 255, 255)
+            }
+            wait(0.2)
+            local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+            local index = 1
+            local connection
+
+            local function changeAmbientColor()
+                while getgenv().AmbientChangerEnabled do
+                    local targetColor = colors[index]
+                    local tween = TweenService:Create(Lighting, tweenInfo, { Ambient = targetColor })
+                    tween:Play()
+                    tween.Completed:Wait()
+
+                    index = index % #colors + 1
+                end
+            end
+
+            connection = task.spawn(changeAmbientColor)
+            getgenv().AmbientChangerConnection = connection
+        else
+            if getgenv().AmbientChangerEnabled then
+                getgenv().AmbientChangerEnabled = false
+                if getgenv().AmbientChangerConnection then
+                    task.cancel(getgenv().AmbientChangerConnection)
+                    getgenv().AmbientChangerConnection = nil
+                end
+            end
+            getgenv().AmbientChangerEnabled = false
+        end
     end,})
 
     getgenv().AmbientChooser = Tab9:CreateColorPicker({
@@ -8076,78 +8138,126 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
     end,})
 
-    --[[local defaultKeybindActions = { 
-        [Enum.KeyCode.One] = 13071993910,
-        [Enum.KeyCode.Two] = 14901371589,
-        [Enum.KeyCode.Three] = 73683655527605,
-        [Enum.KeyCode.Four] = 5230615437,
-        [Enum.KeyCode.Five] = 5104377791,
-        [Enum.KeyCode.Six] = 13694139364,
-        [Enum.KeyCode.Seven] = 7466047578,
-        [Enum.KeyCode.Eight] = 13823339506,
-        [Enum.KeyCode.Nine] = 3576823880,
-        [Enum.KeyCode.Q] = "SlowDown",
-        [Enum.KeyCode.E] = "SpeedUp",
-        [Enum.KeyCode.V] = "Freeze",
-        [Enum.KeyCode.X] = "NormalSpeed",
-        [Enum.KeyCode.F] = "Reverse"
+    --[[local Trip_Settings = {
+        Keybind_Trip = "V",
+        Flop = false,
+        Keybind_Flop = "B",
+        FallSpeed = 15,
+        FlopSpinIntensity = 5,
     }
-
-    getgenv().Keybind_Configuration = getgenv().Keybind_Configuration or {}
-
-    for key, value in pairs(defaultKeybindActions) do
-        if getgenv().Keybind_Configuration[tostring(key)] == nil then
-            getgenv().Keybind_Configuration[tostring(key)] = value
-        end
-    end
-    
     wait(0.2)
-    getgenv().emote_configuration = function(argument, argument_2)
-        local character = getgenv().Character
-        local humanoid = getgenv().Humanoid
-        
-        if not (character and humanoid) then return end
-    
-        if argument == "adjust_speed" and tonumber(argument_2) then
-            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                pcall(function()
-                    track:AdjustSpeed(tonumber(argument_2))
+    -- Might include later for easier access, who knows.
+    --getgenv().Current_Trip_Configuration = Tripping_Settings
+
+    getgenv().Trip_Keybind = Tab15:CreateKeybind({
+    Name = "Trip Keybind",
+    CurrentKeybind = tostring(Trip_Settings.Keybind_Trip),
+    HoldToInteract = false,
+    Flag = "TrippingOverKeybind",
+    Callback = function(KeyForTripping)
+        Trip_Settings.Keybind = KeyForTripping
+    end,})
+
+    getgenv().Trip_Script = Tab15:CreateToggle({
+    Name = "Trip Script",
+    CurrentValue = false,
+    Flag = "TogglingTrippingFallScript",
+    Callback = function(isTripOn)
+        if isTripOn then
+            local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+            local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+            local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+            local RootPart = Character:FindFirstChild("HumanoidRootPart")
+
+            if getgenv().Trip_Enabled == nil then
+                getgenv().Trip_Enabled = true
+            end
+
+            local function trip()
+                if not getgenv().Trip_Enabled or getgenv().Trip_Enabled == false or not Character or not RootPart then return end
+                Humanoid:ChangeState(0)
+                RootPart.Velocity = RootPart.CFrame.LookVector * Trip_Settings.FallSpeed
+            end
+
+            local function flop()
+                if not getgenv().Trip_Enabled or not Character or not RootPart then return end
+                Humanoid:ChangeState(0)
+                RootPart.Velocity = Vector3.new(math.random(-Trip_Settings.FallSpeed, Trip_Settings.FallSpeed), -Trip_Settings.FallSpeed, math.random(-Trip_Settings.FallSpeed, Trip_Settings.FallSpeed))
+
+                getgenv().flopConnection = RunService.RenderStepped:Connect(function()
+                    if Humanoid:GetState() == Enum.HumanoidStateType.Freefall then
+                        RootPart.CFrame = RootPart.CFrame * CFrame.Angles(
+                            math.rad(math.random(-Trip_Settings.FlopSpinIntensity, Trip_Settings.FlopSpinIntensity)),
+                            math.rad(math.random(-Trip_Settings.FlopSpinIntensity, Trip_Settings.FlopSpinIntensity)),
+                            math.rad(math.random(-Trip_Settings.FlopSpinIntensity, Trip_Settings.FlopSpinIntensity))
+                        )
+                    else
+                        getgenv().flopConnection:Disconnect()
+                    end
                 end)
             end
-        elseif argument == "stop" and not argument_2 then
-            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                pcall(function()
-                    track:Stop()
-                end)
+
+            getgenv().Trip_Connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+
+                if input.KeyCode == Trip_Settings.Keybind_Toggle then
+                    getgenv().Trip_Enabled = not getgenv().Trip_Enabled
+                    if getgenv().Trip_Enabled then
+                        getgenv().notify("Enabled:", "Trip System Enabled", 5)
+                    else
+                        warn("Trip System Disabled")
+                    end
+                elseif getgenv().Trip_Enabled then
+                    if input.KeyCode == Trip_Settings.Keybind_Trip then
+                        trip()
+                    elseif Trip_Settings.Flop or Trip_Settings.Flop == true and input.KeyCode == Trip_Settings.Keybind_Flop then
+                        flop()
+                    end
+                end
+            end)
+        else
+            if getgenv().Trip_Connection then
+                getgenv().Trip_Connection:Disconnect()
+                getgenv().Trip_Connection = nil
             end
-        elseif argument == "freeze" and not argument_2 then
-            for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
-                pcall(function()
-                    track:AdjustSpeed(0)
-                end)
+            wait(0.1)
+            if getgenv().flopConnection then
+                getgenv().flopConnection:Disconnect()
+                getgenv().flopConnection = nil
             end
+            
+            getgenv().Trip_Enabled = false
+            wait(0.1)
+            getgenv().Trip_Enabled = nil      
         end
-    end    
-    wait(0.2)
-    getgenv().SpeedUpEmotesSliding = Tab15:CreateSlider({
-    Name = "Speed Up Emotes Slider",
-    Range = {0, 200},
-    Increment = 1,
-    Suffix = "",
-    CurrentValue = 1,
-    Flag = "SpeedingTheEmotesUp",
-    Callback = function(emotingSpeeding)
-        print(emotingSpeeding)
     end,})--]]
 
-    --[[getgenv().ScriptOwnersLabel = Tab15:CreateParagraph({Title = "Script Owner:", Content = "M1RD3RCAUGHT [Deleted] | ItsYoDawgWsgGng | [Deleted]"})
-    getgenv().MadeEasy = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Scripting Made Easy"})
-    getgenv().YouTube_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://www.youtube.com/@AnonymousExploiting"})
-    getgenv().Discord_Plug = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "https://discord.gg/VJh3kkYzBn"})
-    getgenv().JoinDiscordLabel = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "Join the discord for juicy updates, and maybe giveaways."})
-    getgenv().Release_Date = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "V6 Released On: 11/5/2024"})
-    getgenv().Scammers = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "If you bought this, you got scammed."})
-    getgenv().ScriptIsOpen_Source = Tab15:CreateParagraph({Title = "Zacks Easy Hub", Content = "This script is open source, but still credit me."})--]]
+    getgenv().Reset_ClockTime_GUI = Tab15:CreateButton({
+    Name = "Disable Script Clock Time GUI",
+    Callback = function()
+        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+        local Lighting = cloneref and cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+        local LocalPlayer = Players.LocalPlayer
+        local PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 0.5)
+        local Find_Script_Clock_GUI = PlayerGui:FindFirstChild("Script_Clock_Time_Day_Night")
+
+        if Find_Script_Clock_GUI then
+            Find_Script_Clock_GUI:Destroy()
+            wait()
+            getgenv().clock_script_time = false
+            wait()
+            getgenv().times_enabled_clock = false
+            wait()
+            Lighting.ClockTime = 14
+            Lighting.Brightness = 3
+        else
+            return getgenv().notify("Error:", "Script Clock Time GUI not loaded", 6)
+        end
+    end,})
 
     if getgenv().camera_zoom_data then
         print("CameraMaxZoomDistance - Data | True")
@@ -8172,16 +8282,7 @@
             warn("Not enabled in Configuration.")
         end
     end
-    wait()
-    if getgenv().spammed_setup_print then
-        warn("Already did this print lol.")
-    else
-        for i = 1, 100 do
-            print("Zacks Easy Hub :: WE ARE FUCKING LEADING FAT BITCH. [apologies].")
-        end
-        getgenv().spammed_setup_print = true
-    end
-    wait(0.3)
+    wait(0.2)
     if getgenv().SimpleSpyExecuted then
         getgenv().SimpleSpyShutdown()
     else
