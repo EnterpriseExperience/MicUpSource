@@ -1253,6 +1253,69 @@
         "lucxd19K5"
     }
     wait()
+    if game.PlaceId == 97399198116506 then
+        local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+        local EventHandlers = ReplicatedStorage:FindFirstChild("EventHandlers")
+        local Teleport_Function = EventHandlers:FindFirstChild("Matchmake")
+        local ChangeSetting = EventHandlers:FindFirstChild("ChangeSetting")
+        local ReadyToPlay = EventHandlers:FindFirstChild("ReadyToPlay")
+        local Matchmaking = EventHandlers:FindFirstChild("Matchmaking")
+        local MainMenu = Matchmaking:FindFirstChild("MainMenu")
+        local BuyItem = EventHandlers:FindFirstChild("BuyItem")
+
+        if game:IsLoaded() and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            for i = 1, 50 do
+                ReadyToPlay:FireServer()
+            end
+        end
+    else
+        warn("Not on Cellmates (VC)")
+    end
+    wait(0.5)
+    if game.PlaceId == 97399198116506 then
+        if getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] == "on" or getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] == "On" or getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] == "Enabled" then
+            if ChangeSetting then
+                ChangeSetting:InvokeServer("BoomboxVolume", -5 or 0)
+            else
+                local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+                local EventHandlers = ReplicatedStorage:FindFirstChild("EventHandlers")
+                local ChangeSetting = EventHandlers:FindFirstChild("ChangeSetting")
+
+                ChangeSetting:InvokeServer("BoomboxVolume", -5 or 0)
+            end
+        else
+            warn("Not enabled in Configuration.")
+        end
+        wait(0.2)
+        if getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] == "on" or getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] == "On" or getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] == "Enabled" then
+            if ChangeSetting then
+                ChangeSetting:InvokeServer("MusicVolume", -5 or 0)
+            else
+                local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+                local EventHandlers = ReplicatedStorage:FindFirstChild("EventHandlers")
+                local ChangeSetting = EventHandlers:FindFirstChild("ChangeSetting")
+
+                ChangeSetting:InvokeServer("MusicVolume", -5 or 0)
+            end
+        else
+            warn("Not enabled in Configuration.")
+        end
+        wait(0.2)
+        if getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] == "on" or getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] == "On" or getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] == "Enabled" then
+            if ChangeSetting then
+                ChangeSetting:InvokeServer("SFXVolume", -5 or 0)
+            else
+                local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+                local EventHandlers = ReplicatedStorage:FindFirstChild("EventHandlers")
+                local ChangeSetting = EventHandlers:FindFirstChild("ChangeSetting")
+
+                ChangeSetting:InvokeServer("SFXVolume", -5 or 0)
+            end
+        else
+            warn("Not enabled in Configuration.")
+        end
+    end
+    wait()
     -- [] -->> Functions <<-- [] --
     local cmdp = game.Players
     local cmdlp = cmdp.LocalPlayer
@@ -2501,6 +2564,26 @@
         
         send_Remote(noteToBypass)
     end,})
+
+    if game.PlaceId == 97399198116506 then
+        getgenv().PauseMainMenu = Tab1:CreateButton({
+        Name = "Pause (Go To Main Menu)",
+        Callback = function()
+            MainMenu:InvokeServer()
+        end,})
+
+        getgenv().PurchaseItem = Tab1:CreateInput({
+        Name = "Purchase Tool (Specific Name)",
+        CurrentValue = "Enter item Name here",
+        PlaceholderText = "item Name",
+        RemoveTextAfterFocusLost = true,
+        Flag = "ItemInputName",
+        Callback = function(itemEntered)
+            BuyItem:InvokeServer(tostring(itemEntered), "Tools")
+        end,})
+    else
+        warn("Not in Cellmates (VC), not loading these features.")
+    end
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().DeletePlrBooth = Tab11:CreateButton({
