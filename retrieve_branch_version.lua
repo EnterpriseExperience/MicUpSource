@@ -2681,6 +2681,93 @@
             end
         end,})
 
+        getgenv().LoopRemoveAllBooths = Tab11:CreateToggle({
+        Name = "Loop Unclaim/Remove Every Booth",
+        CurrentValue = false,
+        Flag = "LoopGetRidOfAllBooths",
+        Callback = function(doLoopUnclaimAll)
+            if doLoopUnclaimAll then
+                local Players = getgenv().Players
+                local LocalPlayer = getgenv().LocalPlayer
+                local Character = getgenv().Character
+                local Humanoid = getgenv().Humanoid
+                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local GetWorkspace = game:GetService("Workspace")
+                local Folder = GetWorkspace:FindFirstChild("Booth") or GetWorkspace:WaitForChild("Booth") 
+                
+                local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+                local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
+    
+                local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+                getgenv().Oldest_CFrame = OldCF
+                wait(0.3)
+                local function fireAndUnclaimStall(stall)
+                    if not getgenv().Oldest_CFrame or getgenv().Oldest_CFrame == nil then
+                        getgenv().LoopRemoveAllBooths:Set(false)
+                        return getgenv().notify("Failure", "Could not save old Position/CFrame, exiting...", 5)
+                    end
+                    wait(0.2)
+                    local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+                    if proximityPrompt then
+                        proximityPrompt.ClickablePrompt = true
+                        proximityPrompt.RequiresLineOfSight = false
+                        proximityPrompt.HoldDuration = 0
+                        proximityPrompt.MaxActivationDistance = 17
+                        wait(0.2)
+                        Character:PivotTo(stall:GetPivot())
+                        wait(0.2)
+                        fireproximityprompt(proximityPrompt, 999)
+                        fireproximityprompt(proximityPrompt, 999)
+                        fireproximityprompt(proximityPrompt, 999)
+                        wait(0.2)
+                        Delete_Booth_Remote:FireServer()
+                        Delete_Booth_Remote:FireServer()
+                        Delete_Booth_Remote:FireServer()
+                        Delete_Booth_Remote:FireServer()
+                    elseif not proximityPrompt then
+                        getgenv().LoopRemoveAllBooths:Set(false)
+                        return getgenv().notify("Failed!", "ProximityPrompt is missing or doesn't exist.", 5)
+                    end
+                end
+    
+                local function unclaimStalls()
+                    for _, stall in pairs(Folder:GetChildren()) do
+                        if stall and stall:FindFirstChild("Activate") then
+                            wait()
+                            fireAndUnclaimStall(stall)
+                        end
+                    end
+                end
+                
+                wait()
+                getgenv().loop_unclaiming_all_booths = true
+                while getgenv().loop_unclaiming_all_booths == true do
+                wait(0.1)
+                    unclaimStalls()
+                end
+            else
+                getgenv().loop_unclaiming_all_booths = false
+                getgenv().loop_unclaiming_all_booths = false
+                wait(0.5)
+                if not getgenv().loop_unclaiming_all_booths or getgenv().loop_unclaiming_all_booths == false then
+                    for i = 1, 10 do
+                        getgenv().HumanoidRootPart.CFrame = getgenv().Oldest_CFrame
+                        wait(0.4)
+                    end
+                    wait(0.4)
+                    if getgenv().Oldest_CFrame then
+                        getgenv().Oldest_CFrame = nil
+                    end
+                    wait(0.4)
+                    if not getgenv().Oldest_CFrame or getgenv().Oldest_CFrame == nil then
+                        getgenv().notify("Success", "Finished shutting down loop.", 6)
+                    else
+                        return getgenv().notify("Failure", "Loop did not shutdown correctly.", 5)
+                    end
+                end
+            end
+        end,})
+
         getgenv().RemoveBooths = Tab11:CreateButton({
         Name = "Remove Every Booth",
         Callback = function()
