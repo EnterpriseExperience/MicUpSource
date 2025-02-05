@@ -418,6 +418,7 @@
         if getgenv().Easies_Configuration["Anti_Suspend_VC"] == "on" or getgenv().Easies_Configuration["Anti_Suspend_VC"] == "On" or getgenv().Easies_Configuration["Anti_Suspend_VC"] == "Enabled" then
             getgenv().voiceChat_Check = true 
 
+            local vc_internal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
             local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
             
             local reconnecting = false
@@ -453,7 +454,7 @@
                 end
             end
             
-            vc_service.StateChanged:Connect(onVoiceChatStateChanged)
+            vc_internal.StateChanged:Connect(onVoiceChatStateChanged)
         else
             warn("Not enabled in Configuration.")
         end
