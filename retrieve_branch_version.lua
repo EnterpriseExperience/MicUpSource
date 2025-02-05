@@ -1665,6 +1665,66 @@
         warn("Did not load Booth's stuff [1].")
     end
 
+    getgenv().AntiVoidPlayer = Tab2:CreateToggle({
+    Name = "Anti Void Baseplate (Goes under Character)",
+    CurrentValue = false,
+    Flag = "ToggleAntiVoidBasePlate",
+    Callback = function(antiVoidFall)
+        if antiVoidFall then
+            getgenv().anti_void_player = true
+
+            local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            local player = LocalPlayer or Players.LocalPlayer
+            local function return_correct_char()
+                local character = player.Character or player.CharacterAdded:Wait()
+                while character:FindFirstChild("Humanoid") and character.Humanoid.Health <= 0 do
+                    character = player.CharacterAdded:Wait()
+                end
+                return character
+            end
+            
+            local function createBaseplate()
+                local baseplate = Instance.new("Part")
+                baseplate.Name = "ANTI_VOID_BASEPLATE"
+                baseplate.Size = Vector3.new(20, 1, 20)
+                baseplate.Anchored = true
+                baseplate.CanCollide = true
+                baseplate.Material = Enum.Material.Air
+                baseplate.Color = Color3.fromRGB(107, 50, 124)
+                baseplate.Transparency = 0.6
+                baseplate.Parent = Workspace:FindFirstChild("PartStorage")
+                return baseplate
+            end
+            
+            local function updateBaseplate()
+                local baseplate = createBaseplate()
+                local initialY = nil
+
+                while getgenv().anti_void_player == true do
+                    local character = return_correct_char()
+                    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+                    if rootPart then
+                        if not initialY then
+                            initialY = rootPart.Position.Y - rootPart.Size.Y / 2 - baseplate.Size.Y / 2
+                        end
+                        local newPos = Vector3.new(rootPart.Position.X, initialY, rootPart.Position.Z)
+                        baseplate.Position = newPos
+                    end
+                    task.wait(0.04)
+                end
+            end
+            
+            updateBaseplate()
+        else
+            getgenv().anti_void_player = false
+            getgenv().anti_void_player = false
+            wait(0.3)
+            getgenv().Workspace:FindFirstChild("PartStorage"):FindFirstChild("ANTI_VOID_BASEPLATE"):Destroy()
+        end
+    end,})
+
     getgenv().TPOwnerBruh = Tab1:CreateButton({
     Name = "Teleport To: Owner Of Script",
     Callback = function()
@@ -1679,7 +1739,7 @@
             task.wait(.5)
             print("Teleported To Script Owner!")
         else
-            return 
+            return getgenv().notify("Failure", "Unable to successfully locate owner.", 6)
         end
     end,})
 
