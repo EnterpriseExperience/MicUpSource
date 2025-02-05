@@ -420,17 +420,25 @@
             local vc_inter = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
             local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
             local reconnecting = false
-            local retryCooldown = 4
+            local retryCooldown = 2.5
             local function onVoiceChatStateChanged(oldState, newState)
                 if newState == Enum.VoiceChatState.Ended and not reconnecting then
                     reconnecting = true
                     task.spawn(function()
                         wait(retryCooldown)
                         local success, err = pcall(function()
-                            wait(0.5)
-                            print("Rejoining VoiceChat")
-                            vc_service:rejoinVoice()
-                            vc_service:joinVoice()
+                            for i = 1, 100 do
+                                print("Rejoining VoiceChat...")
+                                vc_service:rejoinVoice()
+                                task.wait(0.5)
+                                reconnecting = false
+                                wait(0.3)
+                                vc_service:rejoinVoice()
+                                vc_service:joinVoice()
+                                wait(0.3)
+                                reconnecting = true
+                                task.wait(0.5)
+                            end
                         end)
                         if not success then
                             warn("Error while rejoining voice chat:", err)
