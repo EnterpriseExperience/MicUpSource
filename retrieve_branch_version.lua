@@ -2585,7 +2585,7 @@
                     monitorOwnership()
                 else
                     getgenv().notify("Error:", "No booth found! Claim a booth and toggle this on.", 7.5)
-                end        
+                end
             else
                 getgenv().AutoClaimEnabled = false
                 if getgenv().OwnershipConnection then
@@ -2947,7 +2947,7 @@
     wait(0.1)
     getgenv().JerkOffTimePos = Tab2:CreateSlider({
     Name = "Jerk Off Time Position",
-    Range = {0.1, 0.6},
+    Range = {0.1, 1},
     Increment = 0.1,
     Suffix = "TimePosition",
     CurrentValue = 0.6,
@@ -3108,7 +3108,7 @@
         end
     end,})
 
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 or game.PlaceId == 80080558412215 then
         getgenv().BasePlate_ColorChange = Tab18:CreateSlider({
         Name = "MIC UP BasePlate Transparency",
         Range = {0, 1},
@@ -3123,12 +3123,18 @@
 
                 BasePlate.Transparency = BasePlateMICUPTransparency
                 Texture_Bruh.Transparency = BasePlateMICUPTransparency
-            else
+            elseif game:GetService("Workspace"):FindFirstChild("BasePlate") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("BasePlate")
+
+                BasePlate.Transparency = BasePlateMICUPTransparency
+            elseif game:GetService("Workspace"):FindFirstChild("Game") then
                 local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
                 local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
 
                 BasePlate.Transparency = BasePlateMICUPTransparency
                 Texture_Bruh.Transparency = BasePlateMICUPTransparency
+            else
+                warn("BasePlate here was not found.")
             end
         end,})
     else
@@ -3156,7 +3162,7 @@
         end
     end,})
 
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 or game.PlaceId == 80080558412215 then
         getgenv().BasePlate_ColorChange = Tab18:CreateColorPicker({
         Name = "MIC UP BasePlate Color",
         Color = Color3.fromRGB(255, 0, 0),
@@ -3168,7 +3174,11 @@
 
                 BasePlate.Color = Base_Color
                 Texture_Bruh.Color3 = Base_Color
-            else
+            elseif game:GetService("Workspace"):FindFirstChild("BasePlate") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("BasePlate")
+
+                BasePlate.Color = Base_Color
+            elseif game:GetService("Workspace"):FindFirstChild("Game") then
                 local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
                 local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
 
@@ -3185,10 +3195,28 @@
         CurrentValue = 400,
         Flag = "ChangingBasePlateSized",
         Callback = function(Size_New)
-            local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+            if game:GetService("Workspace"):FindFirstChild("BasePlate") then
+                local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
 
-            BasePlate_Normal.CanCollide = true
-            BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
+                BasePlate_Alt.Size = Vector3.new(Size_New, BasePlate_Alt.Size.Y, BasePlate_Alt.Size.Z)
+            elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
+                local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+
+                if BasePlate_Normal.Transparency == 1 then
+                    BasePlate_Normal.Transparency = 0
+                    BasePlate_Normal.CanCollide = true
+                    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
+                else
+                    BasePlate_Normal.CanCollide = true
+                    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
+                end
+            elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+                BasePlate.Size = Vector3.new(Size_New, BasePlate.Size.Y, BasePlate.Size.Z)
+                Texture_Bruh.Size = Vector3.new(Size_New, BasePlate.Size.Y, BasePlate.Size.Z)
+            end
         end,})
 
         getgenv().Baseplate_Size = Tab18:CreateSlider({
@@ -3199,10 +3227,28 @@
         CurrentValue = 400,
         Flag = "ChangingBaseSize",
         Callback = function(Sized_Z)
-            local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+            if game:GetService("Workspace"):FindFirstChild("BasePlate") then
+                local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
 
-            BasePlate_Normal.CanCollide = true
-            BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
+                BasePlate_Alt.Size = Vector3.new(BasePlate_Alt.X, BasePlate_Alt.Size.Y, Sized_Z)
+            elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
+                local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+
+                if BasePlate_Normal.Transparency == 1 then
+                    BasePlate_Normal.Transparency = 0
+                    BasePlate_Normal.CanCollide = true
+                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.X, BasePlate_Normal.Size.Y, Sized_Z)
+                else
+                    BasePlate_Normal.CanCollide = true
+                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.X, BasePlate_Normal.Size.Y, Sized_Z)
+                end
+            elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+                BasePlate.Size = Vector3.new(BasePlate.X, BasePlate.Size.Y, Sized_Z)
+                Texture_Bruh.Size = Vector3.new(BasePlate.X, BasePlate.Size.Y, Sized_Z)
+            end
         end,})
     else
         warn("MIC UP BasePlate settings will not load, not MIC UP.")
@@ -5895,7 +5941,7 @@
         model.Name = "TicTac-" .. i
         model.Parent = folder
     end--]]
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 or game.PlaceId == 80080558412215 then
         for _, model in pairs(workspace:GetDescendants()) do
             if model:IsA("Model") and model.Name == "Tic Tac Toe" then
                 local parent_to = game:GetService("Workspace"):FindFirstChild("PartStorage")
@@ -6001,7 +6047,7 @@
             end
         end,})
     else
-        warn("Not MIC UP or MIC UP 17+, not loading these TicTacToe options.")
+        warn("Not MIC UP or MIC UP 17+ or German Hangout (VC), not loading these TicTacToe options.")
     end
 
     getgenv().InfYield = Tab5:CreateButton({
