@@ -417,37 +417,46 @@
     else
         if getgenv().Easies_Configuration["Anti_Suspend_VC"] == "on" or getgenv().Easies_Configuration["Anti_Suspend_VC"] == "On" or getgenv().Easies_Configuration["Anti_Suspend_VC"] == "Enabled" then
             getgenv().voiceChat_Check = true
+
             local vc_inter = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
             local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
+            
             local reconnecting = false
-            local retryCooldown = 2.5
-            local function onVoiceChatStateChanged(oldState, newState)
-                if newState == Enum.VoiceChatState.Ended and not reconnecting then
-                    reconnecting = true
-                    task.spawn(function()
-                        wait(retryCooldown)
-                        local success, err = pcall(function()
-                            for i = 1, 100 do
-                                print("Rejoining VoiceChat...")
-                                vc_service:rejoinVoice()
-                                task.wait(0.5)
-                                reconnecting = false
-                                wait(0.3)
-                                vc_service:rejoinVoice()
-                                vc_service:joinVoice()
-                                wait(0.3)
-                                reconnecting = true
-                                task.wait(0.5)
-                            end
-                        end)
-                        if not success then
-                            warn("Error while rejoining voice chat:", err)
+            local retryCooldown = 3
+            
+            local function forceRejoinVoiceChat()
+                if reconnecting then return end
+                reconnecting = true
+            
+                task.spawn(function()
+                    wait(retryCooldown)
+                    local success, err = pcall(function()
+                        for i = 1, 15 do
+                            vc_service:rejoinVoice()
+                            task.wait(0.5)
+            
+                            vc_service:rejoinVoice()
+                            task.wait(0.5)
+            
+                            vc_service:joinVoice()
+                            task.wait(0.3)
                         end
-                        reconnecting = false
                     end)
+            
+                    if not success then
+                        warn("Error while rejoining voice chat:", err)
+                    end
+                    
+                    reconnecting = false
+                end)
+            end
+            
+            local function onVoiceChatStateChanged(_, newState)
+                if newState == Enum.VoiceChatState.Ended and not reconnecting then
+                    forceRejoinVoiceChat()
                 end
             end
-
+            
             vc_inter.StateChanged:Connect(onVoiceChatStateChanged)
         else
             warn("Not enabled in Configuration.")
