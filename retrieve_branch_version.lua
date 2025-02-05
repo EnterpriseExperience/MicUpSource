@@ -3468,24 +3468,24 @@
             if game:GetService("Workspace"):FindFirstChild("BasePlate") then
                 local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
 
-                BasePlate_Alt.Size = Vector3.new(BasePlate_Alt.X, BasePlate_Alt.Size.Y, Sized_Z)
+                BasePlate_Alt.Size = Vector3.new(BasePlate_Alt.Size.X, BasePlate_Alt.Size.Y, Sized_Z)
             elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
                 local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
 
                 if BasePlate_Normal.Transparency == 1 then
                     BasePlate_Normal.Transparency = 0
                     BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.X, BasePlate_Normal.Size.Y, Sized_Z)
+                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
                 else
                     BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.X, BasePlate_Normal.Size.Y, Sized_Z)
+                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
                 end
             elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
                 local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
                 local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
 
-                BasePlate.Size = Vector3.new(BasePlate.X, BasePlate.Size.Y, Sized_Z)
-                Texture_Bruh.Size = Vector3.new(BasePlate.X, BasePlate.Size.Y, Sized_Z)
+                BasePlate.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
+                Texture_Bruh.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
             end
         end,})
     else
