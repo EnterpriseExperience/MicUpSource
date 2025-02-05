@@ -416,38 +416,34 @@
         warn("Voice Chat already initialized.")
     else
         if getgenv().Easies_Configuration["Anti_Suspend_VC"] == "on" or getgenv().Easies_Configuration["Anti_Suspend_VC"] == "On" or getgenv().Easies_Configuration["Anti_Suspend_VC"] == "Enabled" then
-            getgenv().voiceChat_Check = true
+            getgenv().voiceChat_Check = true 
 
-            local vc_inter = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
             local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
             
             local reconnecting = false
-            local retryCooldown = 3
+            local retryDuration = 6
             
             local function forceRejoinVoiceChat()
                 if reconnecting then return end
                 reconnecting = true
             
                 task.spawn(function()
-                    wait(retryCooldown)
-                    local success, err = pcall(function()
-                        for i = 1, 15 do
-                            vc_service:rejoinVoice()
-                            task.wait(0.5)
+                    local startTime = tick()
             
-                            vc_service:rejoinVoice()
-                            task.wait(0.5)
-            
-                            vc_service:joinVoice()
-                            task.wait(0.3)
-                        end
-                    end)
-            
-                    if not success then
-                        warn("Error while rejoining voice chat:", err)
+                    while (tick() - startTime) < retryDuration do
+                        wait()
+                        vc_service.UseAudioApi = Enum.AudioApiRollout.Disabled
+                        task.wait()
+                        vc_service:RejoinVoice()
+                        wait()
+                        vc_service:JoinVoice()
+                        task.wait()
+                        vc_service.UseAudioApi = Enum.AudioApiRollout.Disabled
                     end
-                    
+
                     reconnecting = false
+                    wait(0.2)
+                    vc_service.UseAudioApi = Enum.AudioApiRollout.Disabled
                 end)
             end
             
@@ -457,7 +453,7 @@
                 end
             end
             
-            vc_inter.StateChanged:Connect(onVoiceChatStateChanged)
+            vc_service.StateChanged:Connect(onVoiceChatStateChanged)
         else
             warn("Not enabled in Configuration.")
         end
