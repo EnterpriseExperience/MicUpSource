@@ -4913,6 +4913,8 @@
         warn("Not MIC UP or MIC UP 17+, not loading In-Game music functions.")
     end
 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/GetOuttaHereLmao/refs/heads/main/get_out_meme.js'))()
+
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().WhitelistFriendPlr = Tab1:CreateToggle({
         Name = "[Avatar-UI]: Only Like Friend",
@@ -8422,28 +8424,38 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
     end,})
 
-    --[[local Trip_Settings = {
-        Keybind_Trip = "V",
-        Flop = false,
-        Keybind_Flop = "B",
-        FallSpeed = 15,
-        FlopSpinIntensity = 5,
+    local Trip_Settings = {
+        Keybind_Trip = Enum.KeyCode.V,
+        Keybind_FakeOut = Enum.KeyCode.R
     }
     wait(0.2)
     -- Might include later for easier access, who knows.
     --getgenv().Current_Trip_Configuration = Tripping_Settings
-
-    getgenv().Trip_Keybind = Tab15:CreateKeybind({
+    wait()
+    getgenv().Trip_Keybind = Tab15:CreateKeybind({ 
     Name = "Trip Keybind",
-    CurrentKeybind = tostring(Trip_Settings.Keybind_Trip),
+    CurrentKeybind = tostring("V"),
     HoldToInteract = false,
     Flag = "TrippingOverKeybind",
     Callback = function(KeyForTripping)
-        Trip_Settings.Keybind = KeyForTripping
+        if type(KeyForTripping) == "string" and Enum.KeyCode[KeyForTripping] then
+            Trip_Settings.Keybind_Trip = Enum.KeyCode[KeyForTripping]
+        end
+    end,})
+
+    getgenv().FakeOut_Keybind = Tab15:CreateKeybind({
+    Name = "Fake Out Keybind",
+    CurrentKeybind = tostring("R"),
+    HoldToInteract = false,
+    Flag = "FakingOutKeybind",
+    Callback = function(setKeyForFakeOut)
+        if type(setKeyForFakeOut) == "string" and Enum.KeyCode[setKeyForFakeOut] then
+            Trip_Settings.Keybind_FakeOut = Enum.KeyCode[setKeyForFakeOut]
+        end
     end,})
 
     getgenv().Trip_Script = Tab15:CreateToggle({
-    Name = "Trip Script",
+    Name = "Trip",
     CurrentValue = false,
     Flag = "TogglingTrippingFallScript",
     Callback = function(isTripOn)
@@ -8457,50 +8469,24 @@
             local Humanoid = Character:FindFirstChildOfClass("Humanoid")
             local RootPart = Character:FindFirstChild("HumanoidRootPart")
 
-            if getgenv().Trip_Enabled == nil then
-                getgenv().Trip_Enabled = true
-            end
+            getgenv().Trip_Enabled = true
 
             local function trip()
-                if not getgenv().Trip_Enabled or getgenv().Trip_Enabled == false or not Character or not RootPart then return end
-                Humanoid:ChangeState(0)
-                RootPart.Velocity = RootPart.CFrame.LookVector * Trip_Settings.FallSpeed
-            end
-
-            local function flop()
-                if not getgenv().Trip_Enabled or not Character or not RootPart then return end
-                Humanoid:ChangeState(0)
-                RootPart.Velocity = Vector3.new(math.random(-Trip_Settings.FallSpeed, Trip_Settings.FallSpeed), -Trip_Settings.FallSpeed, math.random(-Trip_Settings.FallSpeed, Trip_Settings.FallSpeed))
-
-                getgenv().flopConnection = RunService.RenderStepped:Connect(function()
-                    if Humanoid:GetState() == Enum.HumanoidStateType.Freefall then
-                        RootPart.CFrame = RootPart.CFrame * CFrame.Angles(
-                            math.rad(math.random(-Trip_Settings.FlopSpinIntensity, Trip_Settings.FlopSpinIntensity)),
-                            math.rad(math.random(-Trip_Settings.FlopSpinIntensity, Trip_Settings.FlopSpinIntensity)),
-                            math.rad(math.random(-Trip_Settings.FlopSpinIntensity, Trip_Settings.FlopSpinIntensity))
-                        )
-                    else
-                        getgenv().flopConnection:Disconnect()
-                    end
-                end)
+                local hum = getgenv().Humanoid
+                local root = getgenv().HumanoidRootPart
+                hum:ChangeState(0)
+                root.Velocity = root.CFrame.LookVector * 30
+                wait(3)
+                hum:ChangeState(2)
             end
 
             getgenv().Trip_Connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
                 if gameProcessed then return end
 
-                if input.KeyCode == Trip_Settings.Keybind_Toggle then
-                    getgenv().Trip_Enabled = not getgenv().Trip_Enabled
-                    if getgenv().Trip_Enabled then
-                        getgenv().notify("Enabled:", "Trip System Enabled", 5)
-                    else
-                        warn("Trip System Disabled")
-                    end
-                elseif getgenv().Trip_Enabled then
-                    if input.KeyCode == Trip_Settings.Keybind_Trip then
-                        trip()
-                    elseif Trip_Settings.Flop or Trip_Settings.Flop == true and input.KeyCode == Trip_Settings.Keybind_Flop then
-                        flop()
-                    end
+                local keybind = Trip_Settings.Keybind_Trip
+            
+                if input.KeyCode == keybind then
+                    trip()
                 end
             end)
         else
@@ -8508,17 +8494,67 @@
                 getgenv().Trip_Connection:Disconnect()
                 getgenv().Trip_Connection = nil
             end
-            wait(0.1)
-            if getgenv().flopConnection then
-                getgenv().flopConnection:Disconnect()
-                getgenv().flopConnection = nil
-            end
-            
+            wait()
             getgenv().Trip_Enabled = false
-            wait(0.1)
-            getgenv().Trip_Enabled = nil      
+            wait(0.3)
+            getgenv().notify("Success", "Successfully disabled Trip Connection.", 5)
         end
-    end,})--]]
+    end,})
+
+    getgenv().FakeOutScript = Tab15:CreateToggle({
+    Name = "Fake Out",
+    CurrentValue = false,
+    Flag = "ToggleAbilityFakeOut",
+    Callback = function(isFakeOutEnabled)
+        if isFakeOutEnabled then
+            local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+            local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+            local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+            local RootPart = Character:FindFirstChild("HumanoidRootPart")
+
+            getgenv().FakeOut_Enabled = true
+            wait(0.1)
+            if getgenv().fake_out then
+                getgenv().notify("Passed", "Function 'fake_out' already exists.", 5)
+            else
+                getgenv().fake_out = function()
+                    wait(0.4)
+                    OrgDestroyHeight = workspace.FallenPartsDestroyHeight
+                    wait(0.1)
+                    local root = getgenv().HumanoidRootPart
+                    local oldpos = root.CFrame
+                    workspace.FallenPartsDestroyHeight = 0/1/0
+                    root.CFrame = CFrame.new(Vector3.new(0, OrgDestroyHeight - 25, 0))
+                    wait(1.3)
+                    root.CFrame = oldpos
+                    workspace.FallenPartsDestroyHeight = OrgDestroyHeight
+                end
+            end
+
+            getgenv().FakeOut_Connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+
+                local keybind = Trip_Settings.Keybind_FakeOut
+                
+                if input.KeyCode == keybind then
+                    getgenv().fake_out()
+                end
+            end)
+        else
+            if getgenv().FakeOut_Connection then
+                getgenv().FakeOut_Connection:Disconnect()
+                getgenv().FakeOut_Connection = nil
+            end
+            wait(0.1)
+            getgenv().FakeOut_Enabled = false
+            wait(0.3)
+            getgenv().notify("Success", "Successfully disabled Fake Out Connection.", 5)
+        end
+    end,})
 
     getgenv().Reset_ClockTime_GUI = Tab15:CreateButton({
     Name = "Disable Script Clock Time GUI",
