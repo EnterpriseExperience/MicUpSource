@@ -422,7 +422,7 @@
             local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
             
             local reconnecting = false
-            local retryDuration = 6
+            local retryDuration = 3
             
             local function forceRejoinVoiceChat()
                 if reconnecting then return end
