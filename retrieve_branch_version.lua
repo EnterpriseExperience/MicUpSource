@@ -422,7 +422,7 @@
             local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
             
             local reconnecting = false
-            local retryDuration = 3
+            local retryDuration = 6
             
             local function forceRejoinVoiceChat()
                 if reconnecting then return end
@@ -432,19 +432,13 @@
                     local startTime = tick()
             
                     while (tick() - startTime) < retryDuration do
-                        wait()
-                        vc_service.UseAudioApi = Enum.AudioApiRollout.Disabled
-                        task.wait()
+                        wait(0.5)
                         vc_service:RejoinVoice()
-                        wait()
-                        vc_service:JoinVoice()
                         task.wait()
-                        vc_service.UseAudioApi = Enum.AudioApiRollout.Disabled
+                        vc_service:JoinVoice()
                     end
 
                     reconnecting = false
-                    wait(0.2)
-                    vc_service.UseAudioApi = Enum.AudioApiRollout.Disabled
                 end)
             end
             
