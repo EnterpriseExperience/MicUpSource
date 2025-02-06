@@ -432,22 +432,25 @@
                 if reconnecting then return end
                 reconnecting = true
             
-                task.spawn(function()
-                    local startTime = tick()
-            
-                    while (tick() - startTime) < retryDuration do
-                        wait(0.5)
-                        vc_service:RejoinVoice()
-                        task.wait()
-                        vc_service:JoinVoice()
-                    end
-
-                    reconnecting = false
-                end)
+                local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
+                local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
+                
+                for i = 1, 7 do
+                    VoiceChatInternal:Leave()
+                    wait()
+                    VoiceChatService:joinVoice()
+                    wait(0.3)
+                    VoiceChatInternal:Leave()
+                    task.wait()
+                    VoiceChatService:joinVoice()
+                end
+                wait(1)
+                reconnecting = false
             end
             
             local function onVoiceChatStateChanged(_, newState)
                 if newState == Enum.VoiceChatState.Ended and not reconnecting then
+                    wait(retryDuration)
                     forceRejoinVoiceChat()
                 end
             end
@@ -1437,6 +1440,25 @@
             end
         end
     end
+    wait()
+    getgenv().Emotes = {
+        "It Ain't My Fault - Zara Larsson", "High Hands", "Jawny - Stomp", "Power Blast", 
+        "Alo Yoga Pose - Warrior II", "Hips Poppin' - Zara Larsson", "Y", "Elton John - Rock Out", 
+        "Nicki Minaj Boom Boom Boom", "Flowing Breeze", "Mean Mug - Tommy Hilfiger", "Samba", 
+        "Fashion Klossette - Runway my way", "NBA WNBA Fadeaway", "Swish", "Robot", 
+        "TWICE I GOT YOU part 1", "Beauty Touchdown", "Floor Rock Freeze - Tommy Hilfiger", 
+        "Cha Cha", "Alo Yoga Pose - Triangle", "Bodybuilder", "V Pose - Tommy Hilfiger", 
+        "Boxing Punch - KSI", "Quiet Waves", "Baby Dance", "Top Rock", "Nicki Minaj Starships", 
+        "Dave's Spin Move - Glass Animals", "TWICE LIKEY", "YUNGBLUD - HIGH KICK", 
+        "TWICE I GOT YOU part 2", "Tantrum", "Rock Guitar - Royal Blood", "Elton John - Elevate", 
+        "Get Out", "Haha", "ericdoa - dance", "Imagine Dragons - 'Bones' Dance", 
+        "GloRilla - 'Tomorrow' Dance", "Take Me Under - Zara Larsson", 
+        "Olivia Rodrigo Fall Back to Float", "ALTÉGO - Couldn't Care Less", 
+        "Baby Queen - Air Guitar & Knee Slide", "TWICE Feel Special", "Wisp - air guitar", 
+        "Frosty Flair - Tommy Hilfiger", "Rock n Roll", "Jumping Wave", "Sol de Janeiro - Samba", 
+        "Secret Handshake Dance", "Baby Queen - Strut", "HOLIDAY Dance - Lil Nas X (LNX)", 
+        "Baby Queen - Dramatic Bow", "Old Town Road Dance - Lil Nas X (LNX)", "Hero Landing"
+    }
     wait()
     function isNumber(str)
         if tonumber(str) ~= nil then
