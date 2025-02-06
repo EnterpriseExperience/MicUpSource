@@ -26,27 +26,31 @@
     -- Don't touch this for now, it's just the default for a fallback, not to be edited, because then you won't be able to revert your configuration to the base settings without losing all data.
     local __DEFAULT_CONFIGURATION = {
         -- Use the names above to choose and load custom Animation Packages (they will keep on respawn to).
-        Custom_Animation_Package_System = "off",
-        Animation_Idle = "Zombie",
-        Animation_Walk = "Zombie",
-        Animation_Run = "Zombie",
+        Custom_Animation_Package_System = "on",
+        Animation_Idle = "Vampire",
+        Animation_Walk = "Adidas",
+        Animation_Run = "Adidas",
         Animation_Jump = "Zombie",
         Animation_Fall = "Zombie",
-        Animation_Climb = "Zombie",
-        Emote_Keybinds = "on",
+        Animation_Climb = "Levitation",
         Death_On_Load = "on",
         AntiAFK = "on",
-        Loading_Screen = "off",
-        Fully_Loaded_Messaging = "off",
-        Fully_Loaded_Message = "This script is the best!", -- Custom message you want to chat when the script fully loads all the way.
+        Loading_Screen = "on",
+        Mute_Boomboxes_Cellmates_VC_Game_Setting = "on", -- Will mute the Boomboxes in the game: "Cellmates (VC)"
+        Mute_Music_Volume_Cellmates_VC_Game_Setting = "on", -- Will mute the Music Volume in the game: "Cellmates (VC)"
+        Mute_Sound_Effects_Cellmates_VC_Game_Setting = "on", -- Will mute the Sound Effects in the game: "Cellmates (VC)"
+        System_Broken_Title = "off",
+        System_Broken_Text_Title = "System Broken New Title Here",
+        Fully_Loaded_Messaging = "on",
+        Fully_Loaded_Message = "Zacks Easy Hub - Winning.", -- Custom message you want to chat when the script fully loads all the way.
         Huge_Baseplate = "on",
         Script_Clock_Time_GUI = "on",
         Anti_Suspend_VC = "on",
         Infinite_Yield_Premium = "on",
         Performance_Statistics = "on",
-        Old_Materials = "off",
-        System_Broken = "off",
-        keep_tp_tool = "on",
+        Old_Materials = "on",
+        System_Broken = "on",
+        keep_tp_tool = "off",
     }
     wait(0.2)
     if isfile and isfile("emoteFile.json") then
@@ -57,7 +61,7 @@
     else
         warn("emoteFile.json does not exist. EXIT_STATUS:[0]")
     end
-
+    wait(0.3)
     local function getExecutor()
         local name
         if identifyexecutor then
@@ -73,7 +77,7 @@
     wait(0.1)
     local executor_Name = detectExecutor()
     wait(0.3)
-    local vc_service = game:GetService("VoiceChatService")
+    local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
     local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
     local Notification
     wait(0.5)
@@ -401,11 +405,11 @@
         updateCharacterComponents(newCharacter)
     end)
 
-    if executor_Name == "Argon" then
-        print("Argon detected, using bypass method. [To actually bypass the security context (a little bit) without running into security errors/issues].")
+    if executor_Name == "AWP" or executor_Name == "Wave" or executor_Name == "Synapse Z" or executor_Name == "Seliware" or executor_Name == "Nihon" then
+        print("Advanced exploit detected, using bypass method. [To actually bypass the security context (a little bit) without running into security errors/issues].")
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua'))()
     else
-        warn("Argon not detected, skipping..")
+        warn("No advanced level exploit detected, skipping..")
     end
 
     -- Voice chat already loaded check, keeping performance as stable as possible, as sometimes the check can duplicate, so we do not want our performance being unstabilized by 1 singular line of code.
@@ -1039,8 +1043,12 @@
     Tab12 = Window:CreateTab("> Emotes", getgenv().image_use_zacks)
     Section12 = Tab12:CreateSection("||| Emoting Section |||")
 
-    Tab14 = Window:CreateTab("> CopyAnim", getgenv().image_use_zacks)
-    Section14 = Tab14:CreateSection("||| Copy Animation Section |||")
+    if executor_Name == "MacSploit" then
+        warn("Not loading CopyAnim features. [Unsupported Executor.]")
+    else
+        Tab14 = Window:CreateTab("> CopyAnim", getgenv().image_use_zacks)
+        Section14 = Tab14:CreateSection("||| Copy Animation Section |||")
+    end
 
     Tab15 = Window:CreateTab("> Settings", getgenv().image_use_zacks)
     Section15 = Tab15:CreateSection("||| UI Settings Section |||")
@@ -2653,7 +2661,7 @@
         warn("Not in Cellmates (VC), not loading these features.")
     end
 
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    if executor_Name ~= "MacSploit" and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().DeletePlrBooth = Tab11:CreateButton({
         Name = "Delete Current Booth",
         Callback = function()
@@ -2888,245 +2896,155 @@
             wait(0.3)
             getgenv().Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
         end,})
+    elseif executor_Name == "MacSploit" and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        getgenv().DeletePlrBooth = Tab11:CreateButton({
+        Name = "Delete Current Booth",
+        Callback = function()
+            for i = 1, 50 do
+                getgenv().ReplicatedStorage:FindFirstChild("DeleteBoothOwnership"):FireServer()
+            end
+        end,})
+
+        getgenv().RemoveBooths = Tab11:CreateButton({
+        Name = "Remove Every Booth",
+        Callback = function()
+            local Players = getgenv().Players
+            local LocalPlayer = getgenv().LocalPlayer
+            local Character = getgenv().Character
+            local Humanoid = getgenv().Humanoid
+            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local GetWorkspace = game:GetService("Workspace")
+            local Folder = GetWorkspace:FindFirstChild("Booth") or GetWorkspace:WaitForChild("Booth") 
+            
+            local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+            local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
+
+            local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+
+            local function fireAndUnclaimStall(stall)
+                local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
+                if proximityPrompt then
+                    proximityPrompt.ClickablePrompt = true
+                    proximityPrompt.RequiresLineOfSight = false
+                    proximityPrompt.HoldDuration = 0
+                    proximityPrompt.MaxActivationDistance = 17
+                    wait(0.3)
+                    Character:PivotTo(stall:GetPivot())
+                    wait(0.1)
+                    Character:WaitForChild("HumanoidRootPart").Anchored = true
+                    wait(0.3)
+                    fireproximityprompt(proximityPrompt, 10)
+                    wait(0.5)
+                    Delete_Booth_Remote:FireServer()
+                    wait(0.2)
+                    Character:WaitForChild("HumanoidRootPart").Anchored = false
+                elseif not proximityPrompt then
+                    return getgenv().notify("Failed!", "ProximityPrompt is missing or doesn't exist.", 5)
+                end
+            end
+
+            local function unclaimStalls()
+                for _, stall in pairs(Folder:GetChildren()) do
+                    if stall and stall:FindFirstChild("Activate") then
+                        wait(0.3)
+                        fireAndUnclaimStall(stall)
+                    end
+                end
+            end
+            
+            wait(0.2)
+            unclaimStalls()
+            wait(0.3)
+            getgenv().Character:WaitForChild("HumanoidRootPart").CFrame = OldCF
+        end,})
     else
         warn("Did not load these Booth tabs [6].")
     end
 
-    getgenv().CopyAnimAddUser = Tab14:CreateInput({
-    Name = "Add CopyAnim Whitelist",
-    PlaceholderText = "User",
-    RemoveTextAfterFocusLost = true,
-    Callback = function(thisUserGet)
-        local Players = getgenv().Players
-        local LocalPlayer = getgenv().LocalPlayer
-        local Character = getgenv().Character
-        local Humanoid = getgenv().Humanoid
-        local HumanoidRootPart = getgenv().HumanoidRootPart
-        local Workspace = game:GetService("Workspace")
-        getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
+    if executor_Name == "MacSploit" then
+        warn("Unsupported executor 'Macsploit', not loading CopyAnim features.")
+    else
+        getgenv().CopyAnimAddUser = Tab14:CreateInput({
+        Name = "Add CopyAnim Whitelist",
+        PlaceholderText = "User",
+        RemoveTextAfterFocusLost = true,
+        Callback = function(thisUserGet)
+            local Players = getgenv().Players
+            local LocalPlayer = getgenv().LocalPlayer
+            local Character = getgenv().Character
+            local Humanoid = getgenv().Humanoid
+            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local Workspace = game:GetService("Workspace")
+            getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
-        local bruhUser = findplr(thisUserGet)
-        
-        local function addPlayerToGlobalTable(player)
+            local bruhUser = findplr(thisUserGet)
             
-            if next(getgenv().singlePlayerTable) then
-                return getgenv().notify("Player Limit!", "Only one player can be added at a time!", 5)
-            else
-                getgenv().singlePlayerTable[player.Name] = player
-                wait(0.2)
+            local function addPlayerToGlobalTable(player)
+                
+                if next(getgenv().singlePlayerTable) then
+                    return getgenv().notify("Player Limit!", "Only one player can be added at a time!", 5)
+                else
+                    getgenv().singlePlayerTable[player.Name] = player
+                    wait(0.2)
+                    if getgenv().singlePlayerTable[player.Name] then
+                        getgenv().notify("Success!", tostring(player.Name)..", was added to Whitelist!", 5)
+                    elseif not Players[player.Name] then
+                        return getgenv().notify("Failure!", tostring(player)..", does not exist!", 5)
+                    elseif bruhUser == getgenv().LocalPlayer.Name then
+                        return getgenv().notify("Failed!", "You cannot add yourself!", 5)
+                    end
+                end
+            end
+            
+            addPlayerToGlobalTable(bruhUser)
+        end,})
+
+        getgenv().RemoveCopyAnimPlr = Tab14:CreateInput({
+        Name = "Remove CopyAnim Whitelist",
+        PlaceholderText = "User",
+        RemoveTextAfterFocusLost = true,
+        Callback = function(CopyAnimPlr)
+            local Players = getgenv().Players
+            local LocalPlayer = getgenv().LocalPlayer
+            local Character = getgenv().Character
+            local Humanoid = getgenv().Humanoid
+            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local Workspace = game:GetService("Workspace")
+
+            getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
+
+            local dawgUser = findplr(CopyAnimPlr)
+            
+            local function removePlayerFromGlobalTable(player)
                 if getgenv().singlePlayerTable[player.Name] then
-                    getgenv().notify("Success!", tostring(player.Name)..", was added to Whitelist!", 5)
-                elseif not Players[player.Name] then
-                    return getgenv().notify("Failure!", tostring(player)..", does not exist!", 5)
-                elseif bruhUser == getgenv().LocalPlayer.Name then
-                    return getgenv().notify("Failed!", "You cannot add yourself!", 5)
-                end
-            end
-        end
-        
-        addPlayerToGlobalTable(bruhUser)
-    end,})
-
-    getgenv().RemoveCopyAnimPlr = Tab14:CreateInput({
-    Name = "Remove CopyAnim Whitelist",
-    PlaceholderText = "User",
-    RemoveTextAfterFocusLost = true,
-    Callback = function(CopyAnimPlr)
-        local Players = getgenv().Players
-        local LocalPlayer = getgenv().LocalPlayer
-        local Character = getgenv().Character
-        local Humanoid = getgenv().Humanoid
-        local HumanoidRootPart = getgenv().HumanoidRootPart
-        local Workspace = game:GetService("Workspace")
-
-        getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
-
-        local dawgUser = findplr(CopyAnimPlr)
-        
-        local function removePlayerFromGlobalTable(player)
-            if getgenv().singlePlayerTable[player.Name] then
-                getgenv().singlePlayerTable[player.Name] = nil
-                wait(0.2)
-                if getgenv().singlePlayerTable[player.Name] == nil then
-                    getgenv().notify("Success!", tostring(player.Name)..", was removed from the CopyAnim Whitelist!", 5)
-                else
-                    return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
-                end
-            else
-                return getgenv().notify("Failed", tostring(player.Name)..", was not found in CopyAnim Whitelist!", 5)
-            end
-        end
-        
-        removePlayerFromGlobalTable(dawgUser)
-    end,})
-
-    getgenv().CopyAnimButtonPlr = Tab14:CreateButton({
-    Name = "CopyAnim Whitelisted Plr",
-    Callback = function()
-        local Players = getgenv().Players
-        local LocalPlayer = getgenv().LocalPlayer
-        local Character = getgenv().Character
-        local Humanoid = getgenv().Humanoid
-        local HumanoidRootPart = getgenv().HumanoidRootPart
-        local Workspace = game:GetService("Workspace")
-        getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
-
-        function getThatPlr()
-            
-            for i, v in pairs(Players:GetChildren()) do
-                if getgenv().singlePlayerTable[v.Name] then
-                    return v
-                end
-            end
-            return nil
-        end
-        
-        local thePlayer = getThatPlr()
-        
-        if thePlayer then
-            print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
-        else
-            return getgenv().notify("Failed", "Player was not found!", 5)
-        end
-
-        local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
-        local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
-        local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
-        
-        if thePlayer then
-            print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
-        else
-            return getgenv().notify("Failed", "Player was not found!", 5)
-        end
-        
-        for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
-            animTrack:Stop()
-        end
-        
-        local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
-        local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
-        
-        local function copyAnimations()
-            for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
-                animTrack:Stop()
-            end
-        
-            for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
-                if not string.find(animTrack.Animation.AnimationId, "507768375") then
-                    local copiedAnim = Humanoid:LoadAnimation(animTrack.Animation)
-                    copiedAnim:Play(0.1, 1, animTrack.Speed)
-                    copiedAnim.TimePosition = animTrack.TimePosition
-        
-                    task.spawn(function()
-                        animTrack.Stopped:Wait()
-                        copiedAnim:Stop()
-                        copiedAnim:Destroy()
-                    end)
-                end
-            end
-        end
-        
-        copyAnimations()
-    end,})
-
-    getgenv().LoopCopyTheEmotePlr = Tab14:CreateToggle({
-    Name = "Loop CopyAnim Whitelist Plr",
-    CurrentValue = false,
-    Flag = "DoCopyAnimLoop",
-    Callback = function(getLoopCopyAnim)
-        if getLoopCopyAnim then
-            getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
-            
-            function getThatPlr()
-                for i, v in pairs(game.Players:GetChildren()) do
-                    if getgenv().singlePlayerTable[v.Name] then
-                        return v
+                    getgenv().singlePlayerTable[player.Name] = nil
+                    wait(0.2)
+                    if getgenv().singlePlayerTable[player.Name] == nil then
+                        getgenv().notify("Success!", tostring(player.Name)..", was removed from the CopyAnim Whitelist!", 5)
+                    else
+                        return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
                     end
+                else
+                    return getgenv().notify("Failed", tostring(player.Name)..", was not found in CopyAnim Whitelist!", 5)
                 end
-                return nil
             end
             
-            local thePlayer = getThatPlr()
+            removePlayerFromGlobalTable(dawgUser)
+        end,})
+
+        getgenv().CopyAnimButtonPlr = Tab14:CreateButton({
+        Name = "CopyAnim Whitelisted Plr",
+        Callback = function()
+            local Players = getgenv().Players
+            local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
             local Humanoid = getgenv().Humanoid
             local HumanoidRootPart = getgenv().HumanoidRootPart
-            local LocalPlayer = getgenv().LocalPlayer
-            local player = LocalPlayer
-            local Players = getgenv().Players
-            local Workspace = getgenv().Workspace
-
-            local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
-            local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
-            
-            if thePlayer then
-                print(tostring(thePlayer))
-            else
-                return getgenv().notify("Error:", "Player not found!", 7)
-            end
-            
-            for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
-                animTrack:Stop()
-            end
-            
-            local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
-            local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
-            
-            local function getAnimationScript(character)
-                if not character:FindFirstChild("Animate") then
-                    return warn("Did not find Animate script for: "..tostring(character))
-                else
-                    return character:FindFirstChild("Animate")
-                end
-            end
-            
-            local defaultAnimationScript = getAnimationScript(Character)
-            
-            local function copyAnimations()
-                if not defaultAnimationScript then
-                    warn("Unable to allocate Animate LocalScript.")
-                else
-                    defaultAnimationScript.Disabled = true
-                end
-            
-                for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
-                    animTrack:Stop()
-                end
-            
-                for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
-                    if not string.find(animTrack.Animation.AnimationId, "507768375") then
-                        local copiedAnim = Humanoid:LoadAnimation(animTrack.Animation)
-                        copiedAnim:Play(0.1, 1, animTrack.Speed)
-                        copiedAnim:AdjustWeight(9e9)
-                        copiedAnim.TimePosition = animTrack.TimePosition
-            
-                        task.spawn(function()
-                            animTrack.Stopped:Wait()
-                            copiedAnim:Stop()
-                            copiedAnim:Destroy()
-                        end)
-                    end
-                end
-            end
-            
-            getgenv().copyAllWhitelistedAnims = true
-            while getgenv().copyAllWhitelistedAnims == true do
-            task.wait(.5)
-                copyAnimations()
-            end
-        else
-            local thePlayer = getThatPlr()
-            local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
-            local HumanoidRootPart = getgenv().HumanoidRootPart
-            local LocalPlayer = getgenv().LocalPlayer
-            local player = LocalPlayer
-            local Players = getgenv().Players
-            local Workspace = getgenv().Workspace
-            
-            getgenv().copyAllWhitelistedAnims = false
-            wait()
+            local Workspace = game:GetService("Workspace")
             getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
+
             function getThatPlr()
+                
                 for i, v in pairs(Players:GetChildren()) do
                     if getgenv().singlePlayerTable[v.Name] then
                         return v
@@ -3138,47 +3056,202 @@
             local thePlayer = getThatPlr()
             
             if thePlayer then
-                print("Found Player: " .. tostring(thePlayer.Name) .. ", DisplayName: " .. tostring(thePlayer.DisplayName) .. ", UserID: " .. tostring(thePlayer.UserId))
+                print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
             else
-                return getgenv().notify("Error:", "Player was not found!", 7)
+                return getgenv().notify("Failed", "Player was not found!", 5)
             end
-            
+
             local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
             local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
             local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
             
             if thePlayer then
-                print("Found Player: " .. tostring(thePlayer.Name) .. ", DisplayName: " .. tostring(thePlayer.DisplayName) .. ", UserID: " .. tostring(thePlayer.UserId))
+                print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
             else
-                return getgenv().notify("Error:", "Player was not found!", 7)
+                return getgenv().notify("Failed", "Player was not found!", 5)
             end
             
             for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
                 animTrack:Stop()
             end
             
-            local function stopAnimations()
-                for _, animTrack in pairs(GetTheirHumanoid:GetPlayingAnimationTracks()) do
+            local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+            local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
+            
+            local function copyAnimations()
+                for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
                     animTrack:Stop()
                 end
-            end
             
-            for i = 1, 10 do
-                stopAnimations()
-            end
-
-            local function resetDefaultAnimations()
-                local animateScript = Character:FindFirstChild("Animate")
-                if animateScript then
-                    animateScript.Disabled = true
-                    wait(0.1)
-                    animateScript.Disabled = false
+                for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+                    if not string.find(animTrack.Animation.AnimationId, "507768375") then
+                        local copiedAnim = Humanoid:LoadAnimation(animTrack.Animation)
+                        copiedAnim:Play(0.1, 1, animTrack.Speed)
+                        copiedAnim.TimePosition = animTrack.TimePosition
+            
+                        task.spawn(function()
+                            animTrack.Stopped:Wait()
+                            copiedAnim:Stop()
+                            copiedAnim:Destroy()
+                        end)
+                    end
                 end
             end
             
-            resetDefaultAnimations()        
-        end
-    end,})
+            copyAnimations()
+        end,})
+
+        getgenv().LoopCopyTheEmotePlr = Tab14:CreateToggle({
+        Name = "Loop CopyAnim Whitelist Plr",
+        CurrentValue = false,
+        Flag = "DoCopyAnimLoop",
+        Callback = function(getLoopCopyAnim)
+            if getLoopCopyAnim then
+                getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
+                
+                function getThatPlr()
+                    for i, v in pairs(game.Players:GetChildren()) do
+                        if getgenv().singlePlayerTable[v.Name] then
+                            return v
+                        end
+                    end
+                    return nil
+                end
+                
+                local thePlayer = getThatPlr()
+                local Character = getgenv().Character
+                local Humanoid = getgenv().Humanoid
+                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local LocalPlayer = getgenv().LocalPlayer
+                local player = LocalPlayer
+                local Players = getgenv().Players
+                local Workspace = getgenv().Workspace
+
+                local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+                local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
+                
+                if thePlayer then
+                    print(tostring(thePlayer))
+                else
+                    return getgenv().notify("Error:", "Player not found!", 7)
+                end
+                
+                for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                    animTrack:Stop()
+                end
+                
+                local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+                local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
+                
+                local function getAnimationScript(character)
+                    if not character:FindFirstChild("Animate") then
+                        return warn("Did not find Animate script for: "..tostring(character))
+                    else
+                        return character:FindFirstChild("Animate")
+                    end
+                end
+                
+                local defaultAnimationScript = getAnimationScript(Character)
+                
+                local function copyAnimations()
+                    if not defaultAnimationScript then
+                        warn("Unable to allocate Animate LocalScript.")
+                    else
+                        defaultAnimationScript.Disabled = true
+                    end
+                
+                    for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                        animTrack:Stop()
+                    end
+                
+                    for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+                        if not string.find(animTrack.Animation.AnimationId, "507768375") then
+                            local copiedAnim = Humanoid:LoadAnimation(animTrack.Animation)
+                            copiedAnim:Play(0.1, 1, animTrack.Speed)
+                            copiedAnim:AdjustWeight(9e9)
+                            copiedAnim.TimePosition = animTrack.TimePosition
+                
+                            task.spawn(function()
+                                animTrack.Stopped:Wait()
+                                copiedAnim:Stop()
+                                copiedAnim:Destroy()
+                            end)
+                        end
+                    end
+                end
+                
+                getgenv().copyAllWhitelistedAnims = true
+                while getgenv().copyAllWhitelistedAnims == true do
+                task.wait(.5)
+                    copyAnimations()
+                end
+            else
+                local thePlayer = getThatPlr()
+                local Character = getgenv().Character
+                local Humanoid = getgenv().Humanoid
+                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local LocalPlayer = getgenv().LocalPlayer
+                local player = LocalPlayer
+                local Players = getgenv().Players
+                local Workspace = getgenv().Workspace
+                
+                getgenv().copyAllWhitelistedAnims = false
+                wait()
+                getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
+                function getThatPlr()
+                    for i, v in pairs(Players:GetChildren()) do
+                        if getgenv().singlePlayerTable[v.Name] then
+                            return v
+                        end
+                    end
+                    return nil
+                end
+                
+                local thePlayer = getThatPlr()
+                
+                if thePlayer then
+                    print("Found Player: " .. tostring(thePlayer.Name) .. ", DisplayName: " .. tostring(thePlayer.DisplayName) .. ", UserID: " .. tostring(thePlayer.UserId))
+                else
+                    return getgenv().notify("Error:", "Player was not found!", 7)
+                end
+                
+                local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+                local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+                local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
+                
+                if thePlayer then
+                    print("Found Player: " .. tostring(thePlayer.Name) .. ", DisplayName: " .. tostring(thePlayer.DisplayName) .. ", UserID: " .. tostring(thePlayer.UserId))
+                else
+                    return getgenv().notify("Error:", "Player was not found!", 7)
+                end
+                
+                for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                    animTrack:Stop()
+                end
+                
+                local function stopAnimations()
+                    for _, animTrack in pairs(GetTheirHumanoid:GetPlayingAnimationTracks()) do
+                        animTrack:Stop()
+                    end
+                end
+                
+                for i = 1, 10 do
+                    stopAnimations()
+                end
+
+                local function resetDefaultAnimations()
+                    local animateScript = Character:FindFirstChild("Animate")
+                    if animateScript then
+                        animateScript.Disabled = true
+                        wait(0.1)
+                        animateScript.Disabled = false
+                    end
+                end
+                
+                resetDefaultAnimations()        
+            end
+        end,})
+    end
     wait(0.1)
     local time_pos_jerking = 0.6 or tonumber(0.6)
     local jerking_off_speed = 1 or tonumber(1)
@@ -3346,7 +3419,7 @@
         end
     end,})
 
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 or game.PlaceId == 80080558412215 then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().BasePlate_ColorChange = Tab18:CreateSlider({
         Name = "MIC UP BasePlate Transparency",
         Range = {0, 1},
@@ -3375,8 +3448,37 @@
                 warn("BasePlate here was not found.")
             end
         end,})
+    elseif game.PlaceId == 80080558412215 then
+        getgenv().BasePlate_ColorChange = Tab18:CreateSlider({
+        Name = "German Hangout BasePlate Transparency",
+        Range = {0, 1},
+        Increment = 0.1,
+        Suffix = "",
+        CurrentValue = 0,
+        Flag = "MICUPTransparency",
+        Callback = function(BasePlateMICUPTransparency)
+            if game:GetService("Workspace"):FindFirstChild("SoccerField") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+                BasePlate.Transparency = BasePlateMICUPTransparency
+                Texture_Bruh.Transparency = BasePlateMICUPTransparency
+            elseif game:GetService("Workspace"):FindFirstChild("BasePlate") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("BasePlate")
+
+                BasePlate.Transparency = BasePlateMICUPTransparency
+            elseif game:GetService("Workspace"):FindFirstChild("Game") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
+                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+                BasePlate.Transparency = BasePlateMICUPTransparency
+                Texture_Bruh.Transparency = BasePlateMICUPTransparency
+            else
+                warn("BasePlate here was not found.")
+            end
+        end,})
     else
-        warn("This game is not MIC UP or MIC UP 17+, BasePlate not being loaded.")
+        warn("This game is not MIC UP or MIC UP 17+ or German Hangout, BasePlate not being loaded.")
     end
 
     getgenv().Change_Map_Color = Tab18:CreateColorPicker({
@@ -3400,7 +3502,7 @@
         end
     end,})
 
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 or game.PlaceId == 80080558412215 then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().BasePlate_ColorChange = Tab18:CreateColorPicker({
         Name = "MIC UP BasePlate Color",
         Color = Color3.fromRGB(255, 0, 0),
@@ -3488,8 +3590,96 @@
                 Texture_Bruh.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
             end
         end,})
+    elseif game.PlaceId == 80080558412215 then
+        getgenv().BasePlate_ColorChange = Tab18:CreateColorPicker({
+        Name = "German Hangout BasePlate Color",
+        Color = Color3.fromRGB(255, 0, 0),
+        Flag = "PickingColorForMap",
+        Callback = function(Base_Color)
+            if game:GetService("Workspace"):FindFirstChild("SoccerField") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+                BasePlate.Color = Base_Color
+                Texture_Bruh.Color3 = Base_Color
+            elseif game:GetService("Workspace"):FindFirstChild("BasePlate") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("BasePlate")
+
+                BasePlate.Color = Base_Color
+            elseif game:GetService("Workspace"):FindFirstChild("Game") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
+                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+                BasePlate.Color = Base_Color
+                Texture_Bruh.Color3 = Base_Color
+            end
+        end,})
+
+        getgenv().Baseplate_Size = Tab18:CreateSlider({
+        Name = "German Hangout BasePlate Size X",
+        Range = {50, 2048},
+        Increment = 1,
+        Suffix = "",
+        CurrentValue = 400,
+        Flag = "ChangingBasePlateSized",
+        Callback = function(Size_New)
+            if game:GetService("Workspace"):FindFirstChild("BasePlate") then
+                local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
+
+                BasePlate_Alt.Size = Vector3.new(Size_New, BasePlate_Alt.Size.Y, BasePlate_Alt.Size.Z)
+            elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
+                local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+
+                if BasePlate_Normal.Transparency == 1 then
+                    BasePlate_Normal.Transparency = 0
+                    BasePlate_Normal.CanCollide = true
+                    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
+                else
+                    BasePlate_Normal.CanCollide = true
+                    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
+                end
+            elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+                BasePlate.Size = Vector3.new(Size_New, BasePlate.Size.Y, BasePlate.Size.Z)
+                Texture_Bruh.Size = Vector3.new(Size_New, BasePlate.Size.Y, BasePlate.Size.Z)
+            end
+        end,})
+
+        getgenv().Baseplate_Size = Tab18:CreateSlider({
+        Name = "German Hangout BasePlate Size Z",
+        Range = {50, 2048},
+        Increment = 1,
+        Suffix = "",
+        CurrentValue = 400,
+        Flag = "ChangingBaseSize",
+        Callback = function(Sized_Z)
+            if game:GetService("Workspace"):FindFirstChild("BasePlate") then
+                local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
+
+                BasePlate_Alt.Size = Vector3.new(BasePlate_Alt.Size.X, BasePlate_Alt.Size.Y, Sized_Z)
+            elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
+                local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+
+                if BasePlate_Normal.Transparency == 1 then
+                    BasePlate_Normal.Transparency = 0
+                    BasePlate_Normal.CanCollide = true
+                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
+                else
+                    BasePlate_Normal.CanCollide = true
+                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
+                end
+            elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
+                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+                BasePlate.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
+                Texture_Bruh.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
+            end
+        end,})
     else
-        warn("MIC UP BasePlate settings will not load, not MIC UP.")
+        warn("These BasePlate settings will not load, not MIC UP or German Hangout.")
     end
 
     getgenv().StopTheEmotes = Tab14:CreateButton({
@@ -3506,38 +3696,32 @@
             return nil
         end
 
+        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local thePlayer = getThatPlr()
-        
-        if thePlayer then
-            print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
-        else
-            return getgenv().notify("Failed", "Player was not found!", 5)
-        end
-        
         local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
         local TheirCharacter = thePlayer.Character or thePlayer.CharacterAdded:Wait()
         local GetTheirHumanoid = TheirCharacter:FindFirstChildWhichIsA("Humanoid") or TheirCharacter:WaitForChild("Humanoid")
         
         if thePlayer then
-            print("Found Player: "..tostring(thePlayer.Name)..", DisplayName: "..tostring(thePlayer.DisplayName)..", UserID: "..tostring(thePlayer.UserId))
+            local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
+            local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
+            
+            local function stopAnimations()
+                for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+                    animTrack:Stop()
+                end
+            end
+            
+            stopAnimations()
         else
-            return getgenv().notify("Failed", "Player was not found!", 5)
-        end
-        
-        for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
-            animTrack:Stop()
-        end
-        
-        local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
-        local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
-        
-        local function stopAnimations()
-            for _, animTrack in pairs(theirHumanoid:GetPlayingAnimationTracks()) do
+            for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
                 animTrack:Stop()
             end
+            wait(0.2)
+            getgenv().notify("Failed", "Player was not found!", 5)
         end
-        
-        stopAnimations()
     end,})
 
     getgenv().PlayEmoteButFrozen = Tab12:CreateInput({
@@ -3613,9 +3797,7 @@
     getgenv().StopTheEmotes = Tab12:CreateButton({
     Name = "Stop Emoting",
     Callback = function()
-        local Humanoid = getgenv().Humanoid
-
-        for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
+        for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
             animTrack:Stop()
         end
     end,})
