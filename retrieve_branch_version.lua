@@ -53,11 +53,11 @@
         keep_tp_tool = "off",
     }
     wait(0.2)
-    if isfile and isfile("EmoteConfig.json") then
+    --[[if isfile and isfile("EmoteConfig.json") then
         getgenv().Easies_Configuration["Death_On_Load"] = "on"
     else
         warn("EmoteConfig.json does not exist. EXIT_STATUS:[0]")
-    end
+    end--]]
     wait(0.3)
     local function getExecutor()
         local name
@@ -8948,228 +8948,232 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
     end,})
     wait()
-    local UserInputService = game:GetService("UserInputService")
+    if getgenv().Easies_Configuration["Emote_Keybinds"] == "on" or getgenv().Easies_Configuration["Emote_Keybinds"] == "On" or getgenv().Easies_Configuration["Emote_Keybinds"] == "Enabled" then
+        local UserInputService = game:GetService("UserInputService")
 
-    getgenv().Reverse_Keybind = Enum.KeyCode.F
-    getgenv().Freeze_Keybind = Enum.KeyCode.V
+        getgenv().Reverse_Keybind = Enum.KeyCode.F
+        getgenv().Freeze_Keybind = Enum.KeyCode.V
 
-    local Trip_Settings = {
-        Keybind_Trip = Enum.KeyCode.V,
-        Keybind_FakeOut = Enum.KeyCode.R
-    }
+        local Trip_Settings = {
+            Keybind_Trip = Enum.KeyCode.V,
+            Keybind_FakeOut = Enum.KeyCode.R
+        }
 
-    local ConfigFileName = "EmoteConfig.json"
-    
-    local Emote_Keybinds_Configuration = {  
-        [Enum.KeyCode.One] = "Rise Above - The Chainsmokers",
-        [Enum.KeyCode.Two] = "BLACKPINK Shut Down - Part 2",
-        [Enum.KeyCode.Three] = "Fashion Roadkill",
-        [Enum.KeyCode.Four] = "Beckon",
-        [Enum.KeyCode.Five] = "Hero Landing",
-        [Enum.KeyCode.Six] = "Man City Scorpion Kick",
-        [Enum.KeyCode.Seven] = "Flowing Breeze",
-        [Enum.KeyCode.Eight] = "Tommy - Archer",
-        [Enum.KeyCode.Nine] = "Point2",
-    }
-    
-    local Emote_Speed_Configuration = {
-        [Enum.KeyCode.Q] = 0.1,
-        [Enum.KeyCode.E] = 4,
-        [Enum.KeyCode.X] = 1
-    }
-
-    local Slots_Table = {
-        ["Number/Key: 1"] = Enum.KeyCode.One,
-        ["Number/Key: 2"] = Enum.KeyCode.Two,
-        ["Number/Key: 3"] = Enum.KeyCode.Three,
-        ["Number/Key: 4"] = Enum.KeyCode.Four,
-        ["Number/Key: 5"] = Enum.KeyCode.Five,
-        ["Number/Key: 6"] = Enum.KeyCode.Six,
-        ["Number/Key: 7"] = Enum.KeyCode.Seven,
-        ["Number/Key: 8"] = Enum.KeyCode.Eight,
-        ["Number/Key: 9"] = Enum.KeyCode.Nine,
-    }
-    
-    Emote_Speed_Configuration[getgenv().Freeze_Keybind] = 0
-    Emote_Speed_Configuration[getgenv().Reverse_Keybind] = -1
-
-    local Slots_Options = {}
-    for name, _ in pairs(Slots_Table) do
-        table.insert(Slots_Options, name)
-    end
-
-    local selectedSlot = nil
-
-    getgenv().PickASlot = Tab15:CreateDropdown({
-    Name = "Choose a Slot (to put the emote in)",
-    Options = Slots_Options,
-    CurrentOption = "",
-    MultipleOptions = false,
-    Flag = "select_slot",
-    Callback = function(slotName)
-        if typeof(slotName) == "table" then
-            slotName = slotName[1]
-        end
-
-        if typeof(slotName) ~= "string" or not Slots_Table[slotName] then
-            return warn("Invalid slot selection:", slotName)
-        end
-
-        selectedSlot = Slots_Table[slotName]
-        getgenv().notify("Success:", "Selected Slot: " .. slotName .. " (KeyCode: " .. tostring(selectedSlot) .. ")", 6)
-    end,})
-
-    getgenv().SelectAnEmote = Tab15:CreateDropdown({
-    Name = "Choose an Emote",
-    Options = Emotes,
-    CurrentOption = "",
-    MultipleOptions = false,
-    Flag = "select_emote",
-    Callback = function(emote)
-        if typeof(emote) == "table" then
-            emote = emote[1]
-        end
-
-        if typeof(emote) ~= "string" then
-            return warn("Invalid emote selection: Expected a string, got:", typeof(emote))
-        end
-
-        if not selectedSlot then
-            return warn("Please select a slot first before choosing an emote!")
-        end
-
-        Emote_Keybinds_Configuration[selectedSlot] = emote
-        getgenv().notify("Success:", "Assigned emote: '" .. emote .. "' to keybind: " .. tostring(selectedSlot), 6)
-    end,})
-
-    getgenv().Emote_Speed_Editor_Config = Tab15:CreateSlider({
-    Name = "Speed Up Emote Speed",
-    Range = {0, 80},
-    Increment = 0.1,
-    Suffix = "",
-    CurrentValue = 1,
-    Flag = "changingTheConfigEmoteSpeed",
-    Callback = function(emoteSpeedConfigSlider)
-        Emote_Speed_Configuration[Enum.KeyCode.E] = tonumber(emoteSpeedConfigSlider)
-        getgenv().emoting_actions(tonumber(emoteSpeedConfigSlider))
-    end,})
-
-    getgenv().Emote_Slow_Down_Speed_Config = Tab15:CreateSlider({
-    Name = "Slow Down Emote Speed",
-    Range = {0, 0.9},
-    Increment = 0.1,
-    Suffix = "",
-    CurrentValue = 0.9,
-    Flag = "changingSlowDownConfig",
-    Callback = function(emoteSlowDownConfig)
-        Emote_Speed_Configuration[Enum.KeyCode.Q] = tonumber(emoteSlowDownConfig)
-        getgenv().emoting_actions(tonumber(emoteSlowDownConfig))
-    end,})
-
-    getgenv().SaveEmoteConfig = Tab15:CreateButton({
-    Name = "Save Emote Configuration",
-    Callback = function()
-        local function saveConfig()
-            local config = {
-                Emote_Keybinds_Configuration = {},
-                Emote_Speed_Configuration = {}
-            }
+        local ConfigFileName = "EmoteConfig.json"
         
-            for key, value in pairs(Emote_Keybinds_Configuration) do
-                config.Emote_Keybinds_Configuration[tostring(key)] = value
+        local Emote_Keybinds_Configuration = {  
+            [Enum.KeyCode.One] = "Rise Above - The Chainsmokers",
+            [Enum.KeyCode.Two] = "BLACKPINK Shut Down - Part 2",
+            [Enum.KeyCode.Three] = "Fashion Roadkill",
+            [Enum.KeyCode.Four] = "Beckon",
+            [Enum.KeyCode.Five] = "Hero Landing",
+            [Enum.KeyCode.Six] = "Man City Scorpion Kick",
+            [Enum.KeyCode.Seven] = "Flowing Breeze",
+            [Enum.KeyCode.Eight] = "Tommy - Archer",
+            [Enum.KeyCode.Nine] = "Point2",
+        }
+        
+        local Emote_Speed_Configuration = {
+            [Enum.KeyCode.Q] = 0.1,
+            [Enum.KeyCode.E] = 4,
+            [Enum.KeyCode.X] = 1
+        }
+
+        local Slots_Table = {
+            ["Number/Key: 1"] = Enum.KeyCode.One,
+            ["Number/Key: 2"] = Enum.KeyCode.Two,
+            ["Number/Key: 3"] = Enum.KeyCode.Three,
+            ["Number/Key: 4"] = Enum.KeyCode.Four,
+            ["Number/Key: 5"] = Enum.KeyCode.Five,
+            ["Number/Key: 6"] = Enum.KeyCode.Six,
+            ["Number/Key: 7"] = Enum.KeyCode.Seven,
+            ["Number/Key: 8"] = Enum.KeyCode.Eight,
+            ["Number/Key: 9"] = Enum.KeyCode.Nine,
+        }
+        
+        Emote_Speed_Configuration[getgenv().Freeze_Keybind] = 0
+        Emote_Speed_Configuration[getgenv().Reverse_Keybind] = -1
+
+        local Slots_Options = {}
+        for name, _ in pairs(Slots_Table) do
+            table.insert(Slots_Options, name)
+        end
+
+        local selectedSlot = nil
+
+        getgenv().PickASlot = Tab15:CreateDropdown({
+        Name = "Choose a Slot (to put the emote in)",
+        Options = Slots_Options,
+        CurrentOption = "",
+        MultipleOptions = false,
+        Flag = "select_slot",
+        Callback = function(slotName)
+            if typeof(slotName) == "table" then
+                slotName = slotName[1]
             end
-        
-            for key, value in pairs(Emote_Speed_Configuration) do
-                config.Emote_Speed_Configuration[tostring(key)] = value
+
+            if typeof(slotName) ~= "string" or not Slots_Table[slotName] then
+                return warn("Invalid slot selection:", slotName)
             end
-        
-            local jsonData = game:GetService("HttpService"):JSONEncode(config)
-            writefile(ConfigFileName, jsonData)
-            getgenv().notify("Success:", "Emote configuration saved!", 5)
-        end
-        
-        saveConfig()
-    end,})
 
-    getgenv().SaveEmoteConfig = Tab15:CreateButton({
-    Name = "Load Emote Configuration",
-    Callback = function()
-        local function loadConfig()
-            if isfile(ConfigFileName) then
-                local jsonData = readfile(ConfigFileName)
-                local config = game:GetService("HttpService"):JSONDecode(jsonData)
+            selectedSlot = Slots_Table[slotName]
+            getgenv().notify("Success:", "Selected Slot: " .. slotName .. " (KeyCode: " .. tostring(selectedSlot) .. ")", 6)
+        end,})
 
-                Emote_Keybinds_Configuration = {}
-                Emote_Speed_Configuration = {}
-        
-                for key, value in pairs(config.Emote_Keybinds_Configuration) do
-                    local keyCode = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
-                    if keyCode then
-                        Emote_Keybinds_Configuration[keyCode] = value
-                    end
+        getgenv().SelectAnEmote = Tab15:CreateDropdown({
+        Name = "Choose an Emote",
+        Options = Emotes,
+        CurrentOption = "",
+        MultipleOptions = false,
+        Flag = "select_emote",
+        Callback = function(emote)
+            if typeof(emote) == "table" then
+                emote = emote[1]
+            end
+
+            if typeof(emote) ~= "string" then
+                return warn("Invalid emote selection: Expected a string, got:", typeof(emote))
+            end
+
+            if not selectedSlot then
+                return warn("Please select a slot first before choosing an emote!")
+            end
+
+            Emote_Keybinds_Configuration[selectedSlot] = emote
+            getgenv().notify("Success:", "Assigned emote: '" .. emote .. "' to keybind: " .. tostring(selectedSlot), 6)
+        end,})
+
+        getgenv().Emote_Speed_Editor_Config = Tab15:CreateSlider({
+        Name = "Speed Up Emote Speed",
+        Range = {0, 80},
+        Increment = 0.1,
+        Suffix = "",
+        CurrentValue = 1,
+        Flag = "changingTheConfigEmoteSpeed",
+        Callback = function(emoteSpeedConfigSlider)
+            Emote_Speed_Configuration[Enum.KeyCode.E] = tonumber(emoteSpeedConfigSlider)
+            getgenv().emoting_actions(tonumber(emoteSpeedConfigSlider))
+        end,})
+
+        getgenv().Emote_Slow_Down_Speed_Config = Tab15:CreateSlider({
+        Name = "Slow Down Emote Speed",
+        Range = {0, 0.9},
+        Increment = 0.1,
+        Suffix = "",
+        CurrentValue = 0.9,
+        Flag = "changingSlowDownConfig",
+        Callback = function(emoteSlowDownConfig)
+            Emote_Speed_Configuration[Enum.KeyCode.Q] = tonumber(emoteSlowDownConfig)
+            getgenv().emoting_actions(tonumber(emoteSlowDownConfig))
+        end,})
+
+        getgenv().SaveEmoteConfig = Tab15:CreateButton({
+        Name = "Save Emote Configuration",
+        Callback = function()
+            local function saveConfig()
+                local config = {
+                    Emote_Keybinds_Configuration = {},
+                    Emote_Speed_Configuration = {}
+                }
+            
+                for key, value in pairs(Emote_Keybinds_Configuration) do
+                    config.Emote_Keybinds_Configuration[tostring(key)] = value
                 end
-        
-                for key, value in pairs(config.Emote_Speed_Configuration) do
-                    local keyCode = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
-                    if keyCode then
-                        Emote_Speed_Configuration[keyCode] = value
-                    end
+            
+                for key, value in pairs(Emote_Speed_Configuration) do
+                    config.Emote_Speed_Configuration[tostring(key)] = value
                 end
-        
-                getgenv().notify("Success:", "Configuration loaded!", 5)
-            else
-                getgenv().notify("Error:", "No saved configuration found!", 5)
+            
+                local jsonData = game:GetService("HttpService"):JSONEncode(config)
+                writefile(ConfigFileName, jsonData)
+                getgenv().notify("Success:", "Emote configuration saved!", 5)
             end
-        end        
-        
-        loadConfig()
-    end,})
+            
+            saveConfig()
+        end,})
 
-    getgenv().SaveEmoteConfig = Tab15:CreateButton({
-    Name = "Delete Emote Configuration",
-    Callback = function()
-        local function deleteConfig()
-            if isfile(ConfigFileName) then
-                delfile(ConfigFileName)
-                getgenv().notify("Success:", "Configuration deleted!", 5)
-            else
-                getgenv().notify("Error:", "No configuration file found!", 5)
+        getgenv().SaveEmoteConfig = Tab15:CreateButton({
+        Name = "Load Emote Configuration",
+        Callback = function()
+            local function loadConfig()
+                if isfile(ConfigFileName) then
+                    local jsonData = readfile(ConfigFileName)
+                    local config = game:GetService("HttpService"):JSONDecode(jsonData)
+
+                    Emote_Keybinds_Configuration = {}
+                    Emote_Speed_Configuration = {}
+            
+                    for key, value in pairs(config.Emote_Keybinds_Configuration) do
+                        local keyCode = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
+                        if keyCode then
+                            Emote_Keybinds_Configuration[keyCode] = value
+                        end
+                    end
+            
+                    for key, value in pairs(config.Emote_Speed_Configuration) do
+                        local keyCode = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
+                        if keyCode then
+                            Emote_Speed_Configuration[keyCode] = value
+                        end
+                    end
+            
+                    getgenv().notify("Success:", "Configuration loaded!", 5)
+                else
+                    getgenv().notify("Error:", "No saved configuration found!", 5)
+                end
+            end        
+            
+            loadConfig()
+        end,})
+
+        getgenv().SaveEmoteConfig = Tab15:CreateButton({
+        Name = "Delete Emote Configuration",
+        Callback = function()
+            local function deleteConfig()
+                if isfile(ConfigFileName) then
+                    delfile(ConfigFileName)
+                    getgenv().notify("Success:", "Configuration deleted!", 5)
+                else
+                    getgenv().notify("Error:", "No configuration file found!", 5)
+                end
+            end     
+            
+            deleteConfig()
+        end,})
+
+        local function onInputBegan(input, gameProcessed)
+            if gameProcessed then return end
+
+            local emote = Emote_Keybinds_Configuration[input.KeyCode]
+            if emote and getgenv().Humanoid then
+                getgenv().Humanoid:PlayEmote(emote)
             end
-        end     
-        
-        deleteConfig()
-    end,})
-
-    local function onInputBegan(input, gameProcessed)
-        if gameProcessed then return end
-
-        local emote = Emote_Keybinds_Configuration[input.KeyCode]
-        if emote and getgenv().Humanoid then
-            getgenv().Humanoid:PlayEmote(emote)
         end
-    end
-    wait()
-    local speedToggle = 1
+        wait()
+        local speedToggle = 1
 
-    local function other_Input_Connecting(input, gameProcessed)
-        if gameProcessed then return end
+        local function other_Input_Connecting(input, gameProcessed)
+            if gameProcessed then return end
 
-        if input.KeyCode == getgenv().Reverse_Keybind then
-            speedToggle = (speedToggle == 1) and -1 or 1
-            Emote_Speed_Configuration[getgenv().Reverse_Keybind] = speedToggle
-            getgenv().emoting_actions(speedToggle)
-        elseif input.KeyCode == getgenv().Freeze_Keybind then
-            getgenv().emoting_actions(0)
-        else
-            local speed = Emote_Speed_Configuration[input.KeyCode]
-            if speed and getgenv().Humanoid then
-                getgenv().emoting_actions(tonumber(speed))
+            if input.KeyCode == getgenv().Reverse_Keybind then
+                speedToggle = (speedToggle == 1) and -1 or 1
+                Emote_Speed_Configuration[getgenv().Reverse_Keybind] = speedToggle
+                getgenv().emoting_actions(speedToggle)
+            elseif input.KeyCode == getgenv().Freeze_Keybind then
+                getgenv().emoting_actions(0)
+            else
+                local speed = Emote_Speed_Configuration[input.KeyCode]
+                if speed and getgenv().Humanoid then
+                    getgenv().emoting_actions(tonumber(speed))
+                end
             end
         end
+        
+        UserInputService.InputBegan:Connect(other_Input_Connecting)
+        UserInputService.InputBegan:Connect(onInputBegan)
+    else
+        warn("Not enabled in Configuration.")
     end
-    
-    UserInputService.InputBegan:Connect(other_Input_Connecting)
-    UserInputService.InputBegan:Connect(onInputBegan)
 
     -- Might include later for easier access, who knows.
     --getgenv().Current_Trip_Configuration = Tripping_Settings
