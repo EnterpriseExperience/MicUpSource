@@ -9022,16 +9022,16 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
     end,})
     wait()
+    local Trip_Settings = {
+        Keybind_Trip = Enum.KeyCode.V,
+        Keybind_FakeOut = Enum.KeyCode.R
+    }
+    wait()
     if getgenv().Easies_Configuration["Emote_Keybinds"] == "on" or getgenv().Easies_Configuration["Emote_Keybinds"] == "On" or getgenv().Easies_Configuration["Emote_Keybinds"] == "Enabled" then
         local UserInputService = game:GetService("UserInputService")
 
         getgenv().Reverse_Keybind = Enum.KeyCode.F
         getgenv().Freeze_Keybind = Enum.KeyCode.V
-
-        local Trip_Settings = {
-            Keybind_Trip = Enum.KeyCode.V,
-            Keybind_FakeOut = Enum.KeyCode.R
-        }
 
         local ConfigFileName = "EmoteConfig.json"
         
