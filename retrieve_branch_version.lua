@@ -1986,7 +1986,7 @@
         Baseplate_AntiVoid.Transparency = transBasePlate
     end,})
 
-    getgenv().Change_Map_Color = Tab18:CreateColorPicker({
+    getgenv().Change_Map_Color = Tab2:CreateColorPicker({
     Name = "Anti Void BasePlate Color",
     Color = Color3.fromRGB(107, 50, 124),
     Flag = "PickThatBasePlateColor",
