@@ -2077,57 +2077,43 @@
     Callback = function()
         local TeleportService = game:GetService("TeleportService")
         local Players = game:GetService("Players")
-        
-        local OwnerName = "L0CKED_1N1" or "CHEATING_B0SS" 
-        wait()
-        local function teleportToOwnerOrServer()
-            local LocalPlayer = Players.LocalPlayer
-            local OwnerPlayer = Players:FindFirstChild(OwnerName)
-        
-            if OwnerPlayer then
-                if OwnerPlayer.Character and OwnerPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    LocalPlayer.Character:PivotTo(OwnerPlayer.Character.HumanoidRootPart.CFrame)
-                    getgenv().notify("Success!", "You have been teleported to: "..tostring(OwnerName), 6)
-                else
-                    getgenv().notify("Teleport Failed:", tostring(OwnerName).." is in the server but their character is not fully loaded.", 6)
-                end
-            else
-                getgenv().notify("Hold On...", "Searching for Script Owner's server...", 6)
-                local success, result = pcall(function()
-                    return TeleportService:GetPlayerPlaceInstanceAsync(OwnerName)
-                end)
-        
-                if success and result then
-                    getgenv().notify("Teleporting", "Teleporting to "..tostring(OwnerName).."'s server...", 6.5)
-                    TeleportService:TeleportToPlaceInstance(result.PlaceId, result.InstanceId, LocalPlayer)
-                else
-                    getgenv().notify("Teleport Failed", "Could not find "..tostring(OwnerName).."'s server.", 6.5)
-                    wait()
-                    warn("Error while trying to teleport: ", result)
-                end
-            end
-        end
-        
-        local function checkServerForOwner()
-            local success, result = pcall(function()
-                return TeleportService:GetPlayerPlaceInstanceAsync(OwnerName)
+
+        local OwnerNames = { "L0CKED_1N1", "CHEATING_B0SS" }
+
+        local function getUserId(username)
+            local success, userId = pcall(function()
+                return Players:GetUserIdFromNameAsync(username)
             end)
-        
-            if success and result then
-                local currentPlaceId = game.PlaceId
-                local currentInstanceId = game.JobId
-        
-                if currentPlaceId == result.PlaceId and currentInstanceId == result.InstanceId then
-                    executeScript()
-                end
-            else
-                warn("Failed to check server for owner: ", result)
-            end
+            return success and userId or nil
         end
-        wait()
-        checkServerForOwner()
-        wait(0.2)
-        teleportToOwnerOrServer()
+
+        local function teleportToOwnerServer()
+            local LocalPlayer = Players.LocalPlayer
+            
+            for _, ownerName in ipairs(OwnerNames) do
+                local ownerUserId = getUserId(ownerName)
+        
+                if ownerUserId then
+                    local success, result = pcall(function()
+                        return TeleportService:GetPlayerPlaceInstanceAsync(ownerUserId)
+                    end)
+        
+                    if success and result and result.InstanceId then
+                        getgenv().notify("Teleporting", "Joining " .. ownerName .. "'s server...", 6.5)
+                        TeleportService:TeleportToPlaceInstance(result.PlaceId, result.InstanceId, LocalPlayer)
+                        return 
+                    end
+                end
+            end
+        
+            getgenv().notify("Teleport Failed", "Could not find the owner's server.", 6.5)
+        end
+        
+        local function onTeleportButtonClick()
+            teleportToOwnerServer()
+        end
+
+        onTeleportButtonClick()
     end,})
 
     getgenv().ViewOwnerBruh = Tab1:CreateToggle({
@@ -6839,6 +6825,28 @@
                 end
             end
         end
+
+        local boardCount = 0
+
+        for _, model in pairs(workspace:GetDescendants()) do
+            if model:IsA("Model") and model.Name == "Tic Tac Toe" then
+                local parent_to = game:GetService("Workspace"):FindFirstChild("PartStorage")
+                if parent_to then
+                    boardCount = boardCount + 1
+                    model.Name = "Tic Tac Toe " .. boardCount
+                    
+                    model.Parent = parent_to
+
+                    if model.Parent == parent_to then
+                        print("Renamed & Moved: Tic Tac Toe " .. boardCount)
+                    else
+                        warn("Failed to move: Tic Tac Toe " .. boardCount)
+                    end
+                else
+                    warn("PartStorage not found!")
+                end
+            end
+        end
         -- Validate for dear god, I hate the Tic Tac Toe shit, and I hate the No Rizz Config version of this script to.
         wait(0.3)
         getgenv().ClickingAllBoards = Tab5:CreateButton({
@@ -6882,6 +6890,36 @@
                 end
             else
                 getgenv().doAllClicks = false
+            end
+        end,})
+
+        getgenv().ClickTicTacToeBoard2 = Tab5:CreateButton({
+        Name = "Click TicTacToe Board 1",
+        Callback = function()
+            for _, v in ipairs(workspace.PartStorage["Tic Tac Toe 1"]:GetDescendants()) do
+                if v:IsA("ClickDetector") then
+                    fireclickdetector(v, 999)
+                end
+            end
+        end,})
+
+        getgenv().ClickTicTacToeBoard2 = Tab5:CreateButton({
+        Name = "Click TicTacToe Board 2",
+        Callback = function()
+            for _, v in ipairs(workspace.PartStorage["Tic Tac Toe 2"]:GetDescendants()) do
+                if v:IsA("ClickDetector") then
+                    fireclickdetector(v, 999)
+                end
+            end
+        end,})
+        
+        getgenv().ClickTicTacToeBoard2 = Tab5:CreateButton({
+        Name = "Click TicTacToe Board 3",
+        Callback = function()
+            for _, v in ipairs(workspace.PartStorage["Tic Tac Toe 3"]:GetDescendants()) do
+                if v:IsA("ClickDetector") then
+                    fireclickdetector(v, 999)
+                end
             end
         end,})
     else
