@@ -2079,6 +2079,19 @@
         local Players = game:GetService("Players")
 
         local OwnerNames = { "L0CKED_1N1", "CHEATING_B0SS" }
+        
+        local function Get_Owner()
+            for _, Owner in ipairs(OwnerNames) do
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player.Name == Owner then
+                        return true
+                    end
+                end
+            end
+            return false
+        end
+
+        local owner_found = Get_Owner()
 
         local function getUserId(username)
             local success, userId = pcall(function()
@@ -2113,7 +2126,11 @@
             teleportToOwnerServer()
         end
 
-        onTeleportButtonClick()
+        if owner_found then
+            getgenv().Character:PivotTo(owner_found.Character:GetPivot())
+        else
+            onTeleportButtonClick()
+        end
     end,})
 
     getgenv().ViewOwnerBruh = Tab1:CreateToggle({
@@ -7712,6 +7729,7 @@
     Callback = function()
         getgenv().getLoopKick = false
         getgenv().SCRIPT_EXECUTED = false
+        getgenv().SCRIPT_EXECUTED = false
         getgenv().Invis_Loaded = false
         getgenv().GetLoopRunning = false
         getgenv().GetLoopRunning = false
@@ -7725,6 +7743,7 @@
     Name = "Destroy GUI/Script",
     Callback = function()
         getgenv().getLoopKick = false
+        getgenv().SCRIPT_EXECUTED = false
         getgenv().SCRIPT_EXECUTED = false
         getgenv().Invis_Loaded = false
         getgenv().GetLoopRunning = false
