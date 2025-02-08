@@ -53,13 +53,10 @@
         keep_tp_tool = "off",
     }
     wait(0.2)
-    if isfile and isfile("emoteFile.json") then
-        print("True - File Exists, deleting...")
-        delfile("emoteFile.json")
-        wait(0.4)
-        print("Deleted.")
+    if isfile and isfile("EmoteConfig.json") then
+        getgenv().Easies_Configuration["Death_On_Load"] = "on"
     else
-        warn("emoteFile.json does not exist. EXIT_STATUS:[0]")
+        warn("EmoteConfig.json does not exist. EXIT_STATUS:[0]")
     end
     wait(0.3)
     local function getExecutor()
