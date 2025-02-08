@@ -1998,6 +1998,80 @@
         Baseplate_AntiVoid.Color = AntiVoid_Color
     end,})
 
+    getgenv().RainbowAntiVoidBasePlate = Tab2:CreateToggle({
+    Name = "Rainbow Anti Void Baseplate",
+    CurrentValue = false,
+    Flag = "GetRainbowPartLmao",
+    Callback = function(GetRainbowStateAntiVoid)
+        if GetRainbowStateAntiVoid then
+            getgenv().parts_rainbow_anti_void = true
+            getgenv().parts_rainbow_anti_void = true
+            getgenv().rainbowTweenConnection = nil
+            
+            local TweenService = game:GetService("TweenService")
+            local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            
+            local PartStorage = Workspace:FindFirstChild("PartStorage")
+            local Baseplate_AntiVoid = PartStorage and PartStorage:FindFirstChild("ANTI_VOID_BASEPLATE")
+            
+            if not Baseplate_AntiVoid then
+                getgenv().RainbowAntiVoidBasePlate:Set(false)
+                getgenv().parts_rainbow_anti_void = false
+                return warn("ANTI_VOID_BASEPLATE not found!")
+            end
+            
+            local colors = {
+                Color3.fromRGB(0, 0, 255),
+                Color3.fromRGB(255, 0, 0),
+                Color3.fromRGB(0, 255, 0),
+                Color3.fromRGB(255, 255, 255),
+                Color3.fromRGB(0, 0, 0),
+                Color3.fromRGB(255, 165, 0),
+                Color3.fromRGB(0, 255, 255),
+                Color3.fromRGB(255, 255, 0),
+                Color3.fromRGB(139, 69, 19)
+            }
+            
+            local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+            local index = 1
+            
+            local function cycleColor()
+                if not getgenv().parts_rainbow_anti_void then
+                    return getgenv().notify("Stopped", "AntiVoid BasePlate rainbow loop disabled.", 6)
+                end
+            
+                local nextIndex = (index % #colors) + 1
+                local goal = { Color = colors[nextIndex] }
+            
+                local tween = TweenService:Create(Baseplate_AntiVoid, tweenInfo, goal)
+                tween:Play()
+
+                if getgenv().rainbowTweenConnection then
+                    getgenv().rainbowTweenConnection:Disconnect()
+                end
+            
+                getgenv().rainbowTweenConnection = tween.Completed:Connect(function()
+                    if getgenv().parts_rainbow_anti_void then
+                        index = nextIndex
+                        cycleColor()
+                    else
+                        getgenv().rainbowTweenConnection:Disconnect()
+                        getgenv().rainbowTweenConnection = nil
+                    end
+                end)
+            end
+            
+            cycleColor()            
+        else
+            getgenv().parts_rainbow_anti_void = false
+            wait()
+            if getgenv().rainbowTweenConnection then
+                getgenv().rainbowTweenConnection:Disconnect()
+                getgenv().rainbowTweenConnection = nil
+            end
+        end
+    end,})
+
     getgenv().TPOwnerBruh = Tab1:CreateButton({
     Name = "Teleport To: Owner Of Script",
     Callback = function()
