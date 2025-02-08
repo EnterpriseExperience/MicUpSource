@@ -2079,6 +2079,17 @@
         local Players = game:GetService("Players")
 
         local OwnerNames = { "L0CKED_1N1", "CHEATING_B0SS" }
+
+        local function Get_Owner_Player()
+            for _, Owner in ipairs(OwnerNames) do
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player.Name == Owner then
+                        return player
+                    end
+                end
+            end
+            return nil
+        end
         
         local function Get_Owner()
             for _, Owner in ipairs(OwnerNames) do
@@ -2091,6 +2102,7 @@
             return false
         end
 
+        local plr_found = Get_Owner_Player()
         local owner_found = Get_Owner()
 
         local function getUserId(username)
@@ -2126,8 +2138,8 @@
             teleportToOwnerServer()
         end
 
-        if owner_found then
-            getgenv().Character:PivotTo(owner_found.Character:GetPivot())
+        if owner_found and plr_found and plr_found.Character and plr_found.Character:FindFirstChild("Humanoid") then
+            getgenv().Character:PivotTo(plr_found.Character:GetPivot())
         else
             onTeleportButtonClick()
         end
