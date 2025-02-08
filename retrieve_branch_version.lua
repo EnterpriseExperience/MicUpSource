@@ -3745,6 +3745,7 @@
         "Brick",
         "Pebble",
         "Sand",
+        "ForceField",
         "Fabric",
         "SmoothPlastic",
         "Metal",
