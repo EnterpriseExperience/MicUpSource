@@ -1,6 +1,59 @@
 ## [V6 Loadstring, BETA RELEASE!]:
 
 ```lua
+-- PC Version Of Script (COPY EVERYTHING HERE!)
+--[[
+    Animation Packages: Zombie, Catwalk Glam, Elder, Cartoony,
+    Adidas, Werewolf, Vampire, Astronaut,
+    Superhero, Knight, Mage, Ninja,
+    Toy, NFL, No Boundaries, Oldschool,
+    Pirate, Levitation, Bubbly, Robot,
+    Wicked Popular, Bold, Stylish,
+    Rthro [default Roblox Animation package]
+--]]
+
+--EDIT THE STUFF BELOW, SET STUFF "on" AND "off"!!
+--YES, YOU HAVE TO COPY ALL OF THIS STUFF!
+
+-- "on" means it's going to run, "off" means it's not going to run.
+local Zacks_Easy_Configuration = {
+    -- Use the names above to choose and load custom Animation Packages (they will keep on respawn to).
+    Custom_Animation_Package_System = "off",
+    Animation_Idle = "Superhero",
+    Animation_Walk = "Adidas",
+    Animation_Run = "Adidas",
+    Animation_Jump = "Levitation",
+    Animation_Fall = "Levitation",
+    Animation_Climb = "Superhero",
+    Death_On_Load = "on",
+    Emote_Keybinds = "off",
+    AntiAFK = "on",
+    Loading_Screen = "off",
+    Mute_Boomboxes_Cellmates_VC_Game_Setting = "off", -- Will mute the Boomboxes in the game: "Cellmates (VC)"
+    Mute_Music_Volume_Cellmates_VC_Game_Setting = "off", -- Will mute the Music Volume in the game: "Cellmates (VC)"
+    Mute_Sound_Effects_Cellmates_VC_Game_Setting = "off", -- Will mute the Sound Effects in the game: "Cellmates (VC)"
+    System_Broken_Title = "off",
+    System_Broken_Text_Title = "System Broken New Title Here",
+    Fully_Loaded_Messaging = "on",
+    Fully_Loaded_Message = "Zacks Easy Hub - Winning.", -- Custom message you want to chat when the script fully loads all the way.
+    Huge_Baseplate = "on",
+    Script_Clock_Time_GUI = "off",
+    Anti_Suspend_VC = "on",
+    Infinite_Yield_Premium = "on",
+    Performance_Statistics = "on",
+    Old_Materials = "off",
+    System_Broken = "on",
+    keep_tp_tool = "off",
+}
+-- Don't touch this stuff below, unless you know what you are doing.
+getgenv().Easies_Configuration = getgenv().Easies_Configuration or {}
+
+for key, value in pairs(Zacks_Easy_Configuration) do
+    if getgenv().Easies_Configuration[key] == nil then
+        getgenv().Easies_Configuration[key] = value
+    end
+end
+wait(0.1)
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
 ```
 
