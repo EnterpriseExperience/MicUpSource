@@ -6223,7 +6223,7 @@
     end,})
 
     getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
-    getgenv().RAINBOW_MODE = true
+    getgenv().RAINBOW_MODE = false
     wait()
     getgenv().EspBox = Tab19:CreateToggle({
     Name = "Box",
@@ -6383,8 +6383,6 @@
                 GuiService:ToggleFullscreen()
                 wait(1.2)
                 GuiService:ToggleFullscreen()
-            else
-                return 
             end
 
             table.clear(getgenv().espBoxes)
@@ -6399,6 +6397,8 @@
                 table.clear(getgenv().espBoxes)
             end)
             getgenv().espBoxes = {}
+            wait(0.1)
+            return 
         end
     end,})
 
@@ -6571,8 +6571,6 @@
                 GuiService:ToggleFullscreen()
                 wait(1.2)
                 GuiService:ToggleFullscreen()
-            else
-                return 
             end
             wait(0.4)
             if getgenv().espLines then
@@ -6586,7 +6584,11 @@
                 table.clear(getgenv().espLines)
             end
             wait()
+            getgenv().espLines = {}
+            wait(0.2)
             getgenv().espLines = nil
+            wait(0.2)
+            return 
         end
     end,})
 
@@ -6630,32 +6632,30 @@
             end
 
             local function updateTracers()
-                if not getgenv().TRACERS_ESP_ENABLED and getgenv().tracerLines then
+                if not getgenv().TRACERS_ESP_ENABLED then
                     for _, tracer in pairs(getgenv().tracerLines) do
                         if tracer then tracer:Remove() end
                     end
                     table.clear(getgenv().tracerLines)
                     return
-                elseif not getgenv().tracerLines then
-                    return 
-                else
-                    return 
                 end
-
+            
                 for player, tracer in pairs(getgenv().tracerLines) do
                     local char = player.Character
                     if char and char:FindFirstChild("HumanoidRootPart") then
                         local rootPart = char.HumanoidRootPart
                         local screenPos, onScreen = camera:WorldToViewportPoint(rootPart.Position)
-
+            
                         if onScreen then
                             tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y)
                             tracer.To = Vector2.new(screenPos.X, screenPos.Y)
                             tracer.Visible = true
-
+            
                             if getgenv().RAINBOW_MODE then
                                 local hue = tick() % 5 / 5
                                 tracer.Color = Color3.fromHSV(hue, 1, 1)
+                            else
+                                tracer.Color = getgenv().color_for_esp_value
                             end
                         else
                             tracer.Visible = false
@@ -6731,8 +6731,6 @@
                 GuiService:ToggleFullscreen()
                 wait(1.2)
                 GuiService:ToggleFullscreen()
-            else
-                return 
             end
         end
     end,})
@@ -6748,6 +6746,10 @@
             getgenv().RAINBOW_MODE = false
         end
     end,})
+    wait(0.2)
+    if getgenv().RAINBOW_MODE then
+        getgenv().RainbowMode:Set(false)
+    end
 
     getgenv().ESPColorPicker = Tab19:CreateColorPicker({
     Name = "ESP Color",
