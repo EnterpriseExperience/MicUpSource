@@ -6757,31 +6757,6 @@
         getgenv().color_for_esp_value = esp_color_selected
     end,})
 
-    getgenv().LowQualityFunc = Tab19:CreateButton({
-    Name = "Change Graphics To Low Quality (Performance)",
-    Callback = function()
-        UserSettings():GetService("UserGameSettings"):GraphicsOptimizationMode(0)
-        UserSettings():GetService("UserGameSettings"):GraphicsQualityLevel(1)
-    end,})
-
-    getgenv().PerformanceStatistics = Tab19:CreateButton({
-    Name = "Performance Statistics (Roblox's System)",
-    Callback = function()
-        UserSettings():GetService("UserGameSettings"):PerformanceStatsVisible(true)
-    end,})
-
-    getgenv().ReducedMotion = Tab19:CreateButton({
-    Name = "Reduced Motion Effects (Performance)",
-    Callback = function()
-        UserSettings():GetService("UserGameSettings"):ReducedMotion(true)
-    end,})
-
-    getgenv().MaxQualityGraphics = Tab19:CreateButton({
-    Name = "Maximize Graphics Quality",
-    Callback = function()
-        UserSettings():GetService("UserGameSettings"):MaxQualityEnabled(true)
-    end,})
-
     getgenv().GetFakeChatGUI = Tab4:CreateButton({
     Name = "Fake Chat GUI",
     Callback = function()
