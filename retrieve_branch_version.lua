@@ -939,7 +939,7 @@
     wait(0.2)
     if executor_Name == "Solara" then
         Window = Rayfield:CreateWindow({
-            Name = "📜 Zacks Easy Hub 📜 | V7.7.2 | "..tostring(executor_Name),
+            Name = "📜 Zacks Easy Hub 📜 | V7.7.6 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy ruling MIC UP 🔊",
             LoadingSubtitle = "Zacks Easy Hub | Success.",
             ConfigurationSaving = {
@@ -965,7 +965,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "📜 Zacks Easy Hub 📜 | V7.7.2 | "..tostring(executor_Name),
+            Name = "📜 Zacks Easy Hub 📜 | V7.7.6 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy ruling MIC UP 🔊",
             LoadingSubtitle = "Zacks Easy Hub | Success.",
             ConfigurationSaving = {
@@ -1705,7 +1705,7 @@
 
         local emote_Script = getgenv().Humanoid:PlayEmote(emote_picked)
         if not emote_Script then
-            return warn("Invalid material: "..tostring(emote_picked))
+            return warn("Invalid Emote: "..tostring(emote_picked))
         end
         wait(0.2)
         getgenv().Humanoid:PlayEmote(emote_picked)
@@ -2879,7 +2879,7 @@
     MultipleOptions = false,
     Flag = "GetEmoteOption",
     Callback = function(selectedEmote)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(selectedEmote)
+        getgenv().Humanoid:PlayEmote(selectedEmote)
         getgenv().HumanoidRootPart.Anchored = true
         wait(0.2)
         getgenv().Character:FindFirstChild("Animate").Disabled = true
@@ -6220,6 +6220,9 @@
         end
     end,})
 
+    getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
+    getgenv().RAINBOW_MODE = true
+    wait()
     getgenv().EspBox = Tab19:CreateToggle({
     Name = "Box",
     CurrentValue = false,
@@ -6227,7 +6230,6 @@
     Callback = function(box_Esp)
         if box_Esp then
             getgenv().ESP_ENABLED = true
-            getgenv().RAINBOW_MODE = true
             getgenv().ESP_TOGGLE = true
 
             local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
@@ -6248,7 +6250,7 @@
                 local box = Drawing.new("Square")
                 box.Visible = false
                 box.Thickness = 2
-                box.Color = Color3.fromRGB(255, 255, 255)
+                box.Color = getgenv().color_for_esp_value
                 box.Filled = false
 
                 getgenv().espBoxes[player] = { Box = box, Player = player }
@@ -6263,32 +6265,38 @@
 
             local function updateESP()
                 if not getgenv().ESP_TOGGLE then
-                    for player, data in pairs(espBoxes) do
-                        data.Box:Remove()
+                    for _, data in pairs(espBoxes) do
+                        if data.Box then
+                            data.Box:Remove()
+                        end
                     end
-                    espBoxes = {}
+                    getgenv().espBoxes = {}
+                    table.clear(espBoxes)
                     return
                 end
-
+            
                 for player, data in pairs(espBoxes) do
                     local box = data.Box
                     local char = player.Character
-                    if char and char:FindFirstChild("HumanoidRootPart") then
+            
+                    if not char or not char:FindFirstChild("HumanoidRootPart") then
+                        box:Remove()
+                        espBoxes[player] = nil
+                    else
                         local root = char.HumanoidRootPart
                         local vector, onScreen = camera:WorldToViewportPoint(root.Position)
+            
                         if onScreen then
                             box.Position = Vector2.new(vector.X - 25, vector.Y - 50)
                             box.Size = Vector2.new(50, 100)
                             box.Visible = getgenv().ESP_ENABLED
                             if getgenv().RAINBOW_MODE then
-                            local hue = tick() % 5 / 5
-                            box.Color = Color3.fromHSV(hue, 1, 1)
+                                local hue = tick() % 5 / 5
+                                box.Color = Color3.fromHSV(hue, 1, 1)
                             end
                         else
                             box.Visible = false
                         end
-                    else
-                        box.Visible = false
                     end
                 end
             end
@@ -6314,15 +6322,14 @@
                 end
             end
 
-            players.PlayerAdded:Connect(onPlayerAdded)
-            players.PlayerRemoving:Connect(onPlayerRemoving)
+            getgenv().EspBoxPlayerAddedConnection = players.PlayerAdded:Connect(onPlayerAdded)
+            getgenv().EspBoxPlayerRemovingConnection = players.PlayerRemoving:Connect(onPlayerRemoving)
 
-            runService.RenderStepped:Connect(updateESP)
+            getgenv().EspBoxUpdatedConnection = runService.RenderStepped:Connect(updateESP)
         else
             local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 
             getgenv().ESP_ENABLED = false
-            getgenv().RAINBOW_MODE = false
             getgenv().ESP_TOGGLE = false
             wait()
             local function removeBox(player)
@@ -6332,6 +6339,27 @@
                 end
             end
 
+            if getgenv().EspBoxUpdatedConnection then
+                pcall(function()
+                    getgenv().EspBoxUpdatedConnection:Disconnect()
+                end)
+                getgenv().EspBoxUpdatedConnection = nil
+            end
+
+            if getgenv().EspBoxPlayerAddedConnection then
+                pcall(function()
+                    getgenv().EspBoxPlayerAddedConnection:Disconnect()
+                end)
+                getgenv().EspBoxPlayerAddedConnection = nil
+            end
+
+            if getgenv().EspBoxPlayerRemovingConnection then
+                pcall(function()
+                    getgenv().EspBoxPlayerRemovingConnection:Disconnect()
+                end)
+                getgenv().EspBoxPlayerRemovingConnection = nil
+            end
+            wait()
             for _, player in ipairs(Players:GetPlayers()) do
                 if player ~= Players.LocalPlayer then
                     if player.Character then
@@ -6339,7 +6367,417 @@
                     end
                 end
             end
+
+            for _, data in pairs(getgenv().espBoxes or {}) do
+                if data and data.Box then
+                    data.Box:Remove()
+                end
+            end
+            wait(0.3)
+            local result_fullscreen = UserSettings():GetService("UserGameSettings"):InFullScreen()
+            local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
+            
+            if result_fullscreen == false then
+                GuiService:ToggleFullscreen()
+                wait(1.2)
+                GuiService:ToggleFullscreen()
+            else
+                return 
+            end
+
+            table.clear(getgenv().espBoxes)
+            wait(0.5)
+            task.spawn(function()
+                wait(1)
+                for _, data in pairs(getgenv().espBoxes or {}) do
+                    if data and data.Box then
+                        data.Box:Remove()
+                    end
+                end
+                table.clear(getgenv().espBoxes)
+            end)
+            getgenv().espBoxes = {}
         end
+    end,})
+
+    getgenv().Skeleton_ESP = Tab19:CreateToggle({
+    Name = "Skeleton",
+    CurrentValue = false,
+    Flag = "ToggleSkeletonESP",
+    Callback = function(isSkelActive)
+        if isSkelActive then
+            getgenv().SKELETON_ESP_ENABLED = true
+            getgenv().espLines = getgenv().espLines or {}
+            
+            local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+            local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+            local workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local camera = workspace.CurrentCamera
+            
+            local function check_r15(plr)
+                return plr.Character and plr.Character:FindFirstChildOfClass('Humanoid') and plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15
+            end
+            
+            local function removeESP(player)
+                if getgenv().espLines[player] then
+                    for _, line in ipairs(getgenv().espLines[player]) do
+                        if line then line:Remove() end
+                    end
+                    getgenv().espLines[player] = nil
+                end
+            end
+            
+            local function createESP(player)
+                if not getgenv().SKELETON_ESP_ENABLED then return end
+                if not player.Character then return end
+            
+                local char = player.Character
+                local humanoid = char:FindFirstChildOfClass("Humanoid")
+                if not humanoid then return end
+                
+                local joints
+                if check_r15(player) then
+                    joints = {
+                        {"Head", "UpperTorso"}, {"UpperTorso", "LowerTorso"},
+                        {"UpperTorso", "LeftUpperArm"}, {"LeftUpperArm", "LeftLowerArm"}, {"LeftLowerArm", "LeftHand"},
+                        {"UpperTorso", "RightUpperArm"}, {"RightUpperArm", "RightLowerArm"}, {"RightLowerArm", "RightHand"},
+                        {"LowerTorso", "LeftUpperLeg"}, {"LeftUpperLeg", "LeftLowerLeg"}, {"LeftLowerLeg", "LeftFoot"},
+                        {"LowerTorso", "RightUpperLeg"}, {"RightUpperLeg", "RightLowerLeg"}, {"RightLowerLeg", "RightFoot"}
+                    }
+                else
+                    joints = {
+                        {"Head", "Torso"}, {"Torso", "Left Arm"}, {"Left Arm", "Left Leg"},
+                        {"Torso", "Right Arm"}, {"Right Arm", "Right Leg"}
+                    }
+                end
+                
+                getgenv().espLines[player] = {}
+                
+                for _, joint in pairs(joints) do
+                    local part1, part2 = char:FindFirstChild(joint[1]), char:FindFirstChild(joint[2])
+                    if part1 and part2 then
+                        local line = Drawing.new("Line")
+                        line.Thickness = 2
+                        line.Color = getgenv().color_for_esp_value
+                        line.Visible = false
+                        table.insert(getgenv().espLines[player], line)
+                    end
+                end
+            end
+            
+            local function updateESP()
+                if not getgenv().SKELETON_ESP_ENABLED then
+                    for _, player in pairs(getgenv().espLines) do removeESP(player) end
+                    return
+                end
+                
+                local hue = tick() % 5 / 5
+                local color = getgenv().RAINBOW_MODE and Color3.fromHSV(hue, 1, 1) or Color3.fromRGB(0, 255, 0)
+            
+                for player, lines in pairs(getgenv().espLines) do
+                    local char = player.Character
+                    if char then
+                        local joints
+                        if check_r15(player) then
+                            joints = {
+                                {"Head", "UpperTorso"}, {"UpperTorso", "LowerTorso"},
+                                {"UpperTorso", "LeftUpperArm"}, {"LeftUpperArm", "LeftLowerArm"}, {"LeftLowerArm", "LeftHand"},
+                                {"UpperTorso", "RightUpperArm"}, {"RightUpperArm", "RightLowerArm"}, {"RightLowerArm", "RightHand"},
+                                {"LowerTorso", "LeftUpperLeg"}, {"LeftUpperLeg", "LeftLowerLeg"}, {"LeftLowerLeg", "LeftFoot"},
+                                {"LowerTorso", "RightUpperLeg"}, {"RightUpperLeg", "RightLowerLeg"}, {"RightLowerLeg", "RightFoot"}
+                            }
+                        else
+                            joints = {
+                                {"Head", "Torso"}, {"Torso", "Left Arm"}, {"Left Arm", "Left Leg"},
+                                {"Torso", "Right Arm"}, {"Right Arm", "Right Leg"}
+                            }
+                        end
+                        
+                        for i, joint in pairs(joints) do
+                            local part1, part2 = char:FindFirstChild(joint[1]), char:FindFirstChild(joint[2])
+                            if part1 and part2 then
+                                local pos1, onScreen1 = camera:WorldToViewportPoint(part1.Position)
+                                local pos2, onScreen2 = camera:WorldToViewportPoint(part2.Position)
+                                local line = lines[i]
+                                
+                                if onScreen1 and onScreen2 and getgenv().RAINBOW_MODE == false then
+                                    line.From = Vector2.new(pos1.X, pos1.Y)
+                                    line.To = Vector2.new(pos2.X, pos2.Y)
+                                    line.Visible = true
+                                    line.Color = getgenv().color_for_esp_value
+                                elseif onScreen1 and onScreen2 then
+                                    line.From = Vector2.new(pos1.X, pos1.Y)
+                                    line.To = Vector2.new(pos2.X, pos2.Y)
+                                    line.Visible = true
+                                    line.Color = color
+                                else
+                                    line.Visible = false
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            
+            local function onPlayerAdded(player)
+                player.CharacterAdded:Connect(function()
+                    repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                    createESP(player)
+                end)
+            end
+            
+            for _, player in ipairs(players:GetPlayers()) do
+                if player ~= players.LocalPlayer then
+                    onPlayerAdded(player)
+                    if player.Character then createESP(player) end
+                end
+            end
+            
+            getgenv().SkelESPPlayerAddedConnection = players.PlayerAdded:Connect(onPlayerAdded)
+            getgenv().SkelESPPlayerRemovingConnection = players.PlayerRemoving:Connect(removeESP)
+            
+            getgenv().SkelESPUpdateConnection = runService.RenderStepped:Connect(updateESP)
+        else
+            getgenv().SKELETON_ESP_ENABLED = false
+            getgenv().espLines = {}
+            wait()
+            if getgenv().SkelESPUpdateConnection then
+                pcall(function()
+                    getgenv().SkelESPUpdateConnection:Disconnect()
+                end)
+                getgenv().SkelESPUpdateConnection = nil
+            end
+            
+            if getgenv().SkelESPPlayerAddedConnection then
+                pcall(function()
+                    getgenv().SkelESPPlayerAddedConnection:Disconnect()
+                end)
+                getgenv().SkelESPPlayerAddedConnection = nil
+            end
+
+            if getgenv().SkelESPPlayerRemovingConnection then
+                pcall(function()
+                    getgenv().SkelESPPlayerRemovingConnection:Disconnect()
+                end)
+                getgenv().SkelESPPlayerRemovingConnection = nil
+            end
+            wait(0.8)
+            local result_fullscreen = UserSettings():GetService("UserGameSettings"):InFullScreen()
+            local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
+            
+            if result_fullscreen == false then
+                GuiService:ToggleFullscreen()
+                wait(1.2)
+                GuiService:ToggleFullscreen()
+            else
+                return 
+            end
+            wait(0.4)
+            if getgenv().espLines then
+                for _, lines in pairs(getgenv().espLines) do
+                    for _, line in ipairs(lines) do
+                        if line then
+                            line:Remove()
+                        end
+                    end
+                end
+                table.clear(getgenv().espLines)
+            end
+            wait()
+            getgenv().espLines = nil
+        end
+    end,})
+
+    getgenv().TracersToggleMain = Tab19:CreateToggle({
+    Name = "Tracers",
+    CurrentValue = false,
+    Flag = "tracersOnActive",
+    Callback = function(runTracersScript)
+        if runTracersScript then
+            getgenv().TRACERS_ESP_ENABLED = true
+            getgenv().tracerLines = getgenv().tracerLines or {}
+
+            local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+            local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+            local workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local camera = workspace.CurrentCamera
+
+            local function removeTracer(player)
+                if getgenv().tracerLines[player] then
+                    if getgenv().tracerLines[player] then
+                        getgenv().tracerLines[player]:Remove()
+                    end
+                    getgenv().tracerLines[player] = nil
+                end
+            end
+
+            local function createTracer(player)
+                if not getgenv().TRACERS_ESP_ENABLED then return end
+                if not player.Character then return end
+
+                local char = player.Character
+                local rootPart = char:FindFirstChild("HumanoidRootPart")
+                if not rootPart then return end
+
+                local tracer = Drawing.new("Line")
+                tracer.Thickness = 2
+                tracer.Color = getgenv().color_for_esp_value
+                tracer.Visible = false
+
+                getgenv().tracerLines[player] = tracer
+            end
+
+            local function updateTracers()
+                if not getgenv().TRACERS_ESP_ENABLED and getgenv().tracerLines then
+                    for _, tracer in pairs(getgenv().tracerLines) do
+                        if tracer then tracer:Remove() end
+                    end
+                    table.clear(getgenv().tracerLines)
+                    return
+                elseif not getgenv().tracerLines then
+                    return 
+                else
+                    return 
+                end
+
+                for player, tracer in pairs(getgenv().tracerLines) do
+                    local char = player.Character
+                    if char and char:FindFirstChild("HumanoidRootPart") then
+                        local rootPart = char.HumanoidRootPart
+                        local screenPos, onScreen = camera:WorldToViewportPoint(rootPart.Position)
+
+                        if onScreen then
+                            tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y)
+                            tracer.To = Vector2.new(screenPos.X, screenPos.Y)
+                            tracer.Visible = true
+
+                            if getgenv().RAINBOW_MODE then
+                                local hue = tick() % 5 / 5
+                                tracer.Color = Color3.fromHSV(hue, 1, 1)
+                            end
+                        else
+                            tracer.Visible = false
+                        end
+                    else
+                        tracer.Visible = false
+                    end
+                end
+            end
+
+            local function onPlayerAdded(player)
+                player.CharacterAdded:Connect(function()
+                    repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                    createTracer(player)
+                end)
+            end
+
+            for _, player in ipairs(players:GetPlayers()) do
+                if player ~= players.LocalPlayer then
+                    onPlayerAdded(player)
+                    if player.Character then createTracer(player) end
+                end
+            end
+
+            getgenv().tracerPlayerAddedConnection = players.PlayerAdded:Connect(onPlayerAdded)
+            getgenv().tracerPlayerRemovingConnection = players.PlayerRemoving:Connect(removeTracer)
+
+            getgenv().tracerUpdateConnection = runService.RenderStepped:Connect(updateTracers)
+        else
+            getgenv().TRACERS_ESP_ENABLED = false
+
+            if getgenv().tracerLines then
+                for _, tracer in pairs(getgenv().tracerLines) do
+                    if tracer then
+                        pcall(function()
+                            tracer.Visible = false
+                            tracer:Remove()
+                        end)
+                    end
+                end
+                table.clear(getgenv().tracerLines)
+            end
+
+            if getgenv().tracerLines then
+                getgenv().tracerLines = nil
+            end
+            wait()
+            if getgenv().tracerUpdateConnection then
+                pcall(function()
+                    getgenv().tracerUpdateConnection:Disconnect()
+                end)
+                getgenv().tracerUpdateConnection = nil
+            end
+
+            if getgenv().tracerPlayerAddedConnection then
+                pcall(function()
+                    getgenv().tracerPlayerAddedConnection:Disconnect()
+                end)
+                getgenv().tracerPlayerAddedConnection = nil
+            end
+
+            if getgenv().tracerPlayerRemovingConnection then
+                pcall(function()
+                    getgenv().tracerPlayerRemovingConnection:Disconnect()
+                end)
+                getgenv().tracerPlayerRemovingConnection = nil
+            end
+            wait(0.4)
+            local result_fullscreen = UserSettings():GetService("UserGameSettings"):InFullScreen()
+            local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
+            
+            if result_fullscreen == false then
+                GuiService:ToggleFullscreen()
+                wait(1.2)
+                GuiService:ToggleFullscreen()
+            else
+                return 
+            end
+        end
+    end,})
+    wait()
+    getgenv().RainbowMode = Tab19:CreateToggle({
+    Name = "Rainbow Mode (For ESP)",
+    CurrentValue = false,
+    Flag = "rainbowModeActive",
+    Callback = function(doRainbowFunc)
+        if doRainbowFunc then
+            getgenv().RAINBOW_MODE = true
+        else
+            getgenv().RAINBOW_MODE = false
+        end
+    end,})
+
+    getgenv().ESPColorPicker = Tab19:CreateColorPicker({
+    Name = "ESP Color",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "ChangeESPColorVal",
+    Callback = function(esp_color_selected)
+        getgenv().color_for_esp_value = esp_color_selected
+    end,})
+
+    getgenv().LowQualityFunc = Tab19:CreateButton({
+    Name = "Change Graphics To Low Quality (Performance)",
+    Callback = function()
+        UserSettings():GetService("UserGameSettings"):GraphicsOptimizationMode(0)
+        UserSettings():GetService("UserGameSettings"):GraphicsQualityLevel(1)
+    end,})
+
+    getgenv().PerformanceStatistics = Tab19:CreateButton({
+    Name = "Performance Statistics (Roblox's System)",
+    Callback = function()
+        UserSettings():GetService("UserGameSettings"):PerformanceStatsVisible(true)
+    end,})
+
+    getgenv().ReducedMotion = Tab19:CreateButton({
+    Name = "Reduced Motion Effects (Performance)",
+    Callback = function()
+        UserSettings():GetService("UserGameSettings"):ReducedMotion(true)
+    end,})
+
+    getgenv().MaxQualityGraphics = Tab19:CreateButton({
+    Name = "Maximize Graphics Quality",
+    Callback = function()
+        UserSettings():GetService("UserGameSettings"):MaxQualityEnabled(true)
     end,})
 
     getgenv().GetFakeChatGUI = Tab4:CreateButton({
