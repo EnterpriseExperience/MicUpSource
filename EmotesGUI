@@ -1,3 +1,6 @@
+if getgenv().emotes_GUI_loaded then
+	return 
+end
 local IsStudio = false
 
 local ContextActionService = game:GetService("ContextActionService")
@@ -620,3 +623,4 @@ if LocalPlayer.Character then
 	CharacterAdded(LocalPlayer.Character)
 end
 LocalPlayer.CharacterAdded:Connect(CharacterAdded)
+getgenv().emotes_GUI_loaded = true
