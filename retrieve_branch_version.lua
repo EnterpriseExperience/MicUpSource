@@ -3488,7 +3488,7 @@
                 
                 local function getStall()
                     for _, v in pairs(game:GetService("Workspace").Booth:GetChildren()) do
-                        if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. LocalPlayer.Name then
+                        if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
                             return v
                         end
                     end
@@ -3500,6 +3500,8 @@
                         local OldCF = getgenv().Character:WaitForChild("HumanoidRootPart").CFrame
                 
                         repeat
+                            if not getgenv().AutoClaimEnabled then return end
+                
                             getgenv().Character:PivotTo(stall:GetPivot() + Vector3.new(0, 3, 0))
                             task.wait(0.5)
                 
@@ -3511,25 +3513,23 @@
                             end
                 
                             task.wait(0.5)
-                        until stall.Username.BillboardGui.TextLabel.Text == "Owned by: " .. LocalPlayer.Name or not getgenv().AutoClaimEnabled
-
+                        until stall.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name or not getgenv().AutoClaimEnabled
+                
                         getgenv().Character:PivotTo(OldCF)
                     end
-                end
+                end                
                 
                 local function monitorOwnership()
                     while getgenv().AutoClaimEnabled == true do
                         local stall = getStall()
                         if stall then
                             getgenv().Booth = stall
-                
-                            if not getgenv().OwnershipConnection then
-                                getgenv().OwnershipConnection = stall.Username.BillboardGui.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
-                                    if stall.Username.BillboardGui.TextLabel.Text ~= "Owned by: " .. LocalPlayer.Name then
-                                        claimStall(stall)
-                                    end
-                                end)
-                            end
+                            wait()
+                            getgenv().OwnershipConnection = stall.Username.BillboardGui.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
+                                if stall.Username.BillboardGui.TextLabel.Text ~= "Owned by: " .. getgenv().LocalPlayer.Name then
+                                    claimStall(stall)
+                                end
+                            end)
                         else
                             local newStall = getStall()
                             claimStall(newStall)
@@ -3548,20 +3548,22 @@
                 if plr_booth and getgenv().AutoClaimEnabled == true then
                     monitorOwnership()
                 else
-                    getgenv().notify("Error:", "No booth found! Claim a booth and toggle this on.", 7.5)
+                    getgenv().AutoReclaimToggle:Set(false)
+                    return getgenv().notify("Error:", "No booth found! Claim a booth and toggle this on.", 7.5)
                 end
             else
                 getgenv().AutoClaimEnabled = false
+
                 if getgenv().OwnershipConnection then
-                    getgenv().OwnershipConnection = nil
+                    print("Booth Ownership Connection is running, disabling..")
                     getgenv().OwnershipConnection:Disconnect()
+                    getgenv().OwnershipConnection = nil
                 else
                     warn("Event not connected.")
                 end
-                getgenv().OwnershipConnection:Disconnect()
-                wait()
-                getgenv().OwnershipConnection = nil
+            
                 getgenv().Booth = nil
+                return 
             end
         end,})
 
