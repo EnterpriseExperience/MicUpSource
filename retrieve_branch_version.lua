@@ -6222,7 +6222,7 @@
         end
     end,})
 
-    getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
+    --[[getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
     getgenv().RAINBOW_MODE = false
     wait()
     getgenv().EspBox = Tab19:CreateToggle({
@@ -6757,7 +6757,7 @@
     Flag = "ChangeESPColorVal",
     Callback = function(esp_color_selected)
         getgenv().color_for_esp_value = esp_color_selected
-    end,})
+    end,})--]]
 
     getgenv().GetFakeChatGUI = Tab4:CreateButton({
     Name = "Fake Chat GUI",
