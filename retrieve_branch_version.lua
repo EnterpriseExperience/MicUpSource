@@ -410,12 +410,12 @@
         updateCharacterComponents(newCharacter)
     end)
 
-    if executor_Name == "AWP" or executor_Name == "Wave" or executor_Name == "Synapse Z" or executor_Name == "Seliware" or executor_Name == "Nihon" then
+    --[[if executor_Name == "AWP" or executor_Name == "Wave" or executor_Name == "Synapse Z" or executor_Name == "Seliware" or executor_Name == "Nihon" then
         print("Advanced exploit detected, using bypass method. [To actually bypass the security context (a little bit) without running into security errors/issues].")
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua'))()
     else
         warn("No advanced level exploit detected, skipping..")
-    end
+    end--]]
 
     -- Voice chat already loaded check, keeping performance as stable as possible, as sometimes the check can duplicate, so we do not want our performance being unstabilized by 1 singular line of code.
     local vc_inter = game:GetService("VoiceChatInternal")
@@ -5921,8 +5921,6 @@
         warn("Not MIC UP or MIC UP 17+, not loading In-Game music functions.")
     end
 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/GetOuttaHereLmao/refs/heads/main/get_out_meme.js'))()
-
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().WhitelistFriendPlr = Tab1:CreateToggle({
         Name = "[Avatar-UI]: Only Like Friend",
@@ -6051,27 +6049,25 @@
         getgenv().notify("Failure!", "Your executor does is garbage.", 5)
     end
 
-    for _, v in ipairs(game:GetDescendants()) do
-        if v:FindFirstChildOfClass("AudioDeviceInput") or getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
-            getgenv().MutingMyself = Tab1:CreateToggle({
-            Name = "Mute Yourself",
-            CurrentValue = false,
-            Flag = "IJustMutedMyself",
-            Callback = function(muteYou)
-                if muteYou then
-                    getgenv().muting = true
-                    if getgenv().muting == true then
-                        getgenv().LocalPlayer.AudioDeviceInput.Muted = true
-                    end
-                else
-                    getgenv().muting = false
-                    wait()
-                    getgenv().LocalPlayer.AudioDeviceInput.Muted = false
+    if getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
+        getgenv().MutingMyself = Tab1:CreateToggle({
+        Name = "Mute Yourself",
+        CurrentValue = false,
+        Flag = "IJustMutedMyself",
+        Callback = function(muteYou)
+            if muteYou then
+                getgenv().muting = true
+                if getgenv().muting == true then
+                    getgenv().LocalPlayer.AudioDeviceInput.Muted = true
                 end
-            end,})
-        else
-            warn("AudioDeviceInput not detected in current game, not loading.")
-        end
+            else
+                getgenv().muting = false
+                wait()
+                getgenv().LocalPlayer.AudioDeviceInput.Muted = false
+            end
+        end,})
+    else
+        warn("AudioDeviceInput not detected in current game, not loading.")
     end
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
@@ -8166,71 +8162,69 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
     end,})
 
-    for _, v in ipairs(game:GetDescendants()) do
-        if v:FindFirstChildOfClass("AudioDeviceInput") or getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
-            getgenv().MuteAllBruh = Tab1:CreateToggle({
-            Name = "Mute All",
-            CurrentValue = false,
-            Flag = "MutingEveryone",
-            Callback = function(TheMuteAll)
-                if TheMuteAll then
-                    getgenv().LmaoGetMuted = true
-                    while getgenv().LmaoGetMuted == true do
-                    wait()
-                        getgenv().VoiceChatInternal:SubscribePauseAll(true)
-                        getgenv().VoiceChatInternal:SubscribePauseAll(true)
-                    end
-                else
-                    getgenv().LmaoGetMuted = false
-                    getgenv().LmaoGetMuted = false
-                    getgenv().LmaoGetMuted = false
-                    wait(0.3)
-                    getgenv().VoiceChatInternal:SubscribePauseAll(false)
-                    getgenv().VoiceChatInternal:SubscribePauseAll(false)
+    if getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
+        getgenv().MuteAllBruh = Tab1:CreateToggle({
+        Name = "Mute All",
+        CurrentValue = false,
+        Flag = "MutingEveryone",
+        Callback = function(TheMuteAll)
+            if TheMuteAll then
+                getgenv().LmaoGetMuted = true
+                while getgenv().LmaoGetMuted == true do
+                wait()
+                    getgenv().VoiceChatInternal:SubscribePauseAll(true)
+                    getgenv().VoiceChatInternal:SubscribePauseAll(true)
                 end
-            end,})
+            else
+                getgenv().LmaoGetMuted = false
+                getgenv().LmaoGetMuted = false
+                getgenv().LmaoGetMuted = false
+                wait(0.3)
+                getgenv().VoiceChatInternal:SubscribePauseAll(false)
+                getgenv().VoiceChatInternal:SubscribePauseAll(false)
+            end
+        end,})
 
-            getgenv().MuteAPlayerSpecific = Tab1:CreateInput({
-            Name = "Mute Player",
-            PlaceholderText = "User",
-            RemoveTextAfterFocusLost = true,
-            Callback = function(getAUser)
-                local derUser = findplr(getAUser)
+        getgenv().MuteAPlayerSpecific = Tab1:CreateInput({
+        Name = "Mute Player",
+        PlaceholderText = "User",
+        RemoveTextAfterFocusLost = true,
+        Callback = function(getAUser)
+            local derUser = findplr(getAUser)
 
-                if not derUser then
-                    return getgenv().notify("Failure!", "User was not found.", 5)
-                end
-                
-                getgenv().shouldMute = true
-                getgenv().MutedPlayers = getgenv().MutedPlayers or {}
-                getgenv().PlayerConnections = getgenv().PlayerConnections or {}
+            if not derUser then
+                return getgenv().notify("Failure!", "User was not found.", 5)
+            end
+            
+            getgenv().shouldMute = true
+            getgenv().MutedPlayers = getgenv().MutedPlayers or {}
+            getgenv().PlayerConnections = getgenv().PlayerConnections or {}
 
-                function MutePlayer(user)
-                    getgenv().notify("Success!", "Player has been muted", 5)
+            function MutePlayer(user)
+                getgenv().notify("Success!", "Player has been muted", 5)
 
-                    while getgenv().shouldMute == true do
-                    wait()
-                        local audiodeviceinput = user:FindFirstChild("AudioDeviceInput")
-
-                        audiodeviceinput.Muted = true
-                    end
-                end
-
-                if getgenv().shouldMute or getgenv().shouldMute == true then
-                    local audiodeviceinput = derUser:FindFirstChild("AudioDeviceInput")
+                while getgenv().shouldMute == true do
+                wait()
+                    local audiodeviceinput = user:FindFirstChild("AudioDeviceInput")
 
                     audiodeviceinput.Muted = true
-                    wait(0.2)
-                    getgenv().notify("Success", "Player has been muted!", 5)
-                else
-                    getgenv().notify("Success!", "Loop was enabled already, new player muted.", 5)
-                    wait(0.1)
-                    MutePlayer(derUser)
                 end
-            end,})
-        else
-            warn("AudioDeviceInput not found in experience, not loading.")
-        end
+            end
+
+            if getgenv().shouldMute or getgenv().shouldMute == true then
+                local audiodeviceinput = derUser:FindFirstChild("AudioDeviceInput")
+
+                audiodeviceinput.Muted = true
+                wait(0.2)
+                getgenv().notify("Success", "Player has been muted!", 5)
+            else
+                getgenv().notify("Success!", "Loop was enabled already, new player muted.", 5)
+                wait(0.1)
+                MutePlayer(derUser)
+            end
+        end,})
+    else
+        warn("AudioDeviceInput not found in experience, not loading.")
     end
 
     getgenv().ResetButton = Tab15:CreateButton({
