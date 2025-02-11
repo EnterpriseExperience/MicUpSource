@@ -442,11 +442,15 @@
                 
                 for i = 1, 7 do
                     VoiceChatInternal:Leave()
-                    wait()
+                    wait(0.2)
+                    VoiceChatService:rejoinVoice()
+                    VoiceChatService:rejoinVoice()
+                    wait(0.1)
                     VoiceChatService:joinVoice()
                     wait(0.3)
                     VoiceChatInternal:Leave()
-                    task.wait()
+                    task.wait(.3)
+                    VoiceChatService:rejoinVoice()
                     VoiceChatService:joinVoice()
                 end
                 wait(1)
@@ -3253,106 +3257,6 @@
         end,})
     else
         warn("User is not on MushYO! 🔊, not putting these here.")
-    end
-
-    if getgenv().ReplicatedStorage:FindFirstChild("SubmitTextEvent") then
-        getgenv().SubmitNoteInputBypassText = Tab5:CreateInput({
-        Name = "Note Bypass Input",
-        PlaceholderText = "Note",
-        RemoveTextAfterFocusLost = true,
-        Callback = function(noteToBypass)
-            local Replicated_Storage = getgenv().ReplicatedStorage
-            local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
-
-            local letters = {
-                set1 = {
-                    ["a"] = "ẳ",
-                    ["b"] = "ɓ",
-                    ["c"] = "ㄈ",
-                    ["d"] = "ȡ",
-                    ["e"] = "ȇ",
-                    ["f"] = "ӻ",
-                    ["g"] = "ɠ",
-                    ["h"] = "ȟ",
-                    ["i"] = "׀",
-                    ["j"] = "ǰ",
-                    ["k"] = "ҟ",
-                    ["l"] = "ȴ",
-                    ["m"] = "ɱ",
-                    ["n"] = "冂",
-                    ["o"] = "ό",
-                    ["p"] = "ᵽ",
-                    ["q"] = "ԛ",
-                    ["r"] = "ŗ",
-                    ["s"] = "ȿ",
-                    ["t"] = "丅",
-                    ["u"] = "ȕ",
-                    ["v"] = "ѵ",
-                    ["w"] = "ώ",
-                    ["x"] = "ẍ",
-                    ["y"] = "ƴ",
-                    ["z"] = "ȥ",
-                }
-            }
-
-            local numbers = {
-                set1 = {
-                    ["0"] = "Θ",
-                    ["1"] = "Ɩ",
-                    ["2"] = "ƻ",
-                    ["3"] = "Ʒ",
-                    ["4"] = "🄅",
-                    ["5"] = "Ƽ",
-                    ["6"] = "Ϭ",
-                    ["7"] = "🄈",
-                    ["8"] = "Ȣ",
-                    ["9"] = "Θ",
-                }
-            }
-
-            local function convert(text)
-                local letters_set = letters["set1"]
-                local numbers_set = numbers["set1"]
-            
-                local converted = ""
-                for i = 1, #text do
-                    local char = text:sub(i, i)
-                    local lower_char = char:lower()
-            
-                    if char:match("%a") then
-                        if lettersBypass then
-                            converted = converted .. char
-                        else
-                            converted = converted .. (letters_set[lower_char] or char)
-                        end
-                    elseif char:match("%d") then
-                        if numbersBypass then
-                            converted = converted .. char
-                        else
-                            converted = converted .. (numbers_set[char] or char)
-                        end
-                    else
-                        converted = converted .. char
-                    end
-                end
-                return converted
-            end
-            task.wait(.7)
-            local function send_Remote(msg)
-                local Replicated_Storage = getgenv().ReplicatedStorage
-                local Submit_Note_Remote = Replicated_Storage:FindFirstChild("SubmitTextEvent") or Replicated_Storage:WaitForChild("SubmitTextEvent")
-
-                local args = {
-                    [1] = tostring(convert(msg))
-                }
-
-                Submit_Note_Remote:FireServer(unpack(args))
-            end
-            
-            send_Remote(noteToBypass)
-        end,})
-    else
-        warn("'SubmitTextEvent' was not found in ReplicatedStorage, continuing without this option.")
     end
 
     if game.PlaceId == 97399198116506 then 
