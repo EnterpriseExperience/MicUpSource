@@ -1,1 +1,38 @@
+local Zacks_Easy_Configuration = {
+    Custom_Animation_Package_System = "off",
+    Animation_Idle = "Superhero",
+    Animation_Walk = "Adidas",
+    Animation_Run = "Adidas",
+    Animation_Jump = "Levitation",
+    Animation_Fall = "Levitation",
+    Animation_Climb = "Superhero",
+    Death_On_Load = "on",
+    Emote_Keybinds = "off",
+    AntiAFK = "on",
+    Loading_Screen = "off",
+    Mute_Boomboxes_Cellmates_VC_Game_Setting = "off",
+    Mute_Music_Volume_Cellmates_VC_Game_Setting = "off",
+    Mute_Sound_Effects_Cellmates_VC_Game_Setting = "off",
+    System_Broken_Title = "off",
+    System_Broken_Text_Title = "System Broken New Title Here",
+    Fully_Loaded_Messaging = "off",
+    Fully_Loaded_Message = "Zacks Easy Hub - Winning.",
+    Huge_Baseplate = "on",
+    Script_Clock_Time_GUI = "off",
+    Anti_Suspend_VC = "on",
+    Infinite_Yield_Premium = "on",
+    Performance_Statistics = "on",
+    Old_Materials = "off",
+    System_Broken = "on",
+    keep_tp_tool = "off",
+}
+
+getgenv().Easies_Configuration = getgenv().Easies_Configuration or {}
+
+for key, value in pairs(Zacks_Easy_Configuration) do
+    if getgenv().Easies_Configuration[key] == nil then
+        getgenv().Easies_Configuration[key] = value
+    end
+end
+wait(0.1)
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
