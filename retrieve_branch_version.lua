@@ -1,18 +1,18 @@
---[[
-    ['Current Scope - START']: Graphical Data.
-        <---------------------------->
-        A. Updates now usually only include stabilization, performance and bug fixes.
-        B. If you distribute, advertise, or promote this script or use it in any video at all, examples include: using our source on script's you make, you MUST include my credit, otherwise you will be forced to shutdown.
-        C. Do not obfuscate my script, as this project is open source and the compatibility will not hold up while obfuscated, since this script is over ~6,970+ lines long.
-        D. You must abide by the 'User Agreement' and adhere to our 'Guidelines' and 'Policies' when utilizing our 'ALL-FREE' services [You can find this posted to our Discord.]
-        E. We are advancing soon to new game's and going to release more products and services, and have more content coming soon.
-        F. We have released a Neighbors script in our Discord: https://discord.gg/VJh3kkYzBn
-        G. If you are reading this, we are also releasing an all out universal Admin script that'll also have bypass WalkSpeed, JumpPower, Fly, etc and let you fly and do orbit, etc.
-        H. Remember to always chase your dreams! they will always catch back up to you one way or another, I only started this Discord in September of 2024, and it's MASSIVE, with over 1,200 people already.
-        <---------------------------->
-    ['Current Scope - END']: Graphical Data.
---]]
-
+    --[[
+        ['Current Scope - START']: Graphical Data.
+            <---------------------------->
+            A. Updates now usually only include stabilization, performance and bug fixes.
+            B. If you distribute, advertise, or promote this script or use it in any video at all, examples include: using our source on script's you make, you MUST include my credit, otherwise you will be forced to shutdown.
+            C. Do not obfuscate my script, as this project is open source and the compatibility will not hold up while obfuscated, since this script is over ~6,970+ lines long.
+            D. You must abide by the 'User Agreement' and adhere to our 'Guidelines' and 'Policies' when utilizing our 'ALL-FREE' services [You can find this posted to our Discord.]
+            E. We are advancing soon to new game's and going to release more products and services, and have more content coming soon.
+            F. We have released a Neighbors script in our Discord: https://discord.gg/VJh3kkYzBn
+            G. If you are reading this, we are also releasing an all out universal Admin script that'll also have bypass WalkSpeed, JumpPower, Fly, etc and let you fly and do orbit, etc.
+            H. Remember to always chase your dreams! they will always catch back up to you one way or another, I only started this Discord in September of 2024, and it's MASSIVE, with over 1,200 people already.
+            <---------------------------->
+        ['Current Scope - END']: Graphical Data.
+    --]]
+    
     --[[
         Animation Packages: Zombie, Catwalk Glam, Elder, Cartoony, Adidas,
         Adidas, Werewolf, Vampire, Astronaut,
@@ -22,7 +22,7 @@
         Wicked Popular, Bold, Stylish,
         Rthro [default Roblox Animation package]
     --]]
-
+    
     -- Don't touch this for now, it's just the default for a fallback, not to be edited, because then you won't be able to revert your configuration to the base settings without losing all data.
     local __DEFAULT_CONFIGURATION = {
         -- Use the names above to choose and load custom Animation Packages (they will keep on respawn to).
@@ -52,7 +52,58 @@
         System_Broken = "on",
         keep_tp_tool = "off",
     }
+
+    local Zacks_Easy_Configuration = {
+        Custom_Animation_Package_System = "off",
+        Animation_Idle = "Superhero",
+        Animation_Walk = "Adidas",
+        Animation_Run = "Adidas",
+        Animation_Jump = "Levitation",
+        Animation_Fall = "Levitation",
+        Animation_Climb = "Superhero",
+        Death_On_Load = "on",
+        Emote_Keybinds = "off",
+        AntiAFK = "on",
+        Loading_Screen = "on",
+        Mute_Boomboxes_Cellmates_VC_Game_Setting = "off",
+        Mute_Music_Volume_Cellmates_VC_Game_Setting = "off",
+        Mute_Sound_Effects_Cellmates_VC_Game_Setting = "off",
+        System_Broken_Title = "off",
+        System_Broken_Text_Title = "System Broken New Title Here",
+        Fully_Loaded_Messaging = "off",
+        Fully_Loaded_Message = "Zacks Easy Hub - Winning.",
+        Huge_Baseplate = "on",
+        Script_Clock_Time_GUI = "off",
+        Anti_Suspend_VC = "on",
+        Infinite_Yield_Premium = "off",
+        Performance_Statistics = "off",
+        Old_Materials = "off",
+        System_Broken = "off",
+        keep_tp_tool = "off",
+    }
     wait(0.2)
+    local configFileName = "Easies_Configuration.json"
+    wait()
+    getgenv().Easies_Configuration = getgenv().Easies_Configuration or {}
+
+    for key, value in pairs(Zacks_Easy_Configuration) do
+        if getgenv().Easies_Configuration[key] == nil then
+            getgenv().Easies_Configuration[key] = value
+        end
+    end
+    wait()
+    local function load_ez_Config()
+        if isfile(configFileName) then
+            local json = readfile(configFileName)
+            getgenv().Easies_Configuration = game:GetService("HttpService"):JSONDecode(json)
+            print("Loaded Configuration Successfully!")
+        else
+            warn("Failure!: No saved configuration found.")
+        end
+    end
+    wait()
+    load_ez_Config()
+    wait()
     --[[if isfile and isfile("EmoteConfig.json") then
         getgenv().Easies_Configuration["Death_On_Load"] = "on"
     else
@@ -115,7 +166,7 @@
                     Rounding = true,
                 }
             });
-            return
+            return 
         end
         -- Wait 7 seconds so the user has time to see it (unlike waiting like 3 seconds or something).
     end
@@ -144,7 +195,7 @@
                 Rounding = true,
             }
         });
-        return
+        return 
     elseif (enabled_vc == false and (not game.PlaceId == 6884319169)) or (not game.PlaceId == 15546218972) then
         Notification.Notify("Welcome", tostring(game.Players.LocalPlayer.Name).." does not have Voice Chat.", "rbxassetid://93594537601787", {
             Duration = 5,
@@ -153,7 +204,297 @@
             }
         });
     end
-    wait(0.2)
+    wait()
+    local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+    local LocalPlayer = Players.LocalPlayer
+    
+    local ChatChannel = TextChatService:WaitForChild("TextChannels"):FindFirstChild("RBXGeneral")
+    local SECRET_CHAT_CODE = "- ? -"
+    
+    local function getOrCreateFolder(name)
+        local folder = ReplicatedStorage:FindFirstChild(name)
+        if not folder then
+            folder = Instance.new("Folder")
+            folder.Name = name
+            folder.Parent = ReplicatedStorage
+        end
+        return folder
+    end
+    
+    local activeClientsFolder = getOrCreateFolder("ActiveClients")
+    
+    local support_team = {"Ixgale7530", "starsorbitspace", "goldgoldgoldBlazn", "euigwerergre", "o7rssuk"}
+    local admin_team = {"Ransacked007", "IIIIDOXII", "IIIIDOXIII"}
+    getgenv().ActiveClients = getgenv().ActiveClients or {}
+    
+    local function is_support_team()
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if table.find(support_team, v.Name) then
+                return true
+            end
+        end
+        return false
+    end
+
+    local function is_admin_team()
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if table.find(admin_team, v.Name) then
+                return true
+            end
+        end
+        return false
+    end
+    wait()
+    local function createTitle(Plr)
+        if getgenv().ActiveClients[Plr.UserId] then return end
+        getgenv().ActiveClients[Plr.UserId] = Plr.Name
+        
+        local playerData = activeClientsFolder:FindFirstChild(tostring(Plr.UserId))
+        if not playerData then
+            playerData = Instance.new("StringValue")
+            playerData.Name = tostring(Plr.UserId)
+            playerData.Value = Plr.Name
+            playerData.Parent = activeClientsFolder
+        end
+        
+        local character = Plr.Character or Plr.CharacterAdded:Wait(1)
+        wait()
+        if Plr.Name == "L0CKED_1N1" or Plr.Name == "CHEATING_B0SS" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Name = "ZacksEasyBillboard"
+            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+            billboardGui.MaxDistance = math.huge
+            billboardGui.LightInfluence = 0
+            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+            billboardGui.AlwaysOnTop = true
+            billboardGui.Parent = character:WaitForChild("Head", 0.5)
+        
+            local background = Instance.new("Frame")
+            background.Active = true
+            background.Size = UDim2.new(1, 0, 1, 0)
+            background.BackgroundTransparency = 0.2
+            background.BackgroundColor3 = Color3.fromRGB(110, 0, 161)
+            background.BorderSizePixel = 0
+            background.Parent = billboardGui
+        
+            local uiCorner = Instance.new("UICorner")
+            uiCorner.CornerRadius = UDim.new(0.3, 0)
+            uiCorner.Parent = background
+        
+            local textLabel = Instance.new("TextLabel")
+            textLabel.Size = UDim2.new(1, -10, 1, -10)
+            textLabel.Position = UDim2.new(0, 5, 0, 5)
+            textLabel.BackgroundTransparency = 1
+            textLabel.TextScaled = true
+            textLabel.Font = Enum.Font.GothamBold
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.TextStrokeTransparency = 0
+            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            textLabel.Text = "🔥 Zacks Easy Hub | Owner 🔥"
+            textLabel.Parent = background
+        elseif Plr.Name ~= "L0CKED_1N1" and Plr.Name ~= "CHEATING_B0SS" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Name = "ZacksEasyBillboard"
+            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+            billboardGui.MaxDistance = math.huge
+            billboardGui.LightInfluence = 0
+            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+            billboardGui.AlwaysOnTop = true
+            billboardGui.Parent = character:WaitForChild("Head", 0.5)
+        
+            local background = Instance.new("Frame")
+            background.Active = true
+            background.Size = UDim2.new(1, 0, 1, 0)
+            background.BackgroundTransparency = 0.2
+            background.BackgroundColor3 = Color3.fromRGB(110, 0, 161)
+            background.BorderSizePixel = 0
+            background.Parent = billboardGui
+        
+            local uiCorner = Instance.new("UICorner")
+            uiCorner.CornerRadius = UDim.new(0.3, 0)
+            uiCorner.Parent = background
+        
+            local textLabel = Instance.new("TextLabel")
+            textLabel.Size = UDim2.new(1, -10, 1, -10)
+            textLabel.Position = UDim2.new(0, 5, 0, 5)
+            textLabel.BackgroundTransparency = 1
+            textLabel.TextScaled = true
+            textLabel.Font = Enum.Font.GothamBold
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.TextStrokeTransparency = 0
+            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            textLabel.Text = "✅ Zacks Easy Hub - Client ✅"
+            textLabel.Parent = background
+        elseif Plr.Name == "adorxfleurys" or Plr.Name == "lucxd19K5" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Name = "ZacksEasyBillboard"
+            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+            billboardGui.MaxDistance = math.huge
+            billboardGui.LightInfluence = 0
+            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+            billboardGui.AlwaysOnTop = true
+            billboardGui.Parent = character:WaitForChild("Head", 0.5)
+        
+            local background = Instance.new("Frame")
+            background.Active = true
+            background.Size = UDim2.new(1, 0, 1, 0)
+            background.BackgroundTransparency = 0.2
+            background.BackgroundColor3 = Color3.fromRGB(110, 0, 161)
+            background.BorderSizePixel = 0
+            background.Parent = billboardGui
+        
+            local uiCorner = Instance.new("UICorner")
+            uiCorner.CornerRadius = UDim.new(0.3, 0)
+            uiCorner.Parent = background
+        
+            local textLabel = Instance.new("TextLabel")
+            textLabel.Size = UDim2.new(1, -10, 1, -10)
+            textLabel.Position = UDim2.new(0, 5, 0, 5)
+            textLabel.BackgroundTransparency = 1
+            textLabel.TextScaled = true
+            textLabel.Font = Enum.Font.GothamBold
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.TextStrokeTransparency = 0
+            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            textLabel.Text = "❤️ Zacks Easy Hub - Wife ❤️"
+            textLabel.Parent = background
+        elseif is_support_team() and character and not character:FindFirstChild("ZacksEasyBillboard") then
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Name = "ZacksEasyBillboard"
+            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+            billboardGui.MaxDistance = math.huge
+            billboardGui.LightInfluence = 0
+            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+            billboardGui.AlwaysOnTop = true
+            billboardGui.Parent = character:WaitForChild("Head", 0.5)
+        
+            local background = Instance.new("Frame")
+            background.Active = true
+            background.Size = UDim2.new(1, 0, 1, 0)
+            background.BackgroundTransparency = 0.2
+            background.BackgroundColor3 = Color3.fromRGB(110, 0, 161)
+            background.BorderSizePixel = 0
+            background.Parent = billboardGui
+        
+            local uiCorner = Instance.new("UICorner")
+            uiCorner.CornerRadius = UDim.new(0.3, 0)
+            uiCorner.Parent = background
+        
+            local textLabel = Instance.new("TextLabel")
+            textLabel.Size = UDim2.new(1, -10, 1, -10)
+            textLabel.Position = UDim2.new(0, 5, 0, 5)
+            textLabel.BackgroundTransparency = 1
+            textLabel.TextScaled = true
+            textLabel.Font = Enum.Font.GothamBold
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.TextStrokeTransparency = 0
+            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            textLabel.Text = "⚒️ Zacks Easy Hub - Support ⚒️"
+            textLabel.Parent = background
+        elseif is_admin_team() and character and not character:FindFirstChild("ZacksEasyBillboard") then
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Name = "ZacksEasyBillboard"
+            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+            billboardGui.MaxDistance = math.huge
+            billboardGui.LightInfluence = 0
+            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+            billboardGui.AlwaysOnTop = true
+            billboardGui.Parent = character:WaitForChild("Head", 0.5)
+        
+            local background = Instance.new("Frame")
+            background.Active = true
+            background.Size = UDim2.new(1, 0, 1, 0)
+            background.BackgroundTransparency = 0.2
+            background.BackgroundColor3 = Color3.fromRGB(110, 0, 161)
+            background.BorderSizePixel = 0
+            background.Parent = billboardGui
+        
+            local uiCorner = Instance.new("UICorner")
+            uiCorner.CornerRadius = UDim.new(0.3, 0)
+            uiCorner.Parent = background
+        
+            local textLabel = Instance.new("TextLabel")
+            textLabel.Size = UDim2.new(1, -10, 1, -10)
+            textLabel.Position = UDim2.new(0, 5, 0, 5)
+            textLabel.BackgroundTransparency = 1
+            textLabel.TextScaled = true
+            textLabel.Font = Enum.Font.GothamBold
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.TextStrokeTransparency = 0
+            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            textLabel.Text = "🗡️ Zacks Easy Hub - Admin 🗡️"
+            textLabel.Parent = background
+        end
+    end
+    
+    local function onChatMessage(message)
+        if message.Text == SECRET_CHAT_CODE then
+            local sender = Players:GetPlayerByUserId(message.TextSource.UserId)
+            if sender and not getgenv().ActiveClients[sender.UserId] then
+                createTitle(sender)
+            end
+        end
+    end
+    
+    if ChatChannel then
+        TextChatService.MessageReceived:Connect(onChatMessage)
+    end
+    
+    wait(1)
+    if ChatChannel then
+        ChatChannel:SendAsync(SECRET_CHAT_CODE)
+    end
+
+    game.Players.LocalPlayer.CharacterAdded:Connect(function(newChar)
+        if not newChar then return warn("Character did not load properly!") end
+        
+        repeat task.wait(0.5) until newChar:FindFirstChild("Humanoid") and newChar:FindFirstChild("Head")
+        
+        if newChar and getgenv().ActiveClients[game.Players.LocalPlayer.UserId] then
+            getgenv().ActiveClients[game.Players.LocalPlayer.UserId] = nil
+        else
+            warn("LocalPlayer is not an active Client in the 'getgenv().ActiveClients' table. | Continuing.")
+        end
+        task.wait(0.6)
+        ChatChannel:SendAsync(SECRET_CHAT_CODE)
+        task.wait(0.3)
+        createTitle(game.Players.LocalPlayer)
+    end)    
+    
+    Players.PlayerAdded:Connect(function(Plr)
+        task.wait(1)
+        if Plr == LocalPlayer and ChatChannel then
+            ChatChannel:SendAsync(SECRET_CHAT_CODE)
+        end
+    end)
+    
+    Players.PlayerRemoving:Connect(function(Plr)
+        if getgenv().ActiveClients[Plr.UserId] then
+            getgenv().ActiveClients[Plr.UserId] = nil
+            local playerData = activeClientsFolder:FindFirstChild(tostring(Plr.UserId))
+            if playerData then
+                playerData:Destroy()
+            end
+        end
+    end)
+    
+    for _, Plr in pairs(Players:GetPlayers()) do
+        if getgenv().ActiveClients[Plr.UserId] then
+            createTitle(Plr)
+        end
+    end
+    
+    activeClientsFolder.ChildAdded:Connect(function(child)
+        if child:IsA("StringValue") and child.Name ~= tostring(LocalPlayer.UserId) then
+            task.wait(0.5)
+            if child and ChatChannel then
+                ChatChannel:SendAsync(SECRET_CHAT_CODE)
+            end
+        end
+    end)
+    wait(0.1)
     if getgenv().clock_script_time then
         warn("Already loaded Clock GUI or user has already clicked 'No'")
     else
@@ -188,7 +529,7 @@
             ClockGUI.ResetOnSpawn = false
             ClockGUI.Parent = PlayerGui
             ClockGUI.IgnoreGuiInset = true
-
+            
             Clock_Frame.Name = "Clock_Frame"
             Clock_Frame.Parent = ClockGUI
             Clock_Frame.Active = true
@@ -431,40 +772,53 @@
             local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
             
             local reconnecting = false
-            local retryDuration = 6
+            local retryDuration = 4
+            local maxAttempts = 40
             
             local function forceRejoinVoiceChat()
-                if reconnecting then return end
+                if reconnecting then return warn("Voice Chat Is Still Reconnecting.") end
                 reconnecting = true
             
-                local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
-                local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
-                
-                for i = 1, 7 do
+                local attempts = 0
+                while attempts < maxAttempts do
+                    local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
+                    local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
+                    
+                    print("Attempting to reconnect to voice chat... Attempt:", attempts + 1)
+                    wait()
                     VoiceChatInternal:Leave()
                     wait(0.2)
-                    VoiceChatService:rejoinVoice()
                     VoiceChatService:rejoinVoice()
                     wait(0.1)
                     VoiceChatService:joinVoice()
                     wait(0.3)
                     VoiceChatInternal:Leave()
-                    task.wait(.3)
+                    task.wait(0.3)
                     VoiceChatService:rejoinVoice()
                     VoiceChatService:joinVoice()
+                    wait(1)
+                    if vc_internal.State ~= Enum.VoiceChatState.Ended then
+                        print("Successfully reconnected to voice chat!")
+                        reconnecting = false
+                        return 
+                    end
+            
+                    attempts = attempts + 1
+                    wait(retryDuration)
                 end
-                wait(1)
+            
+                warn("Failed to reconnect after " .. maxAttempts .. " attempts.")
                 reconnecting = false
             end
             
             local function onVoiceChatStateChanged(_, newState)
                 if newState == Enum.VoiceChatState.Ended and not reconnecting then
-                    wait(retryDuration)
+                    print("Voice chat disconnected, attempting to reconnect...")
                     forceRejoinVoiceChat()
                 end
             end
             
-            vc_internal.StateChanged:Connect(onVoiceChatStateChanged)
+            vc_internal.StateChanged:Connect(onVoiceChatStateChanged)            
         else
             warn("Not enabled in Configuration.")
         end
@@ -499,7 +853,18 @@
             end
         end
 
+        getgenv().otherFuncCheck = function(function_checked)
+            if function_checked then
+                return true
+            elseif not function_checked or function_checked == nil then
+                return false
+            else
+                return nil
+            end
+        end
+
         local GC = getconnections or get_signal_cons
+        local Other_Check = Drawing or Drawing.new
 
         getgenv().checkNecessaryFunctions(cloneref)
         wait()
@@ -513,13 +878,15 @@
         wait()
         getgenv().checkNecessaryFunctions(GC)
         wait()
+        getgenv().checkNecessaryFunctions(Other_Check)
+        wait()
         getgenv().checkNecessaryFunctions(getgenv().AllClipboards)
         wait(0.1)
         getgenv().has_checked_funcs = true
     end
     wait(0.2)
     -- [] -->> Check if the selected experience/game is MIC UP | Ensuring they do not run Zacks Easy Hub outside of MIC UP 🔊 or MIC UP 🔊 17+ <<-- [] --
-    --[[if getgenv().PlaceID == 6884319169 then
+    if getgenv().PlaceID == 6884319169 then
         print("\n<--------------------->\nConnected On MIC UP 🔊\n<--------------------->\n")
     elseif getgenv().PlaceID == 15546218972 then
         print("\n<--------------------->\nConnected On MIC UP 🔊 17+\n<--------------------->\n")
@@ -563,10 +930,10 @@
         end)
         wait()
         getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
-    end--]]
+    end
     wait(0.2)
     if getgenv().emotes_bypassed then
-        warn("Okay, emotes are already bypassed.")
+        warn("Emotes are already bypassed.")
     else
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Emote_Bypass_Script.lua'))()
         getgenv().emotes_bypassed = true
@@ -609,7 +976,7 @@
                 local maxSize = 0.35
                 local minSize = 0.25
                 
-                while elapsedTime < 8 do
+                while elapsedTime < 5 do
                     local scale = minSize + (math.abs(math.sin(elapsedTime * zoomSpeed)) * (maxSize - minSize))
                     image.Size = UDim2.new(scale, 0, scale, 0)
                 
@@ -628,7 +995,7 @@
         getgenv().loading_screen_data = true
         wait(0.1)
         -- Correctly initialize our Folder we put into Workspace, since we can use this for later in the script as well.
-        if getgenv().Workspace:FindFirstChild("PartStorage") then
+        if game:GetService("Workspace"):FindFirstChild("PartStorage") then
             print("Already found Folder")
         else
             local NewFolder = Instance.new("Folder")
@@ -661,7 +1028,7 @@
                     textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
                     textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
                     textLabel.BackgroundTransparency = 1
-                    textLabel.Text = "Current Status: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🎇 Zacks Easy Hub 🎇\n----------------------------\nIs creating a Baseplate,\n\nPlease wait until this screen disappears."
+                    textLabel.Text = "Current Status: <font color=\"rgb(255,0,0)\">Frozen</font>\n--------------\n🔥 Zacks Easy Hub 🔥\n----------------------------\nIs creating a Baseplate,\n\nPlease wait until this screen disappears."
                     textLabel.RichText = true
                     textLabel.TextColor3 = Color3.fromRGB(163, 162, 165)
                     textLabel.TextScaled = true
@@ -775,89 +1142,125 @@
         UserInputService = game:GetService("UserInputService")
     end
     wait(0.2)
-    if getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
-        local function toggle_mute()
-            local player = Players.LocalPlayer
-            if not player then return end
+    if getgenv().already_loaded_mute_keybind then
+        warn("Already initialized mute keybind.")
+    else
+        if getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
+            local function toggle_mute()
+                local player = Players.LocalPlayer
+                if not player then return end
 
-            local audioInput = player:FindFirstChildOfClass("AudioDeviceInput")
-            if audioInput then
-                audioInput.Muted = not audioInput.Muted
-                if audioInput.Muted or audioInput.Muted == true then
+                local audioInput = player:FindFirstChildOfClass("AudioDeviceInput")
+                if audioInput then
+                    audioInput.Muted = not audioInput.Muted
+                    if audioInput.Muted or audioInput.Muted == true then
+                        getgenv().notify("Success", "Muted Microphone.", 6)
+                    elseif not audioInput.Muted or audioInput.Muted == false then
+                        getgenv().notify("Success", "Unmuted Microphone.", 6.5)
+                    end
+                end
+            end
+
+            UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+                if input.KeyCode == Enum.KeyCode.RightControl or input.KeyCode == Enum.KeyCode.RightAlt then
+                    toggle_mute()
+                end
+            end)
+            wait(0.1)
+            getgenv().already_loaded_mute_keybind = true
+        elseif not getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
+            local function toggle_mute()
+                local player = Players.LocalPlayer
+                if not player then return end
+
+                getgenv().VoiceChatInternal:SubscribePause(getgenv().LocalPlayer.UserId, not getgenv().VoiceChatInternal:IsSubscribePaused(getgenv().LocalPlayerUserId))
+
+                local vc_result_paused = getgenv().VoiceChatInternal:IsSubscribePaused(getgenv().LocalPlayer.UserId)
+
+                if vc_result_paused == true then
                     getgenv().notify("Success", "Muted Microphone.", 6)
-                elseif not audioInput.Muted or audioInput.Muted == false then
+                elseif vc_result_paused == false then
                     getgenv().notify("Success", "Unmuted Microphone.", 6.5)
                 end
             end
-        end
 
-        UserInputService.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            if input.KeyCode == Enum.KeyCode.RightControl or input.KeyCode == Enum.KeyCode.RightAlt then
-                toggle_mute()
-            end
-        end)
-    else
-        warn("'AudioDeviceInput' does not exist in 'LocalPlayer', not loading 'Mute Keybind'.")
+            UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+                if input.KeyCode == Enum.KeyCode.RightControl or input.KeyCode == Enum.KeyCode.RightAlt then
+                    toggle_mute()
+                end
+            end)
+            wait(0.1)
+            getgenv().already_loaded_mute_keybind = true
+        else
+            warn("Voice Chat is either not turned on or is not enabled in the current game | Cannot load 'Mute Keybind'.")
+        end
     end
     wait(0.2)
-    if getgenv().conveyer_stored then
-        warn("Already stored conveyer's")
-    else
-        local Storage = Workspace:FindFirstChild("PartStorage")
-        local CFrames = {
-            ["Conveyer_1"] = CFrame.new(203.401642, 12.8743448, -100.937836, 1.4424324e-05, -0.70705986, -0.707153797, 5.9902668e-06, 0.707153738, -0.70705986, 1, 5.9902668e-06, 1.4424324e-05),
-            ["Conveyer_2"] = CFrame.new(221.043793, 28.0164795, -104.937843, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            ["Conveyer_3"] = CFrame.new(217.043793, 28.0164833, -113.937866, -1.1920929e-07, 0, 1.00000012, 0, 1, 0, -1.00000012, 0, -1.1920929e-07),
-            ["Conveyer_4"] = CFrame.new(196.330627, 43.4307442, -113.937851, -3.23057175e-05, 0.707153201, 0.707060337, 1.33812428e-05, 0.707060337, -0.707153201, -1, -1.33812428e-05, -3.23057175e-05)
-        }
-        wait(0.2)
-        for name, cf in pairs(CFrames) do
-            for _, v in ipairs(Workspace:GetChildren()) do
-                if v:IsA("BasePart") and v.CFrame == cf then
-                    v.Name = name
-                    v.Parent = Storage
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        if getgenv().conveyer_stored then
+            warn("Already stored conveyer's")
+        else
+            local Storage = Workspace:FindFirstChild("PartStorage")
+            local CFrames = {
+                ["Conveyer_1"] = CFrame.new(203.401642, 12.8743448, -100.937836, 1.4424324e-05, -0.70705986, -0.707153797, 5.9902668e-06, 0.707153738, -0.70705986, 1, 5.9902668e-06, 1.4424324e-05),
+                ["Conveyer_2"] = CFrame.new(221.043793, 28.0164795, -104.937843, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                ["Conveyer_3"] = CFrame.new(217.043793, 28.0164833, -113.937866, -1.1920929e-07, 0, 1.00000012, 0, 1, 0, -1.00000012, 0, -1.1920929e-07),
+                ["Conveyer_4"] = CFrame.new(196.330627, 43.4307442, -113.937851, -3.23057175e-05, 0.707153201, 0.707060337, 1.33812428e-05, 0.707060337, -0.707153201, -1, -1.33812428e-05, -3.23057175e-05)
+            }
+            wait(0.2)
+            for name, cf in pairs(CFrames) do
+                for _, v in ipairs(Workspace:GetChildren()) do
+                    if v:IsA("BasePart") and v.CFrame == cf then
+                        v.Name = name
+                        v.Parent = Storage
+                    end
+                end
+                wait(0.1)
+            end
+            wait(0.3)
+            for _, v in ipairs(Storage:GetChildren()) do
+                if v.Name == "Conveyer_1" then
+                    v.Transparency = 0.3
+                    v.BrickColor = BrickColor.new("Really black")
                 end
             end
             wait(0.1)
-        end
-        wait(0.3)
-        for _, v in ipairs(Storage:GetChildren()) do
-            if v.Name == "Conveyer_1" then
-                v.Transparency = 0.3
-                v.BrickColor = BrickColor.new("Really black")
+            for _, v in ipairs(Storage:GetChildren()) do
+                if v.Name == "Conveyer_2" then
+                    v.Transparency = 0.3
+                    v.BrickColor = BrickColor.new("Really black")
+                end
             end
-        end
-        wait(0.1)
-        for _, v in ipairs(Storage:GetChildren()) do
-            if v.Name == "Conveyer_2" then
-                v.Transparency = 0.3
-                v.BrickColor = BrickColor.new("Really black")
+            wait(0.1)
+            for _, v in ipairs(Storage:GetChildren()) do
+                if v.Name == "Conveyer_3" then
+                    v.Transparency = 0.3
+                    v.BrickColor = BrickColor.new("Really black")
+                end
             end
-        end
-        wait(0.1)
-        for _, v in ipairs(Storage:GetChildren()) do
-            if v.Name == "Conveyer_3" then
-                v.Transparency = 0.3
-                v.BrickColor = BrickColor.new("Really black")
+            wait(0.1)
+            for _, v in ipairs(Storage:GetChildren()) do
+                if v.Name == "Conveyer_4" then
+                    v.Transparency = 0.3
+                    v.BrickColor = BrickColor.new("Really black")
+                end
             end
-        end
-        wait(0.1)
-        for _, v in ipairs(Storage:GetChildren()) do
-            if v.Name == "Conveyer_4" then
-                v.Transparency = 0.3
-                v.BrickColor = BrickColor.new("Really black")
+            wait(0.2)
+            for _, v in ipairs(Workspace:GetChildren()) do
+                if v:IsA("MeshPart") and v.CFrame == CFrame.new(170.998001, 58, -113.500031, -1, 0, 0, 0, 1, 0, 0, 0, -1) then
+                    v.Name = "MeshPart_Floor_Conveyers"
+                    v.Parent = Workspace:FindFirstChild("PartStorage")
+                    v.Transparency = 0.3
+                    v.BrickColor = BrickColor.new("Really black")
+                end
             end
+            wait(0.1)
+            getgenv().conveyer_stored = true
         end
-        wait(0.2)
-        for _, v in ipairs(Workspace:GetChildren()) do
-            if v:IsA("MeshPart") and v.CFrame == CFrame.new(170.998001, 58, -113.500031, -1, 0, 0, 0, 1, 0, 0, 0, -1) then
-                v.Name = "MeshPart_Floor_Conveyers"
-                v.Parent = Workspace:FindFirstChild("PartStorage")
-                v.Transparency = 0.3
-                v.BrickColor = BrickColor.new("Really black")
-            end
-        end
+    else
+        warn("Not on 'MIC UP' or 'MIC UP 17+', not converting 'MeshPart's' and 'BaseParts'.")
     end
 
     function connect_tp_tool()
@@ -877,37 +1280,43 @@
         end)
     end
     wait(0.1)
-    if getgenv().Easies_Configuration["keep_tp_tool"] == "on" or getgenv().Easies_Configuration["keep_tp_tool"] == "On" or getgenv().Easies_Configuration["keep_tp_tool"] == "Enabled" then
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        
-        local function onCharacterAdded(Character)
-            if not Character then return end
-            print("Character Added: " .. LocalPlayer.Name)
-            wait(0.1)
-            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 5)
-            if not Humanoid then
-                return warn("Humanoid not found, unable to apply TP Tool.")
-            end
-        
-            print("Found Character and Humanoid!")
-            wait()
-            Humanoid.Died:Connect(function()
-                print("LocalPlayer has died. Waiting for respawn...")
-            end)
-            wait(0.5)
-            print("Connecting back to TP Tool...")
-            connect_tp_tool()
-            print("Connected to TP Tool.")
-        end
-        
-        LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-        
-        if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
-            onCharacterAdded(LocalPlayer.Character)
-        end
+    if getgenv().keeping_tp_tool then
+        warn("Already decided to keep teleport tool.")
     else
-        warn("Not enabled in Configuration.")
+        if getgenv().Easies_Configuration["keep_tp_tool"] == "on" or getgenv().Easies_Configuration["keep_tp_tool"] == "On" or getgenv().Easies_Configuration["keep_tp_tool"] == "Enabled" then
+            local Players = game:GetService("Players")
+            local LocalPlayer = Players.LocalPlayer
+            
+            local function onCharacterAdded(Character)
+                if not Character then return end
+                print("Character Added: " .. LocalPlayer.Name)
+                wait(0.1)
+                local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 5)
+                if not Humanoid then
+                    return warn("Humanoid not found, unable to apply TP Tool.")
+                end
+            
+                print("Found Character and Humanoid!")
+                wait()
+                Humanoid.Died:Connect(function()
+                    print("LocalPlayer has died. Waiting for respawn...")
+                end)
+                wait(0.5)
+                print("Connecting back to TP Tool...")
+                connect_tp_tool()
+                print("Connected to TP Tool.")
+            end
+            
+            LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+            
+            if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
+                onCharacterAdded(LocalPlayer.Character)
+            end
+            wait(0.1)
+            getgenv().keeping_tp_tool = true
+        else
+            warn("Not enabled in Configuration.")
+        end
     end
     wait(0.1)
     if getgenv().Easies_Configuration["System_Broken"] == "on" or getgenv().Easies_Configuration["System_Broken"] == "On" or getgenv().Easies_Configuration["System_Broken"] == "Enabled" then
@@ -941,20 +1350,20 @@
     wait()
     local Window 
     wait(0.2)
-    if executor_Name == "Solara" then
+    if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "📜 Zacks Easy Hub 📜 | V7.7.8 | "..tostring(executor_Name),
+            Name = "❤️ Zacks Easy Hub ❤️ | V8.0.5 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy ruling MIC UP 🔊",
             LoadingSubtitle = "Zacks Easy Hub | Success.",
             ConfigurationSaving = {
                 Enabled = false,
-                FolderName = "ConfigurationZacskEasyHub",
+                FolderName = "ConfigurationZacksEasyHub",
                 FileName = "ZacksEasyHub"
             },
             Discord = {
                 Enabled = false,
                 Invite = "VJh3kkYzBn",
-                RememberJoins = false
+                RememberJoins = true
             },
             KeySystem = false,
             KeySettings = {
@@ -969,12 +1378,12 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "📜 Zacks Easy Hub 📜 | V7.7.8 | "..tostring(executor_Name),
+            Name = "❤️ Zacks Easy Hub ❤️ | V8.0.5 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy ruling MIC UP 🔊",
             LoadingSubtitle = "Zacks Easy Hub | Success.",
             ConfigurationSaving = {
                 Enabled = false,
-                FolderName = "ConfigurationZacskEasyHub",
+                FolderName = "ConfigurationZacksEasyHub",
                 FileName = "ZacksEasyHub"
             },
             Discord = {
@@ -994,17 +1403,13 @@
             }
         })
     end
-
-    if not Window then
-        getgenv().SCRIPT_EXECUTED = false
-        return warn("No Window was created.")
-    end
     wait(0.1)
     if getgenv().inf_yield_side then
         getgenv().notify("Alert!", "Infinite Premium (IY-Premium) has already been loaded.", 5)
     else
         if getgenv().Easies_Configuration["Infinite_Yield_Premium"] == "on" or getgenv().Easies_Configuration["Infinite_Yield_Premium"] == "On" or getgenv().Easies_Configuration["Infinite_Yield_Premium"] == "Enabled" then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+            wait(0.1)
             getgenv().inf_yield_side = true
         else
             warn("Not enabled in Configuration.")
@@ -1017,6 +1422,8 @@
     local Tab1 = Window:CreateTab("> Main", getgenv().image_use_zacks)
     local Section1 = Tab1:CreateSection("||| / Main Section |||")
 
+    local Tab21
+    local Section21
     local Tab10
     local Section10
     local Tab11
@@ -1042,12 +1449,20 @@
     else
         Tab10 = nil
         Section10 = nil
-        warn("Not loading Teleports, not MIC UP or MIC UP 17+.")
+        warn("Not loading Teleports, not 'MIC UP' or 'MIC UP 17+'.")
     end
     wait(0.2)
     Tab18 = Window:CreateTab("> Map", getgenv().image_use_zacks)
     Section18 = Tab18:CreateSection("||| Map Section |||")
 
+    if getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
+        Tab21 = Window:CreateTab("> VC", getgenv().image_use_zacks)
+        Section21 = Tab21:CreateSection("||| Voice-Chat Section |||")
+    else
+        Tab21 = Window:CreateTab("> VoiceChat", getgenv().image_use_zacks)
+        Section21 = Tab21:CreateSection("||| VC Configuration Section |||")
+    end
+    wait()
     Tab4 = Window:CreateTab("> Chat", getgenv().image_use_zacks)
     Section4 = Tab4:CreateSection("||| Chatting Section |||")
 
@@ -1069,19 +1484,27 @@
     local Tab19
     local Section19
     wait()
-    if Drawing or Drawing.new then
+    local result_get = getgenv().otherFuncCheck(Other_Check)
+    wait()
+    if result_get == false then
+        Tab19 = Window:CreateTab("> Visuals", getgenv().image_use_zacks)
+        Section19 = Tab19:CreateSection("||| Visuals/ESP Section |||")
+    elseif result_get == true then
         Tab19 = Window:CreateTab("> Drawing", getgenv().image_use_zacks)
         Section19 = Tab19:CreateSection("||| Drawing/ESP Section |||")
     else
-        Tab19 = Window:CreateTab("> Visuals", getgenv().image_use_zacks)
-        Section19 = Tab19:CreateSection("||| Visuals/ESP Section |||")
+        Tab19 = Window:CreateTab("> ESP", getgenv().image_use_zacks)
+        Section19 = Tab19:CreateSection("||| ESP's Section |||")
     end
     wait()
     Tab14 = Window:CreateTab("> CopyAnim", getgenv().image_use_zacks)
     Section14 = Tab14:CreateSection("||| Copy Animation Section |||")
 
     Tab15 = Window:CreateTab("> Settings", getgenv().image_use_zacks)
-    Section15 = Tab15:CreateSection("||| UI Settings Section |||")
+    Section15 = Tab15:CreateSection("||| Keybinds and Settings Section |||")
+
+    Tab20 = Window:CreateTab("> Config", getgenv().image_use_zacks)
+    Section20 = Tab20:CreateSection("||| Configuration Section |||")
     wait(0.2)
     if getgenv().Easies_Configuration["Old_Materials"] == "on" or getgenv().Easies_Configuration["Old_Materials"] == "On" or getgenv().Easies_Configuration["Old_Materials"] == "Enabled" then
         local MaterialService = cloneref and cloneref(game:GetService("MaterialService")) or game:GetService("MaterialService")
@@ -1092,8 +1515,6 @@
     else
         warn("Not enabled in Configuration.")
     end
-    wait(0.2)
-    getgenv().loaded_materials = true
     wait(0.1)
     -- Start searching for the 'Game' Folder located in Workspace, and modify they're "Parent" them somewhere else, and the Part 'Teleport' as well, so we are invincible to that platform game where the soccer thing is.
     local GameFolder = getgenv().Workspace:FindFirstChild("Game")
@@ -1193,7 +1614,7 @@
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/BETA-Loading')))()")
         end
     end)
     wait(0.2)
@@ -1210,6 +1631,7 @@
     end
     wait(0.3)
     local TeleportService = game:GetService("TeleportService")
+    local VirtualUser = game:GetService("VirtualUser")
 
     PlaceId, JobId = game.PlaceId, game.JobId
     wait(0.1)
@@ -1222,6 +1644,7 @@
             local GC = getconnections or get_signal_cons
 
             if GC then
+                getgenv().OtherAntiAfk = false
                 getgenv().AntiAfkScript = true
                 wait()
                 for i, v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
@@ -1231,13 +1654,12 @@
                     end
                 end
             else
+                getgenv().AntiAfkScript = false
                 getgenv().OtherAntiAfk = true
                 wait(0.1)
                 warn("Your executor does not support 'getconnections'! Using VirtualUser for Anti-AFK.")
                 wait()
                 getgenv().notify("Starting", "AntiAFK (2) is loading with VirtualUser...", 5)
-
-                local VirtualUser = game:GetService("VirtualUser")
                 wait()
                 game:GetService("Players").LocalPlayer.Idled:Connect(function()
                     getgenv().notify("Idled!", "Clicking button...", 5)
@@ -1248,10 +1670,10 @@
                 end)
             end
 
-            wait(0.4)
+            wait(0.2)
             if getgenv().AntiAfkScript or getgenv().AntiAfkScript == true then
                 getgenv().notify("Success!", "AntiAFK (1) has loaded!", 5)
-            elseif getgenv().OtherAntiAfk or getgenv().OtherAntiAfk == true then
+            elseif not getgenv().AntiAfkScript or getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk or getgenv().OtherAntiAfk == true then
                 getgenv().notify("Success!", "AntiAFK (2) has loaded.", 5)
             end
 
@@ -4877,7 +5299,7 @@
             Title = "feFlip",
             Text = "FE Flip disabled successfully!",
             Icon = "rbxassetid://505845268",
-            Duration = 8,
+            Duration = 5,
             Button1 = "Okay"
         })
     end,})
@@ -4918,6 +5340,67 @@
         end
     end,})
 
+    getgenv().ForceFullyRejoinVC = Tab21:CreateButton({
+    Name = "Force Rejoin VC",
+    Callback = function()
+        local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
+        local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
+
+        VoiceChatInternal:Leave()
+        wait(0.2)
+        VoiceChatService:rejoinVoice()
+        VoiceChatService:rejoinVoice()
+        wait(0.1)
+        VoiceChatService:joinVoice()
+        wait(0.3)
+        VoiceChatInternal:Leave()
+        task.wait(.3)
+        VoiceChatService:rejoinVoice()
+        VoiceChatService:joinVoice()
+    end,})
+
+    getgenv().LeaveVCToFix = Tab21:CreateButton({
+    Name = "Leave VC (Should fix some VC connection issues)",
+    Callback = function()
+        getgenv().VoiceChatInternal:Leave()
+        getgenv().VoiceChatInternal:Leave()
+    end,})
+
+    getgenv().RegularJoinVC = Tab21:CreateButton({
+    Name = "Join Voice Chat (Regular Method)",
+    Callback = function()
+        getgenv().VoiceChatService:joinVoice()
+        getgenv().VoiceChatService:joinVoice()
+    end,})
+
+    getgenv().RegularRejoinVoiceFunction = Tab21:CreateButton({
+    Name = "Rejoin Voice Chat (Regular Method)",
+    Callback = function()
+        getgenv().VoiceChatService:rejoinVoice()
+        getgenv().VoiceChatService:joinVoice()
+        getgenv().VoiceChatService:rejoinVoice()
+    end,})
+
+    getgenv().BreakVCToFix = Tab21:CreateButton({
+    Name = "Fix Voice Chat (Break Method)",
+    Callback = function()
+        local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
+        local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
+
+        for i = 1, 4 do
+            VoiceChatInternal:Leave()
+            VoiceChatService:rejoinVoice()
+            VoiceChatService:rejoinVoice()
+            VoiceChatService:joinVoice()
+            VoiceChatInternal:Leave()
+            VoiceChatService:rejoinVoice()
+            VoiceChatInternal:Leave()
+            task.wait()
+            VoiceChatService:joinVoice()
+            VoiceChatService:rejoinVoice()
+        end
+    end,})
+
     getgenv().faceBangScript = Tab16:CreateButton({
     Name = "Face F**k Script (Press: Z)",
     Callback = function()
@@ -4939,12 +5422,10 @@
                 getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = true
                 getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
                 getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
-                getgenv().HumanoidRootPart.CanCollide = true
             elseif reset_bool == false then
                 getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
                 getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
                 getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
-                getgenv().HumanoidRootPart.CanCollide = false
             else
                 return warn("Invalid input BoolValue.")
             end
@@ -5482,7 +5963,7 @@
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
         wait()
-        getgenv().InfoLabelParagraph = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
+        getgenv().InfoLabelParagraph_2 = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
         wait()
         getgenv().getHoverboardFlyInput = Tab13:CreateInput({
             Name = "Hoverboard Fly",
@@ -6117,16 +6598,18 @@
     getgenv().ClearChatMsgs = Tab4:CreateButton({
     Name = "Clear Chat Messages",
     Callback = function()
-        for i = 1, 6 do
-            getgenv().sending_async(".")
-            getgenv().sending_async(" ")
-            task.wait(0.2)
-            getgenv().sending_async("/cls")
-            task.wait(0.5)
-        end
+        getgenv().sending_async(".")
+        task.wait(0.2)
+        getgenv().sending_async(".")
+        task.wait(0.2)
+        getgenv().sending_async(".")
+        task.wait(0.2)
+        getgenv().sending_async(".")
+        task.wait(0.2)
+        getgenv().sending_async("/cls")
     end,})
 
-    --[[getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
+    getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
     getgenv().RAINBOW_MODE = false
     wait()
     getgenv().EspBox = Tab19:CreateToggle({
@@ -6135,509 +6618,268 @@
     Flag = "TogglingBoxESP",
     Callback = function(box_Esp)
         if box_Esp then
-            getgenv().ESP_ENABLED = true
-            getgenv().ESP_TOGGLE = true
+            getgenv().ESPEnabled = true
 
-            local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-            local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-            local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-            local camera = Workspace.CurrentCamera
-            local userInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
-            local espBoxes = {}
-            getgenv().espBoxes = espBoxes
-
-            local function createBox(player)
-                if not getgenv().ESP_TOGGLE then return end
-                if not player.Character then return end
-                local char = player.Character
-                local root = char:FindFirstChild("HumanoidRootPart")
-                if not root then return end
-
-                local box = Drawing.new("Square")
-                box.Visible = false
-                box.Thickness = 2
-                box.Color = getgenv().color_for_esp_value
-                box.Filled = false
-
-                getgenv().espBoxes[player] = { Box = box, Player = player }
-            end
-
-            local function removeBox(player)
-                if getgenv().espBoxes[player] then
-                    getgenv().espBoxes[player].Box:Remove()
-                    getgenv().espBoxes[player] = nil
-                end
-            end
-
-            local function updateESP()
-                if not getgenv().ESP_TOGGLE then
-                    for _, data in pairs(espBoxes) do
-                        if data.Box then
-                            data.Box:Remove()
-                        end
-                    end
-                    getgenv().espBoxes = {}
-                    table.clear(espBoxes)
-                    return
-                end
-            
-                for player, data in pairs(espBoxes) do
-                    local box = data.Box
-                    local char = player.Character
-            
-                    if not char or not char:FindFirstChild("HumanoidRootPart") then
-                        box:Remove()
-                        espBoxes[player] = nil
-                    else
-                        local root = char.HumanoidRootPart
-                        local vector, onScreen = camera:WorldToViewportPoint(root.Position)
-            
-                        if onScreen then
-                            box.Position = Vector2.new(vector.X - 25, vector.Y - 50)
-                            box.Size = Vector2.new(50, 100)
-                            box.Visible = getgenv().ESP_ENABLED
-                            if getgenv().RAINBOW_MODE then
-                                local hue = tick() % 5 / 5
-                                box.Color = Color3.fromHSV(hue, 1, 1)
-                            end
-                        else
-                            box.Visible = false
-                        end
-                    end
-                end
-            end
-
-            local function onPlayerAdded(player)
-                if not getgenv().ESP_TOGGLE then return end
-                player.CharacterAdded:Connect(function(char)
-                    repeat wait() until char and char:FindFirstChild("HumanoidRootPart")
-                    createBox(player)
-                end)
-            end
-
-            local function onPlayerRemoving(player)
-                removeBox(player)
-            end
-
-            for _, player in ipairs(players:GetPlayers()) do
-                if player ~= players.LocalPlayer then
-                    onPlayerAdded(player)
-                    if player.Character then
-                        createBox(player)
-                    end
-                end
-            end
-
-            getgenv().EspBoxPlayerAddedConnection = players.PlayerAdded:Connect(onPlayerAdded)
-            getgenv().EspBoxPlayerRemovingConnection = players.PlayerRemoving:Connect(onPlayerRemoving)
-
-            getgenv().EspBoxUpdatedConnection = runService.RenderStepped:Connect(updateESP)
-        else
             local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-
-            getgenv().ESP_ENABLED = false
-            getgenv().ESP_TOGGLE = false
-            wait()
-            local function removeBox(player)
-                if getgenv().espBoxes[player] then
-                    getgenv().espBoxes[player].Box:Remove()
-                    getgenv().espBoxes[player] = nil
-                end
-            end
-
-            if getgenv().EspBoxUpdatedConnection then
-                pcall(function()
-                    getgenv().EspBoxUpdatedConnection:Disconnect()
-                end)
-                getgenv().EspBoxUpdatedConnection = nil
-            end
-
-            if getgenv().EspBoxPlayerAddedConnection then
-                pcall(function()
-                    getgenv().EspBoxPlayerAddedConnection:Disconnect()
-                end)
-                getgenv().EspBoxPlayerAddedConnection = nil
-            end
-
-            if getgenv().EspBoxPlayerRemovingConnection then
-                pcall(function()
-                    getgenv().EspBoxPlayerRemovingConnection:Disconnect()
-                end)
-                getgenv().EspBoxPlayerRemovingConnection = nil
-            end
-            wait()
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= Players.LocalPlayer then
-                    if player.Character then
-                        removeBox(player)
-                    end
-                end
-            end
-
-            for _, data in pairs(getgenv().espBoxes or {}) do
-                if data and data.Box then
-                    data.Box:Remove()
-                end
-            end
-            wait(0.3)
-            local result_fullscreen = UserSettings():GetService("UserGameSettings"):InFullScreen()
-            local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
+            local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+            local LocalPlayer = Players.LocalPlayer
+            getgenv().espObjects = {}
             
-            if result_fullscreen == false then
-                GuiService:ToggleFullscreen()
-                wait(1.2)
-                GuiService:ToggleFullscreen()
-            end
-
-            table.clear(getgenv().espBoxes)
-            wait(0.5)
-            task.spawn(function()
-                wait(1)
-                for _, data in pairs(getgenv().espBoxes or {}) do
-                    if data and data.Box then
-                        data.Box:Remove()
-                    end
-                end
-                table.clear(getgenv().espBoxes)
-            end)
-            getgenv().espBoxes = {}
-            wait(0.1)
-            return 
-        end
-    end,})
-
-    getgenv().Skeleton_ESP = Tab19:CreateToggle({
-    Name = "Skeleton",
-    CurrentValue = false,
-    Flag = "ToggleSkeletonESP",
-    Callback = function(isSkelActive)
-        if isSkelActive then
-            getgenv().SKELETON_ESP_ENABLED = true
-            getgenv().espLines = getgenv().espLines or {}
+            local function hsvToRgb(h, s, v)
+                local i = math.floor(h * 6)
+                local f = h * 6 - i
+                local p = v * (1 - s)
+                local q = v * (1 - f * s)
+                local t = v * (1 - (1 - f) * s)
             
-            local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-            local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-            local workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-            local camera = workspace.CurrentCamera
-            
-            local function check_r15(plr)
-                return plr.Character and plr.Character:FindFirstChildOfClass('Humanoid') and plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15
-            end
-            
-            local function removeESP(player)
-                if getgenv().espLines[player] then
-                    for _, line in ipairs(getgenv().espLines[player]) do
-                        if line then line:Remove() end
-                    end
-                    getgenv().espLines[player] = nil
-                end
+                i = i % 6
+                if i == 0 then return Color3.new(v, t, p) 
+                elseif i == 1 then return Color3.new(q, v, p) 
+                elseif i == 2 then return Color3.new(p, v, t) 
+                elseif i == 3 then return Color3.new(p, q, v) 
+                elseif i == 4 then return Color3.new(t, p, v) 
+                elseif i == 5 then return Color3.new(v, p, q) end
             end
             
             local function createESP(player)
-                if not getgenv().SKELETON_ESP_ENABLED then return end
-                if not player.Character then return end
+                if player ~= LocalPlayer then
+                    local character = player.Character
+                    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
             
-                local char = player.Character
-                local humanoid = char:FindFirstChildOfClass("Humanoid")
-                if not humanoid then return end
-                
-                local joints
-                if check_r15(player) then
-                    joints = {
-                        {"Head", "UpperTorso"}, {"UpperTorso", "LowerTorso"},
-                        {"UpperTorso", "LeftUpperArm"}, {"LeftUpperArm", "LeftLowerArm"}, {"LeftLowerArm", "LeftHand"},
-                        {"UpperTorso", "RightUpperArm"}, {"RightUpperArm", "RightLowerArm"}, {"RightLowerArm", "RightHand"},
-                        {"LowerTorso", "LeftUpperLeg"}, {"LeftUpperLeg", "LeftLowerLeg"}, {"LeftLowerLeg", "LeftFoot"},
-                        {"LowerTorso", "RightUpperLeg"}, {"RightUpperLeg", "RightLowerLeg"}, {"RightLowerLeg", "RightFoot"}
-                    }
-                else
-                    joints = {
-                        {"Head", "Torso"}, {"Torso", "Left Arm"}, {"Left Arm", "Left Leg"},
-                        {"Torso", "Right Arm"}, {"Right Arm", "Right Leg"}
-                    }
-                end
-                
-                getgenv().espLines[player] = {}
-                
-                for _, joint in pairs(joints) do
-                    local part1, part2 = char:FindFirstChild(joint[1]), char:FindFirstChild(joint[2])
-                    if part1 and part2 then
-                        local line = Drawing.new("Line")
-                        line.Thickness = 2
-                        line.Color = getgenv().color_for_esp_value
-                        line.Visible = false
-                        table.insert(getgenv().espLines[player], line)
-                    end
+                    local billboard = Instance.new("BillboardGui")
+                    billboard.Name = "ESP"
+                    billboard.Adornee = character:FindFirstChild("HumanoidRootPart")
+                    billboard.Size = UDim2.new(4, 0, 5, 0)
+                    billboard.StudsOffset = Vector3.new(0, 2, 0)
+                    billboard.AlwaysOnTop = true
+            
+                    local frame = Instance.new("Frame")
+                    frame.Size = UDim2.new(1, 0, 1, 0)
+                    frame.BackgroundColor3 = getgenv().color_for_esp_value
+                    frame.BackgroundTransparency = 0.5
+                    frame.BorderSizePixel = 0
+                    frame.Parent = billboard
+            
+                    billboard.Parent = character
+                    getgenv().espObjects[player] = frame
                 end
             end
             
-            local function updateESP()
-                if not getgenv().SKELETON_ESP_ENABLED then
-                    for _, player in pairs(getgenv().espLines) do removeESP(player) end
-                    return
+            local function removeESP(player)
+                if getgenv().espObjects[player] then
+                    getgenv().espObjects[player]:Destroy()
+                    getgenv().espObjects[player] = nil
                 end
-                
-                local hue = tick() % 5 / 5
-                local color = getgenv().RAINBOW_MODE and Color3.fromHSV(hue, 1, 1) or Color3.fromRGB(0, 255, 0)
+            end
             
-                for player, lines in pairs(getgenv().espLines) do
-                    local char = player.Character
-                    if char then
-                        local joints
-                        if check_r15(player) then
-                            joints = {
-                                {"Head", "UpperTorso"}, {"UpperTorso", "LowerTorso"},
-                                {"UpperTorso", "LeftUpperArm"}, {"LeftUpperArm", "LeftLowerArm"}, {"LeftLowerArm", "LeftHand"},
-                                {"UpperTorso", "RightUpperArm"}, {"RightUpperArm", "RightLowerArm"}, {"RightLowerArm", "RightHand"},
-                                {"LowerTorso", "LeftUpperLeg"}, {"LeftUpperLeg", "LeftLowerLeg"}, {"LeftLowerLeg", "LeftFoot"},
-                                {"LowerTorso", "RightUpperLeg"}, {"RightUpperLeg", "RightLowerLeg"}, {"RightLowerLeg", "RightFoot"}
-                            }
-                        else
-                            joints = {
-                                {"Head", "Torso"}, {"Torso", "Left Arm"}, {"Left Arm", "Left Leg"},
-                                {"Torso", "Right Arm"}, {"Right Arm", "Right Leg"}
-                            }
-                        end
-                        
-                        for i, joint in pairs(joints) do
-                            local part1, part2 = char:FindFirstChild(joint[1]), char:FindFirstChild(joint[2])
-                            if part1 and part2 then
-                                local pos1, onScreen1 = camera:WorldToViewportPoint(part1.Position)
-                                local pos2, onScreen2 = camera:WorldToViewportPoint(part2.Position)
-                                local line = lines[i]
-                                
-                                if onScreen1 and onScreen2 and getgenv().RAINBOW_MODE == false then
-                                    line.From = Vector2.new(pos1.X, pos1.Y)
-                                    line.To = Vector2.new(pos2.X, pos2.Y)
-                                    line.Visible = true
-                                    line.Color = getgenv().color_for_esp_value
-                                elseif onScreen1 and onScreen2 then
-                                    line.From = Vector2.new(pos1.X, pos1.Y)
-                                    line.To = Vector2.new(pos2.X, pos2.Y)
-                                    line.Visible = true
-                                    line.Color = color
-                                else
-                                    line.Visible = false
-                                end
-                            end
-                        end
-                    end
+            local function onCharacterAdded(player)
+                task.wait(1)
+                if getgenv().ESPEnabled then
+                    createESP(player)
                 end
             end
             
             local function onPlayerAdded(player)
                 player.CharacterAdded:Connect(function()
-                    repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                    createESP(player)
+                    onCharacterAdded(player)
+                end)
+                player.CharacterRemoving:Connect(function()
+                    removeESP(player)
                 end)
             end
             
-            for _, player in ipairs(players:GetPlayers()) do
-                if player ~= players.LocalPlayer then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
                     onPlayerAdded(player)
-                    if player.Character then createESP(player) end
+                    if player.Character then
+                        createESP(player)
+                    end
                 end
             end
             
-            getgenv().SkelESPPlayerAddedConnection = players.PlayerAdded:Connect(onPlayerAdded)
-            getgenv().SkelESPPlayerRemovingConnection = players.PlayerRemoving:Connect(removeESP)
+            Players.PlayerAdded:Connect(onPlayerAdded)
+            Players.PlayerRemoving:Connect(removeESP)
             
-            getgenv().SkelESPUpdateConnection = runService.RenderStepped:Connect(updateESP)
+            task.spawn(function()
+                local hue = 0
+                while true do
+                    task.wait(0.05)
+                    if getgenv().ESPEnabled then
+                        local color = getgenv().RAINBOW_MODE and hsvToRgb(hue, 1, 1) or getgenv().color_for_esp_value
+                        for player, frame in pairs(getgenv().espObjects) do
+                            if frame then
+                                frame.BackgroundColor3 = color
+                            end
+                        end
+                        hue = (hue + 0.01) % 1
+                    end
+                end
+            end)
         else
-            getgenv().SKELETON_ESP_ENABLED = false
-            getgenv().espLines = {}
-            wait()
-            if getgenv().SkelESPUpdateConnection then
-                pcall(function()
-                    getgenv().SkelESPUpdateConnection:Disconnect()
-                end)
-                getgenv().SkelESPUpdateConnection = nil
-            end
-            
-            if getgenv().SkelESPPlayerAddedConnection then
-                pcall(function()
-                    getgenv().SkelESPPlayerAddedConnection:Disconnect()
-                end)
-                getgenv().SkelESPPlayerAddedConnection = nil
-            end
+            getgenv().ESPEnabled = false
+            getgenv().ESPEnabled = false
 
-            if getgenv().SkelESPPlayerRemovingConnection then
-                pcall(function()
-                    getgenv().SkelESPPlayerRemovingConnection:Disconnect()
-                end)
-                getgenv().SkelESPPlayerRemovingConnection = nil
+            for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                if player.Character then
+                    local esp = player.Character:FindFirstChild("ESP")
+                    if esp then
+                        esp:Destroy()
+                        esp:Destroy()
+                        esp:Destroy()
+                    end
+                end
             end
-            wait(0.8)
-            local result_fullscreen = UserSettings():GetService("UserGameSettings"):InFullScreen()
-            local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
-            
-            if result_fullscreen == false then
-                GuiService:ToggleFullscreen()
-                wait(1.2)
-                GuiService:ToggleFullscreen()
-            end
-            wait(0.4)
-            if getgenv().espLines then
-                for _, lines in pairs(getgenv().espLines) do
-                    for _, line in ipairs(lines) do
-                        if line then
-                            line:Remove()
+        end
+    end,})
+    wait()
+    local result_get = getgenv().otherFuncCheck(Other_Check)
+
+    if result_get == true then
+        getgenv().TracersToggleMain = Tab19:CreateToggle({
+        Name = "Tracers",
+        CurrentValue = false,
+        Flag = "tracersOnActive",
+        Callback = function(runTracersScript)
+            if runTracersScript then
+                getgenv().TRACERS_ESP_ENABLED = true
+                getgenv().tracerLines = getgenv().tracerLines or {}
+
+                local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+                local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+                local workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+                local camera = workspace.CurrentCamera
+
+                local function removeTracer(player)
+                    if getgenv().tracerLines[player] then
+                        if getgenv().tracerLines[player] then
+                            getgenv().tracerLines[player]:Remove()
+                        end
+                        getgenv().tracerLines[player] = nil
+                    end
+                end
+
+                local function createTracer(player)
+                    if not getgenv().TRACERS_ESP_ENABLED then return end
+                    if not player.Character then return end
+
+                    local char = player.Character
+                    local rootPart = char:FindFirstChild("HumanoidRootPart")
+                    if not rootPart then return end
+
+                    local tracer = Drawing.new("Line")
+                    tracer.Thickness = 2
+                    tracer.Color = getgenv().color_for_esp_value
+                    tracer.Visible = false
+
+                    getgenv().tracerLines[player] = tracer
+                end
+
+                local function updateTracers()
+                    if not getgenv().TRACERS_ESP_ENABLED then
+                        for _, tracer in pairs(getgenv().tracerLines) do
+                            if tracer then tracer:Remove() end
+                        end
+                        table.clear(getgenv().tracerLines)
+                        return
+                    end
+                
+                    for player, tracer in pairs(getgenv().tracerLines) do
+                        local char = player.Character
+                        if char and char:FindFirstChild("HumanoidRootPart") then
+                            local rootPart = char.HumanoidRootPart
+                            local screenPos, onScreen = camera:WorldToViewportPoint(rootPart.Position)
+                
+                            if onScreen then
+                                tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y)
+                                tracer.To = Vector2.new(screenPos.X, screenPos.Y)
+                                tracer.Visible = true
+                
+                                if getgenv().RAINBOW_MODE then
+                                    local hue = tick() % 5 / 5
+                                    tracer.Color = Color3.fromHSV(hue, 1, 1)
+                                else
+                                    tracer.Color = getgenv().color_for_esp_value
+                                end
+                            else
+                                tracer.Visible = false
+                            end
+                        else
+                            tracer.Visible = false
                         end
                     end
                 end
-                table.clear(getgenv().espLines)
-            end
-            wait()
-            getgenv().espLines = {}
-            wait(0.2)
-            getgenv().espLines = nil
-            wait(0.2)
-            return 
-        end
-    end,})
 
-    getgenv().TracersToggleMain = Tab19:CreateToggle({
-    Name = "Tracers",
-    CurrentValue = false,
-    Flag = "tracersOnActive",
-    Callback = function(runTracersScript)
-        if runTracersScript then
-            getgenv().TRACERS_ESP_ENABLED = true
-            getgenv().tracerLines = getgenv().tracerLines or {}
-
-            local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-            local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-            local workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-            local camera = workspace.CurrentCamera
-
-            local function removeTracer(player)
-                if getgenv().tracerLines[player] then
-                    if getgenv().tracerLines[player] then
-                        getgenv().tracerLines[player]:Remove()
-                    end
-                    getgenv().tracerLines[player] = nil
+                local function onPlayerAdded(player)
+                    player.CharacterAdded:Connect(function()
+                        repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        createTracer(player)
+                    end)
                 end
-            end
 
-            local function createTracer(player)
-                if not getgenv().TRACERS_ESP_ENABLED then return end
-                if not player.Character then return end
+                for _, player in ipairs(players:GetPlayers()) do
+                    if player ~= players.LocalPlayer then
+                        onPlayerAdded(player)
+                        if player.Character then createTracer(player) end
+                    end
+                end
 
-                local char = player.Character
-                local rootPart = char:FindFirstChild("HumanoidRootPart")
-                if not rootPart then return end
+                getgenv().tracerPlayerAddedConnection = players.PlayerAdded:Connect(onPlayerAdded)
+                getgenv().tracerPlayerRemovingConnection = players.PlayerRemoving:Connect(removeTracer)
 
-                local tracer = Drawing.new("Line")
-                tracer.Thickness = 2
-                tracer.Color = getgenv().color_for_esp_value
-                tracer.Visible = false
+                getgenv().tracerUpdateConnection = runService.RenderStepped:Connect(updateTracers)
+            else
+                getgenv().TRACERS_ESP_ENABLED = false
 
-                getgenv().tracerLines[player] = tracer
-            end
-
-            local function updateTracers()
-                if not getgenv().TRACERS_ESP_ENABLED then
+                if getgenv().tracerLines then
                     for _, tracer in pairs(getgenv().tracerLines) do
-                        if tracer then tracer:Remove() end
+                        if tracer then
+                            pcall(function()
+                                tracer.Visible = false
+                                tracer:Remove()
+                            end)
+                        end
                     end
                     table.clear(getgenv().tracerLines)
-                    return
                 end
-            
-                for player, tracer in pairs(getgenv().tracerLines) do
-                    local char = player.Character
-                    if char and char:FindFirstChild("HumanoidRootPart") then
-                        local rootPart = char.HumanoidRootPart
-                        local screenPos, onScreen = camera:WorldToViewportPoint(rootPart.Position)
-            
-                        if onScreen then
-                            tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y)
-                            tracer.To = Vector2.new(screenPos.X, screenPos.Y)
-                            tracer.Visible = true
-            
-                            if getgenv().RAINBOW_MODE then
-                                local hue = tick() % 5 / 5
-                                tracer.Color = Color3.fromHSV(hue, 1, 1)
-                            else
-                                tracer.Color = getgenv().color_for_esp_value
-                            end
-                        else
-                            tracer.Visible = false
-                        end
-                    else
-                        tracer.Visible = false
-                    end
+
+                if getgenv().tracerLines then
+                    getgenv().tracerLines = nil
                 end
-            end
+                wait()
+                if getgenv().tracerUpdateConnection then
+                    pcall(function()
+                        getgenv().tracerUpdateConnection:Disconnect()
+                    end)
+                    getgenv().tracerUpdateConnection = nil
+                end
 
-            local function onPlayerAdded(player)
-                player.CharacterAdded:Connect(function()
-                    repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                    createTracer(player)
-                end)
-            end
+                if getgenv().tracerPlayerAddedConnection then
+                    pcall(function()
+                        getgenv().tracerPlayerAddedConnection:Disconnect()
+                    end)
+                    getgenv().tracerPlayerAddedConnection = nil
+                end
 
-            for _, player in ipairs(players:GetPlayers()) do
-                if player ~= players.LocalPlayer then
-                    onPlayerAdded(player)
-                    if player.Character then createTracer(player) end
+                if getgenv().tracerPlayerRemovingConnection then
+                    pcall(function()
+                        getgenv().tracerPlayerRemovingConnection:Disconnect()
+                    end)
+                    getgenv().tracerPlayerRemovingConnection = nil
+                end
+                wait(0.4)
+                local result_fullscreen = UserSettings():GetService("UserGameSettings"):InFullScreen()
+                local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
+                
+                if result_fullscreen == false then
+                    GuiService:ToggleFullscreen()
+                    wait(1.2)
+                    GuiService:ToggleFullscreen()
                 end
             end
-
-            getgenv().tracerPlayerAddedConnection = players.PlayerAdded:Connect(onPlayerAdded)
-            getgenv().tracerPlayerRemovingConnection = players.PlayerRemoving:Connect(removeTracer)
-
-            getgenv().tracerUpdateConnection = runService.RenderStepped:Connect(updateTracers)
-        else
-            getgenv().TRACERS_ESP_ENABLED = false
-
-            if getgenv().tracerLines then
-                for _, tracer in pairs(getgenv().tracerLines) do
-                    if tracer then
-                        pcall(function()
-                            tracer.Visible = false
-                            tracer:Remove()
-                        end)
-                    end
-                end
-                table.clear(getgenv().tracerLines)
-            end
-
-            if getgenv().tracerLines then
-                getgenv().tracerLines = nil
-            end
-            wait()
-            if getgenv().tracerUpdateConnection then
-                pcall(function()
-                    getgenv().tracerUpdateConnection:Disconnect()
-                end)
-                getgenv().tracerUpdateConnection = nil
-            end
-
-            if getgenv().tracerPlayerAddedConnection then
-                pcall(function()
-                    getgenv().tracerPlayerAddedConnection:Disconnect()
-                end)
-                getgenv().tracerPlayerAddedConnection = nil
-            end
-
-            if getgenv().tracerPlayerRemovingConnection then
-                pcall(function()
-                    getgenv().tracerPlayerRemovingConnection:Disconnect()
-                end)
-                getgenv().tracerPlayerRemovingConnection = nil
-            end
-            wait(0.4)
-            local result_fullscreen = UserSettings():GetService("UserGameSettings"):InFullScreen()
-            local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
-            
-            if result_fullscreen == false then
-                GuiService:ToggleFullscreen()
-                wait(1.2)
-                GuiService:ToggleFullscreen()
-            end
-        end
-    end,})
+        end,})
+    else
+        warn("❌ - Drawing - ❌ | Unsupported, Tracer's is not able to load due to 'Drawing' being unsupported.")
+    end
     wait()
     getgenv().RainbowMode = Tab19:CreateToggle({
     Name = "Rainbow Mode (For ESP)",
@@ -6651,7 +6893,7 @@
         end
     end,})
     wait(0.2)
-    if getgenv().RAINBOW_MODE then
+    if getgenv().RAINBOW_MODE or getgenv().RAINBOW_MODE == true then
         getgenv().RainbowMode:Set(false)
     end
 
@@ -6661,7 +6903,7 @@
     Flag = "ChangeESPColorVal",
     Callback = function(esp_color_selected)
         getgenv().color_for_esp_value = esp_color_selected
-    end,})--]]
+    end,})
 
     getgenv().GetFakeChatGUI = Tab4:CreateButton({
     Name = "Fake Chat GUI",
@@ -6675,7 +6917,7 @@
     end,})
     wait()
     getgenv().ChatBypassTextInput = Tab4:CreateInput({
-    Name = "Chat Bypass Input",
+    Name = "Chat Bypass Input (60% working)",
     PlaceholderText = "Text",
     RemoveTextAfterFocusLost = true,
     Callback = function(saveInputFilter)
@@ -6971,26 +7213,6 @@
     else
         warn("Not loading this part, not on MIC UP or MIC UP 17+")
     end
-    if getgenv().connections_loaded then
-        warn("Already loaded connection manager.")
-    else
-        print("Loading Connection Manager... :[Waiting On Response]:")
-        wait(.3)
-        local startEvent = Instance.new("BindableEvent")
-        startEvent.Name = "ConnectEvent"
-        startEvent.Parent = game:GetService("ReplicatedStorage")
-        wait(.1)
-        local disconnectEvent = Instance.new("BindableEvent")
-        disconnectEvent.Name = "DisconnectEvent"
-        disconnectEvent.Parent = game:GetService("ReplicatedStorage")
-        wait(0.2)
-        if startEvent and disconnectEvent then
-            print("Loaded Connection Manager! -[200 : Success]-")
-        else
-            warn("UNABLE TO LOAD CONNECTION MANAGER, BAD_REQUESTED_RESPONSE")
-        end
-        getgenv().connections_loaded = true
-    end
     wait()
     local Settings = {
         Keybind = string.upper("C")
@@ -7003,6 +7225,7 @@
             return getgenv().notify("Error:", "Invisible Is Already Loaded!", 6.5)
         end
 
+        -- Don't know why I have this here.
         local UserIds = {
             6132973250,
             4437551748,
@@ -8483,75 +8706,83 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
     end,})
 
-    if getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
-        getgenv().MuteAllBruh = Tab1:CreateToggle({
-        Name = "Mute All",
-        CurrentValue = false,
-        Flag = "MutingEveryone",
-        Callback = function(TheMuteAll)
-            if TheMuteAll then
-                getgenv().LmaoGetMuted = true
-                while getgenv().LmaoGetMuted == true do
-                wait()
-                    getgenv().VoiceChatInternal:SubscribePauseAll(true)
-                    getgenv().VoiceChatInternal:SubscribePauseAll(true)
-                end
-            else
-                getgenv().LmaoGetMuted = false
-                getgenv().LmaoGetMuted = false
-                getgenv().LmaoGetMuted = false
-                wait(0.3)
-                getgenv().VoiceChatInternal:SubscribePauseAll(false)
-                getgenv().VoiceChatInternal:SubscribePauseAll(false)
+    getgenv().MuteAllBruh = Tab21:CreateToggle({
+    Name = "Mute All",
+    CurrentValue = false,
+    Flag = "MutingEveryone",
+    Callback = function(TheMuteAll)
+        if TheMuteAll then
+            getgenv().LmaoGetMuted = true
+            while getgenv().LmaoGetMuted == true do
+            wait()
+                getgenv().VoiceChatInternal:SubscribePauseAll(true)
+                getgenv().VoiceChatInternal:SubscribePauseAll(true)
             end
-        end,})
+        else
+            getgenv().LmaoGetMuted = false
+            getgenv().LmaoGetMuted = false
+            wait(0.3)
+            getgenv().VoiceChatInternal:SubscribePauseAll(false)
+            getgenv().VoiceChatInternal:SubscribePauseAll(false)
+        end
+    end,})
 
-        getgenv().MuteAPlayerSpecific = Tab1:CreateInput({
-        Name = "Mute Player",
-        PlaceholderText = "User",
-        RemoveTextAfterFocusLost = true,
-        Callback = function(getAUser)
-            local derUser = findplr(getAUser)
+    getgenv().MuteAPlayerSpecific = Tab21:CreateInput({
+    Name = "Mute Player",
+    PlaceholderText = "User",
+    RemoveTextAfterFocusLost = true,
+    Callback = function(getAUser)
+        local derUser = findplr(getAUser)
 
-            if not derUser then
-                return getgenv().notify("Failure!", "User was not found.", 5)
-            end
-            
-            getgenv().shouldMute = true
-            getgenv().MutedPlayers = getgenv().MutedPlayers or {}
-            getgenv().PlayerConnections = getgenv().PlayerConnections or {}
+        if not derUser then
+            return getgenv().notify("Failure!", "User was not found.", 6)
+        end
+        wait(0.1)
+        getgenv().shouldMute = true
+        getgenv().MutedPlayers = getgenv().MutedPlayers or {}
+        getgenv().PlayerConnections = getgenv().PlayerConnections or {}
 
-            function MutePlayer(user)
-                getgenv().notify("Success!", "Player has been muted", 5)
+        function MutePlayer(user)
+            getgenv().notify("Success!", "Player has been muted", 5)
 
+            if user:FindFirstChildOfClass("AudioDeviceInput") then
                 while getgenv().shouldMute == true do
                 wait()
                     local audiodeviceinput = user:FindFirstChild("AudioDeviceInput")
 
                     audiodeviceinput.Muted = true
                 end
+            else
+                while getgenv().shouldMute == true do
+                wait()
+                    getgenv().VoiceChatInternal:SubscribePause(user.UserId, true)
+                end
             end
+        end
 
-            if getgenv().shouldMute or getgenv().shouldMute == true then
-                local audiodeviceinput = derUser:FindFirstChild("AudioDeviceInput")
+        if getgenv().shouldMute or getgenv().shouldMute == true then
+            getgenv().notify("Success!", "Loop was enabled already, new player muted.", 5)
+            wait(0.1)
+            MutePlayer(derUser)
+        elseif not getgenv().shouldMute or getgenv().shouldMute == false then
+            if derUser:FindFirstChildOfClass("AudioDeviceInput") then
+                local audiodeviceinput = derUser:FindFirstChildOfClass("AudioDeviceInput")
 
                 audiodeviceinput.Muted = true
                 wait(0.2)
                 getgenv().notify("Success", "Player has been muted!", 5)
             else
-                getgenv().notify("Success!", "Loop was enabled already, new player muted.", 5)
-                wait(0.1)
-                MutePlayer(derUser)
+                getgenv().VoiceChatInternal:SubscribePause(derUser.UserId, true)
             end
-        end,})
-    else
-        warn("AudioDeviceInput not found in experience, not loading.")
-    end
+        else
+            return getgenv().notify("Unknown Error:", "Could not determine loop status.", 6)
+        end
+    end,})
 
     getgenv().ResetButton = Tab15:CreateButton({
     Name = "Reset",
     Callback = function()
-        if getgenv().Character:FindFirstChild("Humanoid") then
+        if getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") then
             getgenv().Character:FindFirstChildWhichIsA("Humanoid").Health = 0
         else
             return getgenv().notify("Failed!", "Humanoid does not exist (nil).", 5)
@@ -8564,75 +8795,88 @@
         getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, getgenv().LocalPlayer)
     end,})
 
-    getgenv().ServerHopButton = Tab15:CreateButton({
-    Name = "Server Hop (Roblox broke this!)",
-    Callback = function()
-        -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
-        httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-        
-        if httprequest then
-            getgenv().servers = getgenv().servers or {}
-            local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", game.PlaceId)})
-            local body = getgenv().HttpService:JSONDecode(req.Body)
+    if executor_Name == "Solara" then
+        warn("Cannot load 'ServerHop' on 'Solara'.")
+    else
+        getgenv().ServerHopButton = Tab15:CreateButton({
+        Name = "ServerHop",
+        Callback = function()
+            -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
+            httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+            
+            if httprequest then
+                getgenv().servers = getgenv().servers or {}
+                local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", game.PlaceId)})
+                local body = getgenv().HttpService:JSONDecode(req.Body)
 
-            if body and body.data then
-                for i, v in next, body.data do
-                    if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
-                        table.insert(getgenv().servers, 1, v.id)
+                if body and body.data then
+                    for i, v in next, body.data do
+                        if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
+                            table.insert(getgenv().servers, 1, v.id)
+                        end
                     end
+                else
+                    return getgenv().notify("Failed!", "Unable to retrieve any data from game", 5)
                 end
             else
-                return getgenv().notify("Failed!", "Unable to retrieve any data from game", 5)
+                return getgenv().notify("ServerHop", "httprequest is unsupported. [failed].", 5)
             end
-        else
-            return getgenv().notify("ServerHop", "httprequest is unsupported. [failed].", 5)
-        end
 
-        if #servers > 0 then
-            getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
-        else
-            return getgenv().notify("ServerHop", "Couldn't find a server [failed].", 5)
-        end
-    end,})
-
-    getgenv().ChangeUILibColor = Tab15:CreateColorPicker({
-    Name = "Change UI Color",
-    Color = Color3.fromRGB(30, 30, 30),
-    Flag = "UIColoringFunc",
-    Callback = function(UIColor)
-        if not getgenv().Rayfield or getgenv().Rayfield == nil then
-            getgenv().notify("Error:", "You are most likely using the regular UI, don't worry.", 5)
-        end
-
-        local function changeColors(object, frameColor)
-            if object and object:IsA("ScreenGui") then
-                for _, descendant in pairs(object:GetDescendants()) do
-                    if descendant:IsA("Frame") then
-                        descendant.BackgroundColor3 = frameColor
-                    end
-                end
+            if #servers > 0 then
+                getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
             else
-                warn("Rayfield ScreenGui not found!")
+                return getgenv().notify("ServerHop", "Couldn't find a server [failed].", 5)
             end
-        end
+        end,})
+    end
 
-        local newFrameColor = UIColor
+    if getgenv().Rayfield then
+        getgenv().ChangeUILibColor = Tab15:CreateColorPicker({
+        Name = "Change UI Color",
+        Color = Color3.fromRGB(30, 30, 30),
+        Flag = "UIColoringFunc",
+        Callback = function(UIColor)
+            if not getgenv().Rayfield or getgenv().Rayfield == nil then
+                getgenv().notify("Error:", "You are most likely using the regular UI, don't worry.", 5)
+            end
 
-        changeColors(getgenv().Rayfield, newFrameColor)
-    end,})
+            local function changeColors(object, frameColor)
+                if object and object:IsA("ScreenGui") then
+                    for _, descendant in pairs(object:GetDescendants()) do
+                        if descendant:IsA("Frame") then
+                            descendant.BackgroundColor3 = frameColor
+                        end
+                    end
+                else
+                    warn("Rayfield ScreenGui not found!")
+                end
+            end
+
+            local newFrameColor = UIColor
+
+            changeColors(getgenv().Rayfield, newFrameColor)
+        end,})
+    else
+        warn("Custom UI was not loaded properly.")
+    end
 
     getgenv().ReExecuteGUI = Tab15:CreateButton({
     Name = "Re-Execute/Reload Script/GUI",
     Callback = function()
         getgenv().getLoopKick = false
+        wait()
         getgenv().SCRIPT_EXECUTED = false
+        wait()
         getgenv().SCRIPT_EXECUTED = false
+        wait(0.1)
         getgenv().Invis_Loaded = false
         getgenv().GetLoopRunning = false
         getgenv().GetLoopRunning = false
         getgenv().LmaoGetMuted = false
         getgenv().css_digital = false
+        wait(0.2)
         getgenv().Rayfield:Destroy()
+        wait(0.2)
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
     end,})
 
@@ -8640,17 +8884,25 @@
     Name = "Destroy GUI/Script",
     Callback = function()
         getgenv().getLoopKick = false
+        wait()
         getgenv().SCRIPT_EXECUTED = false
+        wait()
         getgenv().SCRIPT_EXECUTED = false
+        wait(0.1)
         getgenv().Invis_Loaded = false
         getgenv().GetLoopRunning = false
         getgenv().GetLoopRunning = false
         getgenv().LmaoGetMuted = false
         getgenv().css_digital = false
-        getgenv().Rayfield:Destroy()
+        wait(0.2)
+        if getgenv().Rayfield then
+            getgenv().Rayfield:Destroy()
+        else
+            warn("Rayfield does not exist, or is already destroyed.")
+        end
     end,})
 
-    getgenv().UnmuteAPlayer = Tab1:CreateInput({
+    getgenv().UnmuteAPlayer = Tab21:CreateInput({
     Name = "Unmute Player",
     PlaceholderText = "User",
     RemoveTextAfterFocusLost = true,
@@ -8663,10 +8915,14 @@
 
         if thisUser then
             function UnmutePlayer(user)
-                local AudioDeviceInput = user:FindFirstChildOfClass("AudioDeviceInput")
+                if user and user:FindFirstChildOfClass("AudioDeviceInput") then
+                    local AudioDeviceInput = user:FindFirstChildOfClass("AudioDeviceInput")
 
-                if AudioDeviceInput.Muted or AudioDeviceInput.Muted == true then
-                    AudioDeviceInput.Muted = false
+                    if AudioDeviceInput.Muted or AudioDeviceInput.Muted == true then
+                        AudioDeviceInput.Muted = false
+                    end
+                else
+                    getgenv().VoiceChatInternal:SubscribePause(user.UserId, true)
                 end
             end
             wait()
@@ -8676,7 +8932,7 @@
             getgenv().notify("Success", "Player has been unmuted", 5)
         end
     end,})
-
+    wait()
     getgenv().run_Shift_Speed = 50
     getgenv().walkSpeed = 16
 
@@ -9985,6 +10241,10 @@
         Keybind_FakeOut = Enum.KeyCode.R
     }
     wait()
+    local function convertToKeyCode(keyString)
+        return Enum.KeyCode[keyString] or nil
+    end
+    wait()
     if getgenv().Easies_Configuration["Emote_Keybinds"] == "on" or getgenv().Easies_Configuration["Emote_Keybinds"] == "On" or getgenv().Easies_Configuration["Emote_Keybinds"] == "Enabled" and getgenv().Character.Animate:FindFirstChild("jump") and getgenv().Character.Animate:FindFirstChild("walk") then
         local UserInputService = game:GetService("UserInputService")
 
@@ -10153,7 +10413,7 @@
                 else
                     getgenv().notify("Error:", "No saved configuration found!", 5)
                 end
-            end        
+            end
             
             loadConfig()
         end,})
@@ -10209,29 +10469,36 @@
     else
         warn("Not enabled in Configuration.")
     end
-
-    -- Might include later for easier access, who knows.
-    --getgenv().Current_Trip_Configuration = Tripping_Settings
     wait()
-    getgenv().Trip_Keybind = Tab15:CreateKeybind({ 
+    getgenv().Trip_Keybind = Tab15:CreateInput({  
     Name = "Trip Keybind",
-    CurrentKeybind = tostring("V"),
-    HoldToInteract = false,
+    CurrentValue = "N",
+    PlaceholderText = "Keybind Here",
+    RemoveTextAfterFocusLost = true,
     Flag = "TrippingOverKeybind",
     Callback = function(KeyForTripping)
-        if type(KeyForTripping) == "string" and Enum.KeyCode[KeyForTripping] then
-            Trip_Settings.Keybind_Trip = Enum.KeyCode[KeyForTripping]
+        local newKey = convertToKeyCode(string.upper(KeyForTripping))
+        wait()
+        if newKey then
+            Trip_Settings.Keybind_Trip = newKey
+        else
+            warn("Invalid keybind for Trip:", KeyForTripping)
         end
     end,})
-
-    getgenv().FakeOut_Keybind = Tab15:CreateKeybind({
+    
+    getgenv().FakeOut_Keybind = Tab15:CreateInput({
     Name = "Fake Out Keybind",
-    CurrentKeybind = tostring("R"),
-    HoldToInteract = false,
+    CurrentValue = "R",
+    PlaceholderText = "Keybind Here",
+    RemoveTextAfterFocusLost = true,
     Flag = "FakingOutKeybind",
     Callback = function(setKeyForFakeOut)
-        if type(setKeyForFakeOut) == "string" and Enum.KeyCode[setKeyForFakeOut] then
-            Trip_Settings.Keybind_FakeOut = Enum.KeyCode[setKeyForFakeOut]
+        local newKey = convertToKeyCode(string.upper(setKeyForFakeOut))
+        wait()
+        if newKey then
+            Trip_Settings.Keybind_FakeOut = newKey
+        else
+            warn("Invalid keybind for Fake Out:", setKeyForFakeOut)
         end
     end,})
     
@@ -10257,7 +10524,7 @@
                 local root = getgenv().HumanoidRootPart
                 hum:ChangeState(0)
                 root.Velocity = root.CFrame.LookVector * 30
-                wait(3)
+                wait(2)
                 hum:ChangeState(2)
             end
 
@@ -10280,6 +10547,462 @@
             wait(0.3)
             getgenv().notify("Success", "Successfully disabled Trip Connection.", 5)
         end
+    end,})
+    wait()
+    local configFileName = "Easies_Configuration.json"
+
+    local function save_ez_Config()
+        local json = game:GetService("HttpService"):JSONEncode(getgenv().Easies_Configuration)
+        writefile(configFileName, json)
+        getgenv().notify("Success!", "Updated Configuration Successfully.", 6)
+    end
+    wait()
+    getgenv().CustomAnimPackageSetting = Tab20:CreateToggle({
+    Name = "Use Custom Animation Package System",
+    CurrentValue = false,
+    Flag = "setConfigAnimPackageSystem",
+    Callback = function(setDefaultFlagForCustomAnims)
+        getgenv().using_custom_animation_packages = setDefaultFlagForCustomAnims
+        getgenv().Easies_Configuration["Custom_Animation_Package_System"] = setDefaultFlagForCustomAnims and "on" or "off"
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
+        getgenv().CustomAnimPackageSetting:Set(true)
+    else
+        getgenv().CustomAnimPackageSetting:Set(false)
+    end
+    
+    getgenv().IdleAnimToSet = Tab20:CreateDropdown({
+    Name = "Idle Animation",
+    Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
+    CurrentOption = "Zombie",
+    MultipleOptions = false,
+    Flag = "IdleAnimDropdownList",
+    Callback = function(dropSelectedForAnim)
+        if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
+            Zacks_Easy_Configuration.Animation_Idle = tostring(dropSelectedForAnim)
+            save_ez_Config()
+        else
+            warn("Use Custom Animation Packages is not enabled.")
+        end
+    end,})
+
+    getgenv().WalkAnimToSet = Tab20:CreateDropdown({
+    Name = "Walk Animation",
+    Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
+    CurrentOption = "Zombie",
+    MultipleOptions = false,
+    Flag = "WalkAnimationDropdownList",
+    Callback = function(selectedWalkAnim)
+        if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
+            Zacks_Easy_Configuration.Animation_Walk = tostring(selectedWalkAnim)
+            save_ez_Config()
+        else
+            warn("Use Custom Animation Packages is not enabled.")
+        end
+    end,})
+
+    getgenv().RunAnimToSet = Tab20:CreateDropdown({
+    Name = "Run Animation",
+    Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
+    CurrentOption = "Zombie",
+    MultipleOptions = false,
+    Flag = "RunAnimationDropdownList",
+    Callback = function(selectedRunAnim)
+        if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
+            Zacks_Easy_Configuration.Animation_Run = tostring(selectedRunAnim)
+            save_ez_Config()
+        else
+            warn("Use Custom Animation Packages is not enabled.")
+        end
+    end,})
+
+    getgenv().JumpAnimToSet = Tab20:CreateDropdown({
+    Name = "Jump Animation",
+    Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
+    CurrentOption = "Zombie",
+    MultipleOptions = false,
+    Flag = "JumpAnimationDropdownList",
+    Callback = function(selectedJumpAnim)
+        if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
+            Zacks_Easy_Configuration.Animation_Jump = tostring(selectedJumpAnim)
+            save_ez_Config()
+        else
+            warn("Use Custom Animation Packages is not enabled.")
+        end
+    end,})
+
+    getgenv().FallAnimToSet = Tab20:CreateDropdown({
+    Name = "Fall Animation",
+    Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
+    CurrentOption = "Zombie",
+    MultipleOptions = false,
+    Flag = "FallAnimationDropdownList",
+    Callback = function(selectedFallAnim)
+        if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
+            Zacks_Easy_Configuration.Animation_Fall = tostring(selectedFallAnim)
+            save_ez_Config()
+        else
+            warn("Use Custom Animation Packages is not enabled.")
+        end
+    end,})
+
+    getgenv().ClimbAnimToSet = Tab20:CreateDropdown({
+    Name = "Climb Animation",
+    Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
+    CurrentOption = "Zombie",
+    MultipleOptions = false,
+    Flag = "ClimbAnimationDropdownList",
+    Callback = function(selectedClimbAnim)
+        if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
+            Zacks_Easy_Configuration.Animation_Climb = tostring(selectedClimbAnim)
+            save_ez_Config()
+        else
+            warn("Use Custom Animation Packages is not enabled.")
+        end
+    end,})
+
+    getgenv().DieUponLoad = Tab20:CreateToggle({
+    Name = "Reset When Loading Script",
+    CurrentValue = false,
+    Flag = "dieOnLoading",
+    Callback = function(deathOnFullLoad)
+        getgenv().die_upon_loading = deathOnFullLoad
+        getgenv().Easies_Configuration["Death_On_Load"] = deathOnFullLoad and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().die_upon_loading or getgenv().die_upon_loading == true then
+        getgenv().DieUponLoad:Set(true)
+    else
+        getgenv().DieUponLoad:Set(false)
+    end
+
+    getgenv().EmoteKeybinds = Tab20:CreateToggle({
+    Name = "Emote Keybinds",
+    CurrentValue = false,
+    Flag = "emoteKeybindsScript",
+    Callback = function(ezEmoteBindings)
+        getgenv().emoting_bindings = ezEmoteBindings
+        getgenv().Easies_Configuration["Emote_Keybinds"] = ezEmoteBindings and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().emoting_bindings or getgenv().emoting_bindings == true then
+        getgenv().EmoteKeybinds:Set(true)
+    else
+        getgenv().EmoteKeybinds:Set(false)
+    end
+
+    getgenv().AntiAFKSetting = Tab20:CreateToggle({
+    Name = "Anti AFK",
+    CurrentValue = false,
+    Flag = "antiAFKToggledOn",
+    Callback = function(antiAfkScript)
+        getgenv().anti_afk_toggle = antiAfkScript
+        getgenv().Easies_Configuration["AntiAFK"] = antiAfkScript and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().anti_afk_toggle or getgenv().anti_afk_toggle == true then
+        getgenv().AntiAFKSetting:Set(true)
+    else
+        getgenv().AntiAFKSetting:Set(false)
+    end
+
+    getgenv().LoadingScreenEnabled = Tab20:CreateToggle({
+    Name = "Loading Screen",
+    CurrentValue = false,
+    Flag = "loadingScreenToggled",
+    Callback = function(loadscreen)
+        getgenv().Load_Screen = loadscreen
+        getgenv().Easies_Configuration["Loading_Screen"] = loadscreen and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().Load_Screen or getgenv().Load_Screen == true then
+        getgenv().LoadingScreenEnabled:Set(true)
+    else
+        getgenv().LoadingScreenEnabled:Set(false)
+    end
+
+    getgenv().MuteAllBoomboxesCellmatesVC = Tab20:CreateToggle({
+    Name = "Mute All Boomboxes (Cellmates VC)",
+    CurrentValue = false,
+    Flag = "cellMatesVCBoomboxes",
+    Callback = function(toggleTheBoomboxSound)
+        getgenv().boomboxes_on = toggleTheBoomboxSound
+        getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] = toggleTheBoomboxSound and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().boomboxes_on or getgenv().boomboxes_on == true then
+        getgenv().MuteAllBoomboxesCellmatesVC:Set(true)
+    else
+        getgenv().MuteAllBoomboxesCellmatesVC:Set(false)
+    end
+
+    getgenv().MuteTheMusicCellmatesVC = Tab20:CreateToggle({
+    Name = "Mute Music (Cellmates VC)",
+    CurrentValue = false,
+    Flag = "cellMatesVCMusicToggle",
+    Callback = function(toggleTheMusicSound)
+        getgenv().music_mute_configured = toggleTheMusicSound
+        getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] = toggleTheMusicSound and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().music_mute_configured or getgenv().music_mute_configured == true then
+        getgenv().MuteTheMusicCellmatesVC:Set(true)
+    else
+        getgenv().MuteTheMusicCellmatesVC:Set(false)
+    end
+
+    getgenv().MuteAllSFXCellmatesVC = Tab20:CreateToggle({
+    Name = "Mute Sound Effects (Cellmates VC)",
+    CurrentValue = false,
+    Flag = "cellMatesVCMuteSFXSounds",
+    Callback = function(toggleTheSFXSounds)
+        getgenv().sfx_sounds_on = toggleTheSFXSounds
+        getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] = toggleTheSFXSounds and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().sfx_sounds_on or getgenv().sfx_sounds_on == true then
+        getgenv().MuteAllSFXCellmatesVC:Set(true)
+    else
+        getgenv().MuteAllSFXCellmatesVC:Set(false)
+    end
+
+    getgenv().SystemBrokenTitle = Tab20:CreateToggle({
+    Name = "System Broken Title",
+    CurrentValue = false,
+    Flag = "setYourOwnTitleSystemBroken",
+    Callback = function(stringForSysBroken)
+        getgenv().sys_broken_label = stringForSysBroken
+        getgenv().Easies_Configuration["System_Broken_Title"] = stringForSysBroken and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+
+    getgenv().changeSysBrokensTitle = Tab20:CreateInput({
+    Name = "System Broken Title",
+    CurrentValue = "",
+    PlaceholderText = "New Title Here",
+    RemoveTextAfterFocusLost = true,
+    Flag = "sysBrokenToString",
+    Callback = function(newestSysBrokenTitle)
+        Zacks_Easy_Configuration.System_Broken_Text_Title = tostring(newestSysBrokenTitle)
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().sys_broken_label or getgenv().sys_broken_label == true then
+        getgenv().SystemBrokenTitle:Set(true)
+    else
+        getgenv().SystemBrokenTitle:Set(false)
+    end
+
+    getgenv().fullyLoadedMsg = Tab20:CreateToggle({
+    Name = "Chat - Fully Loaded Message",
+    CurrentValue = false,
+    Flag = "toggleForLoadedMessage",
+    Callback = function(turnOnFullyLoadedMsg)
+        getgenv().IsFullLoadedMessage = turnOnFullyLoadedMsg
+        getgenv().Easies_Configuration["Fully_Loaded_Messaging"] = turnOnFullyLoadedMsg and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+
+    getgenv().textForFullyLoadedMessage = Tab20:CreateInput({
+    Name = "Fully Loaded Message",
+    CurrentValue = "Fully Loaded.",
+    PlaceholderText = "Text Here",
+    RemoveTextAfterFocusLost = true,
+    Flag = "toStringForFullLoadedMsg",
+    Callback = function(theFullLoadedMsg)
+        Zacks_Easy_Configuration.Fully_Loaded_Message = tostring(theFullLoadedMsg)
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().IsFullLoadedMessage or getgenv().IsFullLoadedMessage == true then
+        getgenv().fullyLoadedMsg:Set(true)
+    else
+        getgenv().fullyLoadedMsg:Set(false)
+    end
+
+    getgenv().hugeBasePlateOn = Tab20:CreateToggle({
+    Name = "Huge Baseplate",
+    CurrentValue = false,
+    Flag = "toggleHugePlate",
+    Callback = function(bigBasePlate)
+        getgenv().biggest_baseplate_yes = bigBasePlate
+        getgenv().Easies_Configuration["Huge_Baseplate"] = bigBasePlate and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().biggest_baseplate_yes or getgenv().biggest_baseplate_yes == true then
+        getgenv().hugeBasePlateOn:Set(true)
+    else
+        getgenv().hugeBasePlateOn:Set(false)
+    end
+
+    getgenv().clocksTimeDayNight = Tab20:CreateToggle({
+    Name = "Script Clock Time GUI",
+    CurrentValue = false,
+    Flag = "scriptsClockTimeMenu",
+    Callback = function(clockTimeMenu)
+        getgenv().day_night_cycle_script_gui = clockTimeMenu
+        getgenv().Easies_Configuration["Script_Clock_Time_GUI"] = clockTimeMenu and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().day_night_cycle_script_gui or getgenv().day_night_cycle_script_gui == true then
+        getgenv().clocksTimeDayNight:Set(true)
+    else
+        getgenv().clocksTimeDayNight:Set(false)
+    end
+
+    getgenv().AntiSuspendVCAuto = Tab20:CreateToggle({
+    Name = "Anti Suspend VC (Auto)",
+    CurrentValue = false,
+    Flag = "neverSuspendVC",
+    Callback = function(vcIsNotSuspended)
+        getgenv().haha_never_suspend = vcIsNotSuspended
+        getgenv().Easies_Configuration["Anti_Suspend_VC"] = vcIsNotSuspended and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().haha_never_suspend or getgenv().haha_never_suspend == true then
+        getgenv().AntiSuspendVCAuto:Set(true)
+    else
+        getgenv().AntiSuspendVCAuto:Set(false)
+    end
+
+    getgenv().InfYieldPrem = Tab20:CreateToggle({
+    Name = "Infinite Yield Premium",
+    CurrentValue = false,
+    Flag = "OnInfYieldPremium",
+    Callback = function(IsInfYieldPrem)
+        getgenv().new_modified_inf_yield = IsInfYieldPrem
+        getgenv().Easies_Configuration["Infinite_Yield_Premium"] = IsInfYieldPrem and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().new_modified_inf_yield or getgenv().new_modified_inf_yield == true then
+        getgenv().InfYieldPrem:Set(true)
+    else
+        getgenv().InfYieldPrem:Set(false)
+    end
+
+    getgenv().PerformanceStats = Tab20:CreateToggle({
+    Name = "Performance Statistics",
+    CurrentValue = false,
+    Flag = "toggleTheGuisPerformance",
+    Callback = function(getPerformanceGUI)
+        getgenv().performance_is_toggled = getPerformanceGUI
+        getgenv().Easies_Configuration["Performance_Statistics"] = getPerformanceGUI and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().performance_is_toggled or getgenv().performance_is_toggled == true then
+        getgenv().PerformanceStats:Set(true)
+    else
+        getgenv().PerformanceStats:Set(false)
+    end
+
+    getgenv().OldMaterialUsingVal = Tab20:CreateToggle({
+    Name = "Old Materials (Materials Before 2022)",
+    CurrentValue = false,
+    Flag = "getOldMaterialsInstead",
+    Callback = function(notNewMaterials)
+        getgenv().utilizing_old_stuff_materials = notNewMaterials
+        getgenv().Easies_Configuration["Old_Materials"] = notNewMaterials and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().utilizing_old_stuff_materials or getgenv().utilizing_old_stuff_materials == true then
+        getgenv().OldMaterialUsingVal:Set(true)
+    else
+        getgenv().OldMaterialUsingVal:Set(false)
+    end
+
+    getgenv().sysBroken_Other_Mod = Tab20:CreateToggle({
+    Name = "Zacks System Broken (Auto-Load)",
+    CurrentValue = false,
+    Flag = "AutoLoadSysBrokenMods",
+    Callback = function(modifiedSysBrokenLoading)
+        getgenv().usingOldSysBroken = modifiedSysBrokenLoading
+        getgenv().Easies_Configuration["System_Broken"] = modifiedSysBrokenLoading and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().usingOldSysBroken or getgenv().usingOldSysBroken == true then
+        getgenv().sysBroken_Other_Mod:Set(true)
+    else
+        getgenv().sysBroken_Other_Mod:Set(false)
+    end
+
+    getgenv().KeepingTeleportToolBackpack = Tab20:CreateToggle({
+    Name = "Keep TP Tool (Load On Every Respawn)",
+    CurrentValue = false,
+    Flag = "keepingTheTPTool",
+    Callback = function(changeTPToolRespawn)
+        getgenv().modifiedTPToolBruh = changeTPToolRespawn
+        getgenv().Easies_Configuration["keep_tp_tool"] = changeTPToolRespawn and "on" or "off"
+        task.wait()
+        save_ez_Config()
+    end,})
+    wait()
+    if getgenv().modifiedTPToolBruh or getgenv().modifiedTPToolBruh == true then
+        getgenv().KeepingTeleportToolBackpack:Set(true)
+    else
+        getgenv().KeepingTeleportToolBackpack:Set(false)
+    end
+    wait(0.1)
+    local function load_ez_Config()
+        if isfile(configFileName) then
+            local json = readfile(configFileName)
+            getgenv().Easies_Configuration = game:GetService("HttpService"):JSONDecode(json)
+            getgenv().notify("Success!", "Configuration has been loaded.", 6)
+        else
+            getgenv().notify("Failure!", "No saved configuration found.", 6)
+        end
+    end
+
+    local function del_ez_Config()
+        if isfile(configFileName) then
+            delfile(configFileName)
+            getgenv().notify("Success.", "Configuration has been deleted.", 6)
+        else
+            getgenv().notify("Failure.", "No saved configuration to delete.", 6)
+        end
+    end
+    wait()
+    getgenv().LoadTheConfigurationZEH = Tab20:CreateButton({
+    Name = "Load Saved Zacks Easy Hub Configuration",
+    Callback = function()
+        load_ez_Config()
+    end,})
+
+    getgenv().DeleteYourCustomConfigurationZEH = Tab20:CreateButton({
+    Name = "Delete Saved Zacks Easy Hub Configuration",
+    Callback = function()
+        del_ez_Config()
     end,})
 
     getgenv().FakeOutScript = Tab15:CreateToggle({
