@@ -10245,7 +10245,7 @@
         return Enum.KeyCode[keyString] or nil
     end
     wait()
-    if getgenv().Easies_Configuration["Emote_Keybinds"] == "on" or getgenv().Easies_Configuration["Emote_Keybinds"] == "On" or getgenv().Easies_Configuration["Emote_Keybinds"] == "Enabled" and getgenv().Character.Animate:FindFirstChild("jump") and getgenv().Character.Animate:FindFirstChild("walk") then
+    if getgenv().Easies_Configuration["Emote_Keybinds"] == "on" or getgenv().Easies_Configuration["Emote_Keybinds"] == "On" or getgenv().Easies_Configuration["Emote_Keybinds"] == "Enabled" then
         local UserInputService = game:GetService("UserInputService")
 
         getgenv().Reverse_Keybind = Enum.KeyCode.F
