@@ -1934,29 +1934,33 @@
     else
         warn("User isn't in MIC UP or MIC UP 17+, not loading.")
     end
-    wait(0.2)
-    getgenv().PlayAnyEmote = Tab2:CreateDropdown({
-    Name = "Play Emote",
-    Options = getgenv().Emotes,
-    CurrentOption = "",
-    MultipleOptions = false,
-    Flag = "choose_an_emote",
-    Callback = function(emote_picked)
-        if typeof(emote_picked) == "table" then
-            emote_picked = emote_picked[1]
-        end
+    wait(0.4)
+    if getgenv().Emotes then
+        getgenv().PlayAnyEmote = Tab2:CreateDropdown({
+        Name = "Play Emote",
+        Options = getgenv().Emotes,
+        CurrentOption = "",
+        MultipleOptions = false,
+        Flag = "choose_an_emote",
+        Callback = function(emote_picked)
+            if typeof(emote_picked) == "table" then
+                emote_picked = emote_picked[1]
+            end
 
-        if typeof(emote_picked) ~= "string" then
-            return warn("Invalid Emote selected. Expected a string, got: "..typeof(emote_picked))
-        end
+            if typeof(emote_picked) ~= "string" then
+                return warn("Invalid Emote selected. Expected a string, got: "..typeof(emote_picked))
+            end
 
-        local emote_Script = getgenv().Humanoid:PlayEmote(emote_picked)
-        if not emote_Script then
-            return warn("Invalid Emote: "..tostring(emote_picked))
-        end
-        wait(0.2)
-        getgenv().Humanoid:PlayEmote(emote_picked)
-    end,})
+            local emote_Script = getgenv().Humanoid:PlayEmote(emote_picked)
+            if not emote_Script then
+                return warn("Invalid Emote: "..tostring(emote_picked))
+            end
+            wait(0.2)
+            getgenv().Humanoid:PlayEmote(emote_picked)
+        end,})
+    else
+        getgenv().notify("Failure!", "Failed to initialize 'Emotes' table, SORRY!.", 6)
+    end
 
     wait(0.1)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
