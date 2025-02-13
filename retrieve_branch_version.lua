@@ -2094,7 +2094,7 @@
         warn("User isn't in MIC UP or MIC UP 17+, not loading.")
     end
     wait(0.4)
-    if executor_Name ~= "Solara" then
+    if executor_Name ~= "Solara" or executor_Name ~= "JJSploit x Xeno" or executor_Name ~= "Xeno" then
         getgenv().PlayAnyEmote = Tab2:CreateDropdown({
         Name = "Play Emote",
         Options = safeEmotes,
@@ -2118,7 +2118,7 @@
             getgenv().Humanoid:PlayEmote(emote_picked)
         end,})
     else
-        warn("Skipping this option for Solara.")
+        warn("Skipping this option for Solara/JJSploit/Xeno.")
     end
     wait()
 	for i,v in next, getgenv().Humanoid:GetPlayingAnimationTracks() do
