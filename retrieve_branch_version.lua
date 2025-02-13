@@ -885,6 +885,53 @@
         getgenv().has_checked_funcs = true
     end
     wait(0.2)
+    -- [] -->> Check if the selected experience/game is MIC UP | Ensuring they do not run Zacks Easy Hub outside of MIC UP 🔊 or MIC UP 🔊 17+ <<-- [] --
+    if getgenv().PlaceID == 6884319169 then
+        print("\n<--------------------->\nConnected On MIC UP 🔊\n<--------------------->\n")
+    elseif getgenv().PlaceID == 15546218972 then
+        print("\n<--------------------->\nConnected On MIC UP 🔊 17+\n<--------------------->\n")
+    else
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "FULLSCREEN_TP_GUI"
+        screenGui.Parent = player:WaitForChild("PlayerGui")
+        screenGui.IgnoreGuiInset = true
+        screenGui.Enabled = true
+        screenGui.ResetOnSpawn = false
+        
+        local fullScreenFrame = Instance.new("Frame")
+        fullScreenFrame.Size = UDim2.new(1, 0, 1, 0)
+        fullScreenFrame.Position = UDim2.new(0, 0, 0, 0)
+        fullScreenFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        fullScreenFrame.BorderSizePixel = 0
+        fullScreenFrame.Parent = screenGui
+        fullScreenFrame.Visible = true
+        
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
+        textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
+        textLabel.BackgroundTransparency = 1
+        -- Yes, this has changed a ton, and how it checks above has changed as well as the teleporting down below these lines.
+        textLabel.Text = "You are now being teleported to MIC UP 🔊, this game is unsupported."
+        textLabel.TextColor3 = Color3.fromRGB(7, 0, 255)
+        textLabel.TextScaled = false
+        textLabel.TextSize = 75
+        textLabel.Font = Enum.Font.SourceSansBold
+        textLabel.Parent = fullScreenFrame
+        wait(0.5) -- Like waiting 0.7 seconds might actually work, I never usually wait(1), only because the task can be shortened to it's minimum with things like this, but still wait a little bit.
+        getgenv().TeleportCheck = false
+        getgenv().LocalPlayer.OnTeleport:Connect(function(State)
+            if (not getgenv().TeleportCheck) and getgenv().queueteleport then
+                getgenv().TeleportCheck = true
+                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()")
+            end
+        end)
+        wait()
+        getgenv().TeleportService:Teleport(6884319169, getgenv().LocalPlayer)
+    end
+    wait(0.2)
     if getgenv().emotes_bypassed then
         warn("Emotes are already bypassed.")
     else
@@ -1843,7 +1890,7 @@
         end
     end
     wait()
-    getgenv().Emotes = game:GetService("HttpService"):JSONEncode({
+    getgenv().Emotes = {
         "Sleep",
         "Olivia Rodrigo Head Bop",
         "Sturdy Dance - Ice Spice",
@@ -2011,7 +2058,6 @@
         "Cartwheel - George Ezra",
         "Panini Dance - Lil Nas X (LNX)",
         "Paris Hilton Sanasa",
-        "2 Baddies Dance Move - NCT 127",
         "Drum Master - Royal Blood",
         "Salute",
         "Tilt",
@@ -2021,7 +2067,7 @@
         "Point2",
         "Stadium",
         "Stray Kids Walkin On Water"
-    })
+    }
     wait()
     function isNumber(str)
         if tonumber(str) ~= nil then
