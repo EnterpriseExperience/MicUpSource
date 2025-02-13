@@ -797,7 +797,7 @@
                     VoiceChatService:rejoinVoice()
                     VoiceChatService:joinVoice()
                     wait(1)
-                    if vc_internal.State ~= Enum.VoiceChatState.Ended then
+                    if vc_internal.StateChanged ~= Enum.VoiceChatState.Ended then
                         print("Successfully reconnected to voice chat!")
                         reconnecting = false
                         return 
