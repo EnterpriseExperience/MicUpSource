@@ -1890,6 +1890,8 @@
         end
     end
     wait()
+    getgenv().Emotes = nil
+    wait()
     getgenv().Emotes = {
         "Sleep",
         "Olivia Rodrigo Head Bop",
@@ -1967,7 +1969,7 @@
         "Rock Guitar - Royal Blood",
         "Elton John - Elevate",
         "ericdoa - dance",
-        'Imagine Dragons - "Bones" Dance',
+        "Imagine Dragons - \"Bones\" Dance",
         'GloRilla - "Tomorrow" Dance',
         "Take Me Under - Zara Larsson",
         "Olivia Rodrigo Fall Back to Float",
@@ -2091,10 +2093,15 @@
     else
         warn("User isn't in MIC UP or MIC UP 17+, not loading.")
     end
+    wait()
+    local safeEmotes = {}
+    for _, emote in ipairs(getgenv().Emotes) do
+        table.insert(safeEmotes, tostring(emote):gsub('"', "'"))
+    end
     wait(0.4)
     getgenv().PlayAnyEmote = Tab2:CreateDropdown({
     Name = "Play Emote",
-    Options = getgenv().Emotes,
+    Options = safeEmotes,
     CurrentOption = "Shuffle",
     MultipleOptions = false,
     Flag = "choose_an_emote",
