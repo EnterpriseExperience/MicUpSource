@@ -1890,7 +1890,7 @@
         end
     end
     wait()
-    getgenv().Emotes = {
+    getgenv().Emotes = game:GetService("HttpService"):JSONEncode({
         "Sleep",
         "Olivia Rodrigo Head Bop",
         "Sturdy Dance - Ice Spice",
@@ -2058,7 +2058,7 @@
         "Cartwheel - George Ezra",
         "Panini Dance - Lil Nas X (LNX)",
         "Paris Hilton Sanasa",
-        tostring("2 Baddies Dance Move - NCT 127"),
+        "2 Baddies Dance Move - NCT 127",
         "Drum Master - Royal Blood",
         "Salute",
         "Tilt",
@@ -2068,7 +2068,7 @@
         "Point2",
         "Stadium",
         "Stray Kids Walkin On Water"
-    }
+    })
     wait()
     function isNumber(str)
         if tonumber(str) ~= nil then
