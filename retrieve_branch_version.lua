@@ -2096,7 +2096,8 @@
     wait()
     local safeEmotes = {}
     for _, emote in ipairs(getgenv().Emotes) do
-        table.insert(safeEmotes, tostring(emote):gsub('"', "'"))
+        local sanitizedEmote = (tostring(emote):gsub('"', "'"))
+        table.insert(safeEmotes, sanitizedEmote)
     end
     wait(0.4)
     getgenv().PlayAnyEmote = Tab2:CreateDropdown({
