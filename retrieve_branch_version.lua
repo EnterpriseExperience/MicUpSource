@@ -2093,35 +2093,33 @@
     else
         warn("User isn't in MIC UP or MIC UP 17+, not loading.")
     end
-    wait()
-    local safeEmotes = {}
-    for _, emote in ipairs(getgenv().Emotes) do
-        local sanitizedEmote = (tostring(emote):gsub('"', "'"))
-        table.insert(safeEmotes, sanitizedEmote)
-    end
     wait(0.4)
-    getgenv().PlayAnyEmote = Tab2:CreateDropdown({
-    Name = "Play Emote",
-    Options = safeEmotes,
-    CurrentOption = "Shuffle",
-    MultipleOptions = false,
-    Flag = "choose_an_emote",
-    Callback = function(emote_picked)
-        if typeof(emote_picked) == "table" then
-            emote_picked = emote_picked[1]
-        end
+    if executor_Name ~= "Solara" then
+        getgenv().PlayAnyEmote = Tab2:CreateDropdown({
+        Name = "Play Emote",
+        Options = safeEmotes,
+        CurrentOption = "Shuffle",
+        MultipleOptions = false,
+        Flag = "choose_an_emote",
+        Callback = function(emote_picked)
+            if typeof(emote_picked) == "table" then
+                emote_picked = emote_picked[1]
+            end
 
-        if typeof(emote_picked) ~= "string" then
-            return warn("Invalid Emote selected. Expected a string, got: "..typeof(emote_picked))
-        end
+            if typeof(emote_picked) ~= "string" then
+                return warn("Invalid Emote selected. Expected a string, got: "..typeof(emote_picked))
+            end
 
-        local emote_Script = getgenv().Humanoid:PlayEmote(emote_picked)
-        if not emote_Script then
-            return warn("Invalid Emote: "..tostring(emote_picked))
-        end
-        wait(0.2)
-        getgenv().Humanoid:PlayEmote(emote_picked)
-    end,})
+            local emote_Script = getgenv().Humanoid:PlayEmote(emote_picked)
+            if not emote_Script then
+                return warn("Invalid Emote: "..tostring(emote_picked))
+            end
+            wait(0.2)
+            getgenv().Humanoid:PlayEmote(emote_picked)
+        end,})
+    else
+        warn("Skipping this option for Solara.")
+    end
     wait()
 	for i,v in next, getgenv().Humanoid:GetPlayingAnimationTracks() do
 		v:Stop()
