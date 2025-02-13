@@ -865,7 +865,7 @@
         end
 
         local GC = getconnections or get_signal_cons
-        local Other_Check = Drawing or Drawing.new
+        local Other_Check = Drawing
 
         getgenv().checkNecessaryFunctions(cloneref)
         wait()
