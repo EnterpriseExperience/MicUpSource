@@ -4411,7 +4411,7 @@
         getgenv().notify("Success!", "Updated Configuration Successfully.", 6)
     end
     wait()
-    getgenv().TitleUIToggle = Tab2:CreateToggle({
+    getgenv().TitleUIToggle = Tab20:CreateToggle({
     Name = "Toggle Title UI",
     CurrentValue = false,
     Flag = "TitleUIToggling",
