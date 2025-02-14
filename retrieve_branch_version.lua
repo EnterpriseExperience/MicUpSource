@@ -7210,7 +7210,7 @@
         warn("Not loading this part, not on MIC UP or MIC UP 17+")
     end
     wait()
-    local Settings = {
+    --[[local Settings = {
         Keybind = string.upper("C")
     }
 
@@ -7400,7 +7400,7 @@
         getgenv().notify("Success!", "Invisible Has Been Loaded!", 7)
         task.wait(.3)
         getgenv().notify("Info:", "Press "..tostring(Settings.Keybind).." to change visibility.", 10)
-    end,})
+    end,})--]]
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().PrivRoomFloor = Tab10:CreateButton({
@@ -7836,14 +7836,14 @@
         warn("Not MIC UP or MIC UP 17+ teleports not being loaded.")
     end
 
-    getgenv().invisKeybindSet = Tab2:CreateInput({
+    --[[getgenv().invisKeybindSet = Tab2:CreateInput({
     Name = "Invisible Keybind",
     PlaceholderText = "Keybind Here",
     RemoveTextAfterFocusLost = true,
     Callback = function(TheBind)
         Settings.Keybind = tostring(TheBind)
         local Humanoid = getgenv().Humanoid
-    end,})
+    end,})--]]
 
     -- // Save this for later, because we can use this code to individually grab the Tic Tac Toe Model's and rename them and Parent them to a different Folder, will introduce this probably in the next couple updates.
     -- // 12/16/2024 - 12:56 PM (EST) Edited.
