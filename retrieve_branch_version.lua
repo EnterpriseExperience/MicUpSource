@@ -467,39 +467,41 @@
         end
     end
     
-    local function onChatMessage(message)
-        if message.Text == SECRET_CHAT_CODE then
-            local sender = Players:GetPlayerByUserId(message.TextSource.UserId)
-            if sender and not getgenv().ActiveClients[sender.UserId] then
-                createTitle(sender)
+    if getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" then
+        local function onChatMessage(message)
+            if message.Text == SECRET_CHAT_CODE then
+                local sender = Players:GetPlayerByUserId(message.TextSource.UserId)
+                if sender and not getgenv().ActiveClients[sender.UserId] then
+                    createTitle(sender)
+                end
             end
         end
-    end
-    
-    if ChatChannel then
-        TextChatService.MessageReceived:Connect(onChatMessage)
-    end
-    
-    wait(1)
-    if ChatChannel then
-        ChatChannel:SendAsync(SECRET_CHAT_CODE)
-    end
-
-    game.Players.LocalPlayer.CharacterAdded:Connect(function(newChar)
-        if not newChar then return warn("Character did not load properly!") end
         
-        repeat task.wait(0.5) until newChar:FindFirstChild("Humanoid") and newChar:FindFirstChild("Head")
-        
-        if newChar and getgenv().ActiveClients[game.Players.LocalPlayer.UserId] then
-            getgenv().ActiveClients[game.Players.LocalPlayer.UserId] = nil
-        else
-            warn("LocalPlayer is not an active Client in the 'getgenv().ActiveClients' table. | Continuing.")
+        if ChatChannel then
+            TextChatService.MessageReceived:Connect(onChatMessage)
         end
-        task.wait(0.6)
-        ChatChannel:SendAsync(SECRET_CHAT_CODE)
-        task.wait(0.3)
-        createTitle(game.Players.LocalPlayer)
-    end)    
+        
+        wait(1)
+        if ChatChannel then
+            ChatChannel:SendAsync(SECRET_CHAT_CODE)
+        end
+
+        game.Players.LocalPlayer.CharacterAdded:Connect(function(newChar)
+            if not newChar then return warn("Character did not load properly!") end
+            
+            repeat task.wait(0.5) until newChar:FindFirstChild("Humanoid") and newChar:FindFirstChild("Head")
+            
+            if newChar and getgenv().ActiveClients[game.Players.LocalPlayer.UserId] then
+                getgenv().ActiveClients[game.Players.LocalPlayer.UserId] = nil
+            else
+                warn("LocalPlayer is not an active Client in the 'getgenv().ActiveClients' table. | Continuing.")
+            end
+            task.wait(0.6)
+            ChatChannel:SendAsync(SECRET_CHAT_CODE)
+            task.wait(0.3)
+            createTitle(game.Players.LocalPlayer)
+        end)
+    end
     
     Players.PlayerAdded:Connect(function(Plr)
         task.wait(1)
