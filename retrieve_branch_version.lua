@@ -262,7 +262,7 @@
         
         local character = Plr.Character or Plr.CharacterAdded:Wait(1)
         wait()
-        if Plr.Name == "L0CKED_1N1" or Plr.Name == "CHEATING_B0SS" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        if Plr.Name == "L0CKED_1N1" or Plr.Name == "CHEATING_B0SS" and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -295,7 +295,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "🔥 Zacks Easy Hub | Owner 🔥"
             textLabel.Parent = background
-        elseif Plr.Name ~= "L0CKED_1N1" and Plr.Name ~= "CHEATING_B0SS" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif Plr.Name ~= "L0CKED_1N1" and Plr.Name ~= "CHEATING_B0SS" and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -328,7 +328,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "✅ Zacks Easy Hub - Client ✅"
             textLabel.Parent = background
-        elseif Plr.Name == "adorxfleurys" or Plr.Name == "lucxd19K5" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif Plr.Name == "adorxfleurys" or Plr.Name == "lucxd19K5" and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -361,7 +361,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "❤️ Zacks Easy Hub - Wife ❤️"
             textLabel.Parent = background
-        elseif is_support_team() and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif is_support_team() and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -394,7 +394,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "⚒️ Zacks Easy Hub - Support ⚒️"
             textLabel.Parent = background
-        elseif is_admin_team() and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif is_admin_team() and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -427,6 +427,43 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "🗡️ Zacks Easy Hub - Admin 🗡️"
             textLabel.Parent = background
+        elseif Plr.Name == "Chick7nn" or Plr.Name == "LIL_RT228" and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Name = "ZacksEasyBillboard"
+            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+            billboardGui.MaxDistance = math.huge
+            billboardGui.LightInfluence = 0
+            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+            billboardGui.AlwaysOnTop = true
+            billboardGui.Parent = character:WaitForChild("Head", 0.5)
+        
+            local background = Instance.new("Frame")
+            background.Active = true
+            background.Size = UDim2.new(1, 0, 1, 0)
+            background.BackgroundTransparency = 0.2
+            background.BackgroundColor3 = Color3.fromRGB(110, 0, 161)
+            background.BorderSizePixel = 0
+            background.Parent = billboardGui
+        
+            local uiCorner = Instance.new("UICorner")
+            uiCorner.CornerRadius = UDim.new(0.3, 0)
+            uiCorner.Parent = background
+        
+            local textLabel = Instance.new("TextLabel")
+            textLabel.Size = UDim2.new(1, -10, 1, -10)
+            textLabel.Position = UDim2.new(0, 5, 0, 5)
+            textLabel.BackgroundTransparency = 1
+            textLabel.TextScaled = true
+            textLabel.Font = Enum.Font.GothamBold
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textLabel.TextStrokeTransparency = 0
+            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            textLabel.Text = "✔️ Zacks Easy Hub - Beta Tester ✔️"
+            textLabel.Parent = background
+        else
+            if getgenv().Easies_Configuration["Title_Toggle_UI"] == "off" then
+                warn("Zacks Easy Client Title not enabled in Configuration.")
+            end
         end
     end
     
