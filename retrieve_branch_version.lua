@@ -315,14 +315,14 @@
 
         local function monitorCharacter()
             wait()
-            if player.Character then
+            if getgenv().Character then
                 wait()
-                setupCharacter(player.Character)
+                setupCharacter(getgenv().Character)
             end
 
-            player.CharacterAdded:Connect(function(character)
+            game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
                 wait()
-                character:WaitForChild("Humanoid")
+                character:WaitForChild("Humanoid", 0.5)
                 setupCharacter(character)
             end)
         end
@@ -362,12 +362,12 @@
 
         local function monitorCharacter()
             wait()
-            if player.Character and player.Character:FindFirstChild("Humanoid") and player.Character:FindFirstChild("HumanoidRootPart") then
+            if getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") and getgenv().Character:FindFirstChild("HumanoidRootPart") then
                 wait()
-                setupCharacter(player.Character)
+                setupCharacter(getgenv().Character)
             end
 
-            player.CharacterAdded:Connect(function(character)
+            game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
                 wait()
                 character:WaitForChild("Humanoid", 0.5)
                 setupCharacter(character)
