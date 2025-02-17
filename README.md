@@ -17,13 +17,13 @@ Star this repo and save it for later!
 
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 
-UPDATE <-> [V6] [UPDATE!]:
+UPDATE <-> [V8] [UPDATE!]:
 
 V6 New Features:
 
 Check out the Discord server linked above for every feature!
 
-[Custom Exclusive Features With: Zacks Easy Hub V6 | MIC UP 🔊/17+]:
+[Custom Exclusive Features With: Zacks Easy Hub V8 | MIC UP 🔊/17+]:
 
 Check Discord server linked above for features!
 
@@ -33,15 +33,9 @@ Check Discord server linked above for features!
 
 [NOW HAS OP ABUSE FEATURES!]
 
-[GOING TO BE A HUGE SCRIPT HUB SOON! INCLUDING GAMES LIKE: NEIGHBORS!]
-
-[BYPASSES ARE WORKING, AND NEW BYPASSES ARE NOW IN THE SCRIPT TO!]
-
 [SUPPORTS EVERY EXECUTOR!] [OFFICIALLY!]
 
 [FE FEATURES AND CLIENT FEATURES (FUN FOR ALL!)]
 
 [HAS AN AUTOMATIC SYSTEM FOR CONFIGURATING SCRIPTING ABILITIES! (and for compatibility to!)]
-
-[RELEASED EMOTE/RIZZ CONFIG! NO MORE INFINITE YIELD!]
 ```
