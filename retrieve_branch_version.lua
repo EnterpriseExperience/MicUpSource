@@ -6668,7 +6668,7 @@
     end
 
     if getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
-        getgenv().MutingMyself = Tab1:CreateToggle({
+        getgenv().MutingMyself = Tab21:CreateToggle({
         Name = "Mute Yourself",
         CurrentValue = false,
         Flag = "IJustMutedMyself",
