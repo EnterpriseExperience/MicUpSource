@@ -1538,7 +1538,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "❤️ Zacks Easy Hub ❤️ | V8.1.2 | "..tostring(executor_Name),
+            Name = "✨ Zacks Easy Hub ✨ | V8.1.5 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy ruling MIC UP 🔊",
             LoadingSubtitle = "Zacks Easy Hub | Success.",
             ConfigurationSaving = {
@@ -1557,14 +1557,14 @@
                 Subtitle = "No key system is provided.",
                 Note = "...",
                 FileName = "Key",
-                SaveKey = false,
+                SaveKey = true,
                 GrabKeyFromSite = false,
                 Key = {"None"}
             }
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "❤️ Zacks Easy Hub ❤️ | V8.1.2 | "..tostring(executor_Name),
+            Name = "✨ Zacks Easy Hub ✨ | V8.1.5 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy ruling MIC UP 🔊",
             LoadingSubtitle = "Zacks Easy Hub | Success.",
             ConfigurationSaving = {
@@ -1583,7 +1583,7 @@
                 Subtitle = "No key system is provided.",
                 Note = "...",
                 FileName = "Key",
-                SaveKey = false,
+                SaveKey = true,
                 GrabKeyFromSite = false,
                 Key = {"None"}
             }
@@ -2887,6 +2887,30 @@
             wait(0.3)
             Claim_A_Booth()
         end,})
+
+        if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) then
+            getgenv().CopyAPlayersAv = Tab2:CreateInput({
+            Name = "Copy Player Avatar",
+            PlaceholderText = "Player",
+            RemoveTextAfterFocusLost = true,
+            Callback = function(copyUserAvatar)
+                local findAPlayerToCopy = findplr(copyUserAvatar)
+
+                if not findAPlayerToCopy then
+                    return getgenv().notify("Failure!", "Player does not exist.", 6)
+                end
+                wait()
+                local args = {
+                    [1] = tostring(findAPlayerToCopy)
+                }
+                
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                wait()
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
+            end,})
+        else
+            warn("Player does not own the GamePass (Admin).")
+        end
     else
         warn("Did not load these Booth tabs [2].")
     end
@@ -3282,7 +3306,7 @@
                 while getgenv().crazyNote == true do
                 wait(1.5)
                     local args = {
-                        [1] = "ɓ׀丅ㄈȟ"
+                        [1] = "???"
                     }
             
                     Submit_Note_Remote:FireServer(unpack(args))
