@@ -22,95 +22,130 @@
         Wicked Popular, Bold, Stylish,
         Rthro [default Roblox Animation package]
     --]]
+
+    local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+    wait()
+    function isSettingEnabled(settingName)
+        local filePath = "executor_configs/" .. settingName .. ".json"
     
-    -- Don't touch this for now, it's just the default for a fallback, not to be edited, because then you won't be able to revert your configuration to the base settings without losing all data.
-    local __DEFAULT_CONFIGURATION = {
-        -- Use the names above to choose and load custom Animation Packages (they will keep on respawn to).
-        Custom_Animation_Package_System = "on",
-        Animation_Idle = "Vampire",
-        Animation_Walk = "Adidas",
-        Animation_Run = "Adidas",
-        Animation_Jump = "Zombie",
-        Animation_Fall = "Zombie",
-        Animation_Climb = "Levitation",
-        Death_On_Load = "on",
-        AntiAFK = "on",
-        Loading_Screen = "on",
-        Mute_Boomboxes_Cellmates_VC_Game_Setting = "on", -- Will mute the Boomboxes in the game: "Cellmates (VC)"
-        Mute_Music_Volume_Cellmates_VC_Game_Setting = "on", -- Will mute the Music Volume in the game: "Cellmates (VC)"
-        Mute_Sound_Effects_Cellmates_VC_Game_Setting = "on", -- Will mute the Sound Effects in the game: "Cellmates (VC)"
-        System_Broken_Title = "off",
-        System_Broken_Text_Title = "System Broken New Title Here",
-        Fully_Loaded_Messaging = "on",
-        Fully_Loaded_Message = "Zacks Easy Hub - Winning.", -- Custom message you want to chat when the script fully loads all the way.
-        Huge_Baseplate = "on",
-        Script_Clock_Time_GUI = "on",
-        Anti_Suspend_VC = "on",
-        Infinite_Yield_Premium = "on",
-        Performance_Statistics = "on",
-        Old_Materials = "on",
-        System_Broken = "on",
-        keep_tp_tool = "off",
-    }
+        if isfile(filePath) then
+            local fileContent = readfile(filePath)
+            local decodedData = HttpService:JSONDecode(fileContent)
 
-    local Zacks_Easy_Configuration = {
-        Custom_Animation_Package_System = "off",
-        Animation_Idle = "Superhero",
-        Animation_Walk = "Adidas",
-        Animation_Run = "Adidas",
-        Animation_Jump = "Levitation",
-        Animation_Fall = "Levitation",
-        Animation_Climb = "Superhero",
-        Death_On_Load = "on",
-        Emote_Keybinds = "off",
-        AntiAFK = "on",
-        Loading_Screen = "on",
-        Mute_Boomboxes_Cellmates_VC_Game_Setting = "off",
-        Mute_Music_Volume_Cellmates_VC_Game_Setting = "off",
-        Mute_Sound_Effects_Cellmates_VC_Game_Setting = "off",
-        System_Broken_Title = "off",
-        System_Broken_Text_Title = "System Broken New Title Here",
-        Fully_Loaded_Messaging = "off",
-        Fully_Loaded_Message = "Zacks Easy Hub - Winning.",
-        Huge_Baseplate = "on",
-        Script_Clock_Time_GUI = "off",
-        Anti_Suspend_VC = "on",
-        Infinite_Yield_Premium = "off",
-        Performance_Statistics = "off",
-        Old_Materials = "off",
-        System_Broken = "off",
-        keep_tp_tool = "off",
-        Title_Toggle_UI = "off"
-    }
-    wait(0.2)
-    local configFileName = "Easies_Configuration.json"
-    wait()
-    getgenv().Easies_Configuration = getgenv().Easies_Configuration or {}
+            local settingValue = decodedData[settingName]
 
-    for key, value in pairs(Zacks_Easy_Configuration) do
-        if getgenv().Easies_Configuration[key] == nil then
-            getgenv().Easies_Configuration[key] = value
+            if typeof(settingValue) == "string" then
+                return settingValue == "on"
+            end
         end
+    
+        return false
     end
-    wait()
-    local function load_ez_Config()
-        if isfile(configFileName) then
-            local json = readfile(configFileName)
-            getgenv().Easies_Configuration = game:GetService("HttpService"):JSONDecode(json)
-            print("Loaded Configuration Successfully!")
+
+    function save_anim_config(animToSave, animFile)
+        local http = game:GetService("HttpService")
+        local folder = "executor_configs"
+        local filePath = folder .. "/Animation_" .. animFile .. ".json"
+    
+        if not isfolder(folder) then
+            makefolder(folder)
+        end
+    
+        local jsonData = http:JSONEncode({["Animation_" .. animFile] = animToSave})
+        writefile(filePath, jsonData)
+    end
+    
+    function save_config_other(animFile, configSave)
+        local http = game:GetService("HttpService")
+        local folder = "executor_configs"
+        local filePath = folder .. "/" .. animFile .. ".json"
+    
+        if not isfolder(folder) then
+            makefolder(folder)
+        end
+    
+        local jsonData = http:JSONEncode({[animFile] = configSave or ""})
+        writefile(filePath, jsonData)
+    end
+    
+    local function load_or_save(fileName, defaultValue, isAnim)
+        local path = "executor_configs/" .. fileName .. ".json"
+    
+        if isfile(path) then
+            return readfile(path)
         else
-            warn("Failure!: No saved configuration found.")
+            if isAnim then
+                save_anim_config(defaultValue, fileName)
+            else
+                save_config_other(fileName, defaultValue)
+            end
+            return defaultValue
         end
     end
-    wait()
-    load_ez_Config()
-    wait()
-    --[[if isfile and isfile("EmoteConfig.json") then
-        getgenv().Easies_Configuration["Death_On_Load"] = "on"
+    
+    function initialize_config()
+        local config = {
+            Custom_Animation_Package_System = load_or_save("Custom_Animation_Package_System", ""),
+            Animation_Idle = load_or_save("Idle", "Zombie", true),
+            Animation_Walk = load_or_save("Walk", "Zombie", true),
+            Animation_Run = load_or_save("Run", "Zombie", true),
+            Animation_Jump = load_or_save("Jump", "Zombie", true),
+            Animation_Fall = load_or_save("Fall", "Zombie", true),
+            Animation_Climb = load_or_save("Climb", "Zombie", true),
+            Death_On_Load = load_or_save("Death_On_Load", "on"),
+            Emote_Keybinds = load_or_save("Emote_Keybinds", "on"),
+            AntiAFK = load_or_save("AntiAFK", "on"),
+            Loading_Screen = load_or_save("Loading_Screen", "on"),
+            Mute_Boomboxes_Cellmates_VC_Game_Setting = load_or_save("Mute_Boomboxes_Cellmates_VC_Game_Setting", "off"),
+            Mute_Music_Volume_Cellmates_VC_Game_Setting = load_or_save("Mute_Music_Volume_Cellmates_VC_Game_Setting", "off"),
+            Mute_Sound_Effects_Cellmates_VC_Game_Setting = load_or_save("Mute_Sound_Effects_Cellmates_VC_Game_Setting", "off"),
+            System_Broken_Title = load_or_save("System_Broken_Title", "off"),
+            System_Broken_Text_Title = load_or_save("System_Broken_Text_Title", "      Zacks System Broken"),
+            Fully_Loaded_Messaging = load_or_save("Fully_Loaded_Messaging", "off"),
+            Fully_Loaded_Message = load_or_save("Fully_Loaded_Message", "Zacks Easy Hub - Winning."),
+            Huge_Baseplate = load_or_save("Huge_Baseplate", "on"),
+            Script_Clock_Time_GUI = load_or_save("Script_Clock_Time_GUI", "off"),
+            Anti_Suspend_VC = load_or_save("Anti_Suspend_VC", "on"),
+            Infinite_Yield_Premium = load_or_save("Infinite_Yield_Premium", "on"),
+            Performance_Statistics = load_or_save("Performance_Statistics", "on"),
+            Old_Materials = load_or_save("Old_Materials", "off"),
+            System_Broken = load_or_save("System_Broken", "on"),
+            keep_tp_tool = load_or_save("keep_tp_tool", "off"),
+            Title_Toggle_UI = load_or_save("Title_Toggle_UI", "off"),
+        }
+        
+        getgenv().Easies_Configuration = config
+        wait(0.3)
+        if getgenv().Easies_Configuration then
+            getgenv().Configuration_Easies_Loaded = true
+            writefile("executor_configs/config_loaded_toggle.lua", "True", true)
+        else
+            getgenv().Configuration_Easies_Loaded = false
+            writefile("executor_configs/config_loaded_toggle.lua", "False", true)
+        end
+
+        return config
+    end
+
+    Zacks_Easy_Configuration = initialize_config()
+    wait(0.2)
+    if not getgenv().Easies_Configuration then
+        print("Loading Configuration...")
+    end
+
+    for i = 1, 100, 4 do
+        wait(0.1)
+        print("Loading Configuration... " .. i .. "%")
+    end
+
+    local main_loader = "executor_configs/config_loaded_toggle.lua"
+
+    if getgenv().Configuration_Easies_Loaded or getgenv().Configuration_Easies_Loaded == true then
+        print("Config loaded successfully!")
     else
-        warn("EmoteConfig.json does not exist. EXIT_STATUS:[0]")
-    end--]]
-    wait(0.3)
+        warn("Config script not found! Make sure file exists.")
+    end
+    wait(0.2)
     local function getExecutor()
         local name
         if identifyexecutor then
@@ -125,11 +160,11 @@
     end
     wait(0.1)
     local executor_Name = detectExecutor()
-    wait(0.3)
+    wait(0.2)
     local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
     local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
     local Notification
-    wait(0.5)
+    wait(0.3)
     -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
     if executor_Name == "Nihon" then
         print("Executor Detected: Nihon | Using alternate notification system.")
@@ -177,7 +212,7 @@
         Notification:Notify("Success!", "Connected with VC successfully!", 5)
     elseif enabled_vc == true and executor_Name ~= "Nihon" then
         Notification.Notify("Success!", "Connected with VoiceChat successfully!", "rbxassetid://93594537601787", {
-            Duration = 5,       
+            Duration = 5,
             Main = {
                 Rounding = true,
             }
@@ -204,6 +239,166 @@
                 Rounding = true,
             }
         });
+    end
+    wait()
+    local GC = getconnections or get_signal_cons
+
+    if GC then
+        local player = game.Players.LocalPlayer
+
+        local function disableConnectionsForPropertiesAndEvents(character)
+            local humanoid = character:WaitForChild("Humanoid")
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+            local properties = {
+                {object = game.Workspace, property = "Gravity"},
+                {object = humanoid, property = "UseJumpPower"},
+                {object = humanoid, property = "JumpPower"},
+                {object = humanoid, property = "WalkSpeed"},
+                {object = humanoid, property = "HipHeight"},
+                {object = humanoid, property = "JumpHeight"},
+                {object = humanoidRootPart, property = "Position"},
+                {object = humanoidRootPart, property = "CFrame"},
+                {object = humanoidRootPart, property = "Velocity"},
+                {object = humanoidRootPart, property = "Size"},
+                {object = humanoidRootPart, property = "CanTouch"},
+            }
+
+            for _, propData in ipairs(properties) do
+                local object = propData.object
+                local property = propData.property
+
+                if object and object:GetPropertyChangedSignal(property) then
+                    local connections = getconnections(object:GetPropertyChangedSignal(property))
+                    for _, connection in ipairs(connections) do
+                        connection:Disable()
+                    end
+                    print("Disabled connections for:", object.Name, property)
+                else
+                    print("Could not find signal for:", object.Name, property)
+                end
+            end
+
+            local stateChangedConnections = getconnections(humanoid.StateChanged)
+            for _, connection in ipairs(stateChangedConnections) do
+                connection:Disable()
+            end
+
+            print("Disabled StateChanged connections for Humanoid.")
+        end
+
+        local function disableDescendantAddedChecks(character)
+            local connections = getconnections(character.DescendantAdded)
+            for _, connection in ipairs(connections) do
+                connection:Disable()
+            end
+
+            print("Disabled DescendantAdded checks for:", character.Name)
+        end
+
+        local function disableChildAddedChecks(character)
+            local connections = getconnections(character.ChildAdded)
+            for _, connection in ipairs(connections) do
+                connection:Disable()
+            end
+
+            print("Disabled ChildAdded checks for:", character.Name)
+        end
+
+        local function setupCharacter(character)
+            wait(0.5)
+            character:WaitForChild("Humanoid", 0.3)
+            disableConnectionsForPropertiesAndEvents(character)
+            disableDescendantAddedChecks(character)
+            disableChildAddedChecks(character)
+        end
+
+        local function monitorCharacter()
+            wait()
+            if player.Character then
+                wait()
+                setupCharacter(player.Character)
+            end
+
+            player.CharacterAdded:Connect(function(character)
+                wait()
+                character:WaitForChild("Humanoid")
+                setupCharacter(character)
+            end)
+        end
+
+        monitorCharacter()
+    else
+        warn("getconnections is not supported.")
+    end
+    wait()
+    if hookmetamethod then
+        local function setupCharacter(character)
+            wait(0.5)
+            character:WaitForChild("Humanoid", 0.5)
+            wait(0.1)
+            local lp = game:FindService("Players").LocalPlayer
+            local hooks = {
+                walkspeed = 16,
+                jumppower = 50
+            }
+            local index
+            local newindex
+    
+            index = hookmetamethod(game,"__index",function(self,property)
+                if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+                    return hooks[property:lower()]
+                end
+                return index(self,property)
+            end)
+    
+            newindex = hookmetamethod(game,"__newindex",function(self,property,value)
+                if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+                    return value
+                end
+                return newindex(self,property,value)
+            end)
+        end
+
+        local function monitorCharacter()
+            wait()
+            if player.Character and player.Character:FindFirstChild("Humanoid") and player.Character:FindFirstChild("HumanoidRootPart") then
+                wait()
+                setupCharacter(player.Character)
+            end
+
+            player.CharacterAdded:Connect(function(character)
+                wait()
+                character:WaitForChild("Humanoid", 0.5)
+                setupCharacter(character)
+            end)
+        end
+
+        monitorCharacter()
+        wait()
+        local lp = game:FindService("Players").LocalPlayer
+        local hooks = {
+            walkspeed = 16,
+            jumppower = 50
+        }
+        local index
+        local newindex
+
+        index = hookmetamethod(game,"__index",function(self,property)
+            if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+                return hooks[property:lower()]
+            end
+            return index(self,property)
+        end)
+
+        newindex = hookmetamethod(game,"__newindex",function(self,property,value)
+            if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+                return value
+            end
+            return newindex(self,property,value)
+        end)
+    else
+        warn("hookmetamethod - is unsupported.")
     end
     wait()
     local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
@@ -262,7 +457,7 @@
         
         local character = Plr.Character or Plr.CharacterAdded:Wait(1)
         wait()
-        if Plr.Name == "L0CKED_1N1" or Plr.Name == "CHEATING_B0SS" and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        if Plr.Name == "L0CKED_1N1" or Plr.Name == "CHEATING_B0SS" and isSettingEnabled("Title_Toggle_UI") and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -295,7 +490,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "🔥 Zacks Easy Hub | Owner 🔥"
             textLabel.Parent = background
-        elseif Plr.Name ~= "L0CKED_1N1" and Plr.Name ~= "CHEATING_B0SS" and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif Plr.Name ~= "L0CKED_1N1" and Plr.Name ~= "CHEATING_B0SS" and isSettingEnabled("Title_Toggle_UI") and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -328,7 +523,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "✅ Zacks Easy Hub - Client ✅"
             textLabel.Parent = background
-        elseif Plr.Name == "adorxfleurys" or Plr.Name == "lucxd19K5" and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif Plr.Name == "adorxfleurys" or Plr.Name == "lucxd19K5" and isSettingEnabled("Title_Toggle_UI") and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -361,7 +556,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "❤️ Zacks Easy Hub - Wife ❤️"
             textLabel.Parent = background
-        elseif is_support_team() and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif is_support_team() and isSettingEnabled("Title_Toggle_UI") and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -394,7 +589,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "⚒️ Zacks Easy Hub - Support ⚒️"
             textLabel.Parent = background
-        elseif is_admin_team() and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif is_admin_team() and isSettingEnabled("Title_Toggle_UI") and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -427,7 +622,7 @@
             textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             textLabel.Text = "🗡️ Zacks Easy Hub - Admin 🗡️"
             textLabel.Parent = background
-        elseif Plr.Name == "Chick7nn" or Plr.Name == "LIL_RT228" and getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" and character and not character:FindFirstChild("ZacksEasyBillboard") then
+        elseif Plr.Name == "Chick7nn" or Plr.Name == "LIL_RT228" and isSettingEnabled("Title_Toggle_UI") and character and not character:FindFirstChild("ZacksEasyBillboard") then
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
             billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
@@ -461,13 +656,11 @@
             textLabel.Text = "✔️ Zacks Easy Hub - Beta Tester ✔️"
             textLabel.Parent = background
         else
-            if getgenv().Easies_Configuration["Title_Toggle_UI"] == "off" then
-                warn("Zacks Easy Client Title not enabled in Configuration.")
-            end
+            warn("Zacks Easy Client Title not enabled in Configuration.")
         end
     end
     
-    if getgenv().Easies_Configuration["Title_Toggle_UI"] == "on" then
+    if isSettingEnabled("Title_Toggle_UI") then
         local function onChatMessage(message)
             if message.Text == SECRET_CHAT_CODE then
                 local sender = Players:GetPlayerByUserId(message.TextSource.UserId)
@@ -538,7 +731,7 @@
     if getgenv().clock_script_time then
         warn("Already loaded Clock GUI or user has already clicked 'No'")
     else
-        if getgenv().Easies_Configuration["Script_Clock_Time_GUI"] == "on" or getgenv().Easies_Configuration["Script_Clock_Time_GUI"] == "On" or getgenv().Easies_Configuration["Script_Clock_Time_GUI"] == "Enabled" then
+        if isSettingEnabled("Script_Clock_Time_GUI") then
             local ClockGUI = Instance.new("ScreenGui")
             local Clock_Frame = Instance.new("ImageLabel")
             local time_label = Instance.new("TextLabel")
@@ -805,7 +998,7 @@
     if getgenv().voiceChat_Check then
         warn("Voice Chat already initialized.")
     else
-        if getgenv().Easies_Configuration["Anti_Suspend_VC"] == "on" or getgenv().Easies_Configuration["Anti_Suspend_VC"] == "On" or getgenv().Easies_Configuration["Anti_Suspend_VC"] == "Enabled" then
+        if isSettingEnabled("Anti_Suspend_VC") then
             getgenv().voiceChat_Check = true 
 
             local vc_internal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
@@ -936,7 +1129,7 @@
         if getgenv().loading_screen_data then
             print("Already Seen Loading Screen")
         else
-            if getgenv().Easies_Configuration["Loading_Screen"] == "on" or getgenv().Easies_Configuration["Loading_Screen"] == "On" or getgenv().Easies_Configuration["Loading_Screen"] == "Enabled" then
+            if isSettingEnabled("Loading_Screen") then
                 local player = getgenv().LocalPlayer
                 local screenGui = Instance.new("ScreenGui")
                 screenGui.Parent = player:WaitForChild("PlayerGui")
@@ -1000,7 +1193,7 @@
         if getgenv().passed_baseplate_check then
             warn("Already loaded BasePlate check.")
         else
-            if getgenv().Easies_Configuration["Huge_Baseplate"] == "on" or getgenv().Easies_Configuration["Huge_Baseplate"] == "On" or getgenv().Easies_Configuration["Huge_Baseplate"] == "Enabled" then
+            if isSettingEnabled("Huge_Baseplate") then
                 getgenv().passed_baseplate_check = true
                 wait(0.2)
                 function do_baseplate_check()
@@ -1276,7 +1469,7 @@
     if getgenv().keeping_tp_tool then
         warn("Already decided to keep teleport tool.")
     else
-        if getgenv().Easies_Configuration["keep_tp_tool"] == "on" or getgenv().Easies_Configuration["keep_tp_tool"] == "On" or getgenv().Easies_Configuration["keep_tp_tool"] == "Enabled" then
+        if isSettingEnabled("keep_tp_tool") then
             local Players = game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
             
@@ -1312,7 +1505,7 @@
         end
     end
     wait(0.1)
-    if getgenv().Easies_Configuration["System_Broken"] == "on" or getgenv().Easies_Configuration["System_Broken"] == "On" or getgenv().Easies_Configuration["System_Broken"] == "Enabled" then
+    if isSettingEnabled("System_Broken") then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
     else
         warn("Not enabled in Configuration.")
@@ -1400,7 +1593,7 @@
     if getgenv().inf_yield_side then
         getgenv().notify("Alert!", "Infinite Premium (IY-Premium) has already been loaded.", 5)
     else
-        if getgenv().Easies_Configuration["Infinite_Yield_Premium"] == "on" or getgenv().Easies_Configuration["Infinite_Yield_Premium"] == "On" or getgenv().Easies_Configuration["Infinite_Yield_Premium"] == "Enabled" then
+        if isSettingEnabled("Infinite_Yield_Premium") then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
             wait(0.1)
             getgenv().inf_yield_side = true
@@ -1499,7 +1692,7 @@
     Tab20 = Window:CreateTab("> Config", getgenv().image_use_zacks)
     Section20 = Tab20:CreateSection("||| Configuration Section |||")
     wait(0.2)
-    if getgenv().Easies_Configuration["Old_Materials"] == "on" or getgenv().Easies_Configuration["Old_Materials"] == "On" or getgenv().Easies_Configuration["Old_Materials"] == "Enabled" then
+    if isSettingEnabled("Old_Materials") then
         local MaterialService = cloneref and cloneref(game:GetService("MaterialService")) or game:GetService("MaterialService")
 
         MaterialService.Use2022Materials = false
@@ -1633,7 +1826,7 @@
         wait(0.2)
         warn("000 >>> 000 >>> nil")
     else
-        if getgenv().Easies_Configuration["AntiAFK"] == "on" or getgenv().Easies_Configuration["AntiAFK"] == "On" or getgenv().Easies_Configuration["AntiAFK"] == "Enabled" then
+        if isSettingEnabled("AntiAFK") then
             local GC = getconnections or get_signal_cons
 
             if GC then
@@ -1734,7 +1927,7 @@
     end
     wait(0.5)
     if game.PlaceId == 97399198116506 then
-        if getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] == "on" or getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] == "On" or getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] == "Enabled" then
+        if isSettingEnabled("Mute_Boomboxes_Cellmates_VC_Game_Setting") then
             if ChangeSetting then
                 ChangeSetting:InvokeServer("BoomboxVolume", -5 or 0)
             else
@@ -1748,7 +1941,7 @@
             warn("Not enabled in Configuration.")
         end
         wait(0.2)
-        if getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] == "on" or getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] == "On" or getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] == "Enabled" then
+        if isSettingEnabled("Mute_Music_Volume_Cellmates_VC_Game_Setting") then
             if ChangeSetting then
                 ChangeSetting:InvokeServer("MusicVolume", -5 or 0)
             else
@@ -1762,7 +1955,7 @@
             warn("Not enabled in Configuration.")
         end
         wait(0.2)
-        if getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] == "on" or getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] == "On" or getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] == "Enabled" then
+        if isSettingEnabled("Mute_Sound_Effects_Cellmates_VC_Game_Setting") then
             if ChangeSetting then
                 ChangeSetting:InvokeServer("SFXVolume", -5 or 0)
             else
@@ -4016,7 +4209,7 @@
         getgenv().DeletePlrBooth = Tab11:CreateButton({
         Name = "Delete Current Booth",
         Callback = function()
-            for i = 1, 50 do
+            for i = 1, 20 do
                 getgenv().ReplicatedStorage:FindFirstChild("DeleteBoothOwnership"):FireServer()
             end
         end,})
@@ -4441,23 +4634,39 @@
             end
         end
     end,})
-    wait()
-    local configFileName = "Easies_Configuration.json"
 
-    local function save_ez_Config()
-        local json = game:GetService("HttpService"):JSONEncode(getgenv().Easies_Configuration)
-        writefile(configFileName, json)
-        getgenv().notify("Success!", "Updated Configuration Successfully.", 6)
-    end
+    local HttpService = game:GetService("HttpService")
+    wait()
+    function save_ez_Config() 
+        local saveDirectory = "executor_configs/"
+    
+        if not isfolder(saveDirectory) then
+            makefolder(saveDirectory)
+        end
+    
+        for key, value in pairs(getgenv().Easies_Configuration) do
+            local filePath = saveDirectory .. key .. ".json"
+
+            local fileContent
+            if typeof(value) == "table" then
+                fileContent = HttpService:JSONEncode({ [key] = value })
+            else
+                fileContent = HttpService:JSONEncode({ [key] = HttpService:JSONDecode(value) or value })
+            end
+    
+            writefile(filePath, fileContent)
+        end
+    
+        getgenv().notify("Success.", "Configuration saved successfully.", 6)
+    end    
     wait()
     getgenv().TitleUIToggle = Tab20:CreateToggle({
-    Name = "Toggle Title UI",
+    Name = "Title UI",
     CurrentValue = false,
-    Flag = "TitleUIToggling",
-    Callback = function(funcUITitle)
-        getgenv().title_is_enabled = funcUITitle
-        getgenv().Easies_Configuration["Title_Toggle_UI"] = funcUITitle and "on" or "off"
-        save_ez_Config()
+    Flag = "togglingTheTitle",
+    Callback = function(ezMakinMoney)
+        getgenv().title_is_enabled = ezMakinMoney
+        getgenv().Easies_Configuration["Title_Toggle_UI"] = ezMakinMoney and "on" or "off"
     end,})
     wait(0.1)
     getgenv().MaterialForMap = Tab18:CreateDropdown({
@@ -8864,17 +9073,16 @@
         getgenv().getLoopKick = false
         wait()
         getgenv().SCRIPT_EXECUTED = false
-        wait()
+        getgenv().SCRIPT_EXECUTED = false
+        getgenv().SCRIPT_EXECUTED = false
+        getgenv().SCRIPT_EXECUTED = false
         getgenv().SCRIPT_EXECUTED = false
         wait(0.1)
         getgenv().Invis_Loaded = false
-        getgenv().GetLoopRunning = false
-        getgenv().GetLoopRunning = false
-        getgenv().LmaoGetMuted = false
         getgenv().css_digital = false
         wait(0.2)
         getgenv().Rayfield:Destroy()
-        wait(0.2)
+        wait(0.8)
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
     end,})
 
@@ -9164,7 +9372,7 @@
         Rthro_Climb = "10921257536"
         Rthro_Fall = "10921262864"
 
-        if getgenv().Easies_Configuration["Custom_Animation_Package_System"] == "on" or getgenv().Easies_Configuration["Custom_Animation_Package_System"] == "On" or getgenv().Easies_Configuration["Custom_Animation_Package_System"] == "Enabled" then
+        if isSettingEnabled("Custom_Animation_Package_System") then
             local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
             local LocalPlayer = Players.LocalPlayer
             local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -10243,7 +10451,7 @@
         return Enum.KeyCode[keyString] or nil
     end
     wait()
-    if getgenv().Easies_Configuration["Emote_Keybinds"] == "on" or getgenv().Easies_Configuration["Emote_Keybinds"] == "On" or getgenv().Easies_Configuration["Emote_Keybinds"] == "Enabled" then
+    if isSettingEnabled("Emote_Keybinds") then
         local UserInputService = game:GetService("UserInputService")
         
         getgenv().Reverse_Keybind = Enum.KeyCode.F
@@ -10496,7 +10704,7 @@
             if typeof(emote) == "table" then
                 emote = emote[1]
             end
-
+            
             if typeof(emote) ~= "string" then
                 return warn("Invalid emote selection: Expected a string, got:", typeof(emote))
             end
@@ -10722,461 +10930,406 @@
             getgenv().notify("Success", "Successfully disabled Trip Connection.", 5)
         end
     end,})
-    wait()
-    local configFileName = "Easies_Configuration.json"
 
-    local function save_ez_Config()
-        local json = game:GetService("HttpService"):JSONEncode(getgenv().Easies_Configuration)
-        writefile(configFileName, json)
-        getgenv().notify("Success!", "Updated Configuration Successfully.", 6)
+    local HttpService = game:GetService("HttpService") 
+    wait()
+    
+    function save_ez_Config() 
+        local saveDirectory = "executor_configs/"
+    
+        if not isfolder(saveDirectory) then
+            makefolder(saveDirectory)
+        end
+    
+        for key, value in pairs(getgenv().Easies_Configuration) do
+            local filePath = saveDirectory .. key .. ".json"
+    
+            local fileContent
+            if typeof(value) == "table" then
+                fileContent = HttpService:JSONEncode({ [key] = value })
+            else
+                fileContent = HttpService:JSONEncode({ [key] = tostring(value) })
+            end
+    
+            writefile(filePath, fileContent)
+            print("Saved Config:", filePath, "Data:", fileContent)
+        end
+    
+        getgenv().notify("Success.", "Configuration saved successfully.", 6)
+    end    
+
+    local function del_ez_Config()
+        if isfolder("executor_configs/") then
+            delfolder("executor_configs/")
+            getgenv().notify("Success.", "Configuration Folder has been deleted.", 6)
+        else
+            getgenv().notify("Failure.", "No saved Configuration Folder to delete.", 6)
+        end
+    end
+
+    function load_ez_Config()
+        local saveDirectory = "executor_configs/"
+        local configTable = {}
+
+        local configKeys = {
+            "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "Mute_Boomboxes_Cellmates_VC_Game_Setting",
+            "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load",
+            "Mute_Music_Volume_Cellmates_VC_Game_Setting", "Custom_Animation_Package_System",
+            "Infinite_Yield_Premium", "System_Broken_Text_Title", "Animation_Idle", "Old_Materials",
+            "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Mute_Sound_Effects_Cellmates_VC_Game_Setting",
+            "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
+            "Title_Toggle_UI", "Loading_Screen", "Animation_Walk", "keep_tp_tool", "AntiAFK"
+        }
+
+        for _, key in ipairs(configKeys) do
+            local filePath = saveDirectory .. key .. ".json"
+            
+            if isfile(filePath) then
+                local fileContent = readfile(filePath)
+                local decodedData = HttpService:JSONDecode(fileContent)
+
+                configTable[key] = decodedData[key]
+            else
+                configTable[key] = "off"
+            end
+        end
+    end
+
+    function readConfigValue(key)
+        local filePath = "executor_configs/" .. key .. ".json"
+
+        if isfile(filePath) then
+            local fileContent = readfile(filePath)
+            local decodedData = HttpService:JSONDecode(fileContent)
+
+            local value = decodedData[key]
+
+            return value == "on"
+        else
+            return false
+        end
+    end
+
+    function getAnimation(animationType)
+        local filePath = "executor_configs/" .. animationType .. ".json"
+
+        if isfile(filePath) then
+            local fileContent = readfile(filePath)
+            local decodedData = HttpService:JSONDecode(fileContent)
+
+            return decodedData[animationType]
+        else
+            return "Zombie"
+        end
     end
     wait()
-    getgenv().CustomAnimPackageSetting = Tab20:CreateToggle({
-    Name = "Use Custom Animation Package System",
-    CurrentValue = false,
-    Flag = "setConfigAnimPackageSystem",
-    Callback = function(setDefaultFlagForCustomAnims)
-        getgenv().using_custom_animation_packages = setDefaultFlagForCustomAnims
-        getgenv().Easies_Configuration["Custom_Animation_Package_System"] = setDefaultFlagForCustomAnims and "on" or "off"
+    getgenv().saveConfigurationSettings = Tab20:CreateButton({
+    Name = "Save Easy Configuration",
+    Callback = function()
         save_ez_Config()
     end,})
-    wait()
-    if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
-        getgenv().CustomAnimPackageSetting:Set(true)
-    else
-        getgenv().CustomAnimPackageSetting:Set(false)
-    end
+
+    getgenv().DeleteYourCustomConfigurationZEH = Tab20:CreateButton({
+    Name = "Delete Easy Configuration",
+    Callback = function()
+        del_ez_Config()
+    end,})
+
+    getgenv().LoadEzConfigurationSettings = Tab20:CreateButton({
+    Name = "Load Easy Configuration",
+    Callback = function()
+        load_ez_Config()
+    end,})
+
+    getgenv().CustomAnimPackageSetting = Tab20:CreateToggle({
+    Name = "Use Custom Animation Package System",
+    CurrentValue = readConfigValue("Custom_Animation_Package_System") or false,
+    Flag = "TurningOnTheAnimationPackagesCustom",
+    Callback = function(animPackageCustoms)
+        getgenv().using_custom_animation_packages = animPackageCustoms
+        getgenv().Easies_Configuration["Custom_Animation_Package_System"] = animPackageCustoms and "on" or "off"
+    end,})
     
     getgenv().IdleAnimToSet = Tab20:CreateDropdown({
     Name = "Idle Animation",
     Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
-    CurrentOption = "Zombie",
+    CurrentOption = getAnimation("Animation_Idle"),
     MultipleOptions = false,
     Flag = "IdleAnimDropdownList",
     Callback = function(dropSelectedForAnim)
         if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
-            Zacks_Easy_Configuration.Animation_Idle = tostring(dropSelectedForAnim)
-            save_ez_Config()
+            print("Dropdown Selection Type:", typeof(dropSelectedForAnim))
+            
+            if typeof(dropSelectedForAnim) == "table" then
+                dropSelectedForAnim = dropSelectedForAnim[1]
+            end
+    
+            save_anim_config(tostring(dropSelectedForAnim), "Idle")
+            wait(0.1)
+            getgenv().Easies_Configuration["Animation_Idle"] = tostring(dropSelectedForAnim)
         else
-            warn("Use Custom Animation Packages is not enabled.")
+            getgenv().notify("Failure", "Use Custom Animation Packages is not enabled.", 6)
         end
     end,})
 
     getgenv().WalkAnimToSet = Tab20:CreateDropdown({
     Name = "Walk Animation",
     Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
-    CurrentOption = "Zombie",
+    CurrentOption = getAnimation("Animation_Walk"),
     MultipleOptions = false,
     Flag = "WalkAnimationDropdownList",
     Callback = function(selectedWalkAnim)
         if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
-            Zacks_Easy_Configuration.Animation_Walk = tostring(selectedWalkAnim)
-            save_ez_Config()
+            print("Dropdown Selection Type:", typeof(selectedWalkAnim))
+            
+            if typeof(selectedWalkAnim) == "table" then
+                selectedWalkAnim = selectedWalkAnim[1]
+            end
+
+            save_anim_config(tostring(selectedWalkAnim), "Walk")
+            wait(0.1)
+            getgenv().Easies_Configuration["Animation_Walk"] = tostring(selectedWalkAnim)
         else
-            warn("Use Custom Animation Packages is not enabled.")
+            getgenv().notify("Failure", "Use Custom Animation Packages is not enabled.", 6)
         end
     end,})
 
     getgenv().RunAnimToSet = Tab20:CreateDropdown({
     Name = "Run Animation",
     Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
-    CurrentOption = "Zombie",
+    CurrentOption = getAnimation("Animation_Run"),
     MultipleOptions = false,
     Flag = "RunAnimationDropdownList",
     Callback = function(selectedRunAnim)
         if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
-            Zacks_Easy_Configuration.Animation_Run = tostring(selectedRunAnim)
-            save_ez_Config()
+            print("Dropdown Selection Type:", typeof(selectedRunAnim))
+            
+            if typeof(selectedRunAnim) == "table" then
+                selectedRunAnim = selectedRunAnim[1]
+            end
+
+            save_anim_config(tostring(selectedRunAnim), "Run")
+            getgenv().Easies_Configuration["Animation_Run"] = tostring(selectedRunAnim)
         else
-            warn("Use Custom Animation Packages is not enabled.")
+            getgenv().notify("Failure", "Use Custom Animation Packages is not enabled.", 6)
         end
     end,})
 
     getgenv().JumpAnimToSet = Tab20:CreateDropdown({
     Name = "Jump Animation",
     Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
-    CurrentOption = "Zombie",
+    CurrentOption = getAnimation("Animation_Jump"),
     MultipleOptions = false,
     Flag = "JumpAnimationDropdownList",
     Callback = function(selectedJumpAnim)
         if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
-            Zacks_Easy_Configuration.Animation_Jump = tostring(selectedJumpAnim)
-            save_ez_Config()
+            print("Dropdown Selection Type:", typeof(selectedJumpAnim))
+            
+            if typeof(selectedJumpAnim) == "table" then
+                selectedJumpAnim = selectedJumpAnim[1]
+            end
+
+            save_anim_config(tostring(selectedJumpAnim), "Jump")
+            getgenv().Easies_Configuration["Animation_Jump"] = tostring(selectedJumpAnim)
         else
-            warn("Use Custom Animation Packages is not enabled.")
+            getgenv().notify("Failure", "Use Custom Animation Packages is not enabled.", 6)
         end
     end,})
 
     getgenv().FallAnimToSet = Tab20:CreateDropdown({
     Name = "Fall Animation",
     Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
-    CurrentOption = "Zombie",
+    CurrentOption = getAnimation("Animation_Fall"),
     MultipleOptions = false,
     Flag = "FallAnimationDropdownList",
     Callback = function(selectedFallAnim)
         if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
-            Zacks_Easy_Configuration.Animation_Fall = tostring(selectedFallAnim)
-            save_ez_Config()
+            print("Dropdown Selection Type:", typeof(selectedFallAnim))
+            
+            if typeof(selectedFallAnim) == "table" then
+                selectedFallAnim = selectedFallAnim[1]
+            end
+
+            save_anim_config(tostring(selectedFallAnim), "Fall")
+            getgenv().Easies_Configuration["Animation_Fall"] = tostring(selectedFallAnim)
         else
-            warn("Use Custom Animation Packages is not enabled.")
+            getgenv().notify("Failure", "Use Custom Animation Packages is not enabled.", 6)
         end
     end,})
 
     getgenv().ClimbAnimToSet = Tab20:CreateDropdown({
     Name = "Climb Animation",
     Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
-    CurrentOption = "Zombie",
+    CurrentOption = getAnimation("Animation_Climb"),
     MultipleOptions = false,
     Flag = "ClimbAnimationDropdownList",
     Callback = function(selectedClimbAnim)
         if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
-            Zacks_Easy_Configuration.Animation_Climb = tostring(selectedClimbAnim)
-            save_ez_Config()
+            print("Dropdown Selection Type:", typeof(selectedClimbAnim))
+            
+            if typeof(selectedClimbAnim) == "table" then
+                selectedClimbAnim = selectedClimbAnim[1]
+            end
+
+            save_anim_config(tostring(selectedClimbAnim), "Climb")
+            getgenv().Easies_Configuration["Animation_Climb"] = tostring(selectedClimbAnim)
         else
-            warn("Use Custom Animation Packages is not enabled.")
+            getgenv().notify("Failure", "Use Custom Animation Packages is not enabled.", 6)
         end
     end,})
 
     getgenv().DieUponLoad = Tab20:CreateToggle({
     Name = "Reset When Loading Script",
-    CurrentValue = false,
-    Flag = "dieOnLoading",
-    Callback = function(deathOnFullLoad)
-        getgenv().die_upon_loading = deathOnFullLoad
-        getgenv().Easies_Configuration["Death_On_Load"] = deathOnFullLoad and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Death_On_Load") or false,
+    Flag = "ResettingWhenLoadingScript",
+    Callback = function(dieWhenLoadingScript)
+        getgenv().die_upon_loading = dieWhenLoadingScript
+        getgenv().Easies_Configuration["Death_On_Load"] = dieWhenLoadingScript and "on" or "off"
     end,})
-    wait()
-    if getgenv().die_upon_loading or getgenv().die_upon_loading == true then
-        getgenv().DieUponLoad:Set(true)
-    else
-        getgenv().DieUponLoad:Set(false)
-    end
 
     getgenv().EmoteKeybinds = Tab20:CreateToggle({
     Name = "Emote Keybinds",
-    CurrentValue = false,
-    Flag = "emoteKeybindsScript",
-    Callback = function(ezEmoteBindings)
-        getgenv().emoting_bindings = ezEmoteBindings
-        getgenv().Easies_Configuration["Emote_Keybinds"] = ezEmoteBindings and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Emote_Keybinds") or false,
+    Flag = "emotingKeybindsToggle",
+    Callback = function(isEmoteKeybindsEnabled)
+        getgenv().emoting_bindings = isEmoteKeybindsEnabled
+        getgenv().Easies_Configuration["Emote_Keybinds"] = isEmoteKeybindsEnabled and "on" or "off"
     end,})
-    wait()
-    if getgenv().emoting_bindings or getgenv().emoting_bindings == true then
-        getgenv().EmoteKeybinds:Set(true)
-    else
-        getgenv().EmoteKeybinds:Set(false)
-    end
 
     getgenv().AntiAFKSetting = Tab20:CreateToggle({
     Name = "Anti AFK",
-    CurrentValue = false,
-    Flag = "antiAFKToggledOn",
-    Callback = function(antiAfkScript)
-        getgenv().anti_afk_toggle = antiAfkScript
-        getgenv().Easies_Configuration["AntiAFK"] = antiAfkScript and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("AntiAFK") or false,
+    Flag = "AntiAFKIsEnabled",
+    Callback = function(antiAfkScriptOn)
+        getgenv().anti_afk_toggle = antiAfkScriptOn
+        getgenv().Easies_Configuration["AntiAFK"] = antiAfkScriptOn and "on" or "off"
     end,})
-    wait()
-    if getgenv().anti_afk_toggle or getgenv().anti_afk_toggle == true then
-        getgenv().AntiAFKSetting:Set(true)
-    else
-        getgenv().AntiAFKSetting:Set(false)
-    end
 
     getgenv().LoadingScreenEnabled = Tab20:CreateToggle({
     Name = "Loading Screen",
-    CurrentValue = false,
-    Flag = "loadingScreenToggled",
-    Callback = function(loadscreen)
-        getgenv().Load_Screen = loadscreen
-        getgenv().Easies_Configuration["Loading_Screen"] = loadscreen and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Loading_Screen") or false,
+    Flag = "LoadingScreenCheckedOn",
+    Callback = function(loadTheScreenImage)
+        getgenv().Load_Screen = loadTheScreenImage
+        getgenv().Easies_Configuration["Loading_Screen"] = loadTheScreenImage and "on" or "off"
     end,})
-    wait()
-    if getgenv().Load_Screen or getgenv().Load_Screen == true then
-        getgenv().LoadingScreenEnabled:Set(true)
-    else
-        getgenv().LoadingScreenEnabled:Set(false)
-    end
 
     getgenv().MuteAllBoomboxesCellmatesVC = Tab20:CreateToggle({
     Name = "Mute All Boomboxes (Cellmates VC)",
-    CurrentValue = false,
-    Flag = "cellMatesVCBoomboxes",
-    Callback = function(toggleTheBoomboxSound)
-        getgenv().boomboxes_on = toggleTheBoomboxSound
-        getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] = toggleTheBoomboxSound and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Mute_Boomboxes_Cellmates_VC_Game_Setting") or false,
+    Flag = "mutingAllTheBoomboxesCellmates",
+    Callback = function(boomboxesMutedToggle)
+        getgenv().boomboxes_on = boomboxesMutedToggle
+        getgenv().Easies_Configuration["Mute_Boomboxes_Cellmates_VC_Game_Setting"] = boomboxesMutedToggle and "on" or "off"
     end,})
-    wait()
-    if getgenv().boomboxes_on or getgenv().boomboxes_on == true then
-        getgenv().MuteAllBoomboxesCellmatesVC:Set(true)
-    else
-        getgenv().MuteAllBoomboxesCellmatesVC:Set(false)
-    end
 
     getgenv().MuteTheMusicCellmatesVC = Tab20:CreateToggle({
     Name = "Mute Music (Cellmates VC)",
-    CurrentValue = false,
-    Flag = "cellMatesVCMusicToggle",
-    Callback = function(toggleTheMusicSound)
-        getgenv().music_mute_configured = toggleTheMusicSound
-        getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] = toggleTheMusicSound and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Mute_Music_Volume_Cellmates_VC_Game_Setting") or false,
+    Flag = "MutingAllTheMusicCellmates",
+    Callback = function(cellmatesVCMusicToggle)
+        getgenv().music_mute_configured = cellmatesVCMusicToggle
+        getgenv().Easies_Configuration["Mute_Music_Volume_Cellmates_VC_Game_Setting"] = cellmatesVCMusicToggle and "on" or "off"
     end,})
-    wait()
-    if getgenv().music_mute_configured or getgenv().music_mute_configured == true then
-        getgenv().MuteTheMusicCellmatesVC:Set(true)
-    else
-        getgenv().MuteTheMusicCellmatesVC:Set(false)
-    end
 
     getgenv().MuteAllSFXCellmatesVC = Tab20:CreateToggle({
     Name = "Mute Sound Effects (Cellmates VC)",
-    CurrentValue = false,
-    Flag = "cellMatesVCMuteSFXSounds",
-    Callback = function(toggleTheSFXSounds)
-        getgenv().sfx_sounds_on = toggleTheSFXSounds
-        getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] = toggleTheSFXSounds and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Mute_Sound_Effects_Cellmates_VC_Game_Setting") or false,
+    Flag = "MutingSFXSoundsCellmates",
+    Callback = function(isSFXEnabledCellmatesVC)
+        getgenv().sfx_sounds_on = isSFXEnabledCellmatesVC
+        getgenv().Easies_Configuration["Mute_Sound_Effects_Cellmates_VC_Game_Setting"] = isSFXEnabledCellmatesVC and "on" or "off"
     end,})
-    wait()
-    if getgenv().sfx_sounds_on or getgenv().sfx_sounds_on == true then
-        getgenv().MuteAllSFXCellmatesVC:Set(true)
-    else
-        getgenv().MuteAllSFXCellmatesVC:Set(false)
-    end
-
-    getgenv().SystemBrokenTitle = Tab20:CreateToggle({
-    Name = "System Broken Title",
-    CurrentValue = false,
-    Flag = "setYourOwnTitleSystemBroken",
-    Callback = function(stringForSysBroken)
-        getgenv().sys_broken_label = stringForSysBroken
-        getgenv().Easies_Configuration["System_Broken_Title"] = stringForSysBroken and "on" or "off"
-        task.wait()
-        save_ez_Config()
-    end,})
-
-    getgenv().changeSysBrokensTitle = Tab20:CreateInput({
-    Name = "System Broken Title",
-    CurrentValue = "",
-    PlaceholderText = "New Title Here",
-    RemoveTextAfterFocusLost = true,
-    Flag = "sysBrokenToString",
-    Callback = function(newestSysBrokenTitle)
-        Zacks_Easy_Configuration.System_Broken_Text_Title = tostring(newestSysBrokenTitle)
-        save_ez_Config()
-    end,})
-    wait()
-    if getgenv().sys_broken_label or getgenv().sys_broken_label == true then
-        getgenv().SystemBrokenTitle:Set(true)
-    else
-        getgenv().SystemBrokenTitle:Set(false)
-    end
 
     getgenv().fullyLoadedMsg = Tab20:CreateToggle({
     Name = "Chat - Fully Loaded Message",
-    CurrentValue = false,
-    Flag = "toggleForLoadedMessage",
-    Callback = function(turnOnFullyLoadedMsg)
-        getgenv().IsFullLoadedMessage = turnOnFullyLoadedMsg
-        getgenv().Easies_Configuration["Fully_Loaded_Messaging"] = turnOnFullyLoadedMsg and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Fully_Loaded_Messaging") or false,
+    Flag = "FullyLoadMessageText",
+    Callback = function(msgToFullyLoad)
+        getgenv().IsFullLoadedMessage = msgToFullyLoad
+        getgenv().Easies_Configuration["Fully_Loaded_Messaging"] = msgToFullyLoad and "on" or "off"
     end,})
 
     getgenv().textForFullyLoadedMessage = Tab20:CreateInput({
     Name = "Fully Loaded Message",
-    CurrentValue = "Fully Loaded.",
+    CurrentValue = readConfigValue("Fully_Loaded_Message") or "Zacks Easy Hub - Winning!",
     PlaceholderText = "Text Here",
     RemoveTextAfterFocusLost = true,
     Flag = "toStringForFullLoadedMsg",
     Callback = function(theFullLoadedMsg)
-        Zacks_Easy_Configuration.Fully_Loaded_Message = tostring(theFullLoadedMsg)
-        save_ez_Config()
+        getgenv().Easies_Configuration["Fully_Loaded_Message"] = tostring(theFullLoadedMsg)
     end,})
-    wait()
-    if getgenv().IsFullLoadedMessage or getgenv().IsFullLoadedMessage == true then
-        getgenv().fullyLoadedMsg:Set(true)
-    else
-        getgenv().fullyLoadedMsg:Set(false)
-    end
 
     getgenv().hugeBasePlateOn = Tab20:CreateToggle({
     Name = "Huge Baseplate",
-    CurrentValue = false,
-    Flag = "toggleHugePlate",
-    Callback = function(bigBasePlate)
-        getgenv().biggest_baseplate_yes = bigBasePlate
-        getgenv().Easies_Configuration["Huge_Baseplate"] = bigBasePlate and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Huge_Baseplate") or false,
+    Flag = "HugeBaseplateToggled",
+    Callback = function(baseplateBigToggled)
+        getgenv().biggest_baseplate_yes = baseplateBigToggled
+        getgenv().Easies_Configuration["Huge_Baseplate"] = baseplateBigToggled and "on" or "off"
     end,})
-    wait()
-    if getgenv().biggest_baseplate_yes or getgenv().biggest_baseplate_yes == true then
-        getgenv().hugeBasePlateOn:Set(true)
-    else
-        getgenv().hugeBasePlateOn:Set(false)
-    end
 
     getgenv().clocksTimeDayNight = Tab20:CreateToggle({
     Name = "Script Clock Time GUI",
-    CurrentValue = false,
-    Flag = "scriptsClockTimeMenu",
-    Callback = function(clockTimeMenu)
-        getgenv().day_night_cycle_script_gui = clockTimeMenu
-        getgenv().Easies_Configuration["Script_Clock_Time_GUI"] = clockTimeMenu and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Script_Clock_Time_GUI") or false,
+    Flag = "ScriptLoadClockTimeGUI",
+    Callback = function(clockTimeGUIEnabled)
+        getgenv().day_night_cycle_script_gui = clockTimeGUIEnabled
+        getgenv().Easies_Configuration["Script_Clock_Time_GUI"] = clockTimeGUIEnabled and "on" or "off"
     end,})
-    wait()
-    if getgenv().day_night_cycle_script_gui or getgenv().day_night_cycle_script_gui == true then
-        getgenv().clocksTimeDayNight:Set(true)
-    else
-        getgenv().clocksTimeDayNight:Set(false)
-    end
 
     getgenv().AntiSuspendVCAuto = Tab20:CreateToggle({
     Name = "Anti Suspend VC (Auto)",
-    CurrentValue = false,
-    Flag = "neverSuspendVC",
-    Callback = function(vcIsNotSuspended)
-        getgenv().haha_never_suspend = vcIsNotSuspended
-        getgenv().Easies_Configuration["Anti_Suspend_VC"] = vcIsNotSuspended and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Anti_Suspend_VC") or false,
+    Flag = "AntiAutoSuspendVC",
+    Callback = function(autoUnsuspendVC)
+        getgenv().haha_never_suspend = autoUnsuspendVC
+        getgenv().Easies_Configuration["Anti_Suspend_VC"] = autoUnsuspendVC and "on" or "off"
     end,})
-    wait()
-    if getgenv().haha_never_suspend or getgenv().haha_never_suspend == true then
-        getgenv().AntiSuspendVCAuto:Set(true)
-    else
-        getgenv().AntiSuspendVCAuto:Set(false)
-    end
 
     getgenv().InfYieldPrem = Tab20:CreateToggle({
     Name = "Infinite Yield Premium",
-    CurrentValue = false,
-    Flag = "OnInfYieldPremium",
-    Callback = function(IsInfYieldPrem)
-        getgenv().new_modified_inf_yield = IsInfYieldPrem
-        getgenv().Easies_Configuration["Infinite_Yield_Premium"] = IsInfYieldPrem and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Infinite_Yield_Premium") or false,
+    Flag = "InfYieldPremOn",
+    Callback = function(EnabledInfYieldPremium)
+        getgenv().new_modified_inf_yield = EnabledInfYieldPremium
+        getgenv().Easies_Configuration["Infinite_Yield_Premium"] = EnabledInfYieldPremium and "on" or "off"
     end,})
-    wait()
-    if getgenv().new_modified_inf_yield or getgenv().new_modified_inf_yield == true then
-        getgenv().InfYieldPrem:Set(true)
-    else
-        getgenv().InfYieldPrem:Set(false)
-    end
 
     getgenv().PerformanceStats = Tab20:CreateToggle({
     Name = "Performance Statistics",
-    CurrentValue = false,
-    Flag = "toggleTheGuisPerformance",
-    Callback = function(getPerformanceGUI)
-        getgenv().performance_is_toggled = getPerformanceGUI
-        getgenv().Easies_Configuration["Performance_Statistics"] = getPerformanceGUI and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Performance_Statistics") or false,
+    Flag = "PerformanceStatsGUI",
+    Callback = function(hasPerformanceStatsEnabled)
+        getgenv().performance_is_toggled = hasPerformanceStatsEnabled
+        getgenv().Easies_Configuration["Performance_Statistics"] = hasPerformanceStatsEnabled and "on" or "off"
     end,})
-    wait()
-    if getgenv().performance_is_toggled or getgenv().performance_is_toggled == true then
-        getgenv().PerformanceStats:Set(true)
-    else
-        getgenv().PerformanceStats:Set(false)
-    end
 
     getgenv().OldMaterialUsingVal = Tab20:CreateToggle({
     Name = "Old Materials (Materials Before 2022)",
-    CurrentValue = false,
-    Flag = "getOldMaterialsInstead",
-    Callback = function(notNewMaterials)
-        getgenv().utilizing_old_stuff_materials = notNewMaterials
-        getgenv().Easies_Configuration["Old_Materials"] = notNewMaterials and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("Old_Materials") or false,
+    Flag = "HasSwitchedOldMaterialsOn",
+    Callback = function(hasOldMaterials)
+        getgenv().utilizing_old_stuff_materials = hasOldMaterials
+        getgenv().Easies_Configuration["Old_Materials"] = hasOldMaterials and "on" or "off"
     end,})
-    wait()
-    if getgenv().utilizing_old_stuff_materials or getgenv().utilizing_old_stuff_materials == true then
-        getgenv().OldMaterialUsingVal:Set(true)
-    else
-        getgenv().OldMaterialUsingVal:Set(false)
-    end
 
     getgenv().sysBroken_Other_Mod = Tab20:CreateToggle({
     Name = "Zacks System Broken (Auto-Load)",
-    CurrentValue = false,
-    Flag = "AutoLoadSysBrokenMods",
-    Callback = function(modifiedSysBrokenLoading)
-        getgenv().usingOldSysBroken = modifiedSysBrokenLoading
-        getgenv().Easies_Configuration["System_Broken"] = modifiedSysBrokenLoading and "on" or "off"
-        task.wait()
-        save_ez_Config()
+    CurrentValue = readConfigValue("System_Broken") or false,
+    Flag = "SystemBrokenBeingLoaded",
+    Callback = function(hasEnabledSysBroken)
+        getgenv().usingOldSysBroken = hasEnabledSysBroken
+        getgenv().Easies_Configuration["System_Broken"] = hasEnabledSysBroken and "on" or "off"
     end,})
-    wait()
-    if getgenv().usingOldSysBroken or getgenv().usingOldSysBroken == true then
-        getgenv().sysBroken_Other_Mod:Set(true)
-    else
-        getgenv().sysBroken_Other_Mod:Set(false)
-    end
 
     getgenv().KeepingTeleportToolBackpack = Tab20:CreateToggle({
     Name = "Keep TP Tool (Load On Every Respawn)",
-    CurrentValue = false,
-    Flag = "keepingTheTPTool",
-    Callback = function(changeTPToolRespawn)
-        getgenv().modifiedTPToolBruh = changeTPToolRespawn
-        getgenv().Easies_Configuration["keep_tp_tool"] = changeTPToolRespawn and "on" or "off"
-        task.wait()
-        save_ez_Config()
-    end,})
-    wait()
-    if getgenv().modifiedTPToolBruh or getgenv().modifiedTPToolBruh == true then
-        getgenv().KeepingTeleportToolBackpack:Set(true)
-    else
-        getgenv().KeepingTeleportToolBackpack:Set(false)
-    end
-    wait(0.1)
-    local function load_ez_Config()
-        if isfile(configFileName) then
-            local json = readfile(configFileName)
-            getgenv().Easies_Configuration = game:GetService("HttpService"):JSONDecode(json)
-            getgenv().notify("Success!", "Configuration has been loaded.", 6)
-        else
-            getgenv().notify("Failure!", "No saved configuration found.", 6)
-        end
-    end
-
-    local function del_ez_Config()
-        if isfile(configFileName) then
-            delfile(configFileName)
-            getgenv().notify("Success.", "Configuration has been deleted.", 6)
-        else
-            getgenv().notify("Failure.", "No saved configuration to delete.", 6)
-        end
-    end
-    wait()
-    getgenv().LoadTheConfigurationZEH = Tab20:CreateButton({
-    Name = "Load Saved Zacks Easy Hub Configuration",
-    Callback = function()
-        load_ez_Config()
-    end,})
-
-    getgenv().DeleteYourCustomConfigurationZEH = Tab20:CreateButton({
-    Name = "Delete Saved Zacks Easy Hub Configuration",
-    Callback = function()
-        del_ez_Config()
+    CurrentValue = readConfigValue("keep_tp_tool") or false,
+    Flag = "KeepingTheTPToolBackpack",
+    Callback = function(TPToolBackpack)
+        getgenv().modifiedTPToolBruh = TPToolBackpack
+        getgenv().Easies_Configuration["keep_tp_tool"] = TPToolBackpack and "on" or "off"
     end,})
 
     getgenv().FakeOutScript = Tab15:CreateToggle({
@@ -11271,7 +11424,7 @@
     if getgenv().Has_Died_Func then
         warn("Already setup death function.")
     else
-        if getgenv().Easies_Configuration["Death_On_Load"] == "on" or getgenv().Easies_Configuration["Death_On_Load"] == "On" or getgenv().Easies_Configuration["Death_On_Load"] == "Enabled" then
+        if isSettingEnabled("Death_On_Load") then
             getgenv().Humanoid.Health = 0
             getgenv().Has_Died_Func = true
             wait(0.1)
@@ -11289,7 +11442,7 @@
     if getgenv().performance_stats then
         warn("Performance stats checked.")
     else
-        if getgenv().Easies_Configuration["Performance_Statistics"] == "on" or getgenv().Easies_Configuration["Performance_Statistics"] == "On" or getgenv().Easies_Configuration["Performance_Statistics"] == "Enabled" then
+        if isSettingEnabled("Performance_Statistics") then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
             wait(0.2)
             getgenv().StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, false)
@@ -11309,7 +11462,7 @@
     if getgenv().fully_loaded_message_script then
         warn("Already loaded fully loaded message.")
     else
-        if getgenv().Easies_Configuration["Fully_Loaded_Messaging"] == "on" or getgenv().Easies_Configuration["Fully_Loaded_Messaging"] == "On" or getgenv().Easies_Configuration["Fully_Loaded_Messaging"] == "Enabled" then
+        if isSettingEnabled("Fully_Loaded_Messaging") then
             getgenv().sending_async(tostring(getgenv().Easies_Configuration["Fully_Loaded_Message"]))
             getgenv().fully_loaded_message_script = true
         end
