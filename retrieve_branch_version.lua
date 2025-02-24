@@ -8016,7 +8016,7 @@
                 function clickAllTheDetectors()
                     local clickDetectors = {}
             
-                    for _, model in pairs(workspace:GetDescendants()) do
+                    for _, model in ipairs(getgenv().Workspace:FindFirstChild("PartStorage"):GetDescendants()) do
                         if model:IsA("Model") and model.Name == "Tic Tac Toe" then
                             for _, part in pairs(model:GetDescendants()) do
                                 if part:IsA("Part") then
@@ -8030,10 +8030,10 @@
                     end
                     
                     for _, clickDetector in pairs(clickDetectors) do
-                        clickDetector.MaxActivationDistance = 99999
-                        fireclickdetector(clickDetector, 9999)
-                        fireclickdetector(clickDetector, 9999)
-                        fireclickdetector(clickDetector, 9999)
+                        clickDetector.MaxActivationDistance = 9999
+                        fireclickdetector(clickDetector, 999)
+                        fireclickdetector(clickDetector, 999)
+			fireclickdetector(clickDetector, 999)
                     end
                 end
             end
@@ -10480,9 +10480,9 @@
     end,})
 
     local Emotes = {
-        "[NEW] NBA Monster Dunk",
-        "[NEW] Stray Kids Walkin On Water",
-        "[NEW] TWICE Strategy",
+        "NBA Monster Dunk",
+        "Stray Kids Walkin On Water",
+        "TWICE Strategy",
         "Sleep",
         "Olivia Rodrigo Head Bop",
         "Sturdy Dance - Ice Spice",
