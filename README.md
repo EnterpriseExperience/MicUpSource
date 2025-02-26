@@ -1,4 +1,4 @@
-## [V6 Loadstring, BETA RELEASE!]:
+## [V8 Loadstring, BETA RELEASE!]:
 
 ```lua
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua'))()
@@ -19,7 +19,7 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 UPDATE <-> [V8] [UPDATE!]:
 
-V6 New Features:
+V8 New Features:
 
 Check out the Discord server linked above for every feature!
 
