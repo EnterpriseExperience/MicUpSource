@@ -16,17 +16,17 @@ wait(0.2)
 local Release
 wait(0.1)
 if game.PlaceId == 15546218972 then
-	Release = "Build 3.0"
+	Release = "Build 1.6"
 elseif game.PlaceId == 6884319169 then
-	Release = "3.0"
+	Release = "1.7"
 else
-	Release = "4.0"
+	Release = "1.1.2"
 end
 wait(0.2)
 local RayfieldFolder
 local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-local Version_Config = "V8.5.0"
-local Version_No_Config = "V8.5.0"
+local Version_Config = "V8.3.0"
+local Version_No_Config = "V8.3.0"
 wait(0.2)
 if game.PlaceId == 15546218972 then
 	RayfieldFolder = "MIC-UP-17"
@@ -43,44 +43,44 @@ local RayfieldLibrary = {
 	Flags = {},
 	Theme = {
 		Default = {
-			TextColor = Color3.fromRGB(236, 232, 222),
+			TextColor = Color3.fromRGB(137, 135, 136),
 
-			Background = Color3.fromRGB(45, 45, 45),
-			Topbar = Color3.fromRGB(161, 165, 162),
-			Shadow = Color3.fromRGB(20, 20, 20),
+			Background = Color3.fromRGB(199, 193, 183),
+			Topbar = Color3.fromRGB(199, 193, 183),
+			Shadow = Color3.fromRGB(250, 250, 245),
 
-			NotificationBackground = Color3.fromRGB(16, 42, 220),
-			NotificationActionsBackground = Color3.fromRGB(89, 34, 89),
+			NotificationBackground = Color3.fromRGB(110, 153, 202),
+			NotificationActionsBackground = Color3.fromRGB(110, 153, 202),
 
-			TabBackground = Color3.fromRGB(80, 80, 80),
-			TabStroke = Color3.fromRGB(85, 85, 85),
-			TabBackgroundSelected = Color3.fromRGB(210, 210, 210),
-			TabTextColor = Color3.fromRGB(240, 240, 240),
-			SelectedTabTextColor = Color3.fromRGB(50, 50, 50),
+			TabBackground = Color3.fromRGB(109, 110, 108),
+			TabStroke = Color3.fromRGB(109, 110, 108),
+			TabBackgroundSelected = Color3.fromRGB(109, 110, 108),
+			TabTextColor = Color3.fromRGB(236, 232, 222),
+			SelectedTabTextColor = Color3.fromRGB(109, 110, 108),
 
-			ElementBackground = Color3.fromRGB(0, 0, 0),
-			ElementBackgroundHover = Color3.fromRGB(0, 0, 0),
-			SecondaryElementBackground = Color3.fromRGB(0, 0, 0),
-			ElementStroke = Color3.fromRGB(0, 0, 0),
-			SecondaryElementStroke = Color3.fromRGB(0, 0, 0),
+			ElementBackground = Color3.fromRGB(22, 29, 50),
+			ElementBackgroundHover = Color3.fromRGB(22, 29, 50),
+			SecondaryElementBackground = Color3.fromRGB(22, 29, 50),
+			ElementStroke = Color3.fromRGB(22, 29, 50),
+			SecondaryElementStroke = Color3.fromRGB(22, 29, 50),
 
 			SliderBackground = Color3.fromRGB(50, 138, 220),
 			SliderProgress = Color3.fromRGB(50, 138, 220),
 			SliderStroke = Color3.fromRGB(58, 163, 255),
 
-			ToggleBackground = Color3.fromRGB(30, 30, 30),
-			ToggleEnabled = Color3.fromRGB(0, 146, 214),
-			ToggleDisabled = Color3.fromRGB(100, 100, 100),
-			ToggleEnabledStroke = Color3.fromRGB(0, 170, 255),
-			ToggleDisabledStroke = Color3.fromRGB(125, 125, 125),
-			ToggleEnabledOuterStroke = Color3.fromRGB(100, 100, 100),
-			ToggleDisabledOuterStroke = Color3.fromRGB(65, 65, 65),
+			ToggleBackground = Color3.fromRGB(205, 205, 205),
+			ToggleEnabled = Color3.fromRGB(0, 255, 0),
+			ToggleDisabled = Color3.fromRGB(255, 0, 0),
+			ToggleEnabledStroke = Color3.fromRGB(0, 255, 0),
+			ToggleDisabledStroke = Color3.fromRGB(255, 0, 0),
+			ToggleEnabledOuterStroke = Color3.fromRGB(0, 255, 0),
+			ToggleDisabledOuterStroke = Color3.fromRGB(255, 0, 0),
 
-			DropdownSelected = Color3.fromRGB(40, 40, 40),
-			DropdownUnselected = Color3.fromRGB(30, 30, 30),
+			DropdownSelected = Color3.fromRGB(140, 91, 159),
+			DropdownUnselected = Color3.fromRGB(175, 221, 255),
 
-			InputBackground = Color3.fromRGB(30, 30, 30),
-			InputStroke = Color3.fromRGB(65, 65, 65),
+			InputBackground = Color3.fromRGB(58, 125, 21),
+			InputStroke = Color3.fromRGB(58, 125, 21),
 			PlaceholderColor = Color3.fromRGB(178, 178, 178)
 		},
 
