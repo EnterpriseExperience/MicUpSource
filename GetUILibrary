@@ -16,17 +16,17 @@ wait(0.2)
 local Release
 wait(0.1)
 if game.PlaceId == 15546218972 then
-	Release = "Build 1.6"
+	Release = "Build 3.0"
 elseif game.PlaceId == 6884319169 then
-	Release = "1.7"
+	Release = "3.0"
 else
-	Release = "1.1.2"
+	Release = "4.0"
 end
 wait(0.2)
 local RayfieldFolder
 local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-local Version_Config = "V6.8.2-C"
-local Version_No_Config = "V6.3.8.2"
+local Version_Config = "V8.5.0"
+local Version_No_Config = "V8.5.0"
 wait(0.2)
 if game.PlaceId == 15546218972 then
 	RayfieldFolder = "MIC-UP-17"
@@ -234,8 +234,6 @@ getgenv().Rayfield = Rayfield
 Rayfield.Enabled = false
 wait(0.2)
 if executor_Name == "AWP" then
-	print("Detected you we're using 'AWP', returning CoreGui...")
-	wait(0.2)
 	Rayfield.Parent = CoreGui
 else
 	if executor_Name ~= "AWP" and hiddenUI() then
@@ -304,7 +302,7 @@ local UserInputService = game:GetService("UserInputService")
 if getgenv().is_on_pc_check and UserInputService.TouchEnabled == false then
 	warn("Already ran check for PC - Toggle Rayfield GUI.")
 elseif getgenv().is_on_pc_check or getgenv().is_on_pc_check == true and UserInputService.TouchEnabled or UserInputService.TouchEnabled == true then
-	print("Already ran check for Mobile -Toggle Rayfield GUI.")
+	print("Already ran check for Mobile - Toggle Rayfield GUI.")
 elseif getgenv().is_on_pc_check == false and UserInputService.TouchEnabled or UserInputService.TouchEnabled == true then
 	local ToggleUIRayfield = Instance.new("ScreenGui")
 	local ToggleUI_Frames = Instance.new("ImageLabel")
@@ -364,7 +362,7 @@ elseif getgenv().is_on_pc_check == false and UserInputService.TouchEnabled or Us
 	coroutine.wrap(ZDDR_fake_script)()
 	wait()
 	getgenv().is_on_pc_check = true
-elseif not getgenv().is_on_pc_check or getgenv().is_on_pc_check == false and UserInputService.TouchEnabled == false then
+elseif getgenv().is_on_pc_check == false and UserInputService.TouchEnabled == false then
 	warn("User isn't on a Mobile device, not creating toggle GUI.")
 	getgenv().is_on_pc_check = true
 end
@@ -1429,7 +1427,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Button.Title.Text = ButtonSettings.Name
 			Button.Visible = true
 			Button.Parent = TabPage
-			Button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			Button.BackgroundColor3 = Color3.fromRGB(58, 125, 21)
 
 			Button.BackgroundTransparency = 1
 			Button.UIStroke.Transparency = 1
@@ -1783,7 +1781,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Label.Title.Text = LabelText
 			Label.Visible = true
 			Label.Parent = TabPage
-			Label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			Label.BackgroundColor3 = Color3.fromRGB(58, 125, 21)
 
 			Label.UIStroke.Color = SelectedTheme.SecondaryElementStroke
 
@@ -1816,13 +1814,14 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Paragraph.Content.Text = ParagraphSettings.Content
 			Paragraph.Visible = true
 			Paragraph.Parent = TabPage
+         Paragraph.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 			Paragraph.BackgroundTransparency = 1
 			Paragraph.UIStroke.Transparency = 1
 			Paragraph.Title.TextTransparency = 1
 			Paragraph.Content.TextTransparency = 1
 			
-			Paragraph.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			Paragraph.BackgroundColor3 = Color3.fromRGB(58, 125, 21)
 			Paragraph.UIStroke.Color = SelectedTheme.SecondaryElementStroke
 
 			TweenService:Create(Paragraph, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
@@ -1854,7 +1853,8 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Input.BackgroundTransparency = 1
 			Input.UIStroke.Transparency = 1
 			Input.Title.TextTransparency = 1
-			Input.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+         Input.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+			Input.BackgroundColor3 = Color3.fromRGB(58, 125, 21)
 			
 			Input.InputFrame.BackgroundColor3 = SelectedTheme.InputBackground
 			Input.InputFrame.UIStroke.Color = SelectedTheme.InputStroke
@@ -1926,7 +1926,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Dropdown.Title.Text = DropdownSettings.Name
 			Dropdown.Visible = true
 			Dropdown.Parent = TabPage
-			Dropdown.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			Dropdown.BackgroundColor3 = Color3.fromRGB(58, 125, 21)
 
 			Dropdown.List.Visible = false
 			if DropdownSettings.CurrentOption then
@@ -2362,7 +2362,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Toggle.BackgroundTransparency = 1
 			Toggle.UIStroke.Transparency = 1
 			Toggle.Title.TextTransparency = 1
-			Toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			Toggle.BackgroundColor3 = Color3.fromRGB(58, 125, 21)
 			Toggle.Switch.BackgroundColor3 = SelectedTheme.ToggleBackground
 
 			if SelectedTheme ~= RayfieldLibrary.Theme.Default then
@@ -2507,7 +2507,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 			return ToggleSettings
 		end
-
 		
 		function Tab:CreateSlider(SliderSettings)
 			local SLDragging = false
@@ -2520,7 +2519,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Slider.BackgroundTransparency = 1
 			Slider.UIStroke.Transparency = 1
 			Slider.Title.TextTransparency = 1
-			Slider.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			Slider.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
 			
 			if SelectedTheme ~= RayfieldLibrary.Theme.Default then
 				Slider.Main.Shadow.Visible = false
