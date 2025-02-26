@@ -4,9 +4,7 @@
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua'))()
 ```
 
-```lua
-https://discord.gg/VJh3kkYzBn
-```
+https://discord.gg/ZacksEasyHub
 
 ```lua
 Be sure to check out our Discord for more content! We also welcome non-exploiters to!
