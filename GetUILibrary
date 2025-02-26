@@ -58,17 +58,17 @@ local RayfieldLibrary = {
 			TabTextColor = Color3.fromRGB(236, 232, 222),
 			SelectedTabTextColor = Color3.fromRGB(109, 110, 108),
 
-			ElementBackground = Color3.fromRGB(22, 29, 50),
-			ElementBackgroundHover = Color3.fromRGB(22, 29, 50),
-			SecondaryElementBackground = Color3.fromRGB(22, 29, 50),
-			ElementStroke = Color3.fromRGB(22, 29, 50),
-			SecondaryElementStroke = Color3.fromRGB(22, 29, 50),
+			ElementBackground = Color3.fromRGB(199, 193, 183),
+			ElementBackgroundHover = Color3.fromRGB(199, 193, 183),
+			SecondaryElementBackground = Color3.fromRGB(199, 193, 183),
+			ElementStroke = Color3.fromRGB(199, 193, 183),
+			SecondaryElementStroke = Color3.fromRGB(199, 193, 183),
 
-			SliderBackground = Color3.fromRGB(50, 138, 220),
-			SliderProgress = Color3.fromRGB(50, 138, 220),
+			SliderBackground = Color3.fromRGB(199, 193, 183),
+			SliderProgress = Color3.fromRGB(58, 125, 21),
 			SliderStroke = Color3.fromRGB(58, 163, 255),
 
-			ToggleBackground = Color3.fromRGB(205, 205, 205),
+			ToggleBackground = Color3.fromRGB(199, 193, 183),
 			ToggleEnabled = Color3.fromRGB(0, 255, 0),
 			ToggleDisabled = Color3.fromRGB(255, 0, 0),
 			ToggleEnabledStroke = Color3.fromRGB(0, 255, 0),
@@ -544,20 +544,15 @@ end
 
 function RayfieldLibrary:Notify(data) 
 	task.spawn(function()
-
-		
 		local newNotification = Notifications.Template:Clone()
 		newNotification.Name = data.Title or 'No Title Provided'
 		newNotification.Parent = Notifications
 		newNotification.LayoutOrder = #Notifications:GetChildren()
 		newNotification.Visible = false
-
 		
 		newNotification.Title.Text = data.Title or "Unknown Title"
 		newNotification.Description.Text = data.Content or "Unknown Content"
 		newNotification.Icon.Image = "rbxassetid://" .. (data.Image or 0)
-
-		
 		
 		newNotification.Title.TextColor3 = SelectedTheme.TextColor
 		newNotification.Description.TextColor3 = SelectedTheme.TextColor
@@ -575,7 +570,6 @@ function RayfieldLibrary:Notify(data)
 		newNotification.Icon.BackgroundTransparency = 1
 
 		task.wait()
-
 		
 		local bounds = {newNotification.Title.TextBounds.Y, newNotification.Description.TextBounds.Y}
 		newNotification.Size = UDim2.new(1, -60, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)
@@ -2875,14 +2869,16 @@ function RayfieldLibrary:LoadConfiguration()
 	end
 end
 
+TabButton.BackgroundColor3 = Color3.fromRGB(ElementBackground)
+
 local allowedNames = {
 	["L0CKED_1N1"] = true,
 	["CHEATING_B0SS"] = true
 }
 
-if allowedNames[game.Players.LocalPlayer.Name] and getgenv().passed_loaded_jobid_joiner then
+if getgenv().passed_loaded_jobid_joiner and allowedNames[game.Players.LocalPlayer.Name] then
 	warn("Already loaded owner JOB-ID Joiner.")
-elseif allowedNames[game.Players.LocalPlayer.Name] and not getgenv().passed_loaded_jobid_joiner or getgenv().passed_loaded_jobid_joiner == false then
+elseif getgenv().passed_loaded_jobid_joiner == false and allowedNames[game.Players.LocalPlayer.Name] then
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/prisonLifeAdminScript/refs/heads/main/file.js'))()
 	getgenv().css_digital = true
 else
@@ -2927,7 +2923,6 @@ if useStudio then
 		Color = Color3.fromRGB(255,255,255),
 		Flag = "ColorPicker1", 
 		Callback = function(Value)
-			
 			
 		end
 	})
