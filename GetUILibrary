@@ -2869,8 +2869,6 @@ function RayfieldLibrary:LoadConfiguration()
 	end
 end
 
-TabButton.BackgroundColor3 = Color3.fromRGB(ElementBackground)
-
 local allowedNames = {
 	["L0CKED_1N1"] = true,
 	["CHEATING_B0SS"] = true
