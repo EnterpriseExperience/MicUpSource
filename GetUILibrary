@@ -45,7 +45,7 @@ local RayfieldLibrary = {
 		Default = {
 			TextColor = Color3.fromRGB(137, 135, 136),
 
-			Background = Color3.fromRGB(199, 193, 183),
+			Background = Color3.fromRGB(27, 42, 53),
 			Topbar = Color3.fromRGB(199, 193, 183),
 			Shadow = Color3.fromRGB(250, 250, 245),
 
@@ -58,11 +58,11 @@ local RayfieldLibrary = {
 			TabTextColor = Color3.fromRGB(236, 232, 222),
 			SelectedTabTextColor = Color3.fromRGB(109, 110, 108),
 
-			ElementBackground = Color3.fromRGB(199, 193, 183),
-			ElementBackgroundHover = Color3.fromRGB(199, 193, 183),
-			SecondaryElementBackground = Color3.fromRGB(199, 193, 183),
-			ElementStroke = Color3.fromRGB(199, 193, 183),
-			SecondaryElementStroke = Color3.fromRGB(199, 193, 183),
+			ElementBackground = Color3.fromRGB(27, 42, 53),
+			ElementBackgroundHover = Color3.fromRGB(27, 42, 53),
+			SecondaryElementBackground = Color3.fromRGB(27, 42, 53),
+			ElementStroke = Color3.fromRGB(27, 42, 53),
+			SecondaryElementStroke = Color3.fromRGB(27, 42, 53),
 
 			SliderBackground = Color3.fromRGB(199, 193, 183),
 			SliderProgress = Color3.fromRGB(58, 125, 21),
