@@ -1412,7 +1412,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 		local Tab = {}
 
-		
 		function Tab:CreateButton(ButtonSettings)
 			local ButtonValue = {}
 
@@ -1421,6 +1420,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Button.Title.Text = ButtonSettings.Name
 			Button.Visible = true
 			Button.Parent = TabPage
+			Button.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
 
 			Button.BackgroundTransparency = 1
 			Button.UIStroke.Transparency = 1
@@ -1429,7 +1429,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 			TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
 			TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
 			TweenService:Create(Button.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
-
 
 			Button.Interact.MouseButton1Click:Connect(function()
 				local Success, Response = pcall(ButtonSettings.Callback)
