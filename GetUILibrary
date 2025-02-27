@@ -1505,6 +1505,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			ColorPicker.Title.Text = ColorPickerSettings.Name
 			ColorPicker.Visible = true
 			ColorPicker.Parent = TabPage
+			ColorPicker.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
 			ColorPicker.Size = UDim2.new(1, -10, 0, 45)
 			Background.Size = UDim2.new(0, 39, 0, 22)
 			Display.BackgroundTransparency = 0
