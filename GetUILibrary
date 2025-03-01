@@ -2029,18 +2029,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 					DropdownOption.UIStroke.Transparency = 1
 					DropdownOption.Title.TextTransparency = 1
 
-					
-					
-					
-					
-					
-					
-					
-
-					
-					
-
-
 					DropdownOption.Interact.ZIndex = 50
 					DropdownOption.Interact.MouseButton1Click:Connect(function()
 						if not DropdownSettings.MultipleOptions and table.find(DropdownSettings.CurrentOption, Option) then 
@@ -2232,6 +2220,11 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Keybind.Title.Text = KeybindSettings.Name
 			Keybind.Visible = true
 			Keybind.Parent = TabPage
+			if Keybind.BackgroundColor3 then
+				Keybind.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+			elseif Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 then
+				Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+			end
 
 			Keybind.BackgroundTransparency = 1
 			Keybind.UIStroke.Transparency = 1
@@ -2268,7 +2261,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 			end)
 
 			UserInputService.InputBegan:Connect(function(input, processed)
-
 				if CheckingForKey then
 					if input.KeyCode ~= Enum.KeyCode.Unknown and input.KeyCode ~= Enum.KeyCode.K then
 						local SplitMessage = string.split(tostring(input.KeyCode), ".")
