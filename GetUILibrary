@@ -1423,54 +1423,62 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Button.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
 
 			Button.BackgroundTransparency = 1
-			Button.UIStroke.Transparency = 1
+			if Button:FindFirstChild("UIStroke") then
+				Button:FindFirstChild("UIStroke").Transparency = 1
+			end
 			Button.Title.TextTransparency = 1
 
 			TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
-			TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+			if Button:FindFirstChild("UIStroke") then
+				TweenService:Create(Button:FindFirstChild("UIStroke"), TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+			end
 			TweenService:Create(Button.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
 
-			Button.Interact.MouseButton1Click:Connect(function()
+			Button:FindFirstChild("Interact").MouseButton1Click:Connect(function()
 				local Success, Response = pcall(ButtonSettings.Callback)
 				if not Success then
 					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
 					if Button:FindFirstChild("ElementIndicator") then
 						TweenService:Create(Button:FindFirstChild("ElementIndicator"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 					end
-					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					if Button:FindFirstChild("UIStroke") then
+						TweenService:Create(Button:FindFirstChild("UIStroke"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					end
 					Button.Title.Text = "Callback Error"
-					print("Rayfield | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
+					print("Rayfield | "..ButtonSettings.Name.." Callback Error: " ..tostring(Response))
 					task.wait(0.5)
 					Button.Title.Text = ButtonSettings.Name
-					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
-					if not Button:FindFirstChild("ElementIndicator") then
-						warn("Button.ElementIndicator // nil")
-					else
-						wait(0.4)
+					if Button then
+						TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					end
+					if Button:FindFirstChild("ElementIndicator") then
 						TweenService:Create(Button:FindFirstChild("ElementIndicator"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 0.9}):Play()
 					end
-					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+					if Button:FindFirstChild("UIStroke") then
+						TweenService:Create(Button:FindFirstChild("UIStroke"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+					end
 				else
 					SaveConfiguration()
 					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackgroundHover}):Play()
-					wait(0.4)
-					if not Button:FindFirstChild("ElementIndicator") then
-						warn("Button.ElementIndicator // nil")
-					else
-						wait(0.4)
+					wait(0.2)
+					if Button:FindFirstChild("ElementIndicator") then
 						TweenService:Create(Button:FindFirstChild("ElementIndicator"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 					end
-					wait(0.3)
-					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					wait(0.2)
+					if Button:FindFirstChild("UIStroke") then
+						TweenService:Create(Button:FindFirstChild("UIStroke"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					end
 					task.wait(0.2)
-					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
-					if not Button:FindFirstChild("ElementIndicator") then
-						warn("Button.ElementIndicator // nil")
-					else
-						wait(0.4)
+					if Button then
+						TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
+					end
+					wait(0.1)
+					if Button:FindFirstChild("ElementIndicator") then
 						TweenService:Create(Button:FindFirstChild("ElementIndicator"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {TextTransparency = 0.9}):Play()
 					end
-					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+					if Button:FindFirstChild("UIStroke") then
+						TweenService:Create(Button:FindFirstChild("UIStroke"), TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+					end
 				end
 			end)
 
