@@ -353,8 +353,8 @@
         Notification:Notify("Success.", "???", 5)
     end
     wait()
-    local Players = getgenv().Players
-    local StarterGui = getgenv().StarterGui
+    local Players = game.Players
+    local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
 
     local watchedPlayers = {"L0CKED_1N1"}
     local specialPlayer = "alt_acc9996"
@@ -431,7 +431,7 @@
     end
 
     local function assignTitlesToAll()
-        for _, player in ipairs(Players:GetPlayers()) do
+        for _, player in ipairs(game.Players:GetPlayers()) do
             if isWatchedPlayer(player.Name) then
                 make_title(player, "👑 Zacks Easy Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
             elseif player.Name == specialPlayer then
@@ -444,7 +444,7 @@
 
     assignTitlesToAll()
 
-    Players.PlayerAdded:Connect(function(player)
+    game.Players.PlayerAdded:Connect(function(player)
         task.wait(1)
         assignTitlesToAll()
     end)
@@ -1133,7 +1133,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "😎 Zacks East Hub 😎 | V9.0.0 | "..tostring(executor_Name),
+            Name = "😎 Zacks East Hub 😎 | V8.8.6 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | Ez.",
             ConfigurationSaving = {
@@ -1159,7 +1159,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "😎 Zacks East Hub 😎 | V9.0.0 | "..tostring(executor_Name),
+            Name = "😎 Zacks East Hub 😎 | V8.8.6 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | Ez.",
             ConfigurationSaving = {
