@@ -230,10 +230,12 @@
     }
 
     local main_settings_to_check = { 
-        "System_Broken_Title", "Huge_Baseplate", "Animation_Fall",
-        "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load", "Custom_Animation_Package_System",
+        "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "Mute_Boomboxes_Cellmates_VC_Game_Setting",
+        "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load",
+        "Mute_Music_Volume_Cellmates_VC_Game_Setting", "Custom_Animation_Package_System",
         "Infinite_Yield_Premium", "System_Broken_Text_Title", "Animation_Idle", "Old_Materials",
-        "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
+        "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Mute_Sound_Effects_Cellmates_VC_Game_Setting",
+        "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
         "Title_Toggle_UI", "Animation_Walk", "keep_tp_tool", "AntiAFK"
     }
 
@@ -4802,39 +4804,37 @@
         warn("Did not load these Booth tabs [6].")
     end
 
-    if game.PlaceId == 135275461271957 or game.PlaceId == 78589782053833 then
-        getgenv().RemoveAllLaserEyes = Tab13:CreateToggle({
-        Name = "Remove All Laser Eye Accessories (Less Lag)",
-        CurrentValue = false,
-        Flag = "RemovingAllLaggyAccessories",
-        Callback = function(doRemoveAnyLaserEyes)
-            if doRemoveAnyLaserEyes then
-                local skybox = game.Players:FindFirstChild("Solid Black Skybox")
+    getgenv().RemoveAllLaserEyes = Tab13:CreateToggle({
+    Name = "Remove All Laser Eyes (Laggy Accessory people wear)",
+    CurrentValue = false,
+    Flag = "RemovingAllLaggyAccessories",
+    Callback = function(doRemoveAnyLaserEyes)
+        if doRemoveAnyLaserEyes then
+            local skybox = game.Players:FindFirstChild("Solid Black Skybox")
 
-                if skybox then
-                    skybox:Destroy()
-                end
-                wait(0.1)
-                getgenv().removing_any_laser_eyes = true
-                while getgenv().removing_any_laser_eyes == true do
-                wait(0.6)
-                    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-                        if player.Character then
-                            for _, item in pairs(player.Character:GetChildren()) do
-                                if item:IsA("Accessory") and item.Name == "Accessory (cooleyes)" then
-                                    item:Destroy()
-                                end
+            if skybox then
+                skybox:Destroy()
+            end
+            wait(0.1)
+            getgenv().removing_any_laser_eyes = true
+            while getgenv().removing_any_laser_eyes == true do
+            wait(0.6)
+                for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                    if player.Character then
+                        for _, item in pairs(player.Character:GetChildren()) do
+                            if item:IsA("Accessory") and item.Name == "Accessory (cooleyes)" then
+                                item:Destroy()
                             end
                         end
                     end
                 end
-            else
-                getgenv().removing_any_laser_eyes = false
-                getgenv().removing_any_laser_eyes = false
-                getgenv().removing_any_laser_eyes = false
             end
-        end,})
-    end
+        else
+            getgenv().removing_any_laser_eyes = false
+            getgenv().removing_any_laser_eyes = false
+            getgenv().removing_any_laser_eyes = false
+        end
+    end,})
     
     getgenv().CopyAnimAddUser = Tab14:CreateInput({
     Name = "Add CopyAnim Whitelist",
@@ -11881,9 +11881,12 @@
         local configTable = {}
 
         local configKeys = {
-            "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load", "Custom_Animation_Package_System",
+            "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "Mute_Boomboxes_Cellmates_VC_Game_Setting",
+            "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load",
+            "Mute_Music_Volume_Cellmates_VC_Game_Setting", "Custom_Animation_Package_System",
             "Infinite_Yield_Premium", "System_Broken_Text_Title", "Animation_Idle", "Old_Materials",
-            "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
+            "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Mute_Sound_Effects_Cellmates_VC_Game_Setting",
+            "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
             "Title_Toggle_UI", "Animation_Walk", "keep_tp_tool", "AntiAFK"
         }
 
