@@ -230,12 +230,10 @@
     }
 
     local main_settings_to_check = { 
-        "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "Mute_Boomboxes_Cellmates_VC_Game_Setting",
-        "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load",
-        "Mute_Music_Volume_Cellmates_VC_Game_Setting", "Custom_Animation_Package_System",
+        "System_Broken_Title", "Huge_Baseplate", "Animation_Fall",
+        "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load", "Custom_Animation_Package_System",
         "Infinite_Yield_Premium", "System_Broken_Text_Title", "Animation_Idle", "Old_Materials",
-        "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Mute_Sound_Effects_Cellmates_VC_Game_Setting",
-        "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
+        "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
         "Title_Toggle_UI", "Animation_Walk", "keep_tp_tool", "AntiAFK"
     }
 
@@ -11883,12 +11881,9 @@
         local configTable = {}
 
         local configKeys = {
-            "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "Mute_Boomboxes_Cellmates_VC_Game_Setting",
-            "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load",
-            "Mute_Music_Volume_Cellmates_VC_Game_Setting", "Custom_Animation_Package_System",
+            "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load", "Custom_Animation_Package_System",
             "Infinite_Yield_Premium", "System_Broken_Text_Title", "Animation_Idle", "Old_Materials",
-            "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Mute_Sound_Effects_Cellmates_VC_Game_Setting",
-            "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
+            "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
             "Title_Toggle_UI", "Animation_Walk", "keep_tp_tool", "AntiAFK"
         }
 
