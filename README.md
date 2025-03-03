@@ -1,4 +1,4 @@
-## [V8 Loadstring, BETA RELEASE!]:
+## [V9 Loadstring, BETA RELEASE!]:
 
 ```lua
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua'))()
@@ -15,9 +15,9 @@ Star this repo and save it for later!
 
 https://github.com/EnterpriseExperience/MicUpSource/wiki
 
-UPDATE <-> [V8] [UPDATE!]:
+UPDATE <-> [V9] [UPDATE!]:
 
-V8 New Features:
+V9 New Features:
 
 Check out the Discord server linked above for every feature!
 
@@ -28,8 +28,6 @@ Check Discord server linked above for features!
 [FEEL FREE TO USE!]
 
 [LOTS OF FEATURES!]
-
-[NOW HAS OP ABUSE FEATURES!]
 
 [SUPPORTS EVERY EXECUTOR!] [OFFICIALLY!]
 
