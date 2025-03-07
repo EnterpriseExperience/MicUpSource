@@ -8053,11 +8053,12 @@
     getgenv().GetFakeChatGUI = Tab4:CreateButton({
     Name = "Fake Chat GUI",
     Callback = function()
-        if getgenv().FakeChat_Loaded then
-            loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
-            getgenv().FakeChat_Loaded = true
-        else
+        if not getgenv().FakeChat_Loaded then
             return getgenv().notify("Failure", "Fake Chat GUI has already been loaded!", 5)
+        else
+            loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
+            waut(0.1)
+            getgenv().FakeChat_Loaded = true
         end
     end,})
 
