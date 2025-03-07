@@ -22,276 +22,6 @@
         Wicked Popular, Bold, Stylish,
         Rthro [default Roblox Animation package]
     --]]
-
-    --[[local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-    local folderName = "executor_configs"
-    local fileName = "config.json"
-    local filePath = folderName .. "/" .. fileName
-
-    if not isfolder(folderName) then
-        makefolder(folderName)
-    end
-
-    local defaultConfig = {
-        Emote_Keybinds = false,
-        Use_Custom_Animation_Package_System = false,
-        Overhead_Title_UI = false,
-        Idle_Animation = "Zombie",
-        Walk_Animation = "Zombie",
-        Run_Animation = "Zombie",
-        Jump_Animation = "Zombie",
-        Climb_Animation = "Zombie",
-        Fall_Animation = "Zombie",
-    }
-
-    local config
-    if isfile(filePath) then
-        local success, result = pcall(function()
-            return HttpService:JSONDecode(readfile(filePath))
-        end)
-        if success and type(result) == "table" then
-            config = result
-        else
-            config = defaultConfig
-            writefile(filePath, HttpService:JSONEncode(defaultConfig))
-        end
-    else
-        config = defaultConfig
-        writefile(filePath, HttpService:JSONEncode(defaultConfig))
-    end
-
-    local function getConfig(key)
-        return config[key]
-    end
-
-    local function setConfig(key, value)
-        config[key] = value
-        writefile(filePath, HttpService:JSONEncode(config))
-    end
-
-    function load_or_save(file)
-        if isfile(file) then
-            loadfile()
-        end
-    
-        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-
-        local ScreenGui = Instance.new("ScreenGui")
-        local Frame = Instance.new("Frame")
-        local YesButton = Instance.new("TextButton")
-        local NoButton = Instance.new("TextButton")
-        local Title = Instance.new("TextLabel")
-        local Blocker = Instance.new("Frame")
-
-        local decisionMade = false
-
-        game.Lighting.ClockTime = 14.5
-        game.Lighting.Brightness = 3
-        game.Lighting.Technology = Enum.Technology.ShadowMap
-
-        ScreenGui.Name = "F_DATA-SCREENGUI_F"
-        ScreenGui.Parent = PlayerGui
-        ScreenGui.ResetOnSpawn = false
-        ScreenGui.IgnoreGuiInset = true
-
-        Blocker.Name = "TRANSPARENT_O"
-        Blocker.Parent = ScreenGui
-        Blocker.Size = UDim2.new(1, 0, 1, 0)
-        Blocker.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        Blocker.BackgroundTransparency = 0.6
-
-        Frame.Name = "Main_E_Frame"
-        Frame.Parent = ScreenGui
-        Frame.Size = UDim2.new(0, 320, 0, 160)
-        Frame.Position = UDim2.new(0.5, -160, 0.5, -80)
-        Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        Frame.BorderSizePixel = 0
-        Frame.BackgroundTransparency = 0.9
-        Frame.Visible = true
-        Frame.ClipsDescendants = true
-        Frame.ZIndex = 2
-
-        Title.Name = "Main_Q_TextLabel"
-        Title.Parent = Frame
-        Title.Text = "Save Emote Configuration?"
-        Title.Size = UDim2.new(1, 0, 0.3, 0)
-        Title.Position = UDim2.new(0, 0, 0, 10)
-        Title.BackgroundTransparency = 1
-        Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        Title.TextScaled = true
-        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Title.Font = Enum.Font.GothamBold
-
-        YesButton.Name = "Yes_Button_E"
-        YesButton.Parent = Frame
-        YesButton.Size = UDim2.new(0.4, 0, 0.3, 0)
-        YesButton.Position = UDim2.new(0.1, 0, 0.5, 0)
-        YesButton.Text = "Yes"
-        YesButton.BackgroundColor3 = Color3.fromRGB(0, 170, 85)
-        YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        YesButton.TextScaled = true
-        YesButton.Font = Enum.Font.GothamMedium
-
-        NoButton.Name = "No_Button_Q"
-        NoButton.Parent = Frame
-        NoButton.Size = UDim2.new(0.4, 0, 0.3, 0)
-        NoButton.Position = UDim2.new(0.5, 0, 0.5, 0)
-        NoButton.Text = "No"
-        NoButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-        NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        NoButton.TextScaled = true
-        NoButton.Font = Enum.Font.GothamMedium
-
-        YesButton.MouseButton1Click:Connect(function()
-            writefile("config.txt", "true")
-            decisionMade = true
-            ScreenGui:Destroy()
-        end)
-
-        NoButton.MouseButton1Click:Connect(function()
-            decisionMade = true
-            ScreenGui:Destroy()
-        end)
-
-        while not decisionMade do
-            task.wait()
-        end
-    end
-    
-    function initialize_config()
-        local config = {
-            Custom_Animation_Package_System = load_or_save("Custom_Animation_Package_System", false),
-            Animation_Idle = load_or_save("Idle", "Zombie", true),
-            Animation_Walk = load_or_save("Walk", "Zombie", true),
-            Animation_Run = load_or_save("Run", "Zombie", true),
-            Animation_Jump = load_or_save("Jump", "Zombie", true),
-            Animation_Fall = load_or_save("Fall", "Zombie", true),
-            Animation_Climb = load_or_save("Climb", "Zombie", true),
-            Death_On_Load = load_or_save("Death_On_Load", "on"),
-            Emote_Keybinds = load_or_save("Emote_Keybinds", "on"),
-            AntiAFK = load_or_save("AntiAFK", "on"),
-            Mute_Boomboxes_Cellmates_VC_Game_Setting = load_or_save("Mute_Boomboxes_Cellmates_VC_Game_Setting", "off"),
-            Mute_Music_Volume_Cellmates_VC_Game_Setting = load_or_save("Mute_Music_Volume_Cellmates_VC_Game_Setting", "off"),
-            Mute_Sound_Effects_Cellmates_VC_Game_Setting = load_or_save("Mute_Sound_Effects_Cellmates_VC_Game_Setting", "off"),
-            System_Broken_Title = load_or_save("System_Broken_Title", "off"),
-            System_Broken_Text_Title = load_or_save("System_Broken_Text_Title", "      Zacks System Broken"),
-            Fully_Loaded_Messaging = load_or_save("Fully_Loaded_Messaging", "off"),
-            Fully_Loaded_Message = load_or_save("Fully_Loaded_Message", "Zacks Easy Hub - Winning."),
-            Huge_Baseplate = load_or_save("Huge_Baseplate", "on"),
-            Script_Clock_Time_GUI = load_or_save("Script_Clock_Time_GUI", "off"),
-            Anti_Suspend_VC = load_or_save("Anti_Suspend_VC", "on"),
-            Infinite_Yield_Premium = load_or_save("Infinite_Yield_Premium", "on"),
-            Performance_Statistics = load_or_save("Performance_Statistics", "on"),
-            Old_Materials = load_or_save("Old_Materials", "off"),
-            System_Broken = load_or_save("System_Broken", "on"),
-            keep_tp_tool = load_or_save("keep_tp_tool", "off"),
-            Title_Toggle_UI = load_or_save("Title_Toggle_UI", "off"),
-        }
-        
-        getgenv().Easies_Configuration = config
-        wait(0.3)
-        if getgenv().Easies_Configuration then
-            getgenv().Configuration_Easies_Loaded = true
-            writefile("executor_configs/config_loaded_toggle.lua", "True", true)
-        else
-            getgenv().Configuration_Easies_Loaded = false
-            writefile("executor_configs/config_loaded_toggle.lua", "False", true)
-        end
-
-        return config
-    end
-
-    Zacks_Easy_Configuration = initialize_config()
-    wait(0.2)
-    if not getgenv().Easies_Configuration then
-        print("Loading Configuration...")
-    end
-
-    for i = 1, 100, 4 do
-        wait(0.1)
-        print("Loading Configuration... " .. i .. "%")
-    end
-
-    local main_loader = "executor_configs/config_loaded_toggle.lua"
-
-    if getgenv().Configuration_Easies_Loaded or getgenv().Configuration_Easies_Loaded == true then
-        print("Config loaded successfully!")
-    else
-        warn("Config script not found! Make sure file exists.")
-    end--]]
-    wait(0.1)
-    local settings_scripts = {
-        System_Broken = "https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua",
-        Infinite_Yield_Premium = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
-        AntiAFK = "https://raw.githubusercontent.com/ExampleUser/AntiAFK/main/script.lua",
-        Old_Materials = "https://raw.githubusercontent.com/ExampleUser/OldMaterials/main/script.lua"
-    }
-
-    local main_settings_to_check = { 
-        "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "Mute_Boomboxes_Cellmates_VC_Game_Setting",
-        "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load",
-        "Mute_Music_Volume_Cellmates_VC_Game_Setting", "Custom_Animation_Package_System",
-        "Infinite_Yield_Premium", "System_Broken_Text_Title", "Animation_Idle", "Old_Materials",
-        "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Mute_Sound_Effects_Cellmates_VC_Game_Setting",
-        "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
-        "Title_Toggle_UI", "Animation_Walk", "keep_tp_tool", "AntiAFK"
-    }
-
-    local default_enabled_settings = {
-        Infinite_Yield_Premium = true,
-        AntiAFK = true,
-        Anti_Suspend_VC = true,
-        Huge_Baseplate = true
-    }
-
-    wait(0.2)
-    for _, setting in ipairs(main_settings_to_check) do
-        if getgenv()[setting] == nil then
-            if default_enabled_settings[setting] then
-                getgenv()[setting] = "On"
-                warn(setting .. " is missing, defaulting to 'On'.")
-            else
-                getgenv()[setting] = "Off"
-                warn(setting .. " is missing, defaulting to 'Off'.")
-            end
-        elseif getgenv()[setting] == false then
-            warn(setting .. " is disabled.")
-        elseif getgenv()[setting] == "On" then
-            if settings_scripts[setting] then
-                local success, err = pcall(function()
-                    loadstring(game:HttpGet(settings_scripts[setting], true))()
-                end)
-                if not success then
-                    warn("Failed to load script for " .. setting .. ": " .. tostring(err))
-                end
-            else
-                warn(setting .. " is enabled, but no script is associated with it.")
-            end
-        end
-    end
-
-    function UpdateSetting(setting, value)
-        if table.find(main_settings_to_check, setting) then
-            getgenv()[setting] = value
-
-            if value == "On" then
-                if settings_scripts[setting] then
-                    local success, err = pcall(function()
-                        loadstring(game:HttpGet(settings_scripts[setting], true))()
-                    end)
-                    if not success then
-                        warn("Failed to load script for " .. setting .. ": " .. tostring(err))
-                    end
-                else
-                    warn(setting .. " is enabled, but no script is associated with it.")
-                end
-            end
-        else
-            warn("Attempted to update an unknown setting: " .. setting)
-        end
-    end
     wait(0.2)
     local function getExecutor()
         local name
@@ -307,6 +37,8 @@
     end
     wait(0.1)
     local executor_Name = detectExecutor()
+    wait(0.1)
+    
     wait(0.2)
     local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
     local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
@@ -327,21 +59,7 @@
     end
     -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
     if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then  
-        return Notification:Notify("Heads Up!", "Zacks Easy Hub is already running!", 7.5)
-        --[[Notification.Notify("Heads Up!", "Zacks Easy Hub is already running!", "rbxassetid://93594537601787", {
-            Duration = 7.5,       
-            Main = {
-                Rounding = true,
-            }
-        });
-        wait(0.2)
-        Notification.Notify("Notification:", "Try clicking Re-Execute GUI instead.", "rbxassetid://93594537601787", {
-            Duration = 7.5,       
-            Main = {
-                Rounding = true,
-            }
-        });
-        return --]]
+        return Notification:Notify("Heads Up!", "Zacks Easy Hub is already running!", 5)
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
     wait(0.3)
@@ -349,14 +67,16 @@
         Notification:Notify("Success!", "Connected with VC successfully!", 3)
     elseif (enabled_vc == false and (not game.PlaceId == 6884319169)) or (not game.PlaceId == 15546218972) then
         Notification:Notify("Success!", "Connected.", 5)
+    elseif enabled_vc == false and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        return Notification:Notify("Sorry!", "Unable to load Zacks Easy Hub (No VC)", 5)
     else
-        Notification:Notify("Success.", "???", 5)
+        Notification:Notify("Passed.", "Unknown error occurred.", 5)
     end
     wait()
-    local Players = game.Players
+    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
     local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
 
-    local watchedPlayers = {"L0CKED_1N1"}
+    local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"}
     local specialPlayer = "alt_acc9996"
     local support_team = {"Ixgale7530", "starsorbitspace", "goldgoldgoldBlazn", "euigwerergre", "o7rssuk"}
 
@@ -380,15 +100,10 @@
 
     local function make_title(player, text, color, transparency)
         local function applyToCharacter(character)
+            task.wait(0.5)
             local head = character:FindFirstChild("Head")
-
-            if not head then 
-                return warn("No head found for player: " .. tostring(player.Name))
-            end
-
-            if head:FindFirstChild("ZacksEasyBillboard") then
-                return warn("Billboard already found in Character's Head!")
-            end
+            if not head then return end
+            if head:FindFirstChild("ZacksEasyBillboard") then return end
 
             local billboardGui = Instance.new("BillboardGui")
             billboardGui.Name = "ZacksEasyBillboard"
@@ -426,27 +141,26 @@
         if player.Character then
             applyToCharacter(player.Character)
         end
-
         player.CharacterAdded:Connect(applyToCharacter)
     end
 
-    local function assignTitlesToAll()
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            if isWatchedPlayer(player.Name) then
-                make_title(player, "👑 Zacks Easy Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
-            elseif player.Name == specialPlayer then
-                make_title(player, "👧 Zacks Easy Hub | Daughter 👧", Color3.fromRGB(89, 34, 89), 0.3)
-            elseif isSupportTeam(player.Name) then
-                make_title(player, "⚒️ Zacks Easy Hub | Support ⚒️", Color3.fromRGB(52, 142, 64), 0.1)
-            end
+    local function assignTitle(player)
+        if isWatchedPlayer(player.Name) then
+            make_title(player, "👑 Zacks Easy Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
+        elseif player.Name == specialPlayer then
+            make_title(player, "👧 Zacks Easy Hub | Daughter 👧", Color3.fromRGB(89, 34, 89), 0.3)
+        elseif isSupportTeam(player.Name) then
+            make_title(player, "⚒️ Zacks Easy Hub | Support ⚒️", Color3.fromRGB(52, 142, 64), 0.1)
         end
     end
 
-    assignTitlesToAll()
+    for _, player in ipairs(Players:GetPlayers()) do
+        assignTitle(player)
+    end
 
-    game.Players.PlayerAdded:Connect(function(player)
+    Players.PlayerAdded:Connect(function(player)
         task.wait(1)
-        assignTitlesToAll()
+        assignTitle(player)
     end)
     wait(0.3)
     -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
@@ -568,6 +282,16 @@
     getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
     wait(0.2)
 
+    local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+    local modelId = 'rbxassetid://85211877443756'
+    local mapModel = loadstring("return game:GetObjects('" .. modelId .. "')[1]")()
+
+    if mapModel and mapModel:IsA("Model") then
+        mapModel.Parent = Workspace
+    else
+        warn("Failed to load and insert Zacks Easy Hub | Crossroads Map Model.")
+    end
+
     -- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
     getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").Position
 
@@ -583,13 +307,38 @@
     getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
         updateCharacterComponents(newCharacter)
         wait(0.2)
-        if getgenv().PlayerGui:FindFirstChild("Menu") then
-            local Menu_GUI = getgenv().PlayerGui:FindFirstChild("Menu")
-            local Background_Menu = Menu_GUI:FindFirstChild("Background")
+        if getgenv().LocalPlayer:WaitForChild("PlayerGui", 1):FindFirstChild("Menu") then
+            local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
+            local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
+            local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
+            local Background = Menu_GUI:FindFirstChild("Background")
+            local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
             
-            for _, v in ipairs(Background_Menu:GetDescendants()) do
+            for _, v in ipairs(Background:GetDescendants()) do
                 if v:IsA("TextButton") or v:IsA("TextLabel") then
                     v.TextColor3 = Color3.fromRGB(0, 0, 0)
+                end
+            end
+            for _, v in ipairs(Background:GetDescendants()) do
+                if v:IsA("ImageButton") or v:IsA("ImageLabel") then
+                    v.ImageColor3 = Color3.fromRGB(0, 0, 0)
+                end
+            end
+            Home_Image_Button.BackgroundTransparency = 0.3
+            Home_Image_Button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            Home_Image_Button.ImageColor3 = Color3.fromRGB(0, 0, 0)
+            Home_Image_Button.Position = UDim2.new(0, 0, 0.7, 0)
+            Background.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            wait()
+            for _, v in ipairs(Background:GetDescendants()) do
+                if v:IsA("TextLabel") then
+                    v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+                end
+            end
+            wait(0.1)
+            for _, v in ipairs(Scrolling_Frame:GetDescendants()) do
+                if v:IsA("TextLabel") then
+                    v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
                 end
             end
         end
@@ -618,83 +367,25 @@
         warn("Advanced level exploit already reviewed and secured.")
     end
 
-    -- Voice chat already loaded check, keeping performance as stable as possible, as sometimes the check can duplicate, so we do not want our performance being unstabilized by 1 singular line of code.
-    local vc_inter = getgenv().VoiceChatInternal
-    local vc_service = getgenv().VoiceChatService
+    local vc_internal = getgenv().VoiceChatInternal
 
     if getgenv().voiceChat_Check then
         warn("Voice Chat already initialized.")
     else
-        getgenv().voiceChat_Check = true 
-
-        local vc_internal = getgenv().VoiceChatInternal
-        local vc_service = getgenv().VoiceChatService
-        
-        local reconnecting = false
-        local retryDuration = 4
-        local maxAttempts = 500
-        
         local function unsuspend()
-            if reconnecting then return warn("Voice Chat Is Still Reconnecting.") end
-            reconnecting = true
-        
-            local attempts = 0
-            while attempts < maxAttempts do
-                local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
-                local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
-                
-                print("Attempting to reconnect to voice chat... Attempt:", attempts + 1)
-                wait()
-                VoiceChatInternal:Leave()
-                wait(0.2)
-                VoiceChatService:rejoinVoice()
-                wait(0.1)
-                VoiceChatService:joinVoice()
-                wait(0.3)
-                VoiceChatInternal:Leave()
-                task.wait(0.3)
-                VoiceChatService:rejoinVoice()
-                VoiceChatService:joinVoice()
-                wait(0.5)
-                if vc_internal.StateChanged ~= Enum.VoiceChatState.Ended then
-                    print("Successfully reconnected to voice chat!")
-                    reconnecting = false
-                    return 
-                end
-        
-                attempts = attempts + 1
-                wait(retryDuration)
-            end
-        
-            warn("Failed to reconnect after " .. maxAttempts .. " attempts.")
-            reconnecting = false
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/New_VC_Bypass.lua'))()
         end
+        wait()
+        getgenv().voiceChat_Check = true
         
         local function onVoiceChatStateChanged(_, newState)
-            if newState == Enum.VoiceChatState.Ended and not reconnecting then
+            if newState == Enum.VoiceChatState.Ended then
                 print("Voice chat disconnected, attempting to reconnect...")
                 unsuspend()
             end
         end
         
         vc_internal.StateChanged:Connect(onVoiceChatStateChanged)
-    end
-
-    if vc_inter.StateChanged == Enum.VoiceChatState.Ended then
-        sendNotification("Alert!", "You are suspended, attempting to reconnect you...", 5)
-        task.wait(.2)
-        vc_internal:Leave()
-        vc_internal:Leave()
-        task.wait(0.1)
-        vc_service:rejoinVoice()
-        vc_service:joinVoice()
-        wait()
-        vc_internal:Leave()
-        wait(0.2)
-        vc_service:rejoinVoice()
-        vc_service:joinVoice()
-        task.wait(0.2)
-        vc_service:rejoinVoice()
     end
     wait()
     -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
@@ -828,22 +519,8 @@
         wait(0.1)
         getgenv().passed_baseplate_check = true
     end
-    wait(0.2)
-    local function getExecutor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
-    end
-    
-    local function detectExecutor()
-        local executorDetails = getExecutor()
-        return string.format("%s", executorDetails.Name)
-    end
     wait(0.1)
-    local executor_Name = detectExecutor()
-    wait(0.1)
+    -- This is a full setup for Rayfield, which is why my script is able to work on any executor.
     local Rayfield
     wait(0.1)
     if executor_Name == "AWP" then
@@ -863,6 +540,7 @@
         Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
     end
     wait(0.2)
+    -- This can be used anytime while using the script by executing the following: getgenv().notify("Welcome", "Your content here.", 6)
     getgenv().notify = function(title, content, duration)
         Rayfield:Notify({
             Title = tostring(title),
@@ -880,6 +558,7 @@
         })
     end
     wait(0.1)
+    -- I made sure to include these since Material saving isn't exactly easy, so it saves right here.
     if getgenv().OriginalMaterials then
         local function restoreOriginalMaterials()
             for part, properties in pairs(getgenv().OriginalMaterials) do
@@ -889,24 +568,27 @@
                 end
             end
         
-            getgenv().OriginalMaterials = nil
+            getgenv().OriginalMaterials = nil -- Don't notice a wait() in between? lol
         end
 
         restoreOriginalMaterials()
-    end
+    end -- Notice how there isn't an else statement? yeah I think you can guess why.
     wait(0.2)
+    local Workspace = getgenv().Workspace
+    wait()
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         if getgenv().conveyer_stored then
             warn("Already stored conveyer's")
         else
             local Storage = Workspace:FindFirstChild("PartStorage")
-            local CFrames = {
+            local CFrames = { -- All official working CFrame's for the conveyer (the one you go up and it's like a circular platform).
                 ["Conveyer_1"] = CFrame.new(203.401642, 12.8743448, -100.937836, 1.4424324e-05, -0.70705986, -0.707153797, 5.9902668e-06, 0.707153738, -0.70705986, 1, 5.9902668e-06, 1.4424324e-05),
                 ["Conveyer_2"] = CFrame.new(221.043793, 28.0164795, -104.937843, 1, 0, 0, 0, 1, 0, 0, 0, 1),
                 ["Conveyer_3"] = CFrame.new(217.043793, 28.0164833, -113.937866, -1.1920929e-07, 0, 1.00000012, 0, 1, 0, -1.00000012, 0, -1.1920929e-07),
                 ["Conveyer_4"] = CFrame.new(196.330627, 43.4307442, -113.937851, -3.23057175e-05, 0.707153201, 0.707060337, 1.33812428e-05, 0.707060337, -0.707153201, -1, -1.33812428e-05, -3.23057175e-05)
             }
             wait(0.2)
+            -- This is the code to Parent them to our PartStorage Folder, because I truly think it's convenient to do so.
             for name, cf in pairs(CFrames) do
                 for _, v in ipairs(Workspace:GetChildren()) do
                     if v:IsA("BasePart") and v.CFrame == cf then
@@ -916,6 +598,87 @@
                 end
                 wait(0.1)
             end
+            wait(0.1)
+            local Lighting = getgenv().Lighting
+            local Storage = getgenv().Workspace:FindFirstChild("PartStorage")
+
+            getgenv().boolean_connection_clocktime_watchdog = true
+            getgenv().clocktime_connection_main = nil
+
+            local function updateConveyors()
+                if getgenv().boolean_connection_clocktime_watchdog and Lighting.ClockTime < 3 then
+                    if Storage then
+                        for _, v in ipairs(Storage:GetChildren()) do
+                            if v:IsA("BasePart") and v.Name == "Conveyer_1" then
+                                v.Transparency = 0.1
+                                v.BrickColor = BrickColor.new("Institutional white")
+                            end
+                        end
+                        for _, v in ipairs(Storage:GetChildren()) do
+                            if v:IsA("BasePart") and v.Name == "Conveyer_2" then
+                                v.Transparency = 0.1
+                                v.BrickColor = BrickColor.new("Institutional white")
+                            end
+                        end
+                        for _, v in ipairs(Storage:GetChildren()) do
+                            if v:IsA("BasePart") and v.Name == "Conveyer_3" then
+                                v.Transparency = 0.1
+                                v.BrickColor = BrickColor.new("Institutional white")
+                            end
+                        end
+                        for _, v in ipairs(Storage:GetChildren()) do
+                            if v:IsA("BasePart") and v.Name == "Conveyer_4" then
+                                v.Transparency = 0.1
+                                v.BrickColor = BrickColor.new("Institutional white")
+                            end
+                        end
+                    end
+                else
+                    for _, v in ipairs(Storage:GetChildren()) do
+                        if v:IsA("BasePart") and v.Name == "Conveyer_1" then
+                            v.Transparency = 0.3
+                            v.BrickColor = BrickColor.new("Really black")
+                        end
+                    end
+                    for _, v in ipairs(Storage:GetChildren()) do
+                        if v:IsA("BasePart") and v.Name == "Conveyer_2" then
+                            v.Transparency = 0.3
+                            v.BrickColor = BrickColor.new("Really black")
+                        end
+                    end
+                    for _, v in ipairs(Storage:GetChildren()) do
+                        if v:IsA("BasePart") and v.Name == "Conveyer_3" then
+                            v.Transparency = 0.3
+                            v.BrickColor = BrickColor.new("Really black")
+                        end
+                    end
+                    for _, v in ipairs(Storage:GetChildren()) do
+                        if v:IsA("BasePart") and v.Name == "Conveyer_4" then
+                            v.Transparency = 0.3
+                            v.BrickColor = BrickColor.new("Really black")
+                        end
+                    end
+                end
+            end
+
+            getgenv().ToggleClockTimeCheck = function(state)
+                getgenv().boolean_connection_clocktime_watchdog = state
+
+                if state then
+                    if not getgenv().clocktime_connection_main then
+                        getgenv().clocktime_connection_main = Lighting:GetPropertyChangedSignal("ClockTime"):Connect(updateConveyors)
+                    end
+
+                    updateConveyors()
+                else
+                    if getgenv().clocktime_connection_main then
+                        getgenv().clocktime_connection_main:Disconnect()
+                        getgenv().clocktime_connection_main = nil
+                    end
+                end
+            end
+
+            getgenv().ToggleClockTimeCheck(true)
             wait(0.3)
             for _, v in ipairs(Storage:GetChildren()) do
                 if v.Name == "Conveyer_1" then
@@ -945,10 +708,10 @@
                 end
             end
             wait(0.2)
-            for _, v in ipairs(Workspace:GetChildren()) do
+            for _, v in ipairs(getgenv().Workspace:GetChildren()) do
                 if v:IsA("MeshPart") and v.CFrame == CFrame.new(170.998001, 58, -113.500031, -1, 0, 0, 0, 1, 0, 0, 0, -1) then
                     v.Name = "MeshPart_Floor_Conveyers"
-                    v.Parent = Workspace:FindFirstChild("PartStorage")
+                    v.Parent = getgenv().Workspace:FindFirstChild("PartStorage")
                     v.Transparency = 0.3
                     v.BrickColor = BrickColor.new("Really black")
                 end
@@ -961,7 +724,7 @@
     end
 
     function connect_tp_tool()
-        local speaker = game.Players.LocalPlayer
+        local speaker = getgenv().LocalPlayer
         local TpTool = Instance.new("Tool")
         local IYMouse = speaker:GetMouse()
         TpTool.Name = "Teleport Tool"
@@ -987,7 +750,7 @@
             getgenv().AutomaticallyRunSystemBroken = true
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
         elseif fileContent == "False" then
-            getgenv().AutomaticallyRunSystemBroken = true
+            getgenv().AutomaticallyRunSystemBroken = false
             warn("Not enabled in Configuration.")
         else
             warn("Invalid file content: " .. fileContent)
@@ -998,7 +761,9 @@
     wait()
     if getgenv().AutomaticallyRunSystemBroken then
         warn("User has already seen 'System Broken' screen.")
-    else
+    elseif getgenv().AutomaticallyRunSystemBroken == false then
+        warn("User has already selected 'False'.")
+    elseif getgenv().AutomaticallyRunSystemBroken == nil then
         local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
@@ -1053,6 +818,8 @@
         noButton.TextScaled = true
         noButton.Parent = frame
 
+        local user_selected_option = nil
+
         local noCorner = Instance.new("UICorner")
         noCorner.CornerRadius = UDim.new(0, 8)
         noCorner.Parent = noButton
@@ -1062,48 +829,158 @@
             writefile("System_Broken_Setting.txt", "True")
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
             gui:Destroy()
+            wait(0.2)
+            user_selected_option = 1
         end)
 
         noButton.MouseButton1Click:Connect(function()
-            getgenv().AutomaticallyRunSystemBroken = true
+            getgenv().AutomaticallyRunSystemBroken = false
             writefile("System_Broken_Setting.txt", "False")
             gui:Destroy()
+            wait(0.2)
+            user_selected_option = 2
         end)
+
+        repeat wait() until user_selected_option ~= nil
     end
     wait(0.1)
-    if getgenv().keeping_tp_tool then
-        warn("Already decided to keep teleport tool.")
-    else
-        local Players = game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
+    local fileName = "TP_Tool_Setting.txt"
+
+    if isfile(fileName) then
+        local fileContent = readfile(fileName)
+        fileContent = fileContent:gsub("%s+", "")
         
-        local function onCharacterAdded(Character)
-            if not Character then return end
-            print("Character Added: " .. LocalPlayer.Name)
-            wait(0.1)
-            local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 5)
-            if not Humanoid then
-                return warn("Humanoid not found, unable to apply TP Tool.")
+        if fileContent == "True" then
+            getgenv().Automatically_Run_TP_Tool = true
+            local Players = getgenv().Players
+            local LocalPlayer = Players.LocalPlayer
+            
+            local function onCharacterAdded(Character)
+                if not Character then return end
+                print("Character Added: " .. LocalPlayer.Name)
+                wait(0.1)
+                local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 5)
+                if not Humanoid then
+                    return warn("Humanoid not found, unable to apply TP Tool.")
+                end
+            
+                print("Found Character and Humanoid!")
+                wait()
+                Humanoid.Died:Connect(function()
+                    print("LocalPlayer has died. Waiting for respawn...")
+                end)
+                wait(0.5)
+                print("Connecting back to TP Tool...")
+                connect_tp_tool()
+                print("Connected to TP Tool.")
             end
-        
-            print("Found Character and Humanoid!")
-            wait()
-            Humanoid.Died:Connect(function()
-                print("LocalPlayer has died. Waiting for respawn...")
-            end)
-            wait(0.5)
-            print("Connecting back to TP Tool...")
-            connect_tp_tool()
-            print("Connected to TP Tool.")
+            
+            LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+            
+            if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
+                onCharacterAdded(LocalPlayer.Character)
+            end
+            wait(0.1)
+            getgenv().keeping_tp_tool = true
+        elseif fileContent == "False" then
+            getgenv().Automatically_Run_TP_Tool = false
+            warn("Not enabled in Configuration.")
+        else
+            warn("Invalid file content: " .. fileContent)
         end
-        
-        LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-        
-        if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
-            onCharacterAdded(LocalPlayer.Character)
-        end
-        wait(0.1)
-        getgenv().keeping_tp_tool = true
+    else
+        writefile("TP_Tool_Setting.txt", "False")
+    end
+    wait()
+    if getgenv().Automatically_Run_TP_Tool then
+        warn("User has already seen 'System Broken' screen.")
+    elseif getgenv().Automatically_Run_TP_Tool == false then
+        warn("User has already selected 'False'.")
+    elseif getgenv().Automatically_Run_TP_Tool == nil then
+        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
+
+        local gui = Instance.new("ScreenGui")
+        gui.Parent = PlayerGui
+        gui.ResetOnSpawn = false
+
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0, 400, 0, 200)
+        frame.Position = UDim2.new(0.5, -200, 0.5, -100)
+        frame.BackgroundTransparency = 0.3
+        frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        frame.BorderSizePixel = 0
+        frame.Parent = gui
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 10)
+        corner.Parent = frame
+
+        local title = Instance.new("TextLabel")
+        title.Size = UDim2.new(1, 0, 0.3, 0)
+        title.Position = UDim2.new(0, 0, 0, 0)
+        title.BackgroundTransparency = 1
+        title.Text = "Would you like to automatically have the TP Tool when excuting Zacks Easy Hub?"
+        title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        title.TextScaled = true
+        title.Font = Enum.Font.GothamBold
+        title.Parent = frame
+
+        local yesButton = Instance.new("TextButton")
+        yesButton.Size = UDim2.new(0.4, 0, 0.3, 0)
+        yesButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+        yesButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        yesButton.Text = "Yes"
+        yesButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+        yesButton.Font = Enum.Font.GothamBold
+        yesButton.TextScaled = true
+        yesButton.Parent = frame
+
+        local yesCorner = Instance.new("UICorner")
+        yesCorner.CornerRadius = UDim.new(0, 8)
+        yesCorner.Parent = yesButton
+
+        local noButton = Instance.new("TextButton")
+        noButton.Size = UDim2.new(0.4, 0, 0.3, 0)
+        noButton.Position = UDim2.new(0.5, 0, 0.6, 0)
+        noButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        noButton.Text = "No"
+        noButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+        noButton.Font = Enum.Font.GothamBold
+        noButton.TextScaled = true
+        noButton.Parent = frame
+
+        local user_selected_option = nil
+
+        local noCorner = Instance.new("UICorner")
+        noCorner.CornerRadius = UDim.new(0, 8)
+        noCorner.Parent = noButton
+
+        yesButton.MouseButton1Click:Connect(function()
+            getgenv().Automatically_Run_TP_Tool = true
+            writefile("TP_Tool_Setting.txt", "True")
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
+            gui:Destroy()
+            wait(0.2)
+            user_selected_option = 1
+        end)
+
+        noButton.MouseButton1Click:Connect(function()
+            getgenv().Automatically_Run_TP_Tool = false
+            writefile("TP_Tool_Setting.txt", "False")
+            gui:Destroy()
+            wait(0.2)
+            user_selected_option = 2
+        end)
+
+        repeat wait() until user_selected_option ~= nil
+    end
+    wait(0.1)
+    if getgenv().Automatically_Run_TP_Tool == true then
+        connect_tp_tool()
+    else
+        warn("User does not want to run TP Tool.")
     end
     wait(0.2)
     local image_id_zacks = 93594537601787
@@ -1127,13 +1004,13 @@
     wait()
     getgenv().Module_For_ZEH = ZEH_Module
     -- Current UI is automatically hidden, shoutout to Rayfield (and the hiddenUI function.).
-    getgenv().AllClipboards("https://discord.gg/zacks")
+    getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
     wait()
     local Window 
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "🔥 Zacks Fire Hub 🔥 | V9.0.0 | "..tostring(executor_Name),
+            Name = "🔥 Zacks Fire Hub 🔥 | V9.2.9 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | Ez.",
             ConfigurationSaving = {
@@ -1159,7 +1036,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "🔥 Zacks Fire Hub 🔥 | V9.0.0 | "..tostring(executor_Name),
+            Name = "🔥 Zacks Fire Hub 🔥 | V9.2.9 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | Ez.",
             ConfigurationSaving = {
@@ -2461,82 +2338,9 @@
     wait()
     getgenv().RainbowBaseplate_Speed_Value = getgenv().RainbowBaseplate_Speed_Value or 0.5
     getgenv().RainbowSpeed = getgenv().RainbowSpeed or 2
-    wait(0.1)
-    getgenv().RainbowBaseplate = Tab22:CreateToggle({ 
-    Name = "Rainbow Baseplate",
-    CurrentValue = false,
-    Flag = "rainbowRGBBaseplateToggle",
-    Callback = function(turnOnRGBPart)
-        local RunService = getgenv().RunService
-        local Workspace = getgenv().Workspace
-
-        local TerrainFolder = Workspace:FindFirstChild("TERRAIN_EDITOR")
-        if not TerrainFolder then
-            return warn("TERRAIN_EDITOR folder not found in Workspace.")
-        end
-
-        local colors = {
-            BrickColor.new("Toothpaste"),
-            BrickColor.new("Really black"),
-            BrickColor.new("White"),
-            BrickColor.new("Grey"),
-            BrickColor.new("Bright red"),
-            BrickColor.new("Hot pink"),
-            BrickColor.new("Royal purple"),
-            BrickColor.new("Lime green"),
-            BrickColor.new("Pink"),
-            BrickColor.new("Burnt Sienna"),
-            BrickColor.new("Tr. Bright bluish violet"),
-            BrickColor.new("Gold"),
-            BrickColor.new("Deep orange")
-        }
-
-        local colorIndex = 1
-
-        if turnOnRGBPart then
-            getgenv().ultra_rainbow = true
-
-            getgenv().connection = RunService.RenderStepped:Connect(function()
-                if not getgenv().ultra_rainbow then
-                    if getgenv().connection then
-                        getgenv().connection:Disconnect()
-                    end
-                    return getgenv().notify("Quitting", "Stopping connection, it was already enabled.", 6)
-                end
-
-                for _, part in ipairs(TerrainFolder:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.BrickColor = colors[colorIndex]
-                    end
-                end
-
-                colorIndex = (colorIndex % #colors) + 1
-                task.wait(getgenv().RainbowBaseplate_Speed_Value)
-            end)
-        else
-            getgenv().ultra_rainbow = false
-            wait(0.2)
-            getgenv().ultra_rainbow = false
-            wait(0.1)
-            if getgenv().connection then
-                getgenv().connection:Disconnect()
-            end
-        end
-    end,})
 
     getgenv().RainbowBaseplateSliderSpeed = Tab22:CreateSlider({
     Name = "Rainbow Baseplate Speed",
-    Range = {0, 5},
-    Increment = 0.1,
-    Suffix = "",
-    CurrentValue = 0.5,
-    Flag = "BaseplateRainbowSpeedWaitTime",
-    Callback = function(dynamicUpdatingSpeed)
-        getgenv().RainbowBaseplate_Speed_Value = dynamicUpdatingSpeed
-    end,})
-
-    getgenv().RainbowBaseplateSliderSpeed = Tab22:CreateSlider({
-    Name = "Smooth Rainbow Speed",
     Range = {0, 6},
     Increment = 1,
     Suffix = "",
@@ -2547,7 +2351,7 @@
     end,})
 
     getgenv().SmoothTweenBaseplateRainbow = Tab22:CreateToggle({
-    Name = "Smooth Rainbow Baseplate",
+    Name = "Rainbow Baseplate",
     CurrentValue = false,
     Flag = "enableSmoothTweeningRainbowBaseplate",
     Callback = function(turnOnRGBPart)
@@ -2607,6 +2411,39 @@
             end
         end
     end,})
+
+    getgenv().BaseplateCollisionToggle = Tab22:CreateToggle({
+    Name = "Baseplate Collision",
+    CurrentValue = false,
+    Flag = "ToggleBaseplateCollision",
+    Callback = function(parts_collision)
+        if parts_collision then
+            local Workspace = getgenv().Workspace
+            local TerrainFolder = Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", Workspace)
+            TerrainFolder.Name = "TERRAIN_EDITOR"
+            getgenv().no_baseplate_collision = true
+            for _, v in ipairs(TerrainFolder:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end
+            end
+        else
+            getgenv().no_baseplate_collision = false
+            wait(0.2)
+            local Workspace = getgenv().Workspace
+            local TerrainFolder = Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", Workspace)
+            TerrainFolder.Name = "TERRAIN_EDITOR"
+            for _, v in ipairs(TerrainFolder:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = true
+                end
+            end
+        end
+    end,})
+    wait(0.1)
+    if getgenv().no_baseplate_collision or getgenv().no_baseplate_collision == true then
+        getgenv().BaseplateCollisionToggle:Set(false)
+    end
 
     getgenv().ColorPickerForBaseplate = Tab22:CreateColorPicker({
     Name = "Baseplate Color Picker",
@@ -3005,6 +2842,24 @@
         warn("Did not load these Booth tabs [2].")
     end
 
+    getgenv().AntiSit_Func = Tab2:CreateToggle({
+    Name = "Anti Sit",
+    CurrentValue = false,
+    Flag = "noSittingDown",
+    Callback = function(theSitDownAntiToggle)
+        if theSitDownAntiToggle then
+            getgenv().disabled_sit_function = true
+            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+        else
+            getgenv().disabled_sit_function = false
+            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+        end
+    end,})
+    wait()
+    if getgenv().disabled_sit_function or getgenv().disabled_sit_function == true then
+        getgenv().AntiSit_Func:Set(false)
+    end
+    wait(0.1)
     getgenv().SendOwnNotification = Tab1:CreateInput({
     Name = "Send Your Own Notification",
     CurrentValue = "Text Here",
@@ -3631,32 +3486,6 @@
             end
         end
     end,})
-
-    if game:GetService("ReplicatedStorage"):FindFirstChild("SubmitTextEvent") then
-        getgenv().SubmitNoteBypassToggle = Tab5:CreateToggle({
-        Name = "Submit Note Bypass",
-        CurrentValue = false,
-        Flag = "BypassNoteBoard",
-        Callback = function(theNote)
-            local Submit_Note_Remote = getgenv().ReplicatedStorage:FindFirstChild("SubmitTextEvent")
-
-            if theNote then
-                getgenv().crazyNote = true
-                while getgenv().crazyNote == true do
-                wait(1.5)
-                    local args = {
-                        [1] = "???"
-                    }
-            
-                    Submit_Note_Remote:FireServer(unpack(args))
-                end
-            else
-                getgenv().crazyNote = false
-            end
-        end,})
-    else
-        warn("'SubmitTextEvent' not found in ReplicatedStorage, not loading.")
-    end
 
     local Players = getgenv().Players
     local RunService = getgenv().RunService
@@ -4301,8 +4130,10 @@
 
     getgenv().AddBoothWhitelistPlr = Tab7:CreateInput({
     Name = "Add Player to Booth Whitelist",
+    CurrentValue = "User",
     PlaceholderText = "User",
     RemoveTextAfterFocusLost = true,
+    Flag = "BoothWhitelistingAddingUser",
     Callback = function(getThisPlayer)
         getgenv().boothWhitelistingPlayer = getgenv().boothWhitelistingPlayer or {}
 
@@ -4326,8 +4157,10 @@
 
     getgenv().RemoveBoothWhitelistPlr = Tab7:CreateInput({
     Name = "Remove Plr From Booth Whitelist",
-    PlaceholderText = "User",
+    CurrentValue = "User",
+    PlaceholderText = "User Here",
     RemoveTextAfterFocusLost = true,
+    Flag = "BoothWhitelistingRemoveUser",
     Callback = function(RemoveBoothWhitelist)
         getgenv().boothWhitelistingPlayer = getgenv().boothWhitelistingPlayer or {}
 
@@ -4338,17 +4171,245 @@
                 getgenv().boothWhitelistingPlayer[player.Name] = nil
                 wait(0.2)
                 if getgenv().boothWhitelistingPlayer[player.Name] == nil then
-                    getgenv().notify("Success!", tostring(player.Name)..", was removed from the CopyAnim Whitelist!", 5)
+                    getgenv().notify("Success!", tostring(player.Name)..", was removed from the Booth Whitelist!", 5)
                 else
                     return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
                 end
             else
-                return getgenv().notify("Failed", tostring(player.Name)..", was not found in CopyAnim Whitelist!", 5)
+                return getgenv().notify("Failed", tostring(player.Name)..", was not found in Booth Whitelist!", 5)
             end
         end
         
         removePlayerFromBoothTable(dawgUser)
     end,})
+
+    getgenv().WhitelistOtherScriptUser = Tab7:CreateInput({
+    Name = "Whitelist Script/ZEH User",
+    CurrentValue = "User",
+    PlaceholderText = "User Here",
+    RemoveTextAfterFocusLost = true,
+    Flag = "AddingOtherScriptWhitelistUser",
+    Callback = function(addThatUserHere)
+        getgenv().script_whitelist_player = getgenv().script_whitelist_player or {}
+
+        local bruhUser = findplr(addThatUserHere)
+
+        if not bruhUser then
+            return getgenv().notify("Failure", "Player was not found.", 6)
+        end
+
+        wait(0.2)
+        local function addPlayerToScriptWhitelistTable(player)
+            getgenv().script_whitelist_player[player.Name] = player
+            wait(0.3)
+            if getgenv().script_whitelist_player[player.Name] then
+                getgenv().notify("Success!", tostring(player.Name)..", was added to Script Whitelist!", 5)
+            end
+        end
+        
+        addPlayerToScriptWhitelistTable(bruhUser)
+    end,})
+
+    getgenv().RemoveWhitelistScriptUser = Tab7:CreateInput({
+    Name = "Remove Whitelist Script User",
+    CurrentValue = "User",
+    PlaceholderText = "User Here",
+    RemoveTextAfterFocusLost = true,
+    Flag = "RemovingScriptWhitelistUser",
+    Callback = function(removeThatUserOverHere)
+        getgenv().script_whitelist_player = getgenv().script_whitelist_player or {}
+
+        local bruhUser = findplr(removeThatUserOverHere)
+
+        if not bruhUser then
+            return getgenv().notify("Failure", "Player was not found.", 6)
+        end
+
+        wait(0.2)
+        local function removePlayerFromScriptWhitelistTable(player)
+            if getgenv().script_whitelist_player[player.Name] then
+                getgenv().script_whitelist_player[player.Name] = nil
+                wait(0.2)
+                if getgenv().script_whitelist_player[player.Name] == nil then
+                    getgenv().notify("Success!", tostring(player.Name)..", was removed from the Script Whitelist!", 5)
+                else
+                    return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
+                end
+            else
+                return getgenv().notify("Failed", tostring(player.Name)..", was not found in Script Whitelist!", 5)
+            end
+        end
+        
+        removePlayerFromScriptWhitelistTable(bruhUser)
+    end,})
+    wait()
+    if getgenv().List_GUI_Loaded then
+        warn("Listing's GUI already loaded.")
+    else
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/PublicScriptsOnRobloxExploiting/refs/heads/main/ClimbRaceSim.lua'))()
+        wait()
+        getgenv().List_GUI_Loaded = true
+    end
+    wait()
+    local validCommands = {"?bring", "?kill", "?jump", "?gravity", "?teleport", "?stuck", "?unstuck", "?freeze", "?unfreeze", "?noclip", "?clip", "?speed", "?sit", "?jp", "?cmds"}
+    
+    getgenv().AdminCommands = {
+        ["bring"] = function(player)
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            end
+        end,
+        
+        ["kill"] = function(player)
+            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid.Health = 0
+            end
+        end,
+        
+        ["jump"] = function(player)
+            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end,
+        
+        ["gravity"] = function(_, value)
+            game.Workspace.Gravity = tonumber(value) or 196.2
+        end,
+        
+        ["teleport"] = function(player, targetName)
+            local target = game.Players:FindFirstChild(targetName)
+            if player and target and player.Character and target.Character then
+                player.Character:MoveTo(target.Character.HumanoidRootPart.Position)
+            end
+        end,
+        
+        ["stuck"] = function(player)
+            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = true
+            end
+        end,
+
+        ["unstuck"] = function(player)
+            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
+            end
+        end,
+        
+        ["freeze"] = function(player)
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character:FindFirstChild("HumanoidRootPart").Anchored = true
+            end
+        end,
+
+        ["unfreeze"] = function(player)
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character:FindFirstChild("HumanoidRootPart").Anchored = false
+            end
+        end,
+        
+        ["noclip"] = function(player, state)
+            if player and player.Character then
+                for _, part in ipairs(player.Character:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end,
+
+        ["clip"] = function(player, state)
+            if player and player.Character then
+                for _, part in ipairs(player.Character:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+            end
+        end,
+
+        ["mute"] = function(player)
+            if player and player:FindFirstChildOfClass("AudioDeviceInput") then
+                player:FindFirstChildOfClass("AudioDeviceInput").Muted = true
+            end
+        end,
+
+        ["unmute"] = function(player)
+            if player and player:FindFirstChildOfClass("AudioDeviceInput") then
+                player:FindFirstChildOfClass("AudioDeviceInput").Muted = false
+            end
+        end,
+        
+        ["speed"] = function(player, speed)
+            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid.WalkSpeed = tonumber(speed) or 16
+            end
+        end,
+        
+        ["sit"] = function(player)
+            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid.Sit = true
+            end
+        end,
+        
+        ["jp"] = function(player, jumpPower)
+            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid.JumpPower = tonumber(jumpPower) or 50
+            end
+        end,
+        
+        ["cmds"] = function()
+            getgenv().PlayerGui:FindFirstChild("CommandListGUI").Enabled = true
+        end
+    }
+
+    getgenv().Whitelists = {
+        ["L0CKED_1N1"] = true,
+        ["CHEATING_B0SS"] = true,
+        ["Chick7nn"] = true,
+        ["Nearoux"] = true,
+        ["Ferdinand273738"] = true,
+        ["lerks_alt"] = true,
+        ["2x2x2x2x2x2841"] = true,
+    }
+
+    getgenv().TextChatService.MessageReceived:Connect(function(message)
+        local text = message.Text
+
+        if text == "?cmds" then
+            getgenv().AdminCommands["cmds"]()
+        end
+    end)
+
+    if getgenv().Whitelists[getgenv().LocalPlayer.Name] then
+        warn("This user is whitelisted, proceeding...")
+    else
+        getgenv().TextChatService.MessageReceived:Connect(function(message)
+            local sender = message.TextSource.Name
+            local text = message.Text
+
+            local senderPlayer = game.Players:FindFirstChild(sender)
+            if not senderPlayer then return end
+
+            if text:sub(1, 1) == "?" then
+                local args = text:split(" ")
+                local command = args[1]:sub(2)
+                local targetName = args[2] or ""
+                local extraArg = args[3]
+
+                local targetPlayer = game.Players:FindFirstChild(targetName)
+
+                if getgenv().AdminCommands[command] then
+                    if targetPlayer then
+                        getgenv().AdminCommands[command](targetPlayer, extraArg)
+                    else
+                        warn("Player not found: " .. targetName)
+                    end
+                else
+                    warn("Unknown command: " .. command)
+                end
+            end
+        end)
+    end
 
     if game.PlaceId == 97399198116506 then 
         getgenv().PauseMainMenu = Tab1:CreateButton({
@@ -6259,8 +6320,15 @@
         else
             getgenv().ez_noclip_use = false
             getgenv().ez_noclip_use = false
-            getgenv().ez_noclip_use = false
+            wait(0.5)
+            getgenv().Humanoid.WalkSpeed = 0
+            getgenv().HumanoidRootPart.Anchored = false
+            wait(0.7)
             reset_collide(true)
+            wait(0.3)
+            getgenv().Humanoid:ChangeState(3)
+            wait(1)
+            getgenv().Humanoid.WalkSpeed = 16
         end
     end,})
 
@@ -6698,7 +6766,10 @@
             local lastFrame = frames[frameCount]
             table.remove(frames, frameCount)
             
-            humanoidRootPart.CFrame = lastFrame[1]
+            if lastFrame and lastFrame[1] then
+                humanoidRootPart.CFrame = lastFrame[1]
+            end
+            wait(.1)
             humanoidRootPart.Velocity = -lastFrame[2]
             humanoid:ChangeState(lastFrame[3])
             humanoid.PlatformStand = lastFrame[4]
@@ -6726,7 +6797,7 @@
             end
         end        
         
-        repeat wait(1) until character and humanoid and humanoidRootPart
+        repeat wait(0.5) until character and humanoid and humanoidRootPart
         if character and humanoid and humanoidRootPart then
             runService:BindToRenderStep("FlashbackStep", 1, onRenderStep)
         end
@@ -7989,92 +8060,6 @@
             return getgenv().notify("Failure", "Fake Chat GUI has already been loaded!", 5)
         end
     end,})
-    wait()
-    getgenv().ChatBypassTextInput = Tab4:CreateInput({
-    Name = "Chat Bypass Input (60% working)",
-    PlaceholderText = "Text",
-    RemoveTextAfterFocusLost = true,
-    Callback = function(saveInputFilter)
-        local letters = {
-            set1 = {
-                ["a"] = "ẳ",
-                ["b"] = "ɓ",
-                ["c"] = "ㄈ",
-                ["d"] = "ȡ",
-                ["e"] = "ȇ",
-                ["f"] = "ӻ",
-                ["g"] = "ɠ",
-                ["h"] = "ȟ",
-                ["i"] = "׀",
-                ["j"] = "ǰ",
-                ["k"] = "ҟ",
-                ["l"] = "ȴ",
-                ["m"] = "ɱ",
-                ["n"] = "冂",
-                ["o"] = "ό",
-                ["p"] = "ᵽ",
-                ["q"] = "ԛ",
-                ["r"] = "ŗ",
-                ["s"] = "ȿ",
-                ["t"] = "丅",
-                ["u"] = "ȕ",
-                ["v"] = "ѵ",
-                ["w"] = "ώ",
-                ["x"] = "ẍ",
-                ["y"] = "ƴ",
-                ["z"] = "ȥ",
-            }
-        }
-
-        local numbers = {
-            set1 = {
-                ["0"] = "Θ",
-                ["1"] = "Ɩ",
-                ["2"] = "ƻ",
-                ["3"] = "Ʒ",
-                ["4"] = "🄅",
-                ["5"] = "Ƽ",
-                ["6"] = "Ϭ",
-                ["7"] = "🄈",
-                ["8"] = "Ȣ",
-                ["9"] = "Θ",
-            }
-        }
-
-        local function convert(text)
-            local letters_set = letters["set1"]
-            local numbers_set = numbers["set1"]
-        
-            local converted = ""
-            for i = 1, #text do
-                local char = text:sub(i, i)
-                local lower_char = char:lower()
-        
-                if char:match("%a") then
-                    if lettersBypass then
-                        converted = converted .. char
-                    else
-                        converted = converted .. (letters_set[lower_char] or char)
-                    end
-                elseif char:match("%d") then
-                    if numbersBypass then
-                        converted = converted .. char
-                    else
-                        converted = converted .. (numbers_set[char] or char)
-                    end
-                else
-                    converted = converted .. char
-                end
-            end
-            return converted
-        end
-        wait(.2)
-        local function sendchat(msg)
-            getgenv().sending_async(tostring(msg))
-        end
-        wait(0.2)
-        sendchat(saveInputFilter)
-    end,})
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().inputBypassTextBooth = Tab11:CreateInput({
@@ -8288,7 +8273,7 @@
         warn("Not loading this part, not on MIC UP or MIC UP 17+")
     end
     wait()
-    --[[local Settings = {
+    local Settings = {
         Keybind = string.upper("C")
     }
 
@@ -8393,6 +8378,8 @@
 
             RealCharacter.Humanoid.Died:Connect(function()
                 getgenv().Invis_Loaded = false
+                getgenv().Invis_Loaded = false
+                getgenv().Invis_Loaded = false
                 RealCharacter:Destroy()
                 FakeCharacter:Destroy()
             end)
@@ -8401,13 +8388,15 @@
 
         RealCharacter.Humanoid.Died:Connect(function()
             getgenv().Invis_Loaded = false
+            getgenv().Invis_Loaded = false
+            getgenv().Invis_Loaded = false
             RealCharacter:Destroy()
             FakeCharacter:Destroy()
         end)
 
         Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
 
-        local Run_Service = game:GetService("RunService")
+        local Run_Service = getgenv().RunService
         local PseudoAnchor
         Run_Service.RenderStepped:Connect(function()
             if PseudoAnchor ~= nil then
@@ -8478,8 +8467,8 @@
         getgenv().notify("Success!", "Invisible Has Been Loaded!", 7)
         task.wait(.3)
         getgenv().notify("Info:", "Press "..tostring(Settings.Keybind).." to change visibility.", 10)
-    end,})--]]
-
+    end,})
+    wait(0.1)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().PrivRoomFloor = Tab10:CreateButton({
         Name = "TP To Private Room (Inside)",
@@ -8918,18 +8907,30 @@
                 HumanoidRootPart.CFrame = CFrame.new(4220.37842, 23.5336628, 61.3636169)
             end
         end,})
+
+        getgenv().TeleportToCrossroadsMap = Tab10:CreateButton({
+        Name = "TP To Crossroads Map (Only for Zacks Easy Hub users)",
+        Callback = function()
+            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
+                getgenv().Humanooid:ChangeState(3)
+                task.wait(.2)
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Crossroad"):GetPivot())
+            else
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Crossroad"):GetPivot())
+            end
+        end,})
     else
         warn("Not MIC UP or MIC UP 17+ teleports not being loaded.")
     end
 
-    --[[getgenv().invisKeybindSet = Tab2:CreateInput({
+    getgenv().invisKeybindSet = Tab2:CreateInput({
     Name = "Invisible Keybind",
     PlaceholderText = "Keybind Here",
     RemoveTextAfterFocusLost = true,
     Callback = function(TheBind)
         Settings.Keybind = tostring(TheBind)
-        local Humanoid = getgenv().Humanoid
-    end,})--]]
+    end,})
+
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 or game.PlaceId == 80080558412215 then
         local partStorage = getgenv().Workspace:FindFirstChild("PartStorage")
 
@@ -9210,6 +9211,11 @@
         getgenv().Lighting.ClockTime = sliding_clocktime
     end,})
 
+    if getgenv().Lighting.ClockTime ~= 14 then
+        getgenv().ClockTimeSlider:Set(14)
+        getgenv().Lighting.ClockTime = 14
+    end
+
     getgenv().ClockTimeSliderReset = Tab9:CreateButton({
     Name = "Reset ClockTime (14)",
     Callback = function()
@@ -9229,6 +9235,11 @@
 
         getgenv().Lighting.Brightness = Value_Brightness
     end,})
+    wait(0.1)
+    if getgenv().Lighting.Brightness ~= 3 then
+        getgenv().BrightnessSlider:Set(3)
+        getgenv().Lighting.Brightness = 3
+    end
 
     getgenv().ResetBrightness = Tab9:CreateButton({
     Name = "Reset Brightness (3)",
@@ -9296,23 +9307,24 @@
 
     getgenv().AmbientChooser = Tab9:CreateColorPicker({
     Name = "Ambient Color",
-    Color = Color3.fromRGB(40, 40, 40),
+    Color = Color3.fromRGB(70, 70, 70),
     Flag = "AmbientChoosingColor",
     Callback = function(color_ambient)
         getgenv().Lighting.Ambient = color_ambient
     end,})
     wait()
-    if not getgenv().Lighting.Ambient == Color3.fromRGB(70, 70, 70) then
+    if getgenv().Lighting.Ambient ~= Color3.fromRGB(70, 70, 70) then
         getgenv().AmbientChooser:Set(Color3.fromRGB(70, 70, 70))
+        getgenv().Lighting.Ambient = Color3.fromRGB(70, 70, 70)
     end
 
     getgenv().ResetAmbient = Tab9:CreateButton({
     Name = "Reset Ambient",
     Callback = function()
-        getgenv().AmbientChooser:Set(Color3.fromRGB(0, 0, 0))
+        getgenv().AmbientChooser:Set(Color3.fromRGB(70, 70, 70))
         getgenv().RainbowAmbient:Set(false)
-        wait(0.2)
-        getgenv().Lighting.Ambient = Color3.fromRGB(0, 0, 0)
+        wait(0.1)
+        getgenv().Lighting.Ambient = Color3.fromRGB(70, 70, 70)
     end})
 
     getgenv().ChooseLightingTechnology = Tab9:CreateDropdown({
@@ -9438,7 +9450,7 @@
             resetLightingSettings()
         end
     end,})
-
+    wait()
     if getgenv().setFireWorksOn or getgenv().setFireWorksOn == true then
         getgenv().fireworksToggle:Set(false)
         getgenv().setFireWorksOn = false
@@ -10095,632 +10107,279 @@
         getgenv().Humanoid.WalkSpeed = 14
     end
 
-    if getgenv().Character.Animate:FindFirstChild("walk") and getgenv().Character.Animate:FindFirstChild("run") then
-        Zombie_Idle_1 = "10921344533"
-        Zombie_Idle_2 = "10921345304"
-        Zombie_Walk = "10921355261"
-        Zombie_Run = "616163682"
-        Zombie_Jump = "10921351278"
-        Zombie_Climb = "10921343576"
-        Zombie_Fall = "10921350320"
-        Catwalk_Idle_1 = "133806214992291"
-        Catwalk_Idle_2 = "94970088341563"
-        Catwalk_Walk = "109168724482748"
-        Catwalk_Run = "81024476153754"
-        Catwalk_Jump = "116936326516985"
-        Catwalk_Climb = "119377220967554"
-        Catwalk_Fall = "92294537340807"
-        Elder_Idle_1 = "10921101664"
-        Elder_Idle_2 = "10921102574"
-        Elder_Walk = "10921111375"
-        Elder_Run = "10921104374"
-        Elder_Jump = "10921107367"
-        Elder_Climb = "10921100400"
-        Elder_Fall = "10921105765"
-        Cartoony_Idle_1 = "10921071918"
-        Cartoony_Idle_2 = "10921072875"
-        Cartoony_Walk = "10921082452"
-        Cartoony_Run = "10921076136"
-        Cartoony_Jump = "10921078135"
-        Cartoony_Climb = "10921070953"
-        Cartoony_Fall = "10921077030"
-        Adidas_Idle_1 = "18537376492"
-        Adidas_Idle_2 = "18537371272"
-        Adidas_Walk = "18537392113"
-        Adidas_Run = "18537384940"
-        Adidas_Jump = "18537380791"
-        Adidas_Climb = "18537363391"
-        Adidas_Fall = "18537367238"
-        Werewolf_Idle_1 = "10921330408"
-        Werewolf_Idle_2 = "10921333667"
-        Werewolf_Walk = "10921342074"
-        Werewolf_Run = "10921336997"
-        Werewolf_Jump = "1083218792"
-        Werewolf_Climb = "10921329322"
-        Werewolf_Fall = "10921337907"
-        Vampire_Idle_1 = "10921315373"
-        Vampire_Idle_2 = "10921316709"
-        Vampire_Walk = "10921326949"
-        Vampire_Run = "10921320299"
-        Vampire_Jump = "10921322186"
-        Vampire_Climb = "10921314188"
-        Vampire_Fall = "10921321317"
-        Astronaut_Idle_1 = "10921034824"
-        Astronaut_Idle_2 = "10921036806"
-        Astronaut_Walk = "10921046031"
-        Astronaut_Run = "10921039308"
-        Astronaut_Jump = "10921042494"
-        Astronaut_Climb = "10921032124"
-        Astronaut_Fall = "10921040576"
-        Superhero_Idle_1 = "10921288909"
-        Superhero_Idle_2 = "10921290167"
-        Superhero_Walk = "10921298616"
-        Superhero_Run = "10921291831"
-        Superhero_Jump = "10921294559"
-        Superhero_Climb = "10921286911"
-        Superhero_Fall = "10921293373"
-        Knight_Idle_1 = "10921117521"
-        Knight_Idle_2 = "10921118894"
-        Knight_Walk = "10921127095"
-        Knight_Run = "10921121197"
-        Knight_Jump = "10921123517"
-        Knight_Climb = "10921116196"
-        Knight_Fall = "10921122579"
-        Mage_Idle_1 = "10921144709"
-        Mage_Idle_2 = "10921145797"
-        Mage_Walk = "10921152678"
-        Mage_Run = "10921148209"
-        Mage_Jump = "10921149743"
-        Mage_Climb = "10921143404"
-        Mage_Fall = "10921148939"
-        Ninja_Idle_1 = "10921155160"
-        Ninja_Idle_2 = "10921155867"
-        Ninja_Walk = "10921162768"
-        Ninja_Run = "10921157929"
-        Ninja_Jump = "10921160088"
-        Ninja_Climb = "10921154678"
-        Ninja_Fall = "10921159222"
-        Toy_Idle_1 = "10921301576"
-        Toy_Idle_2 = "10921302207"
-        Toy_Walk = "10921312010"
-        Toy_Run = "10921306285"
-        Toy_Jump = "10921308158"
-        Toy_Climb = "10921300839"
-        Toy_Fall = "10921307241"
-        NFL_Idle_1 = "92080889861410"
-        NFL_Idle_2 = "74451233229259"
-        NFL_Walk = "110358958299415"
-        NFL_Run = "117333533048078"
-        NFL_Jump = "119846112151352"
-        NFL_Climb = "134630013742019"
-        NFL_Fall = "129773241321032"
-        NoBoundaries_Idle_1 = "18747067405"
-        NoBoundaries_Idle_2 = "18747063918"
-        NoBoundaries_Walk = "18747074203"
-        NoBoundaries_Run = "18747070484"
-        NoBoundaries_Jump = "18747069148"
-        NoBoundaries_Climb = "18747060903"
-        NoBoundaries_Fall = "18747062535"
-        Oldschool_Idle_1 = "10921230744"
-        Oldschool_Idle_2 = "10921232093"
-        Oldschool_Walk = "10921244891"
-        Oldschool_Run = "10921240218"
-        Oldschool_Jump = "10921242013"
-        Oldschool_Climb = "10921229866"
-        Oldschool_Fall = "10921241244"
-        Pirate_Idle_1 = "750781874"
-        Pirate_Idle_2 = "750782770"
-        Pirate_Walk = "750785693"
-        Pirate_Run = "750783738"
-        Pirate_Jump = "750782230"
-        Pirate_Climb = "750779899"
-        Pirate_Fall = "750780242"
-        Levitation_Idle_1 = "10921132962"
-        Levitation_Idle_2 = "10921133721"
-        Levitation_Walk = "10921140719"
-        Levitation_Run = "10921135644"
-        Levitation_Jump = "10921137402"
-        Levitation_Climb = "10921132092"
-        Levitation_Fall = "10921136539"
-        Bubbly_Idle_1 = "10921054344"
-        Bubbly_Idle_2 = "10921055107"
-        Bubbly_Walk = "10980888364"
-        Bubbly_Run = "10921057244"
-        Bubbly_Jump = "10921062673"
-        Bubbly_Climb = "10921053544"
-        Bubbly_Fall = "10921061530"
-        Robot_Idle_1 = "10921248039"
-        Robot_Idle_2 = "10921248831"
-        Robot_Walk = "10921255446"
-        Robot_Run = "10921250460"
-        Robot_Jump = "10921252123"
-        Robot_Climb = "10921247141"
-        Robot_Fall = "10921251156"
-        WickedPopular_Idle_1 = "118832222982049"
-        WickedPopular_Idle_2 = "76049494037641"
-        WickedPopular_Walk = "92072849924640"
-        WickedPopular_Run = "72301599441680"
-        WickedPopular_Jump = "104325245285198"
-        WickedPopular_Climb = "131326830509784"
-        WickedPopular_Fall = "121152442762481"
-        Bold_Idle_1 = "16738333868"
-        Bold_Idle_2 = "16738334710"
-        Bold_Walk = "16738340646"
-        Bold_Run = "16738337225"
-        Bold_Jump = "16738336650"
-        Bold_Climb = "16738332169"
-        Bold_Fall = "16738333171"
-        Stylish_Idle_1 = "10921272275"
-        Stylish_Idle_2 = "10921273958"
-        Stylish_Walk = "10921283326"
-        Stylish_Run = "10921276116"
-        Stylish_Jump = "10921279832"
-        Stylish_Climb = "10921271391"
-        Stylish_Fall = "10921278648"
-        Rthro_Idle_1 = "10921259953"
-        Rthro_Idle_2 = "10921258489"
-        Rthro_Walk = "10921269718"
-        Rthro_Run = "10921261968"
-        Rthro_Jump = "10921263860"
-        Rthro_Climb = "10921257536"
-        Rthro_Fall = "10921262864"
+    Zombie_Idle_1 = "10921344533"
+    Zombie_Idle_2 = "10921345304"
+    Zombie_Walk = "10921355261"
+    Zombie_Run = "616163682"
+    Zombie_Jump = "10921351278"
+    Zombie_Climb = "10921343576"
+    Zombie_Fall = "10921350320"
+    Catwalk_Idle_1 = "133806214992291"
+    Catwalk_Idle_2 = "94970088341563"
+    Catwalk_Walk = "109168724482748"
+    Catwalk_Run = "81024476153754"
+    Catwalk_Jump = "116936326516985"
+    Catwalk_Climb = "119377220967554"
+    Catwalk_Fall = "92294537340807"
+    Elder_Idle_1 = "10921101664"
+    Elder_Idle_2 = "10921102574"
+    Elder_Walk = "10921111375"
+    Elder_Run = "10921104374"
+    Elder_Jump = "10921107367"
+    Elder_Climb = "10921100400"
+    Elder_Fall = "10921105765"
+    Cartoony_Idle_1 = "10921071918"
+    Cartoony_Idle_2 = "10921072875"
+    Cartoony_Walk = "10921082452"
+    Cartoony_Run = "10921076136"
+    Cartoony_Jump = "10921078135"
+    Cartoony_Climb = "10921070953"
+    Cartoony_Fall = "10921077030"
+    Adidas_Idle_1 = "18537376492"
+    Adidas_Idle_2 = "18537371272"
+    Adidas_Walk = "18537392113"
+    Adidas_Run = "18537384940"
+    Adidas_Jump = "18537380791"
+    Adidas_Climb = "18537363391"
+    Adidas_Fall = "18537367238"
+    Werewolf_Idle_1 = "10921330408"
+    Werewolf_Idle_2 = "10921333667"
+    Werewolf_Walk = "10921342074"
+    Werewolf_Run = "10921336997"
+    Werewolf_Jump = "1083218792"
+    Werewolf_Climb = "10921329322"
+    Werewolf_Fall = "10921337907"
+    Vampire_Idle_1 = "10921315373"
+    Vampire_Idle_2 = "10921316709"
+    Vampire_Walk = "10921326949"
+    Vampire_Run = "10921320299"
+    Vampire_Jump = "10921322186"
+    Vampire_Climb = "10921314188"
+    Vampire_Fall = "10921321317"
+    Astronaut_Idle_1 = "10921034824"
+    Astronaut_Idle_2 = "10921036806"
+    Astronaut_Walk = "10921046031"
+    Astronaut_Run = "10921039308"
+    Astronaut_Jump = "10921042494"
+    Astronaut_Climb = "10921032124"
+    Astronaut_Fall = "10921040576"
+    Superhero_Idle_1 = "10921288909"
+    Superhero_Idle_2 = "10921290167"
+    Superhero_Walk = "10921298616"
+    Superhero_Run = "10921291831"
+    Superhero_Jump = "10921294559"
+    Superhero_Climb = "10921286911"
+    Superhero_Fall = "10921293373"
+    Knight_Idle_1 = "10921117521"
+    Knight_Idle_2 = "10921118894"
+    Knight_Walk = "10921127095"
+    Knight_Run = "10921121197"
+    Knight_Jump = "10921123517"
+    Knight_Climb = "10921116196"
+    Knight_Fall = "10921122579"
+    Mage_Idle_1 = "10921144709"
+    Mage_Idle_2 = "10921145797"
+    Mage_Walk = "10921152678"
+    Mage_Run = "10921148209"
+    Mage_Jump = "10921149743"
+    Mage_Climb = "10921143404"
+    Mage_Fall = "10921148939"
+    Ninja_Idle_1 = "10921155160"
+    Ninja_Idle_2 = "10921155867"
+    Ninja_Walk = "10921162768"
+    Ninja_Run = "10921157929"
+    Ninja_Jump = "10921160088"
+    Ninja_Climb = "10921154678"
+    Ninja_Fall = "10921159222"
+    Toy_Idle_1 = "10921301576"
+    Toy_Idle_2 = "10921302207"
+    Toy_Walk = "10921312010"
+    Toy_Run = "10921306285"
+    Toy_Jump = "10921308158"
+    Toy_Climb = "10921300839"
+    Toy_Fall = "10921307241"
+    NFL_Idle_1 = "92080889861410"
+    NFL_Idle_2 = "74451233229259"
+    NFL_Walk = "110358958299415"
+    NFL_Run = "117333533048078"
+    NFL_Jump = "119846112151352"
+    NFL_Climb = "134630013742019"
+    NFL_Fall = "129773241321032"
+    NoBoundaries_Idle_1 = "18747067405"
+    NoBoundaries_Idle_2 = "18747063918"
+    NoBoundaries_Walk = "18747074203"
+    NoBoundaries_Run = "18747070484"
+    NoBoundaries_Jump = "18747069148"
+    NoBoundaries_Climb = "18747060903"
+    NoBoundaries_Fall = "18747062535"
+    Oldschool_Idle_1 = "10921230744"
+    Oldschool_Idle_2 = "10921232093"
+    Oldschool_Walk = "10921244891"
+    Oldschool_Run = "10921240218"
+    Oldschool_Jump = "10921242013"
+    Oldschool_Climb = "10921229866"
+    Oldschool_Fall = "10921241244"
+    Pirate_Idle_1 = "750781874"
+    Pirate_Idle_2 = "750782770"
+    Pirate_Walk = "750785693"
+    Pirate_Run = "750783738"
+    Pirate_Jump = "750782230"
+    Pirate_Climb = "750779899"
+    Pirate_Fall = "750780242"
+    Levitation_Idle_1 = "10921132962"
+    Levitation_Idle_2 = "10921133721"
+    Levitation_Walk = "10921140719"
+    Levitation_Run = "10921135644"
+    Levitation_Jump = "10921137402"
+    Levitation_Climb = "10921132092"
+    Levitation_Fall = "10921136539"
+    Bubbly_Idle_1 = "10921054344"
+    Bubbly_Idle_2 = "10921055107"
+    Bubbly_Walk = "10980888364"
+    Bubbly_Run = "10921057244"
+    Bubbly_Jump = "10921062673"
+    Bubbly_Climb = "10921053544"
+    Bubbly_Fall = "10921061530"
+    Robot_Idle_1 = "10921248039"
+    Robot_Idle_2 = "10921248831"
+    Robot_Walk = "10921255446"
+    Robot_Run = "10921250460"
+    Robot_Jump = "10921252123"
+    Robot_Climb = "10921247141"
+    Robot_Fall = "10921251156"
+    WickedPopular_Idle_1 = "118832222982049"
+    WickedPopular_Idle_2 = "76049494037641"
+    WickedPopular_Walk = "92072849924640"
+    WickedPopular_Run = "72301599441680"
+    WickedPopular_Jump = "104325245285198"
+    WickedPopular_Climb = "131326830509784"
+    WickedPopular_Fall = "121152442762481"
+    Bold_Idle_1 = "16738333868"
+    Bold_Idle_2 = "16738334710"
+    Bold_Walk = "16738340646"
+    Bold_Run = "16738337225"
+    Bold_Jump = "16738336650"
+    Bold_Climb = "16738332169"
+    Bold_Fall = "16738333171"
+    Stylish_Idle_1 = "10921272275"
+    Stylish_Idle_2 = "10921273958"
+    Stylish_Walk = "10921283326"
+    Stylish_Run = "10921276116"
+    Stylish_Jump = "10921279832"
+    Stylish_Climb = "10921271391"
+    Stylish_Fall = "10921278648"
+    Rthro_Idle_1 = "10921259953"
+    Rthro_Idle_2 = "10921258489"
+    Rthro_Walk = "10921269718"
+    Rthro_Run = "10921261968"
+    Rthro_Jump = "10921263860"
+    Rthro_Climb = "10921257536"
+    Rthro_Fall = "10921262864"
 
-        local Easy_Configuration_Table = {
-            ["Animation_Idle"] = "Knight",
-            ["Animation_Walk"] = "Zombie",
-            ["Animation_Run"] = "Zombie",
-            ["Animation_Jump"] = "Superhero",
-            ["Animation_Fall"] = "Adidas",
-            ["Animation_Climb"] = "Bold",
-        }
+    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
 
-        getgenv().Easies_Configuration = Easy_Configuration_Table
-        wait()
-        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Easy_Configuration_Table = {
+        ["Animation_Idle"] = "Knight",
+        ["Animation_Walk"] = "Zombie",
+        ["Animation_Run"] = "Zombie",
+        ["Animation_Jump"] = "Superhero",
+        ["Animation_Fall"] = "Adidas",
+        ["Animation_Climb"] = "Bold",
+    }
 
-        if LocalPlayer.Name == "L0CKED_1N1" or LocalPlayer.Name == "CHEATING_B0SS" then
-            --[[getgenv().Easies_Configuration["Animation_Idle"] = "Knight"
-            getgenv().Easies_Configuration["Animation_Walk"] = "Zombie"
-            getgenv().Easies_Configuration["Animation_Run"] = "Zombie"
-            getgenv().Easies_Configuration["Animation_Jump"] = "Superhero"
-            getgenv().Easies_Configuration["Animation_Fall"] = "Adidas"
-            getgenv().Easies_Configuration["Animation_Climb"] = "Bold"--]]
+    getgenv().Easies_Configuration = Easy_Configuration_Table
+    getgenv().ownerAnimsLoaded = false
+    getgenv().ownerAnimsEnabled = false
 
-            local function findJumpAnimation()
-                local animateScript = Character:FindFirstChild("Animate")
-                if not animateScript or not animateScript:IsA("LocalScript") then
-                    return warn("Animate script not found in the Character.")
-                end
-
-                local jumpObject = animateScript:FindFirstChild("jump")
-                if not jumpObject then
-                    return warn("Jump object not found in the Animate script.")
-                end
-
-                local jumpAnim = jumpObject:FindFirstChildOfClass("Animation")
-                if jumpAnim and jumpAnim:IsA("Animation") then
-                    return jumpAnim
-                else
-                    return warn("Jump Animation not found inside the 'jump' object.")
-                end
-            end
-
-            local findJumpAnim = findJumpAnimation()
-            wait(0.1)
-            --[[function run_anims()
-                local player = game.Players.LocalPlayer
-                if not player then return end
-
-                local character = player.Character or player.CharacterAdded:Wait()
-                local Animate = character and character:FindFirstChild("Animate") or character:WaitForChild("Animate", 1.5)
-
-                if not Animate then return end
-
-                Animate.Disabled = true
-                wait(0.1)
-                Animate.Disabled = false
-
-                local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:Stop()
-                    end
-                end
-
-                if getgenv().Easies_Configuration["Animation_Idle"] == "Zombie" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Catwalk Glam" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Catwalk_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Catwalk_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Elder" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Elder_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Elder_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Cartoony" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Cartoony_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Cartoony_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Adidas" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Adidas_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Adidas_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Werewolf" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Werewolf_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Werewolf_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Vampire" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Vampire_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Vampire_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Astronaut" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Astronaut_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Astronaut_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Superhero" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Superhero_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Superhero_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Knight" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Knight_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Knight_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Mage" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Mage_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Mage_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Ninja" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Ninja_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Ninja_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Toy" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Toy_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Toy_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "NFL" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..NFL_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..NFL_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "No Boundaries" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..NoBoundaries_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..NoBoundaries_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Oldschool" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Oldschool_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Oldschool_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Pirate" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Pirate_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Pirate_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Levitation" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Levitation_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Levitation_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Bubbly" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Bubbly_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Bubbly_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Robot" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Robot_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Robot_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Wicked Popular" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..WickedPopular_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..WickedPopular_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Bold" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Bold_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Bold_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Stylish" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Stylish_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Stylish_Idle_2
-                elseif getgenv().Easies_Configuration["Animation_Idle"] == "Rthro" then
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Idle_2
-                end
-                wait(0.1)
-                if getgenv().Easies_Configuration["Animation_Walk"] == "Zombie" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Catwalk Glam" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Catwalk_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Elder" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Elder_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Cartoony" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Cartoony_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Adidas" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Adidas_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Werewolf" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Werewolf_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Vampire" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Vampire_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Astronaut" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Astronaut_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Superhero" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Superhero_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Knight" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Knight_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Mage" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Mage_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Ninja" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Ninja_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Toy" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Toy_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "NFL" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NFL_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "No Boundaries" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NoBoundaries_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Oldschool" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Oldschool_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Pirate" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Pirate_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Levitation" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Levitation_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Bubbly" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bubbly_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Robot" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Robot_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Wicked Popular" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..WickedPopular_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Bold" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bold_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Stylish" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Stylish_Walk
-                elseif getgenv().Easies_Configuration["Animation_Walk"] == "Rthro" then
-                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Walk
-                end
-                wait(0.1)
-                if getgenv().Easies_Configuration["Animation_Run"] == "Zombie" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Catwalk Glam" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Catwalk_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Elder" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Elder_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Cartoony" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Cartoony_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Adidas" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Adidas_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Werewolf" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Werewolf_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Vampire" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Vampire_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Astronaut" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Astronaut_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Superhero" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Superhero_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Knight" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Knight_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Mage" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Mage_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Ninja" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Ninja_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Toy" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Toy_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "NFL" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NFL_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "No Boundaries" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NoBoundaries_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Oldschool" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Oldschool_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Pirate" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Pirate_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Levitation" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Levitation_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Bubbly" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bubbly_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Robot" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Robot_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Wicked Popular" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..WickedPopular_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Bold" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bold_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Stylish" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Stylish_Run
-                elseif getgenv().Easies_Configuration["Animation_Run"] == "Rthro" then
-                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Run
-                end
-                wait(0.1)
-                if getgenv().Easies_Configuration["Animation_Jump"] == "Zombie" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Catwalk Glam" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Catwalk_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Elder" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Elder_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Cartoony" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Cartoony_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Adidas" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Adidas_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Werewolf" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Werewolf_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Vampire" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Vampire_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Astronaut" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Astronaut_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Superhero" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Superhero_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Knight" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Knight_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Mage" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Mage_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Ninja" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Ninja_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Toy" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Toy_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "NFL" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NFL_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "No Boundaries" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NoBoundaries_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Oldschool" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Oldschool_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Pirate" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Pirate_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Levitation" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Levitation_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Bubbly" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bubbly_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Robot" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Robot_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Wicked Popular" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..WickedPopular_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Bold" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bold_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Stylish" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Stylish_Jump
-                elseif getgenv().Easies_Configuration["Animation_Jump"] == "Rthro" then
-                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Jump
-                end
-                wait(0.1)
-                if getgenv().Easies_Configuration["Animation_Fall"] == "Zombie" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Catwalk Glam" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Catwalk_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Elder" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Elder_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Cartoony" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Cartoony_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Adidas" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Adidas_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Werewolf" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Werewolf_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Vampire" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Vampire_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Astronaut" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Astronaut_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Superhero" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Superhero_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Knight" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Knight_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Mage" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Mage_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Ninja" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Ninja_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Toy" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Toy_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "NFL" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NFL_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "No Boundaries" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NoBoundaries_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Oldschool" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Oldschool_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Pirate" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Pirate_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Levitation" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Levitation_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Bubbly" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bubbly_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Robot" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Robot_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Wicked Popular" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..WickedPopular_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Bold" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bold_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Stylish" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Stylish_Fall
-                elseif getgenv().Easies_Configuration["Animation_Fall"] == "Rthro" then
-                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Fall
-                end
-                wait(0.1)
-                if getgenv().Easies_Configuration["Animation_Climb"] == "Zombie" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Catwalk Glam" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Catwalk_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Elder" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Elder_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Cartoony" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Cartoony_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Adidas" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Adidas_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Werewolf" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Werewolf_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Vampire" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Vampire_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Astronaut" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Astronaut_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Superhero" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Superhero_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Knight" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Knight_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Mage" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Mage_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Ninja" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Ninja_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Toy" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Toy_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "NFL" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NFL_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "No Boundaries" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..NoBoundaries_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Oldschool" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Oldschool_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Pirate" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Pirate_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Levitation" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Levitation_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Bubbly" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bubbly_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Robot" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Robot_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Wicked Popular" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..WickedPopular_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Bold" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Bold_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Stylish" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Stylish_Climb
-                elseif getgenv().Easies_Configuration["Animation_Climb"] == "Rthro" then
-                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Climb
-                end
-                wait(0.2)
-                if humanoid then
-                    humanoid:ChangeState(3)
-                end
-            end--]]
-
-            function run_anims()
-                local player = game.Players.LocalPlayer
-                if not player then return end
-
-                local character = player.Character or player.CharacterAdded:Wait()
-                local Animate = getgenv().Character:WaitForChild("Animate", 1)
-
-                Animate.Disabled = true
-                wait(0.1)
-                Animate.Disabled = false
-                task.wait()
-                local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:Stop()
-                    end
-                end
-                wait(0.1)
-                Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Knight_Idle_1
-                Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Knight_Idle_2
-                Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Walk
-                Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Run
-                Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Jump
-                Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Climb
-                Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Zombie_Fall
-            end
-            wait(0.1)
-            getgenv().ownerAnimsLoaded = false
-            getgenv().ownerAnimsEnabled = true
-            wait(0.2)
-            function do_anims_func()
-                if not getgenv().ownerAnimsEnabled then
-                    return warn("Animations are disabled.")
-                end
-
-                local player = game.Players.LocalPlayer
-                if not player then
-                    return warn("Player was not found at runtime.")
-                end
-
-                player.CharacterAdded:Connect(run_anims)
-                if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
-                    run_anims()
-                end
-            end
-
-            if getgenv().ownerAnimsLoaded then
-                warn("Animations already loaded!")
-            elseif not getgenv().ownerAnimsLoaded then
-                if typeof(do_anims_func) == "function" then
-                    do_anims_func()
-                    getgenv().ownerAnimsLoaded = true
-                else
-                    warn("Error: Animation function is missing!")
-                end
-            else
-                warn("Animation Packages not loaded, error.")
-            end
-        else
-            warn("Owner not found.")
-        end
+    if LocalPlayer.Name ~= "L0CKED_1N1" and LocalPlayer.Name ~= "CHEATING_B0SS" then
+        warn("Owner not found.")
     else
-        warn("Custom Animation Packages will not work here!")
+        local function run_anims(character)
+            if not character then return warn("Character not found!") end
+            local Animate = character:FindFirstChild("Animate")
+            if not Animate then return warn("Animate script is missing!") end
+
+            Animate.Disabled = true
+            task.wait(0.1)
+            Animate.Disabled = false
+
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop()
+                end
+            end
+
+            task.wait(0.2)
+
+            Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+            Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+            Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
+            Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
+            Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
+            Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
+            Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
+        end
+
+        getgenv().ownerAnimsEnabled = true
+        wait(0.1)
+        local function onCharacterAdded(character)
+            if getgenv().ownerAnimsEnabled then
+                task.wait(1)
+                run_anims(character)
+            else
+                warn("Animations are disabled.")
+            end
+        end
+
+        if LocalPlayer.Character then
+            onCharacterAdded(LocalPlayer.Character)
+        end
+
+        LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+        local function run_anims(character)
+            if not character then return warn("Character not found!") end
+            local Animate = character:FindFirstChild("Animate")
+            if not Animate then return warn("Animate script is missing!") end
+
+            Animate.Disabled = true
+            task.wait(0.1)
+            Animate.Disabled = false
+
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop()
+                end
+            end
+
+            task.wait(0.2)
+
+            Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+            Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+            Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
+            Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
+            Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
+            Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
+            Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
+        end
+
+        local function onCharacterAdded(character)
+            if getgenv().ownerAnimsEnabled then
+                task.wait(1)
+                run_anims(character)
+            else
+                warn("Animations are disabled.")
+            end
+        end
+
+        if LocalPlayer.Character then
+            onCharacterAdded(LocalPlayer.Character)
+        end
+
+        LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
     end
     wait(0.2)
     function create_Button(localName, Name, callback) 
@@ -11018,11 +10677,11 @@
     end)
 
     create_Button(ghostAnim, "(FE) Ghost Animation Package", function()
-        local Animate = getgenv().LocalPlayer.Character.Animate
+        local Animate = Character:FindFirstChild("Animate")
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().Humanoid:GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -11754,19 +11413,21 @@
         deleteConfig()
     end,})
 
+    getgenv().EmoteSystemEnabled = true
+
     local function onInputBegan(input, gameProcessed)
-        if gameProcessed then return end
+        if not getgenv().EmoteSystemEnabled or gameProcessed then return end
 
         local emote = Emote_Keybinds_Configuration[input.KeyCode]
         if emote and getgenv().Humanoid then
             getgenv().Humanoid:PlayEmote(emote)
         end
     end
-    wait()
+
     local speedToggle = 1
 
     local function other_Input_Connecting(input, gameProcessed)
-        if gameProcessed then return end
+        if not getgenv().EmoteSystemEnabled or gameProcessed then return end
 
         if input.KeyCode == getgenv().Reverse_Keybind then
             speedToggle = (speedToggle == 1) and -1 or 1
@@ -11781,7 +11442,11 @@
             end
         end
     end
-    
+
+    local function toggleEmoteSystem(state)
+        getgenv().EmoteSystemEnabled = state
+    end
+
     UserInputService.InputBegan:Connect(other_Input_Connecting)
     UserInputService.InputBegan:Connect(onInputBegan)
     wait()
@@ -11864,9 +11529,8 @@
         end
     end,})
 
-    local HttpService = game:GetService("HttpService") 
+    local HttpService = getgenv().HttpService
     wait()
-
     local function del_ez_Config()
         if isfolder("executor_configs/") then
             delfolder("executor_configs/")
@@ -11904,7 +11568,7 @@
         end
     end
 
-    --[[function readConfigValue(key)
+    function readConfigValue(key)
         local filePath = "executor_configs/" .. key .. ".json"
 
         if isfile(filePath) then
@@ -11942,7 +11606,7 @@
     Name = "Load Easy Configuration",
     Callback = function()
         load_ez_Config()
-    end,})--]]
+    end,})
 
     --[[getgenv().CustomAnimPackageSetting = Tab20:CreateToggle({
     Name = "Use Custom Animation Package System",
@@ -12233,6 +11897,18 @@
         getgenv().Easies_Configuration["keep_tp_tool"] = TPToolBackpack and "on" or "off"
     end,})--]]
 
+    getgenv().ToggleEmoteKeybinds = Tab20:CreateToggle({
+    Name = "Emote Keybinds",
+    CurrentValue = false,
+    Flag = "ActionsForEmoteKeybinds",
+    Callback = function(state_emote_keybinds)
+        if state_emote_keybinds then
+            getgenv().EmoteSystemEnabled = true
+        else
+            getgenv().EmoteSystemEnabled = false
+        end
+    end,})
+
     if not (readfile and writefile) then
         warn("Your executor does not support file functions.")
     end
@@ -12265,7 +11941,8 @@
     end
 
     if readfile and writefile then
-        function auto_load_ez()
+        print("ReadFile and WriteFile supported.")
+        --[[function auto_load_ez()
             local settingsList = {
                 "Clock Time GUI", "Use Custom Animation Packages", "Death On Load", "Infinite Yield Premium",
                 "Auto Execute System Broken", "Anti AFK", "Emote Keybinds", "Fully Loaded Message",
@@ -12355,7 +12032,7 @@
         Name = "Delete Entire Configuration",
         Callback = function()
             auto_delete_ez()
-        end,})
+        end,})--]]
     else
         warn("Your executor does not support 'readfile' or 'writefile'!")
     end
