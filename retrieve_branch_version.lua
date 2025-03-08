@@ -282,16 +282,21 @@
     getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
     wait(0.2)
 
-    local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-    local modelId = 'rbxassetid://85211877443756'
-    local mapModel = loadstring("return game:GetObjects('" .. modelId .. "')[1]")()
+    local function insert_id_asset(asset_ID, Parent)
+        local modelId = 'rbxassetid://'..asset_ID
+        local mapModel = loadstring("return game:GetObjects('" .. modelId .. "')[1]")()
 
-    if mapModel and mapModel:IsA("Model") then
-        mapModel.Parent = Workspace
-    else
-        warn("Failed to load and insert Zacks Easy Hub | Crossroads Map Model.")
+        if mapModel and mapModel:IsA("Model") then
+            mapModel.Parent = Parent
+        else
+            warn("Failed to load and insert Zacks Easy Hub | Crossroads Map Model.")
+        end
     end
 
+    insert_id_asset('85211877443756', game:GetService("Workspace"))
+    wait()
+    insert_id_asset('126578094071541', game:GetService("Workspace"))
+    wait(0.3)
     -- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
     getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").Position
 
@@ -1010,7 +1015,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "🔥 Zacks Fire Hub 🔥 | V9.2.9 | "..tostring(executor_Name),
+            Name = "🔥 Zacks Fire Hub 🔥 | V9.3.2 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | Ez.",
             ConfigurationSaving = {
@@ -1036,7 +1041,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "🔥 Zacks Fire Hub 🔥 | V9.2.9 | "..tostring(executor_Name),
+            Name = "🔥 Zacks Fire Hub 🔥 | V9.3.2 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | Ez.",
             ConfigurationSaving = {
@@ -4373,10 +4378,15 @@
     }
 
     getgenv().TextChatService.MessageReceived:Connect(function(message)
-        local text = message.Text
+        if not message.TextSource then
+            warn("No message.TextSource located. [This check is here to prevent an error].")
+        else
+            local sender = message.TextSource.Name
+            local text = message.Text
 
-        if text == "?cmds" then
-            getgenv().AdminCommands["cmds"]()
+            if text == "?cmds" and getgenv().Whitelists[sender] then
+                getgenv().AdminCommands["cmds"]()
+            end
         end
     end)
 
@@ -5199,7 +5209,7 @@
     Name = "Jerk Off Speed",
     Range = {0.2, 3},
     Increment = 0.1,
-    Suffix = "JerkTheSpeed",
+    Suffix = "Speed",
     CurrentValue = 0.6,
     Flag = "SpeedJerkingSpeed",
     Callback = function(jerk_speed)
@@ -6281,16 +6291,167 @@
         end
     end,})
 
-    getgenv().faceBangScript = Tab16:CreateButton({
+    local running = false
+    local fKey = Enum.KeyCode.Z
+    local lastKey = false
+
+    local speed
+    local slider
+    local distSlider
+    local conn
+    local heartConn
+
+    local function stop()
+        if conn then
+            conn:Disconnect()
+            conn = nil
+        end
+        local hum = LocalPlayer.Character:FindFirstChild('Humanoid')
+        if hum then
+            hum.PlatformStand = false
+        end
+        running = false
+    end
+
+    local function fuck()
+        if running then
+            return
+        end
+        running = true
+
+        local plr = LocalPlayer
+        local hrp = plr.Character:FindFirstChild('HumanoidRootPart')
+        local hum = plr.Character.Humanoid
+        local closest, dist = nil, math.huge
+
+        for _, target in ipairs(game:GetService('Players'):GetPlayers()) do
+            if target ~= plr and target.Character then
+                local head = target.Character:FindFirstChild('Head')
+                if head then
+                    local d = (head.Position - hrp.Position).Magnitude
+                    if d < dist then
+                        closest = target
+                        dist = d
+                    end
+                end
+            end
+        end
+
+        if not closest or not hrp then
+            running = false
+            return
+        end
+
+        hum.PlatformStand = true
+        local head = closest.Character.Head
+
+        local init = true
+        local out = true
+        local min = -0.9
+        local base = 2
+        local last = tick()
+        local prog = 0
+
+        conn = game:GetService('RunService').Heartbeat:Connect(function()
+            hrp.Velocity = Vector3.new(0, 0, 0)
+            local back = head.CFrame * CFrame.new(0, 0, 1)
+            local front = head.CFrame * CFrame.new(0, 0, -1)
+            local bPos = back.Position
+            local fPos = front.Position
+            local dir = (bPos - fPos).Unit
+            local max = -distSlider
+
+            if init then
+                local pos = bPos + dir * max
+                hrp.CFrame = CFrame.new(pos + Vector3.new(0, 0.5, 0))
+                init = false
+                last = tick()
+                return
+            end
+
+            local now = tick()
+            local dt = now - last
+            last = now
+
+            local spd = base * (speed or 1)
+
+            if out then
+                prog = math.min(1, prog + dt * spd)
+            else
+                prog = math.max(0, prog - dt * spd)
+            end
+
+            local curr = min + (max - min) * prog
+            local target = bPos + dir * curr
+            local pos = hrp.Position
+            local new = pos:Lerp(target, 0.5) + Vector3.new(0, 0.5, 0)
+            local hCF = head.CFrame
+            hrp.CFrame = CFrame.new(new) * (hCF - hCF.Position) * CFrame.Angles(0, math.rad(180), 0)
+
+            if prog >= 1 or prog <= 0 then
+                out = not out
+            end
+        end)
+    end
+    wait()
+    --[[getgenv().faceBangScript = Tab16:CreateToggle({
     Name = "Face F**k Script (Press: Z)",
-    Callback = function()
-        if getgenv().loaded_face_bang then
-            return getgenv().notify("Notification:", "Already loaded face f*ck script!", 7.5)
+    CurrentValue = false,
+    Flag = "FaceFuckingToggle",
+    Callback = function(face_Bang_Animation)
+        local enabled = false
+        enabled = face_Bang_Animation
+
+        if on then
+            if heartConn then
+                heartConn:Disconnect()
+            end
+
+            heartConn = game:GetService('RunService').Heartbeat:Connect(function()
+                if not enabled then
+                    return
+                end
+
+                local key = game:GetService('UserInputService'):IsKeyDown(fKey)
+
+                if key and not lastKey and not running then
+                    fuck()
+                elseif not key and lastKey and running then
+                    stop()
+                end
+
+                lastKey = key
+            end)
         else
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/face_bang_script.lua'))()
-            getgenv().loaded_face_bang = true
+            if heartConn then
+                heartConn:Disconnect()
+                heartConn = nil
+            end
+            stop()
         end
     end,})
+
+    getgenv().Face_Bang_Speed = Tab16:CreateSlider({
+    Name = "Face F**k Speed",
+    Range = {1, 40},
+    Increment = 1,
+    Suffix = "",
+    CurrentValue = 1,
+    Flag = "faceBangingSpeedSet",
+    Callback = function(set_face_fuck_speed)
+        speed = set_face_fuck_speed / 2
+    end,})
+
+    getgenv().Distance_Face_Bang = Tab16:CreateSlider({
+    Name = "Face F**k Distance",
+    Range = {1, 10},
+    Increment = 1,
+    Suffix = "",
+    CurrentValue = 1,
+    Flag = "faceBangingDistance",
+    Callback = function(max_distance)
+        distSlider = max_distance
+    end,})--]]
 
     getgenv().noclipToggle = Tab2:CreateToggle({
     Name = "Noclip",
@@ -6331,7 +6492,7 @@
             getgenv().Humanoid.WalkSpeed = 16
         end
     end,})
-
+    wait()
     if game.PlaceId == 135275461271957 or game.PlaceId == 78589782053833 then
         getgenv().PlayerGui:FindFirstChild("Notification"):Destroy()
     end
@@ -6960,6 +7121,10 @@
                         getgenv().notify("Failure", "Cannot pickup Hoverboard, GamePass not owned.", 6)
                     end
                     wait(0.3)
+                    if getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Hoverboard") then
+                        getgenv().LocalPlayer:FindFirstChildOfClass("Backpack"):FindFirstChild("Hoverboard").Parent = getgenv().Character
+                    end
+                    wait(0.5)
                     local player = getgenv().LocalPlayer
                     local character = getgenv().Character
                     local humanoidRootPart = getgenv().HumanoidRootPart
@@ -7084,7 +7249,7 @@
                 if humanoidRootPart:FindFirstChild("BodyVelocity") then
                     humanoidRootPart.BodyVelocity:Destroy()
                 end
-                character.Humanoid.PlatformStand = false
+                getgenv().Humanoid.PlatformStand = false
                 getgenv().flyLoop = false
             end
             wait(0.2)
@@ -8471,6 +8636,30 @@
     end,})
     wait(0.1)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        getgenv().TeleportToCrossroadsMap = Tab10:CreateButton({
+        Name = "TP To Crossroads Map (Only for Zacks Easy Hub users)",
+        Callback = function()
+            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
+                getgenv().Humanooid:ChangeState(3)
+                task.wait(.2)
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Crossroad"):GetPivot())
+            else
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Crossroad"):GetPivot())
+            end
+        end,})
+
+        getgenv().TeleportToModernHouseMap = Tab10:CreateButton({
+        Name = "TP To Modern House Map (Only for Zacks Easy Hub users)",
+        Callback = function()
+            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
+                getgenv().Humanoid:ChangeState(3)
+                task.wait(.4)
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 1190, 0))
+            else
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 1190, 0))
+            end
+        end,})
+
         getgenv().PrivRoomFloor = Tab10:CreateButton({
         Name = "TP To Private Room (Inside)",
         Callback = function()
@@ -8906,18 +9095,6 @@
                 local HumanoidRootPart = getgenv().HumanoidRootPart
             
                 HumanoidRootPart.CFrame = CFrame.new(4220.37842, 23.5336628, 61.3636169)
-            end
-        end,})
-
-        getgenv().TeleportToCrossroadsMap = Tab10:CreateButton({
-        Name = "TP To Crossroads Map (Only for Zacks Easy Hub users)",
-        Callback = function()
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanooid:ChangeState(3)
-                task.wait(.2)
-                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Crossroad"):GetPivot())
-            else
-                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Crossroad"):GetPivot())
             end
         end,})
     else
