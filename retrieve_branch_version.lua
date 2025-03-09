@@ -1015,9 +1015,9 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "🔥 Zacks Fire Hub 🔥 | V9.3.2 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.3.6 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
-            LoadingSubtitle = "Zacks Easy Hub | Ez.",
+            LoadingSubtitle = "Zacks Easy Hub | We rule.",
             ConfigurationSaving = {
                 Enabled = false,
                 FolderName = "ConfigurationZacksEasyHub",
@@ -1041,9 +1041,9 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "🔥 Zacks Fire Hub 🔥 | V9.3.2 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.3.6 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
-            LoadingSubtitle = "Zacks Easy Hub | Ez.",
+            LoadingSubtitle = "Zacks Easy Hub | We rule.",
             ConfigurationSaving = {
                 Enabled = false,
                 FolderName = "ConfigurationZacksEasyHub",
@@ -1411,8 +1411,16 @@
             getgenv().notify("Failed!", "Could not load any Anti-AFK Scripts.", 5)
         end
     end
+    wait(0.1)
+    getgenv().r15_or_r6 = function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+            return true
+        else
+            return getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 or false
+        end
+    end
     wait(0.3)
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local ReplicatedStorage = getgenv().ReplicatedStorage
     wait(0.5)
     if getgenv().scripts_init then
         warn("Scripts we're already modified.")
@@ -2828,17 +2836,51 @@
             Callback = function(copyUserAvatar)
                 local findAPlayerToCopy = findplr(copyUserAvatar)
 
-                if not findAPlayerToCopy then
-                    return getgenv().notify("Failure!", "Player does not exist.", 6)
+                if not getgenv().PlayerGui:FindFirstChild("Menu") then
+                    return getgenv().notify("Failure", "Menu was not found, probably removed.", 5)
+                else
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.new(0.168627, 0.521569, 0.552941)
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "Yes"
                 end
                 wait()
+                if not findAPlayerToCopy then
+                    local args = {
+                        [1] = tostring(copyUserAvatar)
+                    }
+
+                    getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                    return 
+                end
+                wait()
+                local args = {
+                    [1] = tostring(copyUserAvatar)
+                }
+
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
                 local args = {
                     [1] = tostring(findAPlayerToCopy)
                 }
                 
-                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
-                wait()
                 getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
+            end,})
+
+            getgenv().GoBackToNormalAvatar = Tab2:CreateButton({
+            Name = "Change Back To Regular Avatar",
+            Callback = function()
+                if not getgenv().PlayerGui:FindFirstChild("Menu") then
+                    return getgenv().notify("Failure", "Menu GUI not found in PlayerGui, probably removed.", 5)
+                end
+                wait()
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.new(0.184314, 0.184314, 0.184314)
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
+                wait(0.1)
+                local args = {
+                    [1] = tostring(getgenv().LocalPlayer.Name)
+                }
+                
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
             end,})
         else
             warn("Player does not own the GamePass (Admin).")
@@ -3246,13 +3288,16 @@
                 getgenv().HumanoidRootPart.Anchored = false
             end
 
+            if getgenv().Humanoid:GetStateEnabled(Enum.HumanoidStateType.Seated, false) then
+                getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            end
+            wait()
             getgenv().bangActive = false
             getgenv().Clip = true
             getgenv().bangScriptLoaded = false
             getgenv().unload = nil
             getgenv().enabled = false
         end
-
         wait(0.1)
         bang_plr_bypass_off()
     end
@@ -3284,42 +3329,24 @@
         getgenv().enabled = true
         getgenv().unload = false
         wait(0.1)
-        local Players = game:GetService("Players")
-        local RunService = game:GetService("RunService")
-        local LocalPlayer = Players.LocalPlayer
-        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local humanoid = Character:WaitForChild("Humanoid")
-        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+        local Players = getgenv().Players
+        local RunService = getgenv().RunService
+        local LocalPlayer = getgenv().LocalPlayer
+        local Character = getgenv().Character
+        local humanoid = getgenv().Humanoid
+        local HumanoidRootPart = getgenv().HumanoidRootPart
         
         local VOID_THRESHOLD = -50
         local UNVOID_THRESHOLD = 0
         
         local function noSitFunc()
-            if getgenv().Humanoid and getgenv().Humanoid.Sit then
-                getgenv().Humanoid.Sit = false
-            end
-        end
-        
-        local function setupNoSit()
-            if getgenv().noSit then getgenv().noSit:Disconnect() end
-            if getgenv().nositDied then getgenv().nositDied:Disconnect() end
-
-            if getgenv().Humanoid then
-                getgenv().noSit = getgenv().Humanoid:GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
-            end
-            
-            local function nositDiedFunc()
-                repeat task.wait() until getgenv().LocalPlayer.Character and getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                setupNoSit()
-            end
-            
-            getgenv().nositDied = getgenv().LocalPlayer.CharacterAdded:Connect(nositDiedFunc)
+            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
         end
         
         local function antiVoidLoop()
             OrgDestroyHeight = getgenv().Workspace.FallenPartsDestroyHeight
 
-            getgenv().antiVoidLoop = RunService.Stepped:Connect(function()
+            getgenv().antiVoidLoop = getgenv().RunService.Stepped:Connect(function()
                 local root = getgenv().HumanoidRootPart
                 if root and root.Position.Y <= OrgDestroyHeight + 25 then
                     root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
@@ -3344,7 +3371,6 @@
         end
         
         local function cleanupConnections()
-            if getgenv().noSit then getgenv().noSit:Disconnect() end
             if getgenv().nositDied then getgenv().nositDied:Disconnect() end
             if getgenv().bangDied then getgenv().bangDied:Disconnect() end
             if getgenv().bangLoop then getgenv().bangLoop:Disconnect() end
@@ -3355,17 +3381,28 @@
         function bang_plr_bypass(target)
             cleanupConnections()
         
-            setupNoSit()
+            noSitFunc()
         
             getgenv().Clip = false
             getgenv().enabled = true
             getgenv().Noclipping = getgenv().RunService.Stepped:Connect(NoclipLoop)
-        
-            local bangAnim = Instance.new("Animation")
-            bangAnim.AnimationId = "rbxassetid://5918726674"
-            local bang = humanoid:LoadAnimation(bangAnim)
-            bang.Looped = true
+            wait()
+            local Result = getgenv().r15_or_r6()
+            local bangAnim
+            local bang
 
+            if Result == true then
+                bangAnim = Instance.new("Animation")
+                bangAnim.AnimationId = "rbxassetid://5918726674"
+                bang = humanoid:LoadAnimation(bangAnim)
+                bang.Looped = true
+            else
+                bangAnim = Instance.new("Animation")
+                bangAnim.AnimationId = "rbxassetid://148840371"
+                bang = humanoid:LoadAnimation(bangAnim)
+                bang.Looped = true
+            end
+            wait(0.1)
             getgenv().bangAnimation = bang
             
             bang:Play(0.1, 1, 1)
@@ -3457,13 +3494,13 @@
     Callback = function(getSpinSpeed)
         local HumanoidRootPart = getgenv().HumanoidRootPart
         local spinSpeed = tonumber(getSpinSpeed)
-        if spinSpeed and spinSpeed <= 145 then
+        if spinSpeed and spinSpeed <= 200 then
             local Spin = Instance.new("BodyAngularVelocity")
             Spin.Name = "Spinning"
             Spin.Parent = HumanoidRootPart
             Spin.MaxTorque = Vector3.new(0, math.huge, 0)
             Spin.AngularVelocity = Vector3.new(0,spinSpeed,0)
-        elseif spinSpeed and spinSpeed >= 145 then
+        elseif spinSpeed and spinSpeed >= 200 then
             getgenv().notify("Limit Reached!", "We lowered speed, because you would be flung.", 5)
             wait(0.2)
             if not getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
@@ -3471,11 +3508,11 @@
                 Spin.Name = "Spinning"
                 Spin.Parent = HumanoidRootPart
                 Spin.MaxTorque = Vector3.new(0, math.huge, 0)
-                Spin.AngularVelocity = Vector3.new(0,145,0)
+                Spin.AngularVelocity = Vector3.new(0,200,0)
             else
-                HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,145,0)
+                HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,200,0)
             end
-        elseif spinSpeed <= 145 and getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
+        elseif spinSpeed <= 200 and getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
             getgenv().notify("Detected.", "Updated speed, detected duplicate spin.", 5)
             wait(0.3)
             getgenv().HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
@@ -6291,7 +6328,7 @@
         end
     end,})
 
-    local running = false
+    --[[local running = false
     local fKey = Enum.KeyCode.Z
     local lastKey = false
 
@@ -6394,7 +6431,7 @@
         end)
     end
     wait()
-    --[[getgenv().faceBangScript = Tab16:CreateToggle({
+    getgenv().faceBangScript = Tab16:CreateToggle({
     Name = "Face F**k Script (Press: Z)",
     CurrentValue = false,
     Flag = "FaceFuckingToggle",
