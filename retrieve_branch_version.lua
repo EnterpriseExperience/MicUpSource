@@ -3557,7 +3557,7 @@
         end
     end,})
 
-    if getgenv().check_marketplace_has_gamepass(951459548, getgenv().LocalPlayer.UserId) then
+    if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) then
         getgenv().CharIntoOwnerOfScript = Tab2:CreateButton({
         Name = "Char Into: Owner Of Script",
         Callback = function()
