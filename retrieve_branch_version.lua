@@ -378,7 +378,13 @@
         warn("Voice Chat already initialized.")
     else
         local function unsuspend()
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/New_VC_Bypass.lua'))()
+            local success = vc_internal:JoinByGroupIdToken("", false, true)
+
+            if success then
+                print("Bypassed Voice Chat.")
+            else
+                warn("Unable to properly Bypass Voice Chat.")
+            end
         end
         wait()
         getgenv().voiceChat_Check = true
@@ -1015,7 +1021,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.3.6 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.4.3 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | We rule.",
             ConfigurationSaving = {
@@ -1041,7 +1047,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.3.6 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.4.3 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | We rule.",
             ConfigurationSaving = {
@@ -2858,6 +2864,7 @@
                 }
 
                 getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                wait(0.5)
                 local args = {
                     [1] = tostring(findAPlayerToCopy)
                 }
@@ -2876,11 +2883,32 @@
                 getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
                 getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
                 wait(0.1)
-                local args = {
-                    [1] = tostring(getgenv().LocalPlayer.Name)
-                }
-                
-                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                if getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text == "Yes" then
+                    local args = {
+                        [1] = tostring(getgenv().LocalPlayer.Name)
+                    }
+                    
+                    getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                    wait(0.3)
+                    local args = {
+                        [1] = tostring(getgenv().LocalPlayer.Name)
+                    }
+                    
+                    getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
+                else
+                    getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
+                    wait(0.3)
+                    local args = {
+                        [1] = tostring(getgenv().LocalPlayer.Name)
+                    }
+                    
+                    getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                    local args = {
+                        [1] = tostring(getgenv().LocalPlayer.Name)
+                    }
+                    
+                    getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
+                end
             end,})
         else
             warn("Player does not own the GamePass (Admin).")
@@ -6071,14 +6099,17 @@
         warn("Did not load this Booth tab [7].")
     end
 
-    getgenv().GraphicsEnhancer = Tab16:CreateButton({
+    getgenv().GraphicsEnhancer = Tab16:CreateToggle({
     Name = "Graphics Enhancer",
-    Callback = function()
-        if getgenv().graphics_upper then
-            return getgenv().notify("Failure!", "Graphics Enhancer script is already loaded!", 5)
-        else
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PublicScriptsOnRobloxExploiting/refs/heads/main/GraphicsEnhancer.lua"))()
+    CurrentValue = false,
+    Flag = "GraphicsEnhancerToggling",
+    Callback = function(new_graphics_toggle)
+        if new_graphics_toggle then
             getgenv().graphics_upper = true
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PublicScriptsOnRobloxExploiting/refs/heads/main/GraphicsEnhancer.lua"))()
+        else
+            getgenv().graphics_upper = false
+            resetLightingSettings()
         end
     end,})
 
@@ -6270,20 +6301,17 @@
     getgenv().ForceFullyRejoinVC = Tab21:CreateButton({
     Name = "Force Rejoin VC",
     Callback = function()
-        local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
-        local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
-
-        VoiceChatInternal:Leave()
+        getgenv().VoiceChatInternal:Leave()
         wait(0.2)
-        VoiceChatService:rejoinVoice()
-        VoiceChatService:rejoinVoice()
+        getgenv().VoiceChatService:rejoinVoice()
+        getgenv().VoiceChatService:rejoinVoice()
         wait(0.1)
-        VoiceChatService:joinVoice()
+        getgenv().VoiceChatService:joinVoice()
         wait(0.3)
-        VoiceChatInternal:Leave()
+        getgenv().VoiceChatInternal:Leave()
         task.wait(.3)
-        VoiceChatService:rejoinVoice()
-        VoiceChatService:joinVoice()
+        getgenv().VoiceChatService:rejoinVoice()
+        getgenv().VoiceChatService:joinVoice()
     end,})
 
     getgenv().LeaveVCToFix = Tab21:CreateButton({
@@ -6291,6 +6319,27 @@
     Callback = function()
         getgenv().VoiceChatInternal:Leave()
         getgenv().VoiceChatInternal:Leave()
+    end,})
+
+    getgenv().joinTheVoiceChatFederalMethod = Tab21:CreateButton({
+    Name = "Join Voice Chat (Federal Method)",
+    Callback = function()
+        getgenv().VoiceChatInternal:JoinByGroupIdToken('', false, true)
+        getgenv().VoiceChatInternal:JoinByGroupId('', false)
+    end,})
+
+    getgenv().RejoinVCFederalMethod = Tab21:CreateButton({
+    Name = "Rejoin Voice Chat (Federal Method)",
+    Callback = function()
+        getgenv().VoiceChatInternal:JoinByGroupIdToken("", false, true)
+    end,})
+
+    getgenv().SetPrioritySpeaker = Tab21:CreateButton({
+    Name = "Become Priority Speaker",
+    Callback = function()
+        getgenv().VoiceChatInternal:PublishPause(false)
+        wait(0.1)
+        getgenv().VoiceChatInternal:SetSpeakerDevice('Default', '')
     end,})
 
     getgenv().RegularJoinVC = Tab21:CreateButton({
@@ -6311,39 +6360,37 @@
     getgenv().BreakVCToFix = Tab21:CreateButton({
     Name = "Fix Voice Chat (Break Method)",
     Callback = function()
-        local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
-        local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
-
         for i = 1, 4 do
-            VoiceChatInternal:Leave()
-            VoiceChatService:rejoinVoice()
-            VoiceChatService:rejoinVoice()
-            VoiceChatService:joinVoice()
-            VoiceChatInternal:Leave()
-            VoiceChatService:rejoinVoice()
-            VoiceChatInternal:Leave()
+            getgenv().VoiceChatInternal:Leave()
+            getgenv().VoiceChatService:rejoinVoice()
+            getgenv().VoiceChatService:rejoinVoice()
+            getgenv().VoiceChatService:joinVoice()
+            getgenv().VoiceChatInternal:Leave()
+            getgenv().VoiceChatService:rejoinVoice()
+            getgenv().VoiceChatInternal:Leave()
             task.wait()
-            VoiceChatService:joinVoice()
-            VoiceChatService:rejoinVoice()
+            getgenv().VoiceChatService:joinVoice()
+            getgenv().VoiceChatService:rejoinVoice()
         end
     end,})
-
-    --[[local running = false
+    wait()
+    local running = false
     local fKey = Enum.KeyCode.Z
     local lastKey = false
 
-    local speed
+    local speed = 1
     local slider
-    local distSlider
+    local distSlider = 3
     local conn
     local heartConn
-
+    wait()
     local function stop()
+        getgenv().loaded_face_bang = false
         if conn then
             conn:Disconnect()
             conn = nil
         end
-        local hum = LocalPlayer.Character:FindFirstChild('Humanoid')
+        local hum = getgenv().Humanoid
         if hum then
             hum.PlatformStand = false
         end
@@ -6356,10 +6403,12 @@
         end
         running = true
 
-        local plr = LocalPlayer
-        local hrp = plr.Character:FindFirstChild('HumanoidRootPart')
-        local hum = plr.Character.Humanoid
+        local plr = getgenv().LocalPlayer
+        local hrp = getgenv().HumanoidRootPart
+        local hum = getgenv().Humanoid
         local closest, dist = nil, math.huge
+
+        getgenv().loaded_face_bang = true
 
         for _, target in ipairs(game:GetService('Players'):GetPlayers()) do
             if target ~= plr and target.Character then
@@ -6380,7 +6429,7 @@
         end
 
         hum.PlatformStand = true
-        local head = closest.Character.Head
+        local head = closest.Character:FindFirstChild("Head")
 
         local init = true
         local out = true
@@ -6389,7 +6438,7 @@
         local last = tick()
         local prog = 0
 
-        conn = game:GetService('RunService').Heartbeat:Connect(function()
+        conn = getgenv().RunService.Heartbeat:Connect(function()
             hrp.Velocity = Vector3.new(0, 0, 0)
             local back = head.CFrame * CFrame.new(0, 0, 1)
             local front = head.CFrame * CFrame.new(0, 0, -1)
@@ -6431,25 +6480,62 @@
         end)
     end
     wait()
+    if heartConn then
+        heartConn:Disconnect()
+    end
     getgenv().faceBangScript = Tab16:CreateToggle({
-    Name = "Face F**k Script (Press: Z)",
+    Name = "Face F**k Script (Press Z)",
     CurrentValue = false,
     Flag = "FaceFuckingToggle",
     Callback = function(face_Bang_Animation)
         local enabled = false
         enabled = face_Bang_Animation
 
-        if on then
+        if getgenv().loaded_face_bang or getgenv().loaded_face_bang == true then
+            getgenv().loaded_face_bang = false
+            wait()
+            if heartConn then
+                heartConn:Disconnect()
+                heartConn = nil
+            end
+            stop()
+            wait(1)
+            getgenv().loaded_face_bang = true
+            wait(0.1)
             if heartConn then
                 heartConn:Disconnect()
             end
 
-            heartConn = game:GetService('RunService').Heartbeat:Connect(function()
+            heartConn = getgenv().RunService.Heartbeat:Connect(function()
                 if not enabled then
                     return
                 end
 
-                local key = game:GetService('UserInputService'):IsKeyDown(fKey)
+                local key = getgenv().UserInputService:IsKeyDown(fKey)
+
+                if key and not lastKey and not running then
+                    fuck()
+                elseif not key and lastKey and running then
+                    stop()
+                end
+
+                lastKey = key
+            end)
+        end
+
+        if enabled then
+            getgenv().loaded_face_bang = true
+            wait(0.1)
+            if heartConn then
+                heartConn:Disconnect()
+            end
+
+            heartConn = getgenv().RunService.Heartbeat:Connect(function()
+                if not enabled then
+                    return
+                end
+
+                local key = getgenv().UserInputService:IsKeyDown(fKey)
 
                 if key and not lastKey and not running then
                     fuck()
@@ -6460,6 +6546,8 @@
                 lastKey = key
             end)
         else
+            getgenv().loaded_face_bang = false
+            wait()
             if heartConn then
                 heartConn:Disconnect()
                 heartConn = nil
@@ -6470,7 +6558,7 @@
 
     getgenv().Face_Bang_Speed = Tab16:CreateSlider({
     Name = "Face F**k Speed",
-    Range = {1, 40},
+    Range = {1, 60},
     Increment = 1,
     Suffix = "",
     CurrentValue = 1,
@@ -6481,14 +6569,14 @@
 
     getgenv().Distance_Face_Bang = Tab16:CreateSlider({
     Name = "Face F**k Distance",
-    Range = {1, 10},
+    Range = {1, 30},
     Increment = 1,
     Suffix = "",
     CurrentValue = 1,
     Flag = "faceBangingDistance",
     Callback = function(max_distance)
         distSlider = max_distance
-    end,})--]]
+    end,})
 
     getgenv().noclipToggle = Tab2:CreateToggle({
     Name = "Noclip",
@@ -12338,15 +12426,6 @@
     print("Getting Requirements... [1 moment.]")
     wait(0.3)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PrivateBecauseYes/refs/heads/main/armsConvert.js", true))()
-    wait(0.4)
-    if getgenv().Has_Died_Func then
-        warn("Already setup death function.")
-    else
-        getgenv().Humanoid.Health = 0
-        getgenv().Has_Died_Func = true
-        wait(0.1)
-        print("Died Func setup")
-    end
     wait(0.2)
     if getgenv().SimpleSpyExecuted then
         getgenv().SimpleSpyShutdown()
@@ -12373,7 +12452,7 @@
         end
     end--]]
 
-    --[[wait(0.2)
+    wait(0.2)
     local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
 
     GuiService:SendNotification({
@@ -12386,22 +12465,47 @@
             Title = "Please wait...",
             Text = "Attaching Zacks Easy Hub into MIC UP 🔊...",
         })
+        wait(0.3)
+        if not getgenv().Has_Died_Func then
+            if setfpscap then
+                setfpscap(0)
+                wait(0.5)
+                print("Injecting Zacks Easy Hub...")
+                wait(0.5)
+                getgenv().emoting_actions(0)
+                wait(0.2)
+                getgenv().emoting_actions()
+                wait(0.5)
+                getgenv().Humanoid.Health = 0
+                wait(0.3)
+                getgenv().Is_ZEH_Attached = true
+                wait(1)
+                setfpscap(999)
+            end
+        else
+            warn("Setup death function already.")
+        end
     else
         GuiService:SendNotification({
             Title = "Please wait...",
             Text = "Hooking and injecting into this experience...",
         })
-        wait(0.2)
-        if getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral") then
-            getgenv().ZEH_Attached_Success = true
-            getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync("[ ]")
-        else
-            getgenv().ZEH_Attaced_Success = true
-            getgenv().ReplicatedStorage:FindFirstChild("DefaultChatSystemEvents"):FindFirstChild("SendMessageRequest"):FireServer("[ ]", "All")
+        wait(0.8)
+        if setfpscap then
+            setfpscap(1)
+            wait(0.5)
+            print("Injecting Zacks Easy Hub...")
+            wait(1)
+            getgenv().emoting_actions(0)
+            getgenv().emoting_actions(0)
+            wait(1)
+            getgenv().Is_ZEH_Attached = true
+            wait(0.6)
+            setfpscap(999)
         end
     end
     wait(0.7)
-    if getgenv().ZEH_Attaced_Success then
+    if getgenv().Is_ZEH_Attached or getgenv().Is_ZEH_Attached == true then
         GuiService:SendNotification({
             Title = "Successful.",
             Text = "Successfully injected into experience.",
@@ -12434,4 +12538,4 @@
     GuiService:SendNotification({
         Title = "Initialized!",
         Text = "We will now provide performance as well whilst you play.",
-    })--]]
+    })
