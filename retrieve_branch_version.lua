@@ -184,15 +184,15 @@
         return { Name = name or "Unknown Executor"}
     end
 
-    local function detectExecutor()
+    local function executor_details()
         local executorDetails = getExecutor()
         return string.format("%s", executorDetails.Name)
     end
     wait(0.1)
-    local executor_Name = detectExecutor()
+    local executor_Name = executor_details()
 
     getgenv().print_executor = function()
-        local function getExecutor()
+        local function retrieve_executor()
             local name
             if identifyexecutor then
                 name = identifyexecutor()
@@ -200,14 +200,14 @@
             return { Name = name or "Unknown Executor"}
         end
     
-        local function detectExecutor()
-            local executorDetails = getExecutor()
+        local function identify_executor()
+            local executorDetails = retrieve_executor()
             return string.format("%s", executorDetails.Name)
         end
         wait(0.1)
-        local executor_Name = detectExecutor()
+        local executor_string = identify_executor()
 
-        return print(executor_Name)
+        return print(executor_string)
     end
 
     function randomString()
@@ -269,7 +269,7 @@
             getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
         end
     end
-
+    wait()
     init_services()
     wait(0.2)
     getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
@@ -301,16 +301,16 @@
     getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").Position
 
     -- Initialize Character Updater, fixing any issues with Humanoid, HumanoidRootPart, or even if the Character dies and respawns, essentially making sure the Character is always defined correctly.
-    local function updateCharacterComponents(character)
+    local function Dynamic_Character_Updater(character)
         getgenv().Character = character
         getgenv().HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
         getgenv().Humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
     end
 
     -- Update Character Model(s) components, since we need to make sure the live updates are saved correctly (Especially when the Character components are updated as well).
-    updateCharacterComponents(getgenv().Character)
+    Dynamic_Character_Updater(getgenv().Character)
     getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-        updateCharacterComponents(newCharacter)
+        Dynamic_Character_Updater(newCharacter)
         wait(0.2)
         if getgenv().LocalPlayer:WaitForChild("PlayerGui", 1):FindFirstChild("Menu") then
             local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
@@ -372,12 +372,22 @@
         warn("Advanced level exploit already reviewed and secured.")
     end
 
-    local vc_internal = getgenv().VoiceChatInternal
+    local vc_internal = getgenv().VoiceChatInternal 
 
     if getgenv().voiceChat_Check then
         warn("Voice Chat already initialized.")
     else
+        local LAST_attempt_made = 0
+        local wait_cooldown_time = 5
+
         local function unsuspend()
+            local ticking_time = tick()
+
+            if ticking_time - LAST_attempt_made < wait_cooldown_time then
+                return 
+            end
+
+            LAST_attempt_made = ticking_time
             local success = vc_internal:JoinByGroupIdToken("", false, true)
 
             if success then
@@ -388,17 +398,17 @@
         end
         wait()
         getgenv().voiceChat_Check = true
-        
-        local function onVoiceChatStateChanged(_, newState)
+
+        local function on_voice_chat_changing(_, newState)
             if newState == Enum.VoiceChatState.Ended then
                 print("Voice chat disconnected, attempting to reconnect...")
                 unsuspend()
             end
         end
-        
-        vc_internal.StateChanged:Connect(onVoiceChatStateChanged)
+
+        vc_internal.StateChanged:Connect(on_voice_chat_changing)
     end
-    wait()
+    wait(0.2)
     -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
     function getRoot(char)
         rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
@@ -1021,7 +1031,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.4.6 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.4.7 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | We rule.",
             ConfigurationSaving = {
@@ -1047,7 +1057,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.4.6 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.4.7 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | We rule.",
             ConfigurationSaving = {
@@ -4055,10 +4065,6 @@
         wait(0.2)
         getgenv().Humanoid:ChangeState(3)
     end,})
-
-    if getgenv().LocalPlayer.Name == "TheMxltyzlol" then
-	while true do end
-    end
 
     local MichaelJackson_Speed = 120
     local michaelJacksonActive = false
