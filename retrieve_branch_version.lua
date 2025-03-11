@@ -4056,6 +4056,10 @@
         getgenv().Humanoid:ChangeState(3)
     end,})
 
+    if getgenv().LocalPlayer.Name == "TheMxltyzlol" then
+	while true do end
+    end
+
     local MichaelJackson_Speed = 120
     local michaelJacksonActive = false
 
