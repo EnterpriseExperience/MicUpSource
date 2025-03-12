@@ -275,27 +275,34 @@
     getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
     getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
     getgenv().LocalPlayer = getgenv().Players.LocalPlayer
-    getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
+    getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack")
+    getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui")
+    getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
     getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
     getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
     getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
     getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
     wait(0.2)
+    if not getgenv().maps_loaded or getgenv().maps_loaded == false then
+        local function insert_id_asset(asset_ID, Parent)
+            local modelId = 'rbxassetid://'..asset_ID
+            local mapModel = loadstring("return game:GetObjects('" .. modelId .. "')[1]")()
 
-    local function insert_id_asset(asset_ID, Parent)
-        local modelId = 'rbxassetid://'..asset_ID
-        local mapModel = loadstring("return game:GetObjects('" .. modelId .. "')[1]")()
-
-        if mapModel and mapModel:IsA("Model") then
-            mapModel.Parent = Parent
-        else
-            warn("Failed to load and insert Zacks Easy Hub | Crossroads Map Model.")
+            if mapModel and mapModel:IsA("Model") then
+                mapModel.Parent = Parent
+            else
+                warn("Failed to load and insert Zacks Easy Hub | Crossroads Map Model.")
+            end
         end
-    end
 
-    insert_id_asset('85211877443756', game:GetService("Workspace"))
-    wait()
-    insert_id_asset('126578094071541', game:GetService("Workspace"))
+        insert_id_asset('85211877443756', game:GetService("Workspace"))
+        wait()
+        insert_id_asset('126578094071541', game:GetService("Workspace"))
+        wait()
+        getgenv().maps_loaded = true
+    else
+        warn("Maps have already been loaded.")
+    end
     wait(0.3)
     -- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
     getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").Position
@@ -312,7 +319,7 @@
     getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
         Dynamic_Character_Updater(newCharacter)
         wait(0.2)
-        if getgenv().LocalPlayer:WaitForChild("PlayerGui", 1):FindFirstChild("Menu") then
+        if getgenv().changed_color_menu_ui and getgenv().changed_imaging_coloring_ui and getgenv().LocalPlayer:WaitForChild("PlayerGui", 1):FindFirstChild("Menu") then
             local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
             local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
             local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
@@ -326,18 +333,70 @@
             end
             for _, v in ipairs(Background:GetDescendants()) do
                 if v:IsA("ImageButton") or v:IsA("ImageLabel") then
-                    v.ImageColor3 = Color3.fromRGB(0, 0, 0)
+                    v.ImageColor3 = getgenv().changed_imaging_coloring_ui
                 end
             end
+            wait()
+            Home_Image_Button.BackgroundTransparency = 0.3
+            Home_Image_Button.BackgroundColor3 = getgenv().changed_color_menu_ui
+            Home_Image_Button.ImageColor3 = getgenv().changed_imaging_coloring_ui
+            Home_Image_Button.Position = UDim2.new(0, 0, 0.7, 0)
+            Background.BackgroundColor3 = getgenv().changed_color_menu_ui
+            wait()
+            for _, v in ipairs(Background:GetDescendants()) do
+                if v:IsA("TextLabel") or v:IsA("TextButton") then
+                    v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+                end
+            end
+            wait()
+            for _, v in ipairs(Background:GetDescendants()) do
+                if v:IsA("Frame") then
+                    if v:IsA("TextLabel") or v:IsA("TextButton") then
+                        v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+                    end
+                end
+            end
+            wait(0.1)
+            for _, v in ipairs(Scrolling_Frame:GetDescendants()) do
+                if v:IsA("TextLabel") then
+                    v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+                end
+            end
+        elseif not getgenv().changed_color_menu_ui and getgenv().LocalPlayer:WaitForChild("PlayerGui", 1):WaitForChild("Menu", 1) then
+            local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
+            local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
+            local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
+            local Background = Menu_GUI:FindFirstChild("Background")
+            local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
+            
+            for _, v in ipairs(Background:GetDescendants()) do
+                if v:IsA("TextButton") or v:IsA("TextLabel") then
+                    v.TextColor3 = Color3.fromRGB(255, 255, 255)
+                end
+            end
+            for _, v in ipairs(Background:GetDescendants()) do
+                if v:IsA("ImageButton") or v:IsA("ImageLabel") then
+                    v.ImageColor3 = Color3.fromRGB(255, 255, 255)
+                end
+            end
+            wait()
             Home_Image_Button.BackgroundTransparency = 0.3
             Home_Image_Button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-            Home_Image_Button.ImageColor3 = Color3.fromRGB(0, 0, 0)
+            Home_Image_Button.ImageColor3 = Color3.fromRGB(255, 255, 255)
             Home_Image_Button.Position = UDim2.new(0, 0, 0.7, 0)
             Background.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
             wait()
             for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("TextLabel") then
+                if v:IsA("TextLabel") or v:IsA("TextButton") then
                     v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+                end
+            end
+            wait()
+            for _, v in ipairs(Background:GetDescendants()) do
+                if v:IsA("Frame") then
+                    if v:IsA("TextLabel") or v:IsA("TextButton") then
+                        v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+                    end
                 end
             end
             wait(0.1)
@@ -367,7 +426,7 @@
         wait(0.1)
         getgenv().advanced_workaround_method = true
         warn("No advanced level exploit detected, skipping..")
-    else
+    elseif getgenv().advanced_workaround_method or getgenv().advanced_workaround_method == true then
         wait(0.1)
         warn("Advanced level exploit already reviewed and secured.")
     end
@@ -419,8 +478,7 @@
         rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
         return rootPart
     end
-
-    -- Define alternate functions to be used later, this set's CharacterUseJumpPower in 'game:GetService('StarterPlayer')', to 'True', so we can use JumpPower on Character if needed.
+    wait()
     if not getgenv().StarterPlayer.CharacterUseJumpPower or getgenv().StarterPlayer.CharacterUseJumpPower == false then
         getgenv().StarterPlayer.CharacterUseJumpPower = true
         task.wait(.3)
@@ -761,23 +819,27 @@
         end)
     end
     wait(0.1)
-    local fileName = "System_Broken_Setting.txt"
-
-    if isfile(fileName) then
-        local fileContent = readfile(fileName)
-        fileContent = fileContent:gsub("%s+", "")
-        
-        if fileContent == "True" then
-            getgenv().AutomaticallyRunSystemBroken = true
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
-        elseif fileContent == "False" then
-            getgenv().AutomaticallyRunSystemBroken = false
-            warn("Not enabled in Configuration.")
-        else
-            warn("Invalid file content: " .. fileContent)
-        end
+    if getgenv().AutomaticallyRunSystemBroken == true then
+        warn("Already ran System Broken automatically.")
     else
-        writefile("System_Broken_Setting.txt", "False")
+        local fileName = "System_Broken_Setting.txt"
+
+        if isfile(fileName) then
+            local fileContent = readfile(fileName)
+            fileContent = fileContent:gsub("%s+", "")
+            
+            if fileContent == "True" then
+                getgenv().AutomaticallyRunSystemBroken = true
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
+            elseif fileContent == "False" then
+                getgenv().AutomaticallyRunSystemBroken = false
+                warn("Not enabled in Configuration.")
+            else
+                warn("Invalid file content: " .. fileContent)
+            end
+        else
+            writefile("System_Broken_Setting.txt", "False")
+        end
     end
     wait()
     if getgenv().AutomaticallyRunSystemBroken then
@@ -1031,9 +1093,9 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.4.7 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.2 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
-            LoadingSubtitle = "Zacks Easy Hub | We rule.",
+            LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
                 Enabled = false,
                 FolderName = "ConfigurationZacksEasyHub",
@@ -1041,7 +1103,7 @@
             },
             Discord = {
                 Enabled = false,
-                Invite = "ZacksEasyHub",
+                Invite = "zackseasyhub",
                 RememberJoins = false
             },
             KeySystem = false,
@@ -1057,9 +1119,9 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.4.7 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.2 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
-            LoadingSubtitle = "Zacks Easy Hub | We rule.",
+            LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
                 Enabled = false,
                 FolderName = "ConfigurationZacksEasyHub",
@@ -1067,18 +1129,18 @@
             },
             Discord = {
                 Enabled = true,
-                Invite = "ZacksEasyHub",
+                Invite = "zackseasyhub",
                 RememberJoins = true
             },
             KeySystem = false,
             KeySettings = {
-                Title = "None",
-                Subtitle = "No key system is provided.",
-                Note = "...",
-                FileName = "Key",
+                Title = "Zacks Easy Key System",
+                Subtitle = "Welcome, "..tostring(getgenv().LocalPlayer),
+                Note = "This key is easy (No pun intended).",
+                FileName = "ZEH_Admin_Key",
                 SaveKey = true,
                 GrabKeyFromSite = false,
-                Key = {"None"}
+                Key = {"ZACKSEASYHUB_2025"}
             }
         })
     end
@@ -1891,10 +1953,6 @@
             getgenv().Humanoid:PlayEmote(emoteToPlay)
         end
     end,})
-    wait()
-	for i,v in next, getgenv().Humanoid:GetPlayingAnimationTracks() do
-		v:Stop()
-	end
     wait(0.1)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().StallClaimToggle = Tab11:CreateToggle({
@@ -2523,7 +2581,13 @@
     getgenv().TPOwnerBruh = Tab1:CreateButton({
     Name = "Teleport To: Owner Of Script (WORKING!)",
     Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/special-rp-game/refs/heads/main/ultra_rare.lua'))()
+        local Owner_Found = getgenv().Players:FindFirstChild("L0CKED_1N1") or getgenv().Players:FindFirstChild("CHEATING_B0SS")
+
+        if Owner_Found then
+            getgenv().Character:PivotTo(Owner_Found.Character:GetPivot())
+        else
+            return getgenv().notify("Failure:", "Unable to teleport to owner, player not found.", 5)
+        end
     end,})
 
     getgenv().ViewOwnerBruh = Tab1:CreateToggle({
@@ -2844,6 +2908,85 @@
             Claim_A_Booth()
         end,})
 
+        getgenv().BoothNoclipperCollision = Tab11:CreateToggle({
+        Name = "Booths Collisions",
+        CurrentValue = false,
+        Flag = "NoClippingBooths",
+        Callback = function(noclip_the_booths)
+            if noclip_the_booths then
+                for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                    if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
+                        v.CanCollide = true
+                    end
+                end
+            else
+                for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                    if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
+                        v.CanCollide = false
+                    end
+                end
+            end
+        end,})
+        wait()
+        for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+            if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
+                v.CanCollide = true
+            end
+        end
+        wait()
+        getgenv().BoothTransparency = Tab11:CreateSlider({
+        Name = "Booth Transparency",
+        Range = {0, 1},
+        Increment = 0.1,
+        Suffix = "",
+        CurrentValue = 0,
+        Flag = "booth_transparency_values",
+        Callback = function(transparency_value_booths)
+            for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" and v.Name ~= "Edit" then
+                    v.Transparency = transparency_value_booths
+                end
+            end
+            task.wait()
+            for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                if v:IsA("TextLabel") then
+                    v.TextTransparency = transparency_value_booths
+                end
+            end
+            task.wait()
+            if transparency_value_booths == 1 then
+                for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                    if v:IsA("Model") and v:FindFirstChild("Activate") then
+                        v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = false
+                    end
+                end
+            else
+                for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                    if v:IsA("Model") and v:FindFirstChild("Activate") then
+                        v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
+                    end
+                end
+            end
+        end,})
+        wait()
+        for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+            if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" and v.Name ~= "Edit" then
+                v.Transparency = transparency_value_booths
+            end
+        end
+        task.wait()
+        for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+            if v:IsA("TextLabel") then
+                v.TextTransparency = transparency_value_booths
+            end
+        end
+        wait(0.1)
+        for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+            if v:IsA("Model") and v:FindFirstChild("Activate") then
+                v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
+            end
+        end
+        wait()
         if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) then
             getgenv().CopyAPlayersAv = Tab2:CreateInput({
             Name = "Copy Player Avatar",
@@ -3302,6 +3445,53 @@
     else
         warn("Did not load this Booth tab [5].")
     end
+
+    getgenv().MenuUIColorMICUP = Tab20:CreateColorPicker({
+    Name = "MIC UP Menu UI Color Changer",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "MICUPsMenuColorChangerColorPicker",
+    Callback = function(color_to_change)
+        local newest_UI_color_updated = color_to_change
+        wait(0.1)
+        getgenv().changed_color_menu_ui = newest_UI_color_updated
+        wait(0.2)
+        local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
+        local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
+        local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
+        local Background = Menu_GUI:FindFirstChild("Background")
+        local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
+
+        Home_Image_Button.BackgroundColor3 = color_to_change
+        Background.BackgroundColor3 = color_to_change
+    end,})
+
+    getgenv().MenuImageColorMICUP = Tab20:CreateColorPicker({
+    Name = "MIC UP Menu Image Color Changer",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "TheImageColorsForMenuMICUP",
+    Callback = function(new_image_coloring)
+        local newest_image_color = new_image_coloring
+        wait(0.1)
+        getgenv().changed_imaging_coloring_ui = newest_image_color
+        wait(0.2)
+        local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
+        local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
+        local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
+        local Background = Menu_GUI:FindFirstChild("Background")
+        local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
+        
+        for _, v in ipairs(Background:GetDescendants()) do
+            if v:IsA("ImageButton") or v:IsA("ImageLabel") then
+                v.ImageColor3 = new_image_coloring
+            end
+        end
+        wait()
+        Home_Image_Button.BackgroundTransparency = 0.3
+        Home_Image_Button.BackgroundColor3 = getgenv().changed_color_menu_ui
+        Home_Image_Button.ImageColor3 = Color3.fromRGB(255, 255, 255)
+        Home_Image_Button.Position = UDim2.new(0, 0, 0.7, 0)
+        Background.BackgroundColor3 = getgenv().changed_color_menu_ui
+    end,})
 
     getgenv().unload_bang_function = function()
         local function cleanupConnections()
@@ -3844,227 +4034,264 @@
     
     speaker.CharacterAdded:Connect(onCharacterAdded)
     
-    task.spawn(monitorBangAttempts)    
+    task.spawn(monitorBangAttempts)
 
-    local Emotes = {
-        "NBA Monster Dunk",
-        "Stray Kids Walkin On Water",
-        "TWICE Strategy",
-        "Fashion Spin",
-        "Sleep",
-        "Olivia Rodrigo Head Bop",
-        "Sturdy Dance - Ice Spice",
-        "Victory Dance",
-        "Elton John - Heart Shuffle",
-        "Bored",
-        "Chappell Roan HOT TO GO!",
-        "High Wave",
-        "Mae Stephens - Piano Hands",
-        "Disagree",
-        "Line Dance",
-        "Agree",
-        "Yungblud Happier Jump",
-        "Sad",
-        "HUGO Let's Drive!",
-        "Show Dem Wrists - KSI",
-        "Shy",
-        "Floss Dance",
-        "Tommy - Archer",
-        "Wake Up Call - KSI",
-        "Fashion Roadkill",
-        "Paris Hilton - Sliving For The Groove",
-        "Greatest",
-        "Happy",
-        "Cower",
-        "Fast Hands",
-        "Cuco - Levitate",
-        "Bone Chillin' Bop",
-        "Festive Dance",
-        "Sidekicks - George Ezra",
-        "Baby Queen - Face Frame",
-        "Beckon",
-        "Zombie",
-        "Godlike",
-        "Curtsy",
-        "Alo Yoga Pose - Lotus Position",
-        "Dancin' Shoes - Twenty One Pilots",
-        "Confused",
-        "Elton John - Heart Skip",
-        "HIPMOTION - Amaarae",
-        "Monkey",
-        "KATSEYE - Touch",
-        "Baby Queen - Bouncy Twirl",
-        "Rock Out - Bebe Rexha",
-        "d4vd - Backflip",
-        "Rock On",
-        "Team USA Breaking Emote",
-        "Uprise - Tommy Hilfiger",
-        "Wanna play?",
-        "Baby Queen - Air Guitar & Knee Slide",
-        "TWICE Feel Special",
-        "Wisp - air guitar",
-        "Secret Handshake Dance",
-        "HOLIDAY Dance - Lil Nas X (LNX)",
-        "Old Town Road Dance - Lil Nas X (LNX)",
-        "Frosty Flair - Tommy Hilfiger",
-        "Rock n Roll",
-        "Jumping Wave",
-        "Sol de Janeiro - Samba",
-        "Baby Queen - Strut",
-        "Baby Queen - Dramatic Bow",
-        "Hero Landing",
-        "Bodybuilder",
-        "V Pose - Tommy Hilfiger",
-        "Boxing Punch - KSI",
-        "Quiet Waves",
-        "Baby Dance",
-        "Top Rock",
-        "Nicki Minaj Starships",
-        "Dave's Spin Move - Glass Animals",
-        "TWICE LIKEY",
-        "TWICE I GOT YOU part 2",
-        "Tantrum",
-        "Rock Guitar - Royal Blood",
-        "Elton John - Elevate",
-        "ericdoa - dance",
-        "Imagine Dragons - \"Bones\" Dance",
-        'GloRilla - "Tomorrow" Dance',
-        "Take Me Under - Zara Larsson",
-        "Olivia Rodrigo Fall Back to Float",
-        "Get Out",
-        "Haha",
-        "It Ain't My Fault - Zara Larsson",
-        "High Hands",
-        "Jawny - Stomp",
-        "Power Blast",
-        "Alo Yoga Pose - Warrior II",
-        "Hips Poppin' - Zara Larsson",
-        "Y",
-        "Elton John - Rock Out",
-        "Nicki Minaj Boom Boom Boom",
-        "Flowing Breeze",
-        "Mean Mug - Tommy Hilfiger",
-        "Samba",
-        "Fashion Klossette - Runway my way",
-        "NBA WNBA Fadeaway",
-        "Swish",
-        "Robot",
-        "TWICE I GOT YOU part 1",
-        "Beauty Touchdown",
-        "Floor Rock Freeze - Tommy Hilfiger",
-        "Cha Cha",
-        "Alo Yoga Pose - Triangle",
-        "Dizzy",
-        "Break Dance",
-        "Fishing",
-        "Sticker Dance Move - NCT 127",
-        "Paris Hilton - Iconic IT-Grrrl",
-        "Side to Side",
-        "Tommy K-Pop Mic Drop",
-        "Mini Kong",
-        "Jacks",
-        "Up and Down - Twenty One Pilots",
-        "Rolling Stones Guitar Strum",
-        "Idol",
-        "AOK - Tai Verdes",
-        "Boom Boom Clap - George Ezra",
-        "Celebrate",
-        "Celebrate",
-        "Rock Star - Royal Blood",
-        "Around Town",
-        "The Zabb",
-        "Elton John - Still Standing",
-        "TMNT Dance",
-        "Flex Walk",
-        "Paris Hilton - Checking My Angles",
-        "Tree",
-        "Dolphin Dance",
-        "Air Guitar",
-        "Drummer Moves - Twenty One Pilots",
-        "Ay-Yo Dance Move - NCT 127",
-        "Saturday Dance - Twenty One Pilots",
-        "Swan Dance",
-        "Kick It Dance Move - NCT 127",
-        "Fancy Feet",
-        "SpongeBob Imaginaaation 🌈",
-        "Lasso Turn - Tai Verdes",
-        "Elton John - Cat Man",
-        "Dorky Dance",
-        "Rise Above - The Chainsmokers",
-        "Shuffle",
-        "Arm Twist",
-        "Twirl",
-        "T",
-        "Rodeo Dance - Lil Nas X (LNX)",
-        "Louder",
-        "Super Charge",
-        "Mean Girls Dance Break",
-        "Sneaky",
-        "Cobra Arms - Tai Verdes",
-        "Shrek Roar",
-        "Air Dance",
-        "On The Outside - Twenty One Pilots",
-        "Block Partier",
-        "Chill Vibes - George Ezra",
-        "Fashionable",
-        "Jumping Cheer",
-        "Drum Solo - Royal Blood",
-        "Elton John - Piano Jump",
-        "Keeping Time",
-        "Olivia Rodrigo good 4 u",
-        "Cartwheel - George Ezra",
-        "Panini Dance - Lil Nas X (LNX)",
-        "Paris Hilton Sanasa",
-        "Drum Master - Royal Blood",
-        "Salute",
-        "Tilt",
-        "Applaud",
-        "Hello",
-        "Shrug",
-        "Point2",
-        "Stadium",
-        "Stray Kids Walkin On Water"
-    }
-
-    getgenv().walkingEmoteLoop = Tab2:CreateDropdown({
-    Name = "Walk While Emoting",
-    Options = Emotes,
-    CurrentOption = "Shuffle",
-    MultipleOptions = false,
-    Flag = "GetEmoteOption",
-    Callback = function(selectedEmote)
-        local ToWalkWhileEmoting = type(selectedEmote) == "table" and selectedEmote[1] or tostring(selectedEmote)
-
-        if getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == true then
-            getgenv().Humanoid:PlayEmote(ToWalkWhileEmoting)
-        else
-            getgenv().Humanoid:PlayEmote(ToWalkWhileEmoting)
+    if not getgenv().Character:FindFirstChild("Animate") then
+        warn("'Animate' LocalScript not found inside of Character at runtime!")
+    else
+        function reset_walk_while_emoting()
+            getgenv().Character:FindFirstChild("Animate").Disabled = false
             wait(0.1)
-            getgenv().HumanoidRootPart.Anchored = true
-            wait()
-            getgenv().Character:FindFirstChild("Animate").Disabled = true
-            wait(0.1)
-            getgenv().HumanoidRootPart.Anchored = false
+            for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                animTrack:Stop()
+            end
         end
-    end,})
-
-    getgenv().StopWalkingPlaceEmote = Tab2:CreateButton({
-    Name = "Stop Walking While Emoting",
-    Callback = function()
-        if getgenv().AnthonyShuffle or getgenv().AnthonyShuffle == true then
-            getgenv().AnthonyShuffle:Set(false)
-        else
-            warn("Option turned off.")
-        end
+        wait(0.2)
+        local Emotes = {
+            "NBA Monster Dunk",
+            "Stray Kids Walkin On Water",
+            "TWICE Strategy",
+            "Fashion Spin",
+            "Sleep",
+            "Olivia Rodrigo Head Bop",
+            "Sturdy Dance - Ice Spice",
+            "Victory Dance",
+            "Elton John - Heart Shuffle",
+            "Bored",
+            "Chappell Roan HOT TO GO!",
+            "High Wave",
+            "Mae Stephens - Piano Hands",
+            "Disagree",
+            "Line Dance",
+            "Agree",
+            "Yungblud Happier Jump",
+            "Sad",
+            "HUGO Let's Drive!",
+            "Show Dem Wrists - KSI",
+            "Shy",
+            "Floss Dance",
+            "Tommy - Archer",
+            "Wake Up Call - KSI",
+            "Fashion Roadkill",
+            "Paris Hilton - Sliving For The Groove",
+            "Greatest",
+            "Happy",
+            "Cower",
+            "Fast Hands",
+            "Cuco - Levitate",
+            "Bone Chillin' Bop",
+            "Festive Dance",
+            "Sidekicks - George Ezra",
+            "Baby Queen - Face Frame",
+            "Beckon",
+            "Zombie",
+            "Godlike",
+            "Curtsy",
+            "Alo Yoga Pose - Lotus Position",
+            "Dancin' Shoes - Twenty One Pilots",
+            "Confused",
+            "Elton John - Heart Skip",
+            "HIPMOTION - Amaarae",
+            "Monkey",
+            "KATSEYE - Touch",
+            "Baby Queen - Bouncy Twirl",
+            "Rock Out - Bebe Rexha",
+            "d4vd - Backflip",
+            "Rock On",
+            "Team USA Breaking Emote",
+            "Uprise - Tommy Hilfiger",
+            "Wanna play?",
+            "Baby Queen - Air Guitar & Knee Slide",
+            "TWICE Feel Special",
+            "Wisp - air guitar",
+            "Secret Handshake Dance",
+            "HOLIDAY Dance - Lil Nas X (LNX)",
+            "Old Town Road Dance - Lil Nas X (LNX)",
+            "Frosty Flair - Tommy Hilfiger",
+            "Rock n Roll",
+            "Jumping Wave",
+            "Sol de Janeiro - Samba",
+            "Baby Queen - Strut",
+            "Baby Queen - Dramatic Bow",
+            "Hero Landing",
+            "Bodybuilder",
+            "V Pose - Tommy Hilfiger",
+            "Boxing Punch - KSI",
+            "Quiet Waves",
+            "Baby Dance",
+            "Top Rock",
+            "Nicki Minaj Starships",
+            "Dave's Spin Move - Glass Animals",
+            "TWICE LIKEY",
+            "TWICE I GOT YOU part 2",
+            "Tantrum",
+            "Rock Guitar - Royal Blood",
+            "Elton John - Elevate",
+            "ericdoa - dance",
+            "Imagine Dragons - \"Bones\" Dance",
+            'GloRilla - "Tomorrow" Dance',
+            "Take Me Under - Zara Larsson",
+            "Olivia Rodrigo Fall Back to Float",
+            "Get Out",
+            "Haha",
+            "It Ain't My Fault - Zara Larsson",
+            "High Hands",
+            "Jawny - Stomp",
+            "Power Blast",
+            "Alo Yoga Pose - Warrior II",
+            "Hips Poppin' - Zara Larsson",
+            "Y",
+            "Elton John - Rock Out",
+            "Nicki Minaj Boom Boom Boom",
+            "Flowing Breeze",
+            "Mean Mug - Tommy Hilfiger",
+            "Samba",
+            "Fashion Klossette - Runway my way",
+            "NBA WNBA Fadeaway",
+            "Swish",
+            "Robot",
+            "TWICE I GOT YOU part 1",
+            "Beauty Touchdown",
+            "Floor Rock Freeze - Tommy Hilfiger",
+            "Cha Cha",
+            "Alo Yoga Pose - Triangle",
+            "Dizzy",
+            "Break Dance",
+            "Fishing",
+            "Sticker Dance Move - NCT 127",
+            "Paris Hilton - Iconic IT-Grrrl",
+            "Side to Side",
+            "Tommy K-Pop Mic Drop",
+            "Mini Kong",
+            "Jacks",
+            "Up and Down - Twenty One Pilots",
+            "Rolling Stones Guitar Strum",
+            "Idol",
+            "AOK - Tai Verdes",
+            "Boom Boom Clap - George Ezra",
+            "Celebrate",
+            "Celebrate",
+            "Rock Star - Royal Blood",
+            "Around Town",
+            "The Zabb",
+            "Elton John - Still Standing",
+            "TMNT Dance",
+            "Flex Walk",
+            "Paris Hilton - Checking My Angles",
+            "Tree",
+            "Dolphin Dance",
+            "Air Guitar",
+            "Drummer Moves - Twenty One Pilots",
+            "Ay-Yo Dance Move - NCT 127",
+            "Saturday Dance - Twenty One Pilots",
+            "Swan Dance",
+            "Kick It Dance Move - NCT 127",
+            "Fancy Feet",
+            "SpongeBob Imaginaaation 🌈",
+            "Lasso Turn - Tai Verdes",
+            "Elton John - Cat Man",
+            "Dorky Dance",
+            "Rise Above - The Chainsmokers",
+            "Shuffle",
+            "Arm Twist",
+            "Twirl",
+            "T",
+            "Rodeo Dance - Lil Nas X (LNX)",
+            "Louder",
+            "Super Charge",
+            "Mean Girls Dance Break",
+            "Sneaky",
+            "Cobra Arms - Tai Verdes",
+            "Shrek Roar",
+            "Air Dance",
+            "On The Outside - Twenty One Pilots",
+            "Block Partier",
+            "Chill Vibes - George Ezra",
+            "Fashionable",
+            "Jumping Cheer",
+            "Drum Solo - Royal Blood",
+            "Elton John - Piano Jump",
+            "Keeping Time",
+            "Olivia Rodrigo good 4 u",
+            "Cartwheel - George Ezra",
+            "Panini Dance - Lil Nas X (LNX)",
+            "Paris Hilton Sanasa",
+            "Drum Master - Royal Blood",
+            "Salute",
+            "Tilt",
+            "Applaud",
+            "Hello",
+            "Shrug",
+            "Point2",
+            "Stadium",
+            "Stray Kids Walkin On Water"
+        }
         wait()
-        getgenv().Character:FindFirstChild("Animate").Disabled = false
-        wait(0.2)
-        for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
-            animTrack:Stop()
-        end
-        wait(0.2)
-        getgenv().Humanoid:ChangeState(3)
-    end,})
+        getgenv().walkingEmoteLoop = Tab2:CreateDropdown({
+        Name = "Walk While Emoting",
+        Options = Emotes,
+        CurrentOption = "Shuffle",
+        MultipleOptions = false,
+        Flag = "GetEmoteOption",
+        Callback = function(selectedEmote)
+            local ToWalkWhileEmoting = type(selectedEmote) == "table" and selectedEmote[1] or tostring(selectedEmote)
+
+            if getgenv().Character:FindFirstChild("Animate") then
+                if getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == true then
+                    getgenv().Humanoid.WalkSpeed = 0
+                    wait(1)
+                    reset_walk_while_emoting()
+                    wait(1.2)
+                    getgenv().Humanoid:PlayEmote(ToWalkWhileEmoting)
+                    wait(2)
+                    getgenv().Humanoid.WalkSpeed = 16
+                else
+                    warn("Proceed with walk while emoting.")
+                end
+            else
+                reset_walk_while_emoting()
+                return getgenv().notify("Failure!", "'Animate' LocalScript not found!", 5)
+            end
+            wait()
+            if getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == true then
+                getgenv().Humanoid.WalkSpeed = 0
+                wait(0.8)
+                getgenv().Humanoid:PlayEmote(ToWalkWhileEmoting)
+            elseif not getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == false then
+                getgenv().Humanoid.WalkSpeed = 0
+                wait(1)
+                getgenv().Humanoid:PlayEmote(ToWalkWhileEmoting)
+                wait(0.1)
+                getgenv().HumanoidRootPart.Anchored = true
+                wait()
+                getgenv().Character:FindFirstChild("Animate").Disabled = true
+                wait(0.3)
+                getgenv().HumanoidRootPart.Anchored = false
+            end
+        end,})
+
+        getgenv().StopWalkingPlaceEmote = Tab2:CreateButton({
+        Name = "Stop Walking While Emoting",
+        Callback = function()
+            if getgenv().AnthonyShuffle or getgenv().AnthonyShuffle == true then
+                getgenv().AnthonyShuffle:Set(false)
+            else
+                warn("Option turned off.")
+            end
+            wait()
+            getgenv().Character:FindFirstChild("Animate").Disabled = false
+            wait(0.2)
+            for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                animTrack:Stop()
+            end
+            wait(0.2)
+            getgenv().Humanoid.WalkSpeed = 0
+            wait(0.2)
+            getgenv().Humanoid:ChangeState(3)
+            wait(0.9)
+            getgenv().Humanoid.WalkSpeed = 16
+        end,})
+    end
 
     local MichaelJackson_Speed = 120
     local michaelJacksonActive = false
@@ -4119,6 +4346,113 @@
             getgenv().Humanoid.WalkSpeed = 16
             wait(0.2)
             getgenv().HumanoidRootPart.Anchored = false
+        end
+    end,})
+
+    getgenv().Owner_Animations = Tab2:CreateToggle({
+    Name = "Zacks Owner Animations (Applies every respawn)",
+    CurrentValue = false,
+    Flag = "LoadZacksOwnerAnims",
+    Callback = function(apply_to_respawn_anims)
+        if apply_to_respawn_anims then
+            getgenv().ownerAnimsEnabled = true
+            local LocalPlayer = getgenv().LocalPlayer
+            
+            local function run_anims(character)
+                if not character then return warn("Character not found!") end
+                local Animate = character:FindFirstChild("Animate")
+                if not Animate then return warn("Animate script is missing!") end
+
+                Animate.Disabled = true
+                task.wait(0.1)
+                Animate.Disabled = false
+
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                        track:Stop()
+                    end
+                end
+
+                task.wait(0.2)
+
+                Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+                Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+                Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
+                Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
+                Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
+                Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
+                Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
+            end
+
+            getgenv().ownerAnimsEnabled = true
+            wait(0.1)
+            local function onCharacterAdded(character)
+                if getgenv().ownerAnimsEnabled then
+                    task.wait(1)
+                    run_anims(character)
+                else
+                    warn("Animations are disabled.")
+                end
+            end
+
+            if LocalPlayer.Character then
+                onCharacterAdded(LocalPlayer.Character)
+            end
+
+            LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+            local function run_anims(character)
+                if not character then return warn("Character not found!") end
+                local Animate = character:FindFirstChild("Animate")
+                if not Animate then return warn("Animate script is missing!") end
+
+                Animate.Disabled = true
+                task.wait(0.1)
+                Animate.Disabled = false
+
+                local humanoid = getgenv().Humanoid
+                if humanoid then
+                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                        track:Stop()
+                    end
+                end
+
+                task.wait(0.2)
+
+                Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+                Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+                Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
+                Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
+                Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
+                Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
+                Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
+            end
+
+            local function onCharacterAdded(character)
+                if getgenv().ownerAnimsEnabled then
+                    task.wait(1)
+                    run_anims(character)
+                else
+                    warn("Animations are disabled.")
+                end
+            end
+
+            if LocalPlayer.Character then
+                onCharacterAdded(LocalPlayer.Character)
+            end
+
+            LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+        else
+            getgenv().ownerAnimsEnabled = false
+            getgenv().ownerAnimsEnabled = false
+            wait()
+            local humanoid = getgenv().Humanoid
+            if humanoid then
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop()
+                end
+            end
         end
     end,})
 
@@ -6702,7 +7036,7 @@
         heartConn:Disconnect()
     end
     getgenv().faceBangScript = Tab16:CreateToggle({
-    Name = "Face F**k Script (Press Z)",
+    Name = "Face F**k Script (Hold Z)",
     CurrentValue = false,
     Flag = "FaceFuckingToggle",
     Callback = function(face_Bang_Animation)
@@ -9588,6 +9922,7 @@
     getgenv().ResetSpeed = Tab2:CreateButton({
     Name = "Reset WalkSpeed",
     Callback = function()
+        getgenv().Humanoid.WalkSpeed = 16
         getgenv().WalkSpeedSliding:Set(16)
     end,})
 
@@ -9621,12 +9956,14 @@
         getgenv().ResetJumpPowerButton = Tab2:CreateButton({
         Name = "Reset JumpPower",
         Callback = function()
+            getgenv().Humanoid.JumpPower = 50
             getgenv().JumpPowerSlider:Set(50)
         end,})
     else
         getgenv().ResetJumpHeightVal = Tab2:CreateButton({
         Name = "Reset JumpHeight",
         Callback = function()
+            getgenv().Humanoid.JumpHeight = 7
             getgenv().HeightJumpPowerSliding:Set(7)
         end,})
     end
@@ -9645,9 +9982,10 @@
     getgenv().ResetGrav = Tab2:CreateButton({
     Name = "Reset Gravity",
     Callback = function()
+        getgenv().Workspace.Gravity = 196.2
         getgenv().GravSliding:Set(196.2)
     end,})
-
+    wait()
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().antiBangTPLoop = Tab2:CreateToggle({
         Name = "Anti Bang/TP (Loop Method)",
@@ -9678,7 +10016,6 @@
                 wait(.1)
                 repeat wait() until getgenv().doTeleport == false
                 wait(0.3)
-                local Workspace = getgenv().Workspace
                 local HumanoidRP = getgenv().HumanoidRootPart
                 print("Teleporting Back...")
                 wait()
@@ -9714,6 +10051,8 @@
             local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
             local Workspace = getgenv().Workspace
             local HumanoidRP = getgenv().HumanoidRootPart
+            getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+            wait(0.2)
             getgenv().loopTPToVoid = true
             while getgenv().loopTPToVoid == true do
             wait()
@@ -9743,12 +10082,12 @@
 
         getgenv().Lighting.ClockTime = sliding_clocktime
     end,})
-
+    wait()
     if getgenv().Lighting.ClockTime ~= 14 then
         getgenv().ClockTimeSlider:Set(14)
         getgenv().Lighting.ClockTime = 14
     end
-
+    wait()
     getgenv().ClockTimeSliderReset = Tab9:CreateButton({
     Name = "Reset ClockTime (14)",
     Callback = function()
@@ -9916,7 +10255,7 @@
     Flag = "FireworksInSkyLoop",
     Callback = function(FireWorksCrazy)
         if FireWorksCrazy then
-            local Lighting = cloneref and cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+            local Lighting = getgenv().Lighting
             Lighting.ClockTime = 1
             Lighting.Brightness = 2
             wait()
@@ -10085,7 +10424,7 @@
             end
         end
     end,})
-
+    wait()
     if getgenv().SpookyMoon or getgenv().SpookyMoon == true then
         getgenv().SpookyMoonToggle:Set(false)
     end
@@ -10154,7 +10493,7 @@
             resetLightingSettings()
         end
     end,})
-
+    wait()
     if getgenv().SpookSun or getgenv().SpookSun == true then
         getgenv().SpookySunLoop:Set(false)
         getgenv().SpookSun = false
@@ -10198,6 +10537,8 @@
         end
     end
     wait(0.1)
+    getgenv().doFreezeToggle = false
+    wait(0.1)
     getgenv().slowMotionToggle = Tab12:CreateToggle({
     Name = "Slow Motion Emotes (Loop)",
     CurrentValue = false,
@@ -10211,18 +10552,19 @@
             end
         else
             getgenv().slowMotion = false
-            wait(0.3)
-            getgenv().emoting_actions(1)
-            wait(0.1)
-            getgenv().emoting_actions()
+            getgenv().slowMotion = false
         end
     end,})
-
+    wait()
+    getgenv().slowMotion = false
+    wait(0.2)
     if getgenv().slowMotion or getgenv().slowMotion == true then
         getgenv().slowMotionToggle:Set(false)
         getgenv().slowMotion = false
     end
-
+    wait()
+    getgenv().doFreezeToggle = false
+    wait()
     getgenv().FreezeEmotesToggle = Tab12:CreateToggle({
     Name = "Freeze Emotes",
     CurrentValue = false,
@@ -10236,13 +10578,10 @@
             end
         else
             getgenv().doFreezeToggle = false
-            wait(0.5)
-            getgenv().emoting_actions(1)
-            wait()
-            getgenv().emoting_actions()
+            getgenv().doFreezeToggle = false
         end
     end,})
-
+    wait()
     if getgenv().doFreezeToggle or getgenv().doFreezeToggle == true then
         getgenv().FreezeEmotesToggle:Set(false)
         getgenv().doFreezeToggle = false
@@ -10261,18 +10600,15 @@
             end
         else
             getgenv().fastToggle = false
-            wait(0.5)
-            getgenv().emoting_actions(1)
-            wait()
-            getgenv().emoting_actions()
+            getgenv().fastToggle = false
         end
     end,})
-
+    wait(0.1)
     if getgenv().fastToggle or getgenv().fastToggle == true then
         getgenv().FastestEmotes:Set(false)
         getgenv().fastToggle = false
     end
-
+    wait()
     getgenv().StopAllEmotes = Tab12:CreateButton({
     Name = "Stop Playing Emotes",
     Callback = function()
@@ -10810,8 +11146,8 @@
     Rthro_Fall = "10921262864"
 
     local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-
+    local LocalPlayer = getgenv().LocalPlayer
+    wait()
     local Easy_Configuration_Table = {
         ["Animation_Idle"] = "Knight",
         ["Animation_Walk"] = "Zombie",
@@ -10820,13 +11156,13 @@
         ["Animation_Fall"] = "Adidas",
         ["Animation_Climb"] = "Bold",
     }
-
+    wait()
     getgenv().Easies_Configuration = Easy_Configuration_Table
     getgenv().ownerAnimsLoaded = false
     getgenv().ownerAnimsEnabled = false
 
-    if LocalPlayer.Name ~= "L0CKED_1N1" and LocalPlayer.Name ~= "CHEATING_B0SS" then
-        warn("Owner not found.")
+    if getgenv().ownerAnimsEnabled == false then
+        warn("Not running loop, owner animations are disabled.")
     else
         local function run_anims(character)
             if not character then return warn("Character not found!") end
@@ -11577,11 +11913,11 @@
         Keybind_FakeOut = Enum.KeyCode.R
     }
     wait()
-    local function convertToKeyCode(keyString)
+    local function keycode_convert(keyString)
         return Enum.KeyCode[keyString] or nil
     end
     wait()
-    local UserInputService = game:GetService("UserInputService")
+    local UserInputService = getgenv().UserInputService
     
     getgenv().Reverse_Keybind = Enum.KeyCode.F
     getgenv().Freeze_Keybind = Enum.KeyCode.V
@@ -11606,7 +11942,7 @@
         [Enum.KeyCode.X] = 1
     }
 
-    local Slots_Table = {
+    local Slots_Table = { 
         ["Number/Key: 1"] = Enum.KeyCode.One,
         ["Number/Key: 2"] = Enum.KeyCode.Two,
         ["Number/Key: 3"] = Enum.KeyCode.Three,
@@ -11616,6 +11952,104 @@
         ["Number/Key: 7"] = Enum.KeyCode.Seven,
         ["Number/Key: 8"] = Enum.KeyCode.Eight,
         ["Number/Key: 9"] = Enum.KeyCode.Nine,
+        ["Number/Key: 0"] = Enum.KeyCode.Zero,
+        ["Function Key: F1"] = Enum.KeyCode.F1,
+        ["Function Key: F2"] = Enum.KeyCode.F2,
+        ["Function Key: F3"] = Enum.KeyCode.F3,
+        ["Function Key: F4"] = Enum.KeyCode.F4,
+        ["Function Key: F5"] = Enum.KeyCode.F5,
+        ["Function Key: F6"] = Enum.KeyCode.F6,
+        ["Function Key: F7"] = Enum.KeyCode.F7,
+        ["Function Key: F8"] = Enum.KeyCode.F8,
+        ["Function Key: F9"] = Enum.KeyCode.F9,
+        ["Function Key: F10"] = Enum.KeyCode.F10,
+        ["Function Key: F11"] = Enum.KeyCode.F11,
+        ["Function Key: F12"] = Enum.KeyCode.F12,
+        ["Key: A"] = Enum.KeyCode.A,
+        ["Key: B"] = Enum.KeyCode.B,
+        ["Key: C"] = Enum.KeyCode.C,
+        ["Key: D"] = Enum.KeyCode.D,
+        ["Key: E"] = Enum.KeyCode.E,
+        ["Key: F"] = Enum.KeyCode.F,
+        ["Key: G"] = Enum.KeyCode.G,
+        ["Key: H"] = Enum.KeyCode.H,
+        ["Key: I"] = Enum.KeyCode.I,
+        ["Key: J"] = Enum.KeyCode.J,
+        ["Key: K"] = Enum.KeyCode.K,
+        ["Key: L"] = Enum.KeyCode.L,
+        ["Key: M"] = Enum.KeyCode.M,
+        ["Key: N"] = Enum.KeyCode.N,
+        ["Key: O"] = Enum.KeyCode.O,
+        ["Key: P"] = Enum.KeyCode.P,
+        ["Key: Q"] = Enum.KeyCode.Q,
+        ["Key: R"] = Enum.KeyCode.R,
+        ["Key: S"] = Enum.KeyCode.S,
+        ["Key: T"] = Enum.KeyCode.T,
+        ["Key: U"] = Enum.KeyCode.U,
+        ["Key: V"] = Enum.KeyCode.V,
+        ["Key: W"] = Enum.KeyCode.W,
+        ["Key: X"] = Enum.KeyCode.X,
+        ["Key: Y"] = Enum.KeyCode.Y,
+        ["Key: Z"] = Enum.KeyCode.Z,
+        ["Key: Shift"] = Enum.KeyCode.LeftShift,
+        ["Key: Ctrl"] = Enum.KeyCode.LeftControl,
+        ["Key: Alt"] = Enum.KeyCode.LeftAlt,
+        ["Key: Right Shift"] = Enum.KeyCode.RightShift,
+        ["Key: Right Ctrl"] = Enum.KeyCode.RightControl,
+        ["Key: Right Alt"] = Enum.KeyCode.RightAlt,
+        ["Key: Escape"] = Enum.KeyCode.Escape,
+        ["Key: Tab"] = Enum.KeyCode.Tab,
+        ["Key: CapsLock"] = Enum.KeyCode.CapsLock,
+        ["Key: Space"] = Enum.KeyCode.Space,
+        ["Key: Enter"] = Enum.KeyCode.Return,
+        ["Key: Backspace"] = Enum.KeyCode.Backspace,
+        ["Key: Delete"] = Enum.KeyCode.Delete,
+        ["Key: Insert"] = Enum.KeyCode.Insert,
+        ["Key: Home"] = Enum.KeyCode.Home,
+        ["Key: End"] = Enum.KeyCode.End,
+        ["Key: PageUp"] = Enum.KeyCode.PageUp,
+        ["Key: PageDown"] = Enum.KeyCode.PageDown,
+        ["Arrow Key: Up"] = Enum.KeyCode.Up,
+        ["Arrow Key: Down"] = Enum.KeyCode.Down,
+        ["Arrow Key: Left"] = Enum.KeyCode.Left,
+        ["Arrow Key: Right"] = Enum.KeyCode.Right,
+        ["Numpad: 0"] = Enum.KeyCode.KeypadZero,
+        ["Numpad: 1"] = Enum.KeyCode.KeypadOne,
+        ["Numpad: 2"] = Enum.KeyCode.KeypadTwo,
+        ["Numpad: 3"] = Enum.KeyCode.KeypadThree,
+        ["Numpad: 4"] = Enum.KeyCode.KeypadFour,
+        ["Numpad: 5"] = Enum.KeyCode.KeypadFive,
+        ["Numpad: 6"] = Enum.KeyCode.KeypadSix,
+        ["Numpad: 7"] = Enum.KeyCode.KeypadSeven,
+        ["Numpad: 8"] = Enum.KeyCode.KeypadEight,
+        ["Numpad: 9"] = Enum.KeyCode.KeypadNine,
+        ["Numpad: Plus"] = Enum.KeyCode.KeypadPlus,
+        ["Numpad: Minus"] = Enum.KeyCode.KeypadMinus,
+        ["Numpad: Multiply"] = Enum.KeyCode.KeypadMultiply,
+        ["Numpad: Divide"] = Enum.KeyCode.KeypadDivide,
+        ["Numpad: Enter"] = Enum.KeyCode.KeypadEnter,
+        ["Numpad: Dot"] = Enum.KeyCode.KeypadPeriod,
+        ["Mouse: Left Click"] = Enum.UserInputType.MouseButton1,
+        ["Mouse: Right Click"] = Enum.UserInputType.MouseButton2,
+        ["Mouse: Middle Click"] = Enum.UserInputType.MouseButton3,
+        ["Controller: A"] = Enum.KeyCode.ButtonA,
+        ["Controller: B"] = Enum.KeyCode.ButtonB,
+        ["Controller: X"] = Enum.KeyCode.ButtonX,
+        ["Controller: Y"] = Enum.KeyCode.ButtonY,
+        ["Controller: L1"] = Enum.KeyCode.ButtonL1,
+        ["Controller: R1"] = Enum.KeyCode.ButtonR1,
+        ["Controller: L2"] = Enum.KeyCode.ButtonL2,
+        ["Controller: R2"] = Enum.KeyCode.ButtonR2,
+        ["Controller: L3"] = Enum.KeyCode.ButtonL3,
+        ["Controller: R3"] = Enum.KeyCode.ButtonR3,
+        ["Controller: Start"] = Enum.KeyCode.ButtonStart,
+        ["Controller: Select"] = Enum.KeyCode.ButtonSelect,
+        ["Controller: D-Pad Up"] = Enum.KeyCode.DPadUp,
+        ["Controller: D-Pad Down"] = Enum.KeyCode.DPadDown,
+        ["Controller: D-Pad Left"] = Enum.KeyCode.DPadLeft,
+        ["Controller: D-Pad Right"] = Enum.KeyCode.DPadRight,
+        ["Controller: Left Stick"] = Enum.KeyCode.Thumbstick1,
+        ["Controller: Right Stick"] = Enum.KeyCode.Thumbstick2,
     }
     
     Emote_Speed_Configuration[getgenv().Freeze_Keybind] = 0
@@ -11625,11 +12059,11 @@
     for name, _ in pairs(Slots_Table) do
         table.insert(Slots_Options, name)
     end
-
+    wait()
     local selectedSlot = nil
 
     getgenv().PickASlot = Tab15:CreateDropdown({
-    Name = "Choose a Slot (to put the emote in)",
+    Name = "Choose a Keybind (To assign the Emote to)",
     Options = Slots_Options,
     CurrentOption = "",
     MultipleOptions = false,
@@ -11875,7 +12309,7 @@
     getgenv().SaveEmoteConfig = Tab15:CreateButton({
     Name = "Save Emote Configuration",
     Callback = function()
-        local function saveConfig()
+        local function write_configuration()
             local config = {
                 Emote_Keybinds_Configuration = {},
                 Emote_Speed_Configuration = {}
@@ -11891,16 +12325,16 @@
         
             local jsonData = game:GetService("HttpService"):JSONEncode(config)
             writefile(ConfigFileName, jsonData)
-            getgenv().notify("Success:", "Emote configuration saved!", 5)
+            getgenv().notify("Success:", "Emote configuration has been saved!", 5)
         end
         
-        saveConfig()
+        write_configuration()
     end,})
 
-    getgenv().SaveEmoteConfig = Tab15:CreateButton({
+    getgenv().LoadEmoteConfig = Tab15:CreateButton({
     Name = "Load Emote Configuration",
     Callback = function()
-        local function loadConfig()
+        local function Initialize_Configuration()
             if isfile(ConfigFileName) then
                 local jsonData = readfile(ConfigFileName)
                 local config = game:GetService("HttpService"):JSONDecode(jsonData)
@@ -11909,47 +12343,48 @@
                 Emote_Speed_Configuration = {}
         
                 for key, value in pairs(config.Emote_Keybinds_Configuration) do
-                    local keyCode = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
-                    if keyCode then
-                        Emote_Keybinds_Configuration[keyCode] = value
+                    local key_press = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
+                    if key_press then
+                        Emote_Keybinds_Configuration[key_press] = value
                     end
                 end
         
                 for key, value in pairs(config.Emote_Speed_Configuration) do
-                    local keyCode = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
-                    if keyCode then
-                        Emote_Speed_Configuration[keyCode] = value
+                    local speed_key_code = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
+                    if speed_key_code then
+                        Emote_Speed_Configuration[speed_key_code] = value
                     end
                 end
-        
-                getgenv().notify("Success:", "Configuration loaded!", 5)
+                wait()
+                getgenv().notify("Success:", "Emote configuration has been loaded!", 5)
             else
                 getgenv().notify("Error:", "No saved configuration found!", 5)
             end
         end
         
-        loadConfig()
+        Initialize_Configuration()
     end,})
 
-    getgenv().SaveEmoteConfig = Tab15:CreateButton({
+    getgenv().DeleteEmoteConfig = Tab15:CreateButton({
     Name = "Delete Emote Configuration",
     Callback = function()
-        local function deleteConfig()
+        local function erase_config()
             if isfile(ConfigFileName) then
                 delfile(ConfigFileName)
-                getgenv().notify("Success:", "Configuration deleted!", 5)
+                getgenv().notify("Success:", "Deleted Emote Configuration!", 5)
             else
                 getgenv().notify("Error:", "No configuration file found!", 5)
             end
         end     
         
-        deleteConfig()
+        erase_config()
     end,})
-
+    wait()
     getgenv().EmoteSystemEnabled = true
+    getgenv().BoundConnections = {}
 
-    local function onInputBegan(input, gameProcessed)
-        if not getgenv().EmoteSystemEnabled or gameProcessed then return end
+    local function input_start(input, entered)
+        if not getgenv().EmoteSystemEnabled or entered then return end
 
         local emote = Emote_Keybinds_Configuration[input.KeyCode]
         if emote and getgenv().Humanoid then
@@ -11959,8 +12394,8 @@
 
     local speedToggle = 1
 
-    local function other_Input_Connecting(input, gameProcessed)
-        if not getgenv().EmoteSystemEnabled or gameProcessed then return end
+    local function input_connecting(input, other)
+        if not getgenv().EmoteSystemEnabled or other then return end
 
         if input.KeyCode == getgenv().Reverse_Keybind then
             speedToggle = (speedToggle == 1) and -1 or 1
@@ -11976,12 +12411,12 @@
         end
     end
 
-    local function toggleEmoteSystem(state)
+    function emote_system(state)
         getgenv().EmoteSystemEnabled = state
     end
 
-    UserInputService.InputBegan:Connect(other_Input_Connecting)
-    UserInputService.InputBegan:Connect(onInputBegan)
+    getgenv().BoundConnections["EmoteInput"] = UserInputService.InputBegan:Connect(input_connecting)
+    getgenv().BoundConnections["EmoteTrigger"] = UserInputService.InputBegan:Connect(input_start)
     wait()
     getgenv().Trip_Keybind = Tab15:CreateInput({  
     Name = "Trip Keybind",
@@ -11990,10 +12425,10 @@
     RemoveTextAfterFocusLost = true,
     Flag = "TrippingOverKeybind",
     Callback = function(KeyForTripping)
-        local newKey = convertToKeyCode(string.upper(KeyForTripping))
+        local new_keycode = keycode_convert(string.upper(KeyForTripping))
         wait()
-        if newKey then
-            Trip_Settings.Keybind_Trip = newKey
+        if new_keycode then
+            Trip_Settings.Keybind_Trip = new_keycode
         else
             warn("Invalid keybind for Trip:", KeyForTripping)
         end
@@ -12005,13 +12440,13 @@
     PlaceholderText = "Keybind Here",
     RemoveTextAfterFocusLost = true,
     Flag = "FakingOutKeybind",
-    Callback = function(setKeyForFakeOut)
-        local newKey = convertToKeyCode(string.upper(setKeyForFakeOut))
+    Callback = function(key_for_fake_out)
+        local updated_key = keycode_convert(string.upper(key_for_fake_out))
         wait()
-        if newKey then
-            Trip_Settings.Keybind_FakeOut = newKey
+        if updated_key then
+            Trip_Settings.Keybind_FakeOut = updated_key
         else
-            warn("Invalid keybind for Fake Out:", setKeyForFakeOut)
+            warn("Invalid keybind for Fake Out:", key_for_fake_out)
         end
     end,})
     
@@ -12285,15 +12720,6 @@
         getgenv().Easies_Configuration["Death_On_Load"] = dieWhenLoadingScript and "on" or "off"
     end,})
 
-    getgenv().EmoteKeybinds = Tab20:CreateToggle({
-    Name = "Emote Keybinds",
-    CurrentValue = readConfigValue("Emote_Keybinds") or false,
-    Flag = "emotingKeybindsToggle",
-    Callback = function(isEmoteKeybindsEnabled)
-        getgenv().emoting_bindings = isEmoteKeybindsEnabled
-        getgenv().Easies_Configuration["Emote_Keybinds"] = isEmoteKeybindsEnabled and "on" or "off"
-    end,})
-
     getgenv().AntiAFKSetting = Tab20:CreateToggle({
     Name = "Anti AFK",
     CurrentValue = readConfigValue("AntiAFK") or false,
@@ -12430,6 +12856,8 @@
         getgenv().Easies_Configuration["keep_tp_tool"] = TPToolBackpack and "on" or "off"
     end,})--]]
 
+    getgenv().EmoteSystemEnabled = false
+    wait()
     getgenv().ToggleEmoteKeybinds = Tab20:CreateToggle({
     Name = "Emote Keybinds",
     CurrentValue = false,
@@ -12441,29 +12869,31 @@
             getgenv().EmoteSystemEnabled = false
         end
     end,})
-
+    wait(0.3)
+    getgenv().EmoteSystemEnabled = false
+    wait()
     if not (readfile and writefile) then
         warn("Your executor does not support file functions.")
     end
 
-    getgenv().currentSettings = getgenv().currentSettings or {}
+    getgenv().saved_settings = getgenv().saved_settings or {}
     local ez_folder_settings = "SettingsConfigs"
 
-    local settingsList = {
+    local settings_list = {
         "Clock Time GUI", "Use Custom Animation Packages", "Death On Load", "Infinite Yield Premium",
         "Auto Execute System Broken", "Anti AFK", "Emote Keybinds", "Fully Loaded Message",
         "Big Baseplate", "TP Tool", "Loading Screen", "Old Materials"
     }
 
-    for _, setting in ipairs(settingsList) do
-        local configPath = ez_folder_settings .. "/" .. setting .. ".txt"
+    for _, setting in ipairs(settings_list) do
+        local main_path = ez_folder_settings .. "/" .. setting .. ".txt"
         
-        if isfile(configPath) then
-            local configValue = readfile(configPath)
-            getgenv().currentSettings[setting] = configValue
-            getgenv().notify("Loaded: " .. setting .. " -> " .. configValue)
+        if isfile(main_path) then
+            local writing_value = readfile(main_path)
+            getgenv().saved_settings[setting] = writing_value
+            getgenv().notify("Loaded: " .. setting .. " -> " .. writing_value)
         else
-            getgenv().currentSettings[setting] = "Off"
+            getgenv().saved_settings[setting] = "Off"
         end
     end
 
@@ -12472,104 +12902,7 @@
     else
         warn("Folder already exists: " .. ez_folder_settings)
     end
-
-    if readfile and writefile then
-        print("ReadFile and WriteFile supported.")
-        --[[function auto_load_ez()
-            local settingsList = {
-                "Clock Time GUI", "Use Custom Animation Packages", "Death On Load", "Infinite Yield Premium",
-                "Auto Execute System Broken", "Anti AFK", "Emote Keybinds", "Fully Loaded Message",
-                "Big Baseplate", "TP Tool", "Loading Screen", "Old Materials"
-            }
-
-            for _, setting in ipairs(settingsList) do
-                local configPath = ez_folder_settings .. "/" .. setting .. ".txt"
-                
-                if isfile(configPath) then
-                    local configValue = readfile(configPath)
-                    getgenv().currentSettings[setting] = configValue
-                    getgenv().notify("Loaded: " .. setting .. " -> " .. configValue)
-                else
-                    getgenv().currentSettings[setting] = "Off"
-                end
-            end
-        end
-
-        function auto_delete_ez()
-            local configPath = "SettingsConfigs/"
-
-            if not isfolder(configPath) then
-                return getgenv().notify("Failure!", "Configuration Folder does not exist!", 6)
-            end
-
-            delfolder(configPath)
-            getgenv().notify("Success:", "Deleted Easy Configuration.", 6)
-        end
-
-        function auto_save_ez()
-            local settingsList = { 
-                "Clock Time GUI", "Use Custom Animation Packages", "Death On Load", "Infinite Yield Premium",
-                "Auto Execute System Broken", "Anti AFK", "Emote Keybinds", "Fully Loaded Message",
-                "Big Baseplate", "TP Tool", "Loading Screen", "Old Materials"
-            }
-
-            for _, setting in ipairs(settingsList) do
-                local configPath = ez_folder_settings .. "/" .. setting .. ".txt"
-                local configValue = getgenv().currentSettings[setting] or "Off"
-
-                writefile(configPath, configValue)
-                getgenv().notify("Saved: " .. setting .. " -> " .. configValue)
-            end
-        end
-        wait()
-        getgenv().SelectSettingsToModify = Tab20:CreateDropdown({
-        Name = "Modify Setting Configuration",
-        Options = {"Clock Time GUI", "Use Custom Animation Packages", "Death On Load", "Infinite Yield Premium", "Auto Execute System Broken", "Anti AFK", "Emote Keybinds", "Fully Loaded Message", "Big Baseplate", "TP Tool", "Loading Screen", "Old Materials"},
-        CurrentOption = "",
-        MultipleOptions = false,
-        Flag = "fallBackSettingsConfigurationList",
-        Callback = function(selected_Setting)
-            getgenv().notify("Selected: " .. tostring(selected_Setting))
-            getgenv().currentSetting = selected_Setting
-        end,})
-
-        getgenv().changeValueForSettingsConfigs = Tab20:CreateDropdown({
-        Name = "Change Value To Selected Setting",
-        Options = {"On", "Off"},
-        CurrentOption = "Off",
-        MultipleOptions = false,
-        Flag = "ModifyingOptionalConfigurationSettings",
-        Callback = function(selected_setting_value)
-            if getgenv().currentSetting then
-                local ez_config_path = ez_folder_settings .. "/" .. getgenv().currentSetting .. ".txt"
-                writefile(ez_config_path, selected_setting_value)
-                getgenv().notify("Updated: " .. getgenv().currentSetting .. " to " .. selected_setting_value)
-            else
-                getgenv().notify("No setting selected.")
-            end
-        end,})
-
-        getgenv().LoadingTheConfiguration = Tab20:CreateButton({
-        Name = "Load Easy Configuration",
-        Callback = function()
-            auto_load_ez()
-        end,})
-
-        getgenv().SavingTheConfiguration = Tab20:CreateButton({
-        Name = "Save Ez Configuration",
-        Callback = function()
-            auto_save_ez()
-        end,})
-
-        getgenv().DeleteTheConfiguration = Tab20:CreateButton({
-        Name = "Delete Entire Configuration",
-        Callback = function()
-            auto_delete_ez()
-        end,})--]]
-    else
-        warn("Your executor does not support 'readfile' or 'writefile'!")
-    end
-
+    wait()
     getgenv().FakeOutScript = Tab15:CreateToggle({
     Name = "Fake Out",
     CurrentValue = false,
@@ -12630,9 +12963,11 @@
     Callback = function()
         local Lighting = getgenv().Lighting
         local PlayerGui = getgenv().PlayerGui
-        local Find_Script_Clock_GUI = PlayerGui:FindFirstChild("Script_Clock_Time_Day_Night")
-
-        if Find_Script_Clock_GUI then
+        local Find_Script_Clock_GUI
+        wait()
+        if PlayerGui:FindFirstChild("Script_Clock_Time_Day_Night") then
+            Find_Script_Clock_GUI = PlayerGui:FindFirstChild("Script_Clock_Time_Day_Night")
+            wait(0.1)
             Find_Script_Clock_GUI:Destroy()
             wait()
             getgenv().clock_script_time = false
@@ -12642,10 +12977,10 @@
             Lighting.ClockTime = 14
             Lighting.Brightness = 3
         else
-            return getgenv().notify("Error:", "Script Clock Time GUI not loaded", 6)
+            return getgenv().notify("Failure:", "Script Clock Time GUI does not exist.", 5)
         end
     end,})
-
+    wait()
     if getgenv().camera_zoom_data then
         print("CameraMaxZoomDistance - Data | True")
     else
@@ -12655,7 +12990,13 @@
     wait(0.2)
     print("Getting Requirements... [1 moment.]")
     wait(0.3)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PrivateBecauseYes/refs/heads/main/armsConvert.js", true))()
+    if not getgenv().not_loaded_checker_notifier then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PrivateBecauseYes/refs/heads/main/armsConvert.js", true))()
+        wait()
+        getgenv().not_loaded_checker_notifier = true
+    else
+        warn("Already loaded check notifier!")
+    end
     wait(0.2)
     if getgenv().SimpleSpyExecuted then
         getgenv().SimpleSpyShutdown()
@@ -12690,82 +13031,106 @@
         Text = tostring(game.Players.LocalPlayer),
     })
     wait(0.2)
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        GuiService:SendNotification({
-            Title = "Please wait...",
-            Text = "Attaching Zacks Easy Hub into MIC UP 🔊...",
-        })
-        wait(0.3)
-        if not getgenv().Has_Died_Func then
-            if setfpscap then
-                setfpscap(0)
-                wait(0.5)
-                print("Injecting Zacks Easy Hub...")
-                wait(0.5)
-                getgenv().emoting_actions(0)
-                wait(0.2)
-                getgenv().emoting_actions()
-                wait(0.5)
-                getgenv().Humanoid.Health = 0
-                wait(0.3)
-                getgenv().Is_ZEH_Attached = true
-                wait(1)
-                setfpscap(999)
+    if getgenv().output_already_viewed then
+        warn("Already viewed and injected 'Zacks Easy Hub'")
+    else
+        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+            GuiService:SendNotification({
+                Title = "Please wait...",
+                Text = "Attaching Zacks Easy Hub into MIC UP 🔊...",
+            })
+            wait(0.3)
+            if not getgenv().Has_Died_Func then
+                if setfpscap then
+                    setfpscap(0)
+                    wait(0.5)
+                    print("Injecting Zacks Easy Hub...")
+                    wait(0.5)
+                    getgenv().emoting_actions(0)
+                    wait(0.2)
+                    getgenv().emoting_actions()
+                    wait(0.5)
+                    getgenv().Humanoid.Health = 0
+                    wait(0.1)
+                    getgenv().Has_Died_Func = true
+                    wait(0.3)
+                    getgenv().Is_ZEH_Attached = true
+                    wait(1)
+                    setfpscap(999)
+                    wait()
+                    getgenv().output_already_viewed = true
+                else
+                    getgenv().Humanoid.Health = 0
+                    wait()
+                    getgenv().Has_Died_Func = true
+                    wait(0.3)
+                    getgenv().Is_ZEH_Attached = true
+                    wait()
+                    getgenv().output_already_viewed = true
+                end
+            else
+                warn("Setup death function already.")
             end
         else
-            warn("Setup death function already.")
+            GuiService:SendNotification({
+                Title = "Please wait...",
+                Text = "Hooking and injecting into this experience...",
+            })
+            wait(0.8)
+            if setfpscap then
+                setfpscap(1)
+                wait(0.5)
+                print("Injecting Zacks Easy Hub...")
+                wait(1)
+                getgenv().emoting_actions(0)
+                getgenv().emoting_actions(0)
+                wait(1)
+                getgenv().Is_ZEH_Attached = true
+                getgenv().Has_Died_Func = true
+                getgenv().output_already_viewed = true
+                wait(0.6)
+                setfpscap(999)
+            end
         end
+    end
+    wait(0.4)
+    if getgenv().seen_output_zeh then
+        warn("Already seen notification output.")
     else
+        if getgenv().Is_ZEH_Attached or getgenv().Is_ZEH_Attached == true then
+            GuiService:SendNotification({
+                Title = "Successful.",
+                Text = "Successfully injected into experience.",
+            })
+        else
+            GuiService:SendNotification({
+                Title = "Failure!",
+                Text = "Could not allocate memory to inject into!",
+            })
+        end
+        wait()
+        local function random_hex()
+            local hex = "0x"
+            for i = 1, 8 do
+                hex = hex .. string.format("%X", math.random(0, 15))
+            end
+            return hex
+        end
+        wait(0.2)
         GuiService:SendNotification({
             Title = "Please wait...",
-            Text = "Hooking and injecting into this experience...",
+            Text = "Starting Watch-Dog Process...",
         })
-        wait(0.8)
-        if setfpscap then
-            setfpscap(1)
-            wait(0.5)
-            print("Injecting Zacks Easy Hub...")
-            wait(1)
-            getgenv().emoting_actions(0)
-            getgenv().emoting_actions(0)
-            wait(1)
-            getgenv().Is_ZEH_Attached = true
-            wait(0.6)
-            setfpscap(999)
-        end
-    end
-    wait(0.7)
-    if getgenv().Is_ZEH_Attached or getgenv().Is_ZEH_Attached == true then
+        wait(0.3)
         GuiService:SendNotification({
-            Title = "Successful.",
-            Text = "Successfully injected into experience.",
+            Title = "Success, Returned:",
+            Text = tostring(random_hex()),
         })
-    else
+        wait(0.1)
         GuiService:SendNotification({
-            Title = "Failure!",
-            Text = "Could not allocate memory to inject into!",
+            Title = "Initialized!",
+            Text = "We will now provide performance as well whilst you play.",
         })
+        wait(0.1)
+        getgenv().seen_output_zeh = true
     end
-    wait()
-    local function generateHex()
-        local hex = "0x"
-        for i = 1, 8 do
-            hex = hex .. string.format("%X", math.random(0, 15))
-        end
-        return hex
-    end
-    wait(0.2)
-    GuiService:SendNotification({
-        Title = "Please wait...",
-        Text = "Starting Watch-Dog Process...",
-    })
-    wait(0.3)
-    GuiService:SendNotification({
-        Title = "Success, Returned:",
-        Text = tostring(generateHex()),
-    })
-    wait(0.1)
-    GuiService:SendNotification({
-        Title = "Initialized!",
-        Text = "We will now provide performance as well whilst you play.",
-    })
