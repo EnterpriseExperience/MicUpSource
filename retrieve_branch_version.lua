@@ -431,41 +431,74 @@
         warn("Advanced level exploit already reviewed and secured.")
     end
 
-    local vc_internal = getgenv().VoiceChatInternal 
+    local vc_inter = getgenv().VoiceChatInternal
+    local vc_service = getgenv().VoiceChatService
 
     if getgenv().voiceChat_Check then
         warn("Voice Chat already initialized.")
     else
-        local LAST_attempt_made = 0
-        local wait_cooldown_time = 5
+        getgenv().voiceChat_Check = true 
 
+        local vc_internal = getgenv().VoiceChatInternal
+        local vc_service = getgenv().VoiceChatService
+        
+        local reconnecting = false
+        local retryDuration = 4
+        local maxAttempts = 500
+        
         local function unsuspend()
-            local ticking_time = tick()
+            if reconnecting then return warn("Voice Chat Is Still Reconnecting.") end
+            reconnecting = true
+        
+            local attempts = 0
+            while attempts < maxAttempts do
+                local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
+                local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
+                
+                print("Attempting to reconnect to voice chat... Attempt:", attempts + 1)
+                wait()
+                local success = vc_internal:JoinByGroupIdToken("", false, true)
 
-            if ticking_time - LAST_attempt_made < wait_cooldown_time then
-                return 
+                if success then
+                    print("Bypassed Voice Chat.")
+                else
+                    warn("Unable to properly Bypass Voice Chat.")
+                end
+                wait(0.5)
+                if vc_internal.StateChanged ~= Enum.VoiceChatState.Ended then
+                    print("Successfully reconnected to voice chat!")
+                    reconnecting = false
+                    return 
+                end
+        
+                attempts = attempts + 1
+                wait(retryDuration)
             end
-
-            LAST_attempt_made = ticking_time
-            local success = vc_internal:JoinByGroupIdToken("", false, true)
-
-            if success then
-                print("Bypassed Voice Chat.")
-            else
-                warn("Unable to properly Bypass Voice Chat.")
-            end
+        
+            warn("Failed to reconnect after " .. maxAttempts .. " attempts.")
+            reconnecting = false
         end
-        wait()
-        getgenv().voiceChat_Check = true
-
-        local function on_voice_chat_changing(_, newState)
-            if newState == Enum.VoiceChatState.Ended then
+        
+        local function onVoiceChatStateChanged(_, newState)
+            if newState == Enum.VoiceChatState.Ended and not reconnecting then
                 print("Voice chat disconnected, attempting to reconnect...")
                 unsuspend()
             end
         end
+        
+        vc_internal.StateChanged:Connect(onVoiceChatStateChanged)
+    end
 
-        vc_internal.StateChanged:Connect(on_voice_chat_changing)
+    if vc_inter.StateChanged == Enum.VoiceChatState.Ended then
+        sendNotification("Alert!", "You are suspended, attempting to reconnect you...", 5)
+        task.wait(.2)
+        local success = vc_internal:JoinByGroupIdToken("", false, true)
+
+        if success then
+            print("Bypassed Voice Chat.")
+        else
+            warn("Unable to properly Bypass Voice Chat.")
+        end
     end
     wait(0.2)
     -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
