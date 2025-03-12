@@ -1126,7 +1126,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.2 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.4 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -1152,7 +1152,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.2 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.4 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
