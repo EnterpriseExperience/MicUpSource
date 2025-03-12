@@ -1365,92 +1365,111 @@
     end
 
     function resetLightingSettings()
-        -- Check it out, let me know what you think.
-        local Lighting = game:GetService("Lighting")
-        local SunRays = Lighting:FindFirstChildOfClass("SunRaysEffect")
-
-        Lighting.ClockTime = 14.5
-        Lighting.Brightness = 3
-        wait()
-        if not Lighting:FindFirstChildOfClass("Atmosphere") then
-            warn("Atmosphere not found, creating...")
-            wait(0.1)
+        if not getgenv().Lighting:FindFirstChildOfClass("Atmosphere") then
             local Atmosphere = Instance.new("Atmosphere")
-            Atmosphere.Name = "Atmosphere"
-            Atmosphere.Parent = Lighting
             Atmosphere.Density = 0.3
+            Atmosphere.Parent = getgenv().Lighting
             Atmosphere.Offset = 0.25
             Atmosphere.Color = Color3.fromRGB(199, 199, 199)
             Atmosphere.Decay = Color3.fromRGB(106, 112, 125)
             Atmosphere.Glare = 0
             Atmosphere.Haze = 0
         else
-            print("Atmosphere found, continuing...")
-            wait(0.1)
-            Lighting.Atmosphere.Density = 0.3
-            Lighting.Atmosphere.Offset = 0.25
-            Lighting.Atmosphere.Color = Color3.fromRGB(199, 199, 199)
-            Lighting.Atmosphere.Decay = Color3.fromRGB(106, 112, 125)
-            Lighting.Atmosphere.Glare = 0
-            Lighting.Atmosphere.Haze = 0
+            getgenv().Lighting:FindFirstChildOfClass("Atmosphere").Density = 0.3
+            getgenv().Lighting:FindFirstChildOfClass("Atmosphere").Offset = 0.25
+            getgenv().Lighting:FindFirstChildOfClass("Atmosphere").Color = Color3.fromRGB(199, 199, 199)
+            getgenv().Lighting:FindFirstChildOfClass("Atmosphere").Decay = Color3.fromRGB(106, 112, 125)
+            getgenv().Lighting:FindFirstChildOfClass("Atmosphere").Glare = 0
+            getgenv().Lighting:FindFirstChildOfClass("Atmosphere").Haze = 0
         end
-        wait(0.1)
-        if not Lighting:FindFirstChildOfClass("BloomEffect") then
-            warn("Bloom was not found, creating...")
-            wait(0.1)
+        wait()
+        if not getgenv().Lighting:FindFirstChildOfClass("Sky") then
+            local Sky = Instance.new("Sky")
+            Sky.MoonAngularSize = 11
+            Sky.Parent = getgenv().Lighting
+            Sky.CelestialBodiesShown = true
+            Sky.MoonTextureId = "rbxassetid://6444320592"
+            Sky.SkyboxBk = "rbxassetid://6444884337"
+            Sky.SkyboxDn = "rbxassetid://6444884785"
+            Sky.SkyboxFt = "rbxassetid://6444884337"
+            Sky.SkyboxLf = "rbxassetid://6444884337"
+            Sky.SkyboxRt = "rbxassetid://6444884337"
+            Sky.SkyboxUp = "rbxassetid://6412503613"
+            Sky.StarCount = 3000
+            Sky.SunAngularSize = 11
+            Sky.SunTextureId = "rbxassetid://6196665106"
+        else
+            getgenv().Lighting:FindFirstChildOfClass("Sky").MoonAngularSize = 11
+            getgenv().Lighting:FindFirstChildOfClass("Sky").CelestialBodiesShown = true
+            getgenv().Lighting:FindFirstChildOfClass("Sky").MoonTextureId = "rbxassetid://6444320592"
+            getgenv().Lighting:FindFirstChildOfClass("Sky").SkyboxBk = "rbxassetid://6444884337"
+            getgenv().Lighting:FindFirstChildOfClass("Sky").SkyboxDn = "rbxassetid://6444884785"
+            getgenv().Lighting:FindFirstChildOfClass("Sky").SkyboxFt = "rbxassetid://6444884337"
+            getgenv().Lighting:FindFirstChildOfClass("Sky").SkyboxLf = "rbxassetid://6444884337"
+            getgenv().Lighting:FindFirstChildOfClass("Sky").SkyboxRt = "rbxassetid://6444884337"
+            getgenv().Lighting:FindFirstChildOfClass("Sky").SkyboxUp = "rbxassetid://6412503613"
+            getgenv().Lighting:FindFirstChildOfClass("Sky").StarCount = 3000
+            getgenv().Lighting:FindFirstChildOfClass("Sky").SunAngularSize = 11
+            getgenv().Lighting:FindFirstChildOfClass("Sky").SunTextureId = "rbxassetid://6196665106"
+        end
+        wait()
+        if not getgenv().Lighting:FindFirstChildOfClass("BloomEffect") then
             local Bloom = Instance.new("BloomEffect")
-            Bloom.Name = "Bloom"
-            Bloom.Parent = Lighting
-            Bloom.Intensity = 1
             Bloom.Enabled = true
+            Bloom.Parent = getgenv().Lighting
+            Bloom.Intensity = 1
             Bloom.Size = 24
             Bloom.Threshold = 2
         else
-            print("Found Bloom, continuing...")
-            wait(0.1)
-            Lighting.Bloom.Intensity = 1
-            Lighting.Bloom.Enabled = true
-            Lighting.Bloom.Size = 24
-            Lighting.Bloom.Threshold = 2
+            getgenv().Lighting:FindFirstChildOfClass("BloomEffect").Enabled = true
+            getgenv().Lighting:FindFirstChildOfClass("BloomEffect").Intensity = 1
+            getgenv().Lighting:FindFirstChildOfClass("BloomEffect").Size = 24
+            getgenv().Lighting:FindFirstChildOfClass("BloomEffect").Threshold = 2
         end
-        wait(0.1)
-        if not Lighting:FindFirstChildOfClass("DepthOfFieldEffect") then
-            warn("DepthOfField not found, creating...")
-            wait(0.1)
-            local DepthOfField = Instance.new("DepthOfFieldEffect")
-            DepthOfField.Name = "DepthOfField"
-            DepthOfField.Parent = Lighting
-            DepthOfField.Enabled = false
-            DepthOfField.FarIntensity = 0.1
-            DepthOfField.FocusDistance = 0.05
-            DepthOfField.InFocusRadius = 30
-            DepthOfField.NearIntensity = 0.75
+        wait()
+        if not getgenv().Lighting:FindFirstChildOfClass("DepthOfFieldEffect") then
+            local DepthOfFieldEffect = Instance.new("DepthOfFieldEffect")
+            DepthOfFieldEffect.Enabled = false
+            DepthOfFieldEffect.Parent = getgenv().Lighting
+            DepthOfFieldEffect.FarIntensity = 0.1
+            DepthOfFieldEffect.FocusDistance = 0.05
+            DepthOfFieldEffect.InFocusRadius = 30
+            DepthOfFieldEffect.NearIntensity = 0.75
         else
-            print("DepthOfField found, continuing...")
-            wait(0.1)
-            Lighting.DepthOfField.Enabled = false
-            Lighting.DepthOfField.FarIntensity = 0.1
-            Lighting.DepthOfField.FocusDistance = 0.05
-            Lighting.DepthOfField.InFocusRadius = 30
-            Lighting.DepthOfField.NearIntensity = 0.75
+            getgenv().Lighting:FindFirstChildOfClass("DepthOfFieldEffect").Enabled = false
+            getgenv().Lighting:FindFirstChildOfClass("DepthOfFieldEffect").FarIntensity = 0.1
+            getgenv().Lighting:FindFirstChildOfClass("DepthOfFieldEffect").FocusDistance = 0.05
+            getgenv().Lighting:FindFirstChildOfClass("DepthOfFieldEffect").InFocusRadius = 30
+            getgenv().Lighting:FindFirstChildOfClass("DepthOfFieldEffect").NearIntensity = 0.75
         end
-        wait(0.1)
-        if not Lighting:FindFirstChildOfClass("SunRaysEffect") then
-            warn("SunRays was not found, creating...")
-            wait(0.1)
-            local SunRays = Instance.new("SunRaysEffect")
-            SunRays.Name = "SunRays"
-            SunRays.Parent = Lighting
-            SunRays.Enabled = true
-            SunRays.Intensity = 0.01
-            SunRays.Spread = 0.1
+        wait()
+        if not getgenv().Lighting:FindFirstChildOfClass("SunRaysEffect") then
+            local SunRaysEffect = Instance.new("SunRaysEffect")
+            SunRaysEffect.Enabled = true
+            SunRaysEffect.Parent = getgenv().Lighting
+            SunRaysEffect.Intensity = 0.01
+            SunRaysEffect.Spread = 0.1
         else
-            print("SunRays found, continuing...")
-            wait(0.1)
-            Lighting.SunRays.Enabled = true
-            Lighting.SunRays.Intensity = 0.01
-            Lighting.SunRays.Spread = 0.1
+            getgenv().Lighting:FindFirstChildOfClass("SunRaysEffect").Enabled = true
+            getgenv().Lighting:FindFirstChildOfClass("SunRaysEffect").Intensity = 0.01
+            getgenv().Lighting:FindFirstChildOfClass("SunRaysEffect").Spread = 0.1
         end
+        wait()
+        getgenv().Lighting.ClockTime = 14
+        getgenv().Lighting.Brightness = 3
+        getgenv().Lighting.Ambient = Color3.fromRGB(70, 70, 70)
+        getgenv().Lighting.ColorShift_Bottom = Color3.fromRGB(0, 0, 0)
+        getgenv().Lighting.ColorShift_Top = Color3.fromRGB(0, 0, 0)
+        getgenv().Lighting.EnvironmentDiffuseScale = 1
+        getgenv().Lighting.EnvironmentSpecularScale = 1
+        getgenv().Lighting.GlobalShadows = true
+        getgenv().Lighting.OutdoorAmbient = Color3.fromRGB(70, 70, 70)
+        getgenv().Lighting.ShadowSoftness = 0.2
+        getgenv().Lighting.Technology = Enum.Technology.Compatibility
+        getgenv().Lighting.FogColor = Color3.fromRGB(192, 192, 192)
+        getgenv().Lighting.FogEnd = 100000
+        getgenv().Lighting.FogStart = 0
+        getgenv().Lighting:SetAttribute("UseCurrentLighting", false)
     end
     wait()
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
@@ -6694,10 +6713,20 @@
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PublicScriptsOnRobloxExploiting/refs/heads/main/GraphicsEnhancer.lua"))()
         else
             getgenv().graphics_upper = false
+            wait()
+            getgenv().graphics_upper = false
+            wait(0.1)
             resetLightingSettings()
         end
     end,})
-
+    wait(0.1)
+    if getgenv().graphics_upper or getgenv().graphics_upper == true then
+        getgenv().graphics_upper = false
+        getgenv().GraphicsEnhancer:Set(false)
+        wait(0.3)
+        resetLightingSettings()
+    end
+    wait()
     getgenv().CtrlClickTP = Tab16:CreateToggle({
     Name = "Ctrl Click-TP (Hold CTRL and Click)",
     CurrentValue = false,
@@ -6959,16 +6988,16 @@
         end
     end,})
     wait()
+    local UserInputService = getgenv().UserInputService
+
     local running = false
     local fKey = Enum.KeyCode.Z
-    local lastKey = false
-
     local speed = 1
-    local slider
     local distSlider = 3
     local conn
     local heartConn
     wait()
+
     local function stop()
         getgenv().loaded_face_bang = false
         if conn then
@@ -6983,9 +7012,7 @@
     end
 
     local function fuck()
-        if running then
-            return
-        end
+        if running then return end
         running = true
 
         local plr = getgenv().LocalPlayer
@@ -7015,7 +7042,6 @@
 
         hum.PlatformStand = true
         local head = closest.Character:FindFirstChild("Head")
-
         local init = true
         local out = true
         local min = -0.9
@@ -7064,19 +7090,24 @@
             end
         end)
     end
+
     wait()
     if heartConn then
         heartConn:Disconnect()
     end
+
+    local function modify_key(newKey)
+        fKey = newKey
+    end
+
     getgenv().faceBangScript = Tab16:CreateToggle({
-    Name = "Face F**k Script (Hold Z)",
+    Name = "Face F**k Script (Press Key)",
     CurrentValue = false,
     Flag = "FaceFuckingToggle",
     Callback = function(face_Bang_Animation)
-        local enabled = false
-        enabled = face_Bang_Animation
+        local enabled = face_Bang_Animation
 
-        if getgenv().loaded_face_bang or getgenv().loaded_face_bang == true then
+        if getgenv().loaded_face_bang then
             getgenv().loaded_face_bang = false
             wait()
             if heartConn then
@@ -7090,22 +7121,6 @@
             if heartConn then
                 heartConn:Disconnect()
             end
-
-            heartConn = getgenv().RunService.Heartbeat:Connect(function()
-                if not enabled then
-                    return
-                end
-
-                local key = getgenv().UserInputService:IsKeyDown(fKey)
-
-                if key and not lastKey and not running then
-                    fuck()
-                elseif not key and lastKey and running then
-                    stop()
-                end
-
-                lastKey = key
-            end)
         end
 
         if enabled then
@@ -7115,20 +7130,16 @@
                 heartConn:Disconnect()
             end
 
-            heartConn = getgenv().RunService.Heartbeat:Connect(function()
-                if not enabled then
-                    return
-                end
-
-                local key = getgenv().UserInputService:IsKeyDown(fKey)
-
-                if key and not lastKey and not running then
+            heartConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if not gameProcessed and input.KeyCode == fKey then
                     fuck()
-                elseif not key and lastKey and running then
+                end
+            end)
+            task.wait()
+            UserInputService.InputEnded:Connect(function(input, gameProcessed)
+                if not gameProcessed and input.KeyCode == fKey then
                     stop()
                 end
-
-                lastKey = key
             end)
         else
             getgenv().loaded_face_bang = false
@@ -7138,6 +7149,33 @@
                 heartConn = nil
             end
             stop()
+        end
+    end,})
+
+    getgenv().Change_Face_Bang_Keybind = Tab16:CreateKeybind({
+    Name = "Face F**k Keybind",
+    CurrentKeybind = "Z",
+    HoldToInteract = false,
+    Flag = "faceBangingKeybind",
+    Callback = function(new_face_bang_keycode)
+        if not new_face_bang_keycode or new_face_bang_keycode == "" then
+            new_face_bang_keycode = getgenv().Change_Face_Bang_Keybind.CurrentKeybind
+            if not new_face_bang_keycode then
+                return warn("No valid keybind found.")
+            end
+        end
+
+        if typeof(new_face_bang_keycode) == "EnumItem" then
+            fKey = new_face_bang_keycode
+        elseif typeof(new_face_bang_keycode) == "string" then
+            local foundKey = Enum.KeyCode[new_face_bang_keycode:upper()]
+            if foundKey then
+                fKey = foundKey
+            else
+                warn("Invalid keybind:", new_face_bang_keycode)
+            end
+        else
+            warn("Unexpected keybind type:", typeof(new_face_bang_keycode))
         end
     end,})
 
@@ -10360,7 +10398,7 @@
         getgenv().fireworksToggle:Set(false)
         getgenv().setFireWorksOn = false
     end
-
+    wait()
     getgenv().NightTimeButton = Tab9:CreateButton({
     Name = "NightTime",
     Callback = function()
