@@ -443,7 +443,7 @@
         local vc_service = getgenv().VoiceChatService
         
         local reconnecting = false
-        local retryDuration = 4
+        local retryDuration = 7
         local maxAttempts = 500
         
         local function unsuspend()
