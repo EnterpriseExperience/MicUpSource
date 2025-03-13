@@ -442,8 +442,8 @@
         local vc_internal = getgenv().VoiceChatInternal
         local vc_service = getgenv().VoiceChatService
         local reconnecting = false
-        local retry_time = 7
-        local maximum_attempts = 5
+        local retry_time = 3
+        local maximum_attempts = 500
         local last_prompted_attempt = os.time()
         local maximum_cooldown = 3
         
