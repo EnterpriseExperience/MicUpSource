@@ -445,7 +445,7 @@
         local retry_time = 7
         local maximum_attempts = 5
         local last_prompted_attempt = os.time()
-        local maximum_cooldown = 30
+        local maximum_cooldown = 3
         
         local function unsuspend()
             if reconnecting then return warn("Voice Chat Is Still Reconnecting.") end
