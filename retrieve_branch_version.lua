@@ -433,49 +433,50 @@
 
     local vc_inter = getgenv().VoiceChatInternal
     local vc_service = getgenv().VoiceChatService
-
+    
     if getgenv().voiceChat_Check then
         warn("Voice Chat already initialized.")
     else
         getgenv().voiceChat_Check = true 
-
+    
         local vc_internal = getgenv().VoiceChatInternal
         local vc_service = getgenv().VoiceChatService
-        
         local reconnecting = false
-        local retryDuration = 7
-        local maxAttempts = 500
+        local retry_time = 7
+        local maximum_attempts = 5
+        local last_prompted_attempt = os.time()
+        local maximum_cooldown = 30
         
         local function unsuspend()
             if reconnecting then return warn("Voice Chat Is Still Reconnecting.") end
+            if os.time() - last_prompted_attempt < maximum_cooldown then
+                return warn("Cooldown active. Please wait before retrying.")
+            end
+            
             reconnecting = true
-        
+            last_prompted_attempt = os.time()
             local attempts = 0
-            while attempts < maxAttempts do
+            
+            while attempts < maximum_attempts do
                 local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
                 local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
                 
                 print("Attempting to reconnect to voice chat... Attempt:", attempts + 1)
                 wait()
                 local success = vc_internal:JoinByGroupIdToken("", false, true)
-
+    
                 if success then
-                    print("Bypassed Voice Chat.")
+                    reconnecting = false
+                    return
                 else
                     warn("Unable to properly Bypass Voice Chat.")
                 end
-                wait(0.5)
-                if vc_internal.StateChanged ~= Enum.VoiceChatState.Ended then
-                    print("Successfully reconnected to voice chat!")
-                    reconnecting = false
-                    return 
-                end
-        
+                
                 attempts = attempts + 1
-                wait(retryDuration)
+                wait(retry_time)
             end
-        
-            warn("Failed to reconnect after " .. maxAttempts .. " attempts.")
+            
+            warn("Failed to reconnect after " .. maximum_attempts .. " attempts. Entering cooldown.")
             reconnecting = false
         end
         
@@ -488,12 +489,15 @@
         
         vc_internal.StateChanged:Connect(onVoiceChatStateChanged)
     end
-
+    
     if vc_inter.StateChanged == Enum.VoiceChatState.Ended then
-        sendNotification("Alert!", "You are suspended, attempting to reconnect you...", 5)
+        if getgenv().notify then
+            getgenv().notify("Alert!", "You are suspended, attempting to reconnect you...", 5)
+        else
+            warn("[Alert-Warning-Box]: You are suspended, attempting to reconnect to Voice Chat...")
+        end
         task.wait(.2)
         local success = vc_internal:JoinByGroupIdToken("", false, true)
-
         if success then
             print("Bypassed Voice Chat.")
         else
@@ -1126,7 +1130,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.4 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.6 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -1152,7 +1156,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.4 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.6 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -8966,12 +8970,14 @@
     getgenv().GetFakeChatGUI = Tab4:CreateButton({
     Name = "Fake Chat GUI",
     Callback = function()
-        if not getgenv().FakeChat_Loaded then
+        if getgenv().FakeChat_Loaded then
             return getgenv().notify("Failure", "Fake Chat GUI has already been loaded!", 5)
-        else
+        elseif getgenv().FakeChat_Loaded == false then
             loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/LmaoBruh.lua')))()
-            waut(0.1)
+            wait(0.1)
             getgenv().FakeChat_Loaded = true
+        else
+            warn("Unknown operation/nil or bad call occurred.")
         end
     end,})
 
