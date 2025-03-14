@@ -22,7 +22,7 @@
         Wicked Popular, Bold, Stylish,
         Rthro [default Roblox Animation package]
     --]]
-    wait(0.2)
+    wait(1)
     local function getExecutor()
         local name
         if identifyexecutor then
@@ -299,10 +299,61 @@
         wait()
         insert_id_asset('126578094071541', game:GetService("Workspace"))
         wait()
+        insert_id_asset('76940250202002', game:GetService("Workspace"))
+        wait()
+        insert_id_asset('108255747072763', game:GetService("Workspace"))
+        wait(1)
+        local PrisonFences = getgenv().Workspace:FindFirstChild("Prison_Life") and getgenv().Workspace.Prison_Life:FindFirstChild("Prison_Fences")
+        wait()
+        local function take_hit(hit)
+            if not getgenv().FenceDamageEnabled then return end
+            wait()
+            if hit and hit.Parent then
+                if hit.Parent == getgenv().Character or hit.Parent:FindFirstChild("Humanoid") == getgenv().Humanoid then
+                    getgenv().Humanoid:TakeDamage(10)
+                end
+            end
+        end
+
+        local function fence_damaging(state)
+            if state then
+                if not getgenv().Connection then
+                    getgenv().FenceDamageEnabled = true
+                    getgenv().Connection = {}
+                    
+                    for _, model in ipairs(PrisonFences:GetChildren()) do
+                        if model:IsA("Model") then
+                            for _, part in ipairs(model:GetDescendants()) do
+                                if part:IsA("BasePart") then
+                                    local conn = part.Touched:Connect(take_hit)
+                                    table.insert(getgenv().Connection, conn)
+                                end
+                            end
+                        end
+                    end
+                end
+            else
+                if getgenv().Connection then
+                    for _, conn in ipairs(getgenv().Connection) do
+                        conn:Disconnect()
+                        conn = nil
+                    end
+                    getgenv().Connection = nil
+                    getgenv().FenceDamageEnabled = false
+                end
+            end
+        end
+
+        fence_damaging(true)
+        wait()
+        getgenv().ToggleFenceDamage = toggleFenceDamage
+        wait()
         getgenv().maps_loaded = true
     else
         warn("Maps have already been loaded.")
     end
+    wait(0.2)
+    
     wait(0.3)
     -- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
     getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").Position
@@ -417,7 +468,7 @@
         end
     end
 
-    if getmetatable and setmetatable and hookmetamethod and hookfunction then
+    if getgenv().advanced_workaround_method == false and getmetatable and setmetatable and hookmetamethod and hookfunction then
         print("Advanced exploit detected, using bypass method.")
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua'))()
         wait(0.1)
@@ -426,83 +477,24 @@
         wait(0.1)
         getgenv().advanced_workaround_method = true
         warn("No advanced level exploit detected, skipping..")
-    elseif getgenv().advanced_workaround_method or getgenv().advanced_workaround_method == true then
+    elseif getgenv().advanced_workaround_method == true then
         wait(0.1)
         warn("Advanced level exploit already reviewed and secured.")
     end
 
     local vc_inter = getgenv().VoiceChatInternal
     local vc_service = getgenv().VoiceChatService
-    
-    if getgenv().voiceChat_Check then
-        warn("Voice Chat already initialized.")
+
+    if getgenv().voicechat_check then
+        warn("voice chat already initialized.")
     else
-        getgenv().voiceChat_Check = true 
-    
-        local vc_internal = getgenv().VoiceChatInternal
-        local vc_service = getgenv().VoiceChatService
-        local reconnecting = false
-        local retry_time = 3
-        local maximum_attempts = 500
-        local last_prompted_attempt = os.time()
-        local maximum_cooldown = 3
-        
         local function unsuspend()
-            if reconnecting then return warn("Voice Chat Is Still Reconnecting.") end
-            if os.time() - last_prompted_attempt < maximum_cooldown then
-                return warn("Cooldown active. Please wait before retrying.")
-            end
-            
-            reconnecting = true
-            last_prompted_attempt = os.time()
-            local attempts = 0
-            
-            while attempts < maximum_attempts do
-                local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
-                local VoiceChatService = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
-                
-                print("Attempting to reconnect to voice chat... Attempt:", attempts + 1)
-                wait()
-                local success = vc_internal:JoinByGroupIdToken("", false, true)
-    
-                if success then
-                    reconnecting = false
-                    return
-                else
-                    warn("Unable to properly Bypass Voice Chat.")
-                end
-                
-                attempts = attempts + 1
-                wait(retry_time)
-            end
-            
-            warn("Failed to reconnect after " .. maximum_attempts .. " attempts. Entering cooldown.")
-            reconnecting = false
+            vc_inter:JoinByGroupIdToken("", false, true)
         end
-        
-        local function onVoiceChatStateChanged(_, newState)
-            if newState == Enum.VoiceChatState.Ended and not reconnecting then
-                print("Voice chat disconnected, attempting to reconnect...")
-                unsuspend()
-            end
-        end
-        
-        vc_internal.StateChanged:Connect(onVoiceChatStateChanged)
-    end
-    
-    if vc_inter.StateChanged == Enum.VoiceChatState.Ended then
-        if getgenv().notify then
-            getgenv().notify("Alert!", "You are suspended, attempting to reconnect you...", 5)
-        else
-            warn("[Alert-Warning-Box]: You are suspended, attempting to reconnect to Voice Chat...")
-        end
-        task.wait(.2)
-        local success = vc_internal:JoinByGroupIdToken("", false, true)
-        if success then
-            print("Bypassed Voice Chat.")
-        else
-            warn("Unable to properly Bypass Voice Chat.")
-        end
+
+        vc_inter.LocalPlayerModerated:Connect(unsuspend)
+        wait()
+        getgenv().voicechat_check = true
     end
     wait(0.2)
     -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
@@ -683,7 +675,7 @@
                     part.Reflectance = properties.Reflectance
                 end
             end
-        
+
             getgenv().OriginalMaterials = nil -- Don't notice a wait() in between? lol
         end
 
@@ -1130,7 +1122,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.6 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.7.3 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -1156,7 +1148,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.6.6 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.7.3 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -7230,6 +7222,19 @@
             wait()
                 reset_collide(false)
             end
+        elseif not getgenv().Character and noclip_toggle then
+            getgenv().noclipToggle:Set(false)
+            getgenv().ez_noclip_use = false
+            getgenv().ez_noclip_use = false
+            wait(0.5)
+            getgenv().Humanoid.WalkSpeed = 0
+            getgenv().HumanoidRootPart.Anchored = false
+            wait(0.7)
+            reset_collide(true)
+            wait(0.3)
+            getgenv().Humanoid:ChangeState(3)
+            wait(1)
+            getgenv().Humanoid.WalkSpeed = 16
         else
             getgenv().ez_noclip_use = false
             getgenv().ez_noclip_use = false
@@ -7248,7 +7253,7 @@
     if game.PlaceId == 135275461271957 or game.PlaceId == 78589782053833 then
         getgenv().PlayerGui:FindFirstChild("Notification"):Destroy()
     end
-
+    wait()
     getgenv().FlyNoclip = Tab16:CreateToggle({
     Name = "Noclip Toggle For Fly",
     CurrentValue = false,
@@ -7274,6 +7279,11 @@
             wait()
                 reset_collide(false)
             end
+        elseif not getgenv().Character and noclipToggleFly then
+            getgenv().FlyNoClip = false
+            getgenv().non_fly_use = false
+            getgenv().non_fly_use = false
+            reset_collide(true)
         else
             getgenv().non_fly_use = false
             getgenv().non_fly_use = false
@@ -7655,58 +7665,64 @@
             if #frames > flashbackLength * 60 then
                 table.remove(frames, 1)
             end
-        
-            table.insert(frames, {
-                humanoidRootPart.CFrame,
-                humanoidRootPart.Velocity,
-                humanoid:GetState(),
-                humanoid.PlatformStand
-            })
+
+            if getgenv().HumanoidRootPart then
+                table.insert(frames, {
+                    humanoidRootPart.CFrame,
+                    humanoidRootPart.Velocity,
+                    humanoid:GetState(),
+                    humanoid.PlatformStand
+                })
+            end
         end
         
         function flashback:Revert(character, humanoidRootPart, humanoid)
-            local frameCount = #frames
-            if frameCount == 0 then
-                self:Advance(character, humanoidRootPart, humanoid)
-                return
-            end
-        
-            for _ = 1, flashbackSpeed do
-                table.remove(frames, frameCount)
-                frameCount = frameCount - 1
-            end
-        
-            local lastFrame = frames[frameCount]
-            table.remove(frames, frameCount)
+            if getgenv().HumanoidRootPart and getgenv().Humanoid then
+                local frameCount = #frames
+                if frameCount == 0 then
+                    self:Advance(character, humanoidRootPart, humanoid)
+                    return
+                end
             
-            if lastFrame and lastFrame[1] then
-                humanoidRootPart.CFrame = lastFrame[1]
+                for _ = 1, flashbackSpeed do
+                    table.remove(frames, frameCount)
+                    frameCount = frameCount - 1
+                end
+            
+                local lastFrame = frames[frameCount]
+                table.remove(frames, frameCount)
+                
+                if lastFrame and lastFrame[1] then
+                    getgenv().HumanoidRootPart.CFrame = lastFrame[1]
+                end
+                wait(.3)
+                getgenv().HumanoidRootPart.Velocity = -lastFrame[2]
+                getgenv().Humanoid:ChangeState(lastFrame[3])
+                getgenv().Humanoid.PlatformStand = lastFrame[4]
             end
-            wait(.1)
-            humanoidRootPart.Velocity = -lastFrame[2]
-            humanoid:ChangeState(lastFrame[3])
-            humanoid.PlatformStand = lastFrame[4]
         end
         
         local function onRenderStep()
-            local character = getgenv().Character
-            local humanoidRootPart = getgenv().HumanoidRootPart
-            local humanoid = getgenv().Humanoid
+            if getgenv().HumanoidRootPart and getgenv().Humanoid then
+                local character = getgenv().Character
+                local humanoidRootPart = getgenv().HumanoidRootPart
+                local humanoid = getgenv().Humanoid
+                
+                if not key or typeof(key) ~= "EnumItem" then
+                    pcall(function()
+                        runService:UnbindFromRenderStep("FlashbackStep")
+                        getgenv().frames = nil
+                        getgenv().flashbacks_script = false
+                        getgenv().flashback = nil
+                    end)
+                    return getgenv().notify("Invalid Key!", "KeyCode seems to be invalid, try another one", 7)
+                end
             
-            if not key or typeof(key) ~= "EnumItem" then
-                pcall(function()
-                    runService:UnbindFromRenderStep("FlashbackStep")
-                    getgenv().frames = nil
-                    getgenv().flashbacks_script = false
-                    getgenv().flashback = nil
-                end)
-                return getgenv().notify("Invalid Key!", "KeyCode seems to be invalid, try another one", 7)
-            end
-        
-            if uis:IsKeyDown(key) then
-                flashback:Revert(character, humanoidRootPart, humanoid)
-            else
-                flashback:Advance(character, humanoidRootPart, humanoid)
+                if uis:IsKeyDown(key) then
+                    flashback:Revert(character, humanoidRootPart, humanoid)
+                else
+                    flashback:Advance(character, humanoidRootPart, humanoid)
+                end
             end
         end        
         
@@ -8705,6 +8721,7 @@
             
             local function createESP(player)
                 if player ~= LocalPlayer then
+                    wait(0.5)
                     local character = player.Character
                     if not character or not character:FindFirstChild("HumanoidRootPart") then return end
             
@@ -8735,7 +8752,7 @@
             end
             
             local function onCharacterAdded(player)
-                task.wait(1)
+                wait(1)
                 if getgenv().ESPEnabled then
                     createESP(player)
                 end
@@ -8743,22 +8760,26 @@
             
             local function onPlayerAdded(player)
                 player.CharacterAdded:Connect(function()
+                    wait(0.5)
                     onCharacterAdded(player)
                 end)
                 player.CharacterRemoving:Connect(function()
+                    wait(0.5)
                     removeESP(player)
                 end)
             end
             
             for _, player in ipairs(Players:GetPlayers()) do
                 if player ~= LocalPlayer then
+                    wait(0.5)
                     onPlayerAdded(player)
                     if player.Character then
+                        wait(0.5)
                         createESP(player)
                     end
                 end
             end
-            
+            wait()
             Players.PlayerAdded:Connect(onPlayerAdded)
             Players.PlayerRemoving:Connect(removeESP)
             
@@ -8794,73 +8815,70 @@
         end
     end,})
     wait()
-    local result_get = getgenv().otherFuncCheck(Other_Check)
-
-    if result_get == true then
+    if Drawing then
         getgenv().TracersToggleMain = Tab19:CreateToggle({
         Name = "Tracers",
         CurrentValue = false,
         Flag = "tracersOnActive",
         Callback = function(runTracersScript)
+            wait(1)
             if runTracersScript then
-                getgenv().TRACERS_ESP_ENABLED = true
-                getgenv().tracerLines = getgenv().tracerLines or {}
+                getgenv().tracers_esp_enabled = true
+                getgenv().tracer_lines = getgenv().tracer_lines or {}
 
-                local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+                local run_service = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
                 local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-                local workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-                local camera = workspace.CurrentCamera
+                local Workspace = getgenv().Workspace
+                local camera = Workspace.CurrentCamera
 
-                local function removeTracer(player)
-                    if getgenv().tracerLines[player] then
-                        if getgenv().tracerLines[player] then
-                            getgenv().tracerLines[player]:Remove()
-                        end
-                        getgenv().tracerLines[player] = nil
+                local function remove_tracer(player)
+                    if getgenv().tracer_lines[player] then
+                        getgenv().tracer_lines[player]:Remove()
+                        getgenv().tracer_lines[player] = nil
                     end
                 end
 
-                local function createTracer(player)
-                    if not getgenv().TRACERS_ESP_ENABLED then return end
+                local function create_tracer(player)
+                    if not getgenv().tracers_esp_enabled then return end
                     if not player.Character then return end
 
                     local char = player.Character
-                    local rootPart = char:FindFirstChild("HumanoidRootPart")
-                    if not rootPart then return end
+                    local root_part = char:FindFirstChild("HumanoidRootPart")
+                    if not root_part then return end
 
                     local tracer = Drawing.new("Line")
                     tracer.Thickness = 2
-                    tracer.Color = getgenv().color_for_esp_value
+                    tracer.Color = getgenv().color_for_esp_value or Color3.fromRGB(255, 0, 0)
                     tracer.Visible = false
 
-                    getgenv().tracerLines[player] = tracer
+                    getgenv().tracer_lines[player] = tracer
                 end
 
-                local function updateTracers()
-                    if not getgenv().TRACERS_ESP_ENABLED then
-                        for _, tracer in pairs(getgenv().tracerLines) do
+                local function update_tracers()
+                    if not getgenv().tracers_esp_enabled then
+                        for _, tracer in pairs(getgenv().tracer_lines) do
                             if tracer then tracer:Remove() end
                         end
-                        table.clear(getgenv().tracerLines)
-                        return
+                        table.clear(getgenv().tracer_lines)
+                        return 
                     end
-                
-                    for player, tracer in pairs(getgenv().tracerLines) do
+
+                    for player, tracer in pairs(getgenv().tracer_lines) do
                         local char = player.Character
-                        if char and char:FindFirstChild("HumanoidRootPart") then
-                            local rootPart = char.HumanoidRootPart
-                            local screenPos, onScreen = camera:WorldToViewportPoint(rootPart.Position)
-                
-                            if onScreen then
+                        if char and char:FindFirstChild("HumanoidRootPart") and player ~= players.LocalPlayer then
+                            local root_part = char.HumanoidRootPart
+                            local screen_pos, on_screen = camera:WorldToViewportPoint(root_part.Position)
+
+                            if on_screen then
                                 tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y)
-                                tracer.To = Vector2.new(screenPos.X, screenPos.Y)
+                                tracer.To = Vector2.new(screen_pos.X, screen_pos.Y)
                                 tracer.Visible = true
-                
+
                                 if getgenv().RAINBOW_MODE then
                                     local hue = tick() % 5 / 5
                                     tracer.Color = Color3.fromHSV(hue, 1, 1)
                                 else
-                                    tracer.Color = getgenv().color_for_esp_value
+                                    tracer.Color = getgenv().color_for_esp_value or Color3.fromRGB(255, 0, 0)
                                 end
                             else
                                 tracer.Visible = false
@@ -8871,76 +8889,232 @@
                     end
                 end
 
-                local function onPlayerAdded(player)
+                local function on_player_added(player)
                     player.CharacterAdded:Connect(function()
                         repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                        createTracer(player)
+                        create_tracer(player)
                     end)
                 end
 
                 for _, player in ipairs(players:GetPlayers()) do
                     if player ~= players.LocalPlayer then
-                        onPlayerAdded(player)
-                        if player.Character then createTracer(player) end
+                        on_player_added(player)
+                        if player.Character then create_tracer(player) end
                     end
-                end
-
-                getgenv().tracerPlayerAddedConnection = players.PlayerAdded:Connect(onPlayerAdded)
-                getgenv().tracerPlayerRemovingConnection = players.PlayerRemoving:Connect(removeTracer)
-
-                getgenv().tracerUpdateConnection = runService.RenderStepped:Connect(updateTracers)
-            else
-                getgenv().TRACERS_ESP_ENABLED = false
-
-                if getgenv().tracerLines then
-                    for _, tracer in pairs(getgenv().tracerLines) do
-                        if tracer then
-                            pcall(function()
-                                tracer.Visible = false
-                                tracer:Remove()
-                            end)
-                        end
-                    end
-                    table.clear(getgenv().tracerLines)
-                end
-
-                if getgenv().tracerLines then
-                    getgenv().tracerLines = nil
                 end
                 wait()
-                if getgenv().tracerUpdateConnection then
-                    pcall(function()
-                        getgenv().tracerUpdateConnection:Disconnect()
-                    end)
-                    getgenv().tracerUpdateConnection = nil
+                if getgenv().tracer_player_added_connection then
+                    getgenv().tracer_player_added_connection:Disconnect()
+                end
+                getgenv().tracer_player_added_connection = players.PlayerAdded:Connect(on_player_added)
+
+                if getgenv().tracer_player_removing_connection then
+                    getgenv().tracer_player_removing_connection:Disconnect()
+                end
+                getgenv().tracer_player_removing_connection = players.PlayerRemoving:Connect(remove_tracer)
+
+                if getgenv().tracer_update_connection then
+                    getgenv().tracer_update_connection:Disconnect()
+                end
+                getgenv().tracer_update_connection = run_service.RenderStepped:Connect(update_tracers)
+            else
+                wait(1.5)
+                local function disable_tracers()
+                    getgenv().tracers_esp_enabled = false
+
+                    if getgenv().tracer_update_connection then
+                        getgenv().tracer_update_connection:Disconnect()
+                        getgenv().tracer_update_connection = nil
+                    end
+
+                    if getgenv().tracer_player_added_connection then
+                        getgenv().tracer_player_added_connection:Disconnect()
+                        getgenv().tracer_player_added_connection = nil
+                    end
+
+                    if getgenv().tracer_player_removing_connection then
+                        getgenv().tracer_player_removing_connection:Disconnect()
+                        getgenv().tracer_player_removing_connection = nil
+                    end
+
+                    if getgenv().tracer_lines then
+                        for _, tracer in pairs(getgenv().tracer_lines) do
+                            if tracer then tracer:Remove() end
+                        end
+                        table.clear(getgenv().tracer_lines)
+                    end
+                end
+                task.wait()
+                disable_tracers()
+            end
+        end,})
+
+        getgenv().SkeletonESP_Drawing = Tab19:CreateToggle({
+        Name = "Skeleton",
+        CurrentValue = false,
+        Flag = "ToggleSkeletonESP",
+        Callback = function(ez_skelly_esp)
+            wait(1)
+            if ez_skelly_esp then
+                getgenv().skeleton_esp_enabled = true
+                getgenv().skeleton_lines = getgenv().skeleton_lines or {}
+
+                local run_service = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+                local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+                local camera = workspace.CurrentCamera
+    
+                local bone_connections = {
+                    {"Head", "UpperTorso"},
+                    {"UpperTorso", "LowerTorso"},
+                    {"LeftUpperArm", "LeftLowerArm"},
+                    {"LeftLowerArm", "LeftHand"},
+                    {"RightUpperArm", "RightLowerArm"},
+                    {"RightLowerArm", "RightHand"},
+                    {"LeftUpperLeg", "LeftLowerLeg"},
+                    {"LeftLowerLeg", "LeftFoot"},
+                    {"RightUpperLeg", "RightLowerLeg"},
+                    {"RightLowerLeg", "RightFoot"},
+                    {"UpperTorso", "LeftUpperArm"},
+                    {"UpperTorso", "RightUpperArm"},
+                    {"LowerTorso", "LeftUpperLeg"},
+                    {"LowerTorso", "RightUpperLeg"},
+                }
+
+                local function create_skeleton(player)
+                    if not getgenv().skeleton_esp_enabled then return end
+                    if not player.Character then return end
+                    wait(0.5)
+                    local char = player.Character
+                    local lines = {}
+
+                    for _, bone in ipairs(bone_connections) do
+                        local line = Drawing.new("Line")
+                        line.Thickness = 2
+                        line.Color = Color3.fromRGB(255, 0, 0)
+                        line.Visible = false
+                        lines[bone[1] .. "_" .. bone[2]] = line
+                    end
+
+                    getgenv().skeleton_lines[player] = lines
                 end
 
-                if getgenv().tracerPlayerAddedConnection then
-                    pcall(function()
-                        getgenv().tracerPlayerAddedConnection:Disconnect()
-                    end)
-                    getgenv().tracerPlayerAddedConnection = nil
+                local function remove_skeleton(player)
+                    if getgenv().skeleton_lines[player] then
+                        for _, line in pairs(getgenv().skeleton_lines[player]) do
+                            line:Remove()
+                        end
+                        getgenv().skeleton_lines[player] = nil
+                    end
                 end
 
-                if getgenv().tracerPlayerRemovingConnection then
-                    pcall(function()
-                        getgenv().tracerPlayerRemovingConnection:Disconnect()
+                local function update_skeletons()
+                    wait(0.5)
+                    if not getgenv().skeleton_esp_enabled then
+                        for _, skeleton in pairs(getgenv().skeleton_lines) do
+                            for _, line in pairs(skeleton) do
+                                line:Remove()
+                            end
+                        end
+                        table.clear(getgenv().skeleton_lines)
+                        return
+                    end
+
+                    for player, lines in pairs(getgenv().skeleton_lines) do
+                        local char = player.Character
+                        if char and char:FindFirstChild("HumanoidRootPart") and player ~= players.LocalPlayer then
+                            for _, bone in ipairs(bone_connections) do
+                                local part1, part2 = char:FindFirstChild(bone[1]), char:FindFirstChild(bone[2])
+                                if part1 and part2 then
+                                    wait(0.5)
+                                    local pos1, on_screen1 = camera:WorldToViewportPoint(part1.Position)
+                                    local pos2, on_screen2 = camera:WorldToViewportPoint(part2.Position)
+
+                                    local line = lines[bone[1] .. "_" .. bone[2]]
+                                    if on_screen1 and on_screen2 then
+                                        line.From = Vector2.new(pos1.X, pos1.Y)
+                                        line.To = Vector2.new(pos2.X, pos2.Y)
+                                        line.Visible = true
+
+                                        if getgenv().RAINBOW_MODE then
+                                            local hue = tick() % 5 / 5
+                                            line.Color = Color3.fromHSV(hue, 1, 1)
+                                        end
+                                    else
+                                        line.Visible = false
+                                    end
+                                end
+                            end
+                        else
+                            remove_skeleton(player)
+                        end
+                    end
+                end
+
+                local function on_player_added(player)
+                    player.CharacterAdded:Connect(function()
+                        repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        wait(0.5)
+                        create_skeleton(player)
                     end)
-                    getgenv().tracerPlayerRemovingConnection = nil
                 end
-                wait(0.4)
-                local result_fullscreen = UserSettings():GetService("UserGameSettings"):InFullScreen()
-                local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
-                
-                if result_fullscreen == false then
-                    GuiService:ToggleFullscreen()
-                    wait(1.2)
-                    GuiService:ToggleFullscreen()
+
+                for _, player in ipairs(players:GetPlayers()) do
+                    if player ~= players.LocalPlayer then
+                        wait(0.5)
+                        on_player_added(player)
+                        if player.Character then wait(0.5) create_skeleton(player) end
+                    end
                 end
+
+                if getgenv().skeleton_player_added_connection then
+                    getgenv().skeleton_player_added_connection:Disconnect()
+                end
+                getgenv().skeleton_player_added_connection = players.PlayerAdded:Connect(on_player_added)
+
+                if getgenv().skeleton_player_removing_connection then
+                    getgenv().skeleton_player_removing_connection:Disconnect()
+                end
+                getgenv().skeleton_player_removing_connection = players.PlayerRemoving:Connect(remove_skeleton)
+
+                if getgenv().skeleton_update_connection then
+                    getgenv().skeleton_update_connection:Disconnect()
+                end
+                getgenv().skeleton_update_connection = run_service.RenderStepped:Connect(update_skeletons)
+            else
+                wait(1.5)
+                local function disable_skeleton_esp()
+                    getgenv().skeleton_esp_enabled = false
+
+                    if getgenv().skeleton_update_connection then
+                        getgenv().skeleton_update_connection:Disconnect()
+                        getgenv().skeleton_update_connection = nil
+                    end
+
+                    if getgenv().skeleton_player_added_connection then
+                        getgenv().skeleton_player_added_connection:Disconnect()
+                        getgenv().skeleton_player_added_connection = nil
+                    end
+
+                    if getgenv().skeleton_player_removing_connection then
+                        getgenv().skeleton_player_removing_connection:Disconnect()
+                        getgenv().skeleton_player_removing_connection = nil
+                    end
+
+                    if getgenv().skeleton_lines then
+                        for _, lines in pairs(getgenv().skeleton_lines) do
+                            for _, line in pairs(lines) do
+                                line:Remove()
+                            end
+                        end
+                        table.clear(getgenv().skeleton_lines)
+                    end
+                end
+                task.wait()
+                disable_skeleton_esp()
             end
         end,})
     else
-        warn("❌ - Drawing - ❌ | Unsupported, Tracer's is not able to load due to 'Drawing' being unsupported.")
+        warn("❌ - Drawing - ❌ | Unsupported, ESP is not able to load due to 'Drawing' being unsupported or unavailable.")
     end
     wait()
     getgenv().RainbowMode = Tab19:CreateToggle({
@@ -9419,10 +9593,50 @@
         Callback = function()
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
-                task.wait(.4)
-                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 1190, 0))
+                task.wait(.3)
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 695, 0))
             else
-                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 1190, 0))
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 695, 0))
+            end
+        end,})
+
+        getgenv().Prison_Life_Map_TP = Tab10:CreateButton({
+        Name = "TP To Prison Life (Only for Zacks Easy Hub users)",
+        Callback = function()
+            local Workspace = getgenv().Workspace
+            local Prison_Life_Map = Workspace:FindFirstChild("Prison_Life")
+            if not Prison_Life_Map then
+                return getgenv().notify("Failure", "Did not find allocated Prison_Life Map.", 5)
+            end
+            local Prison_Spawn = Prison_Life_Map:FindFirstChild("Prison_spawn")
+            if not Prison_Spawn then
+                return getgenv().notify("Failure", "Did not find allocated Prison_Spawn Part.", 5)
+            end
+            local Nexus_Prison_Spawn = Prison_Spawn:FindFirstChild("Nexus")
+            if not Nexus_Prison_Spawn then
+                return getgenv().notify("Failure", "Did not find allocated Nexus Script Spawn.", 5)
+            end
+            wait()
+            local Main_Script_Spawn = Nexus_Prison_Spawn:FindFirstChild("Script_Spawn")
+
+            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
+                getgenv().Humanoid:ChangeState(3)
+                task.wait(.3)
+                getgenv().HumanoidRootPart.CFrame = Main_Script_Spawn.CFrame
+            else
+                getgenv().HumanoidRootPart.CFrame = Main_Script_Spawn.CFrame
+            end
+        end,})
+
+        getgenv().Teleport_To_VIBE_NYC_Map = Tab10:CreateButton({
+        Name = "TP To VIBE NYC Map (Only for Zacks Easy Hub users)",
+        Callback = function()
+            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
+                getgenv().Humanoid:ChangeState(3)
+                task.wait(.3)
+                getgenv().HumanoidRootPart.CFrame = CFrame.new(-6959.81445, 3374.51855, -8968.93848)
+            else
+                getgenv().HumanoidRootPart.CFrame = CFrame.new(-6959.81445, 3374.51855, -8968.93848)
             end
         end,})
 
@@ -12640,6 +12854,16 @@
             return "Zombie"
         end
     end
+
+    getgenv().CopyDiscordInviteLink = Tab20:CreateButton({
+    Name = "Copy Discord Invite Link",
+    Callback = function()
+        if getgenv().AllClipboards then
+            getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
+        else
+            return getgenv().notify("Discord:", "https://discord.gg/VJh3kkYzBn", 5)
+        end
+    end,})
 
     getgenv().DeleteYourCustomConfigurationZEH = Tab20:CreateButton({
     Name = "Delete Easy Configuration",
