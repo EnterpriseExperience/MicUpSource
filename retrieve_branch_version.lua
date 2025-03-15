@@ -302,7 +302,7 @@
         --[[insert_id_asset('76940250202002', game:GetService("Workspace"))
         wait()
         insert_id_asset('108255747072763', game:GetService("Workspace"))--]]
-        wait(1)
+        --[[wait(1)
         local PrisonFences = getgenv().Workspace:FindFirstChild("Prison_Life") and getgenv().Workspace.Prison_Life:FindFirstChild("Prison_Fences")
         wait()
         local function take_hit(hit)
@@ -346,7 +346,7 @@
 
         fence_damaging(true)
         wait()
-        getgenv().ToggleFenceDamage = toggleFenceDamage
+        getgenv().ToggleFenceDamage = toggleFenceDamage--]]
         wait()
         getgenv().maps_loaded = true
     else
