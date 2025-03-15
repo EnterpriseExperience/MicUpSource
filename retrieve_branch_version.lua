@@ -489,9 +489,11 @@
         warn("voice chat already initialized.")
     else
         local function unsuspend()
+            wait(3)
             vc_inter:JoinByGroupIdToken("", false, true)
+            task.wait(0.5)
         end
-
+        wait(1)
         vc_inter.LocalPlayerModerated:Connect(unsuspend)
         wait()
         getgenv().voicechat_check = true
@@ -11547,7 +11549,7 @@
         })
     end
 
-    create_Button(CatWalkGlamAnim, "[NEW] 'Catwalk Glam' Animation Package", function()
+    create_Button(CatWalkGlamAnim, "'Catwalk Glam' Animation Package", function()
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
@@ -11576,7 +11578,7 @@
         Animate.Disabled = false
     end)
 
-    create_Button(WickedPopularAnim, "[NEW] 'Wicked Popular' Animation Package", function()
+    create_Button(WickedPopularAnim, "'Wicked Popular' Animation Package", function()
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
@@ -11601,6 +11603,43 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=131326830509784"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=121152442762481"
+        task.wait()
+        Animate.Disabled = false
+    end)
+
+    create_Button(RThroAnim, "RThro Animation Package", function()
+        local player = getgenv().LocalPlayer
+        local character = getgenv().Character
+        local Animate = character:WaitForChild("Animate")
+
+        Rthro_Idle_1 = "10921259953"
+        Rthro_Idle_2 = "10921258489"
+        Rthro_Walk = "10921269718"
+        Rthro_Run = "10921261968"
+        Rthro_Jump = "10921263860"
+        Rthro_Climb = "10921257536"
+        Rthro_Fall = "10921262864"
+
+        if not Animate then return end
+
+        Animate.Disabled = true
+        task.wait()
+        Animate.Disabled = false
+
+        local humanoid = getgenv().Humanoid
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+        end
+
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Idle_1
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Idle_1
+        Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Walk
+        Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Run
+        Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Jump
+        Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Climb
+        Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Fall
         task.wait()
         Animate.Disabled = false
     end)
