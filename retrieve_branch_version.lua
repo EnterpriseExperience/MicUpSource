@@ -299,9 +299,9 @@
         wait()
         insert_id_asset('126578094071541', game:GetService("Workspace"))
         wait()
-        insert_id_asset('76940250202002', game:GetService("Workspace"))
+        --[[insert_id_asset('76940250202002', game:GetService("Workspace"))
         wait()
-        insert_id_asset('108255747072763', game:GetService("Workspace"))
+        insert_id_asset('108255747072763', game:GetService("Workspace"))--]]
         wait(1)
         local PrisonFences = getgenv().Workspace:FindFirstChild("Prison_Life") and getgenv().Workspace.Prison_Life:FindFirstChild("Prison_Fences")
         wait()
@@ -1122,7 +1122,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.7.3 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.7.9 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -1148,7 +1148,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.7.3 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.7.9 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -8111,8 +8111,8 @@
                 if fireclickdetector then
                     getgenv().alrLike = true
                     while getgenv().alrLike == true do
-                    wait(0.6)
-                        fireclickdetector(Click_Detector_Input, 999)
+                    wait(0.5)
+                        fireclickdetector(Click_Detector_Input)
                     end
                 else
                     getgenv().alrLike = false
@@ -8122,11 +8122,9 @@
                 getgenv().alrLike = false
                 wait(0.3)
                 getgenv().alrLike = false
-                wait(0.4)
-                getgenv().alrLike = false
             end
         end,})
-
+        wait()
         if getgenv().alrLike or getgenv().alrLike == true then
             getgenv().alrLike = false
             getgenv().AutoLikingPlayer:Set(false)
@@ -12763,8 +12761,6 @@
                 local root = getgenv().HumanoidRootPart
                 hum:ChangeState(0)
                 root.Velocity = root.CFrame.LookVector * 30
-                wait(2)
-                hum:ChangeState(2)
             end
 
             getgenv().Trip_Connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
@@ -12804,13 +12800,12 @@
         local configTable = {}
 
         local configKeys = {
-            "System_Broken_Title", "Huge_Baseplate", "Animation_Fall", "Mute_Boomboxes_Cellmates_VC_Game_Setting",
-            "System_Broken", "Emote_Keybinds", "Animation_Climb", "Death_On_Load",
-            "Mute_Music_Volume_Cellmates_VC_Game_Setting", "Custom_Animation_Package_System",
-            "Infinite_Yield_Premium", "System_Broken_Text_Title", "Animation_Idle", "Old_Materials",
-            "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics", "Mute_Sound_Effects_Cellmates_VC_Game_Setting",
-            "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", "Script_Clock_Time_GUI",
-            "Title_Toggle_UI", "Animation_Walk", "keep_tp_tool", "AntiAFK"
+            "Huge_Baseplate", "Animation_Fall", "System_Broken", "Emote_Keybinds",
+            "Animation_Climb", "Death_On_Load", "Custom_Animation_Package_System",
+            "Infinite_Yield_Premium", "Animation_Idle", "Old_Materials",
+            "Animation_Jump", "Anti_Suspend_VC", "Performance_Statistics",
+            "Fully_Loaded_Message", "Fully_Loaded_Messaging", "Animation_Run", 
+            "Script_Clock_Time_GUI", "Animation_Walk", "keep_tp_tool", "AntiAFK"
         }
 
         for _, key in ipairs(configKeys) do
@@ -12854,7 +12849,7 @@
             return "Zombie"
         end
     end
-
+    wait()
     getgenv().CopyDiscordInviteLink = Tab20:CreateButton({
     Name = "Copy Discord Invite Link",
     Callback = function()
@@ -12877,7 +12872,7 @@
         load_ez_Config()
     end,})
 
-    --[[getgenv().CustomAnimPackageSetting = Tab20:CreateToggle({
+    getgenv().CustomAnimPackageSetting = Tab20:CreateToggle({
     Name = "Use Custom Animation Package System",
     CurrentValue = readConfigValue("Custom_Animation_Package_System") or false,
     Flag = "TurningOnTheAnimationPackagesCustom",
@@ -12885,7 +12880,14 @@
         getgenv().using_custom_animation_packages = animPackageCustoms
         getgenv().Easies_Configuration["Custom_Animation_Package_System"] = animPackageCustoms and "on" or "off"
     end,})
-    
+
+    idle_anim_selected = nil
+    walk_anim_selected = nil
+    run_anim_selected = nil
+    jump_anim_selected = nil
+    fall_anim_selected = nil
+    climb_anim_selected = nil
+    wait()
     getgenv().IdleAnimToSet = Tab20:CreateDropdown({
     Name = "Idle Animation",
     Options = {"Zombie", "Catwalk Glam", "Elder", "Cartoony", "Adidas", "Werewolf", "Vampire", "Astronaut", "Superhero", "Knight", "Mage", "Ninja", "Toy", "NFL", "No Boundaries", "Oldschool", "Pirate", "Levitation", "Bubbly", "Robot", "Wicked Popular", "Bold", "Stylish", "Rthro"},
@@ -12894,13 +12896,11 @@
     Flag = "IdleAnimDropdownList",
     Callback = function(dropSelectedForAnim)
         if getgenv().using_custom_animation_packages or getgenv().using_custom_animation_packages == true then
-            print("Dropdown Selection Type:", typeof(dropSelectedForAnim))
-            
             if typeof(dropSelectedForAnim) == "table" then
                 dropSelectedForAnim = dropSelectedForAnim[1]
             end
-
-            getgenv().Easies_Configuration["Animation_Idle"] = tostring(dropSelectedForAnim)
+            wait()
+            idle_anim_selected = dropSelectedForAnim
         else
             getgenv().notify("Failure", "Use Custom Animation Packages is not enabled.", 6)
         end
@@ -13155,8 +13155,8 @@
     Callback = function(TPToolBackpack)
         getgenv().modifiedTPToolBruh = TPToolBackpack
         getgenv().Easies_Configuration["keep_tp_tool"] = TPToolBackpack and "on" or "off"
-    end,})--]]
-
+    end,})
+    wait()
     getgenv().EmoteSystemEnabled = false
     wait()
     getgenv().ToggleEmoteKeybinds = Tab20:CreateToggle({
@@ -13170,6 +13170,8 @@
             getgenv().EmoteSystemEnabled = false
         end
     end,})
+    wait()
+
     wait(0.3)
     getgenv().EmoteSystemEnabled = false
     wait()
@@ -13210,22 +13212,21 @@
     Flag = "ToggleAbilityFakeOut",
     Callback = function(isFakeOutEnabled)
         if isFakeOutEnabled then
-            local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-            local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-            local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
-
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            local Humanoid = Character:FindFirstChildOfClass("Humanoid")
-            local RootPart = Character:FindFirstChild("HumanoidRootPart")
-
+            local Players = getgenv().Players
+            local RunService = getgenv().RunService
+            local UserInputService = getgenv().UserInputService
+            local LocalPlayer = getgenv().LocalPlayer
+            local Character = getgenv().Character
+            local Humanoid = getgenv().Humanoid
+            local RootPart = getgenv().HumanoidRootPart
+            task.wait()
             getgenv().FakeOut_Enabled = true
             wait(0.1)
             if getgenv().fake_out then
                 getgenv().notify("Passed", "Function 'fake_out' already exists.", 5)
             else
                 getgenv().fake_out = function()
-                    wait(0.4)
+                    wait(0.5)
                     OrgDestroyHeight = workspace.FallenPartsDestroyHeight
                     wait(0.1)
                     local root = getgenv().HumanoidRootPart
@@ -13244,6 +13245,7 @@
                 local keybind = Trip_Settings.Keybind_FakeOut
                 
                 if input.KeyCode == keybind then
+                    wait(2.5)
                     getgenv().fake_out()
                 end
             end)
