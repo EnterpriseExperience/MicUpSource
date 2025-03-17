@@ -79,6 +79,7 @@
     local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"}
     local specialPlayer = "alt_acc9996"
     local support_team = {"Ixgale7530", "starsorbitspace", "goldgoldgoldBlazn", "euigwerergre", "o7rssuk"}
+    local all_beta_testers = {"Chick7nn", "LIL_RT288", "CrimGameHolder"}
 
     local function isWatchedPlayer(playerName)
         for _, name in ipairs(watchedPlayers) do
@@ -98,44 +99,115 @@
         return false
     end
 
+    local function beta_tester(player)
+        for _, name in ipairs(all_beta_testers) do
+            if player == name then
+                return true
+            end
+        end
+        return false
+    end
+
+    local function edit_naming(player, new_name, type)
+        if type == "Username" then
+            local function update_name(character)
+                task.wait(0.5)
+                player.Name = new_name
+            end
+
+            if player.Character then
+                update_name(player)
+            end
+        elseif type == "DisplayName" then
+            local function update_display(character)
+                task.wait(0.5)
+                player.DisplayName = new_name
+            end
+
+            if player.Character then
+                update_display(player)
+            end
+        else
+            return warn("Unknown type provided.")
+        end
+    end
+    wait()
     local function make_title(player, text, color, transparency)
         local function applyToCharacter(character)
             task.wait(0.5)
-            local head = character:FindFirstChild("Head")
-            if not head then return end
-            if head:FindFirstChild("ZacksEasyBillboard") then return end
+            if color == Color3.fromRGB(255, 255, 255) then
+                local head = character:FindFirstChild("Head")
+                if not head then return end
+                if head:FindFirstChild("ZacksEasyBillboard") then return end
 
-            local billboardGui = Instance.new("BillboardGui")
-            billboardGui.Name = "ZacksEasyBillboard"
-            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
-            billboardGui.MaxDistance = math.huge
-            billboardGui.LightInfluence = 0
-            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
-            billboardGui.AlwaysOnTop = true
-            billboardGui.Parent = head
+                local billboardGui = Instance.new("BillboardGui")
+                billboardGui.Name = "ZacksEasyBillboard"
+                billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+                billboardGui.MaxDistance = math.huge
+                billboardGui.LightInfluence = 0
+                billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+                billboardGui.AlwaysOnTop = true
+                billboardGui.Parent = head
 
-            local background = Instance.new("Frame")
-            background.Size = UDim2.new(1, 0, 1, 0)
-            background.BackgroundTransparency = transparency
-            background.BackgroundColor3 = color
-            background.BorderSizePixel = 0
-            background.Parent = billboardGui
+                local background = Instance.new("Frame")
+                background.Size = UDim2.new(1, 0, 1, 0)
+                background.BackgroundTransparency = transparency
+                background.BackgroundColor3 = color
+                background.BorderSizePixel = 0
+                background.Parent = billboardGui
 
-            local uiCorner = Instance.new("UICorner")
-            uiCorner.CornerRadius = UDim.new(0.3, 0)
-            uiCorner.Parent = background
+                local uiCorner = Instance.new("UICorner")
+                uiCorner.CornerRadius = UDim.new(0.3, 0)
+                uiCorner.Parent = background
 
-            local textLabel = Instance.new("TextLabel")
-            textLabel.Size = UDim2.new(1, -10, 1, -10)
-            textLabel.Position = UDim2.new(0, 5, 0, 5)
-            textLabel.BackgroundTransparency = 1
-            textLabel.TextScaled = true
-            textLabel.Font = Enum.Font.GothamBold
-            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            textLabel.TextStrokeTransparency = 0
-            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-            textLabel.Text = text
-            textLabel.Parent = background
+                local textLabel = Instance.new("TextLabel")
+                textLabel.Size = UDim2.new(1, -10, 1, -10)
+                textLabel.Position = UDim2.new(0, 5, 0, 5)
+                textLabel.BackgroundTransparency = 1
+                textLabel.TextScaled = true
+                textLabel.Font = Enum.Font.GothamBold
+                textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+                textLabel.TextStrokeTransparency = 0
+                textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+                textLabel.Text = text
+                textLabel.Parent = background
+            else
+                local head = character:FindFirstChild("Head")
+                if not head then return end
+                if head:FindFirstChild("ZacksEasyBillboard") then return end
+
+                local billboardGui = Instance.new("BillboardGui")
+                billboardGui.Name = "ZacksEasyBillboard"
+                billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+                billboardGui.MaxDistance = math.huge
+                billboardGui.LightInfluence = 0
+                billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+                billboardGui.AlwaysOnTop = true
+                billboardGui.Parent = head
+
+                local background = Instance.new("Frame")
+                background.Size = UDim2.new(1, 0, 1, 0)
+                background.BackgroundTransparency = transparency
+                background.BackgroundColor3 = color
+                background.BorderSizePixel = 0
+                background.Parent = billboardGui
+
+                local uiCorner = Instance.new("UICorner")
+                uiCorner.CornerRadius = UDim.new(0.3, 0)
+                uiCorner.Parent = background
+
+                local textLabel = Instance.new("TextLabel")
+                textLabel.Size = UDim2.new(1, -10, 1, -10)
+                textLabel.Position = UDim2.new(0, 5, 0, 5)
+                textLabel.BackgroundTransparency = 1
+                textLabel.TextScaled = true
+                textLabel.Font = Enum.Font.GothamBold
+                textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                textLabel.TextStrokeTransparency = 0
+                textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+                textLabel.Text = text
+                textLabel.Parent = background
+            end
         end
 
         if player.Character then
@@ -144,23 +216,26 @@
         player.CharacterAdded:Connect(applyToCharacter)
     end
 
-    local function assignTitle(player)
+    local function assign(player)
         if isWatchedPlayer(player.Name) then
             make_title(player, "👑 Zacks Easy Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
+            edit_naming(player, "discord.gg/zackseasyhub", "DisplayName")
         elseif player.Name == specialPlayer then
             make_title(player, "👧 Zacks Easy Hub | Daughter 👧", Color3.fromRGB(89, 34, 89), 0.3)
         elseif isSupportTeam(player.Name) then
             make_title(player, "⚒️ Zacks Easy Hub | Support ⚒️", Color3.fromRGB(52, 142, 64), 0.1)
+        elseif beta_tester(player.Name) then
+            make_title(player, "✨ Zacks Easy Hub | Beta Tester ✨", Color3.fromRGB(255, 255, 255), 0.1)
         end
     end
 
     for _, player in ipairs(Players:GetPlayers()) do
-        assignTitle(player)
+        assign(player)
     end
 
     Players.PlayerAdded:Connect(function(player)
         task.wait(1)
-        assignTitle(player)
+        assign(player)
     end)
     wait(0.3)
     -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
@@ -460,11 +535,36 @@
     end)
 
     getgenv().check_marketplace_has_gamepass = function(userid, GamePassID)
-        if getgenv().MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(GamePassID)) then
-            return true
+        if executor_Name == "Arceus X" then
+            local MarketplaceService = game:GetService("MarketplaceService")
+
+            local function ownsGamePass(userid, gamepassid)
+                local success, result = pcall(function()
+                    return MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(gamepassid))
+                end)
+
+                if success then
+                    return result
+                else
+                    warn("Error checking game pass:", result)
+                    return false
+                end
+            end
+
+            local gamepassid = GamePassID
+            wait(1)
+            if ownsGamePass(userid, gamepassid) then
+                return true
+            else
+                return false
+            end
         else
-            getgenv().notify("Failure:", "You do not own this GamePass.", 5)
-            return false
+            if getgenv().MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(GamePassID)) then
+                return true
+            else
+                getgenv().notify("Failure:", "You do not own this GamePass.", 5)
+                return false
+            end
         end
     end
 
@@ -1124,7 +1224,7 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.7.9 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.8.8 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -1150,7 +1250,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Zacks Easy Hub ⭐ | V9.7.9 | "..tostring(executor_Name),
+            Name = "⭐ Zacks Easy Hub ⭐ | V9.8.8 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Zacks Easy Hub | ON TOP!",
             ConfigurationSaving = {
@@ -1453,6 +1553,21 @@
             getgenv().Lighting:FindFirstChildOfClass("SunRaysEffect").Spread = 0.1
         end
         wait()
+        if not getgenv().Lighting:FindFirstChildOfClass("ColorCorrectionEffect") then
+            local ColorCorrectionEffect = Instance.new("ColorCorrectionEffect")
+            ColorCorrectionEffect.Brightness = 0.1
+            ColorCorrectionEffect.Contrast = 0.15
+            ColorCorrectionEffect.Enabled = false
+            ColorCorrectionEffect.Saturation = 0.25
+            ColorCorrectionEffect.TintColor = Color3.fromRGB(255, 255, 255)
+        else
+            getgenv().Lighting:FindFirstChildOfClass("ColorCorrectionEffect").Brightness = 0.1
+            getgenv().Lighting:FindFirstChildOfClass("ColorCorrectionEffect").Contrast = 0.15
+            getgenv().Lighting:FindFirstChildOfClass("ColorCorrectionEffect").Enabled = false
+            getgenv().Lighting:FindFirstChildOfClass("ColorCorrectionEffect").Saturation = 0.25
+            getgenv().Lighting:FindFirstChildOfClass("ColorCorrectionEffect").TintColor = Color3.fromRGB(255, 255, 255)
+        end
+        wait()
         getgenv().Lighting.ClockTime = 14
         getgenv().Lighting.Brightness = 3
         getgenv().Lighting.Ambient = Color3.fromRGB(70, 70, 70)
@@ -1578,15 +1693,45 @@
         end
     end
     wait()
+    local Workspace = getgenv().Workspace
+    local SoccerField = Workspace:FindFirstChild("SoccerField")
+    if SoccerField then
+        local BasePlate = SoccerField:FindFirstChild("Baseplate")
+        wait(0.1)
+        if BasePlate then
+            local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+            BasePlate.Transparency = 1
+            if Texture_Bruh then
+                Texture_Bruh.Transparency = 1
+            end
+        else
+            warn("Baseplate not found inside SoccerField.")
+        end
+    end
+    task.wait(.1)
+    local GameFolder = Workspace:FindFirstChild("Game")
+    if GameFolder then
+        local BasePlate_1 = GameFolder:FindFirstChild("Baseplate")
+        if BasePlate_1 then
+            local Texture_Bruh_1 = BasePlate_1:FindFirstChildOfClass("Texture")
+            BasePlate_1.Transparency = 1
+            if Texture_Bruh_1 then
+                Texture_Bruh_1.Transparency = 1
+            end
+        else
+            warn("Baseplate not found inside Game.")
+        end
+    else
+        warn("Neither SoccerField nor Game exist in Workspace.")
+    end
+    wait()
     local player = getgenv().LocalPlayer
 
     getgenv().whitelist = {}
 
     getgenv().ownerWhitelist = {
         "L0CKED_1N1",
-        "adorxfleurys",
-        "CHEATING_B0SS",
-        "lucxd19K5"
+        "CHEATING_B0SS"
     }
     wait()
     if game.PlaceId == 97399198116506 then
@@ -1788,6 +1933,51 @@
         if tonumber(str) ~= nil then
             return true
         end
+    end
+    wait()
+    -- AntiLag modified exclusively by Zacks Easy Hub
+    if not getgenv().AbsoluteAntiLagZEH then
+        local Terrain = getgenv().Terrain
+        local Lighting = getgenv().Lighting
+        local Workspace = getgenv().Workspace
+
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterReflectance = 0
+        Terrain.WaterTransparency = 0
+        Lighting.GlobalShadows = false
+        Lighting.FogEnd = 9e9
+        Lighting.Brightness = 0
+
+        local function optimize(child)
+            if child:IsA("BasePart") and child.Name ~= "Terrain" then
+                child.Material = Enum.Material.Plastic
+                child.Reflectance = 0
+            elseif child:IsA("Texture") then
+                child:Destroy()
+            elseif child:IsA("ParticleEmitter") or child:IsA("Fire") or child:IsA("Smoke") then
+                child.Enabled = false
+            elseif child:IsA("Explosion") then
+                child.Visible = false
+            end
+        end
+
+        for _, child in pairs(Workspace:GetDescendants()) do
+            optimize(child)
+        end
+
+        Workspace.ChildAdded:Connect(function(child)
+            task.wait(0.1)
+            optimize(child)
+            
+            if child:IsA("Model") or child:IsA("Folder") then
+                child.DescendantAdded:Connect(optimize)
+            end
+        end)
+        wait(0.1)
+        getgenv().AbsoluteAntiLagZEH = true
+    else
+        warn("Anti-Lag already loaded for Zacks Easy Hub!")
     end
     wait()
     local safeEmotes = {
@@ -2406,7 +2596,14 @@
             end
         end
     end,})
-    wait(0.1)
+    if getgenv().parts_rainbow_anti_void == true then
+        getgenv().AntiVoidPlayer:Set(false)
+        if getgenv().rainbowTweenConnection then
+            getgenv().rainbowTweenConnection:Disconnect()
+            getgenv().rainbowTweenConnection = nil
+        end
+    end
+    task.wait(0.2)
     getgenv().AntiVoidPlayer:Set(false)
     wait(0.1)
     getgenv().Baseplate_Exists = false
@@ -2578,8 +2775,9 @@
         end
     end,})
     wait(0.1)
-    if getgenv().no_baseplate_collision or getgenv().no_baseplate_collision == true then
+    if getgenv().no_baseplate_collision == true then
         getgenv().BaseplateCollisionToggle:Set(false)
+        getgenv().no_baseplate_collision = false
     end
 
     getgenv().ColorPickerForBaseplate = Tab22:CreateColorPicker({
@@ -3037,7 +3235,7 @@
             end
         end
         wait()
-        if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) then
+        if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) then
             getgenv().CopyAPlayersAv = Tab2:CreateInput({
             Name = "Copy Player Avatar",
             PlaceholderText = "Player",
@@ -3134,8 +3332,9 @@
         end
     end,})
     wait()
-    if getgenv().disabled_sit_function or getgenv().disabled_sit_function == true then
+    if getgenv().disabled_sit_function == true then
         getgenv().AntiSit_Func:Set(false)
+        getgenv().disabled_sit_function = false
     end
     wait(0.1)
     getgenv().SendOwnNotification = Tab1:CreateInput({
@@ -3753,7 +3952,8 @@
             if getgenv().HumanoidRootPart then
                 getgenv().HumanoidRootPart.Anchored = false
             end
-
+            
+            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
             getgenv().bangActive = false
             getgenv().Clip = true
             getgenv().bangScriptLoaded = false
@@ -3807,7 +4007,7 @@
         end
     end,})
 
-    if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) then
+    if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) then
         getgenv().CharIntoOwnerOfScript = Tab2:CreateButton({
         Name = "Char Into: Owner Of Script",
         Callback = function()
@@ -4323,7 +4523,7 @@
         getgenv().StopWalkingPlaceEmote = Tab2:CreateButton({
         Name = "Stop Walking While Emoting",
         Callback = function()
-            if getgenv().AnthonyShuffle or getgenv().AnthonyShuffle == true then
+            if getgenv().AnthonyShuffle == true then
                 getgenv().AnthonyShuffle:Set(false)
             else
                 warn("Option turned off.")
@@ -4408,6 +4608,9 @@
             getgenv().ownerAnimsEnabled = true
             local LocalPlayer = getgenv().LocalPlayer
             
+            getgenv().Humanoid.WalkSpeed = 0
+            getgenv().HumanoidRootPart.Anchored = false
+            wait(1)
             local function run_anims(character)
                 if not character then return warn("Character not found!") end
                 local Animate = character:FindFirstChild("Animate")
@@ -4487,6 +4690,8 @@
                     warn("Animations are disabled.")
                 end
             end
+            wait(1.5)
+            getgenv().Humanoid.WalkSpeed = 16
 
             if LocalPlayer.Character then
                 onCharacterAdded(LocalPlayer.Character)
@@ -4496,16 +4701,27 @@
         else
             getgenv().ownerAnimsEnabled = false
             getgenv().ownerAnimsEnabled = false
-            wait()
-            local humanoid = getgenv().Humanoid
-            if humanoid then
-                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                    track:Stop()
+            if getgenv().Humanoid and getgenv().HumanoidRootPart then
+                getgenv().Humanoid.WalkSpeed = 0
+                getgenv().HumanoidRootPart.Anchored = false
+                wait(1.5)
+                local humanoid = getgenv().Humanoid
+                if humanoid then
+                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                        track:Stop()
+                    end
                 end
+                wait(1.5)
+                getgenv().Humanoid.WalkSpeed = 16
             end
         end
     end,})
-
+    wait(0.3)
+    if getgenv().ownerAnimsEnabled == true then
+        getgenv().Owner_Animations:Set(false)
+        getgenv().ownerAnimsEnabled = false
+    end
+    wait(0.2)
     if game.PlaceId == 17274762379 then
         local Remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
         local RemoteEvents = Remotes and Remotes:FindFirstChild("RemoteEvents")
@@ -5061,6 +5277,10 @@
         warn("This user is whitelisted, proceeding...")
     else
         getgenv().TextChatService.MessageReceived:Connect(function(message)
+            if not message.TextSource.Name then
+                return 
+            end
+            wait()
             local sender = message.TextSource.Name
             local text = message.Text
 
@@ -5326,6 +5546,95 @@
             end            
         end,})
 
+        getgenv().RainbowBoothClientSide = Tab11:CreateToggle({
+        Name = "Rainbow Booth (Client Side)",
+        CurrentValue = false,
+        Flag = "BoothBeingRainbowClientSide",
+        Callback = function(booth_rainbow_not_fe)
+            if booth_rainbow_not_fe then
+                local function retrieve_booth()
+                    for _, v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                        if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
+                            return v
+                        end
+                    end
+                    return nil
+                end
+
+                local has_stall_exists = retrieve_booth()
+
+                if not has_stall_exists then
+                    getgenv().booth_colors_rgb_not_fe = false
+                    getgenv().RainbowBoothClientSide:Set(false)
+                    return getgenv().notify("Failure!", "No Booth found, please claim one and try again.", 5)
+                end
+                wait()
+                getgenv().booth_colors_rgb_not_fe = true
+                while getgenv().booth_colors_rgb_not_fe == true do
+                wait()
+                    local Workspace = getgenv().Workspace
+
+                    local function cycle_colors(objects)
+                        local colors = {
+                            "Black", "Really red", "White", "Bright blue",
+                            "New Yeller", "Toothpaste", "Royal purple", "Hot pink"
+                        }
+                        
+                        while getgenv().booth_colors_rgb_not_fe == true do
+                            for _, color in ipairs(colors) do
+                                for _, part in ipairs(objects) do
+                                    if part:IsA("BasePart") then
+                                        part.BrickColor = BrickColor.new(color)
+                                    end
+                                end
+                                task.wait(0.5)
+                            end
+                        end
+                    end
+
+                    if has_stall_exists then
+                        local baseParts = {}
+                        for _, v in ipairs(has_stall_exists:GetDescendants()) do
+                            if v:IsA("BasePart") then
+                                table.insert(baseParts, v)
+                            end
+                        end
+                        task.spawn(cycle_colors, baseParts)
+                    end
+                end
+            else
+                local function retrieve_booth()
+                    for _, v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                        if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
+                            return v
+                        end
+                    end
+                    return nil
+                end
+
+                local has_stall_exists = retrieve_booth()
+                wait()
+                getgenv().booth_colors_rgb_not_fe = false
+                getgenv().booth_colors_rgb_not_fe = false
+                getgenv().booth_colors_rgb_not_fe = false
+                wait()
+                if has_stall_exists then
+                    for _, part in ipairs(has_stall_exists:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.BrickColor = BrickColor.new("Black")
+                        end
+                    end
+                else
+                    warn("Booth did not exist when turning off loop.")
+                end
+            end
+        end,})
+        wait()
+        if getgenv().booth_colors_rgb_not_fe == true then
+            getgenv().booth_colors_rgb_not_fe = false
+            getgenv().RainbowBoothClientSide:Set(false)
+        end
+        wait(0.3)
         getgenv().DeleteOldCFrameConnection = Tab11:CreateButton({
         Name = "Delete Old CFrame (Anti-Booth Stealer)",
         Callback = function()
@@ -5851,8 +6160,8 @@
             resetDefaultAnimations()        
         end
     end,})
-
-    if getgenv().copyAllWhitelistedAnims or getgenv().copyAllWhitelistedAnims == true then
+    wait(0.2)
+    if getgenv().copyAllWhitelistedAnims == true then
         getgenv().copyAllWhitelistedAnims = false
         getgenv().copyAllWhitelistedAnims = false
         getgenv().LoopCopyTheEmotePlr:Set(false)
@@ -6077,47 +6386,65 @@
         CurrentValue = 0,
         Flag = "MICUPTransparency",
         Callback = function(BasePlateMICUPTransparency)
-            if game:GetService("Workspace"):FindFirstChild("SoccerField") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Transparency = BasePlateMICUPTransparency
-                Texture_Bruh.Transparency = BasePlateMICUPTransparency
-            elseif game:GetService("Workspace"):FindFirstChild("BasePlate") then
-                local BasePlate
-                wait(0.2)
-                if getgenv().Workspace:FindFirstChild("Baseplate") then
-                    BasePlate = getgenv().Workspace:FindFirstChild("BasePlate") or getgenv().Workspace:FindFirstChild("Baseplate")
-
-                    BasePlate.Transparency = BasePlateMICUPTransparency
-                elseif not getgenv().Workspace:FindFirstChild("Baseplate") then
-                    BasePlate = getgenv().Workspace:FindFirstChild("BasePlate")
-
-                    BasePlate.Transparency = BasePlateMICUPTransparency
-                end
-            elseif game:GetService("Workspace"):FindFirstChild("Game") then
-                if getgenv().Workspace:FindFirstChild("Baseplate") then
-                    local BasePlate_0 = getgenv().Workspace:FindFirstChild("Baseplate")
-                    local BasePlate_1 = getgenv().Workspace:FindFirstChild("Game"):FindFirstChild("Baseplate")
-
-                    BasePlate_0.Transparency = BasePlateMICUPTransparency
-                    BasePlate_1.Transparency = BasePlateMICUPTransparency
-                    Baseplate_1:FindFirstChild("Texture").Transparency = BasePlateMICUPTransparency
-                elseif not getgenv().Workspace:FindFirstChild("Baseplate") then
-                    BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
+            local Workspace = getgenv().Workspace
+            local SoccerField = Workspace:FindFirstChild("SoccerField")
+            if SoccerField then
+                local BasePlate = SoccerField:FindFirstChild("Baseplate")
+                wait(0.1)
+                if BasePlate then
                     local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
                     BasePlate.Transparency = BasePlateMICUPTransparency
-                    Texture_Bruh.Transparency = BasePlateMICUPTransparency
+                    if Texture_Bruh then
+                        Texture_Bruh.Transparency = BasePlateMICUPTransparency
+                    end
+                else
+                    warn("Baseplate not found inside SoccerField.")
                 end
-            elseif getgenv().Workspace:FindFirstChild("Baseplate") then
-                local Base_plate = getgenv().Workspace:FindFirstChild("Baseplate")
-
-                Base_plate.Transparency = BasePlateMICUPTransparency
+                return 
+            end
+            task.wait(.1)
+            local GameFolder = Workspace:FindFirstChild("Game")
+            if GameFolder then
+                local BasePlate_1 = GameFolder:FindFirstChild("Baseplate")
+                if BasePlate_1 then
+                    local Texture_Bruh_1 = BasePlate_1:FindFirstChildOfClass("Texture")
+                    BasePlate_1.Transparency = BasePlateMICUPTransparency
+                    if Texture_Bruh_1 then
+                        Texture_Bruh_1.Transparency = BasePlateMICUPTransparency
+                    end
+                else
+                    warn("Baseplate not found inside Game.")
+                end
             else
-                warn("BasePlate here was not found.")
+                warn("Neither SoccerField nor Game exist in Workspace.")
             end
         end,})
+        wait(0.2)
+        if game:GetService("Workspace"):FindFirstChild("SoccerField") then
+            local BasePlate = getgenv().Workspace:FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+            local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+
+            if BasePlate and Texture_Bruh then
+                BasePlate.Transparency = 1
+                Texture_Bruh.Transparency = 1
+            else
+                warn("BasePlate does not exist!")
+            end
+        elseif game:GetService("Workspace"):FindFirstChild("Game") then
+            if getgenv().Workspace:FindFirstChild("Baseplate") then
+                local BasePlate_0 = getgenv().Workspace:FindFirstChild("Baseplate")
+                local BasePlate_1 = getgenv().Workspace:FindFirstChild("Game"):FindFirstChild("Baseplate")
+
+                if not Baseplate_1 then
+                    warn("BasePlate_1 (Regular MIC UP Baseplate) does not exist.")
+                else
+                    BasePlate_1.Transparency = 1
+                    Baseplate_1:FindFirstChild("Texture").Transparency = 1
+                end
+            end
+        else
+            warn("BasePlate here was not found.")
+        end
     elseif game.PlaceId == 80080558412215 then
         getgenv().BasePlate_ColorChange = Tab18:CreateSlider({
         Name = "German Hangout BasePlate Transparency",
@@ -6707,18 +7034,21 @@
     Flag = "GraphicsEnhancerToggling",
     Callback = function(new_graphics_toggle)
         if new_graphics_toggle then
+            wait(1)
             getgenv().graphics_upper = true
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/PublicScriptsOnRobloxExploiting/refs/heads/main/GraphicsEnhancer.lua"))()
         else
+            wait(0.5)
             getgenv().graphics_upper = false
             wait()
             getgenv().graphics_upper = false
             wait(0.1)
             resetLightingSettings()
+            wait(0.5)
         end
     end,})
     wait(0.1)
-    if getgenv().graphics_upper or getgenv().graphics_upper == true then
+    if getgenv().graphics_upper == true then
         getgenv().graphics_upper = false
         getgenv().GraphicsEnhancer:Set(false)
         wait(0.3)
@@ -8059,8 +8389,8 @@
                 getgenv().Camera.CameraSubject = getgenv().Character
             end
         end,})
-
-        if getgenv().viewing_booth or getgenv().viewing_booth == true then
+        wait(0.1)
+        if getgenv().viewing_booth == true then
             getgenv().viewing_booth = false
             getgenv().viewBooth:Set(false)
             getgenv().Camera.CameraSubject = getgenv().Character
@@ -8127,7 +8457,7 @@
             end
         end,})
         wait()
-        if getgenv().alrLike or getgenv().alrLike == true then
+        if getgenv().alrLike == true then
             getgenv().alrLike = false
             getgenv().AutoLikingPlayer:Set(false)
         end
@@ -8163,7 +8493,7 @@
             end
         end,})
         wait(0.2)
-        if getgenv().Disliking or getgenv().Disliking == true then
+        if getgenv().Disliking == true then
             getgenv().Disliking = false
             getgenv().dislikePlayersAvatar:Set(false)
         end
@@ -8264,8 +8594,8 @@
                     end
                 end
             end,})
-
-            if getgenv().plr_music_menu or getgenv().plr_music_menu == true then
+            wait()
+            if getgenv().plr_music_menu == true then
                 getgenv().plr_music_menu = false
                 getgenv().Music_Player:Set(false)
             end
@@ -8339,7 +8669,7 @@
                 end
             end,})
 
-            if getgenv().Like_Friends or getgenv().Like_Friends == true then
+            if getgenv().Like_Friends == true then
                 getgenv().Like_Friends = false
                 getgenv().WhitelistFriendPlr:Set(false)
             end
@@ -8559,8 +8889,6 @@
                     getgenv().shouldGrabTools = false
                     getgenv().shouldGrabTools = false
                     getgenv().getEverything:Set(false)
-                    getgenv().getEverything:Set(false)
-                    getgenv().getEverything:Set(false)
                 end
                 wait(0.2)
                 local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage") or getgenv().ReplicatedStorage
@@ -8690,26 +9018,32 @@
     getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
     getgenv().RAINBOW_MODE = false
     wait()
+    --[[local Box_ESP = {
+        enabled = false,
+        espObjects = {},
+        color = Color3.fromRGB(255, 0, 0)
+    }
+    wait()
     getgenv().EspBox = Tab19:CreateToggle({
     Name = "Box",
     CurrentValue = false,
     Flag = "TogglingBoxESP",
     Callback = function(box_Esp)
         if box_Esp then
-            getgenv().ESPEnabled = true
+            wait(1)
+            getgenv().ESPEnabled = false
 
             local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
             local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
             local LocalPlayer = Players.LocalPlayer
-            getgenv().espObjects = {}
-            
-            local function hsvToRgb(h, s, v)
+
+            local function HSV_To_RGB(h, s, v)
                 local i = math.floor(h * 6)
                 local f = h * 6 - i
                 local p = v * (1 - s)
                 local q = v * (1 - f * s)
                 local t = v * (1 - (1 - f) * s)
-            
+
                 i = i % 6
                 if i == 0 then return Color3.new(v, t, p) 
                 elseif i == 1 then return Color3.new(q, v, p) 
@@ -8718,78 +9052,88 @@
                 elseif i == 4 then return Color3.new(t, p, v) 
                 elseif i == 5 then return Color3.new(v, p, q) end
             end
-            
+
             local function createESP(player)
-                if player ~= LocalPlayer then
-                    wait(0.5)
-                    local character = player.Character
-                    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
-            
-                    local billboard = Instance.new("BillboardGui")
-                    billboard.Name = "ESP"
-                    billboard.Adornee = character:FindFirstChild("HumanoidRootPart")
-                    billboard.Size = UDim2.new(4, 0, 5, 0)
-                    billboard.StudsOffset = Vector3.new(0, 2, 0)
-                    billboard.AlwaysOnTop = true
-            
-                    local frame = Instance.new("Frame")
-                    frame.Size = UDim2.new(1, 0, 1, 0)
-                    frame.BackgroundColor3 = getgenv().color_for_esp_value
-                    frame.BackgroundTransparency = 0.5
-                    frame.BorderSizePixel = 0
-                    frame.Parent = billboard
-            
-                    billboard.Parent = character
-                    getgenv().espObjects[player] = frame
-                end
+                if not Box_ESP.enabled or player == LocalPlayer or Box_ESP.espObjects[player] then return end
+
+                local character = player.Character
+                if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+                local billboard = Instance.new("BillboardGui")
+                billboard.Name = "ESP"
+                billboard.Adornee = character:FindFirstChild("HumanoidRootPart")
+                billboard.Size = UDim2.new(4, 0, 5, 0)
+                billboard.StudsOffset = Vector3.new(0, 2, 0)
+                billboard.AlwaysOnTop = true
+
+                local frame = Instance.new("Frame")
+                frame.Size = UDim2.new(1, 0, 1, 0)
+                frame.BackgroundColor3 = Box_ESP.color
+                frame.BackgroundTransparency = 0.5
+                frame.BorderSizePixel = 0
+                frame.Parent = billboard
+
+                billboard.Parent = character
+                Box_ESP.espObjects[player] = frame
             end
-            
+
             local function removeESP(player)
-                if getgenv().espObjects[player] then
-                    getgenv().espObjects[player]:Destroy()
-                    getgenv().espObjects[player] = nil
+                if Box_ESP.espObjects[player] then
+                    Box_ESP.espObjects[player]:Destroy()
+                    Box_ESP.espObjects[player] = nil
                 end
             end
-            
-            local function onCharacterAdded(player)
-                wait(1)
-                if getgenv().ESPEnabled then
-                    createESP(player)
+
+            local function updateESP()
+                if not Box_ESP.enabled then
+                    for player, _ in pairs(Box_ESP.espObjects) do
+                        removeESP(player)
+                    end
+                    return
                 end
-            end
-            
-            local function onPlayerAdded(player)
-                player.CharacterAdded:Connect(function()
-                    wait(0.5)
-                    onCharacterAdded(player)
-                end)
-                player.CharacterRemoving:Connect(function()
-                    wait(0.5)
-                    removeESP(player)
-                end)
-            end
-            
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer then
-                    wait(0.5)
-                    onPlayerAdded(player)
-                    if player.Character then
-                        wait(0.5)
+
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer then
                         createESP(player)
                     end
                 end
             end
-            wait()
+
+            local function onCharacterAdded(player)
+                task.wait(0.5)
+                if Box_ESP.enabled then
+                    createESP(player)
+                end
+            end
+
+            local function onPlayerAdded(player)
+                player.CharacterAdded:Connect(function()
+                    onCharacterAdded(player)
+                end)
+                player.CharacterRemoving:Connect(function()
+                    removeESP(player)
+                end)
+                if player.Character then
+                    onCharacterAdded(player)
+                end
+            end
+
             Players.PlayerAdded:Connect(onPlayerAdded)
             Players.PlayerRemoving:Connect(removeESP)
-            
+
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    onPlayerAdded(player)
+                end
+            end
+
             task.spawn(function()
                 local hue = 0
                 while true do
                     task.wait(0.05)
-                    if getgenv().ESPEnabled then
-                        local color = getgenv().RAINBOW_MODE and hsvToRgb(hue, 1, 1) or getgenv().color_for_esp_value
-                        for player, frame in pairs(getgenv().espObjects) do
+                    if Box_ESP.enabled then
+                        local color = getgenv().RAINBOW_MODE and HSV_To_RGB(hue, 1, 1) or Box_ESP.color
+                        for player, frame in pairs(Box_ESP.espObjects) do
                             if frame then
                                 frame.BackgroundColor3 = color
                             end
@@ -8798,24 +9142,38 @@
                     end
                 end
             end)
+            wait()
+            Box_ESP.enabled = true
         else
+            wait(1)
             getgenv().ESPEnabled = false
-            getgenv().ESPEnabled = false
+            wait()
+            if Box_ESP then
+                Box_ESP.enabled = false
 
-            for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
-                if player.Character then
-                    local esp = player.Character:FindFirstChild("ESP")
-                    if esp then
-                        esp:Destroy()
-                        esp:Destroy()
-                        esp:Destroy()
-                    end
+                for _, frame in pairs(Box_ESP.espObjects) do
+                    if frame then frame:Destroy() end
                 end
+                table.clear(Box_ESP.espObjects)
+                wait(0.3)
+                for _, frame in pairs(Box_ESP.espObjects) do
+                    if frame then frame:Destroy() end
+                end
+                table.clear(Box_ESP.espObjects)
             end
         end
-    end,})
+    end,})--]]
     wait()
     if Drawing then
+        local tracer_settings = {
+            enabled = false,
+            tracer_lines = {},
+            player_added_starter = nil,
+            player_removing_starter = nil,
+            update_conn = nil,
+            color = Color3.fromRGB(255, 0, 0)
+        }
+
         getgenv().TracersToggleMain = Tab19:CreateToggle({
         Name = "Tracers",
         CurrentValue = false,
@@ -8824,22 +9182,21 @@
             wait(1)
             if runTracersScript then
                 getgenv().tracers_esp_enabled = true
-                getgenv().tracer_lines = getgenv().tracer_lines or {}
-
+                tracer_settings.enabled = true
+                wait()
                 local run_service = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
                 local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-                local Workspace = getgenv().Workspace
-                local camera = Workspace.CurrentCamera
+                local camera = workspace.CurrentCamera
 
                 local function remove_tracer(player)
-                    if getgenv().tracer_lines[player] then
-                        getgenv().tracer_lines[player]:Remove()
-                        getgenv().tracer_lines[player] = nil
+                    if tracer_settings.tracer_lines[player] then
+                        tracer_settings.tracer_lines[player]:Remove()
+                        tracer_settings.tracer_lines[player] = nil
                     end
                 end
 
                 local function create_tracer(player)
-                    if not getgenv().tracers_esp_enabled then return end
+                    if not tracer_settings.enabled then return end
                     if not player.Character then return end
 
                     local char = player.Character
@@ -8848,22 +9205,22 @@
 
                     local tracer = Drawing.new("Line")
                     tracer.Thickness = 2
-                    tracer.Color = getgenv().color_for_esp_value or Color3.fromRGB(255, 0, 0)
+                    tracer.Color = tracer_settings.color
                     tracer.Visible = false
 
-                    getgenv().tracer_lines[player] = tracer
+                    tracer_settings.tracer_lines[player] = tracer
                 end
 
                 local function update_tracers()
-                    if not getgenv().tracers_esp_enabled then
-                        for _, tracer in pairs(getgenv().tracer_lines) do
+                    if not tracer_settings.enabled then
+                        for _, tracer in pairs(tracer_settings.tracer_lines) do
                             if tracer then tracer:Remove() end
                         end
-                        table.clear(getgenv().tracer_lines)
-                        return 
+                        table.clear(tracer_settings.tracer_lines)
+                        return
                     end
 
-                    for player, tracer in pairs(getgenv().tracer_lines) do
+                    for player, tracer in pairs(tracer_settings.tracer_lines) do
                         local char = player.Character
                         if char and char:FindFirstChild("HumanoidRootPart") and player ~= players.LocalPlayer then
                             local root_part = char.HumanoidRootPart
@@ -8874,11 +9231,11 @@
                                 tracer.To = Vector2.new(screen_pos.X, screen_pos.Y)
                                 tracer.Visible = true
 
-                                if getgenv().RAINBOW_MODE then
+                                if getgenv().RAINBOW_MODE == true then
                                     local hue = tick() % 5 / 5
                                     tracer.Color = Color3.fromHSV(hue, 1, 1)
                                 else
-                                    tracer.Color = getgenv().color_for_esp_value or Color3.fromRGB(255, 0, 0)
+                                    tracer.Color = tracer_settings.color
                                 end
                             else
                                 tracer.Visible = false
@@ -8902,54 +9259,65 @@
                         if player.Character then create_tracer(player) end
                     end
                 end
+
                 wait()
-                if getgenv().tracer_player_added_connection then
-                    getgenv().tracer_player_added_connection:Disconnect()
+                if tracer_settings.player_added_starter then
+                    tracer_settings.player_added_starter:Disconnect()
                 end
-                getgenv().tracer_player_added_connection = players.PlayerAdded:Connect(on_player_added)
+                tracer_settings.player_added_starter = players.PlayerAdded:Connect(on_player_added)
 
-                if getgenv().tracer_player_removing_connection then
-                    getgenv().tracer_player_removing_connection:Disconnect()
+                if tracer_settings.player_removing_starter then
+                    tracer_settings.player_removing_starter:Disconnect()
                 end
-                getgenv().tracer_player_removing_connection = players.PlayerRemoving:Connect(remove_tracer)
+                tracer_settings.player_removing_starter = players.PlayerRemoving:Connect(remove_tracer)
 
-                if getgenv().tracer_update_connection then
-                    getgenv().tracer_update_connection:Disconnect()
+                if tracer_settings.update_conn then
+                    tracer_settings.update_conn:Disconnect()
                 end
-                getgenv().tracer_update_connection = run_service.RenderStepped:Connect(update_tracers)
+                tracer_settings.update_conn = run_service.RenderStepped:Connect(update_tracers)
             else
-                wait(1.5)
-                local function disable_tracers()
+                wait(0.5)
+                if tracer_settings then
                     getgenv().tracers_esp_enabled = false
-
-                    if getgenv().tracer_update_connection then
-                        getgenv().tracer_update_connection:Disconnect()
-                        getgenv().tracer_update_connection = nil
+                    tracer_settings.enabled = false
+                    wait()
+                    for _, tracer in pairs(tracer_settings.tracer_lines) do
+                        if tracer then tracer:Remove() end
+                    end
+                    table.clear(tracer_settings.tracer_lines)
+                    wait()
+                    for _, tracer in pairs(tracer_settings.tracer_lines) do
+                        if tracer then tracer:Remove() end
+                    end
+                    table.clear(tracer_settings.tracer_lines)
+                    wait()
+                    if tracer_settings.player_added_starter then
+                        tracer_settings.player_added_starter:Disconnect()
+                        tracer_settings.player_added_starter = nil
                     end
 
-                    if getgenv().tracer_player_added_connection then
-                        getgenv().tracer_player_added_connection:Disconnect()
-                        getgenv().tracer_player_added_connection = nil
+                    if tracer_settings.player_removing_starter then
+                        tracer_settings.player_removing_starter:Disconnect()
+                        tracer_settings.player_removing_starter = nil
                     end
 
-                    if getgenv().tracer_player_removing_connection then
-                        getgenv().tracer_player_removing_connection:Disconnect()
-                        getgenv().tracer_player_removing_connection = nil
-                    end
-
-                    if getgenv().tracer_lines then
-                        for _, tracer in pairs(getgenv().tracer_lines) do
-                            if tracer then tracer:Remove() end
-                        end
-                        table.clear(getgenv().tracer_lines)
+                    if tracer_settings.update_conn then
+                        tracer_settings.update_conn:Disconnect()
+                        tracer_settings.update_conn = nil
                     end
                 end
-                task.wait()
-                disable_tracers()
             end
         end,})
-
-        getgenv().SkeletonESP_Drawing = Tab19:CreateToggle({
+        wait()
+        local skeleton_settings = {
+            enabled = false,
+            skeleton_lines = {},
+            player_added_starter = nil,
+            player_removing_starter = nil,
+            update_conn = nil
+        }
+        wait(0.2)
+        --[[getgenv().SkeletonESP_Drawing = Tab19:CreateToggle({
         Name = "Skeleton",
         CurrentValue = false,
         Flag = "ToggleSkeletonESP",
@@ -8957,12 +9325,11 @@
             wait(1)
             if ez_skelly_esp then
                 getgenv().skeleton_esp_enabled = true
-                getgenv().skeleton_lines = getgenv().skeleton_lines or {}
-
-                local run_service = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+                skeleton_settings.enabled = true
+                local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
                 local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
                 local camera = workspace.CurrentCamera
-    
+
                 local bone_connections = {
                     {"Head", "UpperTorso"},
                     {"UpperTorso", "LowerTorso"},
@@ -8981,9 +9348,10 @@
                 }
 
                 local function create_skeleton(player)
-                    if not getgenv().skeleton_esp_enabled then return end
+                    if not skeleton_settings.enabled then return end
                     if not player.Character then return end
-                    wait(0.5)
+                    task.wait(0.5)
+
                     local char = player.Character
                     local lines = {}
 
@@ -8992,50 +9360,50 @@
                         line.Thickness = 2
                         line.Color = Color3.fromRGB(255, 0, 0)
                         line.Visible = false
-                        lines[bone[1] .. "_" .. bone[2]] = line
-                    end
+                        lines[bone[1] .. "_" .. bone[2]]--]] = line
+                    --[[end
 
-                    getgenv().skeleton_lines[player] = lines
+                    skeleton_settings.skeleton_lines[player] = lines
                 end
 
                 local function remove_skeleton(player)
-                    if getgenv().skeleton_lines[player] then
-                        for _, line in pairs(getgenv().skeleton_lines[player]) do
+                    if skeleton_settings.skeleton_lines[player] then
+                        for _, line in pairs(skeleton_settings.skeleton_lines[player]) do
                             line:Remove()
                         end
-                        getgenv().skeleton_lines[player] = nil
+                        skeleton_settings.skeleton_lines[player] = nil
                     end
                 end
 
                 local function update_skeletons()
-                    wait(0.5)
-                    if not getgenv().skeleton_esp_enabled then
-                        for _, skeleton in pairs(getgenv().skeleton_lines) do
+                    task.wait(0.5)
+                    if not skeleton_settings.enabled then
+                        for _, skeleton in pairs(skeleton_settings.skeleton_lines) do
                             for _, line in pairs(skeleton) do
                                 line:Remove()
                             end
                         end
-                        table.clear(getgenv().skeleton_lines)
-                        return
+                        table.clear(skeleton_settings.skeleton_lines)
+                        return 
                     end
 
-                    for player, lines in pairs(getgenv().skeleton_lines) do
+                    for player, lines in pairs(skeleton_settings.skeleton_lines) do
                         local char = player.Character
                         if char and char:FindFirstChild("HumanoidRootPart") and player ~= players.LocalPlayer then
                             for _, bone in ipairs(bone_connections) do
                                 local part1, part2 = char:FindFirstChild(bone[1]), char:FindFirstChild(bone[2])
                                 if part1 and part2 then
-                                    wait(0.5)
-                                    local pos1, on_screen1 = camera:WorldToViewportPoint(part1.Position)
-                                    local pos2, on_screen2 = camera:WorldToViewportPoint(part2.Position)
+                                    task.wait(0.5)
+                                    local pos1, onScreen1 = camera:WorldToViewportPoint(part1.Position)
+                                    local pos2, onScreen2 = camera:WorldToViewportPoint(part2.Position)
 
-                                    local line = lines[bone[1] .. "_" .. bone[2]]
-                                    if on_screen1 and on_screen2 then
+                                    local line = lines[bone[1] .. "_" .. bone[2]--]]
+                                    --[[if onScreen1 and onScreen2 then
                                         line.From = Vector2.new(pos1.X, pos1.Y)
                                         line.To = Vector2.new(pos2.X, pos2.Y)
                                         line.Visible = true
 
-                                        if getgenv().RAINBOW_MODE then
+                                        if getgenv().RAINBOW_MODE == true then
                                             local hue = tick() % 5 / 5
                                             line.Color = Color3.fromHSV(hue, 1, 1)
                                         end
@@ -9052,67 +9420,73 @@
 
                 local function on_player_added(player)
                     player.CharacterAdded:Connect(function()
-                        repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                        wait(0.5)
+                        repeat task.wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        task.wait(0.5)
                         create_skeleton(player)
                     end)
                 end
 
                 for _, player in ipairs(players:GetPlayers()) do
                     if player ~= players.LocalPlayer then
-                        wait(0.5)
+                        task.wait(0.5)
                         on_player_added(player)
-                        if player.Character then wait(0.5) create_skeleton(player) end
+                        if player.Character then task.wait(0.5) create_skeleton(player) end
                     end
                 end
 
-                if getgenv().skeleton_player_added_connection then
-                    getgenv().skeleton_player_added_connection:Disconnect()
+                if skeleton_settings.player_added_starter then
+                    skeleton_settings.player_added_starter:Disconnect()
                 end
-                getgenv().skeleton_player_added_connection = players.PlayerAdded:Connect(on_player_added)
+                skeleton_settings.player_added_starter = players.PlayerAdded:Connect(on_player_added)
 
-                if getgenv().skeleton_player_removing_connection then
-                    getgenv().skeleton_player_removing_connection:Disconnect()
+                if skeleton_settings.player_removing_starter then
+                    skeleton_settings.player_removing_starter:Disconnect()
                 end
-                getgenv().skeleton_player_removing_connection = players.PlayerRemoving:Connect(remove_skeleton)
+                skeleton_settings.player_removing_starter = players.PlayerRemoving:Connect(remove_skeleton)
 
-                if getgenv().skeleton_update_connection then
-                    getgenv().skeleton_update_connection:Disconnect()
+                if skeleton_settings.update_conn then
+                    skeleton_settings.update_conn:Disconnect()
                 end
-                getgenv().skeleton_update_connection = run_service.RenderStepped:Connect(update_skeletons)
+                skeleton_settings.update_conn = runService.RenderStepped:Connect(update_skeletons)
             else
-                wait(1.5)
-                local function disable_skeleton_esp()
+                wait(0.5)
+                if skeleton_settings then
+                    skeleton_settings.enabled = false
                     getgenv().skeleton_esp_enabled = false
 
-                    if getgenv().skeleton_update_connection then
-                        getgenv().skeleton_update_connection:Disconnect()
-                        getgenv().skeleton_update_connection = nil
-                    end
-
-                    if getgenv().skeleton_player_added_connection then
-                        getgenv().skeleton_player_added_connection:Disconnect()
-                        getgenv().skeleton_player_added_connection = nil
-                    end
-
-                    if getgenv().skeleton_player_removing_connection then
-                        getgenv().skeleton_player_removing_connection:Disconnect()
-                        getgenv().skeleton_player_removing_connection = nil
-                    end
-
-                    if getgenv().skeleton_lines then
-                        for _, lines in pairs(getgenv().skeleton_lines) do
-                            for _, line in pairs(lines) do
-                                line:Remove()
-                            end
+                    for _, skeleton in pairs(skeleton_settings.skeleton_lines) do
+                        for _, line in pairs(skeleton) do
+                            line:Remove()
                         end
-                        table.clear(getgenv().skeleton_lines)
+                    end
+                    table.clear(skeleton_settings.skeleton_lines)
+                    wait(0.3)
+                    for _, skeleton in pairs(skeleton_settings.skeleton_lines) do
+                        for _, line in pairs(skeleton) do
+                            line:Remove()
+                        end
+                    end
+                    table.clear(skeleton_settings.skeleton_lines)
+                    wait(0.1)
+                    if skeleton_settings.player_added_starter then
+                        skeleton_settings.player_added_starter:Disconnect()
+                        skeleton_settings.player_added_starter = nil
+                    end
+
+                    if skeleton_settings.player_removing_starter then
+                        skeleton_settings.player_removing_starter:Disconnect()
+                        skeleton_settings.player_removing_starter = nil
+                    end
+
+                    if skeleton_settings.update_conn then
+                        skeleton_settings.update_conn:Disconnect()
+                        skeleton_settings.update_conn = nil
                     end
                 end
-                task.wait()
-                disable_skeleton_esp()
+                wait(0.3)
+                getgenv().skeleton_esp_enabled = false
             end
-        end,})
+        end,})--]]
     else
         warn("❌ - Drawing - ❌ | Unsupported, ESP is not able to load due to 'Drawing' being unsupported or unavailable.")
     end
@@ -9129,7 +9503,7 @@
         end
     end,})
     wait(0.2)
-    if getgenv().RAINBOW_MODE or getgenv().RAINBOW_MODE == true then
+    if getgenv().RAINBOW_MODE == true then
         getgenv().RainbowMode:Set(false)
     end
 
@@ -9296,7 +9670,7 @@
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         local gamePassId = 951459548
 
-        if not getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, gamePassId) then
+        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) then
             warn("You do not own the Admin GamePass, not loading Tab: [Character Flicker (FE)]")
         else
             getgenv().DoCharacterFlicking = Tab2:CreateToggle({
@@ -9600,7 +9974,7 @@
             end
         end,})
 
-        getgenv().Prison_Life_Map_TP = Tab10:CreateButton({
+        --[[getgenv().Prison_Life_Map_TP = Tab10:CreateButton({
         Name = "TP To Prison Life (Only for Zacks Easy Hub users)",
         Callback = function()
             local Workspace = getgenv().Workspace
@@ -9638,7 +10012,7 @@
             else
                 getgenv().HumanoidRootPart.CFrame = CFrame.new(-6959.81445, 3374.51855, -8968.93848)
             end
-        end,})
+        end,})--]]
 
         getgenv().PrivRoomFloor = Tab10:CreateButton({
         Name = "TP To Private Room (Inside)",
@@ -10464,7 +10838,7 @@
         end
     end,})
     wait()
-    if getgenv().AmbientChangerEnabled or getgenv().AmbientChangerEnabled == true then
+    if getgenv().AmbientChangerEnabled == true then
         getgenv().AmbientChangerEnabled:Set(false)
     end
 
@@ -10614,7 +10988,7 @@
         end
     end,})
     wait()
-    if getgenv().setFireWorksOn or getgenv().setFireWorksOn == true then
+    if getgenv().setFireWorksOn == true then
         getgenv().fireworksToggle:Set(false)
         getgenv().setFireWorksOn = false
     end
@@ -10716,7 +11090,7 @@
         end
     end,})
     wait()
-    if getgenv().SpookyMoon or getgenv().SpookyMoon == true then
+    if getgenv().SpookyMoon == true then
         getgenv().SpookyMoonToggle:Set(false)
     end
 
@@ -10785,7 +11159,7 @@
         end
     end,})
     wait()
-    if getgenv().SpookSun or getgenv().SpookSun == true then
+    if getgenv().SpookSun == true then
         getgenv().SpookySunLoop:Set(false)
         getgenv().SpookSun = false
     end
@@ -10849,7 +11223,7 @@
     wait()
     getgenv().slowMotion = false
     wait(0.2)
-    if getgenv().slowMotion or getgenv().slowMotion == true then
+    if getgenv().slowMotion == true then
         getgenv().slowMotionToggle:Set(false)
         getgenv().slowMotion = false
     end
@@ -10873,7 +11247,7 @@
         end
     end,})
     wait()
-    if getgenv().doFreezeToggle or getgenv().doFreezeToggle == true then
+    if getgenv().doFreezeToggle == true then
         getgenv().FreezeEmotesToggle:Set(false)
         getgenv().doFreezeToggle = false
     end
@@ -10895,7 +11269,7 @@
         end
     end,})
     wait(0.1)
-    if getgenv().fastToggle or getgenv().fastToggle == true then
+    if getgenv().fastToggle == true then
         getgenv().FastestEmotes:Set(false)
         getgenv().fastToggle = false
     end
@@ -11260,11 +11634,11 @@
             end
         end
     end,})
-
-    if getgenv().runningEnabled or getgenv().runningEnabled == true then
+    wait(0.7)
+    if getgenv().runningEnabled == true then
         getgenv().ShiftToRun:Set(false)
         wait(0.2)
-        getgenv().Humanoid.WalkSpeed = 14
+        getgenv().Humanoid.WalkSpeed = 16
     end
 
     Zombie_Idle_1 = "10921344533"
@@ -12780,8 +13154,9 @@
     
     getgenv().Trip_Script = Tab15:CreateToggle({
     Name = "Trip",
-    CurrentValue = false,
-    Flag = "TogglingTrippingFallScript",
+    CurrentKeybind = "T",
+    HoldToInteract = false,
+    Flag = "TripKeybindMain",
     Callback = function(isTripOn)
         if isTripOn then
             local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -12911,7 +13286,7 @@
         load_ez_Config()
     end,})
 
-    getgenv().CustomAnimPackageSetting = Tab20:CreateToggle({
+    --[[getgenv().CustomAnimPackageSetting = Tab20:CreateToggle({
     Name = "Use Custom Animation Package System",
     CurrentValue = readConfigValue("Custom_Animation_Package_System") or false,
     Flag = "TurningOnTheAnimationPackagesCustom",
@@ -13194,7 +13569,7 @@
     Callback = function(TPToolBackpack)
         getgenv().modifiedTPToolBruh = TPToolBackpack
         getgenv().Easies_Configuration["keep_tp_tool"] = TPToolBackpack and "on" or "off"
-    end,})
+    end,})--]]
     wait()
     getgenv().EmoteSystemEnabled = false
     wait()
