@@ -23,6 +23,7 @@
         Rthro [default Roblox Animation package]
     --]]
     wait(1)
+    print("1")
     local function getExecutor()
         local name
         if identifyexecutor then
@@ -38,7 +39,7 @@
     wait(0.1)
     local executor_Name = detectExecutor()
     wait(0.1)
-    
+    print("2")
     wait(0.2)
     local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
     local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
@@ -63,6 +64,7 @@
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
     wait(0.3)
+    print("3")
     if enabled_vc == true  then
         Notification:Notify("Success!", "Connected with VC successfully!", 3)
     elseif (enabled_vc == false and (not game.PlaceId == 6884319169)) or (not game.PlaceId == 15546218972) then
@@ -75,7 +77,7 @@
     wait()
     local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
     local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
-
+    print("4")
     local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"}
     local specialPlayer = "alt_acc9996"
     local support_team = {"Ixgale7530", "starsorbitspace", "goldgoldgoldBlazn", "euigwerergre", "o7rssuk"}
@@ -98,6 +100,7 @@
         end
         return false
     end
+    print("5")
 
     local function beta_tester(player)
         for _, name in ipairs(all_beta_testers) do
@@ -107,6 +110,8 @@
         end
         return false
     end
+
+    print("6")
 
     local function edit_naming(player, new_name, type)
         if type == "Username" then
@@ -132,12 +137,13 @@
         end
     end
     wait()
+    print("7")
+    wait()
     local function make_title(player, text, color, transparency)
         local function applyToCharacter(character)
             task.wait(0.5)
             if color == Color3.fromRGB(255, 255, 255) then
                 local head = character:FindFirstChild("Head")
-                if not head then return end
                 if head:FindFirstChild("ZacksEasyBillboard") then return end
 
                 local billboardGui = Instance.new("BillboardGui")
@@ -173,7 +179,6 @@
                 textLabel.Parent = background
             else
                 local head = character:FindFirstChild("Head")
-                if not head then return end
                 if head:FindFirstChild("ZacksEasyBillboard") then return end
 
                 local billboardGui = Instance.new("BillboardGui")
@@ -213,6 +218,7 @@
         if player.Character then
             applyToCharacter(player.Character)
         end
+        print("8")
         player.CharacterAdded:Connect(applyToCharacter)
     end
 
@@ -237,6 +243,8 @@
         task.wait(1)
         assign(player)
     end)
+    wait()
+    print("9")
     wait(0.3)
     -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
     getgenv().Game = game
@@ -251,6 +259,8 @@
         end
     end
 
+    print("10")
+
     local function getExecutor()
         local name
         if identifyexecutor then
@@ -264,6 +274,8 @@
         return string.format("%s", executorDetails.Name)
     end
     wait(0.1)
+    print("11")
+    wait()
     local executor_Name = executor_details()
 
     getgenv().print_executor = function()
@@ -285,6 +297,8 @@
         return print(executor_string)
     end
 
+    print("12")
+
     function randomString()
         local length = math.random(10,20)
         local array = {}
@@ -303,6 +317,8 @@
         return table.concat(array)
     end
 
+    print("13")
+
     -- These below this line are being wrapped in the function above (as you can see), essentially making them useful anywhere in the script, local variables but quite more advanced.
     getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
     getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
@@ -310,6 +326,8 @@
     get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
     getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
     queueteleport = getgenv().queueteleport
+
+    print("14")
 
     local function init_services()
         local services = {
@@ -345,6 +363,8 @@
         end
     end
     wait()
+    print("15")
+    wait()
     init_services()
     wait(0.2)
     getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
@@ -369,7 +389,8 @@
                 warn("Failed to load and insert Zacks Easy Hub | Crossroads Map Model.")
             end
         end
-
+        wait()
+        print("16")
         insert_id_asset('85211877443756', game:GetService("Workspace"))
         wait()
         insert_id_asset('126578094071541', game:GetService("Workspace"))
@@ -427,6 +448,8 @@
     else
         warn("Maps have already been loaded.")
     end
+    wait()
+    print("17")
     wait(0.2)
     
     wait(0.3)
@@ -554,6 +577,7 @@
             local gamepassid = GamePassID
             wait(1)
             if ownsGamePass(userid, gamepassid) then
+                print("Player Owns GamePass!")
                 return true
             else
                 return false
@@ -7028,7 +7052,7 @@
         warn("Did not load this Booth tab [7].")
     end
 
-    getgenv().GraphicsEnhancer = Tab16:CreateToggle({
+    getgenv().GraphicsEnhancer = Tab9:CreateToggle({
     Name = "Graphics Enhancer",
     CurrentValue = false,
     Flag = "GraphicsEnhancerToggling",
