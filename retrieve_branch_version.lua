@@ -144,6 +144,7 @@
             task.wait(0.5)
             if color == Color3.fromRGB(255, 255, 255) then
                 local head = character:FindFirstChild("Head")
+                if not head then return warn("Head does not exist!") end
                 if head:FindFirstChild("ZacksEasyBillboard") then return end
 
                 local billboardGui = Instance.new("BillboardGui")
@@ -215,7 +216,7 @@
             end
         end
 
-        if player.Character then
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
             applyToCharacter(player.Character)
         end
         print("8")
