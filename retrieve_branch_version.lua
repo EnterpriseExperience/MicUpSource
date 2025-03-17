@@ -75,7 +75,7 @@
         Notification:Notify("Passed.", "Unknown error occurred.", 5)
     end
     wait()
-    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    --[[local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
     local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
     print("4")
     local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"}
@@ -243,7 +243,7 @@
     Players.PlayerAdded:Connect(function(player)
         task.wait(1)
         assign(player)
-    end)
+    end)--]]
     wait()
     print("9")
     wait(0.3)
