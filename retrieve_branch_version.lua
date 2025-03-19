@@ -1083,6 +1083,8 @@
         repeat wait() until user_selected_option ~= nil
     end
     wait(0.1)
+
+    wait(0.1)
     local fileName = "TP_Tool_Setting.txt"
 
     if isfile(fileName) then
@@ -2220,6 +2222,40 @@
     end,})
     wait(0.1)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        Players = getgenv().Players
+        Workspace = getgenv().Workspace
+        UserInputService = getgenv().UserInputService
+        RunService = getgenv().RunService
+        ReplicatedStorage = getgenv().ReplicatedStorage
+        TweenService = getgenv().TweenService
+        LocalPlayer = getgenv().LocalPlayer
+        HttpService = getgenv().HttpService
+
+        local ghostEnabled = false
+        local originalCharacter
+        local ghostClone
+        local originalCFrame
+        local originalAnimateScript
+        local updateConnection
+
+        local ghostOriginalHipHeight
+
+        local cloneSize = 1
+        local cloneWidth = 1
+
+        local ghostOriginalSizes = {}
+        local ghostOriginalMotorCFrames = {}
+        wait(0.1)
+        local body_parts = {
+            "Head", "UpperTorso", "LowerTorso",
+            "LeftUpperArm", "LeftLowerArm", "LeftHand",
+            "RightUpperArm", "RightLowerArm", "RightHand",
+            "LeftUpperLeg", "LeftLowerLeg", "LeftFoot",
+            "RightUpperLeg", "RightLowerLeg", "RightFoot"
+        }
+        wait(0.1)
+        
+
         getgenv().StallClaimToggle = Tab11:CreateToggle({
         Name = "Claim Any Booth",
         CurrentValue = false,
@@ -4032,7 +4068,7 @@
         end
     end,})
 
-    if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) then
+    if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) then
         getgenv().CharIntoOwnerOfScript = Tab2:CreateButton({
         Name = "Char Into: Owner Of Script",
         Callback = function()
@@ -8633,15 +8669,16 @@
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         if fireclickdetector then
-            local function findFriendPlayer()
-                local Local_Player = getgenv().LocalPlayer
-                for _, player in ipairs(getgenv().Players:GetPlayers()) do
-                    if player ~= Local_Player and Local_Player:IsFriendsWith(player.UserId) then
-                        return player
+            local function find_real_friend()
+                for _, v in ipairs(game.Players:GetPlayers()) do
+                    if v:IsFriendsWith(game.Players.LocalPlayer.UserId) then
+                        return v
                     end
                 end
                 return nil
             end
+
+            local friend_find = find_real_friend()
             wait(0.1)
             getgenv().WhitelistFriendPlr = Tab1:CreateToggle({
             Name = "[Avatar-UI]: Auto Like Friends",
@@ -8654,10 +8691,7 @@
                     local Click_Detector_Input = Like_Button:FindFirstChild("ClickDetector")
                     local Avatar_Part_UI = Avatar_UI:WaitForChild("AvatarUI")
                     local Image_Label = Avatar_Part_UI:WaitForChild("SurfaceGui"):WaitForChild("ImageLabel")
-                    
                     local Local_Player = getgenv().LocalPlayer
-                    
-                    local friend_find = findFriendPlayer()
                     
                     if not friend_find then
                         getgenv().WhitelistFriendPlr:Set(false)
@@ -8669,7 +8703,7 @@
                         if user then
                             local expectedURL = "rbxthumb://type=Avatar&id=" .. tostring(user.UserId) .. "&w=420&h=420"
                             if Image_Label.Image == expectedURL then
-                                fireclickdetector(Click_Detector_Input, 999)
+                                fireclickdetector(Click_Detector_Input)
                                 return true
                             end
                         end
@@ -8681,19 +8715,19 @@
                         while getgenv().Like_Friends == true do
                             wait()
                             local liked = like_friend_only(friend_find)
-                            if not liked then
-                                getgenv().WhitelistFriendPlr:Set(false)
-                                getgenv().Like_Friends = false
-                            end
                         end
                     else
+                        getgenv().Like_Friends = false
+                        wait(0.2)
                         getgenv().Like_Friends = false
                     end
                 else
                     getgenv().Like_Friends = false
+                    wait(0.2)
+                    getgenv().Like_Friends = false
                 end
             end,})
-
+            wait()
             if getgenv().Like_Friends == true then
                 getgenv().Like_Friends = false
                 getgenv().WhitelistFriendPlr:Set(false)
@@ -8798,7 +8832,7 @@
             end
         end,})
 
-        getgenv().defaulting_keybind_for_muting_microphone = "LeftControl"
+        getgenv().defaulting_keybind_for_muting_microphone = "M"
         wait()
         getgenv().EzMuteKeybind = Tab21:CreateDropdown({
         Name = "Mute Keybind",
@@ -9043,152 +9077,6 @@
     getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
     getgenv().RAINBOW_MODE = false
     wait()
-    --[[local Box_ESP = {
-        enabled = false,
-        espObjects = {},
-        color = Color3.fromRGB(255, 0, 0)
-    }
-    wait()
-    getgenv().EspBox = Tab19:CreateToggle({
-    Name = "Box",
-    CurrentValue = false,
-    Flag = "TogglingBoxESP",
-    Callback = function(box_Esp)
-        if box_Esp then
-            wait(1)
-            getgenv().ESPEnabled = false
-
-            local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-            local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-            local LocalPlayer = Players.LocalPlayer
-
-            local function HSV_To_RGB(h, s, v)
-                local i = math.floor(h * 6)
-                local f = h * 6 - i
-                local p = v * (1 - s)
-                local q = v * (1 - f * s)
-                local t = v * (1 - (1 - f) * s)
-
-                i = i % 6
-                if i == 0 then return Color3.new(v, t, p) 
-                elseif i == 1 then return Color3.new(q, v, p) 
-                elseif i == 2 then return Color3.new(p, v, t) 
-                elseif i == 3 then return Color3.new(p, q, v) 
-                elseif i == 4 then return Color3.new(t, p, v) 
-                elseif i == 5 then return Color3.new(v, p, q) end
-            end
-
-            local function createESP(player)
-                if not Box_ESP.enabled or player == LocalPlayer or Box_ESP.espObjects[player] then return end
-
-                local character = player.Character
-                if not character or not character:FindFirstChild("HumanoidRootPart") then return end
-
-                local billboard = Instance.new("BillboardGui")
-                billboard.Name = "ESP"
-                billboard.Adornee = character:FindFirstChild("HumanoidRootPart")
-                billboard.Size = UDim2.new(4, 0, 5, 0)
-                billboard.StudsOffset = Vector3.new(0, 2, 0)
-                billboard.AlwaysOnTop = true
-
-                local frame = Instance.new("Frame")
-                frame.Size = UDim2.new(1, 0, 1, 0)
-                frame.BackgroundColor3 = Box_ESP.color
-                frame.BackgroundTransparency = 0.5
-                frame.BorderSizePixel = 0
-                frame.Parent = billboard
-
-                billboard.Parent = character
-                Box_ESP.espObjects[player] = frame
-            end
-
-            local function removeESP(player)
-                if Box_ESP.espObjects[player] then
-                    Box_ESP.espObjects[player]:Destroy()
-                    Box_ESP.espObjects[player] = nil
-                end
-            end
-
-            local function updateESP()
-                if not Box_ESP.enabled then
-                    for player, _ in pairs(Box_ESP.espObjects) do
-                        removeESP(player)
-                    end
-                    return
-                end
-
-                for _, player in ipairs(Players:GetPlayers()) do
-                    if player ~= LocalPlayer then
-                        createESP(player)
-                    end
-                end
-            end
-
-            local function onCharacterAdded(player)
-                task.wait(0.5)
-                if Box_ESP.enabled then
-                    createESP(player)
-                end
-            end
-
-            local function onPlayerAdded(player)
-                player.CharacterAdded:Connect(function()
-                    onCharacterAdded(player)
-                end)
-                player.CharacterRemoving:Connect(function()
-                    removeESP(player)
-                end)
-                if player.Character then
-                    onCharacterAdded(player)
-                end
-            end
-
-            Players.PlayerAdded:Connect(onPlayerAdded)
-            Players.PlayerRemoving:Connect(removeESP)
-
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer then
-                    onPlayerAdded(player)
-                end
-            end
-
-            task.spawn(function()
-                local hue = 0
-                while true do
-                    task.wait(0.05)
-                    if Box_ESP.enabled then
-                        local color = getgenv().RAINBOW_MODE and HSV_To_RGB(hue, 1, 1) or Box_ESP.color
-                        for player, frame in pairs(Box_ESP.espObjects) do
-                            if frame then
-                                frame.BackgroundColor3 = color
-                            end
-                        end
-                        hue = (hue + 0.01) % 1
-                    end
-                end
-            end)
-            wait()
-            Box_ESP.enabled = true
-        else
-            wait(1)
-            getgenv().ESPEnabled = false
-            wait()
-            if Box_ESP then
-                Box_ESP.enabled = false
-
-                for _, frame in pairs(Box_ESP.espObjects) do
-                    if frame then frame:Destroy() end
-                end
-                table.clear(Box_ESP.espObjects)
-                wait(0.3)
-                for _, frame in pairs(Box_ESP.espObjects) do
-                    if frame then frame:Destroy() end
-                end
-                table.clear(Box_ESP.espObjects)
-            end
-        end
-    end,})--]]
-    wait()
     if Drawing then
         local tracer_settings = {
             enabled = false,
@@ -9198,6 +9086,147 @@
             update_conn = nil,
             color = Color3.fromRGB(255, 0, 0)
         }
+
+        getgenv().RAINBOW_MODE = getgenv().RAINBOW_MODE or false
+
+        local Players = game:GetService("Players")
+        local RunService = game:GetService("RunService")
+        local LocalPlayer = Players.LocalPlayer
+        local Camera = workspace.CurrentCamera
+
+        local ESP_ENABLED = false
+        local BOX_THICKNESS = 2
+        local TEAM_CHECK = true
+        local ESP_Boxes = {}
+
+        local RenderConnection = nil
+
+        local function CreateDrawing(type)
+            local drawing = Drawing.new(type)
+            drawing.Visible = false
+            drawing.Thickness = BOX_THICKNESS
+            drawing.Color = Color3.new(1, 1, 1)
+            return drawing
+        end
+
+        local function CreateESP(character)
+            if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+            
+            local box = {
+                Top = CreateDrawing("Line"),
+                Bottom = CreateDrawing("Line"),
+                Left = CreateDrawing("Line"),
+                Right = CreateDrawing("Line")
+            }
+            
+            ESP_Boxes[character] = box
+            return box
+        end
+
+        local function GetRainbowColor()
+            local hue = tick() % 6 / 6
+            return Color3.fromHSV(hue, 1, 1)
+        end
+
+        local function UpdateESP(character, box)
+            if not character or not character:FindFirstChild("HumanoidRootPart") or not character:FindFirstChild("Humanoid") then
+                for _, line in pairs(box) do
+                    line.Visible = false
+                end
+                return
+            end
+            
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            local humanoid = character:FindFirstChild("Humanoid")
+            
+            if humanoid.Health <= 0 then
+                for _, line in pairs(box) do
+                    line.Visible = false
+                end
+                return
+            end
+            
+            local player = Players:GetPlayerFromCharacter(character)
+            if TEAM_CHECK and player and player.Team == LocalPlayer.Team then
+                for _, line in pairs(box) do
+                    line.Visible = false
+                end
+                return
+            end
+            
+            local rootPos, onScreen = Camera:WorldToViewportPoint(humanoidRootPart.Position)
+            if not onScreen then
+                for _, line in pairs(box) do
+                    line.Visible = false
+                end
+                return
+            end
+            
+            local size = Vector3.new(4, 6, 4)
+            local topLeft = Camera:WorldToViewportPoint(humanoidRootPart.Position - size/2)
+            local bottomRight = Camera:WorldToViewportPoint(humanoidRootPart.Position + size/2)
+            
+            local color = getgenv().RAINBOW_MODE and GetRainbowColor() or Color3.new(1, 1, 1)
+            
+            box.Top.From = Vector2.new(topLeft.X, topLeft.Y)
+            box.Top.To = Vector2.new(bottomRight.X, topLeft.Y)
+            box.Bottom.From = Vector2.new(topLeft.X, bottomRight.Y)
+            box.Bottom.To = Vector2.new(bottomRight.X, bottomRight.Y)
+            box.Left.From = Vector2.new(topLeft.X, topLeft.Y)
+            box.Left.To = Vector2.new(topLeft.X, bottomRight.Y)
+            box.Right.From = Vector2.new(bottomRight.X, topLeft.Y)
+            box.Right.To = Vector2.new(bottomRight.X, bottomRight.Y)
+            
+            for _, line in pairs(box) do
+                line.Color = color
+                line.Visible = ESP_ENABLED
+            end
+        end
+
+        local function PlayerAdded(player)
+            player.CharacterAdded:Connect(function(character)
+                local box = CreateESP(character)
+                if box then
+                    ESP_Boxes[character] = box
+                end
+            end)
+        end
+
+        getgenv().EspBox = Tab19:CreateToggle({
+        Name = "Box",
+        CurrentValue = false,
+        Flag = "TogglingBoxESP",
+        Callback = function(box_Esp)
+            ESP_ENABLED = box_Esp
+            
+            if ESP_ENABLED then
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer then
+                        PlayerAdded(player)
+                    end
+                end
+                Players.PlayerAdded:Connect(PlayerAdded)
+                
+                if not RenderConnection then
+                    RenderConnection = RunService.RenderStepped:Connect(function()
+                        for character, box in pairs(ESP_Boxes) do
+                            UpdateESP(character, box)
+                        end
+                    end)
+                end
+            else
+                if RenderConnection then
+                    RenderConnection:Disconnect()
+                    RenderConnection = nil
+                end
+                for character, box in pairs(ESP_Boxes) do
+                    for _, line in pairs(box) do
+                        line:Remove()
+                    end
+                    ESP_Boxes[character] = nil
+                end
+            end
+        end,})
 
         getgenv().TracersToggleMain = Tab19:CreateToggle({
         Name = "Tracers",
@@ -9910,7 +9939,7 @@
                 if getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Teleport Tool") then
                     getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Teleport Tool"):Destroy()
                 end
-                wait(0.1)
+                wait(0.3)
                 local StoredCF = RealCharacter.HumanoidRootPart.CFrame
                 RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
                 FakeCharacter.HumanoidRootPart.CFrame = StoredCF
@@ -9961,7 +9990,7 @@
                     if getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Teleport Tool") then
                         getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Teleport Tool"):Destroy()
                     end
-                    wait()
+                    wait(1)
                     Invisible()
                 end
             end
@@ -12641,7 +12670,7 @@
     }
     wait()
     local function keycode_convert(keyString)
-        return Enum.KeyCode[keyString] or nil
+        return Enum.KeyCode[keyString] or Enum.KeyCode[keyString:upper()] or nil
     end
     wait()
     local UserInputService = getgenv().UserInputService
@@ -12650,6 +12679,9 @@
     getgenv().Freeze_Keybind = Enum.KeyCode.V
 
     local ConfigFileName = "EmoteConfig.json"
+
+    getgenv().Emote_Keybinds_Configuration = getgenv().Emote_Keybinds_Configuration or {}
+    getgenv().Emote_Speed_Configuration = getgenv().Emote_Speed_Configuration or {}
     
     local Emote_Keybinds_Configuration = {  
         [Enum.KeyCode.One] = "Rise Above - The Chainsmokers",
@@ -12805,7 +12837,7 @@
         end
 
         selectedSlot = Slots_Table[slotName]
-        getgenv().notify("Success:", "Selected Slot: " .. slotName .. " (KeyCode: " .. tostring(selectedSlot) .. ")", 6)
+        getgenv().notify("Success:", "Selected Slot: " .. slotName .. " (Keybind: " .. tostring(selectedSlot) .. ")", 6)
     end,})
 
     local Emotes = {
@@ -12824,6 +12856,7 @@
         "Disagree",
         "Line Dance",
         "Agree",
+        "BLACKPINK Shut Down - Part 2",
         "Yungblud Happier Jump",
         "Sad",
         "HUGO Let's Drive!",
@@ -13005,7 +13038,7 @@
             return warn("Please select a slot first before choosing an emote!")
         end
 
-        Emote_Keybinds_Configuration[selectedSlot] = emote
+        UpdateEmoteKeybind(selectedSlot, emote)
         getgenv().notify("Success:", "Assigned emote: '" .. emote .. "' to keybind: " .. tostring(selectedSlot), 6)
     end,})
 
@@ -13033,63 +13066,52 @@
         getgenv().emoting_actions(tonumber(emoteSlowDownConfig))
     end,})
 
+    local ConfigFileName = "EmoteConfig.json"
+    wait()
     getgenv().SaveEmoteConfig = Tab15:CreateButton({
     Name = "Save Emote Configuration",
     Callback = function()
-        local function write_configuration()
-            local config = {
-                Emote_Keybinds_Configuration = {},
-                Emote_Speed_Configuration = {}
-            }
-        
-            for key, value in pairs(Emote_Keybinds_Configuration) do
-                config.Emote_Keybinds_Configuration[tostring(key)] = value
+        local function save_emote_configuration()
+            local data = {}
+            for key, emote in pairs(getgenv().Emote_Keybinds_Configuration) do
+                local keyName = tostring(key):match("Enum%.KeyCode%.(.+)")
+                if keyName then
+                    data[keyName] = emote
+                end
             end
-        
-            for key, value in pairs(Emote_Speed_Configuration) do
-                config.Emote_Speed_Configuration[tostring(key)] = value
-            end
-        
-            local jsonData = game:GetService("HttpService"):JSONEncode(config)
-            writefile(ConfigFileName, jsonData)
-            getgenv().notify("Success:", "Emote configuration has been saved!", 5)
+            writefile(ConfigFileName, HttpService:JSONEncode(data))
+            getgenv().notify("Success:", "Emote Configuration Saved!", 5)
         end
-        
-        write_configuration()
     end,})
 
     getgenv().LoadEmoteConfig = Tab15:CreateButton({
     Name = "Load Emote Configuration",
     Callback = function()
-        local function Initialize_Configuration()
+        function Init_Emote_Configuration()
+            local ConfigFileName = "EmoteConfig.json"
+
             if isfile(ConfigFileName) then
                 local jsonData = readfile(ConfigFileName)
-                local config = game:GetService("HttpService"):JSONDecode(jsonData)
+                local data = HttpService:JSONDecode(jsonData)
 
-                Emote_Keybinds_Configuration = {}
-                Emote_Speed_Configuration = {}
-        
-                for key, value in pairs(config.Emote_Keybinds_Configuration) do
-                    local key_press = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
-                    if key_press then
-                        Emote_Keybinds_Configuration[key_press] = value
+                table.clear(getgenv().Emote_Keybinds_Configuration)
+
+                for keyName, emote in pairs(data) do
+                    local keyEnum = Enum.KeyCode[keyName]
+                    if keyEnum then
+                        getgenv().Emote_Keybinds_Configuration[keyEnum] = emote
+                        getgenv().notify("Loaded:", "Key: " .. keyName .. " -> Emote: " .. emote, 5)
+                    else
+                        getgenv().notify("Warning:", "Invalid KeyCode: " .. keyName, 5)
                     end
                 end
-        
-                for key, value in pairs(config.Emote_Speed_Configuration) do
-                    local speed_key_code = Enum.KeyCode[key:match("Enum.KeyCode.(%w+)")]
-                    if speed_key_code then
-                        Emote_Speed_Configuration[speed_key_code] = value
-                    end
-                end
-                wait()
-                getgenv().notify("Success:", "Emote configuration has been loaded!", 5)
+                getgenv().notify("Success:", "Loaded Emote Configuration from: " .. tostring(ConfigFileName), 5)
             else
-                getgenv().notify("Error:", "No saved configuration found!", 5)
+                getgenv().notify("Failed:", "Emote Configuration was not found.", 5)
             end
         end
-        
-        Initialize_Configuration()
+        wait()
+        Init_Emote_Configuration()
     end,})
 
     getgenv().DeleteEmoteConfig = Tab15:CreateButton({
@@ -13114,8 +13136,18 @@
         if not getgenv().EmoteSystemEnabled or entered then return end
 
         local emote = Emote_Keybinds_Configuration[input.KeyCode]
-        if emote and getgenv().Humanoid then
+        if emote then
+            if getgenv().emoting_actions then
+                pcall(getgenv().emoting_actions)
+            else
+                for _, v in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+                    v:Stop()
+                end
+            end
+            wait(0.1)
             getgenv().Humanoid:PlayEmote(emote)
+        else
+            getgenv().notify("Debug:", "No emote assigned to key: " .. tostring(input.KeyCode), 5)
         end
     end
 
@@ -13133,7 +13165,7 @@
         else
             local speed = Emote_Speed_Configuration[input.KeyCode]
             if speed and getgenv().Humanoid then
-                getgenv().emoting_actions(tonumber(speed))
+                getgenv().emoting_actions(tonumber(speed) or 1)
             end
         end
     end
@@ -13145,35 +13177,45 @@
     getgenv().BoundConnections["EmoteInput"] = UserInputService.InputBegan:Connect(input_connecting)
     getgenv().BoundConnections["EmoteTrigger"] = UserInputService.InputBegan:Connect(input_start)
     wait()
-    getgenv().Trip_Keybind = Tab15:CreateInput({  
+    getgenv().Trip_Keybind = Tab15:CreateDropdown({  
     Name = "Trip Keybind",
-    CurrentValue = "N",
-    PlaceholderText = "Keybind Here",
-    RemoveTextAfterFocusLost = true,
+    Options = {"Q","E","R","T","Y","U","I","O","P","F","G","H","J","K","L","Z","X","C","V","B","N","M",
+               "Comma","Period","Question","Semicolon","Colon","LeftAlt","RightAlt","LeftControl",
+               "RightControl","LeftBracket","RightBracket","BackSlash","Pipe","LeftCurly",
+               "RightCurly","Underscore","Minus","LeftParenthesis","RightParenthesis","Asterisk",
+               "Slash","GreaterThan","LessThan","Backquote","At","Equals","Caret","Hash","Dollar",
+               "Percent","Ampersand","Quote","QuotedDouble","Plus","F1","F2","F3","F4","F5","F6",
+               "F7","F8","F9","F10","F11","F12","Print","Help","Compose","Menu","Euro","ButtonX",
+               "ButtonA","ButtonY","ButtonB","ButtonR1","ButtonL1","ButtonL2","ButtonR2","ButtonL3",
+               "ButtonStart","ButtonSelect","DPadLeft","DPadRight","DPadUp","DPadDown","Thumbstick1", "Thumbstick2"},
+    CurrentOption = "N",
+    MultipleOptions = false,
     Flag = "TrippingOverKeybind",
     Callback = function(KeyForTripping)
-        local new_keycode = keycode_convert(string.upper(KeyForTripping))
-        wait()
+        local new_keycode = Enum.KeyCode[KeyForTripping[1]]
         if new_keycode then
             Trip_Settings.Keybind_Trip = new_keycode
-        else
-            warn("Invalid keybind for Trip:", KeyForTripping)
         end
     end,})
     
-    getgenv().FakeOut_Keybind = Tab15:CreateInput({
+    getgenv().FakeOut_Keybind = Tab15:CreateDropdown({
     Name = "Fake Out Keybind",
-    CurrentValue = "R",
-    PlaceholderText = "Keybind Here",
-    RemoveTextAfterFocusLost = true,
+    Options = {"Q","E","R","T","Y","U","I","O","P","F","G","H","J","K","L","Z","X","C","V","B","N","M",
+               "Comma","Period","Question","Semicolon","Colon","LeftAlt","RightAlt","LeftControl",
+               "RightControl","LeftBracket","RightBracket","BackSlash","Pipe","LeftCurly",
+               "RightCurly","Underscore","Minus","LeftParenthesis","RightParenthesis","Asterisk",
+               "Slash","GreaterThan","LessThan","Backquote","At","Equals","Caret","Hash","Dollar",
+               "Percent","Ampersand","Quote","QuotedDouble","Plus","F1","F2","F3","F4","F5","F6",
+               "F7","F8","F9","F10","F11","F12","Print","Help","Compose","Menu","Euro","ButtonX",
+               "ButtonA","ButtonY","ButtonB","ButtonR1","ButtonL1","ButtonL2","ButtonR2","ButtonL3",
+               "ButtonStart","ButtonSelect","DPadLeft","DPadRight","DPadUp","DPadDown","Thumbstick1", "Thumbstick2"},
+    CurrentOption = "R",
+    MultipleOptions = false,
     Flag = "FakingOutKeybind",
     Callback = function(key_for_fake_out)
-        local updated_key = keycode_convert(string.upper(key_for_fake_out))
-        wait()
-        if updated_key then
-            Trip_Settings.Keybind_FakeOut = updated_key
-        else
-            warn("Invalid keybind for Fake Out:", key_for_fake_out)
+        local newest_keycode = Enum.KeyCode[key_for_fake_out[1]]
+        if newest_keycode then
+            Trip_Settings.Keybind_FakeOut = newest_keycode
         end
     end,})
     
@@ -13222,7 +13264,12 @@
             getgenv().notify("Success", "Successfully disabled Trip Connection.", 5)
         end
     end,})
-
+    wait()
+    if getgenv().Trip_Enabled == true then
+        getgenv().Trip_Enabled = false
+        getgenv().Trip_Script:Set(false)
+    end
+    wait()
     local HttpService = getgenv().HttpService
     wait()
     local function del_ez_Config()
@@ -13684,7 +13731,7 @@
                 local keybind = Trip_Settings.Keybind_FakeOut
                 
                 if input.KeyCode == keybind then
-                    wait(2.5)
+                    wait(0.5)
                     getgenv().fake_out()
                 end
             end)
@@ -13699,7 +13746,12 @@
             getgenv().notify("Success", "Successfully disabled Fake Out Connection.", 5)
         end
     end,})
-
+    wait()
+    if getgenv().FakeOut_Enabled == true then
+        getgenv().FakeOut_Enabled = false
+        getgenv().FakeOutScript:Set(false)
+    end
+    wait(0.1)
     getgenv().Reset_ClockTime_GUI = Tab15:CreateButton({
     Name = "Disable Script Clock Time GUI",
     Callback = function()
