@@ -13143,8 +13143,6 @@
             end
             wait(0.1)
             getgenv().Humanoid:PlayEmote(emote)
-        else
-            getgenv().notify("Debug:", "No emote assigned to key: " .. tostring(input.KeyCode), 5)
         end
     end
 
