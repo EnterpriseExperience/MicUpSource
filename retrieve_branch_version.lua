@@ -81,7 +81,7 @@
     local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"}
     local specialPlayer = "alt_acc9996"
     local support_team = {"Ixgale7530", "starsorbitspace", "goldgoldgoldBlazn", "euigwerergre", "o7rssuk"}
-    local all_beta_testers = {"Chick7nn", "LIL_RT288", "CrimGameHolder"}
+    local all_beta_testers = {"Chick7nn", "LIL_RT228", "CrimGameHolder"}
 
     local function isWatchedPlayer(playerName)
         for _, name in ipairs(watchedPlayers) do
