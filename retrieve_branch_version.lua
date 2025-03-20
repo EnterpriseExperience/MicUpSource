@@ -581,7 +581,7 @@
                 return false
             end
         else
-            if getgenv().MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(GamePassID)) then
+            if getgenv().MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(GamePassID)) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
                 return true
             else
                 getgenv().notify("Failure:", "You do not own this GamePass.", 5)
@@ -3293,7 +3293,7 @@
             end
         end
         wait()
-        if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) then
+        if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
             getgenv().CopyAPlayersAv = Tab2:CreateInput({
             Name = "Copy Player Avatar",
             PlaceholderText = "Player",
@@ -4065,7 +4065,7 @@
         end
     end,})
 
-    if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) then
+    if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
         getgenv().CharIntoOwnerOfScript = Tab2:CreateButton({
         Name = "Char Into: Owner Of Script",
         Callback = function()
@@ -6904,7 +6904,7 @@
         local gamePassId = tonumber(id)
 
         local success, hasPass = pcall(function()
-            return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamePassId)
+            return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamePassId) or MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, gamePassId)
         end)
 
         if success then
@@ -8269,7 +8269,7 @@
             RemoveTextAfterFocusLost = true,
             Callback = function(GetSpeed)
                 if tonumber(GetSpeed) then
-                    if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) then
+                    if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
                         local args = {
                             [1] = "Hoverboard"
                         }
@@ -8926,7 +8926,7 @@
             Delete_Inv_RemoteEvent:FireServer()
         end,})
 
-        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) then
+        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or not MarketplaceService(getgenv().LocalPlayer, 2937412613) then
             warn("LocalPlayer does not own this GamePass.")
             getgenv().notify("Skipped:", "You do not own the 'Admin' GamePass.", 5)
         else
@@ -8937,7 +8937,7 @@
                 local gamepassId = 951459548
 
                 local success, hasPass = pcall(function()
-                    return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassId)
+                    return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassId) or MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, gamepassId)
                 end)
                 if success and hasPass then
                     print(tostring(player.Name).." owns this GamePass, moving on.")
@@ -9721,7 +9721,7 @@
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         local gamePassId = 951459548
 
-        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) then
+        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or not getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
             warn("You do not own the Admin GamePass, not loading Tab: [Character Flicker (FE)]")
         else
             getgenv().DoCharacterFlicking = Tab2:CreateToggle({
