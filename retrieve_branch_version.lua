@@ -11483,7 +11483,7 @@
     getgenv().RejoinButton = Tab15:CreateButton({
     Name = "Rejoin",
     Callback = function()
-        getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, getgenv().LocalPlayer)
+        getgenv().TeleportService:TeleportToPlaceInstance(getgenv().PlaceID, getgenv().JobID, getgenv().LocalPlayer)
     end,})
 
     if executor_Name == "Solara" then
@@ -11513,8 +11513,8 @@
                 return getgenv().notify("ServerHop", "httprequest is unsupported. [failed].", 5)
             end
 
-            if #servers > 0 then
-                getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], getgenv().LocalPlayer)
+            if #getgenv().servers > 0 then
+                getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, getgenv().servers[math.random(1, #getgenv().servers)], getgenv().LocalPlayer)
             else
                 return getgenv().notify("ServerHop", "Couldn't find a server [failed].", 5)
             end
