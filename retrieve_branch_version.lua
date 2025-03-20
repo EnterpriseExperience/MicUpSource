@@ -8926,7 +8926,7 @@
             Delete_Inv_RemoteEvent:FireServer()
         end,})
 
-        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or not MarketplaceService(getgenv().LocalPlayer, 2937412613) then
+        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or not MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
             warn("LocalPlayer does not own this GamePass.")
             getgenv().notify("Skipped:", "You do not own the 'Admin' GamePass.", 5)
         else
