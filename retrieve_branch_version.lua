@@ -75,7 +75,7 @@
         Notification:Notify("Passed.", "Unknown error occurred.", 5)
     end
     wait()
-    --[[local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
     local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
     print("4")
     local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"}
@@ -113,8 +113,8 @@
 
     print("6")
 
-    local function edit_naming(player, new_name, type)
-        if type == "Username" then
+    local function edit_naming(player, new_name, the_type)
+        if the_type == "Username" then
             local function update_name(character)
                 task.wait(0.5)
                 player.Name = new_name
@@ -123,7 +123,7 @@
             if player.Character then
                 update_name(player)
             end
-        elseif type == "DisplayName" then
+        elseif the_type == "DisplayName" then
             local function update_display(character)
                 task.wait(0.5)
                 player.DisplayName = new_name
@@ -132,8 +132,6 @@
             if player.Character then
                 update_display(player)
             end
-        else
-            return warn("Unknown type provided.")
         end
     end
     wait()
@@ -226,7 +224,6 @@
     local function assign(player)
         if isWatchedPlayer(player.Name) then
             make_title(player, "👑 Zacks Easy Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
-            edit_naming(player, "discord.gg/zackseasyhub", "DisplayName")
         elseif player.Name == specialPlayer then
             make_title(player, "👧 Zacks Easy Hub | Daughter 👧", Color3.fromRGB(89, 34, 89), 0.3)
         elseif isSupportTeam(player.Name) then
@@ -243,7 +240,7 @@
     Players.PlayerAdded:Connect(function(player)
         task.wait(1)
         assign(player)
-    end)--]]
+    end)
     wait()
     print("9")
     wait(0.3)
