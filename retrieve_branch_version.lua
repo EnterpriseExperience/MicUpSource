@@ -561,7 +561,7 @@
 
             local function ownsGamePass(userid, gamepassid)
                 local success, result = pcall(function()
-                    return MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(gamepassid))
+                    return MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(gamepassid)) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613)
                 end)
 
                 if success then
@@ -954,7 +954,17 @@
     else
         warn("Not on 'MIC UP' or 'MIC UP 17+', not converting 'MeshPart's' and 'BaseParts'.")
     end
-
+    wait()
+    if getgenv().Players.RespawnTime == 0 then
+        warn("Players.RespawnTime is already 0")
+    else
+        getgenv().Players.RespawnTime = 0
+        wait(0.1)
+        print("Set 'RespawnTime' to 0 successfully.")
+    end
+    wait()
+    
+    wait()
     function connect_tp_tool()
         local speaker = getgenv().LocalPlayer
         local TpTool = Instance.new("Tool")
@@ -8664,7 +8674,7 @@
         warn("Not MIC UP or MIC UP 17+, not loading In-Game music functions.")
     end
 
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 and executor_Name ~= "Ronix" then
         if fireclickdetector then
             local function find_real_friend()
                 for _, v in ipairs(game.Players:GetPlayers()) do
@@ -8926,10 +8936,7 @@
             Delete_Inv_RemoteEvent:FireServer()
         end,})
 
-        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or not MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
-            warn("LocalPlayer does not own this GamePass.")
-            getgenv().notify("Skipped:", "You do not own the 'Admin' GamePass.", 5)
-        else
+        if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
             function Tools_Grab_Func()
                 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
                 local MarketplaceService = cloneref and cloneref(game:GetService("MarketplaceService")) or game:GetService("MarketplaceService")
@@ -9007,6 +9014,9 @@
                     Delete_Inv_Event:FireServer()
                 end
             end,})
+        else
+            warn("LocalPlayer does not own this GamePass.")
+            getgenv().notify("Skipped:", "You do not own the 'Admin' GamePass.", 5)
         end
     else
         warn("Not on MIC UP, not loading these features.")
@@ -9721,9 +9731,7 @@
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         local gamePassId = 951459548
 
-        if not getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or not getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
-            warn("You do not own the Admin GamePass, not loading Tab: [Character Flicker (FE)]")
-        else
+        if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
             getgenv().DoCharacterFlicking = Tab2:CreateToggle({
             Name = "Character Flicker (FE)",
             CurrentValue = false,
@@ -9787,6 +9795,8 @@
                     Modify_User_Remote:FireServer(unpack(args))
                 end
             end,})
+        else
+            warn("You do not own the Admin GamePass, not loading Tab: [Character Flicker (FE)]")
         end
     else
         warn("Not loading this part, not on MIC UP or MIC UP 17+")
@@ -13651,8 +13661,6 @@
             getgenv().EmoteSystemEnabled = false
         end
     end,})
-    wait()
-
     wait(0.3)
     getgenv().EmoteSystemEnabled = false
     wait()
