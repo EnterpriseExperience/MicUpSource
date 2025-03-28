@@ -2491,7 +2491,7 @@
     end
 
     getgenv().FreeReanimationGUI = Tab1:CreateButton({
-    Name = "Free Reanimations GUI",
+    Name = "Free Reanimations GUI (Best Speed = 110%)",
     Callback = function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/OpenSource_Reanim_Free.lua'))()
     end,})
