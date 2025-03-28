@@ -2261,8 +2261,6 @@
             "RightUpperLeg", "RightLowerLeg", "RightFoot"
         }
         wait(0.1)
-        
-
         getgenv().StallClaimToggle = Tab11:CreateToggle({
         Name = "Claim Any Booth",
         CurrentValue = false,
@@ -2491,6 +2489,12 @@
     else
         warn("Did not load Booth's stuff [1].")
     end
+
+    getgenv().FreeReanimationGUI = Tab1:CreateButton({
+    Name = "Free Reanimations GUI",
+    Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/OpenSource_Reanim_Free.lua'))()
+    end,})
 
     getgenv().AntiVoidPlayer = Tab2:CreateToggle({
     Name = "Anti Void Baseplate (Goes under Character)",
@@ -3678,7 +3682,7 @@
     else
         warn("Did not load this Booth tab [4].")
     end
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/refs/heads/main/coding_stuff.lua')))()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        --loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/refs/heads/main/coding_stuff.lua')))()
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().ToggleBadWords = Tab11:CreateToggle({
         Name = "Bypassed Booth (FE)",
