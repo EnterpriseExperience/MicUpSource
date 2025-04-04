@@ -2161,6 +2161,17 @@
     else
         warn("User isn't in MIC UP or MIC UP 17+, not loading.")
     end
+    wait(0.2)
+    getgenv().CopyURLLinkToUpdatesLink = Tab1:CreateButton({
+    Name = "Copy Link To See Latest Updates",
+    Callback = function()
+        if getgenv().AllClipboards then
+            getgenv().AllClipboards("https://github.com/EnterpriseExperience/MicUpSource/releases")
+        else
+            warn("https://github.com/EnterpriseExperience/MicUpSource/releases")
+            getgenv().notify("Failure", "Posted the link in Developer Console, couldn't copy.", 6)
+        end
+    end,})
     wait(0.4)
     getgenv().PlayAnyEmote = Tab2:CreateDropdown({
     Name = "Play Emote",
