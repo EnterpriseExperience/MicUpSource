@@ -1,18 +1,16 @@
-    --[[
-        ['Current Scope - START']: Graphical Data.
-            <---------------------------->
-            A. Updates now usually only include stabilization, performance and bug fixes.
-            B. If you distribute, advertise, or promote this script or use it in any video at all, examples include: using our source on script's you make, you MUST include my credit, otherwise you will be forced to shutdown.
-            C. Do not obfuscate my script, as this project is open source and the compatibility will not hold up while obfuscated, since this script is over ~6,970+ lines long.
-            D. You must abide by the 'User Agreement' and adhere to our 'Guidelines' and 'Policies' when utilizing our 'ALL-FREE' services [You can find this posted to our Discord.]
-            E. We are advancing soon to new game's and going to release more products and services, and have more content coming soon.
-            F. We have released a Neighbors script in our Discord: https://discord.gg/VJh3kkYzBn
-            G. If you are reading this, we are also releasing an all out universal Admin script that'll also have bypass WalkSpeed, JumpPower, Fly, etc and let you fly and do orbit, etc.
-            H. Remember to always chase your dreams! they will always catch back up to you one way or another, I only started this Discord in September of 2024, and it's MASSIVE, with over 1,200 people already.
-            <---------------------------->
-        ['Current Scope - END']: Graphical Data.
-    --]]
+    -- THIS PROJECT ISN'T MANAGED ANYMORE, I QUIT SINCE THEN! This project was to much to handle and I don't want to have my life interrupted by thousands of users looking for support all day everyday, interrupts my real life ultimately.
+    -- There wasn't any updates before I quit, and someone tried to "expose me", which didn't go well for them lmao, why would it? also, they wouldn't have they're script hub (which just IP logs, and hardware logs, and they work with RATTERS), sooo..
+    -- People claim this was wrote with ChatGPT, if you believe it was wrote with ChatGPT go test it, but it's 13K lines of code, why would any of this junk be wrote with ChatGPT?
+    -- This code is VERY unorganized and garbage, I don't know what the FUCK I was doing with this code, but I must have been high when writing it, but I am NOT re-writing any of this code, fuck that shit.
+    -- Enjoy it anyway, I never actually cared for the script, but I did write it so, and it's sort of stable, barely has any issues, and supports every executor, so I guess it worked out somewhat.
+    -- I might fix the code up, but I haven't worked on this shit in a while so, I'm not sure.
+    -- Also, any other script hub with Booth features, just skidded mine, this script came out before ANY of the other scripts, this script actually REALISTICALLY released all the way back in March of 2024.
+    -- Because I see a lot of scripts and script hubs that have these Booth features, and sure enough, they are obfuscated, and seem to work JUST how mine work, that's fucking suspicious, don't you think?
+    -- I wrote this script myself, and I don't plan on utilizing ChatGPT, why would I? scripting in Roblox is fairly easy, and doesn't take much skill, unlike languages like C# that might take a bit more time to learn or JavaScript, or even Java.
+    -- I plan to release an API sort of script soon, which will allow you to have anticheat bypasses and stuff and secure services and shit but with 1 singular Loadstring, and ESP and what not to.
+    -- Stay tuned, even though I quit doing all of this bullshit.
     
+    -- Do you even fuckin need this? no you don't.
     --[[
         Animation Packages: Zombie, Catwalk Glam, Elder, Cartoony, Adidas,
         Adidas, Werewolf, Vampire, Astronaut,
@@ -22,39 +20,44 @@
         Wicked Popular, Bold, Stylish,
         Rthro [default Roblox Animation package]
     --]]
-    wait(1)
+    wait(1) -- Believe it or not, this actually helps when loading the script, stops people from spamming it, so it can load correctly and smoothly.
     print("1")
     local function getExecutor()
         local name
         if identifyexecutor then
             name = identifyexecutor()
         end
-        return { Name = name or "Unknown Executor"}
+        return { Name = name or "Unknown Executor"} -- Alternates to "Unknown Executor" if the name isn't found, the only reason I kept this was because people on executors like JJSploit, or Zorara, we're having some issues in the beginning, and it would produce string errors, but this fixed it, and I kept it ever since, long time ago.
     end
 
-    local function detectExecutor()
+    local function detectExecutor() -- Really cool function, does the hard work for us, erases the version part of the executors name so we can ACTUALLY match the name and make support for all different types of things.
         local executorDetails = getExecutor()
         return string.format("%s", executorDetails.Name)
     end
     wait(0.1)
     local executor_Name = detectExecutor()
     wait(0.1)
-    print("2")
+    print("2") -- And throughout the beginning of the script there might be these random print statements, don't mind them, it's just my way of debugging, like if something doesn't load, then I'll count my steps back and see where it stopped loading at or what not.
     wait(0.2)
-    local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
-    local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
+    -- Because I mean, sometimes the errors don't exactly show where the issue is, so print statements everywhere helps identify where the issue is located at or around what area.
+    local vc_service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService") -- This wasn't exactly necessary, but I decided to leave it in to keep safety a priority.
+    local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId) -- This was to make sure users know if they have VoiceChat, because apparently some of them miss that part of Roblox.
     local Notification
     wait(0.3)
-    -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful techniques and functions.
+    -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful functions.
     httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
     local response = httprequest({
         Url = "https://raw.githubusercontent.com/laagginq/ui-libraries/main/dxhooknotify/src.lua",
         Method = "GET"
     })
+    -- Before you ask, yes, this works for every executor, and it is really good for when you don't want to use Loadstring ;) plus it's fully internal, and I guarantee it bypasses most anticheats to ;)
+    -- Definitely doesn't bypass Football Fusion or popular anticheats or anything, that'd be wrong of me to publicly release a bypass for loading UI libraries and scripts fully internally and bypassed.
+    -- You get what I'm saying, now go fuck off and skid it.
 
     if response and response.StatusCode == 200 then
         Notification = loadstring(response.Body)()
+        -- This is actually believe it or not a very neat system, I'll tell you why, when utilizing Loadstring, some people execute HTTP loggers/HTTP spies, and when utilizing this, you can put in an anti HTTP Loadstring loader, and this'll still work like normal, go test it.
     else
         print("Failed to fetch script:", response.StatusCode)
     end
@@ -63,39 +66,32 @@
         return Notification:Notify("Heads Up!", "Zacks Easy Hub is already running!", 5)
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
+    -- Sometimes would fuck up, but that's because I accidentally removed the "not _G.SCRIPT_EXECUTED == true" part, didn't know it was necessary, so oops.
     wait(0.3)
     print("3")
-    if enabled_vc == true  then
+    if enabled_vc == true then -- This just retrieves that response you get when you called "IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)", even though I don't know why I have to match it to a Boolean, but ok.
         Notification:Notify("Success!", "Connected with VC successfully!", 3)
     elseif (enabled_vc == false and (not game.PlaceId == 6884319169)) or (not game.PlaceId == 15546218972) then
         Notification:Notify("Success!", "Connected.", 5)
     elseif enabled_vc == false and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         return Notification:Notify("Sorry!", "Unable to load Zacks Easy Hub (No VC)", 5)
     else
-        Notification:Notify("Passed.", "Unknown error occurred.", 5)
+        Notification:Notify("Passed.", "Unknown error occurred.", 5) -- I actually have no idea when or why I added this, but I guess I kept it, so it might be necessary, I don't know man.
     end
     wait()
     local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
     local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
+    -- And these are necessary since we haven't even loaded the "getgenv()" services yet, so keep these as cloneref, because believe it or not, some shitty sploits don't support "cloneref", it's retarded.
     print("4")
     local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"}
     local specialPlayer = "alt_acc9996"
-    local support_team = {"Ixgale7530", "starsorbitspace", "goldgoldgoldBlazn", "euigwerergre", "o7rssuk"}
     local all_beta_testers = {"Chick7nn", "LIL_RT228", "CrimGameHolder"}
+    -- Only whitelisted people allowed here, and if you want to I guess you can put your own names, I mean go ahead.
 
     local function isWatchedPlayer(playerName)
         for _, name in ipairs(watchedPlayers) do
             if playerName == name then
-                return true
-            end
-        end
-        return false
-    end
-
-    local function isSupportTeam(playerName)
-        for _, name in ipairs(support_team) do
-            if playerName == name then
-                return true
+                return true -- Same here with what I said below.
             end
         end
         return false
@@ -105,39 +101,18 @@
     local function beta_tester(player)
         for _, name in ipairs(all_beta_testers) do
             if player == name then
-                return true
+                return true -- Never really cared about these, but I figured I don't have another way of doing this stupid shitty system better, so I kept this shit.
             end
         end
         return false
     end
 
     print("6")
-
-    local function edit_naming(player, new_name, the_type)
-        if the_type == "Username" then
-            local function update_name(character)
-                task.wait(0.5)
-                player.Name = new_name
-            end
-
-            if player.Character then
-                update_name(player)
-            end
-        elseif the_type == "DisplayName" then
-            local function update_display(character)
-                task.wait(0.5)
-                player.DisplayName = new_name
-            end
-
-            if player.Character then
-                update_display(player)
-            end
-        end
-    end
     wait()
     print("7")
     wait()
     local function make_title(player, text, color, transparency)
+        -- This matches the color for the Title because of how the colors on Billboards work, so I decided to make a check for it instead, I'm not trying to set that shit up manually otherwise.
         local function applyToCharacter(character)
             task.wait(0.5)
             if color == Color3.fromRGB(255, 255, 255) then
@@ -174,7 +149,7 @@
                 textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
                 textLabel.TextStrokeTransparency = 0
                 textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-                textLabel.Text = text
+                textLabel.Text = text -- If you change this, it won't do anything since it's in the function, and the function is called below when matching the names.
                 textLabel.Parent = background
             else
                 local head = character:FindFirstChild("Head")
@@ -209,27 +184,26 @@
                 textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
                 textLabel.TextStrokeTransparency = 0
                 textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-                textLabel.Text = text
+                textLabel.Text = text -- Don't change this shit, it won't update, modify it below.
                 textLabel.Parent = background
             end
         end
 
         if player.Character and player.Character:FindFirstChild("Humanoid") then
-            applyToCharacter(player.Character)
+            applyToCharacter(player.Character) -- And keep this otherwise, when you respawn, it'll bug out completely, I forgot to add it before, and that's where I fucked up.
         end
         print("8")
         player.CharacterAdded:Connect(applyToCharacter)
     end
 
     local function assign(player)
+        -- If you want a Title, update it below, I and the people below don't really play MIC UP or any game anymore, so you can do what ever you want with it lol.
         if isWatchedPlayer(player.Name) then
             make_title(player, "👑 Zacks Easy Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
         elseif player.Name == specialPlayer then
             make_title(player, "👧 Zacks Easy Hub | Daughter 👧", Color3.fromRGB(89, 34, 89), 0.3)
-        elseif isSupportTeam(player.Name) then
-            make_title(player, "⚒️ Zacks Easy Hub | Support ⚒️", Color3.fromRGB(52, 142, 64), 0.1)
         elseif beta_tester(player.Name) then
-            make_title(player, "✨ Zacks Easy Hub | Beta Tester ✨", Color3.fromRGB(255, 255, 255), 0.1)
+            make_title(player, "✨ Zacks Easy Hub | Beta Tester ✨", Color3.fromRGB(0, 0, 0), 0.1)
         end
     end
 
@@ -238,7 +212,8 @@
     end
 
     Players.PlayerAdded:Connect(function(player)
-        task.wait(1)
+        task.wait(1) -- Roblox sucks for making us do this bullshit, if you don't have this, the player's Character seems to just fucking disappear and apparently in Roblox's eyes, never loaded.
+        -- Like the fuck?
         assign(player)
     end)
     wait()
@@ -249,6 +224,8 @@
     getgenv().JobID = getgenv().Game.JobId
     getgenv().PlaceID = getgenv().Game.PlaceId
 
+    -- And you can also use this anywhere, even outside of the script, while having the script running, you can do like "getgenv().Service_Wrap("Workspace")", and it should work.
+    -- You can do like: "local Workspace = getgenv().Service_Wrap("Workspace")" and it should work normally.
     getgenv().Service_Wrap = function(serviceName)
         if cloneref then
             return cloneref(getgenv().Game:GetService(serviceName))
@@ -355,8 +332,12 @@
             "ContextActionService",
             "GuiService"
         }
+        -- I do use all of these by the way, people said it's ChatGPT, but I use all of these, these are all in use, this is a huge script, go check it.
+        -- The only one I probably don't use is ReplicatedFirst, but I most likely do.
+        -- Or maybe it's Teams, but other then that, I use all of these, like ContextActionService, it's for the Free Emotes GUI.
 
         for _, serviceName in pairs(services) do
+            -- And this is just for putting the services into a "getgenv()" global variable, so it can be used anywhere in the script, and outside of the script to.
             getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
         end
     end
@@ -365,6 +346,7 @@
     wait()
     init_services()
     wait(0.2)
+    -- I use all of these to, check my script, these come in handy, because like I stated before, they can be used outside of the script.
     getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
     getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
     getgenv().LocalPlayer = getgenv().Players.LocalPlayer
@@ -472,23 +454,6 @@
             local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
             local Background = Menu_GUI:FindFirstChild("Background")
             local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
-            
-            for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("TextButton") or v:IsA("TextLabel") then
-                    v.TextColor3 = Color3.fromRGB(0, 0, 0)
-                end
-            end
-            for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("ImageButton") or v:IsA("ImageLabel") then
-                    v.ImageColor3 = getgenv().changed_imaging_coloring_ui
-                end
-            end
-            wait()
-            Home_Image_Button.BackgroundTransparency = 0.3
-            Home_Image_Button.BackgroundColor3 = getgenv().changed_color_menu_ui
-            Home_Image_Button.ImageColor3 = getgenv().changed_imaging_coloring_ui
-            Home_Image_Button.Position = UDim2.new(0, 0, 0.7, 0)
-            Background.BackgroundColor3 = getgenv().changed_color_menu_ui
             wait()
             for _, v in ipairs(Background:GetDescendants()) do
                 if v:IsA("TextLabel") or v:IsA("TextButton") then
@@ -515,23 +480,6 @@
             local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
             local Background = Menu_GUI:FindFirstChild("Background")
             local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
-            
-            for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("TextButton") or v:IsA("TextLabel") then
-                    v.TextColor3 = Color3.fromRGB(255, 255, 255)
-                end
-            end
-            for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("ImageButton") or v:IsA("ImageLabel") then
-                    v.ImageColor3 = Color3.fromRGB(255, 255, 255)
-                end
-            end
-            wait()
-            Home_Image_Button.BackgroundTransparency = 0.3
-            Home_Image_Button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-            Home_Image_Button.ImageColor3 = Color3.fromRGB(255, 255, 255)
-            Home_Image_Button.Position = UDim2.new(0, 0, 0.7, 0)
-            Background.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
             wait()
             for _, v in ipairs(Background:GetDescendants()) do
                 if v:IsA("TextLabel") or v:IsA("TextButton") then
@@ -1258,9 +1206,9 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Flames Hub ⭐ | V9.9.1 | "..tostring(executor_Name),
+            Name = "⭐ Flames Hub ⭐ | V9.9.7 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
-            LoadingSubtitle = "Zacks Easy Hub | ;)",
+            LoadingSubtitle = "Zacks Easy Hub | Wassup.",
             ConfigurationSaving = {
                 Enabled = false,
                 FolderName = "ConfigurationZacksEasyHub",
@@ -1284,9 +1232,9 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Flames Easy Hub ⭐ | V9.9.1 | "..tostring(executor_Name),
+            Name = "⭐ Flames Easy Hub ⭐ | V9.9.7 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
-            LoadingSubtitle = "Zacks Easy Hub | ;)",
+            LoadingSubtitle = "Zacks Easy Hub | Wassup.",
             ConfigurationSaving = {
                 Enabled = false,
                 FolderName = "ConfigurationZacksEasyHub",
@@ -3314,35 +3262,45 @@
             RemoveTextAfterFocusLost = true,
             Callback = function(copyUserAvatar)
                 local findAPlayerToCopy = findplr(copyUserAvatar)
+                if not getgenv().PlayerGui:FindFirstChild("Menu") then return end
+                local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
 
                 if not getgenv().PlayerGui:FindFirstChild("Menu") then
                     return getgenv().notify("Failure", "Menu was not found, probably removed.", 5)
                 else
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.new(0.168627, 0.521569, 0.552941)
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "Yes"
+                    -- Bet you ain't never seen a proper check like this in other MIC UP scripts, it ACTUALLY checks if your allowing users to copy your avatar, and sets it for you if it's disabled/off, and if it is on, it does nothing :)
+                    if CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "No" and firesignal then
+                        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+                        local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
+
+                        for _,v in pairs(CopyToggleToButton:GetDescendants()) do
+                            if v:IsA("ImageButton") or v:IsA("TextButton") then
+                                for i,Signal in pairs(Signals) do
+                                    firesignal(v[Signal])
+                                end
+                            end
+                        end
+                    elseif not firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "No" then
+                        getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.new(0.168627, 0.521569, 0.552941)
+                        getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0
+                        getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "Yes"
+                        getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
+                    end
                 end
-                wait()
-                if not findAPlayerToCopy then
+                wait(0.2)
+                if not findAPlayerToCopy and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
                     local args = {
                         [1] = tostring(copyUserAvatar)
                     }
 
                     getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
-                    return 
+                elseif CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
+                    local args = {
+                        [1] = tostring(findAPlayerToCopy)
+                    }
+                    
+                    getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
                 end
-                wait()
-                local args = {
-                    [1] = tostring(copyUserAvatar)
-                }
-
-                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
-                wait(0.5)
-                local args = {
-                    [1] = tostring(findAPlayerToCopy)
-                }
-                
-                getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
             end,})
 
             getgenv().GoBackToNormalAvatar = Tab2:CreateButton({
@@ -3352,11 +3310,34 @@
                     return getgenv().notify("Failure", "Menu GUI not found in PlayerGui, probably removed.", 5)
                 end
                 wait()
-                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.new(0.184314, 0.184314, 0.184314)
-                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
-                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
+                local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
+                
+                if firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
+                    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+                    local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
+
+                    for _,v in pairs(CopyToggleToButton:GetDescendants()) do
+                        if v:IsA("ImageButton") or v:IsA("TextButton") then
+                            for i,Signal in pairs(Signals) do
+                                firesignal(v[Signal])
+                            end
+                        end
+                    end
+                elseif not firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then -- Bet you all those other scripts don't make checks like these.
+                    getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
+                    wait(0.1)
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
+                end
                 wait(0.1)
-                if getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text == "Yes" then
+                if CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
+                    getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
+                    wait(0.1)
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
+                    wait(0.5)
                     local args = {
                         [1] = tostring(getgenv().LocalPlayer.Name)
                     }
@@ -3369,8 +3350,10 @@
                     
                     getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
                 else
-                    getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
-                    wait(0.3)
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
+                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
+                    wait(0.5)
                     local args = {
                         [1] = tostring(getgenv().LocalPlayer.Name)
                     }
@@ -3766,53 +3749,6 @@
     else
         warn("Did not load this Booth tab [5].")
     end
-
-    getgenv().MenuUIColorMICUP = Tab20:CreateColorPicker({
-    Name = "MIC UP Menu UI Color Changer",
-    Color = Color3.fromRGB(255,255,255),
-    Flag = "MICUPsMenuColorChangerColorPicker",
-    Callback = function(color_to_change)
-        local newest_UI_color_updated = color_to_change
-        wait(0.1)
-        getgenv().changed_color_menu_ui = newest_UI_color_updated
-        wait(0.2)
-        local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
-        local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
-        local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
-        local Background = Menu_GUI:FindFirstChild("Background")
-        local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
-
-        Home_Image_Button.BackgroundColor3 = color_to_change
-        Background.BackgroundColor3 = color_to_change
-    end,})
-
-    getgenv().MenuImageColorMICUP = Tab20:CreateColorPicker({
-    Name = "MIC UP Menu Image Color Changer",
-    Color = Color3.fromRGB(255,255,255),
-    Flag = "TheImageColorsForMenuMICUP",
-    Callback = function(new_image_coloring)
-        local newest_image_color = new_image_coloring
-        wait(0.1)
-        getgenv().changed_imaging_coloring_ui = newest_image_color
-        wait(0.2)
-        local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
-        local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
-        local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
-        local Background = Menu_GUI:FindFirstChild("Background")
-        local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
-        
-        for _, v in ipairs(Background:GetDescendants()) do
-            if v:IsA("ImageButton") or v:IsA("ImageLabel") then
-                v.ImageColor3 = new_image_coloring
-            end
-        end
-        wait()
-        Home_Image_Button.BackgroundTransparency = 0.3
-        Home_Image_Button.BackgroundColor3 = getgenv().changed_color_menu_ui
-        Home_Image_Button.ImageColor3 = Color3.fromRGB(255, 255, 255)
-        Home_Image_Button.Position = UDim2.new(0, 0, 0.7, 0)
-        Background.BackgroundColor3 = getgenv().changed_color_menu_ui
-    end,})
 
     getgenv().unload_bang_function = function()
         local function cleanupConnections()
@@ -5565,8 +5501,6 @@
                             getgenv().ReplicatedStorage:FindFirstChild("UpdateBoothText"):FireServer(getgenv().text_for_booth, "Cinder", "SourceSans")
                             wait(0.2)
                             getgenv().text_for_booth = nil
-                        else
-                            warn("Oldest_AntiBoothStealer_CF is nil, unable to teleport back!")
                         end
                     end
                 end
@@ -5612,11 +5546,27 @@
                 else
                     warn("Event not connected.")
                 end
-            
-                getgenv().Booth = nil
+                
+                if getgenv().Booth then
+                    getgenv().Booth = nil
+                end
                 return 
             end            
         end,})
+        wait(0.3)
+        if getgenv().AutoClaimEnabled == true then
+            getgenv().AutoClaimEnabled = false
+            getgenv().AutoReclaimToggle:Set(false)
+            if getgenv().Booth then
+                getgenv().Booth = nil
+            end
+            if getgenv().OwnershipConnection then
+                getgenv().OwnershipConnection:Disconnect()
+                getgenv().OwnershipConnection = nil
+            else
+                warn("Event not connected.")
+            end
+        end
 
         getgenv().RainbowBoothClientSide = Tab11:CreateToggle({
         Name = "Rainbow Booth (Client Side)",
@@ -5858,7 +5808,7 @@
             wait(0.3)
             getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
         end,})
-    elseif executor_Name == "MacSploit" and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+
         getgenv().DeletePlrBooth = Tab11:CreateButton({
         Name = "Delete Current Booth",
         Callback = function()
@@ -5919,8 +5869,37 @@
             wait(0.3)
             getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
         end,})
+
+        -- I plan to add more MAYBE soon.
+        if executor_Name == "AWP" or executor_Name == "Zenith" or executor_Name == "Velocity" or executor_Name == "Wave" or executor_Name == "Swift" or executor_Name == "Ascendant" or executor_Name == "Sirhurt" then
+            local Module_Require = require(getgenv().ReplicatedStorage:WaitForChild("Menu"):FindFirstChild("AI"):FindFirstChild("Constants"))
+
+            -- Basically just gets rid of the AI generator delay, because this ModuleScript controls the delay entirely client-sided, so it also gets rid of that stupid timer, so when you open the Menu, you can do it yourself instead of having to have a script to do it for you.
+            Module_Require["GENERATION_DELAY"] = 0
+            if Module_Require["GENERATION_DELAY"] == 0 then
+                print("Successfully set AI Generation Delay to 0!")
+            else
+                warn("Not an error, probably a mistake though, must have not changed or wasn't checked correctly.")
+            end
+        else
+            warn("We we're not able to edit the cooldown of the AI generation section of the Menu, executor is not a whitelisted executor.")
+        end
     else
-        warn("Did not load these Booth tabs [6].")
+        warn("Did not load these tabs [6].")
+    end
+
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        getgenv().ai_input_generator = Tab5:CreateInput({
+        Name = "AI Input Generator (No Cooldown)",
+        CurrentValue = "Input",
+        PlaceholderText = "Input",
+        RemoveTextAfterFocusLost = false,
+        Flag = "AIGeneratorQuestion",
+        Callback = function(ai_inputtedhere)
+            local Premade_Input = tostring(ai_inputtedhere)
+            wait(0.3)
+            getgenv().ReplicatedStorage:WaitForChild("Menu"):FindFirstChild("AI"):FindFirstChild("MeshEvent"):FireServer(Premade_Input, Vector3.new(getgenv().HumanoidRootPart.Position.X, getgenv().HumanoidRootPart.Position.Y, getgenv().HumanoidRootPart.Position.Z))
+        end,})
     end
 
     getgenv().RemoveAllLaserEyes = Tab13:CreateToggle({
@@ -5965,7 +5944,7 @@
         local Character = getgenv().Character
         local Humanoid = getgenv().Humanoid
         local HumanoidRootPart = getgenv().HumanoidRootPart
-        local Workspace = game:GetService("Workspace")
+        local Workspace = getgenv().Workspace
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
         local bruhUser = findplr(thisUserGet)
@@ -6066,9 +6045,11 @@
             animTrack:Stop()
         end
         
+        -- This looks so ChatGPT, but I wrote this a long fucking time ago, thought I was cooking, but I really didn't.
         local getTheirChar = thePlayer.Character or thePlayer.CharacterAdded:Wait()
         local theirHumanoid = getTheirChar:FindFirstChildWhichIsA('Humanoid') or getTheirChar:WaitForChild('Humanoid')
         
+        -- And this is just from Infinite Yield, so go cry and whine about it dickface.
         local function copyAnimations()
             for _, animTrack in pairs(Humanoid:GetPlayingAnimationTracks()) do
                 animTrack:Stop()
@@ -6100,6 +6081,7 @@
         if getLoopCopyAnim then
             getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
             
+            -- I rewrote this dumb ass function from my Booth finder, where it's able to know if you have a Booth or not.
             function getThatPlr()
                 for i, v in pairs(game.Players:GetChildren()) do
                     if getgenv().singlePlayerTable[v.Name] then
@@ -11989,14 +11971,18 @@
     end
 
     create_Button(CatWalkGlamAnim, "'Catwalk Glam' Animation Package", function()
+        wait(0.7)
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
         if not Animate then return end
-
+        
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
-        task.wait()
+        wait()
         Animate.Disabled = false
 
         local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -12013,19 +11999,25 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=92294537340807"
-        task.wait()
+        wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(WickedPopularAnim, "'Wicked Popular' Animation Package", function()
+        wait(0.7)
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
         if not Animate then return end
 
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
-        task.wait()
+        wait()
         Animate.Disabled = false
 
         local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -12042,11 +12034,14 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=131326830509784"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=121152442762481"
-        task.wait()
+        wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(RThroAnim, "RThro Animation Package", function()
+        wait(0.7)
         local player = getgenv().LocalPlayer
         local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
@@ -12061,8 +12056,11 @@
 
         if not Animate then return end
 
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
-        task.wait()
+        wait()
         Animate.Disabled = false
 
         local humanoid = getgenv().Humanoid
@@ -12079,19 +12077,25 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Jump
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Climb
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Fall
-        task.wait()
+        wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(adidasAnim, "Adidas Animation Package", function()
+        wait(0.7)
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
         if not Animate then return end
 
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
-        task.wait()
+        wait()
         Animate.Disabled = false
 
         local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -12108,19 +12112,25 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537380791"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537363391"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537367238"
-        task.wait()
+        wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(NFLAnim, "NFL Animation Package", function()
+        wait(0.7)
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
         if not Animate then return end
 
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
-        task.wait()
+        wait()
         Animate.Disabled = false
 
         local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -12137,19 +12147,25 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=134630013742019"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
-        task.wait()
+        wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(BoldAnim, "Bold Animation Package", function()
+        wait(0.7)
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
         if not Animate then return end
 
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
-        task.wait()
+        wait()
         Animate.Disabled = false
 
         local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -12166,19 +12182,25 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738336650"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738332169"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738333171"
-        task.wait()
+        wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(noBoundariesAnim, "No Boundaries Animation Package", function()
+        wait(0.7)
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
         if not Animate then return end
 
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
-        task.wait()
+        wait()
         Animate.Disabled = false
 
         local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -12195,19 +12217,24 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747069148"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747060903"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747062535"
-        task.wait()
+        wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(robotAnim, "Robot Animation Package", function()
+        wait(0.7)
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
         if not Animate then return end
-
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
-        task.wait()
+        wait()
         Animate.Disabled = false
 
         local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -12224,12 +12251,18 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921252123"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921247141"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921251156"
-        task.wait()
+        wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(zombieAnim, "Zombie Animation Package", function()
-        local Animate = getgenv().LocalPlayer.Character.Animate
+        wait(0.7)
+        local Animate = getgenv().Character:FindFirstChild("Animate")
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12247,10 +12280,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616157476"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(HeroAnim, "Hero Animation Package", function()
-        local Animate = getgenv().LocalPlayer.Character.Animate
+        wait(0.7)
+        local Animate = getgenv().Character:FindFirstChild("Animate")
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12268,14 +12307,20 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616108001"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(vampireAnim, "Vampire Animation Package", function()
-        local Animate = getgenv().LocalPlayer.Character.Animate
+        wait(0.7)
+        local Animate = getgenv().Character:FindFirstChild("Animate")
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -12289,14 +12334,20 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083443587"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(mageAnim, "Mage Animation Package", function()
-        local Animate = getgenv().LocalPlayer.Character.Animate
+        wait(0.7)
+        local Animate = getgenv().Character:FindFirstChild("Animate")
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -12310,10 +12361,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707829716"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(ghostAnim, "(FE) Ghost Animation Package", function()
-        local Animate = Character:FindFirstChild("Animate")
+        wait(0.7)
+        local Animate = getgenv().Character:FindFirstChild("Animate")
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12331,10 +12388,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616005863"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(elderAnim, "Elder Animation Package", function()
-        local Animate = getgenv().LocalPlayer.Character.Animate
+        wait(0.7)
+        local Animate = getgenv().Character:FindFirstChild("Animate")
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12352,10 +12415,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845396048"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(LevitationAnim, "Levitation Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12373,10 +12442,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616005863"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(AstronautAnim, "Astronaut Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12394,10 +12469,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891617961"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(NinjaAnim, "Ninja Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12415,10 +12496,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656115606"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(WerewolfAnim, "Werewolf Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12436,10 +12523,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083189019"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(CartoonAnim, "Cartoon Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12457,10 +12550,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742637151"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(PirateAnim, "Pirate Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12478,10 +12577,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750780242"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(SneakyFEAnim, "(FE) Sneaky Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12499,10 +12604,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132469004"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(ToyAnim, "Toy Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12520,10 +12631,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782846423"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(KnightAnim, "Knight Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12541,10 +12658,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=657600338"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(ConfidentFEAnim, "(FE) Confident Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12562,10 +12685,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069973677"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(PopstarFEAnim, "(FE) Popstar Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12583,10 +12712,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212900995"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(PrincessFEAnim, "(FE) Princess Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12604,10 +12739,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941000007"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(CowboyFEAnim, "(FE) Cowboy Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12625,10 +12766,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014384571"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(PatrolFEAnim, "(FE) Patrol Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12646,10 +12793,16 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1148863382"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
 
     create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
+        wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12667,11 +12820,15 @@
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616157476"
         wait()
         Animate.Disabled = false
+        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 16
     end)
+    -- Also, all of these animations do NOT jump, because while moving, jumping causes issues, and it should also stop you from walking when applying an animation, and it also has a delay to, because of how buggy the animations can be.
 
     getgenv().SystemBroken = Tab5:CreateButton({
     Name = "System Broken",
     Callback = function()
+        -- I modified this whole shit myself, people have copied my System Broken, and to that I say, go to hell!
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
     end,})
     wait()
@@ -12723,6 +12880,7 @@
         ["Number/Key: 8"] = Enum.KeyCode.Eight,
         ["Number/Key: 9"] = Enum.KeyCode.Nine,
         ["Number/Key: 0"] = Enum.KeyCode.Zero,
+        -- Anything past here for emote keybinds is considered retarded, and you gotta have Autism if you use anything past here.
         ["Function Key: F1"] = Enum.KeyCode.F1,
         ["Function Key: F2"] = Enum.KeyCode.F2,
         ["Function Key: F3"] = Enum.KeyCode.F3,
@@ -12768,13 +12926,14 @@
         ["Key: Right Ctrl"] = Enum.KeyCode.RightControl,
         ["Key: Right Alt"] = Enum.KeyCode.RightAlt,
         ["Key: Escape"] = Enum.KeyCode.Escape,
-        ["Key: Tab"] = Enum.KeyCode.Tab,
+        ["Key: Tab"] = Enum.KeyCode.Tab, -- I hope you die if you use this.
         ["Key: CapsLock"] = Enum.KeyCode.CapsLock,
         ["Key: Space"] = Enum.KeyCode.Space,
         ["Key: Enter"] = Enum.KeyCode.Return,
         ["Key: Backspace"] = Enum.KeyCode.Backspace,
         ["Key: Delete"] = Enum.KeyCode.Delete,
         ["Key: Insert"] = Enum.KeyCode.Insert,
+        -- If you use "Home", "End", "PageUp", "PageDown" or any of the fucking arrow keys, who are you and what the hell are you thinking? nobody is using these bum ass keycodes.
         ["Key: Home"] = Enum.KeyCode.Home,
         ["Key: End"] = Enum.KeyCode.End,
         ["Key: PageUp"] = Enum.KeyCode.PageUp,
@@ -12797,7 +12956,7 @@
         ["Numpad: Minus"] = Enum.KeyCode.KeypadMinus,
         ["Numpad: Multiply"] = Enum.KeyCode.KeypadMultiply,
         ["Numpad: Divide"] = Enum.KeyCode.KeypadDivide,
-        ["Numpad: Enter"] = Enum.KeyCode.KeypadEnter,
+        ["Numpad: Enter"] = Enum.KeyCode.KeypadEnter, -- What the fuck?
         ["Numpad: Dot"] = Enum.KeyCode.KeypadPeriod,
         ["Mouse: Left Click"] = Enum.UserInputType.MouseButton1,
         ["Mouse: Right Click"] = Enum.UserInputType.MouseButton2,
@@ -12844,13 +13003,15 @@
         end
 
         if typeof(slotName) ~= "string" or not Slots_Table[slotName] then
-            return warn("Invalid slot selection:", slotName)
+            return -- Lazy fix for small performance but you can go to hell.
         end
 
         selectedSlot = Slots_Table[slotName]
-        getgenv().notify("Success:", "Selected Slot: " .. slotName .. " (Keybind: " .. tostring(selectedSlot) .. ")", 6)
+        -- And another lazy fix, unnecessary, so go to hell (x2)
+        --getgenv().notify("Success:", "Selected Slot: " .. slotName .. " (Keybind: " .. tostring(selectedSlot) .. ")", 6)
     end,})
 
+    -- I remember when I tried to put a text next to the emote like: "[NEW]: " but that doesn't work because we use "getgenv().Humanoid:PlayEmote(emote_name)" <-- but using this you need the actual name of the emote and the fucking emote isn't named "[NEW]: NBA Master Dunk", like wtf?
     local Emotes = {
         "NBA Monster Dunk",
         "Stray Kids Walkin On Water",
@@ -13143,23 +13304,6 @@
     getgenv().EmoteSystemEnabled = true
     getgenv().BoundConnections = {}
 
-    local function input_start(input, entered)
-        if not getgenv().EmoteSystemEnabled or entered then return end
-
-        local emote = Emote_Keybinds_Configuration[input.KeyCode]
-        if emote then
-            if getgenv().emoting_actions then
-                pcall(getgenv().emoting_actions)
-            else
-                for _, v in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
-                    v:Stop()
-                end
-            end
-            wait(0.1)
-            getgenv().Humanoid:PlayEmote(emote)
-        end
-    end
-
     local speedToggle = 1
 
     local function input_connecting(input, other)
@@ -13171,11 +13315,6 @@
             getgenv().emoting_actions(speedToggle)
         elseif input.KeyCode == getgenv().Freeze_Keybind then
             getgenv().emoting_actions(0)
-        else
-            local speed = Emote_Speed_Configuration[input.KeyCode]
-            if speed and getgenv().Humanoid then
-                getgenv().emoting_actions(tonumber(speed) or 1)
-            end
         end
     end
 
@@ -13184,10 +13323,10 @@
     end
 
     getgenv().BoundConnections["EmoteInput"] = UserInputService.InputBegan:Connect(input_connecting)
-    getgenv().BoundConnections["EmoteTrigger"] = UserInputService.InputBegan:Connect(input_start)
     wait()
-    getgenv().Trip_Keybind = Tab15:CreateDropdown({  
+    getgenv().Trip_Keybind = Tab15:CreateDropdown({
     Name = "Trip Keybind",
+    -- I must have been smoking something or some shit when writing this code, what the hell is "Euro"? I must have really dug into Roblox's keycode API, because what the hell is ButtonStart??? 😭😭
     Options = {"Q","E","R","T","Y","U","I","O","P","F","G","H","J","K","L","Z","X","C","V","B","N","M",
                "Comma","Period","Question","Semicolon","Colon","LeftAlt","RightAlt","LeftControl",
                "RightControl","LeftBracket","RightBracket","BackSlash","Pipe","LeftCurly",
@@ -13345,15 +13484,32 @@
         end
     end
     wait()
-    getgenv().CopyDiscordInviteLink = Tab20:CreateButton({
-    Name = "Copy Discord Invite Link",
-    Callback = function()
-        if getgenv().AllClipboards then
-            getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
+    getgenv().TurnOffBoothMenuGUI = Tab20:CreateToggle({
+    Name = "Toggle Booth GUI/Menu (When claiming a Booth)",
+    CurrentValue = false,
+    Flag = "TurnOffTheBoothGUIThing",
+    Callback = function(toggledBoothMenuGUIVisibility)
+        if toggledBoothMenuGUIVisibility then
+            getgenv().turned_off_booth_GUI = true
+            while getgenv().turned_off_booth_GUI == true do
+            wait()
+                if getgenv().PlayerGui:FindFirstChild("Booth") and getgenv().PlayerGui:FindFirstChild("Booth").Enabled then
+                    getgenv().PlayerGui:FindFirstChild("Booth").Enabled = false
+                end
+            end
         else
-            return getgenv().notify("Discord:", "https://discord.gg/VJh3kkYzBn", 5)
+            getgenv().turned_off_booth_GUI = false
+            wait(0.3)
+            if getgenv().PlayerGui:FindFirstChild("Booth") then
+                getgenv().PlayerGui:FindFirstChild("Booth"):Destroy()
+            end
         end
     end,})
+    wait(0.2)
+    if getgenv().turned_off_booth_GUI == true then
+        getgenv().TurnOffBoothMenuGUI:Set(false)
+        getgenv().turned_off_booth_GUI = false
+    end
 
     getgenv().DeleteYourCustomConfigurationZEH = Tab20:CreateButton({
     Name = "Delete Easy Configuration",
@@ -13655,7 +13811,7 @@
     getgenv().EmoteSystemEnabled = false
     wait()
     getgenv().ToggleEmoteKeybinds = Tab20:CreateToggle({
-    Name = "Emote Keybinds",
+    Name = "Emote Speed Keybinds",
     CurrentValue = false,
     Flag = "ActionsForEmoteKeybinds",
     Callback = function(state_emote_keybinds)
