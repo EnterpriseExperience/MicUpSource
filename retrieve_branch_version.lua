@@ -362,18 +362,18 @@
     getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
     getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
     getgenv().LocalPlayer = getgenv().Players.LocalPlayer
-    getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack")
-    getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui")
+    getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack")
+    getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui")
     getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
     getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
     getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
-    getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
+    getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildOfClass("Humanoid")
     getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
+    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid") or getgenv().Character:WaitForChild("Humanoid")
+    local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
     wait(0.2)
     print("17")
     wait(0.2)
-
-    -- Initialize Character Updater, fixing any issues with Humanoid, HumanoidRootPart, or even if the Character dies and respawns, essentially making sure the Character is always defined correctly.
     local function Dynamic_Character_Updater(character)
         getgenv().Character = character
 
@@ -387,12 +387,8 @@
         getgenv().Head = (head and head:IsA("BasePart")) and head or nil
     end
 
-    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:WaitForChild("Humanoid")
-    local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
-    local Head = getgenv().Character:FindFirstChild("Head") or getgenv().Character:WaitForChild("Head")
-
-    -- Update Character Model(s) components, since we need to make sure the live updates are saved correctly (Especially when the Character components are updated as well).
     Dynamic_Character_Updater(getgenv().Character)
+
     getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
         Dynamic_Character_Updater(newCharacter)
     end)
@@ -1309,10 +1305,10 @@
     end
     wait(0.1)
     getgenv().r15_or_r6 = function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
             return true
         else
-            return getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 or false
+            return getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 or false
         end
     end
     wait(0.3)
@@ -1865,7 +1861,7 @@
         local emoteToPlay = type(emote_picked) == "table" and emote_picked[1] or tostring(emote_picked)
 
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid") and is_r15 == true then
-            getgenv().Humanoid:PlayEmote(emoteToPlay)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(emoteToPlay)
         elseif not getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
             return getgenv().notify("Failure:", "You are not R15!", 5)
         end
@@ -2047,7 +2043,7 @@
                 return getgenv().notify("Failure", "You already own a Booth!", 5)
             end
             
-            local OldCF = Character:FindFirstChild("HumanoidRootPart").CFrame
+            local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
             
             local stalls = {
                 Folder:FindFirstChild("Booth01"),
@@ -2078,7 +2074,7 @@
             end
             
             local function Claim_A_Booth()
-                local OldCF = getgenv().HumanoidRootPart.CFrame
+                local OldCF = getgenv().Character:FindFirstChildWhichIsA("Humanoid").CFrame
             
                 local plr_booth = getStall()
                 if plr_booth then
@@ -2092,7 +2088,7 @@
                     task.wait(0.1)
 
                     if stall then
-                        getgenv().HumanoidRootPart.CFrame = stall:GetPivot()
+                        getgenv().Character:FindFirstChildWhichIsA("Humanoid").CFrame = stall:GetPivot()
                     else
                         return getgenv().notify("Error:", "Player's Booth was not found", 6)
                     end
@@ -2113,7 +2109,7 @@
                     getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
 
                     task.wait(0.2)
-                    getgenv().HumanoidRootPart.CFrame = OldCF
+                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
                     task.wait(0.1)
                     plr_booth = getStall()
                     if plr_booth then
@@ -2609,7 +2605,7 @@
             if not getgenv().Players:FindFirstChild(OwnerName) then
                 getgenv().ViewOwnerBruh:Set(false)
                 wait(0.1)
-                getgenv().Camera = getgenv().Character or getgenv().Humanoid
+                getgenv().Camera = getgenv().Character or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             end
         
             if getgenv().Players:FindFirstChild(OwnerName) then
@@ -2742,7 +2738,7 @@
             local Workspace = getgenv().Workspace
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
-            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local HumanoidRootPart = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             
             local function findPlrBooth(player)
                 for _, booth in pairs(Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
@@ -2812,7 +2808,7 @@
             task.wait(0.2)
             setupProximityPrompt(plr_booth)
             task.wait(0.3)
-            Claim_A_Booth()            
+            Claim_A_Booth()
         end,})
 
         getgenv().unclaimPlrBooth = Tab11:CreateInput({
@@ -2856,7 +2852,7 @@
 
             local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
 
-            local OldCF = getgenv().HumanoidRootPart.CFrame
+            local OldCF = getgenv().Character:FindFirstChildWhichIsA("Humanoid").CFrame
 
             local stalls = {
                 Folder:FindFirstChild("Booth01"),
@@ -2878,7 +2874,7 @@
             end
 
             local function Claim_A_Booth()
-                local OldCF = getgenv().HumanoidRootPart.CFrame
+                local OldCF = getgenv().Character:FindFirstChildWhichIsA("Humanoid").CFrame
 
                 local stall = plr_booth
                 local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
@@ -2899,7 +2895,7 @@
                     wait(0.6)
                     getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
                     wait(0.2)
-                    getgenv().HumanoidRootPart.CFrame = OldCF
+                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
                     wait(0.2)
                     getgenv().notify("Success:", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
                     if plr_booth then
@@ -3323,7 +3319,7 @@
     end,})
 
     local function disable_connection(propertyName)
-        local signal = getgenv().Humanoid:GetPropertyChangedSignal(propertyName)
+        local signal = getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPropertyChangedSignal(propertyName)
         for _, conn in ipairs(getconnections(signal)) do
             conn:Disable()
         end
@@ -3445,7 +3441,7 @@
 
             local function patch_char(char)
                 disable_signal_conns(char, "DescendantAdded")
-                disable_signal_conns(getgenv().HumanoidRootPart, "DescendantAdded")
+                disable_signal_conns(getgenv().Character:FindFirstChild("HumanoidRootPart"), "DescendantAdded")
 
                 for _, v in ipairs(char:GetDescendants()) do
                     disable_signal_conns(v, "ChildAdded")
@@ -3473,10 +3469,10 @@
     Callback = function(theSitDownAntiToggle)
         if theSitDownAntiToggle then
             getgenv().disabled_sit_function = true
-            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
         else
             getgenv().disabled_sit_function = false
-            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
         end
     end,})
     wait()
@@ -3497,7 +3493,7 @@
             FlyConnection = nil
         end
 
-        local hrp = getgenv().HumanoidRootPart
+        local hrp = getgenv().Character:FindFirstChild("HumanoidRootPart")
         if hrp:FindFirstChild("ExecutorFlyGyro") then
             hrp.ExecutorFlyGyro:Destroy()
         end
@@ -3505,8 +3501,8 @@
             hrp.ExecutorFlyPosition:Destroy()
         end
 
-        if getgenv().Humanoid then
-            getgenv().Humanoid.PlatformStand = false
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
         end
     end
 
@@ -3557,8 +3553,8 @@
             repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
             local Character = getgenv().Character
-            local HRP = getgenv().HumanoidRootPart
-            local Humanoid = getgenv().Humanoid
+            local HRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             local Camera = getgenv().Camera
 
             local KeysDown = {
@@ -3683,7 +3679,7 @@
     local UserInputService = getgenv().UserInputService
     local Player = getgenv().LocalPlayer
     local Character = getgenv().Character
-    local RootPart = getgenv().HumanoidRootPart
+    local RootPart = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
 
     local isHoldingJump = false
     local isHoldingKey = false
@@ -3881,7 +3877,7 @@
 
             local function getHRP()
                 local char = getgenv().Character
-                return char and char:FindFirstChild("HumanoidRootPart") or getgenv().HumanoidRootPart
+                return char and char:FindFirstChild("HumanoidRootPart") or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             end
 
             local function cleanUpForces()
@@ -3996,7 +3992,7 @@
                 local Workspace = getgenv().Workspace
                 local Player = getgenv().LocalPlayer
                 local Character = getgenv().Character
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChildWhichIsA("HumanoidRootPart")
                 getgenv().Gudock_Part_Touching = true
 
                 if not Workspace:FindFirstChild("Gudock") then
@@ -4042,7 +4038,7 @@
             repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
             local Character = getgenv().Character
-            local HRP = getgenv().HumanoidRootPart
+            local HRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
             local lastCFrame = HRP.CFrame
 
             local maxDistance = 5
@@ -4173,7 +4169,7 @@
         getgenv().CFrameSpeed.Speed = newSpeed
     end,})
 
-    if getgenv().Humanoid.UseJumpPower then
+    if getgenv().Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower then
         getgenv().JumpPowerSpeedSlider = Tab2:CreateSlider({
         Name = "Set CFrame JumpPower",
         Range = {1, 30},
@@ -4487,12 +4483,12 @@
         function bang_plr_bypass_off()
             cleanupConnections()
 
-            if getgenv().HumanoidRootPart then
-                getgenv().HumanoidRootPart.Anchored = false
+            if getgenv().Character:FindFirstChild("HumanoidRootPart") then
+                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
             end
 
-            if getgenv().Humanoid:GetStateEnabled(Enum.HumanoidStateType.Seated, false) then
-                getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetStateEnabled(Enum.HumanoidStateType.Seated, false) then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
             end
             wait()
             getgenv().bangActive = false
@@ -4531,7 +4527,7 @@
                 warn("No valid players to teleport to.")
             end
         else
-            getgenv().Camera.CameraSubject = getgenv().Character or getgenv().Humanoid
+            getgenv().Camera.CameraSubject = getgenv().Character or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
         end
     end,})
 
@@ -4552,7 +4548,7 @@
             local targetHRP = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
 
             if target and targetHRP then
-                getgenv().HumanoidRootPart.CFrame = targetHRP.CFrame
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = targetHRP.CFrame
             end
         else
             warn("No valid players to teleport to.")
@@ -4573,10 +4569,10 @@
 
     getgenv().r15_or_r6 = function(humanoid)
         if typeof(humanoid) ~= "Instance" or not humanoid:IsA("Humanoid") then
-            if typeof(getgenv().Humanoid) ~= "Instance" or not getgenv().Humanoid:IsA("Humanoid") then
-                return warn("Invalid or no Humanoid argument was passed, and getgenv().Humanoid is also invalid!")
+            if typeof(getgenv().Character:FindFirstChildWhichIsA("Humanoid")) ~= "Instance" or not getgenv().Character:FindFirstChildWhichIsA("Humanoid"):IsA("Humanoid") then
+                return warn("Invalid or no Humanoid argument was passed, and Humanoid is also invalid!")
             end
-            humanoid = getgenv().Humanoid
+            humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
         end
 
         local rig_type = humanoid.RigType
@@ -4609,21 +4605,21 @@
         local RunService = getgenv().RunService
         local LocalPlayer = getgenv().LocalPlayer
         local Character = getgenv().Character
-        local humanoid = getgenv().Humanoid
-        local HumanoidRootPart = getgenv().HumanoidRootPart
+        local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
         
         local VOID_THRESHOLD = -50
         local UNVOID_THRESHOLD = 0
         
         local function noSitFunc()
-            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
         end
         
         local function antiVoidLoop()
             OrgDestroyHeight = getgenv().Workspace.FallenPartsDestroyHeight
 
             getgenv().antiVoidLoop = getgenv().RunService.Stepped:Connect(function()
-                local root = getgenv().HumanoidRootPart
+                local root = getgenv().Character:FindFirstChild("HumanoidRootPart")
                 if root and root.Position.Y <= OrgDestroyHeight + 25 then
                     root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
                 end
@@ -4708,11 +4704,11 @@
         
                 if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
                     local bang_char_root = target.Character:FindFirstChild("HumanoidRootPart")
-                    getgenv().HumanoidRootPart.CFrame = bang_char_root.CFrame * CFrame.new(0, 0, 1.1)
+                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = bang_char_root.CFrame * CFrame.new(0, 0, 1.1)
                 end
             end)
 
-            getgenv().bangDied = getgenv().Humanoid.Died:Connect(function()
+            getgenv().bangDied = getgenv().Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(function()
                 bang:Stop()
                 bangAnim:Destroy()
                 cleanupConnections()
@@ -4748,11 +4744,11 @@
         function bang_plr_bypass_off()
             cleanupConnections()
 
-            if getgenv().HumanoidRootPart then
-                getgenv().HumanoidRootPart.Anchored = false
+            if getgenv().Character:FindFirstChild("HumanoidRootPart") then
+                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
             end
             
-            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
             getgenv().bangActive = false
             getgenv().Clip = true
             getgenv().bangScriptLoaded = false
@@ -4769,7 +4765,7 @@
     PlaceholderText = "Speed",
     RemoveTextAfterFocusLost = true,
     Callback = function(getSpinSpeed)
-        local HumanoidRootPart = getgenv().HumanoidRootPart
+        local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
         local spinSpeed = tonumber(getSpinSpeed)
         if spinSpeed and spinSpeed <= 200 then
             local Spin = Instance.new("BodyAngularVelocity")
@@ -4780,7 +4776,7 @@
         elseif spinSpeed and spinSpeed >= 200 then
             getgenv().notify("Limit Reached!", "We lowered speed, because you would be flung.", 5)
             wait(0.2)
-            if not getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
+            if not getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Spinning") then
                 local Spin = Instance.new("BodyAngularVelocity")
                 Spin.Name = "Spinning"
                 Spin.Parent = HumanoidRootPart
@@ -4789,17 +4785,17 @@
             else
                 HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,200,0)
             end
-        elseif spinSpeed <= 200 and getgenv().HumanoidRootPart:FindFirstChild("Spinning") then
+        elseif spinSpeed <= 200 and getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Spinning") then
             getgenv().notify("Detected.", "Updated speed, detected duplicate spin.", 5)
             wait(0.3)
-            getgenv().HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
+            getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
         end
     end,})
 
     getgenv().UnspinNow = Tab2:CreateButton({
     Name = "Unspin",
     Callback = function()
-        for i,v in pairs(getgenv().HumanoidRootPart:GetChildren()) do
+        for i,v in pairs(getgenv().Character:FindFirstChild("HumanoidRootPart"):GetChildren()) do
             if v.Name == "Spinning" then
                 v:Destroy()
             end
@@ -4990,7 +4986,7 @@
                 task.wait(0.1)
                 Animate.Disabled = false
 
-                local humanoid = getgenv().Humanoid
+                local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
                 if humanoid then
                     for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                         track:Stop()
@@ -5091,7 +5087,7 @@
         function reset_walk_while_emoting()
             getgenv().Character:FindFirstChild("Animate").Disabled = false
             wait(0.1)
-            for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+            for _, animTrack in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
                 animTrack:Stop()
             end
         end
@@ -5283,7 +5279,7 @@
         MultipleOptions = false,
         Flag = "GetEmoteOption",
         Callback = function(selectedEmote)
-            if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
                 return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
             end
 
@@ -5291,13 +5287,13 @@
 
             if getgenv().Character:FindFirstChild("Animate") then
                 if getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == true then
-                    getgenv().Humanoid.WalkSpeed = 0
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
                     wait(1)
                     reset_walk_while_emoting()
                     wait(1.2)
-                    getgenv().Humanoid:PlayEmote(ToWalkWhileEmoting)
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(ToWalkWhileEmoting)
                     wait(2)
-                    getgenv().Humanoid.WalkSpeed = 16
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
                 else
                     warn("Proceed with walk while emoting.")
                 end
@@ -5307,26 +5303,26 @@
             end
             wait()
             if getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == true then
-                getgenv().Humanoid.WalkSpeed = 0
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
                 wait(0.8)
-                getgenv().Humanoid:PlayEmote(ToWalkWhileEmoting)
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(ToWalkWhileEmoting)
             elseif not getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == false then
-                getgenv().Humanoid.WalkSpeed = 0
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
                 wait(1)
-                getgenv().Humanoid:PlayEmote(ToWalkWhileEmoting)
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(ToWalkWhileEmoting)
                 wait(0.1)
-                getgenv().HumanoidRootPart.Anchored = true
+                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = true
                 wait()
                 getgenv().Character:FindFirstChild("Animate").Disabled = true
                 wait(0.3)
-                getgenv().HumanoidRootPart.Anchored = false
+                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
             end
         end,})
 
         getgenv().StopWalkingPlaceEmote = Tab2:CreateButton({
         Name = "Stop Walking While Emoting",
         Callback = function()
-            if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
                 return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
             end
 
@@ -5338,15 +5334,15 @@
             wait()
             getgenv().Character:FindFirstChild("Animate").Disabled = false
             wait(0.2)
-            for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+            for _, animTrack in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
                 animTrack:Stop()
             end
             wait(0.2)
-            getgenv().Humanoid.WalkSpeed = 0
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
             wait(0.2)
-            getgenv().Humanoid:ChangeState(3)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
             wait(0.9)
-            getgenv().Humanoid.WalkSpeed = 16
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
         end,})
     end
 
@@ -5374,7 +5370,7 @@
     Callback = function(michaelJackson)
         michaelJacksonActive = michaelJackson
         if michaelJackson then
-            if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then 
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then 
                 michaelJacksonActive = false
                 if getgenv().AnthonyShuffle then
                     getgenv().AnthonyShuffle:Set(false)
@@ -5382,12 +5378,12 @@
                 return getgenv().notify("Failure:", "You must be R15 to use this!", 5)
             end
 
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
             end
             wait()
-            getgenv().HumanoidRootPart.Anchored = true
+            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = true
             wait(0.2)
             getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = MichaelJackson_Speed
             wait(0.1)
@@ -5395,22 +5391,22 @@
             wait(0.2)
             getgenv().Character:FindFirstChild("Animate").Disabled = true
             wait(0.1)
-            getgenv().HumanoidRootPart.Anchored = false
+            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         else
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
             end
             wait()
-            getgenv().HumanoidRootPart.Anchored = true
+            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = true
             wait()
             getgenv().Character:FindFirstChild("Animate").Disabled = false
             task.wait(.2)
             getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
             wait(0.2)
-            getgenv().Humanoid.WalkSpeed = 16
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
             wait(0.2)
-            getgenv().HumanoidRootPart.Anchored = false
+            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         end
     end,})
 
@@ -5421,7 +5417,7 @@
         Flag = "LoadFlamesOwnerAnims",
         Callback = function(apply_to_respawn_anims)
             if apply_to_respawn_anims then
-                if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then 
+                if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then 
                     if getgenv().Owner_Animations then
                         getgenv().Owner_Animations:Set(false)
                     end
@@ -5430,8 +5426,8 @@
                 getgenv().ownerAnimsEnabled = true
                 local LocalPlayer = getgenv().LocalPlayer
                 
-                getgenv().Humanoid.WalkSpeed = 0
-                getgenv().HumanoidRootPart.Anchored = false
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
                 wait(1)
                 local function run_anims(character)
                     if not character then return warn("Character not found!") end
@@ -5486,7 +5482,7 @@
                     task.wait(0.1)
                     Animate.Disabled = false
 
-                    local humanoid = getgenv().Humanoid
+                    local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
                     if humanoid then
                         for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                             track:Stop()
@@ -5513,7 +5509,7 @@
                     end
                 end
                 wait(1.5)
-                getgenv().Humanoid.WalkSpeed = 16
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
 
                 if LocalPlayer.Character then
                     onCharacterAdded(LocalPlayer.Character)
@@ -5523,18 +5519,18 @@
             else
                 getgenv().ownerAnimsEnabled = false
                 getgenv().ownerAnimsEnabled = false
-                if getgenv().Humanoid and getgenv().HumanoidRootPart then
-                    getgenv().Humanoid.WalkSpeed = 0
-                    getgenv().HumanoidRootPart.Anchored = false
+                if getgenv().Character:FindFirstChildWhichIsA("Humanoid") and getgenv().Character:FindFirstChild("HumanoidRootPart") then
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+                    getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
                     wait(1.5)
-                    local humanoid = getgenv().Humanoid
+                    local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
                     if humanoid then
                         for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                             track:Stop()
                         end
                     end
                     wait(1.5)
-                    getgenv().Humanoid.WalkSpeed = 16
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
                 end
             end
         end,})
@@ -5719,8 +5715,8 @@
             local Players = getgenv().Players
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
-            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             local Workspace = getgenv().Workspace
             getgenv().SpamWhitelistTable = getgenv().SpamWhitelistTable or {}
             
@@ -6334,8 +6330,8 @@
                 local Players = getgenv().Players
                 local LocalPlayer = getgenv().LocalPlayer
                 local Character = getgenv().Character
-                local Humanoid = getgenv().Humanoid
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
                 local GetWorkspace = game:GetService("Workspace")
                 local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
                 
@@ -6395,7 +6391,7 @@
                 wait(0.5)
                 if not getgenv().loop_unclaiming_all_booths or getgenv().loop_unclaiming_all_booths == false then
                     for i = 1, 10 do
-                        getgenv().HumanoidRootPart.CFrame = getgenv().Oldest_CFrame
+                        getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = getgenv().Oldest_CFrame
                         wait(0.4)
                     end
                     wait(0.4)
@@ -6418,7 +6414,7 @@
             local Players = getgenv().Players
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             local GetWorkspace = getgenv().Workspace
             local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
@@ -6479,8 +6475,8 @@
             local Players = getgenv().Players
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
-            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             local GetWorkspace = getgenv().Workspace
             local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
             
@@ -6554,7 +6550,7 @@
         Callback = function(ai_inputtedhere)
             local Premade_Input = tostring(ai_inputtedhere)
             wait(0.3)
-            getgenv().ReplicatedStorage:WaitForChild("Menu"):FindFirstChild("AI"):FindFirstChild("MeshEvent"):FireServer(Premade_Input, Vector3.new(getgenv().HumanoidRootPart.Position.X, getgenv().HumanoidRootPart.Position.Y, getgenv().HumanoidRootPart.Position.Z))
+            getgenv().ReplicatedStorage:WaitForChild("Menu"):FindFirstChild("AI"):FindFirstChild("MeshEvent"):FireServer(Premade_Input, Vector3.new(getgenv().Character:FindFirstChild("HumanoidRootPart").Position.X, getgenv().Character:FindFirstChild("HumanoidRootPart").Position.Y, getgenv().Character:FindFirstChild("HumanoidRootPart").Position.Z))
         end,})
     end
 
@@ -6598,8 +6594,8 @@
         local Players = getgenv().Players
         local LocalPlayer = getgenv().LocalPlayer
         local Character = getgenv().Character
-        local Humanoid = getgenv().Humanoid
-        local HumanoidRootPart = getgenv().HumanoidRootPart
+        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
         local Workspace = getgenv().Workspace
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
@@ -6633,8 +6629,8 @@
         local Players = getgenv().Players
         local LocalPlayer = getgenv().LocalPlayer
         local Character = getgenv().Character
-        local Humanoid = getgenv().Humanoid
-        local HumanoidRootPart = getgenv().HumanoidRootPart
+        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
         local Workspace = game:GetService("Workspace")
 
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
@@ -6664,8 +6660,8 @@
         local Players = getgenv().Players
         local LocalPlayer = getgenv().LocalPlayer
         local Character = getgenv().Character
-        local Humanoid = getgenv().Humanoid
-        local HumanoidRootPart = getgenv().HumanoidRootPart
+        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
         local Workspace = game:GetService("Workspace")
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
@@ -6749,8 +6745,8 @@
             
             local thePlayer = getThatPlr()
             local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
-            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             local LocalPlayer = getgenv().LocalPlayer
             local player = LocalPlayer
             local Players = getgenv().Players
@@ -6815,8 +6811,8 @@
         else
             local thePlayer = getThatPlr()
             local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
-            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             local LocalPlayer = getgenv().LocalPlayer
             local player = LocalPlayer
             local Players = getgenv().Players
@@ -6914,13 +6910,13 @@
             wait(0.1)
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             wait(0.1)
             getgenv().Jerking = true
             wait(0.1)
             getgenv().JerkAnim = Instance.new("Animation")
-            getgenv().JerkAnim.AnimationId = (getgenv().r15_or_r6(getgenv().Humanoid) == true) and "rbxassetid://698251653" or "rbxassetid://168268306"
-            getgenv().Jerk = getgenv().Humanoid:LoadAnimation(getgenv().JerkAnim)
+            getgenv().JerkAnim.AnimationId = (getgenv().r15_or_r6(getgenv().Character:FindFirstChildWhichIsA("Humanoid")) == true) and "rbxassetid://698251653" or "rbxassetid://168268306"
+            getgenv().Jerk = getgenv().Character:FindFirstChildWhichIsA("Humanoid"):LoadAnimation(getgenv().JerkAnim)
 
             task.spawn(function()
                 while getgenv().Jerking == true do
@@ -7460,21 +7456,21 @@
     PlaceholderText = "Enter ID",
     RemoveTextAfterFocusLost = true,
     Callback = function(idForEmoting)
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
         end
         
         local number_id = tonumber(idForEmoting) or idForEmoting
 
         local succ, err = pcall(function()
-            getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(number_id)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(number_id)
         end)
         wait(0.1)
         if succ then
-            getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(number_id)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(number_id)
             task.wait(.3)
-            if getgenv().HumanoidRootPart.Anchored == false then
-                getgenv().HumanoidRootPart.Anchored = true
+            if getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored == false then
+                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = true
                 wait(0.2)
                 if not getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == false then
                     getgenv().Character:FindFirstChild("Animate").Disabled = true
@@ -7482,9 +7478,9 @@
                     warn("Animate LocalScript is already disabled.")
                 end
                 wait(0.2)
-                getgenv().HumanoidRootPart.Anchored = false
+                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
             else
-                getgenv().HumanoidRootPart.Anchored = false
+                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
                 wait(0.1)
                 if not getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == false then
                     getgenv().Character:FindFirstChild("Animate").Disabled = true
@@ -7500,7 +7496,7 @@
     getgenv().StopEmoteLooping = Tab12:CreateButton({
     Name = "Stop Loop Emoting",
     Callback = function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
         end
 
@@ -7510,20 +7506,20 @@
             warn("Animate LocalScript is not disabled.")
         end
         wait(0.2)
-        for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+        for _, animTrack in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
             animTrack:Stop()
         end
         wait(0.1)
-        if getgenv().Humanoid.Sit or getgenv().Humanoid == true then
-            getgenv().Humanoid:ChangeState(3)
-            getgenv().Humanoid.Jumping = true
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").Jumping = true
         end
         wait(0.2)
-        if getgenv().HumanoidRootPart.Anchored or getgenv().HumanoidRootPart.Anchored == true then
+        if getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored or getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored == true then
             getgenv().FrozenChar:Set(false)
-            getgenv().HumanoidRootPart.Anchored = false
+            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
             wait(0.2)
-            getgenv().Humanoid:ChangeState(3)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         end
     end,})
 
@@ -7532,18 +7528,18 @@
     PlaceholderText = "Enter ID",
     RemoveTextAfterFocusLost = true,
     Callback = function(getTheIDForEmote)
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
         end
 
         local getNumberID = tonumber(getTheIDForEmote) or getTheIDForEmote
         
         local succ, err = pcall(function()
-            getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(getNumberID)
         end)
         
         if succ then
-            getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(getNumberID)
         else
             return getgenv().notify("Error:", tostring(err), 7)
         end
@@ -7552,16 +7548,16 @@
     getgenv().StopTheEmotes = Tab12:CreateButton({
     Name = "Stop Emoting",
     Callback = function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
         end
 
-        if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-            getgenv().Humanoid:ChangeState(3)
-            getgenv().Humanoid:ChangeState(3)
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         end
         wait(0.3)
-        for _, animTrack in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+        for _, animTrack in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
             animTrack:Stop()
         end
     end,})
@@ -7842,45 +7838,45 @@
         function zeezyFrontflip(act, inp, obj)
             if not getgenv().zeezyEnabled then return end
             if inp == Enum.UserInputState.Begin then
-                getgenv().Humanoid:ChangeState(3)
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 wait()
-                getgenv().Humanoid.Sit = true
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = true
                 for i = 1, 360 do 
                     delay(i / 720, function()
                         if not getgenv().zeezyEnabled then return end
-                        getgenv().Humanoid.Sit = true
-                        getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(-h, 0, 0)
+                        getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = true
+                        getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.Angles(-h, 0, 0)
                     end)
                 end
                 wait(0.55)
-                getgenv().Humanoid.Sit = false
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = false
             end
         end
         
         function zeezyBackflip(act, inp, obj)
             if not getgenv().zeezyEnabled then return end
             if inp == Enum.UserInputState.Begin then
-                getgenv().Humanoid:ChangeState(3)
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 wait()
-                getgenv().Humanoid.Sit = true
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = true
                 for i = 1, 360 do
                     delay(i / 720, function()
                         if not getgenv().zeezyEnabled then return end
-                        getgenv().Humanoid.Sit = true
-                        getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(h, 0, 0)
+                        getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = true
+                        getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.Angles(h, 0, 0)
                     end)
                 end
                 wait(0.55)
-                getgenv().Humanoid.Sit = false
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = false
             end
         end
         
         function zeezyAirjump(act, inp, obj)
             if not getgenv().zeezyEnabled then return end
             if inp == Enum.UserInputState.Begin then
-                getgenv().Humanoid:ChangeState("Seated")
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState("Seated")
                 wait()
-                getgenv().Humanoid:ChangeState(3)	
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)	
             end
         end
         
@@ -8058,7 +8054,7 @@
             conn:Disconnect()
             conn = nil
         end
-        local hum = getgenv().Humanoid
+        local hum = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
         if hum then
             hum.PlatformStand = false
         end
@@ -8261,18 +8257,18 @@
     Flag = "toggleNoclipChar",
     Callback = function(noclip_toggle)
         function reset_collide(reset_bool)
-            if reset_bool == true and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+            if reset_bool == true and getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
                 HumanoidRootPart.CanCollide = true
                 getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
                 getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
-            elseif reset_bool == false and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+            elseif reset_bool == false and getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
                 getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
                 getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
                 getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
-            elseif reset_bool == true and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
-                getgenv().HumanoidRootPart.CanCollide = true
-            elseif reset_bool == false and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
-                getgenv().HumanoidRootPart.CanCollide = false
+            elseif reset_bool == true and getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = true
+            elseif reset_bool == false and getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
             else
                 return warn("Invalid input BoolValue.")
             end
@@ -8289,26 +8285,26 @@
             getgenv().ez_noclip_use = false
             getgenv().ez_noclip_use = false
             wait(0.5)
-            getgenv().Humanoid.WalkSpeed = 0
-            getgenv().HumanoidRootPart.Anchored = false
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
             wait(0.7)
             reset_collide(true)
             wait(0.3)
-            getgenv().Humanoid:ChangeState(3)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
             wait(1)
-            getgenv().Humanoid.WalkSpeed = 16
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
         else
             getgenv().ez_noclip_use = false
             getgenv().ez_noclip_use = false
             wait(0.5)
-            getgenv().Humanoid.WalkSpeed = 0
-            getgenv().HumanoidRootPart.Anchored = false
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
             wait(0.7)
             reset_collide(true)
             wait(0.3)
-            getgenv().Humanoid:ChangeState(3)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
             wait(1)
-            getgenv().Humanoid.WalkSpeed = 16
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
         end
     end,})
     wait()
@@ -8325,11 +8321,11 @@
             if reset_bool == true then
                 getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
                 getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
-                getgenv().HumanoidRootPart.CanCollide = true
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = true
             elseif reset_bool == false then
                 getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
                 getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
-                getgenv().HumanoidRootPart.CanCollide = false
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
             else
                 return warn("Invalid input BoolValue.")
             end
@@ -8366,9 +8362,9 @@
                 wait(0.4)
                     for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
                         if v:IsA("BasePart") and v.Name == "Football" then
-                            firetouchinterest(v, getgenv().HumanoidRootPart, 1)
+                            firetouchinterest(v, getgenv().Character:FindFirstChild("HumanoidRootPart"), 1)
                             wait()
-                            firetouchinterest(v, getgenv().HumanoidRootPart, 0)
+                            firetouchinterest(v, getgenv().Character:FindFirstChild("HumanoidRootPart"), 0)
                         end
                     end
                 end
@@ -8543,8 +8539,8 @@
             local player = game:GetService("Players").LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
 
-            local rootPart = getgenv().HumanoidRootPart or character:WaitForChild("HumanoidRootPart")
-            local humanoid = getgenv().Humanoid or character:FindFirstChildWhichIsA("Humanoid")
+            local rootPart = getgenv().Character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart")
+            local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
 
             if anti_teleport_toggle_saved == true then
                 if getgenv().AntiFlingToggle then
@@ -8562,14 +8558,14 @@
                 end
             end
 
-            if getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly") then
-                getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly"):Destroy()
+            if getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Gyro-Fly") then
+                getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Gyro-Fly"):Destroy()
             else
                 warn("nil - BodyGyro")
             end
             wait(0.1)
-            if getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly") then
-                getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly"):Destroy()
+            if getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Velocity-Fly") then
+                getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Velocity-Fly"):Destroy()
             else
                 warn("nil - BodyVelocity")
             end
@@ -8752,9 +8748,9 @@
         local uis = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
         local player = getgenv().LocalPlayer
         local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-        local humanoid = getgenv().Humanoid
+        local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
         local character = getgenv().Character
-        local humanoidRootPart = getgenv().HumanoidRootPart
+        local humanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
         getgenv().flashback = getgenv().flashback or {}
         local flashback = getgenv().flashback
@@ -8764,7 +8760,7 @@
                 table.remove(frames, 1)
             end
 
-            if getgenv().HumanoidRootPart then
+            if getgenv().Character:FindFirstChild("HumanoidRootPart") then
                 table.insert(frames, {
                     humanoidRootPart.CFrame,
                     humanoidRootPart.Velocity,
@@ -8775,7 +8771,7 @@
         end
         
         function flashback:Revert(character, humanoidRootPart, humanoid)
-            if getgenv().HumanoidRootPart and getgenv().Humanoid then
+            if getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
                 local frameCount = #frames
                 if frameCount == 0 then
                     self:Advance(character, humanoidRootPart, humanoid)
@@ -8791,21 +8787,21 @@
                 table.remove(frames, frameCount)
                 
                 if lastFrame and lastFrame[1] then
-                    getgenv().HumanoidRootPart.CFrame = lastFrame[1]
+                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = lastFrame[1]
                 end
                 wait(.3)
                 if lastFrame and lastFrame[2] then
-                    getgenv().HumanoidRootPart.Velocity = -lastFrame[2]
+                    getgenv().Character:FindFirstChild("HumanoidRootPart").Velocity = -lastFrame[2]
                 else
                     warn("LastFrame[2] not detected at runtime, skipping...")
                 end
                 if lastFrame and lastFrame[3] then
-                    getgenv().Humanoid:ChangeState(lastFrame[3])
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(lastFrame[3])
                 else
                     warn("LastFrame[3] not detected at runtime, skipping...")
                 end
                 if lastFrame and lastFrame[4] then
-                    getgenv().Humanoid.PlatformStand = lastFrame[4]
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = lastFrame[4]
                 else
                     warn("LastFrame[4] not detected at runtime, skipping...")
                 end
@@ -8813,10 +8809,10 @@
         end
         
         local function onRenderStep()
-            if getgenv().HumanoidRootPart and getgenv().Humanoid then
+            if getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
                 local character = getgenv().Character
-                local humanoidRootPart = getgenv().HumanoidRootPart
-                local humanoid = getgenv().Humanoid
+                local humanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
+                local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
                 
                 if not key or typeof(key) ~= "EnumItem" then
                     pcall(function()
@@ -8893,7 +8889,7 @@
                     wait(0.5)
                     local player = getgenv().LocalPlayer
                     local character = getgenv().Character
-                    local humanoidRootPart = getgenv().HumanoidRootPart
+                    local humanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
                     getgenv().flying = false
                     getgenv().speed = tonumber(GetSpeed)
                     local bodyGyro = nil
@@ -8960,8 +8956,8 @@
                     wait(0.2)
                     local player = getgenv().LocalPlayer
                     local character = player.Character or player.CharacterAdded:Wait()
-                    local humanoidRootPart = getgenv().HumanoidRootPart
-                    local Humanoid = getgenv().Humanoid
+                    local humanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
+                    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
 
                     if character:FindFirstChild("Hoverboard") then
                         local hover = character:FindFirstChild("Hoverboard")
@@ -8999,8 +8995,8 @@
             wait(0.2)
             local player = getgenv().LocalPlayer
             local character = getgenv().Character
-            local humanoidRootPart = getgenv().HumanoidRootPart
-            local Humanoid = getgenv().Humanoid
+            local humanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
 
             if character:FindFirstChild("Hoverboard") then
                 local hover = character:FindFirstChild("Hoverboard")
@@ -9015,7 +9011,7 @@
                 if humanoidRootPart:FindFirstChild("BodyVelocity") then
                     humanoidRootPart.BodyVelocity:Destroy()
                 end
-                getgenv().Humanoid.PlatformStand = false
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
                 getgenv().flyLoop = false
             end
             wait(0.2)
@@ -10837,8 +10833,8 @@
         getgenv().TeleportToCrossroadsMap = Tab10:CreateButton({
         Name = "TP To Crossroads Map (Only for Flames Hub users)",
         Callback = function()
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanooid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Humanoid:ChangeState(3)
                 task.wait(.2)
                 getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Crossroad"):GetPivot())
             else
@@ -10849,8 +10845,8 @@
         getgenv().TeleportToModernHouseMap = Tab10:CreateButton({
         Name = "TP To Modern House Map (Only for Flames Hub users)",
         Callback = function()
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.3)
                 getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 695, 0))
             else
@@ -10877,24 +10873,24 @@
             wait()
             local Main_Script_Spawn = Nexus_Prison_Spawn:FindFirstChild("Script_Spawn")
 
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.3)
-                getgenv().HumanoidRootPart.CFrame = Main_Script_Spawn.CFrame
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = Main_Script_Spawn.CFrame
             else
-                getgenv().HumanoidRootPart.CFrame = Main_Script_Spawn.CFrame
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = Main_Script_Spawn.CFrame
             end
         end,})
 
         getgenv().Teleport_To_VIBE_NYC_Map = Tab10:CreateButton({
         Name = "TP To VIBE NYC Map (Only for Flames Hub users)",
         Callback = function()
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.3)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-6959.81445, 3374.51855, -8968.93848)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-6959.81445, 3374.51855, -8968.93848)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-6959.81445, 3374.51855, -8968.93848)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-6959.81445, 3374.51855, -8968.93848)
             end
         end,})--]]
 
@@ -10902,14 +10898,14 @@
         Name = "TP To Private Room (Inside)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(4220.82275, 2.76511836, 60.7681046)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(4220.82275, 2.76511836, 60.7681046)
             end
@@ -10919,14 +10915,14 @@
         Name = "TP To Room Next To Bathrooms",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(-108.536659, 5.38924313, 135.303314)
             end
@@ -10936,14 +10932,14 @@
         Name = "TP To Bathrooms",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(-72.3955917, 5.09832525, 93.0914459)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(-72.3955917, 5.09832525, 93.0914459)
             end
@@ -10953,14 +10949,14 @@
         Name = "TP To Chill Spot",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(228.970184, 5.75081444, -21.5613441)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(228.970184, 5.75081444, -21.5613441)
             end
@@ -10971,21 +10967,21 @@
         Callback = function()
             local PreDefined_CFrame = CFrame.new(-94.0359421, 5.24999952, 29.9133148)
 
-            getgenv().HumanoidRootPart.CFrame = PreDefined_CFrame
+            getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = PreDefined_CFrame
         end,})
 
         getgenv().TPPicnicFirst = Tab10:CreateButton({
         Name = "TP To Picnic (Seat 1)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(85.846756, 3.61196709, -29.8345909)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(85.846756, 3.61196709, -29.8345909)
             end
@@ -10995,14 +10991,14 @@
         Name = "TP To Picnic (Seat 2)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(76.6581955, 3.61196709, -29.8332996)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(76.6581955, 3.61196709, -29.8332996)
             end
@@ -11012,13 +11008,13 @@
         Name = "TP To Stage (Mic 1)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
                 HumanoidRootPart.CFrame = CFrame.new(39.2528572, 7.80023623, -67.7634125)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
                 HumanoidRootPart.CFrame = CFrame.new(39.2528572, 7.80023623, -67.7634125)
             end
         end,})
@@ -11027,14 +11023,14 @@
         Name = "TP To Stage (Mic 2)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(14.8289356, 7.80023623, -67.7656097)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 HumanoidRootPart.CFrame = CFrame.new(14.8289356, 7.80023623, -67.7656097)
             end
@@ -11044,14 +11040,14 @@
         Name = "TP To Middle Room (Tent)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             
                 HumanoidRootPart.CFrame = CFrame.new(70.9464493, 5.62692404, 24.2968006)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             
                 HumanoidRootPart.CFrame = CFrame.new(70.9464493, 5.62692404, 24.2968006)
             end
@@ -11061,12 +11057,12 @@
         Name = "TP To Booth Rows (Table)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(26.7397423, 7.81395245, 86.7164536)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(26.7397423, 7.81395245, 86.7164536)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(26.7397423, 7.81395245, 86.7164536)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(26.7397423, 7.81395245, 86.7164536)
             end
         end,})
 
@@ -11074,12 +11070,12 @@
         Name = "TP To Tower (Float Up Part)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(61.3288841, 72.0192184, 215.731613)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(61.3288841, 72.0192184, 215.731613)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(61.3288841, 72.0192184, 215.731613)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(61.3288841, 72.0192184, 215.731613)
             end
         end,})
 
@@ -11087,12 +11083,12 @@
         Name = "TP To Tower (Top)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(63.2298126, 284.407227, 193.529007)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(63.2298126, 284.407227, 193.529007)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(63.2298126, 284.407227, 193.529007)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(63.2298126, 284.407227, 193.529007)
             end
         end,})
 
@@ -11100,12 +11096,12 @@
         Name = "TP To Tower (Highest Part)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(58.0468788, 313.312622, 225.215027)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(58.0468788, 313.312622, 225.215027)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(58.0468788, 313.312622, 225.215027)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(58.0468788, 313.312622, 225.215027)
             end
         end,})
 
@@ -11113,8 +11109,8 @@
         Name = "TP To Booth-1",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
                 local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth01")
@@ -11130,8 +11126,8 @@
         Name = "TP To Booth-2",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
                 local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth02")
@@ -11147,8 +11143,8 @@
         Name = "TP To Booth-3",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
                 local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth03")
@@ -11164,8 +11160,8 @@
         Name = "TP To Booth-4",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
                 local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth04")
@@ -11181,8 +11177,8 @@
         Name = "TP To Booth-5",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
                 local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth05")
@@ -11198,12 +11194,12 @@
         Name = "TP To Donut Shop",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-80.8301239, 3.1662631, -82.6656799)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-80.8301239, 3.1662631, -82.6656799)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-80.8301239, 3.1662631, -82.6656799)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-80.8301239, 3.1662631, -82.6656799)
             end
         end,})
 
@@ -11211,12 +11207,12 @@
         Name = "TP To Donut Shop (Seat 1)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-98.4535675, 4.04168415, -96.7826004)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-98.4535675, 4.04168415, -96.7826004)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-98.4535675, 4.04168415, -96.7826004)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-98.4535675, 4.04168415, -96.7826004)
             end
         end,})
 
@@ -11224,12 +11220,12 @@
         Name = "TP To Donut Shop (Seat 2)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-91.7390671, 4.04168415, -90.0620728)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-91.7390671, 4.04168415, -90.0620728)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-91.7390671, 4.04168415, -90.0620728)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-91.7390671, 4.04168415, -90.0620728)
             end
         end,})
 
@@ -11237,12 +11233,12 @@
         Name = "TP To Donut Shop (Table Seat 1)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-102.440971, 4.51146317, -66.6184387)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-102.440971, 4.51146317, -66.6184387)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-102.440971, 4.51146317, -66.6184387)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-102.440971, 4.51146317, -66.6184387)
             end
         end,})
 
@@ -11250,12 +11246,12 @@
         Name = "TP To Donut Shop (Table, Seat 2)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-94.6592941, 4.51146317, -74.3931046)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-94.6592941, 4.51146317, -74.3931046)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-94.6592941, 4.51146317, -74.3931046)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-94.6592941, 4.51146317, -74.3931046)
             end
         end,})
 
@@ -11263,12 +11259,12 @@
         Name = "TP To Donut Shop (Behind Counter)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-122.382172, 3.22726321, -83.5359192)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-122.382172, 3.22726321, -83.5359192)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-122.382172, 3.22726321, -83.5359192)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-122.382172, 3.22726321, -83.5359192)
             end
         end,})
 
@@ -11276,12 +11272,12 @@
         Name = "TP Above Relaxing Room",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-97.4412308, 24.4840164, 121.394676)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-97.4412308, 24.4840164, 121.394676)
             else
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(-97.4412308, 24.4840164, 121.394676)
+                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-97.4412308, 24.4840164, 121.394676)
             end
         end,})
 
@@ -11289,14 +11285,14 @@
         Name = "TP To Submit Note Board",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             
                 HumanoidRootPart.CFrame = CFrame.new(58.6107864, 4.99999857, 245.690369)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             
                 HumanoidRootPart.CFrame = CFrame.new(58.6107864, 4.99999857, 245.690369)
             end
@@ -11306,14 +11302,14 @@
         Name = "TP To Stage Mic",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             
                 HumanoidRootPart.CFrame = CFrame.new(-61.6848221, 10.0853853, 229.676834)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             
                 HumanoidRootPart.CFrame = CFrame.new(-61.6848221, 10.0853853, 229.676834)
             end
@@ -11323,14 +11319,14 @@
         Name = "TP To Private Room (Roof)",
         Callback = function()
             wait(0.4)
-            if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             
                 HumanoidRootPart.CFrame = CFrame.new(4220.37842, 23.5336628, 61.3636169)
             else
-                local HumanoidRootPart = getgenv().HumanoidRootPart
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             
                 HumanoidRootPart.CFrame = CFrame.new(4220.37842, 23.5336628, 61.3636169)
             end
@@ -11465,17 +11461,17 @@
     CurrentValue = 16,
     Flag = "walkSpeedValue",
     Callback = function(wsVal)
-        getgenv().Humanoid.WalkSpeed = wsVal
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = wsVal
     end,})
 
     getgenv().ResetSpeed = Tab2:CreateButton({
     Name = "Reset WalkSpeed",
     Callback = function()
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
         getgenv().WalkSpeedSliding:Set(16)
     end,})
 
-    if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
+    if getgenv().Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower or getgenv().Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == true then
         getgenv().notify("Returned", "Found Method: JumpPower", 6)
         getgenv().JumpPowerSlider = Tab2:CreateSlider({
         Name = "JumpPower (Default): 50",
@@ -11485,7 +11481,7 @@
         CurrentValue = 16,
         Flag = "jpValue",
         Callback = function(jpVal)
-            getgenv().Humanoid.JumpPower = jpVal
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").JumpPower = jpVal
         end,})
     else
         getgenv().notify("Returned-2", "Found Method: JumpHeight", 6)
@@ -11497,27 +11493,27 @@
         CurrentValue = 7,
         Flag = "jumpHeightValue",
         Callback = function(jumpHVal)
-            getgenv().Humanoid.JumpHeight = jumpHVal
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").JumpHeight = jumpHVal
         end,})
     end
 
-    if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
+    if getgenv().Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower or getgenv().Character:FindFirstChildWhichIsA("Humanoid").UseJumpPower == true then
         getgenv().ResetJumpPowerButton = Tab2:CreateButton({
         Name = "Reset JumpPower",
         Callback = function()
-            getgenv().Humanoid.JumpPower = 50
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").JumpPower = 50
             getgenv().JumpPowerSlider:Set(50)
         end,})
     else
         getgenv().ResetJumpHeightVal = Tab2:CreateButton({
         Name = "Reset JumpHeight",
         Callback = function()
-            getgenv().Humanoid.JumpHeight = 7
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").JumpHeight = 7
             getgenv().HeightJumpPowerSliding:Set(7)
         end,})
     end
 
-    if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+    if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
         getgenv().HipHeightSliding = Tab2:CreateSlider({
         Name = "HipHeight (R15), Default: 2",
         Range = {1, 300},
@@ -11526,7 +11522,7 @@
         CurrentValue = 2,
         Flag = "HipHeightValue",
         Callback = function(hipValue)
-            getgenv().Humanoid.HipHeight = hipValue
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").HipHeight = hipValue
         end,})
     else
         getgenv().HipHeightSliding = Tab2:CreateSlider({
@@ -11537,7 +11533,7 @@
         CurrentValue = 0,
         Flag = "HipHeightValue",
         Callback = function(hipValue)
-            getgenv().Humanoid.HipHeight = hipValue
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid").HipHeight = hipValue
         end,})
     end
 
@@ -11571,7 +11567,7 @@
             wait(0.5)
             if doAntiTP then
                 local Workspace = getgenv().Workspace
-                local HumanoidRP = getgenv().HumanoidRootPart
+                local HumanoidRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
 
                 if HumanoidRP and HumanoidRP ~= nil then
                     getgenv().doTeleport = true
@@ -11589,7 +11585,7 @@
                 wait(.1)
                 repeat wait() until getgenv().doTeleport == false
                 wait(0.3)
-                local HumanoidRP = getgenv().HumanoidRootPart
+                local HumanoidRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
                 print("Teleporting Back...")
                 wait()
                 HumanoidRP.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
@@ -11605,7 +11601,7 @@
         local OldDestroy_Height = getgenv().Workspace.FallenPartsDestroyHeight
         local voidPosition = Vector3.new(-499, -499, -499)
         local Workspace = getgenv().Workspace
-        local HumanoidRP = getgenv().HumanoidRootPart
+        local HumanoidRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
         wait(.4)
         getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
         HumanoidRP.CFrame = CFrame.new(voidPosition)
@@ -11623,7 +11619,7 @@
         if getLoopTpToVoid then
             local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
             local Workspace = getgenv().Workspace
-            local HumanoidRP = getgenv().HumanoidRootPart
+            local HumanoidRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
             getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
             wait(0.2)
             getgenv().loopTPToVoid = true
@@ -11636,7 +11632,7 @@
             getgenv().loopTPToVoid = false
             wait()
             repeat wait() until getgenv().loopTPToVoid == false
-            local HumanoidRootPart = getgenv().HumanoidRootPart
+            local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
             wait(0.3)
             getgenv().Workspace.FallenPartsDestroyHeight = OldDestroyH
@@ -12100,11 +12096,11 @@
 
     getgenv().emoting_actions = function(speed)
         if speed then
-            for _, v in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+            for _, v in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
                 v:AdjustSpeed(speed)
             end
         else
-            for _, v in pairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+            for _, v in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
                 v:Stop()
             end
         end
@@ -12185,7 +12181,7 @@
     getgenv().StopAllEmotes = Tab12:CreateButton({
     Name = "Stop Playing Emotes",
     Callback = function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
         end
 
@@ -12566,7 +12562,7 @@
     if getgenv().runningEnabled == true then
         getgenv().ShiftToRun:Set(false)
         wait(0.2)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end
 
     Zombie_Idle_1 = "10921344533"
@@ -12857,14 +12853,14 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
         if not Animate then return end
         
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -12887,7 +12883,7 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(WickedPopularAnim, "'Wicked Popular' Animation Package", function()
@@ -12896,14 +12892,14 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
         if not Animate then return end
 
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -12926,7 +12922,7 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(RThroAnim, "RThro Animation Package", function()
@@ -12935,7 +12931,7 @@
         local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
 
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
@@ -12949,14 +12945,14 @@
 
         if not Animate then return end
 
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
 
-        local humanoid = getgenv().Humanoid
+        local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
         if humanoid then
             for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                 track:Stop()
@@ -12973,7 +12969,7 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(adidasAnim, "Adidas Animation Package", function()
@@ -12982,14 +12978,14 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
         if not Animate then return end
 
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13012,7 +13008,7 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(NFLAnim, "NFL Animation Package", function()
@@ -13021,14 +13017,14 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
         if not Animate then return end
 
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13051,7 +13047,7 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(BoldAnim, "Bold Animation Package", function()
@@ -13060,14 +13056,14 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
         if not Animate then return end
 
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13090,7 +13086,7 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(noBoundariesAnim, "No Boundaries Animation Package", function()
@@ -13099,14 +13095,14 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
         if not Animate then return end
 
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13129,7 +13125,7 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(robotAnim, "Robot Animation Package", function()
@@ -13138,13 +13134,13 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
         
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
         if not Animate then return end
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13167,17 +13163,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(zombieAnim, "Zombie Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13197,17 +13193,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(HeroAnim, "Hero Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13227,17 +13223,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(vampireAnim, "Vampire Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13257,17 +13253,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(mageAnim, "Mage Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13287,22 +13283,22 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(ghostAnim, "(FE) Ghost Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = getgenv().Humanoid:GetPlayingAnimationTracks()
+        local animtrack = getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -13317,17 +13313,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(elderAnim, "Elder Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13347,17 +13343,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(LevitationAnim, "Levitation Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13377,17 +13373,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(AstronautAnim, "Astronaut Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13407,17 +13403,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(NinjaAnim, "Ninja Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13437,17 +13433,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(WerewolfAnim, "Werewolf Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13467,17 +13463,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(CartoonAnim, "Cartoon Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13497,17 +13493,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(PirateAnim, "Pirate Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13527,17 +13523,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(SneakyFEAnim, "(FE) Sneaky Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13557,17 +13553,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(ToyAnim, "Toy Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13587,17 +13583,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(KnightAnim, "Knight Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13617,17 +13613,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(ConfidentFEAnim, "(FE) Confident Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13647,17 +13643,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(PopstarFEAnim, "(FE) Popstar Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13677,17 +13673,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(PrincessFEAnim, "(FE) Princess Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13707,17 +13703,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(CowboyFEAnim, "(FE) Cowboy Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13737,17 +13733,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(PatrolFEAnim, "(FE) Patrol Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13767,17 +13763,17 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
     create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
-        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
-        getgenv().Humanoid.WalkSpeed = 0
-        getgenv().HumanoidRootPart.Anchored = false
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
+        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
         wait(0.8)
         Animate.Disabled = true
         wait()
@@ -13797,7 +13793,7 @@
         wait()
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Humanoid.WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
     -- Also, all of these animations do NOT jump, because while moving, jumping causes issues, and it should also stop you from walking when applying an animation, and it also has a delay to, because of how buggy the animations can be.
 
@@ -13987,7 +13983,7 @@
         --getgenv().notify("Success:", "Selected Slot: " .. slotName .. " (Keybind: " .. tostring(selectedSlot) .. ")", 6)
     end,})
 
-    -- I remember when I tried to put a text next to the emote like: "[NEW]: " but that doesn't work because we use "getgenv().Humanoid:PlayEmote(emote_name)" <-- but using this you need the actual name of the emote and the fucking emote isn't named "[NEW]: NBA Master Dunk", like wtf?
+    -- I remember when I tried to put a text next to the emote like: "[NEW]: " but that doesn't work because we use "getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(emote_name)" <-- but using this you need the actual name of the emote and the fucking emote isn't named "[NEW]: NBA Master Dunk", like wtf?
     local Emotes = {
         "NBA Monster Dunk",
         "Stray Kids Walkin On Water",
@@ -14362,8 +14358,8 @@
             getgenv().Trip_Enabled = true
 
             local function trip()
-                local hum = getgenv().Humanoid
-                local root = getgenv().HumanoidRootPart
+                local hum = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+                local root = getgenv().Character:FindFirstChild("HumanoidRootPart")
                 hum:ChangeState(0)
                 root.Velocity = root.CFrame.LookVector * 30
             end
@@ -14842,8 +14838,8 @@
             local UserInputService = getgenv().UserInputService
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
-            local RootPart = getgenv().HumanoidRootPart
+            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            local RootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             task.wait()
             getgenv().FakeOut_Enabled = true
             wait(0.1)
@@ -14854,7 +14850,7 @@
                     wait(0.5)
                     OrgDestroyHeight = workspace.FallenPartsDestroyHeight
                     wait(0.1)
-                    local root = getgenv().HumanoidRootPart
+                    local root = getgenv().Character:FindFirstChild("HumanoidRootPart")
                     local oldpos = root.CFrame
                     workspace.FallenPartsDestroyHeight = 0/1/0
                     root.CFrame = CFrame.new(Vector3.new(0, OrgDestroyHeight - 25, 0))
@@ -14983,7 +14979,7 @@
                     wait(0.2)
                     getgenv().emoting_actions()
                     wait(0.5)
-                    getgenv().Humanoid.Health = 0
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").Health = 0
                     wait(0.1)
                     getgenv().Has_Died_Func = true
                     wait(0.3)
@@ -14993,7 +14989,7 @@
                     wait()
                     getgenv().output_already_viewed = true
                 else
-                    getgenv().Humanoid.Health = 0
+                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").Health = 0
                     wait()
                     getgenv().Has_Died_Func = true
                     wait(0.3)
