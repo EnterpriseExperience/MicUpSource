@@ -8070,8 +8070,8 @@
         running = true
 
         local plr = getgenv().LocalPlayer
-        local hrp = getgenv().HumanoidRootPart
-        local hum = getgenv().Humanoid
+        local hrp = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
+        local hum = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:WaitForChild("Humanoid")
         local closest, dist = nil, math.huge
 
         getgenv().loaded_face_bang = true
