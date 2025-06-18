@@ -1912,7 +1912,7 @@
             if claimAnyBooth then
                 getgenv().isToggled = true
 
-                local Folder = getgenv().Workspace.Booth
+                local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
 
                 local stalls = {
                     Folder:FindFirstChild("Booth01"),
@@ -1963,7 +1963,7 @@
             else
                 getgenv().isToggled = false
 
-                local Folder = getgenv().Workspace.Booth
+                local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 
                 local stalls = {
                     Folder:FindFirstChild("Booth01"),
@@ -2820,7 +2820,7 @@
         PlaceholderText = "User Here",
         RemoveTextAfterFocusLost = true,
         Callback = function(unclaimTheirBooth)
-            local Folder = getgenv().Workspace.Booth
+            local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
             local find_plr_func_booth = findplr(unclaimTheirBooth)
 
             if getgenv().boothWhitelistingPlayer and getgenv().boothWhitelistingPlayer[find_plr_func_booth] then
@@ -2840,7 +2840,7 @@
             end
 
             local function getStall()
-                for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                     if v ~= getgenv().LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
                         return v
                     end
@@ -2854,7 +2854,7 @@
                 return getgenv().notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5, 3)
             end
 
-            local Folder = getgenv().Workspace.Booth
+            local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
 
             local OldCF = getgenv().HumanoidRootPart.CFrame
 
@@ -2920,13 +2920,13 @@
         Flag = "NoClippingBooths",
         Callback = function(noclip_the_booths)
             if noclip_the_booths then
-                for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
                         v.CanCollide = true
                     end
                 end
             else
-                for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
                         v.CanCollide = false
                     end
@@ -2934,7 +2934,7 @@
             end
         end,})
         wait()
-        for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
             if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
                 v.CanCollide = true
             end
@@ -2948,26 +2948,26 @@
         CurrentValue = 0,
         Flag = "booth_transparency_values",
         Callback = function(transparency_value_booths)
-            for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+            for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
                 if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" and v.Name ~= "Edit" then
                     v.Transparency = transparency_value_booths
                 end
             end
             task.wait()
-            for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+            for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
                 if v:IsA("TextLabel") then
                     v.TextTransparency = transparency_value_booths
                 end
             end
             task.wait()
             if transparency_value_booths == 1 then
-                for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("Model") and v:FindFirstChild("Activate") then
                         v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = false
                     end
                 end
             else
-                for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("Model") and v:FindFirstChild("Activate") then
                         v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
                     end
@@ -2975,19 +2975,19 @@
             end
         end,})
         wait()
-        for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
             if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" and v.Name ~= "Edit" then
                 v.Transparency = transparency_value_booths
             end
         end
         task.wait()
-        for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
             if v:IsA("TextLabel") then
                 v.TextTransparency = transparency_value_booths
             end
         end
         wait(0.1)
-        for _, v in ipairs(getgenv().Workspace.Booth:GetDescendants()) do
+        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
             if v:IsA("Model") and v:FindFirstChild("Activate") then
                 v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
             end
@@ -4401,7 +4401,7 @@
                 while getgenv().Cuss == true do
                 wait(0.5)
                     local function getStall()
-                        for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                        for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                             if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                                 return v
                             end
@@ -6118,7 +6118,7 @@
                 end
             
                 local function getStall()
-                    for _, v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                    for _, v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                         if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
                             return v
                         end
@@ -6237,7 +6237,7 @@
         Callback = function(booth_rainbow_not_fe)
             if booth_rainbow_not_fe then
                 local function retrieve_booth()
-                    for _, v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                    for _, v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                         if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
                             return v
                         end
@@ -6288,7 +6288,7 @@
                 end
             else
                 local function retrieve_booth()
-                    for _, v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                    for _, v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                         if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
                             return v
                         end
@@ -9150,7 +9150,7 @@
         Flag = "theBoothView",
         Callback = function(specBooth)
             local function get_booth()
-                for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                     if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                         return v
                     end
@@ -9184,7 +9184,7 @@
         Name = "Teleport To Booth",
         Callback = function()
             local function get_booth()
-                for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                     if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                         return v
                     end
@@ -10631,7 +10631,7 @@
             wait(.2)
             local function send_bypass_config(msg)
                 local function getStall()
-                    for i,v in pairs(getgenv().Workspace.Booth:GetChildren()) do
+                    for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                         if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                             return v
                         end
