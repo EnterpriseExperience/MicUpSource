@@ -446,18 +446,41 @@
     local vc_service = getgenv().VoiceChatService
 
     if getgenv().voicechat_check then
-        warn("voice chat already initialized.")
-    else
-        local function unsuspend()
-            wait(3)
-            vc_inter:JoinByGroupIdToken("", false, true)
-            task.wait(0.5)
-        end
-        wait(1)
-        vc_inter.LocalPlayerModerated:Connect(unsuspend)
-        wait()
-        getgenv().voicechat_check = true
+        warn("Voice Chat already initialized.")
+        return
     end
+
+    local reconnecting = false
+    local retry_dur = 3
+
+    local function unsuspend()
+        if reconnecting then return warn("STILL TRYING TO RECONNECT TO VC! WAITING!") end
+        reconnecting = true
+
+        task.wait(2)
+        pcall(function()
+            vc_inter:JoinByGroupIdToken("", false, true)
+            vc_inter:Leave()
+            task.wait(0.2)
+            vc_service:rejoinVoice()
+            vc_service:rejoinVoice()
+            task.wait(0.1)
+            vc_service:joinVoice()
+        end)
+
+        reconnecting = false
+    end
+
+    vc_inter.LocalPlayerModerated:Connect(unsuspend)
+
+    vc_inter.StateChanged:Connect(function(_, newState)
+        if newState == Enum.VoiceChatState.Ended and not reconnecting then
+            task.wait(retry_dur)
+            unsuspend()
+        end
+    end)
+
+    getgenv().voicechat_check = true
     wait(0.2)
     -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
     function getRoot(char)
