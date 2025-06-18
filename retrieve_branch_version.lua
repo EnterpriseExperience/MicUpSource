@@ -63,7 +63,7 @@
     end
     -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
     if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then  
-        return Notification:Notify("Heads Up!", "Zacks Easy Hub is already running!", 5)
+        return Notification:Notify("Heads Up!", "Flames Hub is already running!", 5)
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
     -- Sometimes would fuck up, but that's because I accidentally removed the "not _G.SCRIPT_EXECUTED == true" part, didn't know it was necessary, so oops.
@@ -74,7 +74,7 @@
     elseif (enabled_vc == false and (not game.PlaceId == 6884319169)) or (not game.PlaceId == 15546218972) then
         Notification:Notify("Success!", "Connected.", 5)
     elseif enabled_vc == false and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        return Notification:Notify("Sorry!", "Unable to load Zacks Easy Hub (No VC)", 5)
+        return Notification:Notify("Sorry!", "Unable to load Flames Hub (No VC)", 5)
     else
         Notification:Notify("Passed.", "Unknown error occurred.", 5) -- I actually have no idea when or why I added this, but I guess I kept it, so it might be necessary, I don't know man.
     end
@@ -97,6 +97,17 @@
         return false
     end
     print("5")
+
+    function low_level_executor()
+        if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
+            getgenv().notify("Failure:", "This feature isn't supported on this executor.", 5)
+            return false
+        else
+            return true
+        end
+    end
+
+    local low_level_executor_result = low_level_executor()
 
     local function beta_tester(player)
         for _, name in ipairs(all_beta_testers) do
@@ -199,11 +210,11 @@
     local function assign(player)
         -- If you want a Title, update it below, I and the people below don't really play MIC UP or any game anymore, so you can do what ever you want with it lol.
         if isWatchedPlayer(player.Name) then
-            make_title(player, "👑 Zacks Easy Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
+            make_title(player, "👑 Flames Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
         elseif player.Name == specialPlayer then
-            make_title(player, "👧 Zacks Easy Hub | Daughter 👧", Color3.fromRGB(89, 34, 89), 0.3)
+            make_title(player, "👧 Flames Hub | Daughter 👧", Color3.fromRGB(89, 34, 89), 0.3)
         elseif beta_tester(player.Name) then
-            make_title(player, "✨ Zacks Easy Hub | Beta Tester ✨", Color3.fromRGB(0, 0, 0), 0.1)
+            make_title(player, "✨ Flames Hub | Beta Tester ✨", Color3.fromRGB(0, 0, 0), 0.1)
         end
     end
 
@@ -330,7 +341,8 @@
             "UserInputService",
             "TextChatService",
             "ContextActionService",
-            "GuiService"
+            "GuiService",
+            "PhysicsService"
         }
         -- I do use all of these by the way, people said it's ChatGPT, but I use all of these, these are all in use, this is a huge script, go check it.
         -- The only one I probably don't use is ReplicatedFirst, but I most likely do.
@@ -358,149 +370,31 @@
     getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
     getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
     wait(0.2)
-    if not getgenv().maps_loaded or getgenv().maps_loaded == false then
-        local function insert_id_asset(asset_ID, Parent)
-            local modelId = 'rbxassetid://'..asset_ID
-            local mapModel = loadstring("return game:GetObjects('" .. modelId .. "')[1]")()
-
-            if mapModel and mapModel:IsA("Model") then
-                mapModel.Parent = Parent
-            else
-                warn("Failed to load and insert Zacks Easy Hub | Crossroads Map Model.")
-            end
-        end
-        wait()
-        print("16")
-        insert_id_asset('85211877443756', game:GetService("Workspace"))
-        wait()
-        insert_id_asset('126578094071541', game:GetService("Workspace"))
-        wait()
-        --[[insert_id_asset('76940250202002', game:GetService("Workspace"))
-        wait()
-        insert_id_asset('108255747072763', game:GetService("Workspace"))--]]
-        --[[wait(1)
-        local PrisonFences = getgenv().Workspace:FindFirstChild("Prison_Life") and getgenv().Workspace.Prison_Life:FindFirstChild("Prison_Fences")
-        wait()
-        local function take_hit(hit)
-            if not getgenv().FenceDamageEnabled then return end
-            wait()
-            if hit and hit.Parent then
-                if hit.Parent == getgenv().Character or hit.Parent:FindFirstChild("Humanoid") == getgenv().Humanoid then
-                    getgenv().Humanoid:TakeDamage(10)
-                end
-            end
-        end
-
-        local function fence_damaging(state)
-            if state then
-                if not getgenv().Connection then
-                    getgenv().FenceDamageEnabled = true
-                    getgenv().Connection = {}
-                    
-                    for _, model in ipairs(PrisonFences:GetChildren()) do
-                        if model:IsA("Model") then
-                            for _, part in ipairs(model:GetDescendants()) do
-                                if part:IsA("BasePart") then
-                                    local conn = part.Touched:Connect(take_hit)
-                                    table.insert(getgenv().Connection, conn)
-                                end
-                            end
-                        end
-                    end
-                end
-            else
-                if getgenv().Connection then
-                    for _, conn in ipairs(getgenv().Connection) do
-                        conn:Disconnect()
-                        conn = nil
-                    end
-                    getgenv().Connection = nil
-                    getgenv().FenceDamageEnabled = false
-                end
-            end
-        end
-
-        fence_damaging(true)
-        wait()
-        getgenv().ToggleFenceDamage = toggleFenceDamage--]]
-        wait()
-        getgenv().maps_loaded = true
-    else
-        warn("Maps have already been loaded.")
-    end
-    wait()
     print("17")
     wait(0.2)
-    
-    wait(0.3)
-    -- We can utilize this to teleport back to the same CFrame, as per when the script started, since we need to reset the Character when the script is fully loaded to fix other potential issues.
-    getgenv().StartedScriptCFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").Position
 
     -- Initialize Character Updater, fixing any issues with Humanoid, HumanoidRootPart, or even if the Character dies and respawns, essentially making sure the Character is always defined correctly.
     local function Dynamic_Character_Updater(character)
         getgenv().Character = character
-        getgenv().HumanoidRootPart = character:WaitForChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
-        getgenv().Humanoid = character:WaitForChild("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
+
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        getgenv().HumanoidRootPart = (hrp and hrp:IsA("BasePart")) and hrp or nil
+
+        local hum = character:FindFirstChildOfClass("Humanoid")
+        getgenv().Humanoid = (hum and hum:IsA("Humanoid")) and hum or nil
+
+        local head = character:FindFirstChild("Head")
+        getgenv().Head = (head and head:IsA("BasePart")) and head or nil
     end
+
+    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:WaitForChild("Humanoid")
+    local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
+    local Head = getgenv().Character:FindFirstChild("Head") or getgenv().Character:WaitForChild("Head")
 
     -- Update Character Model(s) components, since we need to make sure the live updates are saved correctly (Especially when the Character components are updated as well).
     Dynamic_Character_Updater(getgenv().Character)
     getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
         Dynamic_Character_Updater(newCharacter)
-        wait(0.2)
-        if getgenv().changed_color_menu_ui and getgenv().changed_imaging_coloring_ui and getgenv().LocalPlayer:WaitForChild("PlayerGui", 1):FindFirstChild("Menu") then
-            local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
-            local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
-            local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
-            local Background = Menu_GUI:FindFirstChild("Background")
-            local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
-            wait()
-            for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("TextLabel") or v:IsA("TextButton") then
-                    v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-                end
-            end
-            wait()
-            for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("Frame") then
-                    if v:IsA("TextLabel") or v:IsA("TextButton") then
-                        v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-                    end
-                end
-            end
-            wait(0.1)
-            for _, v in ipairs(Scrolling_Frame:GetDescendants()) do
-                if v:IsA("TextLabel") then
-                    v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-                end
-            end
-        elseif not getgenv().changed_color_menu_ui and getgenv().LocalPlayer:WaitForChild("PlayerGui", 1):WaitForChild("Menu", 1) then
-            local Menu_GUI = getgenv().LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("Menu")
-            local Home_Button = Menu_GUI:FindFirstChild("HomeButton")
-            local Home_Image_Button = Home_Button:FindFirstChild("ImageButton")
-            local Background = Menu_GUI:FindFirstChild("Background")
-            local Scrolling_Frame = Background:FindFirstChild("ScrollingFrame")
-            wait()
-            for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("TextLabel") or v:IsA("TextButton") then
-                    v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-                end
-            end
-            wait()
-            for _, v in ipairs(Background:GetDescendants()) do
-                if v:IsA("Frame") then
-                    if v:IsA("TextLabel") or v:IsA("TextButton") then
-                        v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-                    end
-                end
-            end
-            wait(0.1)
-            for _, v in ipairs(Scrolling_Frame:GetDescendants()) do
-                if v:IsA("TextLabel") then
-                    v.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-                end
-            end
-        end
     end)
 
     getgenv().check_marketplace_has_gamepass = function(userid, GamePassID)
@@ -636,7 +530,7 @@
     if getgenv().emotes_bypassed then
         warn("Emotes are already bypassed.")
     else
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Emote_Bypass_Script.lua'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/Emote_Bypass_Script.lua'))()
         getgenv().emotes_bypassed = true
     end
     wait(0.1)
@@ -699,27 +593,43 @@
         wait(0.1)
         getgenv().passed_baseplate_check = true
     end
-    wait(0.1)
-    -- This is a full setup for Rayfield, which is why my script is able to work on any executor.
-    local Rayfield
-    wait(0.1)
-    if executor_Name == "AWP" then
-        print("'AWP' detected, using custom/modified loadstring collector.")
-        local response = getgenv().httprequest_Init({
-            Url = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary",
-            Method = "GET"
-        })
-        
-        if response and response.StatusCode == 200 then
-            Rayfield = loadstring(response.Body)()
+    wait(0.5)
+    local TextChatService = getgenv().Service_Wrap("TextChatService")
+    local TextChannels = TextChatService:FindFirstChild("TextChannels")
+    local RBXGeneral = TextChannels:FindFirstChild("RBXGeneral")
+
+    RBXGeneral:DisplaySystemMessage("You are now running:")
+    wait(1.7)
+    RBXGeneral:DisplaySystemMessage("Flames Hub, with version:")
+    wait(1.8)
+    RBXGeneral:DisplaySystemMessage("V-5.4.1")
+    wait(1.5)
+    RBXGeneral:DisplaySystemMessage("Welcome, "..tostring(game.Players.LocalPlayer).." | We hope you enjoy scripting.")
+    wait(0.5)
+    -- This is a full advanced setup for Rayfield, which is why my UI is able to work on any executor.
+    local Rayfield = nil
+    local MAX_ATTEMPTS = 5
+    local WAIT_BETWEEN_ATTEMPTS = 1
+
+    for attempt = 1, MAX_ATTEMPTS do
+        local success, result = pcall(function()
+            return loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary"))()
+        end)
+
+        if success and result then
+            Rayfield = result
+            print("Rayfield loaded successfully on attempt:", attempt)
+            break
         else
-            print("Failed to fetch script:", response.StatusCode)
+            warn("Rayfield load failed on attempt:", attempt, "Error:", result)
+            task.wait(WAIT_BETWEEN_ATTEMPTS)
         end
-    else
-        warn("'AWP' not detected, using regular Loadstring collector.")
-        Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
     end
-    wait(0.2)
+
+    if not Rayfield then
+        warn("[CRITICAL_ERROR]: Failed to load Rayfield after multiple attempts.")
+    end
+    wait(0.5)
     -- This can be used anytime while using the script by executing the following: getgenv().notify("Welcome", "Your content here.", 6)
     getgenv().notify = function(title, content, duration)
         Rayfield:Notify({
@@ -930,253 +840,14 @@
         end)
     end
     wait(0.1)
-    if getgenv().AutomaticallyRunSystemBroken == true then
-        warn("Already ran System Broken automatically.")
-    else
-        local fileName = "System_Broken_Setting.txt"
+    local fileName = "System_Broken_Setting.txt"
+    local file_2 = "TP_Tool_Setting.txt"
 
-        if isfile(fileName) then
-            local fileContent = readfile(fileName)
-            fileContent = fileContent:gsub("%s+", "")
-            
-            if fileContent == "True" then
-                getgenv().AutomaticallyRunSystemBroken = true
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
-            elseif fileContent == "False" then
-                getgenv().AutomaticallyRunSystemBroken = false
-                warn("Not enabled in Configuration.")
-            else
-                warn("Invalid file content: " .. fileContent)
-            end
-        else
-            writefile("System_Broken_Setting.txt", "False")
-        end
+    if delfile and isfile and isfile(fileName) then
+        delfile(fileName)
     end
-    wait()
-    if getgenv().AutomaticallyRunSystemBroken then
-        warn("User has already seen 'System Broken' screen.")
-    elseif getgenv().AutomaticallyRunSystemBroken == false then
-        warn("User has already selected 'False'.")
-    elseif getgenv().AutomaticallyRunSystemBroken == nil then
-        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-
-        local gui = Instance.new("ScreenGui")
-        gui.Parent = PlayerGui
-        gui.ResetOnSpawn = false
-
-        local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(0, 400, 0, 200)
-        frame.Position = UDim2.new(0.5, -200, 0.5, -100)
-        frame.BackgroundTransparency = 0.3
-        frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        frame.BorderSizePixel = 0
-        frame.Parent = gui
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 10)
-        corner.Parent = frame
-
-        local title = Instance.new("TextLabel")
-        title.Size = UDim2.new(1, 0, 0.3, 0)
-        title.Position = UDim2.new(0, 0, 0, 0)
-        title.BackgroundTransparency = 1
-        title.Text = "Would you like to automatically run System Broken when loading Zacks Easy Hub?"
-        title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        title.TextScaled = true
-        title.Font = Enum.Font.GothamBold
-        title.Parent = frame
-
-        local yesButton = Instance.new("TextButton")
-        yesButton.Size = UDim2.new(0.4, 0, 0.3, 0)
-        yesButton.Position = UDim2.new(0.1, 0, 0.6, 0)
-        yesButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        yesButton.Text = "Yes"
-        yesButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-        yesButton.Font = Enum.Font.GothamBold
-        yesButton.TextScaled = true
-        yesButton.Parent = frame
-
-        local yesCorner = Instance.new("UICorner")
-        yesCorner.CornerRadius = UDim.new(0, 8)
-        yesCorner.Parent = yesButton
-
-        local noButton = Instance.new("TextButton")
-        noButton.Size = UDim2.new(0.4, 0, 0.3, 0)
-        noButton.Position = UDim2.new(0.5, 0, 0.6, 0)
-        noButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        noButton.Text = "No"
-        noButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-        noButton.Font = Enum.Font.GothamBold
-        noButton.TextScaled = true
-        noButton.Parent = frame
-
-        local user_selected_option = nil
-
-        local noCorner = Instance.new("UICorner")
-        noCorner.CornerRadius = UDim.new(0, 8)
-        noCorner.Parent = noButton
-
-        yesButton.MouseButton1Click:Connect(function()
-            getgenv().AutomaticallyRunSystemBroken = true
-            writefile("System_Broken_Setting.txt", "True")
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
-            gui:Destroy()
-            wait(0.2)
-            user_selected_option = 1
-        end)
-
-        noButton.MouseButton1Click:Connect(function()
-            getgenv().AutomaticallyRunSystemBroken = false
-            writefile("System_Broken_Setting.txt", "False")
-            gui:Destroy()
-            wait(0.2)
-            user_selected_option = 2
-        end)
-
-        repeat wait() until user_selected_option ~= nil
-    end
-    wait(0.1)
-
-    wait(0.1)
-    local fileName = "TP_Tool_Setting.txt"
-
-    if isfile(fileName) then
-        local fileContent = readfile(fileName)
-        fileContent = fileContent:gsub("%s+", "")
-        
-        if fileContent == "True" then
-            getgenv().Automatically_Run_TP_Tool = true
-            local Players = getgenv().Players
-            local LocalPlayer = Players.LocalPlayer
-            
-            local function onCharacterAdded(Character)
-                if not Character then return end
-                print("Character Added: " .. LocalPlayer.Name)
-                wait(0.1)
-                local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 5)
-                if not Humanoid then
-                    return warn("Humanoid not found, unable to apply TP Tool.")
-                end
-            
-                print("Found Character and Humanoid!")
-                wait()
-                Humanoid.Died:Connect(function()
-                    print("LocalPlayer has died. Waiting for respawn...")
-                end)
-                wait(0.5)
-                print("Connecting back to TP Tool...")
-                connect_tp_tool()
-                print("Connected to TP Tool.")
-            end
-            
-            LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-            
-            if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
-                onCharacterAdded(LocalPlayer.Character)
-            end
-            wait(0.1)
-            getgenv().keeping_tp_tool = true
-        elseif fileContent == "False" then
-            getgenv().Automatically_Run_TP_Tool = false
-            warn("Not enabled in Configuration.")
-        else
-            warn("Invalid file content: " .. fileContent)
-        end
-    else
-        writefile("TP_Tool_Setting.txt", "False")
-    end
-    wait()
-    if getgenv().Automatically_Run_TP_Tool then
-        warn("User has already seen 'System Broken' screen.")
-    elseif getgenv().Automatically_Run_TP_Tool == false then
-        warn("User has already selected 'False'.")
-    elseif getgenv().Automatically_Run_TP_Tool == nil then
-        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-        local LocalPlayer = Players.LocalPlayer
-        local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-
-        local gui = Instance.new("ScreenGui")
-        gui.Parent = PlayerGui
-        gui.ResetOnSpawn = false
-
-        local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(0, 400, 0, 200)
-        frame.Position = UDim2.new(0.5, -200, 0.5, -100)
-        frame.BackgroundTransparency = 0.3
-        frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        frame.BorderSizePixel = 0
-        frame.Parent = gui
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 10)
-        corner.Parent = frame
-
-        local title = Instance.new("TextLabel")
-        title.Size = UDim2.new(1, 0, 0.3, 0)
-        title.Position = UDim2.new(0, 0, 0, 0)
-        title.BackgroundTransparency = 1
-        title.Text = "Would you like to automatically have the TP Tool when excuting Zacks Easy Hub?"
-        title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        title.TextScaled = true
-        title.Font = Enum.Font.GothamBold
-        title.Parent = frame
-
-        local yesButton = Instance.new("TextButton")
-        yesButton.Size = UDim2.new(0.4, 0, 0.3, 0)
-        yesButton.Position = UDim2.new(0.1, 0, 0.6, 0)
-        yesButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        yesButton.Text = "Yes"
-        yesButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-        yesButton.Font = Enum.Font.GothamBold
-        yesButton.TextScaled = true
-        yesButton.Parent = frame
-
-        local yesCorner = Instance.new("UICorner")
-        yesCorner.CornerRadius = UDim.new(0, 8)
-        yesCorner.Parent = yesButton
-
-        local noButton = Instance.new("TextButton")
-        noButton.Size = UDim2.new(0.4, 0, 0.3, 0)
-        noButton.Position = UDim2.new(0.5, 0, 0.6, 0)
-        noButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        noButton.Text = "No"
-        noButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-        noButton.Font = Enum.Font.GothamBold
-        noButton.TextScaled = true
-        noButton.Parent = frame
-
-        local user_selected_option = nil
-
-        local noCorner = Instance.new("UICorner")
-        noCorner.CornerRadius = UDim.new(0, 8)
-        noCorner.Parent = noButton
-
-        yesButton.MouseButton1Click:Connect(function()
-            getgenv().Automatically_Run_TP_Tool = true
-            writefile("TP_Tool_Setting.txt", "True")
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/plus_source.lua"))()
-            gui:Destroy()
-            wait(0.2)
-            user_selected_option = 1
-        end)
-
-        noButton.MouseButton1Click:Connect(function()
-            getgenv().Automatically_Run_TP_Tool = false
-            writefile("TP_Tool_Setting.txt", "False")
-            gui:Destroy()
-            wait(0.2)
-            user_selected_option = 2
-        end)
-
-        repeat wait() until user_selected_option ~= nil
-    end
-    wait(0.1)
-    if getgenv().Automatically_Run_TP_Tool == true then
-        connect_tp_tool()
-    else
-        warn("User does not want to run TP Tool.")
+    if delfile and isfile and isfile(file_2) then
+        delfile(file_2)
     end
     wait(0.2)
     local image_id_zacks = 93594537601787
@@ -1200,24 +871,24 @@
     wait()
     getgenv().Module_For_ZEH = ZEH_Module
     -- Current UI is automatically hidden, shoutout to Rayfield (and the hiddenUI function.).
-    getgenv().AllClipboards("https://discord.gg/VJh3kkYzBn")
+    getgenv().AllClipboards("https://github.com/LmaoItsCrazyBro/new_main/releases <-- make sure to stay updated.")
     wait()
     local Window 
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" then
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Flames Hub ⭐ | V9.9.7 | "..tostring(executor_Name),
+            Name = "⭐ Flames Hub ⭐ | V5.4.1 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
-            LoadingSubtitle = "Zacks Easy Hub | Wassup.",
+            LoadingSubtitle = "Flames Hub | Yo.",
             ConfigurationSaving = {
                 Enabled = false,
-                FolderName = "ConfigurationZacksEasyHub",
-                FileName = "ZacksEasyHub"
+                FolderName = "ConfigurationFlamesHub",
+                FileName = "FlamesHub"
             },
             Discord = {
                 Enabled = false,
-                Invite = "zackseasyhub",
-                RememberJoins = false
+                Invite = "",
+                RememberJoins = true
             },
             KeySystem = false,
             KeySettings = {
@@ -1232,28 +903,28 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "⭐ Flames Easy Hub ⭐ | V9.9.7 | "..tostring(executor_Name),
+            Name = "⭐ Flames Hub ⭐ | V5.4.1 | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
-            LoadingSubtitle = "Zacks Easy Hub | Wassup.",
+            LoadingSubtitle = "Flames Hub | Yo.",
             ConfigurationSaving = {
                 Enabled = false,
-                FolderName = "ConfigurationZacksEasyHub",
-                FileName = "ZacksEasyHub"
+                FolderName = "ConfigurationFlamesHub",
+                FileName = "FlamesHub"
             },
             Discord = {
-                Enabled = true,
-                Invite = "zackseasyhub",
+                Enabled = false,
+                Invite = "",
                 RememberJoins = true
             },
             KeySystem = false,
             KeySettings = {
-                Title = "Zacks Easy Key System",
+                Title = "Flames Key System",
                 Subtitle = "Welcome, "..tostring(getgenv().LocalPlayer),
-                Note = "This key is easy (No pun intended).",
-                FileName = "ZEH_Admin_Key",
+                Note = "Hello!",
+                FileName = "Admin_Key",
                 SaveKey = true,
                 GrabKeyFromSite = false,
-                Key = {"ZACKSEASYHUB_2025"}
+                Key = {"REKT_2025"}
             }
         })
     end
@@ -1570,7 +1241,7 @@
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/total_main.lua')))()")
         end
     end)
     wait(0.2)
@@ -1917,7 +1588,7 @@
         end
     end
     wait()
-    -- AntiLag modified exclusively by Zacks Easy Hub
+    -- AntiLag modified exclusively by Flames Hub
     if not getgenv().AbsoluteAntiLagZEH then
         local Terrain = getgenv().Terrain
         local Lighting = getgenv().Lighting
@@ -1937,7 +1608,7 @@
                 child.Reflectance = 0
             elseif child:IsA("Texture") then
                 child:Destroy()
-            elseif child:IsA("ParticleEmitter") or child:IsA("Fire") or child:IsA("Smoke") then
+            elseif child:IsA("ParticleEmitter") or child:IsA("Smoke") then
                 child.Enabled = false
             elseif child:IsA("Explosion") then
                 child.Visible = false
@@ -1959,7 +1630,7 @@
         wait(0.1)
         getgenv().AbsoluteAntiLagZEH = true
     else
-        warn("Anti-Lag already loaded for Zacks Easy Hub!")
+        warn("Anti-Lag already loaded for Flames Hub!")
     end
     wait()
     local safeEmotes = {
@@ -2166,12 +1837,23 @@
     Name = "Copy Link To See Latest Updates",
     Callback = function()
         if getgenv().AllClipboards then
-            getgenv().AllClipboards("https://github.com/EnterpriseExperience/MicUpSource/releases")
+            getgenv().AllClipboards("https://github.com/LmaoItsCrazyBro/new_main/releases")
         else
-            warn("https://github.com/EnterpriseExperience/MicUpSource/releases")
+            warn("https://github.com/LmaoItsCrazyBro/new_main/releases")
             getgenv().notify("Failure", "Posted the link in Developer Console, couldn't copy.", 6)
         end
     end,})
+
+    function check_r15()
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
+            return true
+        else
+            return getgenv().notify("Failure:", "You do not seem to be R15.", 5)
+        end
+    end
+
+    local is_r15 = check_r15()
+
     wait(0.4)
     getgenv().PlayAnyEmote = Tab2:CreateDropdown({
     Name = "Play Emote",
@@ -2182,8 +1864,10 @@
     Callback = function(emote_picked)
         local emoteToPlay = type(emote_picked) == "table" and emote_picked[1] or tostring(emote_picked)
 
-        if getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
+        if getgenv().Character:FindFirstChildWhichIsA("Humanoid") and is_r15 == true then
             getgenv().Humanoid:PlayEmote(emoteToPlay)
+        elseif not getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
+            return getgenv().notify("Failure:", "You are not R15!", 5)
         end
     end,})
     wait(0.1)
@@ -2449,11 +2133,13 @@
         warn("Did not load Booth's stuff [1].")
     end
 
-    getgenv().FreeReanimationGUI = Tab1:CreateButton({
-    Name = "Free Reanimations GUI (Best Anim Speed = 110-125)",
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/OpenSource_Reanim_Free.lua'))()
-    end,})
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        getgenv().FreeReanimationGUI = Tab1:CreateButton({
+        Name = "Free Reanimations GUI (Best Anim Speed = 110-125)",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/OpenSource_Reanim_Free.lua'))()
+        end,})
+    end
 
     getgenv().AntiVoidPlayer = Tab2:CreateToggle({
     Name = "Anti Void Baseplate (Goes under Character)",
@@ -2461,68 +2147,116 @@
     Flag = "ToggleAntiVoidBasePlate",
     Callback = function(antiVoidFall)
         if antiVoidFall then
-            getgenv().anti_void_player = true
+            getgenv().keepMyPlateOn = true 
+            getgenv().plateBelowMeOffset = -6
+            getgenv().letItFollow = true
 
-            local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-            local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local player = LocalPlayer or Players.LocalPlayer
-            local function return_correct_char()
-                local character = player.Character or player.CharacterAdded:Wait()
-                while character:FindFirstChild("Humanoid") and character.Humanoid.Health <= 0 do
-                    character = player.CharacterAdded:Wait()
+            local wrkspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local plyrs = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+            local uis = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+            local me = plyrs.LocalPlayer
+
+            local floatSpeed = 0.2
+            local upPressed = false
+            local downPressed = false
+
+            local function getMyCharacter()
+                local char = me.Character or me.CharacterAdded:Wait()
+                while char:FindFirstChild("Humanoid") and char.Humanoid.Health <= 0 do
+                    char = me.CharacterAdded:Wait()
                 end
-                return character
+                return char
             end
-            
-            local function createBaseplate()
-                local baseplate = Instance.new("Part")
-                baseplate.Name = "ANTI_VOID_BASEPLATE"
-                baseplate.Size = Vector3.new(20, 1, 20)
-                baseplate.Anchored = true
-                baseplate.CanCollide = true
-                baseplate.Material = Enum.Material.Air
-                baseplate.Color = Color3.fromRGB(107, 50, 124)
-                baseplate.Transparency = 0.6
-                baseplate.Parent = Workspace:FindFirstChild("PartStorage")
-                return baseplate
-            end
-            
-            local function updateBaseplate()
-                local baseplate = createBaseplate()
-                local initialY = nil
 
-                while getgenv().anti_void_player == true do
-                    local character = return_correct_char()
-                    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
-                    if rootPart then
-                        if not initialY then
-                            initialY = rootPart.Position.Y - rootPart.Size.Y / 2 - baseplate.Size.Y / 2
+            local function putThingUnderMe()
+                if getgenv().myPlateThingy then
+                    getgenv().myPlateThingy:Destroy()
+                end
+
+                local char = getgenv().Character
+                local root = char:FindFirstChild("HumanoidRootPart")
+                if not root then return end
+
+                local flatThing = Instance.new("Part")
+                flatThing.Name = "ANTI_VOID_BASEPLATE"
+                flatThing.Size = Vector3.new(20, 1, 20)
+                flatThing.Anchored = true
+                flatThing.CanCollide = true
+                flatThing.Material = Enum.Material.SmoothPlastic
+                flatThing.Color = Color3.fromRGB(107, 50, 124)
+                flatThing.Transparency = 0.6
+
+                flatThing.Position = root.Position + Vector3.new(0, getgenv().plateBelowMeOffset or -6, 0)
+                flatThing.Parent = workspace
+
+                getgenv().myPlateThingy = flatThing
+                return flatThing
+            end
+
+            uis.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+                if input.KeyCode == Enum.KeyCode.E then
+                    upPressed = true
+                elseif input.KeyCode == Enum.KeyCode.Q then
+                    downPressed = true
+                end
+            end)
+
+            uis.InputEnded:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.E then
+                    upPressed = false
+                elseif input.KeyCode == Enum.KeyCode.Q then
+                    downPressed = false
+                end
+            end)
+
+            local function keepItInPlace()
+                local plate = putThingUnderMe()
+
+                while getgenv().keepMyPlateOn do
+                    local char = getMyCharacter()
+                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    if root and plate then
+                        if getgenv().letItFollow then
+                            if upPressed then
+                                getgenv().plateBelowMeOffset = getgenv().plateBelowMeOffset + floatSpeed
+                            elseif downPressed then
+                                getgenv().plateBelowMeOffset = getgenv().plateBelowMeOffset - floatSpeed
+                            end
+
+                            local howFar = getgenv().plateBelowMeOffset
+                            plate.Position = Vector3.new(
+                                root.Position.X,
+                                root.Position.Y + howFar,
+                                root.Position.Z
+                            )
                         end
-                        local newPos = Vector3.new(rootPart.Position.X, initialY, rootPart.Position.Z)
-                        baseplate.Position = newPos
                     end
                     task.wait(0.04)
                 end
+
+                if plate then
+                    plate:Destroy()
+                end
             end
-            
-            updateBaseplate()
+
+            task.spawn(keepItInPlace)
         else
-            getgenv().anti_void_player = false
-            getgenv().anti_void_player = false
-            wait(0.3)
-            if not getgenv().Workspace:FindFirstChild("PartStorage"):FindFirstChild("ANTI_VOID_BASEPLATE") then
-                return getgenv().notify("Passed.", "Anti Void Part was already destroyed.", 5)
-            else
-                getgenv().Workspace:FindFirstChild("PartStorage"):FindFirstChild("ANTI_VOID_BASEPLATE"):Destroy()
+            getgenv().keepMyPlateOn = false 
+            if getgenv().myPlateThingy then
+                getgenv().myPlateThingy:Destroy() 
+                getgenv().myPlateThingy = nil 
             end
+            getgenv().letItFollow = false
         end
     end,})
     wait(0.2)
     if getgenv().Workspace:FindFirstChild("ANTI_VOID_BASEPLATE") then
         getgenv().AntiVoidPlayer:Set(false)
-        getgenv().anti_void_player = false
-        getgenv().Workspace:FindFirstChild("PartStorage"):FindFirstChild("ANTI_VOID_BASEPLATE"):Destroy()
+        getgenv().keepMyPlateOn = false
+        getgenv().Character:FindFirstChild("ANTI_VOID_BASEPLATE"):Destroy()
+        getgenv().myPlateThingy = nil
+        getgenv().letItFollow = false
     end
     wait(0.1)
     getgenv().AntiVoidTransparency = Tab2:CreateSlider({ 
@@ -2533,10 +2267,7 @@
     CurrentValue = 0.6,
     Flag = "SlidingTransBasePlate",
     Callback = function(transBasePlate)
-        local Workspace = getgenv().Workspace
-        local PartStorage = Workspace:FindFirstChild("PartStorage")
-        wait(0.3)
-        local Baseplate_AntiVoid = PartStorage:FindFirstChild("ANTI_VOID_BASEPLATE")
+        local Baseplate_AntiVoid = getgenv().myPlateThingy
 
         Baseplate_AntiVoid.Transparency = transBasePlate
     end,})
@@ -2546,10 +2277,7 @@
     Color = Color3.fromRGB(107, 50, 124),
     Flag = "PickThatBasePlateColor",
     Callback = function(AntiVoid_Color)
-        local Workspace = getgenv().Workspace
-        local PartStorage = Workspace:FindFirstChild("PartStorage")
-        wait(0.2)
-        local Baseplate_AntiVoid = PartStorage:FindFirstChild("ANTI_VOID_BASEPLATE")
+        local Baseplate_AntiVoid = getgenv().myPlateThingy
         
         Baseplate_AntiVoid.Color = AntiVoid_Color
     end,})
@@ -2566,9 +2294,8 @@
             
             local TweenService = getgenv().TweenService
             local Workspace = getgenv().Workspace
-            
             local PartStorage = Workspace:FindFirstChild("PartStorage")
-            local Baseplate_AntiVoid = PartStorage and PartStorage:FindFirstChild("ANTI_VOID_BASEPLATE")
+            local Baseplate_AntiVoid = getgenv().myPlateThingy
             
             if not Baseplate_AntiVoid then
                 getgenv().RainbowAntiVoidBasePlate:Set(false)
@@ -2860,7 +2587,7 @@
     getgenv().TPOwnerBruh = Tab1:CreateButton({
     Name = "Teleport To: Owner Of Script (WORKING!)",
     Callback = function()
-        local Owner_Found = getgenv().Players:FindFirstChild("L0CKED_1N1") or getgenv().Players:FindFirstChild("CHEATING_B0SS")
+        local Owner_Found = getgenv().Players:FindFirstChild("L0CKED_1N1") or getgenv().Players:FindFirstChild("CHEATING_B0SS") or getgenv().Players:FindFirstChild("ImClipFarmingForSure") or getgenv().Players:FindFirstChild("AmazingDontUKnowIt") or getgenv().Players:FindFirstChild("LolOperationSuccess")
 
         if Owner_Found then
             getgenv().Character:PivotTo(Owner_Found.Character:GetPivot())
@@ -2876,7 +2603,7 @@
     Callback = function(viewingOwner)
         if viewingOwner then
             getgenv().spectateOwner = true
-            local OwnerName = "L0CKED_1N1" or "CHEATING_B0SS"
+            local OwnerName = "L0CKED_1N1" or "CHEATING_B0SS" or "ImClipFarmingForSure" or "AmazingDontUKnowIt" or "LolOperationSuccess"
             local Workspace = getgenv().Workspace
             local Camera = Workspace:FindFirstChild("Camera")
             if not getgenv().Players:FindFirstChild(OwnerName) then
@@ -3384,6 +3111,367 @@
         warn("Did not load these Booth tabs [2].")
     end
 
+    getgenv().WalkSpeedBypass = Tab1:CreateButton({
+    Name = "[AntiCheats]: WalkSpeed/JumpPower Bypass",
+    Callback = function()
+        if hookmetamethod then
+            getgenv().notify("Wait.", "We are initializing the WalkSpeed bypass...", 5)
+            wait(0.3)
+            local lp = game:FindService("Players").LocalPlayer
+            local hooks = {
+                walkspeed = 16,
+                jumppower = 50
+            }
+            local index
+            local newindex
+
+            index = hookmetamethod(game,"__index",function(self,property)
+                if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+                    return hooks[property:lower()]
+                end
+                return index(self,property)
+            end)
+
+            newindex = hookmetamethod(game,"__newindex",function(self,property,value)
+                if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+                    return value
+                end
+                return newindex(self,property,value)
+            end)
+            wait(0.1)
+            getgenv().notify("Success!", "Successfully applied WalkSpeed anti-cheat bypass.")
+        else
+            return getgenv().notify("Failure:", "Your exploit is unsupported, and cannot use WalkSpeed Bypass.", 5)
+        end
+    end,})
+
+    getgenv().WalkSpeedSpooferBypass = Tab1:CreateButton({
+    Name = "[AntiCheats]: Full WalkSpeed Spoofer and Bypass",
+    Callback = function()
+        if not hookmetamethod then
+            return getgenv().notify("Failure:", "Your exploit does not support 'hookmetamethod'!", 5)
+        end
+        if not cloneref then
+            return getgenv().notify("Failure:", "Your exploit does not support 'cloneref'", 5)
+        end
+        wait(0.2)
+        if hookmetamethod and cloneref then
+            getgenv().notify("Waiting:", "Initiating spoof and bypass process...", 5)
+            task.wait(0.3)
+            local WalkSpeedSpoof = getgenv().WalkSpeedSpoof
+            local Disable = WalkSpeedSpoof and WalkSpeedSpoof.Disable
+            if Disable then
+                Disable()
+            end
+
+            local cloneref = cloneref or function(...)
+                return ...
+            end
+
+            local WalkSpeedSpoof = {}
+
+            local Players = cloneref(game:GetService("Players"))
+            if not Players.LocalPlayer then
+                Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+            end
+            local lp = cloneref(Players.LocalPlayer)
+
+            local split = string.split
+
+            local GetDebugIdHandler = Instance.new("BindableFunction")
+            local TempHumanoid = Instance.new("Humanoid")
+
+            local cachedhumanoids = {}
+
+            local CurrentHumanoid
+            local newindexhook
+            local indexhook
+
+            function GetDebugIdHandler.OnInvoke(obj: Instance): string
+                return obj:GetDebugId()
+            end
+
+            local function GetDebugId(obj: Instance): string
+                return GetDebugIdHandler:Invoke(obj)
+            end
+
+            local function GetWalkSpeed(obj: any): number
+                TempHumanoid.WalkSpeed = obj
+                return TempHumanoid.WalkSpeed
+            end
+
+            function cachedhumanoids:cacheHumanoid(DebugId: string,Humanoid: Humanoid)
+                cachedhumanoids[DebugId] = {
+                    currentindex = indexhook(Humanoid,"WalkSpeed"),
+                    lastnewindex = nil
+                }
+                return self[DebugId]
+            end
+
+            indexhook = hookmetamethod(game,"__index",function(self,index)
+                if not checkcaller() and typeof(self) == "Instance" then
+                    if self:IsA("Humanoid") then
+                        local DebugId = GetDebugId(self)
+                        local cached = cachedhumanoids[DebugId]
+
+                        if self:IsDescendantOf(lp.Character) or cached then
+                            if type(index) == "string" then
+                                local cleanindex = split(index,"\0")[1]
+
+                                if cleanindex == "WalkSpeed" then
+                                    if not cached then
+                                        cached = cachedhumanoids:cacheHumanoid(DebugId,self)
+                                    end
+
+                                    if not (CurrentHumanoid and CurrentHumanoid:IsDescendantOf(game)) then
+                                        CurrentHumanoid = cloneref(self)
+                                    end
+
+                                    return cached.lastnewindex or cached.currentindex
+                                end
+                            end
+                        end
+                    end
+                end
+
+                return indexhook(self,index)
+            end)
+
+            newindexhook = hookmetamethod(game,"__newindex",function(self,index,newindex)
+                if not checkcaller() and typeof(self) == "Instance" then
+                    if self:IsA("Humanoid") then
+                        local DebugId = GetDebugId(self)
+                        local cached = cachedhumanoids[DebugId]
+
+                        if self:IsDescendantOf(lp.Character) or cached then
+                            if type(index) == "string" then
+                                local cleanindex = split(index,"\0")[1]
+
+                                if cleanindex == "WalkSpeed" then
+                                    if not cached then
+                                        cached = cachedhumanoids:cacheHumanoid(DebugId,self)
+                                    end
+
+                                    if not (CurrentHumanoid and CurrentHumanoid:IsDescendantOf(game)) then
+                                        CurrentHumanoid = cloneref(self)
+                                    end
+                                    cached.lastnewindex = GetWalkSpeed(newindex)
+                                    return CurrentHumanoid.WalkSpeed
+                                end
+                            end
+                        end
+                    end
+                end
+                
+                return newindexhook(self,index,newindex)
+            end)
+
+            function WalkSpeedSpoof:Disable()
+                WalkSpeedSpoof:RestoreWalkSpeed()
+                hookmetamethod(game,"__index",indexhook)
+                hookmetamethod(game,"__newindex",newindexhook)
+                GetDebugIdHandler:Destroy()
+                TempHumanoid:Destroy()
+                table.clear(WalkSpeedSpoof)
+                getgenv().WalkSpeedSpoof = nil
+            end
+
+            function WalkSpeedSpoof:GetHumanoid()
+                return CurrentHumanoid or (function()
+                    local char = lp.Character
+                    local Humanoid = char and char:FindFirstChildWhichIsA("Humanoid") or nil
+                    
+                    if Humanoid then
+                        cachedhumanoids:cacheHumanoid(Humanoid:GetDebugId(),Humanoid)
+                        return cloneref(Humanoid)
+                    end
+                end)()
+            end
+
+            function WalkSpeedSpoof:SetWalkSpeed(speed)
+                local Humanoid = WalkSpeedSpoof:GetHumanoid()
+
+                if Humanoid then
+                    local connections = {}
+                    local function AddConnectionsFromSignal(Signal)
+                        for i,v in getconnections(Signal) do
+                            if v.State then
+                                v:Disable()
+                                table.insert(connections,v)
+                            end
+                        end
+                    end
+                    AddConnectionsFromSignal(Humanoid.Changed)
+                    AddConnectionsFromSignal(Humanoid:GetPropertyChangedSignal("WalkSpeed"))
+                    Humanoid.WalkSpeed = speed
+                    for i,v in connections do
+                        v:Enable()
+                    end
+                end
+            end
+
+            function WalkSpeedSpoof:RestoreWalkSpeed()
+                local Humanoid = WalkSpeedSpoof:GetHumanoid()
+                
+                if Humanoid then
+                    local cached = cachedhumanoids[Humanoid:GetDebugId()]
+
+                    if cached then
+                        WalkSpeedSpoof:SetWalkSpeed(cached.lastnewindex or cached.currentindex)
+                    end
+                end
+            end
+
+            getgenv().WalkSpeedSpoof = WalkSpeedSpoof
+            wait(0.2)
+            getgenv().notify("Done!", "Successfully loaded WalkSpeed spoof and bypass.", 5)
+        end
+    end,})
+
+    local function disable_connection(propertyName)
+        local signal = getgenv().Humanoid:GetPropertyChangedSignal(propertyName)
+        for _, conn in ipairs(getconnections(signal)) do
+            conn:Disable()
+        end
+    end
+
+    getgenv().Spoof_Zoom_Script = Tab5:CreateToggle({
+    Name = "Spoof Zoom (maximizes zoom distance loop)",
+    CurrentValue = false,
+    Flag = "SpoofingZoomLoop",
+    Callback = function(zoom_spoofed)
+        local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+        local Old_Min_Zoom_Distance = Players.LocalPlayer.CameraMinZoomDistance
+        local Old_Max_Zoom_Distance = Players.LocalPlayer.CameraMaxZoomDistance
+        wait(0.1)
+        if zoom_spoofed then
+           getgenv().inf_zoom_always = true
+            while getgenv().inf_zoom_always == true do
+            task.wait()
+                getgenv().LocalPlayer.CameraMinZoomDistance = 0
+                getgenv().LocalPlayer.CameraMaxZoomDistance = 1000000
+            end
+        else
+            getgenv().inf_zoom_always = false
+            getgenv().LocalPlayer.CameraMinZoomDistance = Old_Min_Zoom_Distance
+            getgenv().LocalPlayer.CameraMaxZoomDistance = Old_Max_Zoom_Distance
+        end
+    end,})
+
+    getgenv().JumpingConnectionsBypass = Tab1:CreateButton({
+    Name = "[AntiCheats]: JumpPower/JumpHeight Bypass (Connections method)",
+    Callback = function()
+        if getconnections then
+            disable_connection("JumpPower")
+            disable_connection("JumpHeight")
+            getgenv().notify("Success:", "Disabled connections for JumpPower/JumpHeight!", 5)
+        else
+            return getgenv().notify("Failure:", "Your executor does not support 'getconnections'!", 5)
+        end
+    end,})
+
+    getgenv().GravityConnectionsBypass = Tab1:CreateButton({
+    Name = "Gravity Bypass (Connections method)",
+    Callback = function()
+        if getconnections then
+            getgenv().notify("Wait:", "Disabling Gravity connections...", 5)
+            task.wait(0.3)
+            local function grav_connections()
+                for _, conn in ipairs(getconnections(getgenv().Workspace:GetPropertyChangedSignal("Gravity"))) do
+                    conn:Disable()
+                end
+            end
+            
+            wait(0.3)
+            grav_connections()
+            wait(0.3)
+            getgenv().notify("Success:", "We have applied Gravity bypass (disabled connection).", 5)
+        end
+    end,})
+
+    getgenv().JumpingHeartbeatConnections = Tab1:CreateButton({
+    Name = "[AntiCheats]: WalkSpeed/JumpPower/JumpHeight Bypass (Heartbeat)",
+    Callback = function()
+        if getrawmetatable and newcclosure then
+            getgenv().notify("Wait:", "Loading Heartbeat bypass...", 5)
+            task.wait(0.3)
+            local spoofedWalkSpeed = 16
+            local spoofedJumpPower = 50
+            local spoofedJumpHeight = 7.2
+
+            local mt = getrawmetatable(game)
+            setreadonly(mt, false)
+
+            local oldIndex = mt.__index
+            mt.__index = newcclosure(function(self, key)
+                if typeof(self) == "Instance" and self:IsA("Humanoid") then
+                    if key == "WalkSpeed" then
+                        return spoofedWalkSpeed
+                    elseif key == "JumpPower" then
+                        return spoofedJumpPower
+                    elseif key == "JumpHeight" then
+                        return spoofedJumpHeight
+                    end
+                end
+                return oldIndex(self, key)
+            end)
+            wait(0.2)
+            getgenv().notify("Success:", "Successfully loaded Heartbeat bypass.", 5)
+        else
+            return getgenv().notify("Failure:", "Your executor does not support 'getrawmetatable' or 'newcclosure'!", 5)
+        end
+    end,})
+
+    getgenv().FlyBypassConnections = Tab1:CreateButton({
+    Name = "[AntiCheats]: Fly Bypass (Connections method)",
+    Callback = function()
+        if getconnections then
+            getgenv().notify("Wait:", "Loading Fly Bypass, disabling connections...", 5)
+            task.wait(0.3)
+            local physicsInstances = {
+                BodyVelocity = true,
+                BodyGyro = true,
+                BodyPosition = true,
+                BodyForce = true,
+                BodyAngularVelocity = true,
+                AlignPosition = true,
+                AlignOrientation = true,
+                VectorForce = true,
+                RocketPropulsion = true
+            }
+
+            local function disable_signal_conns(instance, signal_string)
+                local signal = instance[signal_string]
+                if typeof(signal) == "RBXScriptSignal" then
+                    for _, conn in ipairs(getconnections(signal)) do
+                        conn:Disable()
+                    end
+                end
+            end
+
+            local function patch_char(char)
+                disable_signal_conns(char, "DescendantAdded")
+                disable_signal_conns(getgenv().HumanoidRootPart, "DescendantAdded")
+
+                for _, v in ipairs(char:GetDescendants()) do
+                    disable_signal_conns(v, "ChildAdded")
+                end
+            end
+
+            if getgenv().LocalPlayer.Character then
+                getgenv().notify("Loading...", "Now patching up Character connections...", 5)
+                task.wait(0.5)
+                patch_char(getgenv().Character)
+                wait(0.3)
+                getgenv().notify("Success:", "We have successfully applied Fly Bypass.", 5)
+            else
+                return getgenv().notify("Failure:", "It seems as if your Character hasn't loaded, wait!", 5)
+            end
+        else
+            return getgenv().notify("Failure:", "Your executor does not support 'getconnections'!", 5)
+        end
+    end,})
+
     getgenv().AntiSit_Func = Tab2:CreateToggle({
     Name = "Anti Sit",
     CurrentValue = false,
@@ -3391,10 +3479,10 @@
     Callback = function(theSitDownAntiToggle)
         if theSitDownAntiToggle then
             getgenv().disabled_sit_function = true
-            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
         else
             getgenv().disabled_sit_function = false
-            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
         end
     end,})
     wait()
@@ -3402,6 +3490,186 @@
         getgenv().AntiSit_Func:Set(false)
         getgenv().disabled_sit_function = false
     end
+
+    getgenv().HD_FlyEnabled = false
+    local FlyConnection
+    local speed
+
+    function DisableFlyScript()
+        getgenv().HD_FlyEnabled = false
+
+        if FlyConnection then
+            FlyConnection:Disconnect()
+            FlyConnection = nil
+        end
+
+        local hrp = getgenv().HumanoidRootPart
+        if hrp:FindFirstChild("ExecutorFlyGyro") then
+            hrp.ExecutorFlyGyro:Destroy()
+        end
+        if hrp:FindFirstChild("ExecutorFlyPosition") then
+            hrp.ExecutorFlyPosition:Destroy()
+        end
+
+        if getgenv().Humanoid then
+            getgenv().Humanoid.PlatformStand = false
+        end
+    end
+
+    local anti_fling_toggle_saved = false
+    local anti_teleport_toggle_saved = false
+    wait(0.2)
+    getgenv().HDAdminFly = Tab2:CreateToggle({
+    Name = "HD Admin Fly (FE!)",
+    CurrentValue = false,
+    Flag = "FlyHDAdmin",
+    Callback = function(toggle_hd_fly)
+        if toggle_hd_fly then
+            if getgenv().antiFlingEnabled == true then
+                anti_fling_toggle_saved = true
+                if getgenv().AntiFlingToggle then
+                    getgenv().AntiFlingToggle:Set(false)
+                    getgenv().notify("Alert:", "Turned off Anti Fling for 'Fly' to work properly.", 6)
+                else
+                    return getgenv().notify("Error:", "Please disable 'Anti Fling' for 'Fly' to work properly", 6)
+                end
+            else
+                anti_fling_toggle_saved = false
+            end
+            wait()
+            if getgenv().AntiTeleport == true then
+                anti_teleport_toggle_saved = true
+                if getgenv().AntiTeleport_Univ then
+                    getgenv().AntiTeleport_Univ:Set(false)
+                    getgenv().notify("Alert:", "Turned off Anti Teleport for 'Fly' to work properly.", 6)
+                else
+                    return getgenv().notify("Error:", "Please disable 'Anti Teleport' for 'Fly' to work properly.", 6)
+                end
+            else
+                anti_fling_toggle_saved = false
+            end
+
+            getgenv().notify("Note:", "E = Fly Up | Q = Fly Down.", 10)
+            getgenv().HD_FlyEnabled = true
+            getgenv().HD_FlySpeed = 100
+            speed = getgenv().HD_FlySpeed
+
+            local Players = getgenv().Players
+            local RunService = getgenv().RunService
+            local UserInputService = getgenv().UserInputService
+            local Workspace = getgenv().Workspace
+
+            local LocalPlayer = getgenv().LocalPlayer
+            repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+            local Character = getgenv().Character
+            local HRP = getgenv().HumanoidRootPart
+            local Humanoid = getgenv().Humanoid
+            local Camera = getgenv().Camera
+
+            local KeysDown = {
+                W = false,
+                A = false,
+                S = false,
+                D = false,
+                E = false,
+                Q = false,
+            }
+
+            UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                if gameProcessed then return end
+                local key = input.KeyCode
+                if KeysDown[key.Name] ~= nil then
+                    KeysDown[key.Name] = true
+                end
+            end)
+
+            UserInputService.InputEnded:Connect(function(input)
+                local key = input.KeyCode
+                if KeysDown[key.Name] ~= nil then
+                    KeysDown[key.Name] = false
+                end
+            end)
+
+            local function GetInputDirection(cam)
+                local dir = Vector3.zero
+                if KeysDown.W then dir += cam.CFrame.LookVector end
+                if KeysDown.S then dir -= cam.CFrame.LookVector end
+                if KeysDown.D then dir += cam.CFrame.RightVector end
+                if KeysDown.A then dir -= cam.CFrame.RightVector end
+                if KeysDown.E then dir += cam.CFrame.UpVector end
+                if KeysDown.Q then dir -= cam.CFrame.UpVector end
+                return dir.Magnitude > 0 and dir.Unit or Vector3.zero
+            end
+
+            local function ToggleFly()
+                local bodyGyro = Instance.new("BodyGyro")
+                bodyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+                bodyGyro.P = 4000
+                bodyGyro.D = 150
+                bodyGyro.CFrame = HRP.CFrame
+                bodyGyro.Name = "ExecutorFlyGyro"
+                bodyGyro.Parent = HRP
+
+                local bodyPos = Instance.new("BodyPosition")
+                bodyPos.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+                bodyPos.P = 7500
+                bodyPos.D = 1000
+                bodyPos.Position = HRP.Position
+                bodyPos.Name = "ExecutorFlyPosition"
+                bodyPos.Parent = HRP
+
+                Humanoid.PlatformStand = true
+
+                FlyConnection = RunService.Heartbeat:Connect(function(dt)
+                    if not getgenv().HD_FlyEnabled then
+                        bodyGyro:Destroy()
+                        bodyPos:Destroy()
+                        Humanoid.PlatformStand = false
+                        FlyConnection:Disconnect()
+                        return
+                    end
+
+                    local direction = GetInputDirection(Camera)
+                    local move = direction * getgenv().HD_FlySpeed * dt
+
+                    bodyPos.Position += move
+                    bodyGyro.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector)
+                end)
+            end
+
+            ToggleFly()
+        else
+            DisableFlyScript()
+            wait(0.2)
+            if anti_fling_toggle_saved == true then
+                if getgenv().AntiFlingToggle then
+                    getgenv().notify("Alert:", "Turning 'Anti Fling' back on, it was enabled before.", 5)
+                    getgenv().AntiFlingToggle:Set(true)
+                    anti_fling_toggle_saved = false
+                end
+            end
+            if anti_teleport_toggle_saved == true then
+                if getgenv().AntiTeleport_Univ then
+                    getgenv().notify("Alert:", "Turning 'Anti Teleport' back on, it was enabled before.", 5)
+                    getgenv().AntiTeleport_Univ:Set(true)
+                    anti_teleport_toggle_saved = false
+                end
+            end
+        end
+    end,})
+
+    getgenv().HDAdminFly_Speed = Tab2:CreateSlider({
+    Name = "HD Admin Fly Speed",
+    Range = {75, 300},
+    Increment = 1,
+    Suffix = "",
+    CurrentValue = 50,
+    Flag = "EditFlySpeedHDAdmin",
+    Callback = function(HDAdminFlySpeed_Edit)
+        speed = tonumber(HDAdminFlySpeed_Edit)
+    end,})
+
     wait(0.1)
     getgenv().SendOwnNotification = Tab1:CreateInput({
     Name = "Send Your Own Notification",
@@ -3411,7 +3679,7 @@
     Flag = "SendNotifMessage",
     Callback = function(Notif_Sender)
         getgenv().GuiService:SendNotification({
-            Title = tostring("Zacks Easy Hub:"),
+            Title = tostring("Flames Hub:"),
             Text = tostring(Notif_Sender),
         })
     end,})
@@ -3455,6 +3723,451 @@
     end
 
     wait(0.2)
+
+    local JailCellConnection
+    getgenv().JailCellCheckEnabled = false
+
+    local function DisableJailCellWatcher()
+        getgenv().JailCellCheckEnabled = false
+        if JailCellConnection then
+            JailCellConnection:Disconnect()
+            JailCellConnection = nil
+        end
+    end
+
+    local FreezeCheckConnection
+    local IceBlockConnection
+    getgenv().IceBlockCheckEnabled = false
+
+    local function DisableIceWatcher()
+        getgenv().IceBlockCheckEnabled = false
+        if IceBlockConnection then
+            IceBlockConnection:Disconnect()
+            IceBlockConnection = nil
+        end
+        if FreezeCheckConnection then
+            FreezeCheckConnection:Disconnect()
+            FreezeCheckConnection = nil
+        end
+    end
+
+    getgenv().AddAutoAntiIceJailCell = Tab16:CreateButton({
+    Name = "Auto-Run Anti Ice/Jail (Leave manually to stop)",
+    Callback = function()
+        if getgenv().Loaded_Check_For_Anti_Ice_Jail then
+            return getgenv().notify("Heads Up:", "You already loaded auto-run anti ice/jail!", 6)
+        end
+        task.wait(0.2)
+        getgenv().notify("Heads Up!:", "You MUST leave manually and rejoin to disable/stop this script.", 5)
+        getgenv().Loaded_Check_For_Anti_Ice_Jail = true
+        getgenv().LocalPlayer.OnTeleport:Connect(function(State)
+            if (not getgenv().Anti_Ice_Jail_AutoRun) and getgenv().queueteleport then
+                getgenv().Anti_Ice_Jail_AutoRun = true
+                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/anti_jail_ice_queue_teleport.lua')))()")
+            else
+                return getgenv().notify("Failure:", "Your executor does not support 'queueteleport'!", 6)
+            end
+        end)
+    end,})
+
+    getgenv().AntiJailCell = Tab16:CreateToggle({
+    Name = "Anti Jail Cell (HD Admin)",
+    CurrentValue = false,
+    Flag = "AntiJailCellConnection",
+    Callback = function(AntiJailHDAdmin)
+        if AntiJailHDAdmin then
+            local TeleportService = cloneref and cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+            local LocalPlayer = getgenv().LocalPlayer
+            local PlaceID = game.PlaceId
+            local JobID = game.JobId
+
+            getgenv().JailCellCheckEnabled = false
+
+            local function Rejoin()
+                TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
+            end
+
+            local function EnableJailCellWatcher()
+                if JailCellConnection then return end
+                getgenv().JailCellCheckEnabled = true
+
+                JailCellConnection = workspace.DescendantAdded:Connect(function(descendant)
+                    if not getgenv().JailCellCheckEnabled then return end
+                    if descendant:IsA("Model") and descendant.Name == LocalPlayer.Name.."'s JailCell" then
+                        Rejoin()
+                    end
+                end)
+            end
+
+            EnableJailCellWatcher()
+        else
+            DisableJailCellWatcher()
+        end
+    end,})
+
+    getgenv().AntiIceBlock = Tab16:CreateToggle({
+    Name = "Anti Ice/Freeze (HD Admin)",
+    CurrentValue = false,
+    Flag = "AntiIceBlockConnection",
+    Callback = function(AntiIceHDAdmin)
+        if AntiIceHDAdmin then
+            local TeleportService = cloneref and cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+            local Players = getgenv().Players
+            local RunService = getgenv().RunService
+
+            local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
+            local PlaceID = game.PlaceId
+            local JobID = game.JobId
+
+            local function Rejoin()
+                TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
+            end
+
+            local function IsFullyFrozen()
+                local character = LocalPlayer.Character
+                if not character then return false end
+
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if not humanoid then return false end
+
+                for _, part in ipairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                        if not part.Anchored then
+                            return false
+                        end
+                    end
+                end
+
+                return true
+            end
+
+            local function EnableIceWatcher()
+                if IceBlockConnection then return end
+                getgenv().IceBlockCheckEnabled = true
+
+                IceBlockConnection = workspace.DescendantAdded:Connect(function(descendant)
+                    if not getgenv().IceBlockCheckEnabled then return end
+                    if descendant:IsA("Part") and descendant.Name == LocalPlayer.Name.."'s FreezeBlock" then
+                        Rejoin()
+                    end
+                end)
+
+                FreezeCheckConnection = RunService.Heartbeat:Connect(function()
+                    if not getgenv().IceBlockCheckEnabled then return end
+
+                    local character = LocalPlayer.Character
+                    if character and IsFullyFrozen() then
+                        Rejoin()
+                    end
+                end)
+            end
+
+            EnableIceWatcher()
+        else
+            DisableIceWatcher()
+        end
+    end,})
+
+
+    local anti_knockback_connection
+    local antiKnockbackEnabled = false
+
+    getgenv().AntiFlingToggle = Tab16:CreateToggle({
+    Name = "Anti Fling",
+    CurrentValue = false,
+    Flag = "AntiFlingAbsolutelyInsane",
+    Callback = function(EnableAntiFlingScript)
+        if EnableAntiFlingScript then
+            getgenv().antiFlingEnabled = true
+            getgenv().antiKnockbackEnabled = true
+
+            local RunService = getgenv().RunService
+            local Players = getgenv().Players
+            local lp = getgenv().LocalPlayer
+
+            local function getHRP()
+                local char = getgenv().Character
+                return char and char:FindFirstChild("HumanoidRootPart") or getgenv().HumanoidRootPart
+            end
+
+            local function cleanUpForces()
+                local hrp = getHRP()
+                if not hrp then return end
+
+                for _, obj in ipairs(hrp:GetChildren()) do
+                    if obj:IsA("BodyMover") or obj:IsA("VectorForce") or obj:IsA("Torque") or obj:IsA("LinearVelocity") then
+                        obj:Destroy()
+                    end
+                end
+            end
+
+            local function onHeartbeat()
+                if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
+
+                local hrp = getHRP()
+                local humanoid = lp.Character and lp.Character:FindFirstChildWhichIsA("Humanoid")
+                if not hrp or not humanoid then return end
+
+                local maxSpeed = 45
+                local maxAngularSpeed = 60
+
+                if hrp.Velocity.Magnitude > maxSpeed then
+                    hrp.Velocity = hrp.Velocity.Unit * maxSpeed
+                end
+
+                if hrp.AssemblyLinearVelocity.Magnitude > maxSpeed then
+                    hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity.Unit * maxSpeed
+                end
+
+                if hrp.RotVelocity.Magnitude > maxAngularSpeed then
+                    hrp.RotVelocity = Vector3.zero
+                end
+
+                if hrp.AssemblyAngularVelocity.Magnitude > maxAngularSpeed then
+                    hrp.AssemblyAngularVelocity = Vector3.zero
+                end
+
+                if humanoid.PlatformStand then
+                    humanoid.PlatformStand = false
+                end
+
+                cleanUpForces()
+            end
+
+            if anti_knockback_connection then
+                anti_knockback_connection:Disconnect()
+            end
+            wait(0.2)
+            anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
+        else
+            getgenv().antiFlingEnabled = false
+
+            if getgenv().antiFlingThing then
+                getgenv().antiFlingThing:Disconnect()
+                getgenv().antiFlingThing = nil
+            end
+            antiKnockbackEnabled = false
+            if anti_knockback_connection then
+                anti_knockback_connection:Disconnect()
+                anti_knockback_connection = nil
+            end
+        end
+    end,})
+
+    local original_parents = {}
+
+    local function perform_scan()
+        local results = {}
+
+        for _, obj in ipairs(getgenv().Workspace:GetDescendants()) do
+            if obj:IsA("BasePart") and (string.match(obj.Name:upper(), "KILLPART") or string.match(obj.Name:upper(), "KILL")) then
+                original_parents[obj] = obj.Parent
+                table.insert(results, obj)
+            end
+        end
+
+        return results
+    end
+
+    getgenv().KillPartsToggle = Tab16:CreateToggle({
+    Name = "Toggle Kill Parts (Works for most obbies)",
+    CurrentValue = false,
+    Flag = "KillPartsTogglingScript",
+    Callback = function(ToggleTheKillParts)
+        if ToggleTheKillParts then
+            local VRService = getgenv().Service_Wrap("VRService")
+            local Results = perform_scan()
+
+            for _, part in ipairs(Results) do
+                part.Parent = VRService
+            end
+        else
+            local VRService = getgenv().Service_Wrap("VRService")
+            
+            for part, parent in pairs(original_parents) do
+                if part and parent then
+                    part.Parent = parent
+                end
+            end
+        end
+    end,})
+
+    if game.PlaceId == 83312952548612 then
+        getgenv().FastTogglePart = Tab16:CreateToggle({
+        Name = "Toggle Obby Button [Fast]",
+        CurrentValue = false,
+        Flag = "FastToggleButtonForObby",
+        Callback = function(fast_toggling_obby)
+            if fast_toggling_obby then
+                local Workspace = getgenv().Workspace
+                local Player = getgenv().LocalPlayer
+                local Character = getgenv().Character
+                local HumanoidRootPart = getgenv().HumanoidRootPart
+                getgenv().Gudock_Part_Touching = true
+
+                if not Workspace:FindFirstChild("Gudock") then
+                    getgenv().FastTogglePart:Set(false)
+                    return getgenv().notify("Failure:", "Gudock button for the obby doesn't seem to exist.", 5)
+                end
+            
+                local Gudock_Part = Workspace:FindFirstChild("Gudock")
+
+                if Gudock_Part then
+                    while getgenv().Gudock_Part_Touching == true do
+                        for _, v in ipairs(Gudock_Part:GetDescendants()) do
+                            if v:IsA("TouchTransmitter") and firetouchinterest then
+                                firetouchinterest(v.Parent, HumanoidRootPart, 0)
+                                task.wait()
+                                firetouchinterest(v.Parent, HumanoidRootPart, 1)
+                            end
+                        end
+                        task.wait()
+                    end
+                end
+            else
+                getgenv().Gudock_Part_Touching = false
+                getgenv().Gudock_Part_Touching = false
+            end
+        end,})
+    else
+        warn("You do not seem to be on Troll Is A Pinning Tower 2, not running 'Toggle Obby Button [Fast]'.")
+    end
+
+    getgenv().AntiTeleport_Univ = Tab16:CreateToggle({
+    Name = "Anti Teleport",
+    CurrentValue = false,
+    Flag = "AntiTeleportToggleUniversal",
+    Callback = function(anti_teleport_toggle)
+        if anti_teleport_toggle then
+            getgenv().AntiTeleport = true
+            getgenv().AntiTeleportConnection = nil
+
+            local Players = getgenv().Players
+            local RunService = getgenv().RunService
+            local LocalPlayer = getgenv().LocalPlayer
+            repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+            local Character = getgenv().Character
+            local HRP = getgenv().HumanoidRootPart
+            local lastCFrame = HRP.CFrame
+
+            local maxDistance = 5
+            local checkInterval = 0.05
+
+            getgenv().AntiTeleportConnection = task.spawn(function()
+                while task.wait(checkInterval) do
+                    if not getgenv().AntiTeleport then
+                        lastCFrame = HRP.CFrame
+                        continue
+                    end
+
+                    if LocalPlayer.Character ~= Character then
+                        Character = LocalPlayer.Character
+                        HRP = Character:WaitForChild("HumanoidRootPart")
+                        lastCFrame = HRP.CFrame
+                    end
+
+                    if (HRP.Position - lastCFrame.Position).Magnitude > maxDistance then
+                        warn("[Anti-Teleport_DEBUG]: Teleport detected. Reverting.")
+                        pcall(function()
+                            HRP.CFrame = lastCFrame
+                        end)
+                    else
+                        lastCFrame = HRP.CFrame
+                    end
+                end
+            end)
+        else
+            getgenv().AntiTeleport = false
+
+            pcall(function()
+                task.cancel(getgenv().AntiTeleportConnection)
+                getgenv().AntiTeleportConnection = nil
+            end)
+        end
+    end,})
+
+    getgenv().AntiBlurUniversal = Tab16:CreateToggle({
+    Name = "Anti Blur",
+    CurrentValue = false,
+    Flag = "AntiBlurUniversalToggle",
+    Callback = function(anti_blur_toggle)
+        if anti_blur_toggle then
+            if getgenv().AntiBlurConnections then
+                for _, con in ipairs(getgenv().AntiBlurConnections) do con:Disconnect() end
+            end
+
+            getgenv().AntiBlurEnabled = true
+            getgenv().AntiBlurConnections = {}
+
+            local Workspace = getgenv().Workspace
+            local Lighting = getgenv().Lighting
+            local Camera = getgenv().Camera or Workspace.CurrentCamera
+
+            local function trackConnection(conn)
+                table.insert(getgenv().AntiBlurConnections, conn)
+            end
+
+            local function RemoveBlurIfPresent(obj)
+                if obj:IsA("BlurEffect") then
+                    obj:Destroy()
+                end
+            end
+
+            local function WatchForBlurRecursive(container)
+                if not container or typeof(container) ~= "Instance" then return end
+
+                RemoveBlurIfPresent(container)
+
+                for _, child in ipairs(container:GetChildren()) do
+                    WatchForBlurRecursive(child)
+                end
+
+                local added = container.ChildAdded:Connect(function(child)
+                    if not getgenv().AntiBlurEnabled then return end
+                    RemoveBlurIfPresent(child)
+                    WatchForBlurRecursive(child)
+                end)
+
+                trackConnection(added)
+            end
+
+            local function SetupAntiBlur()
+                for _, con in ipairs(getgenv().AntiBlurConnections) do
+                    con:Disconnect()
+                end
+
+                table.clear(getgenv().AntiBlurConnections)
+
+                if not getgenv().AntiBlurEnabled then return end
+
+                WatchForBlurRecursive(Camera)
+                WatchForBlurRecursive(Lighting)
+                WatchForBlurRecursive(Workspace)
+
+                local camChange = Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+                    Camera = Workspace.CurrentCamera
+                    WatchForBlurRecursive(Camera)
+                end)
+
+                trackConnection(camChange)
+            end
+
+            getgenv().ToggleAntiBlur = function(state)
+                getgenv().AntiBlurEnabled = (state ~= false)
+                SetupAntiBlur()
+            end
+
+            SetupAntiBlur()
+        else
+            getgenv().AntiBlurEnabled = false
+            getgenv().AntiBlurEnabled = false
+            if getgenv().AntiBlurConnection then
+                getgenv().AntiBlurConnection:Disconnect()
+                getgenv().AntiBlurConnection = nil
+            end
+        end
+    end,})
 
     getgenv().CFrameSpeedSlider = Tab2:CreateSlider({
     Name = "CFrame WalkSpeed Set Speed",
@@ -3798,6 +4511,60 @@
         bang_plr_bypass_off()
     end
 
+    getgenv().ViewRandomPlayer = Tab13:CreateToggle({
+    Name = "View/Spectate Random Player",
+    CurrentValue = false,
+    Flag = "SpectatingRandomPlr",
+    Callback = function(spectating_random)
+        if spectating_random then
+            local others = {}
+
+            for _, p in ipairs(getgenv().Players:GetPlayers()) do
+                local char = p.Character
+                if p ~= getgenv().LocalPlayer and char and char:FindFirstChild("Humanoid") then
+                    table.insert(others, p)
+                end
+            end
+
+            if #others > 0 then
+                local target = others[math.random(1, #others)]
+                local target_humanoid = target.Character and target.Character:FindFirstChildWhichIsA("Humanoid")
+
+                if target and target_humanoid then
+                    getgenv().Camera.CameraSubject = target_humanoid
+                end
+            else
+                warn("No valid players to teleport to.")
+            end
+        else
+            getgenv().Camera.CameraSubject = getgenv().Character or getgenv().Humanoid
+        end
+    end,})
+
+    getgenv().TPToRandomPlayer = Tab13:CreateButton({
+    Name = "TP To Random Player",
+    Callback = function()
+        local others = {}
+
+        for _, p in ipairs(getgenv().Players:GetPlayers()) do
+            local char = p.Character
+            if p ~= getgenv().LocalPlayer and char and char:FindFirstChild("HumanoidRootPart") then
+                table.insert(others, p)
+            end
+        end
+
+        if #others > 0 then
+            local target = others[math.random(1, #others)]
+            local targetHRP = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+
+            if target and targetHRP then
+                getgenv().HumanoidRootPart.CFrame = targetHRP.CFrame
+            end
+        else
+            warn("No valid players to teleport to.")
+        end
+    end,})
+
     getgenv().bangSpeed = 1
     getgenv().bangPlrSpeedSlider = Tab13:CreateSlider({
     Name = "Bang Player Speed",
@@ -3810,6 +4577,25 @@
         getgenv().bangSpeed = tonumber(speedOfPlayerBang)
     end,})
 
+    getgenv().r15_or_r6 = function(humanoid)
+        if typeof(humanoid) ~= "Instance" or not humanoid:IsA("Humanoid") then
+            if typeof(getgenv().Humanoid) ~= "Instance" or not getgenv().Humanoid:IsA("Humanoid") then
+                return warn("Invalid or no Humanoid argument was passed, and getgenv().Humanoid is also invalid!")
+            end
+            humanoid = getgenv().Humanoid
+        end
+
+        local rig_type = humanoid.RigType
+
+        if rig_type == Enum.HumanoidRigType.R15 then
+            return true
+        elseif rig_type == Enum.HumanoidRigType.R6 then
+            return false
+        else
+            return "Unknown"
+        end
+    end
+    wait(0.2)
     getgenv().BangPlrInputBox = Tab13:CreateInput({
     Name = "Bang Player (Bypassed)",
     PlaceholderText = "Target Here",
@@ -4503,6 +5289,10 @@
         MultipleOptions = false,
         Flag = "GetEmoteOption",
         Callback = function(selectedEmote)
+            if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+                return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+            end
+
             local ToWalkWhileEmoting = type(selectedEmote) == "table" and selectedEmote[1] or tostring(selectedEmote)
 
             if getgenv().Character:FindFirstChild("Animate") then
@@ -4542,6 +5332,10 @@
         getgenv().StopWalkingPlaceEmote = Tab2:CreateButton({
         Name = "Stop Walking While Emoting",
         Callback = function()
+            if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+                return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+            end
+
             if getgenv().AnthonyShuffle == true then
                 getgenv().AnthonyShuffle:Set(false)
             else
@@ -4586,6 +5380,14 @@
     Callback = function(michaelJackson)
         michaelJacksonActive = michaelJackson
         if michaelJackson then
+            if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then 
+                michaelJacksonActive = false
+                if getgenv().AnthonyShuffle then
+                    getgenv().AnthonyShuffle:Set(false)
+                end
+                return getgenv().notify("Failure:", "You must be R15 to use this!", 5)
+            end
+
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
                 getgenv().Humanoid:ChangeState(3)
@@ -4618,127 +5420,137 @@
         end
     end,})
 
-    getgenv().Owner_Animations = Tab2:CreateToggle({
-    Name = "Zacks Owner Animations (Applies every respawn)",
-    CurrentValue = false,
-    Flag = "LoadZacksOwnerAnims",
-    Callback = function(apply_to_respawn_anims)
-        if apply_to_respawn_anims then
-            getgenv().ownerAnimsEnabled = true
-            local LocalPlayer = getgenv().LocalPlayer
-            
-            getgenv().Humanoid.WalkSpeed = 0
-            getgenv().HumanoidRootPart.Anchored = false
-            wait(1)
-            local function run_anims(character)
-                if not character then return warn("Character not found!") end
-                local Animate = character:FindFirstChild("Animate")
-                if not Animate then return warn("Animate script is missing!") end
-
-                Animate.Disabled = true
-                task.wait(0.1)
-                Animate.Disabled = false
-
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:Stop()
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        getgenv().Owner_Animations = Tab2:CreateToggle({
+        Name = "Flames Animations (Applies every respawn)",
+        CurrentValue = false,
+        Flag = "LoadFlamesOwnerAnims",
+        Callback = function(apply_to_respawn_anims)
+            if apply_to_respawn_anims then
+                if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then 
+                    if getgenv().Owner_Animations then
+                        getgenv().Owner_Animations:Set(false)
                     end
+                    return getgenv().notify("Failure:", "You must be R15 to use this!", 5)
                 end
-
-                task.wait(0.2)
-
-                Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
-                Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
-                Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
-                Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
-                Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
-                Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
-                Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
-            end
-
-            getgenv().ownerAnimsEnabled = true
-            wait(0.1)
-            local function onCharacterAdded(character)
-                if getgenv().ownerAnimsEnabled then
-                    task.wait(1)
-                    run_anims(character)
-                else
-                    warn("Animations are disabled.")
-                end
-            end
-
-            if LocalPlayer.Character then
-                onCharacterAdded(LocalPlayer.Character)
-            end
-
-            LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-
-            local function run_anims(character)
-                if not character then return warn("Character not found!") end
-                local Animate = character:FindFirstChild("Animate")
-                if not Animate then return warn("Animate script is missing!") end
-
-                Animate.Disabled = true
-                task.wait(0.1)
-                Animate.Disabled = false
-
-                local humanoid = getgenv().Humanoid
-                if humanoid then
-                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:Stop()
-                    end
-                end
-
-                task.wait(0.2)
-
-                Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
-                Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
-                Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
-                Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
-                Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
-                Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
-                Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
-            end
-
-            local function onCharacterAdded(character)
-                if getgenv().ownerAnimsEnabled then
-                    task.wait(1)
-                    run_anims(character)
-                else
-                    warn("Animations are disabled.")
-                end
-            end
-            wait(1.5)
-            getgenv().Humanoid.WalkSpeed = 16
-
-            if LocalPlayer.Character then
-                onCharacterAdded(LocalPlayer.Character)
-            end
-
-            LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-        else
-            getgenv().ownerAnimsEnabled = false
-            getgenv().ownerAnimsEnabled = false
-            if getgenv().Humanoid and getgenv().HumanoidRootPart then
+                getgenv().ownerAnimsEnabled = true
+                local LocalPlayer = getgenv().LocalPlayer
+                
                 getgenv().Humanoid.WalkSpeed = 0
                 getgenv().HumanoidRootPart.Anchored = false
-                wait(1.5)
-                local humanoid = getgenv().Humanoid
-                if humanoid then
-                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:Stop()
+                wait(1)
+                local function run_anims(character)
+                    if not character then return warn("Character not found!") end
+                    local Animate = character:FindFirstChild("Animate")
+                    if not Animate then return warn("Animate script is missing!") end
+
+                    Animate.Disabled = true
+                    task.wait(0.1)
+                    Animate.Disabled = false
+
+                    local humanoid = character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:Stop()
+                        end
+                    end
+
+                    task.wait(0.2)
+
+                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
+                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
+                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
+                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
+                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
+                end
+
+                getgenv().ownerAnimsEnabled = true
+                wait(0.1)
+                local function onCharacterAdded(character)
+                    if getgenv().ownerAnimsEnabled then
+                        task.wait(1)
+                        run_anims(character)
+                    else
+                        warn("Animations are disabled.")
+                    end
+                end
+
+                if LocalPlayer.Character then
+                    onCharacterAdded(LocalPlayer.Character)
+                end
+
+                LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+                local function run_anims(character)
+                    if not character then return warn("Character not found!") end
+                    local Animate = character:FindFirstChild("Animate")
+                    if not Animate then return warn("Animate script is missing!") end
+
+                    Animate.Disabled = true
+                    task.wait(0.1)
+                    Animate.Disabled = false
+
+                    local humanoid = getgenv().Humanoid
+                    if humanoid then
+                        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:Stop()
+                        end
+                    end
+
+                    task.wait(0.2)
+
+                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+                    Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
+                    Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
+                    Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
+                    Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
+                    Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
+                end
+
+                local function onCharacterAdded(character)
+                    if getgenv().ownerAnimsEnabled then
+                        task.wait(1)
+                        run_anims(character)
+                    else
+                        warn("Animations are disabled.")
                     end
                 end
                 wait(1.5)
                 getgenv().Humanoid.WalkSpeed = 16
+
+                if LocalPlayer.Character then
+                    onCharacterAdded(LocalPlayer.Character)
+                end
+
+                LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+            else
+                getgenv().ownerAnimsEnabled = false
+                getgenv().ownerAnimsEnabled = false
+                if getgenv().Humanoid and getgenv().HumanoidRootPart then
+                    getgenv().Humanoid.WalkSpeed = 0
+                    getgenv().HumanoidRootPart.Anchored = false
+                    wait(1.5)
+                    local humanoid = getgenv().Humanoid
+                    if humanoid then
+                        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                            track:Stop()
+                        end
+                    end
+                    wait(1.5)
+                    getgenv().Humanoid.WalkSpeed = 16
+                end
             end
+        end,})
+        wait(0.3)
+        if getgenv().ownerAnimsEnabled == true then
+            getgenv().Owner_Animations:Set(false)
+            getgenv().ownerAnimsEnabled = false
         end
-    end,})
-    wait(0.3)
-    if getgenv().ownerAnimsEnabled == true then
-        getgenv().Owner_Animations:Set(false)
-        getgenv().ownerAnimsEnabled = false
+    else
+        warn("User does not seem to be in MIC UP or MIC UP 17+, not loading custom owner animations toggle.")
     end
     wait(0.2)
     if game.PlaceId == 17274762379 then
@@ -4809,7 +5621,7 @@
         MultipleOptions = false,
         Flag = "AnimationsDropdownListing",
         Callback = function(anim_play)
-            local Remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+            local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes")
             local RemoteEvents = Remotes:FindFirstChild("RemoteEvents")
             local animationHandlerEvent = RemoteEvents:FindFirstChild("animationHandlerEvent")
 
@@ -4828,7 +5640,7 @@
         getgenv().RedeemCodes = Tab5:CreateButton({
         Name = "Redeem All Codes",
         Callback = function()
-            local Remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+            local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes")
             local RemoteFunctions = Remotes or Remotes:FindFirstChild("RemoteFunctions")
             local Codes = RemoteFunctions:FindFirstChild("Codes")
 
@@ -4841,7 +5653,7 @@
         RemoveTextAfterFocusLost = true,
         Callback = function(player_entered)
             local found_this_plr = findplr(player_entered)
-            local Remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+            local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes")
             local RemoteFunctions = Remotes or Remotes:FindFirstChild("RemoteFunctions")
             local OnInviteRequest = RemoteFunctions:FindFirstChild("OnInviteRequest")
 
@@ -4872,6 +5684,10 @@
                 local PlayerScripts = getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
                 local ClientEvent = PlayerScripts:FindFirstChild("ClientEvent")
                 local module = require(ClientEvent:FindFirstChild("DialogueModule"))
+
+                if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
+                    return getgenv().notify("Failure:", "This feature isn't support on this executor.", 5)
+                end
 
                 getgenv().notify("Alert!", "If it gives you an error it means you can't do it.", 6)
 
@@ -5035,60 +5851,64 @@
         warn("User is not on MushYO! 🔊, not putting these here.")
     end
 
-    getgenv().AddBoothWhitelistPlr = Tab7:CreateInput({
-    Name = "Add Player to Booth Whitelist",
-    CurrentValue = "User",
-    PlaceholderText = "User",
-    RemoveTextAfterFocusLost = true,
-    Flag = "BoothWhitelistingAddingUser",
-    Callback = function(getThisPlayer)
-        getgenv().boothWhitelistingPlayer = getgenv().boothWhitelistingPlayer or {}
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        getgenv().AddBoothWhitelistPlr = Tab7:CreateInput({
+        Name = "Add Player to Booth Whitelist",
+        CurrentValue = "User",
+        PlaceholderText = "User",
+        RemoveTextAfterFocusLost = true,
+        Flag = "BoothWhitelistingAddingUser",
+        Callback = function(getThisPlayer)
+            getgenv().boothWhitelistingPlayer = getgenv().boothWhitelistingPlayer or {}
 
-        local bruhUser = findplr(getThisPlayer)
+            local bruhUser = findplr(getThisPlayer)
 
-        if not bruhUser then
-            return getgenv().notify("Failure", "Player was not found.", 6)
-        end
-
-        wait(0.2)
-        local function addPlayerToBoothTable(player)
-            getgenv().boothWhitelistingPlayer[player.Name] = player
-            wait(0.3)
-            if getgenv().boothWhitelistingPlayer[player.Name] then
-                getgenv().notify("Success!", tostring(player.Name)..", was added to Booth Whitelist!", 5)
+            if not bruhUser then
+                return getgenv().notify("Failure", "Player was not found.", 6)
             end
-        end
-        
-        addPlayerToBoothTable(bruhUser)
-    end,})
 
-    getgenv().RemoveBoothWhitelistPlr = Tab7:CreateInput({
-    Name = "Remove Plr From Booth Whitelist",
-    CurrentValue = "User",
-    PlaceholderText = "User Here",
-    RemoveTextAfterFocusLost = true,
-    Flag = "BoothWhitelistingRemoveUser",
-    Callback = function(RemoveBoothWhitelist)
-        getgenv().boothWhitelistingPlayer = getgenv().boothWhitelistingPlayer or {}
-
-        local dawgUser = findplr(RemoveBoothWhitelist)
-        
-        local function removePlayerFromBoothTable(player)
-            if getgenv().boothWhitelistingPlayer[player.Name] then
-                getgenv().boothWhitelistingPlayer[player.Name] = nil
-                wait(0.2)
-                if getgenv().boothWhitelistingPlayer[player.Name] == nil then
-                    getgenv().notify("Success!", tostring(player.Name)..", was removed from the Booth Whitelist!", 5)
-                else
-                    return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
+            wait(0.2)
+            local function addPlayerToBoothTable(player)
+                getgenv().boothWhitelistingPlayer[player.Name] = player
+                wait(0.3)
+                if getgenv().boothWhitelistingPlayer[player.Name] then
+                    getgenv().notify("Success!", tostring(player.Name)..", was added to Booth Whitelist!", 5)
                 end
-            else
-                return getgenv().notify("Failed", tostring(player.Name)..", was not found in Booth Whitelist!", 5)
             end
-        end
-        
-        removePlayerFromBoothTable(dawgUser)
-    end,})
+            
+            addPlayerToBoothTable(bruhUser)
+        end,})
+
+        getgenv().RemoveBoothWhitelistPlr = Tab7:CreateInput({
+        Name = "Remove Plr From Booth Whitelist",
+        CurrentValue = "User",
+        PlaceholderText = "User Here",
+        RemoveTextAfterFocusLost = true,
+        Flag = "BoothWhitelistingRemoveUser",
+        Callback = function(RemoveBoothWhitelist)
+            getgenv().boothWhitelistingPlayer = getgenv().boothWhitelistingPlayer or {}
+
+            local dawgUser = findplr(RemoveBoothWhitelist)
+            
+            local function removePlayerFromBoothTable(player)
+                if getgenv().boothWhitelistingPlayer[player.Name] then
+                    getgenv().boothWhitelistingPlayer[player.Name] = nil
+                    wait(0.2)
+                    if getgenv().boothWhitelistingPlayer[player.Name] == nil then
+                        getgenv().notify("Success!", tostring(player.Name)..", was removed from the Booth Whitelist!", 5)
+                    else
+                        return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
+                    end
+                else
+                    return getgenv().notify("Failed", tostring(player.Name)..", was not found in Booth Whitelist!", 5)
+                end
+            end
+            
+            removePlayerFromBoothTable(dawgUser)
+        end,})
+    else
+        warn("[FALLBACK]: Not in MIC UP or MIC UP 17+, not loading Booth Whitelisting features.")
+    end
 
     getgenv().WhitelistOtherScriptUser = Tab7:CreateInput({
     Name = "Whitelist Script/ZEH User",
@@ -5156,175 +5976,6 @@
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/PublicScriptsOnRobloxExploiting/refs/heads/main/ClimbRaceSim.lua'))()
         wait()
         getgenv().List_GUI_Loaded = true
-    end
-    wait()
-    local validCommands = {"?bring", "?kill", "?jump", "?gravity", "?teleport", "?stuck", "?unstuck", "?freeze", "?unfreeze", "?noclip", "?clip", "?speed", "?sit", "?jp", "?cmds"}
-    
-    getgenv().AdminCommands = {
-        ["bring"] = function(player)
-            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                player.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-            end
-        end,
-        
-        ["kill"] = function(player)
-            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                player.Character.Humanoid.Health = 0
-            end
-        end,
-        
-        ["jump"] = function(player)
-            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            end
-        end,
-        
-        ["gravity"] = function(_, value)
-            game.Workspace.Gravity = tonumber(value) or 196.2
-        end,
-        
-        ["teleport"] = function(player, targetName)
-            local target = game.Players:FindFirstChild(targetName)
-            if player and target and player.Character and target.Character then
-                player.Character:MoveTo(target.Character.HumanoidRootPart.Position)
-            end
-        end,
-        
-        ["stuck"] = function(player)
-            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                player.Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = true
-            end
-        end,
-
-        ["unstuck"] = function(player)
-            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                player.Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
-            end
-        end,
-        
-        ["freeze"] = function(player)
-            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                player.Character:FindFirstChild("HumanoidRootPart").Anchored = true
-            end
-        end,
-
-        ["unfreeze"] = function(player)
-            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                player.Character:FindFirstChild("HumanoidRootPart").Anchored = false
-            end
-        end,
-        
-        ["noclip"] = function(player, state)
-            if player and player.Character then
-                for _, part in ipairs(player.Character:GetChildren()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
-                end
-            end
-        end,
-
-        ["clip"] = function(player, state)
-            if player and player.Character then
-                for _, part in ipairs(player.Character:GetChildren()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = true
-                    end
-                end
-            end
-        end,
-
-        ["mute"] = function(player)
-            if player and player:FindFirstChildOfClass("AudioDeviceInput") then
-                player:FindFirstChildOfClass("AudioDeviceInput").Muted = true
-            end
-        end,
-
-        ["unmute"] = function(player)
-            if player and player:FindFirstChildOfClass("AudioDeviceInput") then
-                player:FindFirstChildOfClass("AudioDeviceInput").Muted = false
-            end
-        end,
-        
-        ["speed"] = function(player, speed)
-            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                player.Character.Humanoid.WalkSpeed = tonumber(speed) or 16
-            end
-        end,
-        
-        ["sit"] = function(player)
-            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                player.Character.Humanoid.Sit = true
-            end
-        end,
-        
-        ["jp"] = function(player, jumpPower)
-            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                player.Character.Humanoid.JumpPower = tonumber(jumpPower) or 50
-            end
-        end,
-        
-        ["cmds"] = function()
-            getgenv().PlayerGui:FindFirstChild("CommandListGUI").Enabled = true
-        end
-    }
-
-    getgenv().Whitelists = {
-        ["L0CKED_1N1"] = true,
-        ["CHEATING_B0SS"] = true,
-        ["Chick7nn"] = true,
-        ["Nearoux"] = true,
-        ["Ferdinand273738"] = true,
-        ["lerks_alt"] = true,
-        ["2x2x2x2x2x2841"] = true,
-    }
-
-    getgenv().TextChatService.MessageReceived:Connect(function(message)
-        if not message.TextSource then
-            warn("No message.TextSource located. [This check is here to prevent an error].")
-        else
-            local sender = message.TextSource.Name
-            local text = message.Text
-
-            if text == "?cmds" and getgenv().Whitelists[sender] then
-                getgenv().AdminCommands["cmds"]()
-            end
-        end
-    end)
-
-    if getgenv().Whitelists[getgenv().LocalPlayer.Name] then
-        warn("This user is whitelisted, proceeding...")
-    else
-        getgenv().TextChatService.MessageReceived:Connect(function(message)
-            if not message.TextSource.Name then
-                return 
-            end
-            wait()
-            local sender = message.TextSource.Name
-            local text = message.Text
-
-            local senderPlayer = game.Players:FindFirstChild(sender)
-            if not senderPlayer then return end
-
-            if text:sub(1, 1) == "?" then
-                local args = text:split(" ")
-                local command = args[1]:sub(2)
-                local targetName = args[2] or ""
-                local extraArg = args[3]
-
-                local targetPlayer = game.Players:FindFirstChild(targetName)
-
-                if getgenv().AdminCommands[command] then
-                    if targetPlayer then
-                        getgenv().AdminCommands[command](targetPlayer, extraArg)
-                    else
-                        warn("Player not found: " .. targetName)
-                    end
-                else
-                    warn("Unknown command: " .. command)
-                end
-            end
-        end)
     end
 
     if game.PlaceId == 97399198116506 then 
@@ -6274,7 +6925,7 @@
             getgenv().Jerking = true
             wait(0.1)
             getgenv().JerkAnim = Instance.new("Animation")
-            getgenv().JerkAnim.AnimationId = "rbxassetid://698251653"
+            getgenv().JerkAnim.AnimationId = (getgenv().r15_or_r6(getgenv().Humanoid) == true) and "rbxassetid://698251653" or "rbxassetid://168268306"
             getgenv().Jerk = getgenv().Humanoid:LoadAnimation(getgenv().JerkAnim)
 
             task.spawn(function()
@@ -6815,6 +7466,10 @@
     PlaceholderText = "Enter ID",
     RemoveTextAfterFocusLost = true,
     Callback = function(idForEmoting)
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+        end
+        
         local number_id = tonumber(idForEmoting) or idForEmoting
 
         local succ, err = pcall(function()
@@ -6851,6 +7506,10 @@
     getgenv().StopEmoteLooping = Tab12:CreateButton({
     Name = "Stop Loop Emoting",
     Callback = function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+        end
+
         if getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == true then
             getgenv().Character:FindFirstChild("Animate").Disabled = false
         else
@@ -6879,6 +7538,10 @@
     PlaceholderText = "Enter ID",
     RemoveTextAfterFocusLost = true,
     Callback = function(getTheIDForEmote)
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+        end
+
         local getNumberID = tonumber(getTheIDForEmote) or getTheIDForEmote
         
         local succ, err = pcall(function()
@@ -6895,6 +7558,10 @@
     getgenv().StopTheEmotes = Tab12:CreateButton({
     Name = "Stop Emoting",
     Callback = function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+        end
+
         if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
             getgenv().Humanoid:ChangeState(3)
             getgenv().Humanoid:ChangeState(3)
@@ -7035,13 +7702,13 @@
                 end
 
                 local write_words = {
-                    "Zacks Easy Hub [WINNING]!",
+                    "Flames Hub [WINNING]!",
                     "Join: VJh3kkYzBn",
-                    "Zacks Easy Hub [WE UP]!",
-                    "Zacks Easy Hub V6, POWERFUL!",
+                    "Flames Hub [WE UP]!",
+                    "Flames Hub V6, POWERFUL!",
                     "Powering Automation | Scripting",
-                    "Zacks Easy Hub | WE OP!",
-                    "Zacks Easy Hub | WE SIGMA",
+                    "Flames Hub | WE OP!",
+                    "Flames Hub | WE SIGMA",
                     "BEST FREE SCRIPT RN!",
                     "WE ARE TAKING OVER, JOIN US!",
                     "IF YOU DONT JOIN, YOUR NOT SIGMA"
@@ -7574,7 +8241,7 @@
 
     getgenv().Face_Bang_Speed = Tab16:CreateSlider({
     Name = "Face F**k Speed",
-    Range = {1, 60},
+    Range = {1, 100},
     Increment = 1,
     Suffix = "",
     CurrentValue = 1,
@@ -7585,7 +8252,7 @@
 
     getgenv().Distance_Face_Bang = Tab16:CreateSlider({
     Name = "Face F**k Distance",
-    Range = {1, 30},
+    Range = {1, 60},
     Increment = 1,
     Suffix = "",
     CurrentValue = 1,
@@ -7600,14 +8267,18 @@
     Flag = "toggleNoclipChar",
     Callback = function(noclip_toggle)
         function reset_collide(reset_bool)
-            if reset_bool == true then
-                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = true
+            if reset_bool == true and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+                HumanoidRootPart.CanCollide = true
                 getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
                 getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
-            elseif reset_bool == false then
+            elseif reset_bool == false and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
                 getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
                 getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
                 getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
+            elseif reset_bool == true and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+                getgenv().HumanoidRootPart.CanCollide = true
+            elseif reset_bool == false and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+                getgenv().HumanoidRootPart.CanCollide = false
             else
                 return warn("Invalid input BoolValue.")
             end
@@ -7616,7 +8287,7 @@
         if noclip_toggle then
             getgenv().ez_noclip_use = true
             while getgenv().ez_noclip_use == true do
-            wait()
+            task.wait()
                 reset_collide(false)
             end
         elseif not getgenv().Character and noclip_toggle then
@@ -7739,6 +8410,26 @@
     CurrentValue = false,
     Flag = "flyScriptToggle",
     Callback = function(toggleTheFly)
+        if getgenv().antiFlingEnabled == true then
+            anti_fling_toggle_saved = true
+            if getgenv().AntiFlingToggle then
+                getgenv().AntiFlingToggle:Set(false)
+                getgenv().notify("Alert:", "Turned off Anti Fling for 'Fly' to work properly.", 6)
+            else
+                return getgenv().notify("Error:", "Please disable 'Anti Fling' for 'Fly' to work properly", 6)
+            end
+        end
+        wait()
+        if getgenv().AntiTeleport == true then
+            anti_teleport_toggle_saved = true
+            if getgenv().AntiTeleport_Univ then
+                getgenv().AntiTeleport_Univ:Set(false)
+                getgenv().notify("Alert:", "Turned off Anti Teleport for 'Fly' to work properly.", 6)
+            else
+                return getgenv().notify("Error:", "Please disable 'Anti Teleport' for 'Fly' to work properly.", 6)
+            end
+        end
+
         getgenv().FLYING = false
         getgenv().QEfly = true
         wait(0.1)
@@ -7858,8 +8549,24 @@
             local player = game:GetService("Players").LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
 
-            local rootPart = character:WaitForChild("HumanoidRootPart")
-            local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+            local rootPart = getgenv().HumanoidRootPart or character:WaitForChild("HumanoidRootPart")
+            local humanoid = getgenv().Humanoid or character:FindFirstChildWhichIsA("Humanoid")
+
+            if anti_teleport_toggle_saved == true then
+                if getgenv().AntiFlingToggle then
+                    getgenv().notify("Alert:", "Turning 'Anti Teleport' back on, it was enabled before.", 5)
+                    getgenv().AntiFlingToggle:Set(true)
+                    anti_fling_toggle_saved = false
+                end
+            end
+
+            if anti_fling_toggle_saved == true then
+                if getgenv().AntiFlingToggle then
+                    getgenv().notify("Alert:", "Turning 'Anti Fling' back on, it was enabled before.", 5)
+                    getgenv().AntiFlingToggle:Set(true)
+                    anti_fling_toggle_saved = false
+                end
+            end
 
             if getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly") then
                 getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly"):Destroy()
@@ -8093,9 +8800,21 @@
                     getgenv().HumanoidRootPart.CFrame = lastFrame[1]
                 end
                 wait(.3)
-                getgenv().HumanoidRootPart.Velocity = -lastFrame[2]
-                getgenv().Humanoid:ChangeState(lastFrame[3])
-                getgenv().Humanoid.PlatformStand = lastFrame[4]
+                if lastFrame and lastFrame[2] then
+                    getgenv().HumanoidRootPart.Velocity = -lastFrame[2]
+                else
+                    warn("LastFrame[2] not detected at runtime, skipping...")
+                end
+                if lastFrame and lastFrame[3] then
+                    getgenv().Humanoid:ChangeState(lastFrame[3])
+                else
+                    warn("LastFrame[3] not detected at runtime, skipping...")
+                end
+                if lastFrame and lastFrame[4] then
+                    getgenv().Humanoid.PlatformStand = lastFrame[4]
+                else
+                    warn("LastFrame[4] not detected at runtime, skipping...")
+                end
             end
         end
         
@@ -9019,13 +9738,359 @@
         warn("Not on MIC UP, not loading these features.")
     end
 
-    getgenv().ChatBypassBest = Tab4:CreateButton({
-    Name = "Chat Bypass (UserCreation, not up rn)",
-    Callback = function()
-        --loadstring(game:HttpGet("https://raw.githubusercontent.com/1price/usercreation/refs/heads/main/UserCreation.lua", true))()
-        getgenv().notify("Error:", "The library would close and you would have to rejoin.", 6)
-        return getgenv().notify("[Read]:", "Usercreation bypassing is temporarily disabled.", 6)
+    getgenv().AntiChatSpy = Tab4:CreateToggle({
+    Name = "Anti Chat Spy",
+    CurrentValue = false,
+    Flag = "EnableAntiChatSpySpamLogs",
+    Callback = function(enabling_anti_chat_spy)
+        if enabling_anti_chat_spy then
+            getgenv().anti_chat_spy = true
+            while getgenv().anti_chat_spy == true do
+            task.wait()
+                getgenv().Players:Chat(randomString())
+            end
+        else
+            getgenv().anti_chat_spy = false
+        end
     end,})
+
+    if hookfunction and hookmetamethod then
+        getgenv().ChatBypassBest = Tab4:CreateButton({
+        Name = "Anti Chat Log/Anti Screenshot",
+        Callback = function()
+            if not game:IsLoaded() then
+                game.Loaded:wait()
+            end
+
+            task.wait(3)
+
+            local ACL_LoadTime = tick()
+            local NotificationTitle = "Anthony's ACL"
+
+            local OldCoreTypeSettings = {}
+            local WhitelistedCoreTypes = {
+                "Chat",
+                "All",
+                Enum.CoreGuiType.Chat,
+                Enum.CoreGuiType.All
+            }
+
+            local OldCoreSetting = nil
+
+            local CoreGui = game:GetService("CoreGui")
+            local StarterGui = getgenv().StarterGui or game:GetService("StarterGui")
+            local TweenService = getgenv().TweenService or game:GetService("TweenService")
+            local TextChatService = getgenv().TextChatService or game:GetService("TextChatService")
+            local Players = getgenv().Players or game:GetService("Players")
+            local Player = getgenv().LocalPlayer or Players.LocalPlayer
+
+            local Notify = function(_Title, _Text , Time)
+                StarterGui:SetCore("SendNotification", {Title = _Title, Text = _Text, Icon = "rbxassetid://2541869220", Duration = Time})
+            end
+
+            local Tween = function(Object, Time, Style, Direction, Property)
+                return TweenService:Create(Object, TweenInfo.new(Time, Enum.EasingStyle[Style], Enum.EasingDirection[Direction]), Property)
+            end
+
+            local PlayerGui = Player:FindFirstChildWhichIsA("PlayerGui") do
+                if not PlayerGui then
+                    local Timer = tick() + 5
+                    repeat task.wait() until Player:FindFirstChildWhichIsA("PlayerGui") or (tick() > Timer)
+                    PlayerGui = Player:FindFirstChildWhichIsA("PlayerGui") or false
+                    if not PlayerGui then
+                        return Notify(NotificationTitle, "Failed to find PlayerGui!", 10)
+                    end
+                end
+            end
+
+            if getgenv().AntiChatLogger then
+                return Notify(NotificationTitle, "Anti Chat & Screenshot Logger already loaded!", 15)
+            else
+                getgenv().AntiChatLogger = true
+            end
+
+            local Metatable = getrawmetatable(StarterGui)
+            setreadonly(Metatable, false)
+
+            local MessageEvent = Instance.new("BindableEvent")
+
+            if hookmetamethod then
+                local CoreHook do
+                    CoreHook = hookmetamethod(StarterGui, "__namecall", newcclosure(function(self, ...)
+                        local Method = getnamecallmethod()
+                        local Arguments = {...}
+                        
+                        if self == StarterGui and not checkcaller() then
+                            if Method == "SetCoreGuiEnabled" then
+                                local CoreType = Arguments[1]
+                                local Enabled = Arguments[2]
+                                
+                                if table.find(WhitelistedCoreTypes, CoreType) and Enabled == false then -- Thanks Harun for correcting me on the second argument
+                                    OldCoreTypeSettings[CoreType] = Enabled
+                                    return
+                                end
+                            elseif Method == "SetCore" then
+                                local Core = Arguments[1]
+                                local Connection = Arguments[2]
+                                
+                                if Core == "CoreGuiChatConnections" then
+                                    OldCoreSetting = Connection
+                                    return
+                                end
+                            end
+                        end
+                        
+                        return CoreHook(self, ...)
+                    end))
+                end
+
+                if not getgenv().ChattedFix then
+                    if hookmetamethod then
+                        getgenv().ChattedFix = true
+
+                        local ChattedFix do
+                            ChattedFix = hookmetamethod(Player, "__index", newcclosure(function(self, index)
+                                if self == Player and tostring(index):lower():match("chatted") and MessageEvent.Event then
+                                    return MessageEvent.Event
+                                end
+
+                                return ChattedFix(self, index)
+                            end))
+                        end
+
+                        local AnimateChattedFix = task.spawn(function()
+                            local ChattedSignal = false
+
+                            for _, x in next, getgc() do
+                                if type(x) == "function" and getfenv(x).script ~= nil and tostring(getfenv(x).script) == "Animate" then
+                                    if islclosure(x) then
+                                        local Constants = getconstants(x)
+
+                                        for _, v in next, Constants do
+                                            if v == "Chatted" then
+                                                ChattedSignal = x
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+
+                            if ChattedSignal then
+                                ChattedSignal()
+                            end
+                        end)
+                    end
+                end
+            end
+
+            local EnabledChat = task.spawn(function()
+                repeat
+                    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+                    task.wait()
+                until StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
+            end)
+
+            if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+                getgenv().notify("Failure:", "Detected new chat, loading Anti Screenshot...", 5)
+                if setfflag then
+                    pcall(function()
+                        setfflag("AbuseReportScreenshot", "False")
+                        setfflag("AbuseReportScreenshotPercentage", "0")
+                        getgenv().notify("Success:", "Just Anti Screenshot was loaded.", 5)
+                        task.wait(0.2)
+                        getgenv().notify("Success:", "Because your using the new TextChatService.", 5)
+                    end)
+                else
+                    getgenv().notify("Warning:", "Your executor does not support 'fflag' to run this!", 6)
+                end
+                return 
+            end
+
+            local PlayerScripts = Player:WaitForChild("PlayerScripts")
+            local ChatMain = PlayerScripts:FindFirstChild("ChatMain", true) or false
+
+            if not ChatMain then
+                local Timer = tick()
+                
+                repeat task.wait() until PlayerScripts:FindFirstChild("ChatMain", true) or tick() > (Timer + 3)
+                ChatMain = PlayerScripts:FindFirstChild("ChatMain", true)
+                
+                if not ChatMain then
+                    getgenv().notify("Failure:", "Did not find ChatMain, loading Anti Screenshot instead...", 5)
+                    if setfflag then
+                        pcall(function()
+                            setfflag("AbuseReportScreenshot", "False")
+                            setfflag("AbuseReportScreenshotPercentage", "0")
+                            getgenv().notify("Success:", "Just Anti Screenshot was loaded.", 5)
+                            task.wait(0.2)
+                            getgenv().notify("Success:", "Because we could not find ChatMain LocalScript.", 5)
+                        end)
+                    else
+                        getgenv().notify("Warning:", "Your executor does not support 'fflag' to run this!", 6)
+                    end
+                    return
+                end
+            end
+
+            local PostMessage = require(ChatMain).MessagePosted
+
+            if not PostMessage then
+                getgenv().notify("Failure:", "PostMessage could not be located, loading Anti Screenshot...", 5)
+                if setfflag then
+                    pcall(function()
+                        setfflag("AbuseReportScreenshot", "False")
+                        setfflag("AbuseReportScreenshotPercentage", "0")
+                        getgenv().notify("Success:", "Just Anti Screenshot was loaded.", 5)
+                        task.wait(0.2)
+                        getgenv().notify("Success:", "Because we could not properly allocate PostMessage ModuleScript.", 5)
+                    end)
+                else
+                    getgenv().notify("Warning:", "Your executor does not support 'fflag' to run this!", 6)
+                end
+                return
+            end
+
+            local OldFunctionHook; OldFunctionHook = hookfunction(PostMessage.fire, function(self, Message)
+                if self == PostMessage then
+                    MessageEvent:Fire(Message)
+                    return
+                end
+                return OldFunctionHook(self, Message)
+            end)
+
+            if setfflag then
+                pcall(function()
+                    setfflag("AbuseReportScreenshot", "False")
+                    setfflag("AbuseReportScreenshotPercentage", "0")
+                end)
+            else
+                getgenv().notify("Warning:", "Your executor does not support 'fflag' to run this!", 6)
+            end -- To prevent roblox from taking screenshots of your client.
+
+            local Credits = task.spawn(function()
+                local UserIds = {
+                    1414978355
+                }
+                
+                if table.find(UserIds, Player.UserId) then
+                    return
+                end
+                
+                local Tag = Instance.new("BillboardGui")
+                local Title = Instance.new("TextLabel", Tag)
+                local Rank = Instance.new("TextLabel", Tag)
+                local Gradient = Instance.new("UIGradient", Title)
+                
+                Tag.Brightness = 2
+                Tag.Size = UDim2.new(4, 0, 1, 0)
+                Tag.StudsOffsetWorldSpace = Vector3.new(0, 5, 0)
+                
+                Title.BackgroundTransparency = 1
+                Title.Size = UDim2.new(1, 0, .6, 0)
+                Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+                Title.TextScaled = true
+                
+                Rank.AnchorPoint = Vector2.new(.5, 0)
+                Rank.BackgroundTransparency = 1
+                Rank.Position = UDim2.new(.5, 0, .65, 0)
+                Rank.Size = UDim2.new(.75, 0, .5, 0)
+                Rank.TextColor3 = Color3.fromRGB(0, 0, 0)
+                Rank.TextScaled = true
+                Rank.Text = "< Anti Chat-Logger >"
+                
+                Gradient.Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color3.new(.75, .75, .75)),
+                    ColorSequenceKeypoint.new(.27, Color3.new(0, 0, 0)),
+                    ColorSequenceKeypoint.new(.5, Color3.new(.3, 0, .5)),
+                    ColorSequenceKeypoint.new(0.78, Color3.new(0, 0, 0)),
+                    ColorSequenceKeypoint.new(1, Color3.new(.75, .75, .75))
+                })
+                Gradient.Offset = Vector2.new(-1, 0)
+                
+                local GradientTeen = Tween(Gradient, 2, "Circular", "Out", {Offset = Vector2.new(1, 0)})
+                
+                function PlayAnimation()
+                    GradientTeen:Play()
+                    GradientTeen.Completed:Wait()
+                    Gradient.Offset = Vector2.new(-1, 0)
+                    task.wait(.75)
+                    PlayAnimation()
+                end
+                
+                local AddTitle = function(Character)
+                    repeat task.wait() until Character
+                    
+                    local Humanoid = Character and Character:WaitForChild("Humanoid")
+                    local RootPart = Humanoid and Humanoid.RootPart
+                    
+                    if Humanoid then
+                        Humanoid:GetPropertyChangedSignal("RootPart"):Connect(function()
+                            if Humanoid.RootPart then
+                                Tag.Adornee = RootPart
+                            end
+                        end)
+                    end
+                    
+                    if RootPart then
+                        Tag.Adornee = RootPart
+                    end
+                end
+                
+                task.spawn(PlayAnimation)
+                
+                for _, x in next, Players:GetPlayers() do
+                    if table.find(UserIds, x.UserId) then
+                        Tag.Parent = workspace.Terrain
+                        Title.Text = x.Name
+                        AddTitle(x.Character)
+                        x.CharacterAdded:Connect(AddTitle)
+                    end
+                end
+                
+                Players.PlayerAdded:Connect(function(x)
+                    if table.find(UserIds, x.UserId) then
+                        Tag.Parent = workspace.Terrain
+                        Title.Text = x.Name
+                        x.CharacterAdded:Connect(AddTitle)
+                    end
+                end)
+                
+                Players.PlayerRemoving:Connect(function(x)
+                    if table.find(UserIds, x.UserId) then
+                        Tag.Parent = game
+                    end
+                end)
+            end)
+
+            for _, x in next, OldCoreTypeSettings do
+                if not x then
+                    StarterGui:SetCore("ChatActive", false)
+                end
+                StarterGui:SetCoreGuiEnabled(_, x)
+            end
+
+            if OldCoreSetting then
+                StarterGui:SetCore("CoreGuiChatConnections", OldCoreSetting)
+            end
+
+            if StarterGui:GetCore("ChatActive") then
+                StarterGui:SetCore("ChatActive", false)
+                StarterGui:SetCore("ChatActive", true)
+            end
+
+            --Metatable.__namecall = CoreHook
+            if CoreHook then
+                setmetatable(Metatable, {__namecall = CoreHook}) 
+            end
+            setreadonly(Metatable, true)
+
+            Notify(NotificationTitle, "Anti Chat & Screenshot Logger Loaded!", 15)
+            print(string.format("AnthonyIsntHere's Anti Chat-Logger has loaded in %s seconds.", string.format("%.2f", tostring(tick() - ACL_LoadTime))))
+        end,})
+    else
+        getgenv().notify("Warning:", "Your executor does not support hookfunction or hookmetamethod.", 5)
+        warn("Hookmetamethod or hookfunction not supported, skipping anti chat log/anti screenshot.")
+    end
     wait(0.2)
     local textChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
     local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
@@ -9067,14 +10132,13 @@
     getgenv().ClearChatMsgs = Tab4:CreateButton({
     Name = "Clear Chat Messages",
     Callback = function()
-        getgenv().sending_async(".")
-        task.wait(0.2)
-        getgenv().sending_async(".")
-        task.wait(0.2)
-        getgenv().sending_async(".")
-        task.wait(0.2)
-        getgenv().sending_async(".")
-        task.wait(0.2)
+        for i = 1, 5 do
+            getgenv().sending_async(".")
+        end
+        for i = 1, 300 do
+            getgenv().Players:Chat("???????????")
+        end
+        task.wait(0.3)
         getgenv().sending_async("/cls")
     end,})
 
@@ -9082,139 +10146,129 @@
     getgenv().RAINBOW_MODE = false
     wait()
     if Drawing then
-        local tracer_settings = {
-            enabled = false,
-            tracer_lines = {},
-            player_added_starter = nil,
-            player_removing_starter = nil,
-            update_conn = nil,
-            color = Color3.fromRGB(255, 0, 0)
-        }
-
-        getgenv().RAINBOW_MODE = getgenv().RAINBOW_MODE or false
-
-        local Players = game:GetService("Players")
-        local RunService = game:GetService("RunService")
-        local LocalPlayer = Players.LocalPlayer
-        local Camera = workspace.CurrentCamera
-
-        local ESP_ENABLED = false
-        local BOX_THICKNESS = 2
-        local TEAM_CHECK = true
         local ESP_Boxes = {}
-
+        local Connections = {}
         local RenderConnection = nil
+        local BOX_ESP_ENABLED = true
 
-        local function CreateDrawing(type)
-            local drawing = Drawing.new(type)
-            drawing.Visible = false
-            drawing.Thickness = BOX_THICKNESS
-            drawing.Color = Color3.new(1, 1, 1)
-            return drawing
-        end
-
-        local function CreateESP(character)
-            if not character or not character:FindFirstChild("HumanoidRootPart") then return end
-            
-            local box = {
-                Top = CreateDrawing("Line"),
-                Bottom = CreateDrawing("Line"),
-                Left = CreateDrawing("Line"),
-                Right = CreateDrawing("Line")
+        local function init_box_lines()
+            return {
+                TL = Drawing.new("Line"),
+                TR = Drawing.new("Line"),
+                BL = Drawing.new("Line"),
+                BR = Drawing.new("Line"),
             }
-            
-            ESP_Boxes[character] = box
-            return box
         end
 
-        local function GetRainbowColor()
-            local hue = tick() % 6 / 6
-            return Color3.fromHSV(hue, 1, 1)
+        local function delete_box(box)
+            if box then
+                for _, line in pairs(box) do
+                    if line and line.Remove then
+                        line:Remove()
+                    elseif line and line.Destroy then
+                        line:Destroy()
+                    end
+                end
+            end
         end
 
-        local function UpdateESP(character, box)
-            if not character or not character:FindFirstChild("HumanoidRootPart") or not character:FindFirstChild("Humanoid") then
-                for _, line in pairs(box) do
-                    line.Visible = false
-                end
+        local function remove_box_esp(player)
+            delete_box(ESP_Boxes[player])
+            ESP_Boxes[player] = nil
+        end
+
+        local function refresh_box(player, box)
+            local character = player.Character or player.CharacterAdded:Wait()
+            local hrp = character and character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart", 0.3)
+            if not hrp then
+                delete_box(box)
+                ESP_Boxes[player] = nil
                 return
             end
-            
-            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-            local humanoid = character:FindFirstChild("Humanoid")
-            
-            if humanoid.Health <= 0 then
-                for _, line in pairs(box) do
-                    line.Visible = false
-                end
-                return
-            end
-            
-            local player = Players:GetPlayerFromCharacter(character)
-            if TEAM_CHECK and player and player.Team == LocalPlayer.Team then
-                for _, line in pairs(box) do
-                    line.Visible = false
-                end
-                return
-            end
-            
-            local rootPos, onScreen = Camera:WorldToViewportPoint(humanoidRootPart.Position)
+
+            local pos, onScreen = Camera:WorldToViewportPoint(hrp.Position)
             if not onScreen then
                 for _, line in pairs(box) do
                     line.Visible = false
                 end
                 return
             end
-            
-            local size = Vector3.new(4, 6, 4)
-            local topLeft = Camera:WorldToViewportPoint(humanoidRootPart.Position - size/2)
-            local bottomRight = Camera:WorldToViewportPoint(humanoidRootPart.Position + size/2)
-            
-            local color = getgenv().RAINBOW_MODE and GetRainbowColor() or Color3.new(1, 1, 1)
-            
-            box.Top.From = Vector2.new(topLeft.X, topLeft.Y)
-            box.Top.To = Vector2.new(bottomRight.X, topLeft.Y)
-            box.Bottom.From = Vector2.new(topLeft.X, bottomRight.Y)
-            box.Bottom.To = Vector2.new(bottomRight.X, bottomRight.Y)
-            box.Left.From = Vector2.new(topLeft.X, topLeft.Y)
-            box.Left.To = Vector2.new(topLeft.X, bottomRight.Y)
-            box.Right.From = Vector2.new(bottomRight.X, topLeft.Y)
-            box.Right.To = Vector2.new(bottomRight.X, bottomRight.Y)
-            
+
+            local sizeY = 3
+            local height = 80
+            local width = 80
+
+            local topLeft = Vector2.new(pos.X - width, pos.Y - height)
+            local topRight = Vector2.new(pos.X + width, pos.Y - height)
+            local bottomLeft = Vector2.new(pos.X - width, pos.Y + height)
+            local bottomRight = Vector2.new(pos.X + width, pos.Y + height)
+
+            box.TL.From = topLeft
+            box.TL.To = topRight
+
+            box.TR.From = topRight
+            box.TR.To = bottomRight
+
+            box.BR.From = bottomRight
+            box.BR.To = bottomLeft
+
+            box.BL.From = bottomLeft
+            box.BL.To = topLeft
+
             for _, line in pairs(box) do
-                line.Color = color
-                line.Visible = ESP_ENABLED
+                line.Color = Color3.fromRGB(255, 0, 0)
+                line.Thickness = 1
+                line.Visible = true
             end
         end
 
-        local function PlayerAdded(player)
-            player.CharacterAdded:Connect(function(character)
-                local box = CreateESP(character)
-                if box then
-                    ESP_Boxes[character] = box
+        local function box_esp_main(player)
+            if player == LocalPlayer then return end
+            if ESP_Boxes[player] then return end
+
+            local function handle_char(char)
+                if ESP_Boxes[player] then
+                    delete_box(ESP_Boxes[player])
                 end
-            end)
+                ESP_Boxes[player] = init_box_lines()
+
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum then
+                    local conn = hum.Died:Connect(function()
+                        delete_box(ESP_Boxes[player])
+                        ESP_Boxes[player] = nil
+                    end)
+                    table.insert(Connections, conn)
+                end
+            end
+
+            if player.Character then
+                handle_char(player.Character)
+            end
+
+            local conn = player.CharacterAdded:Connect(handle_char)
+            table.insert(Connections, conn)
         end
+
+        local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 
         getgenv().EspBox = Tab19:CreateToggle({
         Name = "Box",
         CurrentValue = false,
         Flag = "TogglingBoxESP",
         Callback = function(box_Esp)
-            ESP_ENABLED = box_Esp
-            
-            if ESP_ENABLED then
-                for _, player in pairs(Players:GetPlayers()) do
-                    if player ~= LocalPlayer then
-                        PlayerAdded(player)
-                    end
+            if box_Esp then
+                for _, player in ipairs(Players:GetPlayers()) do
+                    box_esp_main(player)
                 end
-                Players.PlayerAdded:Connect(PlayerAdded)
-                
-                if not RenderConnection then
+
+                table.insert(Connections, Players.PlayerAdded:Connect(box_esp_main))
+                table.insert(Connections, Players.PlayerRemoving:Connect(remove_box_esp))
+
+                if box_Esp then
                     RenderConnection = RunService.RenderStepped:Connect(function()
-                        for character, box in pairs(ESP_Boxes) do
-                            UpdateESP(character, box)
+                        for player, box in pairs(ESP_Boxes) do
+                            refresh_box(player, box)
                         end
                     end)
                 end
@@ -9223,354 +10277,237 @@
                     RenderConnection:Disconnect()
                     RenderConnection = nil
                 end
-                for character, box in pairs(ESP_Boxes) do
-                    for _, line in pairs(box) do
-                        line:Remove()
-                    end
-                    ESP_Boxes[character] = nil
+                for _, conn in ipairs(Connections) do
+                    conn:Disconnect()
                 end
+                for _, box in pairs(ESP_Boxes) do
+                    delete_box(box)
+                end
+                table.clear(ESP_Boxes)
+                table.clear(Connections)
             end
         end,})
-
-        getgenv().TracersToggleMain = Tab19:CreateToggle({
-        Name = "Tracers",
-        CurrentValue = false,
-        Flag = "tracersOnActive",
-        Callback = function(runTracersScript)
-            wait(1)
-            if runTracersScript then
-                getgenv().tracers_esp_enabled = true
-                tracer_settings.enabled = true
-                wait()
-                local run_service = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-                local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-                local camera = workspace.CurrentCamera
-
-                local function remove_tracer(player)
-                    if tracer_settings.tracer_lines[player] then
-                        tracer_settings.tracer_lines[player]:Remove()
-                        tracer_settings.tracer_lines[player] = nil
-                    end
-                end
-
-                local function create_tracer(player)
-                    if not tracer_settings.enabled then return end
-                    if not player.Character then return end
-
-                    local char = player.Character
-                    local root_part = char:FindFirstChild("HumanoidRootPart")
-                    if not root_part then return end
-
-                    local tracer = Drawing.new("Line")
-                    tracer.Thickness = 2
-                    tracer.Color = tracer_settings.color
-                    tracer.Visible = false
-
-                    tracer_settings.tracer_lines[player] = tracer
-                end
-
-                local function update_tracers()
-                    if not tracer_settings.enabled then
-                        for _, tracer in pairs(tracer_settings.tracer_lines) do
-                            if tracer then tracer:Remove() end
-                        end
-                        table.clear(tracer_settings.tracer_lines)
-                        return
-                    end
-
-                    for player, tracer in pairs(tracer_settings.tracer_lines) do
-                        local char = player.Character
-                        if char and char:FindFirstChild("HumanoidRootPart") and player ~= players.LocalPlayer then
-                            local root_part = char.HumanoidRootPart
-                            local screen_pos, on_screen = camera:WorldToViewportPoint(root_part.Position)
-
-                            if on_screen then
-                                tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y)
-                                tracer.To = Vector2.new(screen_pos.X, screen_pos.Y)
-                                tracer.Visible = true
-
-                                if getgenv().RAINBOW_MODE == true then
-                                    local hue = tick() % 5 / 5
-                                    tracer.Color = Color3.fromHSV(hue, 1, 1)
-                                else
-                                    tracer.Color = tracer_settings.color
-                                end
-                            else
-                                tracer.Visible = false
-                            end
-                        else
-                            tracer.Visible = false
-                        end
-                    end
-                end
-
-                local function on_player_added(player)
-                    player.CharacterAdded:Connect(function()
-                        repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                        create_tracer(player)
-                    end)
-                end
-
-                for _, player in ipairs(players:GetPlayers()) do
-                    if player ~= players.LocalPlayer then
-                        on_player_added(player)
-                        if player.Character then create_tracer(player) end
-                    end
-                end
-
-                wait()
-                if tracer_settings.player_added_starter then
-                    tracer_settings.player_added_starter:Disconnect()
-                end
-                tracer_settings.player_added_starter = players.PlayerAdded:Connect(on_player_added)
-
-                if tracer_settings.player_removing_starter then
-                    tracer_settings.player_removing_starter:Disconnect()
-                end
-                tracer_settings.player_removing_starter = players.PlayerRemoving:Connect(remove_tracer)
-
-                if tracer_settings.update_conn then
-                    tracer_settings.update_conn:Disconnect()
-                end
-                tracer_settings.update_conn = run_service.RenderStepped:Connect(update_tracers)
-            else
-                wait(0.5)
-                if tracer_settings then
-                    getgenv().tracers_esp_enabled = false
-                    tracer_settings.enabled = false
-                    wait()
-                    for _, tracer in pairs(tracer_settings.tracer_lines) do
-                        if tracer then tracer:Remove() end
-                    end
-                    table.clear(tracer_settings.tracer_lines)
-                    wait()
-                    for _, tracer in pairs(tracer_settings.tracer_lines) do
-                        if tracer then tracer:Remove() end
-                    end
-                    table.clear(tracer_settings.tracer_lines)
-                    wait()
-                    if tracer_settings.player_added_starter then
-                        tracer_settings.player_added_starter:Disconnect()
-                        tracer_settings.player_added_starter = nil
-                    end
-
-                    if tracer_settings.player_removing_starter then
-                        tracer_settings.player_removing_starter:Disconnect()
-                        tracer_settings.player_removing_starter = nil
-                    end
-
-                    if tracer_settings.update_conn then
-                        tracer_settings.update_conn:Disconnect()
-                        tracer_settings.update_conn = nil
-                    end
-                end
-            end
-        end,})
-        wait()
-        local skeleton_settings = {
-            enabled = false,
-            skeleton_lines = {},
-            player_added_starter = nil,
-            player_removing_starter = nil,
-            update_conn = nil
-        }
-        wait(0.2)
-        --[[getgenv().SkeletonESP_Drawing = Tab19:CreateToggle({
-        Name = "Skeleton",
-        CurrentValue = false,
-        Flag = "ToggleSkeletonESP",
-        Callback = function(ez_skelly_esp)
-            wait(1)
-            if ez_skelly_esp then
-                getgenv().skeleton_esp_enabled = true
-                skeleton_settings.enabled = true
-                local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-                local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-                local camera = workspace.CurrentCamera
-
-                local bone_connections = {
-                    {"Head", "UpperTorso"},
-                    {"UpperTorso", "LowerTorso"},
-                    {"LeftUpperArm", "LeftLowerArm"},
-                    {"LeftLowerArm", "LeftHand"},
-                    {"RightUpperArm", "RightLowerArm"},
-                    {"RightLowerArm", "RightHand"},
-                    {"LeftUpperLeg", "LeftLowerLeg"},
-                    {"LeftLowerLeg", "LeftFoot"},
-                    {"RightUpperLeg", "RightLowerLeg"},
-                    {"RightLowerLeg", "RightFoot"},
-                    {"UpperTorso", "LeftUpperArm"},
-                    {"UpperTorso", "RightUpperArm"},
-                    {"LowerTorso", "LeftUpperLeg"},
-                    {"LowerTorso", "RightUpperLeg"},
-                }
-
-                local function create_skeleton(player)
-                    if not skeleton_settings.enabled then return end
-                    if not player.Character then return end
-                    task.wait(0.5)
-
-                    local char = player.Character
-                    local lines = {}
-
-                    for _, bone in ipairs(bone_connections) do
-                        local line = Drawing.new("Line")
-                        line.Thickness = 2
-                        line.Color = Color3.fromRGB(255, 0, 0)
-                        line.Visible = false
-                        lines[bone[1] .. "_" .. bone[2]]--]] = line
-                    --[[end
-
-                    skeleton_settings.skeleton_lines[player] = lines
-                end
-
-                local function remove_skeleton(player)
-                    if skeleton_settings.skeleton_lines[player] then
-                        for _, line in pairs(skeleton_settings.skeleton_lines[player]) do
-                            line:Remove()
-                        end
-                        skeleton_settings.skeleton_lines[player] = nil
-                    end
-                end
-
-                local function update_skeletons()
-                    task.wait(0.5)
-                    if not skeleton_settings.enabled then
-                        for _, skeleton in pairs(skeleton_settings.skeleton_lines) do
-                            for _, line in pairs(skeleton) do
-                                line:Remove()
-                            end
-                        end
-                        table.clear(skeleton_settings.skeleton_lines)
-                        return 
-                    end
-
-                    for player, lines in pairs(skeleton_settings.skeleton_lines) do
-                        local char = player.Character
-                        if char and char:FindFirstChild("HumanoidRootPart") and player ~= players.LocalPlayer then
-                            for _, bone in ipairs(bone_connections) do
-                                local part1, part2 = char:FindFirstChild(bone[1]), char:FindFirstChild(bone[2])
-                                if part1 and part2 then
-                                    task.wait(0.5)
-                                    local pos1, onScreen1 = camera:WorldToViewportPoint(part1.Position)
-                                    local pos2, onScreen2 = camera:WorldToViewportPoint(part2.Position)
-
-                                    local line = lines[bone[1] .. "_" .. bone[2]--]]
-                                    --[[if onScreen1 and onScreen2 then
-                                        line.From = Vector2.new(pos1.X, pos1.Y)
-                                        line.To = Vector2.new(pos2.X, pos2.Y)
-                                        line.Visible = true
-
-                                        if getgenv().RAINBOW_MODE == true then
-                                            local hue = tick() % 5 / 5
-                                            line.Color = Color3.fromHSV(hue, 1, 1)
-                                        end
-                                    else
-                                        line.Visible = false
-                                    end
-                                end
-                            end
-                        else
-                            remove_skeleton(player)
-                        end
-                    end
-                end
-
-                local function on_player_added(player)
-                    player.CharacterAdded:Connect(function()
-                        repeat task.wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                        task.wait(0.5)
-                        create_skeleton(player)
-                    end)
-                end
-
-                for _, player in ipairs(players:GetPlayers()) do
-                    if player ~= players.LocalPlayer then
-                        task.wait(0.5)
-                        on_player_added(player)
-                        if player.Character then task.wait(0.5) create_skeleton(player) end
-                    end
-                end
-
-                if skeleton_settings.player_added_starter then
-                    skeleton_settings.player_added_starter:Disconnect()
-                end
-                skeleton_settings.player_added_starter = players.PlayerAdded:Connect(on_player_added)
-
-                if skeleton_settings.player_removing_starter then
-                    skeleton_settings.player_removing_starter:Disconnect()
-                end
-                skeleton_settings.player_removing_starter = players.PlayerRemoving:Connect(remove_skeleton)
-
-                if skeleton_settings.update_conn then
-                    skeleton_settings.update_conn:Disconnect()
-                end
-                skeleton_settings.update_conn = runService.RenderStepped:Connect(update_skeletons)
-            else
-                wait(0.5)
-                if skeleton_settings then
-                    skeleton_settings.enabled = false
-                    getgenv().skeleton_esp_enabled = false
-
-                    for _, skeleton in pairs(skeleton_settings.skeleton_lines) do
-                        for _, line in pairs(skeleton) do
-                            line:Remove()
-                        end
-                    end
-                    table.clear(skeleton_settings.skeleton_lines)
-                    wait(0.3)
-                    for _, skeleton in pairs(skeleton_settings.skeleton_lines) do
-                        for _, line in pairs(skeleton) do
-                            line:Remove()
-                        end
-                    end
-                    table.clear(skeleton_settings.skeleton_lines)
-                    wait(0.1)
-                    if skeleton_settings.player_added_starter then
-                        skeleton_settings.player_added_starter:Disconnect()
-                        skeleton_settings.player_added_starter = nil
-                    end
-
-                    if skeleton_settings.player_removing_starter then
-                        skeleton_settings.player_removing_starter:Disconnect()
-                        skeleton_settings.player_removing_starter = nil
-                    end
-
-                    if skeleton_settings.update_conn then
-                        skeleton_settings.update_conn:Disconnect()
-                        skeleton_settings.update_conn = nil
-                    end
-                end
-                wait(0.3)
-                getgenv().skeleton_esp_enabled = false
-            end
-        end,})--]]
     else
-        warn("❌ - Drawing - ❌ | Unsupported, ESP is not able to load due to 'Drawing' being unsupported or unavailable.")
+        warn("❌ - Drawing - ❌ | Unsupported, ESP is not able to initialize due to 'Drawing' being unsupported or unavailable.")
     end
-    wait()
+
+    local highlights = {}
+    local connections = {}
+    local highlight_color = Color3.fromRGB(255, 255, 255)
+    local rainbow_connection
+
+    local function Highlight(player)
+        if player == LocalPlayer then return end
+        local char = player.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+
+        if highlights[player] and highlights[player].Adornee == char then return end
+
+        if highlights[player] then
+            highlights[player]:Destroy()
+            highlights[player] = nil
+        end
+
+        local hl = Instance.new("Highlight")
+        hl.Name = "ESP_Highlight"
+        hl.Adornee = char
+        hl.FillColor = highlight_color
+        hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+        hl.FillTransparency = 0.5
+        hl.OutlineTransparency = 0
+        hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        hl.Parent = char
+        highlights[player] = hl
+    end
+
+    local function RemoveHighlight(player)
+        if highlights[player] then
+            highlights[player]:Destroy()
+            highlights[player] = nil
+        end
+    end
+
+    wait(0.2)
+    local function disconnect_all()
+        for _, conn in ipairs(connections) do
+            if conn.Disconnect then conn:Disconnect() end
+        end
+        table.clear(connections)
+    end
+
+    local function clear_highlights()
+        for _, hl in pairs(highlights) do
+            if hl and hl.Destroy then
+                hl:Destroy()
+            end
+        end
+        table.clear(highlights)
+    end
+
+    function shutdown_esp()
+        disconnect_all()
+        clear_highlights()
+        if rainbow_connection then
+            rainbow_connection:Disconnect()
+            rainbow_connection = nil
+        end
+    end
+
+    getgenv().InfYield_ESP = Tab19:CreateToggle({
+    Name = "Infinite Yield Player ESP",
+    CurrentValue = false,
+    Flag = "MainESP_InfYield",
+    Callback = function(esp_inf_yield)
+        if esp_inf_yield then
+            if not getgenv().Holder_Frame then
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/Infinite_Premium.lua'))()
+                wait(0.5)
+                if getgenv().execCmd then
+                    getgenv().execCmd("esp")
+                    task.wait(.5)
+                    getgenv().notify("Success:", "Infinite Yield ESP has been loaded successfully!", 5)
+                else
+                    getgenv().InfYield_ESP:Set(false)
+                    return getgenv().notify("Failure:", "Load Infinite Premium to load this ESP!", 5)
+                end
+            elseif getgenv().Holder_Frame then
+                if getgenv().execCmd then
+                    getgenv().execCmd("esp")
+                    task.wait(.5)
+                    getgenv().notify("Success:", "Infinite Yield ESP has been loaded successfully!", 5)
+                end
+            end
+        else
+            if getgenv().Holder_Frame then
+                if getgenv().execCmd then
+                    getgenv().execCmd("unesp")
+                    task.wait(0.3)
+                    getgenv().notify("Success:", "Successfully unloaded Infinite Yield ESP", 5)
+                else
+                    return getgenv().notify("Failure:", "Infinite Premium is needed to run this ESP!", 5)
+                end
+            else
+                return getgenv().notify("Heads Up:", "Could not find Infinite Yield, ESP not on.", 5)
+            end
+        end
+    end,})
+
+    wait(0.2)
+    getgenv().HighlightESP_Drawing = Tab19:CreateToggle({
+    Name = "Highlight",
+    CurrentValue = false,
+    Flag = "ToggleHighlightESP",
+    Callback = function(ez_highlight_esp)
+        wait(0.4)
+        if ez_highlight_esp then
+            local Players = getgenv().Players
+            local LocalPlayer = getgenv().LocalPlayer
+            local RunService = getgenv().RunService
+
+            local function onCharacterAdded(player, character)
+                local function tryAdd()
+                    if character:FindFirstChild("HumanoidRootPart") then
+                        Highlight(player)
+                    else
+                        local attempts = 0
+                        local connection
+                        connection = RunService.RenderStepped:Connect(function()
+                            attempts += 1
+                            if character:FindFirstChild("HumanoidRootPart") then
+                                Highlight(player)
+                                connection:Disconnect()
+                            elseif attempts > 20 then
+                                connection:Disconnect()
+                            end
+                        end)
+                        table.insert(connections, connection)
+                    end
+                end
+
+                tryAdd()
+
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    local conn = humanoid.Died:Connect(function()
+                        RemoveHighlight(player)
+                    end)
+                    table.insert(connections, conn)
+                end
+            end
+
+            local function onPlayerAdded(player)
+                if player == LocalPlayer then return end
+
+                if player.Character then
+                    onCharacterAdded(player, player.Character)
+                end
+
+                local conn = player.CharacterAdded:Connect(function(char)
+                    onCharacterAdded(player, char)
+                end)
+                table.insert(connections, conn)
+            end
+
+            local function onPlayerRemoving(player)
+                RemoveHighlight(player)
+            end
+
+            for _, p in ipairs(Players:GetPlayers()) do
+                onPlayerAdded(p)
+            end
+
+            table.insert(connections, Players.PlayerAdded:Connect(onPlayerAdded))
+            table.insert(connections, Players.PlayerRemoving:Connect(onPlayerRemoving))
+        else
+            shutdown_esp()
+        end
+    end,})
+
     getgenv().RainbowMode = Tab19:CreateToggle({
-    Name = "Rainbow Mode (For ESP)",
+    Name = "Rainbow Mode (For Highlight ESP)",
     CurrentValue = false,
     Flag = "rainbowModeActive",
     Callback = function(doRainbowFunc)
         if doRainbowFunc then
             getgenv().RAINBOW_MODE = true
+            local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+            local hue = 0
+
+            rainbow_connection = RunService.RenderStepped:Connect(function()
+                hue = (hue + 0.005) % 1
+                local color = Color3.fromHSV(hue, 1, 1)
+
+                for _, hl in pairs(highlights) do
+                    if hl and hl:IsA("Highlight") then
+                        hl.FillColor = color
+                        hl.OutlineColor = color
+                    end
+                end
+            end)
         else
             getgenv().RAINBOW_MODE = false
+            if rainbow_connection then
+                rainbow_connection:Disconnect()
+                rainbow_connection = nil
+            end
         end
     end,})
     wait(0.2)
     if getgenv().RAINBOW_MODE == true then
         getgenv().RainbowMode:Set(false)
+        getgenv().RAINBOW_MODE = false
     end
 
-    getgenv().ESPColorPicker = Tab19:CreateColorPicker({
-    Name = "ESP Color",
+    getgenv().HighlightColorPicker = Tab19:CreateColorPicker({
+    Name = "Highlight Color",
     Color = Color3.fromRGB(255,255,255),
-    Flag = "ChangeESPColorVal",
+    Flag = "ChangeHighlightColorVal",
     Callback = function(esp_color_selected)
-        getgenv().color_for_esp_value = esp_color_selected
+        for _, hl in pairs(highlights) do
+            if hl and hl:IsA("Highlight") then
+                hl.FillColor = newColor
+            end
+        end
     end,})
 
     getgenv().GetFakeChatGUI = Tab4:CreateButton({
@@ -9963,15 +10900,22 @@
                     getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Teleport Tool"):Destroy()
                 end
                 wait(0.1)
-                local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
-                FakeCharacter.HumanoidRootPart.CFrame = RealCharacter.HumanoidRootPart.CFrame
+                local StoredCF
+                if FakeCharacter and FakeCharacter:FindFirstChild("Humanoid") and FakeCharacter:FindFirstChild("HumanoidRootPart") then
+                    StoredCF = FakeCharacter:FindFirstChild("HumanoidRootPart").CFrame
+                end
+                if FakeCharacter and FakeCharacter:FindFirstChild("Humanoid") and FakeCharacter:FindFirstChild("HumanoidRootPart") then
+                    FakeCharacter:FindFirstChild("HumanoidRootPart").CFrame = RealCharacter:FindFirstChild("HumanoidRootPart").CFrame
+                elseif not FakeCharacter:FindFirstChild("HumanoidRootPart") then
+                    FakeCharacter:WaitForChild("HumanoidRootPart", 1).CFrame = RealCharacter:WaitForChild("HumanoidRootPart", 0.5).CFrame
+                end
                 
-                RealCharacter.HumanoidRootPart.CFrame = StoredCF
+                RealCharacter:WaitForChild("HumanoidRootPart", 0.5).CFrame = StoredCF
                 
-                FakeCharacter.Humanoid:UnequipTools()
+                FakeCharacter:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
                 Player.Character = RealCharacter
-                Workspace_Service.CurrentCamera.CameraSubject = RealCharacter.Humanoid
-                PseudoAnchor = FakeCharacter.HumanoidRootPart
+                getgenv().Camera.CameraSubject = RealCharacter:FindFirstChildWhichIsA("Humanoid")
+                PseudoAnchor = FakeCharacter:WaitForChild("HumanoidRootPart", 0.5)
                 for i, v in pairs(FakeCharacter:GetChildren()) do
                     if v:IsA("LocalScript") then
                         v.Disabled = true
@@ -9982,8 +10926,8 @@
             end
         end
 
-        local User_Input_Service = game:GetService("UserInputService")
-        local Sound_Service = game:GetService("SoundService")
+        local User_Input_Service = getgenv().UserInputService
+        local Sound_Service = getgenv().SoundService
         
         User_Input_Service.InputBegan:Connect(function(key, gamep)
             if gamep then
@@ -10009,7 +10953,7 @@
     wait(0.1)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().TeleportToCrossroadsMap = Tab10:CreateButton({
-        Name = "TP To Crossroads Map (Only for Zacks Easy Hub users)",
+        Name = "TP To Crossroads Map (Only for Flames Hub users)",
         Callback = function()
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanooid:ChangeState(3)
@@ -10021,7 +10965,7 @@
         end,})
 
         getgenv().TeleportToModernHouseMap = Tab10:CreateButton({
-        Name = "TP To Modern House Map (Only for Zacks Easy Hub users)",
+        Name = "TP To Modern House Map (Only for Flames Hub users)",
         Callback = function()
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
@@ -10033,7 +10977,7 @@
         end,})
 
         --[[getgenv().Prison_Life_Map_TP = Tab10:CreateButton({
-        Name = "TP To Prison Life (Only for Zacks Easy Hub users)",
+        Name = "TP To Prison Life (Only for Flames Hub users)",
         Callback = function()
             local Workspace = getgenv().Workspace
             local Prison_Life_Map = Workspace:FindFirstChild("Prison_Life")
@@ -10061,7 +11005,7 @@
         end,})
 
         getgenv().Teleport_To_VIBE_NYC_Map = Tab10:CreateButton({
-        Name = "TP To VIBE NYC Map (Only for Zacks Easy Hub users)",
+        Name = "TP To VIBE NYC Map (Only for Flames Hub users)",
         Callback = function()
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
@@ -10620,12 +11564,12 @@
     end
 
     getgenv().InfYield = Tab5:CreateButton({
-    Name = "Infinite Yield",
+    Name = "Infinite Premium (Infinite Yield Upgraded).",
     Callback = function()
         if getgenv().inf_yield_side then
             return getgenv().notify("Alert!", "Infinite Yield has already been loaded.", 6)
         else
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua", true))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/Infinite_Premium.lua", true))()
             getgenv().notify("Heads Up!", "We have now defaulted to a new Infinite Yield script [mine].", 5)
             getgenv().inf_yield_side = true
         end
@@ -10688,6 +11632,30 @@
         Callback = function()
             getgenv().Humanoid.JumpHeight = 7
             getgenv().HeightJumpPowerSliding:Set(7)
+        end,})
+    end
+
+    if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+        getgenv().HipHeightSliding = Tab2:CreateSlider({
+        Name = "HipHeight (R15), Default: 2",
+        Range = {1, 300},
+        Increment = 1,
+        Suffix = "",
+        CurrentValue = 2,
+        Flag = "HipHeightValue",
+        Callback = function(hipValue)
+            getgenv().Humanoid.HipHeight = hipValue
+        end,})
+    else
+        getgenv().HipHeightSliding = Tab2:CreateSlider({
+        Name = "HipHeight (R6), Default: 0",
+        Range = {0, 300},
+        Increment = 1,
+        Suffix = "",
+        CurrentValue = 0,
+        Flag = "HipHeightValue",
+        Callback = function(hipValue)
+            getgenv().Humanoid.HipHeight = hipValue
         end,})
     end
 
@@ -10902,7 +11870,7 @@
 
     getgenv().AmbientChooser = Tab9:CreateColorPicker({
     Name = "Ambient Color",
-    Color = Color3.fromRGB(70, 70, 70),
+    Color = getgenv().Lighting.Ambient,
     Flag = "AmbientChoosingColor",
     Callback = function(color_ambient)
         getgenv().Lighting.Ambient = color_ambient
@@ -11304,7 +12272,7 @@
             getgenv().doFreezeToggle = false
         end
     end,})
-    wait()
+    wait(0.1)
     if getgenv().doFreezeToggle == true then
         getgenv().FreezeEmotesToggle:Set(false)
         getgenv().doFreezeToggle = false
@@ -11335,6 +12303,10 @@
     getgenv().StopAllEmotes = Tab12:CreateButton({
     Name = "Stop Playing Emotes",
     Callback = function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+        end
+
         getgenv().emoting_actions()
     end,})
 
@@ -11410,6 +12382,12 @@
     Flag = "MutingEveryone",
     Callback = function(TheMuteAll)
         if TheMuteAll then
+            local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
+
+            if not enabled_vc or enabled_vc == false then
+                return getgenv().notify("Failure:", "Your account does not have VoiceChat!", 5)
+            end
+
             getgenv().LmaoGetMuted = true
             while getgenv().LmaoGetMuted == true do
             wait()
@@ -11431,6 +12409,11 @@
     RemoveTextAfterFocusLost = true,
     Callback = function(getAUser)
         local derUser = findplr(getAUser)
+        local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
+
+        if not enabled_vc or enabled_vc == false then
+            return getgenv().notify("Failure:", "Your account does not have VoiceChat!", 5)
+        end
 
         if not derUser then
             return getgenv().notify("Failure!", "User was not found.", 6)
@@ -11477,7 +12460,7 @@
         end
     end,})
 
-    getgenv().ResetButton = Tab15:CreateButton({
+    getgenv().ResetButton = Tab2:CreateButton({
     Name = "Reset",
     Callback = function()
         if getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") then
@@ -11558,7 +12541,7 @@
         warn("Custom UI was not loaded properly.")
     end
 
-    getgenv().ReExecuteGUI = Tab15:CreateButton({
+    getgenv().ReExecuteGUI = Tab1:CreateButton({
     Name = "Re-Execute/Reload Script/GUI",
     Callback = function()
         getgenv().getLoopKick = false
@@ -11574,10 +12557,10 @@
         wait(0.2)
         getgenv().Rayfield:Destroy()
         wait(0.8)
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/total_main.lua')))()
     end,})
-
-    getgenv().DestroyGUIScript = Tab15:CreateButton({
+    wait(0.1)
+    getgenv().DestroyGUIScript = Tab1:CreateButton({
     Name = "Destroy GUI/Script",
     Callback = function()
         getgenv().getLoopKick = false
@@ -11605,6 +12588,11 @@
     RemoveTextAfterFocusLost = true,
     Callback = function(LolPUser)
         local thisUser = findplr(LolPUser)
+        local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
+
+        if not enabled_vc or enabled_vc == false then
+            return getgenv().notify("Failure:", "Your account does not have VoiceChat!", 5)
+        end
 
         if not thisUser then
             getgenv().notify("Failure", "Player was not found.", 5)
@@ -11987,6 +12975,10 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
+
         if not Animate then return end
         
         getgenv().Humanoid.WalkSpeed = 0
@@ -12022,6 +13014,10 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
+
         if not Animate then return end
 
         getgenv().Humanoid.WalkSpeed = 0
@@ -12056,6 +13052,10 @@
         local player = getgenv().LocalPlayer
         local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
+
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
 
         Rthro_Idle_1 = "10921259953"
         Rthro_Idle_2 = "10921258489"
@@ -12100,6 +13100,10 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
+
         if not Animate then return end
 
         getgenv().Humanoid.WalkSpeed = 0
@@ -12134,6 +13138,10 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
 
         if not Animate then return end
 
@@ -12170,6 +13178,10 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
+
         if not Animate then return end
 
         getgenv().Humanoid.WalkSpeed = 0
@@ -12205,6 +13217,10 @@
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
 
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
+
         if not Animate then return end
 
         getgenv().Humanoid.WalkSpeed = 0
@@ -12239,6 +13255,10 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
 
         if not Animate then return end
         getgenv().Humanoid.WalkSpeed = 0
@@ -12269,6 +13289,9 @@
     end)
 
     create_Button(zombieAnim, "Zombie Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Humanoid.WalkSpeed = 0
@@ -12296,6 +13319,9 @@
     end)
 
     create_Button(HeroAnim, "Hero Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Humanoid.WalkSpeed = 0
@@ -12323,6 +13349,9 @@
     end)
 
     create_Button(vampireAnim, "Vampire Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Humanoid.WalkSpeed = 0
@@ -12350,6 +13379,9 @@
     end)
 
     create_Button(mageAnim, "Mage Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Humanoid.WalkSpeed = 0
@@ -12377,6 +13409,9 @@
     end)
 
     create_Button(ghostAnim, "(FE) Ghost Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Humanoid.WalkSpeed = 0
@@ -12404,6 +13439,9 @@
     end)
 
     create_Button(elderAnim, "Elder Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Humanoid.WalkSpeed = 0
@@ -12431,6 +13469,9 @@
     end)
 
     create_Button(LevitationAnim, "Levitation Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12458,6 +13499,9 @@
     end)
 
     create_Button(AstronautAnim, "Astronaut Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12485,6 +13529,9 @@
     end)
 
     create_Button(NinjaAnim, "Ninja Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12512,6 +13559,9 @@
     end)
 
     create_Button(WerewolfAnim, "Werewolf Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12539,6 +13589,9 @@
     end)
 
     create_Button(CartoonAnim, "Cartoon Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12566,6 +13619,9 @@
     end)
 
     create_Button(PirateAnim, "Pirate Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12593,6 +13649,9 @@
     end)
 
     create_Button(SneakyFEAnim, "(FE) Sneaky Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12620,6 +13679,9 @@
     end)
 
     create_Button(ToyAnim, "Toy Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12647,6 +13709,9 @@
     end)
 
     create_Button(KnightAnim, "Knight Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12674,6 +13739,9 @@
     end)
 
     create_Button(ConfidentFEAnim, "(FE) Confident Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12701,6 +13769,9 @@
     end)
 
     create_Button(PopstarFEAnim, "(FE) Popstar Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12728,6 +13799,9 @@
     end)
 
     create_Button(PrincessFEAnim, "(FE) Princess Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12755,6 +13829,9 @@
     end)
 
     create_Button(CowboyFEAnim, "(FE) Cowboy Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12782,6 +13859,9 @@
     end)
 
     create_Button(PatrolFEAnim, "(FE) Patrol Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Humanoid.WalkSpeed = 0
@@ -12809,6 +13889,9 @@
     end)
 
     create_Button(ZombieFEAnim, "(FE) Zombie Animation Package", function()
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
+        end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Humanoid.WalkSpeed = 0
@@ -12840,7 +13923,7 @@
     Name = "System Broken",
     Callback = function()
         -- I modified this whole shit myself, people have copied my System Broken, and to that I say, go to hell!
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/main/source"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/System_Broken.lua"))()
     end,})
     wait()
     local Trip_Settings = {
@@ -13739,7 +14822,7 @@
 
     getgenv().textForFullyLoadedMessage = Tab20:CreateInput({
     Name = "Fully Loaded Message",
-    CurrentValue = readConfigValue("Fully_Loaded_Message") or "Zacks Easy Hub - Winning!",
+    CurrentValue = readConfigValue("Fully_Loaded_Message") or "Flames Hub - Winning!",
     PlaceholderText = "Text Here",
     RemoveTextAfterFocusLost = true,
     Flag = "toStringForFullLoadedMsg",
@@ -13980,7 +15063,7 @@
         getgenv().performance_stats = true
     end
     --[[wait(0.2)
-    getgenv().Easies_Configuration["Fully_Loaded_Message"] = "Zacks Easy Hub - On TOP!"
+    getgenv().Easies_Configuration["Fully_Loaded_Message"] = "Flames Hub - On TOP!"
     wait(0.3)
     if getgenv().fully_loaded_message_script then
         warn("Already loaded fully loaded message.")
@@ -14000,19 +15083,19 @@
     })
     wait(0.2)
     if getgenv().output_already_viewed then
-        warn("Already viewed and injected 'Zacks Easy Hub'")
+        warn("Already viewed and injected 'Flames Hub'")
     else
         if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
             GuiService:SendNotification({
                 Title = "Please wait...",
-                Text = "Attaching Zacks Easy Hub into MIC UP 🔊...",
+                Text = "Attaching Flames Hub into MIC UP 🔊...",
             })
             wait(0.3)
             if not getgenv().Has_Died_Func then
                 if setfpscap then
                     setfpscap(0)
                     wait(0.5)
-                    print("Injecting Zacks Easy Hub...")
+                    print("Injecting Flames Hub...")
                     wait(0.5)
                     getgenv().emoting_actions(0)
                     wait(0.2)
@@ -14042,13 +15125,11 @@
         else
             GuiService:SendNotification({
                 Title = "Please wait...",
-                Text = "Hooking and injecting into this experience...",
+                Text = "Hooking and injecting into: "..tostring(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name),
             })
             wait(0.8)
             if setfpscap then
-                setfpscap(1)
-                wait(0.5)
-                print("Injecting Zacks Easy Hub...")
+                print("Injecting Flames Hub...")
                 wait(1)
                 getgenv().emoting_actions(0)
                 getgenv().emoting_actions(0)
@@ -14058,6 +15139,8 @@
                 getgenv().output_already_viewed = true
                 wait(0.6)
                 setfpscap(999)
+                wait(0.2)
+                print("Done injecting Flames Hub.")
             end
         end
     end
@@ -14070,35 +15153,41 @@
                 Title = "Successful.",
                 Text = "Successfully injected into experience.",
             })
+            getgenv().seen_output_zeh = true
+            return 
         else
             GuiService:SendNotification({
                 Title = "Failure!",
                 Text = "Could not allocate memory to inject into!",
             })
+            getgenv().seen_output_zeh = true
+            return 
         end
-        wait()
-        local function random_hex()
-            local hex = "0x"
-            for i = 1, 8 do
-                hex = hex .. string.format("%X", math.random(0, 15))
+        
+        if getgenv().seen_output_zeh == false then
+            local function random_hex()
+                local hex = "0x"
+                for i = 1, 8 do
+                    hex = hex .. string.format("%X", math.random(0, 15))
+                end
+                return hex
             end
-            return hex
+            wait(0.2)
+            GuiService:SendNotification({
+                Title = "Please wait...",
+                Text = "Starting Watch-Dog Process...",
+            })
+            wait(0.3)
+            GuiService:SendNotification({
+                Title = "Success, Returned:",
+                Text = tostring(random_hex()),
+            })
+            wait(0.1)
+            GuiService:SendNotification({
+                Title = "Initialized!",
+                Text = "We will now provide performance as well whilst you play.",
+            })
+            wait(0.1)
+            getgenv().seen_output_zeh = true
         end
-        wait(0.2)
-        GuiService:SendNotification({
-            Title = "Please wait...",
-            Text = "Starting Watch-Dog Process...",
-        })
-        wait(0.3)
-        GuiService:SendNotification({
-            Title = "Success, Returned:",
-            Text = tostring(random_hex()),
-        })
-        wait(0.1)
-        GuiService:SendNotification({
-            Title = "Initialized!",
-            Text = "We will now provide performance as well whilst you play.",
-        })
-        wait(0.1)
-        getgenv().seen_output_zeh = true
     end
