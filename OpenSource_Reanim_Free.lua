@@ -1287,7 +1287,7 @@ local function setGhostEnabled(newState)
 
         task.delay(0, function()
             if not ghostEnabled then return end
-            ReplicatedStorage.RagdollEvent:FireServer()
+            ReplicatedStorage.Ragdoll:FireServer()
             task.delay(0, function()
                 if not ghostEnabled then return end
                 if updateConnection then updateConnection:Disconnect() end
@@ -1304,7 +1304,7 @@ local function setGhostEnabled(newState)
         if not originalCharacter or not ghostClone then return end
 
         for i = 1, 3 do
-            ReplicatedStorage.UnragdollEvent:FireServer()
+            ReplicatedStorage.Unragdoll:FireServer()
             task.wait(0.1)
         end
 
