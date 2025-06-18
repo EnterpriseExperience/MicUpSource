@@ -2018,7 +2018,7 @@
         getgenv().claimRandomBooth = Tab11:CreateButton({
         Name = "Claim Random Booth",
         Callback = function()
-            local Folder = getgenv().Workspace:FindFirstChild("Booth")
+            local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
             local Character = getgenv().Character
             
             local function getStall()
@@ -2640,7 +2640,7 @@
                     "SourceSans",
                 }
 
-                local Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
 
                 local function getStall()
                     for _, v in pairs(Folder:GetChildren()) do
@@ -2745,7 +2745,7 @@
             local HumanoidRootPart = getgenv().HumanoidRootPart
             
             local function findPlrBooth(player)
-                for _, booth in pairs(Workspace.Booth:GetChildren()) do
+                for _, booth in pairs(Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
                     local usernameLabel = booth:FindFirstChild("Username") and booth.Username:FindFirstChild("BillboardGui") and booth.Username.BillboardGui:FindFirstChild("TextLabel")
                     if usernameLabel and usernameLabel.Text == "Owned by: "..tostring(player) then
                         return booth
@@ -6337,7 +6337,7 @@
                 local Humanoid = getgenv().Humanoid
                 local HumanoidRootPart = getgenv().HumanoidRootPart
                 local GetWorkspace = game:GetService("Workspace")
-                local Folder = GetWorkspace:FindFirstChild("Booth") or GetWorkspace:WaitForChild("Booth") 
+                local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
                 
                 local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
                 local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
@@ -6419,9 +6419,9 @@
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
             local Humanoid = getgenv().Humanoid
-            local HumanoidRootPart = getgenv().HumanoidRootPart
-            local GetWorkspace = game:GetService("Workspace")
-            local Folder = GetWorkspace:FindFirstChild("Booth") or GetWorkspace:WaitForChild("Booth") 
+            local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
+            local GetWorkspace = getgenv().Workspace
+            local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
             
             local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
             local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
@@ -6481,8 +6481,8 @@
             local Character = getgenv().Character
             local Humanoid = getgenv().Humanoid
             local HumanoidRootPart = getgenv().HumanoidRootPart
-            local GetWorkspace = game:GetService("Workspace")
-            local Folder = GetWorkspace:FindFirstChild("Booth") or GetWorkspace:WaitForChild("Booth") 
+            local GetWorkspace = getgenv().Workspace
+            local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
             
             local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
             local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
@@ -11116,11 +11116,11 @@
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth01")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth01")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
@@ -11133,11 +11133,11 @@
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth02")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth02")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
@@ -11150,11 +11150,11 @@
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth03")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth03")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
@@ -11167,11 +11167,11 @@
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth04")
                 Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth04")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
@@ -11184,11 +11184,11 @@
             if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
                 getgenv().Humanoid:ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth05")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth05")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
