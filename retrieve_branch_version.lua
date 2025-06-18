@@ -2980,12 +2980,6 @@
                 v.Transparency = transparency_value_booths
             end
         end
-        task.wait()
-        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
-            if v:IsA("TextLabel") then
-                v.TextTransparency = transparency_value_booths
-            end
-        end
         wait(0.1)
         for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
             if v:IsA("Model") and v:FindFirstChild("Activate") then
@@ -8868,123 +8862,6 @@
     end,})
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        if getgenv().checked_function_elevator then
-            warn("We checked elevator stuff")
-        else
-            local Elevator = getgenv().Workspace:FindFirstChild("Elevator")
-            local Obby_Folder = getgenv().Workspace:FindFirstChild("Obby")
-            local Low_Model = Obby_Folder:FindFirstChild("Low")
-            local function resize_part(part, size, position)
-                local position = position
-                local size = size
-                local part = getgenv().Workspace:FindFirstChild(part)
-
-                part.CFrame = position
-                part.Size = size
-            end
-            resize_part("Elevator", Vector3.new(45, 284, 34), CFrame.new(58.5813599, 139.712708, 225, -1, 0, 0, 0, 1, 0, 0, 0, -1))
-            wait(0.3)
-            local obby_clone = Low_Model:Clone()
-            obby_clone.Parent = getgenv().Workspace:FindFirstChild("PartStorage")
-            Elevator.Parent = getgenv().Workspace:FindFirstChild("PartStorage")
-            wait(0.3)
-            if getgenv().Workspace:FindFirstChild("PartStorage"):FindFirstChild("Elevator") then
-                Elevator = getgenv().Workspace:FindFirstChild("PartStorage"):FindFirstChild("Elevator")
-            else
-                warn("Didn't find 'Elevator' in PartStorage [game.Workspace/workspace], Falling back.")
-                task.wait()
-                Elevator = getgenv().Workspace:FindFirstChild("Elevator")
-            end
-            wait(0.2)
-            getgenv().checked_function_elevator = true
-        end
-        wait(0.3)
-        local elevator
-        wait(0.2)
-        if getgenv().Workspace:FindFirstChild("PartStorage"):FindFirstChild("Elevator") then
-            elevator = getgenv().Workspace:FindFirstChild("PartStorage"):FindFirstChild("Elevator")
-        else
-            elevator = getgenv().Workspace:FindFirstChild("Elevator")
-        end
-        wait(0.2)
-        getgenv().elevatorModifier = Tab1:CreateToggle({
-        Name = "Visible Elevator (Tower - Float Up Part)",
-        CurrentValue = false,
-        Flag = "toggleElevatorVisibility",
-        Callback = function(elevToggle)
-            if elevToggle then
-                elevator.Transparency = 0
-            else
-                elevator.Transparency = 1
-            end
-        end,})
-
-        getgenv().ElevatorColorChanger = Tab1:CreateColorPicker({
-        Name = "Elevator Color",
-        Color = Color3.fromRGB(159, 161, 172),
-        Flag = "ColorPicker1",
-        Callback = function(theElevatorColor)
-            if elevator.Color then
-                elevator.Color = theElevatorColor
-            else
-                local ConvertBrickColor = theElevatorColor
-                wait()
-                if ConvertBrickColor then
-                    local BrickColor_Returned = BrickColor.new(ConvertBrickColor)
-                elseif not ConvertBrickColor then
-                    getgenv().ElevatorColorChanger:Set(255, 255, 255)
-                else
-                    return getgenv().notify("Failed!", "BrickColor or Color3 expected, got nothing.", 6)
-                end
-                wait(0.1)
-                elevator.BrickColor = BrickColor_Returned
-            end
-        end,})
-
-        getgenv().collisionForElevator = Tab1:CreateToggle({
-        Name = "Elevator Collision (Tower - Float Up Part)",
-        CurrentValue = false,
-        Flag = "toggleElevatorCollide",
-        Callback = function(elevatorCollide)
-            if elevatorCollide then
-                local Remember_CFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-                getgenv().old_remember_the_cframe = Remember_CFrame
-                wait(0.2)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(61.8545914, 5.14999866, 195.52623)
-                wait(0.3)
-                if getgenv().HumanoidRootPart.Anchored == false then
-                    getgenv().HumanoidRootPart.Anchored = true
-                end
-                wait(0.1)
-                elevator.CanTouch = true
-                elevator.CanQuery = true
-                wait(0.2)
-                getgenv().HumanoidRootPart.Anchored = false
-                wait(0.2)
-                getgenv().HumanoidRootPart.CFrame = getgenv().old_remember_the_cframe
-                wait(0.2)
-                if getgenv().old_remember_the_cframe then
-                    getgenv().old_remember_the_cframe = nil
-                end
-            else
-                if getgenv().HumanoidRootPart.Anchored or getgenv().HumanoidRootPart.Anchored == true then
-                    getgenv().HumanoidRootPart.Anchored = false
-                end
-                wait(0.2)
-                elevator.CanCollide = false
-                elevator.CanQuery = false
-                elevator.CanTouch = false
-                wait(0.1)
-                getgenv().HumanoidRootPart.CFrame = CFrame.new(61.8545914, 5.14999866, 195.52623)
-            end
-        end,})
-    else
-        getgenv().checked_function_elevator = true
-        wait(0.1)
-        warn("Skipping Elevator Section.")
-    end
-
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
         wait()
         getgenv().InfoLabelParagraph_2 = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
@@ -9007,6 +8884,11 @@
                     wait(0.3)
                     if getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Hoverboard") then
                         getgenv().LocalPlayer:FindFirstChildOfClass("Backpack"):FindFirstChild("Hoverboard").Parent = getgenv().Character
+                    elseif getgenv().Character:FindFirstChild("Hoverboard") then
+                        warn("Already in Character.")
+                    else
+                        getgenv().getHoverboardFlyInput:Set(false)
+                        return getgenv().notify("Failure:", "Hoverboard was not found in Backpack or Character, disabling...", 5)
                     end
                     wait(0.5)
                     local player = getgenv().LocalPlayer
@@ -12557,7 +12439,7 @@
         wait(0.2)
         getgenv().Rayfield:Destroy()
         wait(0.8)
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/total_main.lua')))()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
     end,})
     wait(0.1)
     getgenv().DestroyGUIScript = Tab1:CreateButton({
