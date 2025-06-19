@@ -1287,7 +1287,7 @@ local function setGhostEnabled(newState)
 
         task.delay(0, function()
             if not ghostEnabled then return end
-            ReplicatedStorage.Ragdoll:FireServer()
+            ReplicatedStorage.Ragdoll:FireServer("Ball")
             task.delay(0, function()
                 if not ghostEnabled then return end
                 if updateConnection then updateConnection:Disconnect() end
