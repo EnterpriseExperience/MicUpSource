@@ -3492,10 +3492,10 @@
     Callback = function(theSitDownAntiToggle)
         if theSitDownAntiToggle then
             getgenv().disabled_sit_function = true
-            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
         else
             getgenv().disabled_sit_function = false
-            getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
         end
     end,})
     wait()
@@ -10857,7 +10857,7 @@
         Name = "TP To Crossroads Map (Only for Flames Hub users)",
         Callback = function()
             if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
-                getgenv().Humanoid:ChangeState(3)
+                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
                 getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Crossroad"):GetPivot())
             else
@@ -12875,16 +12875,17 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
-        if not Animate then return end
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
         
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12903,10 +12904,12 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119377220967554"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=92294537340807"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(WickedPopularAnim, "'Wicked Popular' Animation Package", function()
@@ -12914,16 +12917,17 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
-        if not Animate then return end
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12942,17 +12946,20 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=131326830509784"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=121152442762481"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(RThroAnim, "RThro Animation Package", function()
-        wait(0.7)
+        wait(0.5)
         local player = getgenv().LocalPlayer
-        local character = getgenv().Character
+        local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
@@ -12966,11 +12973,11 @@
         Rthro_Climb = "10921257536"
         Rthro_Fall = "10921262864"
 
-        if not Animate then return end
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -12989,10 +12996,12 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Jump
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Climb
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Fall
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(adidasAnim, "Adidas Animation Package", function()
@@ -13000,16 +13009,17 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
-        if not Animate then return end
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13028,10 +13038,12 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537380791"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537363391"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537367238"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(NFLAnim, "NFL Animation Package", function()
@@ -13039,16 +13051,17 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
-        if not Animate then return end
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13067,10 +13080,12 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=134630013742019"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=129773241321032"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(BoldAnim, "Bold Animation Package", function()
@@ -13078,16 +13093,17 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
-        if not Animate then return end
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13106,10 +13122,12 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738336650"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738332169"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738333171"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(noBoundariesAnim, "No Boundaries Animation Package", function()
@@ -13117,16 +13135,17 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
-        if not Animate then return end
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13145,10 +13164,12 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747069148"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747060903"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747062535"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(robotAnim, "Robot Animation Package", function()
@@ -13156,15 +13177,16 @@
         local player = getgenv().LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
         
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
-        if not Animate then return end
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13183,25 +13205,36 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921252123"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921247141"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921251156"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(zombieAnim, "Zombie Animation Package", function()
-        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+        wait(0.7)
+        local player = getgenv().LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
+
+        if character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
+
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
+
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
-        local animtrack = getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
+        local animtrack = getgenv().Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()
         for i, track in pairs (animtrack) do
             track:Stop()
         end
@@ -13213,21 +13246,32 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616161997"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616156119"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616157476"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(HeroAnim, "Hero Animation Package", function()
-        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+        wait(0.7)
+        local player = getgenv().LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
+
+        if character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
         wait(0.7)
         local Animate = getgenv().Character:FindFirstChild("Animate")
+
+        if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
+
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13243,13 +13287,21 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616115533"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616104706"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616108001"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(vampireAnim, "Vampire Animation Package", function()
+        wait(0.7)
+        local player = getgenv().LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local Animate = character:WaitForChild("Animate")
+        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
+
         if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
@@ -13257,7 +13309,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13273,7 +13325,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083455352"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083439238"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083443587"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13287,7 +13341,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13303,7 +13357,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707853694"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707826056"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707829716"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13317,7 +13373,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13333,7 +13389,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616008936"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616003713"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616005863"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13347,7 +13405,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13363,7 +13421,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845398858"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845392038"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845396048"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13377,7 +13437,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13393,7 +13453,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616008936"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616003713"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616005863"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13407,7 +13469,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13423,7 +13485,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891627522"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891609353"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891617961"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13437,7 +13501,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13453,7 +13517,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656117878"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656114359"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656115606"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13467,7 +13533,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13483,7 +13549,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083218792"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083182000"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083189019"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13497,7 +13565,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13513,7 +13581,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742637942"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742636889"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742637151"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13527,7 +13597,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13543,7 +13613,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750782230"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750779899"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750780242"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13557,7 +13629,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13573,7 +13645,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132489853"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132461372"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132469004"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13587,7 +13661,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13603,7 +13677,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782847020"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782843869"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782846423"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13617,7 +13693,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13633,7 +13709,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=658409194"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=658360781"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=657600338"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13647,7 +13725,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13663,7 +13741,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069984524"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069946257"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069973677"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13677,7 +13757,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13693,7 +13773,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212954642"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1213044953"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212900995"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13707,7 +13789,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13723,7 +13805,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941008832"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=940996062"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941000007"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13737,7 +13821,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13753,7 +13837,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014394726"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014380606"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014384571"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13767,7 +13853,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13783,7 +13869,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1150944216"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1148811837"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1148863382"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
@@ -13797,7 +13885,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(0.8)
+        wait(1.1)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13813,7 +13901,9 @@
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616161997"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616156119"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616157476"
-        wait()
+        wait(0.1)
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        wait(0.3)
         Animate.Disabled = false
         wait(1.1)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
