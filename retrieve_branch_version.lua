@@ -4015,7 +4015,7 @@
                 local Workspace = getgenv().Workspace
                 local Player = getgenv().LocalPlayer
                 local Character = getgenv().Character
-                local HumanoidRootPart = getgenv().Character:FindFirstChildWhichIsA("HumanoidRootPart")
+                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
                 getgenv().Gudock_Part_Touching = true
 
                 if not Workspace:FindFirstChild("Gudock") then
