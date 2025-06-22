@@ -581,6 +581,7 @@ local BuiltInAnimationsR15 = {
     ["PC24"] = 87214454379601,
     ["Pig Dance"] = 138988330656366,
     ["john-Traffic"] = 71894922167975,
+    ["SypherPK"] = 10965913854,
     ["h3R3-MissYou"] = 133109803473958,
     ["Amaarae-Luv Money"] = 122157693129395,
     ["Hiiragi-Tetoris"] = 125058040803530,
