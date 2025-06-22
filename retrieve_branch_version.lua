@@ -2993,12 +2993,6 @@
                 end
             end
         end,})
-        wait()
-        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
-            if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" and v.Name ~= "Edit" then
-                v.Transparency = transparency_value_booths
-            end
-        end
         wait(0.1)
         for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
             if v:IsA("Model") and v:FindFirstChild("Activate") then
@@ -4349,7 +4343,7 @@
     Callback = function(hasFrozenChar)
         if hasFrozenChar then
             local Character = getgenv().Character
-            local Workspace_Service = game:GetService("Workspace") or workspace or cloneref(game:GetService("Workspace"))
+            local Workspace_Service = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
             local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart", true) or Workspace_Service:WaitForChild(LocalPlayer.Name):WaitForChild("HumanoidRootPart", 999)
             getgenv().FreezingChar = true
             if Character and HumanoidRootPart or Character:FindFirstChild("HuamnoidRootPart") then
@@ -4402,7 +4396,7 @@
     else
         warn("Did not load this Booth tab [4].")
     end
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        --loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/AdonisAdminFE/refs/heads/main/coding_stuff.lua')))()
+
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().ToggleBadWords = Tab11:CreateToggle({
         Name = "Bypassed Booth (FE)",
@@ -7132,15 +7126,15 @@
                 return 
             end
             task.wait(.1)
-            local GameFolder = Workspace:FindFirstChild("Game")
-            if GameFolder then
-                local BasePlate_1 = GameFolder:FindFirstChild("Baseplate")
+            local Map_Folder = Workspace:FindFirstChild("Map")
+            local GameFolder = Map_Folder:FindFirstChild("Game")
+            local Important_Folder = Map_Folder:FindFirstChild("Important")
+            local Baseplate_Folder = Important_Folder:FindFirstChild("Baseplate")
+            local Baseplate_Part = Baseplate_Folder:FindFirstChild("Baseplate")
+            if GameFolder and Baseplate_Folder then
+                local BasePlate_1 = Baseplate_Part
                 if BasePlate_1 then
-                    local Texture_Bruh_1 = BasePlate_1:FindFirstChildOfClass("Texture")
                     BasePlate_1.Transparency = BasePlateMICUPTransparency
-                    if Texture_Bruh_1 then
-                        Texture_Bruh_1.Transparency = BasePlateMICUPTransparency
-                    end
                 else
                     warn("Baseplate not found inside Game.")
                 end
