@@ -354,9 +354,10 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 end)
 task.wait(0.2)
 
+local carNames = {}
 local HttpService = getgenv().HttpService or getgenv().Service_Wrap("HttpService")
 task.wait(0.2)
-local function get_car_names()
+function get_car_names()
     local vehicleDataValue = getgenv().LocalPlayer:FindFirstChild("Values")
         and getgenv().LocalPlayer.Values:FindFirstChild("ExtraLeaderStats")
         and getgenv().LocalPlayer.Values.ExtraLeaderStats:FindFirstChild("VehicleData")
@@ -373,7 +374,6 @@ local function get_car_names()
         return {}
     end
 
-    local carNames = {}
     for carName, _ in pairs(decoded) do
         table.insert(carNames, carName)
     end
@@ -397,7 +397,7 @@ if not all_vehicles or #all_vehicles == 0 then
 end
 task.wait(1)
 local function spawn_vehicle(name)
-    if type(name) ~= "string" then return end
+    if type(name) ~= "string" then return warn(tostring(name).." is not a string!") end
 
     local args = {
         "VehicleSpawn",
@@ -531,7 +531,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✨ Ultimate Driving ✨ | 1.0.1 | "..tostring(executor_Name),
+        Name = "✨ Ultimate Driving ✨ | 1.0.4 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "Ultimate Driving | Hub.",
         ConfigurationSaving = {
@@ -975,6 +975,50 @@ if getgenv().RainbowTires_Script == true then
     getgenv().RainbowTires_Script = false
     getgenv().Rainbow_Tires_FE:Set(false)
 end
+
+for _, v in pairs(all_vehicles) do
+    local Any_Car = v
+end
+
+local Owned_Vehicle_Slots = {}
+
+for _, car in pairs(carNames) do
+    table.insert(Owned_Vehicle_Slots, car)
+end
+wait()
+local vehicle_selected = nil
+
+getgenv().Spawn_Vehicle_Plr = Tab3:CreateDropdown({
+Name = "Spawn Vehicle",
+Options = Owned_Vehicle_Slots,
+CurrentOption = "",
+MultipleOptions = false,
+Flag = "vehicle_slot",
+Callback = function(vehicle_slot_picker)
+    if typeof(vehicle_slot_picker) == "table" then
+        vehicle_slot_picker = vehicle_slot_picker[1]
+        wait(0.3)
+        print("Selected Vehicle: "..tostring(vehicle_slot_picker))
+    end
+    wait(0.2)
+    vehicle_selected = carNames[vehicle_slot_picker]
+    wait(0.3)
+    print("Spawning Vehicle: "..tostring(vehicle_slot_picker))
+    spawn_vehicle(vehicle_slot_picker)
+end,})
+
+getgenv().Delete_Vehicle = Tab3:CreateButton({
+Name = "Delete Current Vehicle",
+Callback = function()
+    local Events_Folder = getgenv().ReplicatedStorage:FindFirstChild("Events")
+    local Delete_Car_Remote = Events_Folder:FindFirstChild("RemoteEvent")
+    local LocalPlayer = getgenv().LocalPlayer
+    local Values_Folder = LocalPlayer:FindFirstChild("Values")
+    local References_Folder = Values_Folder:FindFirstChild("References")
+    local Vehicle_Seat_Car = References_Folder:FindFirstChild("CarSeat").Value
+
+    Delete_Car_Remote:FireServer("VehicleDelete", { Vehicle_Seat_Car.Parent })
+end,})
 
 getgenv().ClaimAllRewards = Tab3:CreateButton({
 Name = "Claim All Rewards",
