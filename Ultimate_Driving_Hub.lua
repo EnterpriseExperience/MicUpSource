@@ -383,6 +383,19 @@ end
 
 local all_vehicles = get_car_names()
 
+if not all_vehicles or #all_vehicles == 0 then
+    local args = {
+        "VehiclePurchase",
+        {
+            "ClassicSedanDonk",
+            getgenv().Workspace:WaitForChild("_Main"):WaitForChild("VehicleShops"):WaitForChild("VehicleShop"),
+            true,
+            false
+        }
+    }
+    getgenv().ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
+end
+task.wait(1)
 local function spawn_vehicle(name)
     if type(name) ~= "string" then return end
 
