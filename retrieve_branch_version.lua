@@ -1,12 +1,3 @@
-    -- THIS PROJECT ISN'T MANAGED ANYMORE, I QUIT SINCE THEN! This project was to much to handle and I don't want to have my life interrupted by thousands of users looking for support all day everyday, interrupts my real life ultimately.
-    -- There wasn't any updates before I quit, and someone tried to "expose me", which didn't go well for them lmao, why would it? also, they wouldn't have they're script hub (which just IP logs, and hardware logs, and they work with RATTERS), sooo..
-    -- People claim this was wrote with ChatGPT, if you believe it was wrote with ChatGPT go test it, but it's 13K lines of code, why would any of this junk be wrote with ChatGPT?
-    -- This code is VERY unorganized and garbage, I don't know what the FUCK I was doing with this code, but I must have been high when writing it, but I am NOT re-writing any of this code, fuck that shit.
-    -- Enjoy it anyway, I never actually cared for the script, but I did write it so, and it's sort of stable, barely has any issues, and supports every executor, so I guess it worked out somewhat.
-    -- I might fix the code up, but I haven't worked on this shit in a while so, I'm not sure.
-    -- Also, any other script hub with Booth features, just skidded mine, this script came out before ANY of the other scripts, this script actually REALISTICALLY released all the way back in March of 2024.
-    -- Because I see a lot of scripts and script hubs that have these Booth features, and sure enough, they are obfuscated, and seem to work JUST how mine work, that's fucking suspicious, don't you think?
-    -- I wrote this script myself, and I don't plan on utilizing ChatGPT, why would I? scripting in Roblox is fairly easy, and doesn't take much skill, unlike languages like C# that might take a bit more time to learn or JavaScript, or even Java.
     -- I plan to release an API sort of script soon, which will allow you to have anticheat bypasses and stuff and secure services and shit but with 1 singular Loadstring, and ESP and what not to.
     -- Stay tuned, even though I quit doing all of this bullshit.
     
