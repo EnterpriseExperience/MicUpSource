@@ -100,7 +100,7 @@
 
     function low_level_executor()
         if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
-            getgenv().notify("Failure:", "This feature isn't supported on this executor.", 5)
+            warn("Failure:", "This feature isn't supported on this executor.")
             return false
         else
             return true
