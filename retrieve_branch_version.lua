@@ -1,3 +1,12 @@
+    -- THIS PROJECT ISN'T MANAGED ANYMORE, I QUIT SINCE THEN! This project was to much to handle and I don't want to have my life interrupted by thousands of users looking for support all day everyday, interrupts my real life ultimately.
+    -- There wasn't any updates before I quit, and someone tried to "expose me", which didn't go well for them lmao, why would it? also, they wouldn't have they're script hub (which just IP logs, and hardware logs, and they work with RATTERS), sooo..
+    -- People claim this was wrote with ChatGPT, if you believe it was wrote with ChatGPT go test it, but it's 13K lines of code, why would any of this junk be wrote with ChatGPT?
+    -- This code is VERY unorganized and garbage, I don't know what the FUCK I was doing with this code, but I must have been high when writing it, but I am NOT re-writing any of this code, fuck that shit.
+    -- Enjoy it anyway, I never actually cared for the script, but I did write it so, and it's sort of stable, barely has any issues, and supports every executor, so I guess it worked out somewhat.
+    -- I might fix the code up, but I haven't worked on this shit in a while so, I'm not sure.
+    -- Also, any other script hub with Booth features, just skidded mine, this script came out before ANY of the other scripts, this script actually REALISTICALLY released all the way back in March of 2024.
+    -- Because I see a lot of scripts and script hubs that have these Booth features, and sure enough, they are obfuscated, and seem to work JUST how mine work, that's fucking suspicious, don't you think?
+    -- I wrote this script myself, and I don't plan on utilizing ChatGPT, why would I? scripting in Roblox is fairly easy, and doesn't take much skill, unlike languages like C# that might take a bit more time to learn or JavaScript, or even Java.
     -- I plan to release an API sort of script soon, which will allow you to have anticheat bypasses and stuff and secure services and shit but with 1 singular Loadstring, and ESP and what not to.
     -- Stay tuned, even though I quit doing all of this bullshit.
     
@@ -438,40 +447,39 @@
 
     if getgenv().voicechat_check then
         warn("Voice Chat already initialized.")
-        return
-    end
+    else
+        local reconnecting = false
+        local retry_dur = 3
 
-    local reconnecting = false
-    local retry_dur = 3
+        local function unsuspend()
+            if reconnecting then return warn("STILL TRYING TO RECONNECT TO VC! WAITING!") end
+            reconnecting = true
 
-    local function unsuspend()
-        if reconnecting then return warn("STILL TRYING TO RECONNECT TO VC! WAITING!") end
-        reconnecting = true
+            task.wait(2)
+            pcall(function()
+                vc_inter:JoinByGroupIdToken("", false, true)
+                vc_inter:Leave()
+                task.wait(0.2)
+                vc_service:rejoinVoice()
+                vc_service:rejoinVoice()
+                task.wait(0.1)
+                vc_service:joinVoice()
+            end)
 
-        task.wait(2)
-        pcall(function()
-            vc_inter:JoinByGroupIdToken("", false, true)
-            vc_inter:Leave()
-            task.wait(0.2)
-            vc_service:rejoinVoice()
-            vc_service:rejoinVoice()
-            task.wait(0.1)
-            vc_service:joinVoice()
+            reconnecting = false
+        end
+
+        vc_inter.LocalPlayerModerated:Connect(unsuspend)
+
+        vc_inter.StateChanged:Connect(function(_, newState)
+            if newState == Enum.VoiceChatState.Ended and not reconnecting then
+                task.wait(retry_dur)
+                unsuspend()
+            end
         end)
 
-        reconnecting = false
+        getgenv().voicechat_check = true
     end
-
-    vc_inter.LocalPlayerModerated:Connect(unsuspend)
-
-    vc_inter.StateChanged:Connect(function(_, newState)
-        if newState == Enum.VoiceChatState.Ended and not reconnecting then
-            task.wait(retry_dur)
-            unsuspend()
-        end
-    end)
-
-    getgenv().voicechat_check = true
     wait(0.2)
     -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
     function getRoot(char)
@@ -841,8 +849,8 @@
         TpTool.RequiresHandle = false
         TpTool.Parent = speaker and speaker:WaitForChild("Backpack")
         TpTool.Activated:Connect(function()
-            local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
-            local HRP = Char and Char:FindFirstChild("HumanoidRootPart") or Char:WaitForChild("HumanoidRootPart", 1)
+            local Char = speaker.Character
+            local HRP = getgenv().getRoot(Char)
             if not Char or not HRP then
                 return warn("Failed to find HumanoidRootPart")
             end
@@ -2057,7 +2065,7 @@
                 return getgenv().notify("Failure", "You already own a Booth!", 5)
             end
             
-            local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+            local OldCF = getgenv().getRoot(getgenv().Character).CFrame
             
             local stalls = {
                 Folder:FindFirstChild("Booth01"),
@@ -2123,7 +2131,7 @@
                     getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
 
                     task.wait(0.2)
-                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+                    getgenv().getRoot(getgenv().Character).CFrame = OldCF
                     task.wait(0.1)
                     plr_booth = getStall()
                     if plr_booth then
@@ -2184,7 +2192,7 @@
                 end
 
                 local char = getgenv().Character
-                local root = char:FindFirstChild("HumanoidRootPart")
+                local root = getgenv().getRoot(getgenv().Character)
                 if not root then return end
 
                 local flatThing = Instance.new("Part")
@@ -2225,7 +2233,7 @@
 
                 while getgenv().keepMyPlateOn do
                     local char = getMyCharacter()
-                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    local root = char and getgenv().getRoot(getgenv().Character)
                     if root and plate then
                         if getgenv().letItFollow then
                             if upPressed then
@@ -2752,7 +2760,7 @@
             local Workspace = getgenv().Workspace
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
-            local HumanoidRootPart = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
             
             local function findPlrBooth(player)
                 for _, booth in pairs(Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
@@ -2909,7 +2917,7 @@
                     wait(0.6)
                     getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
                     wait(0.2)
-                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+                    getgenv().getRoot(getgenv().Character).CFrame = OldCF
                     wait(0.2)
                     getgenv().notify("Success:", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
                     if plr_booth then
@@ -3449,7 +3457,7 @@
 
             local function patch_char(char)
                 disable_signal_conns(char, "DescendantAdded")
-                disable_signal_conns(getgenv().Character:FindFirstChild("HumanoidRootPart"), "DescendantAdded")
+                disable_signal_conns(getgenv().getRoot(getgenv().Character), "DescendantAdded")
 
                 for _, v in ipairs(char:GetDescendants()) do
                     disable_signal_conns(v, "ChildAdded")
@@ -3501,7 +3509,7 @@
             FlyConnection = nil
         end
 
-        local hrp = getgenv().Character:FindFirstChild("HumanoidRootPart")
+        local hrp = getgenv().getRoot(getgenv().Character)
         if hrp:FindFirstChild("ExecutorFlyGyro") then
             hrp.ExecutorFlyGyro:Destroy()
         end
@@ -3561,7 +3569,7 @@
             repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
             local Character = getgenv().Character
-            local HRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+            local HRP = getgenv().getRoot(getgenv().Character)
             local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             local Camera = getgenv().Camera
 
@@ -4000,7 +4008,7 @@
                 local Workspace = getgenv().Workspace
                 local Player = getgenv().LocalPlayer
                 local Character = getgenv().Character
-                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().Character:WaitForChild("HumanoidRootPart")
+                local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
                 getgenv().Gudock_Part_Touching = true
 
                 if not Workspace:FindFirstChild("Gudock") then
@@ -4046,7 +4054,7 @@
             repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
             local Character = getgenv().Character
-            local HRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+            local HRP = getgenv().getRoot(getgenv().Character)
             local lastCFrame = HRP.CFrame
 
             local maxDistance = 5
@@ -4061,7 +4069,7 @@
 
                     if LocalPlayer.Character ~= Character then
                         Character = LocalPlayer.Character
-                        HRP = Character:WaitForChild("HumanoidRootPart")
+                        HRP = getgenv().getRoot(Character)
                         lastCFrame = HRP.CFrame
                     end
 
@@ -4335,7 +4343,7 @@
         if hasFrozenChar then
             local Character = getgenv().Character
             local Workspace_Service = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-            local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart") or Character:FindFirstChild("HumanoidRootPart", true) or Workspace_Service:WaitForChild(LocalPlayer.Name):WaitForChild("HumanoidRootPart", 999)
+            local HumanoidRootPart = getgenv().getRoot(Character)
             getgenv().FreezingChar = true
             if Character and HumanoidRootPart or Character:FindFirstChild("HuamnoidRootPart") then
                 if getgenv().FreezingChar == true then
@@ -4492,7 +4500,7 @@
             cleanupConnections()
 
             if getgenv().Character:FindFirstChild("HumanoidRootPart") then
-                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
+                getgenv().getRoot(getgenv().Character).Anchored = false
             end
 
             if getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetStateEnabled(Enum.HumanoidStateType.Seated, false) then
@@ -4529,7 +4537,7 @@
                 local target_humanoid = target.Character and target.Character:FindFirstChildWhichIsA("Humanoid")
 
                 if target and target_humanoid then
-                    getgenv().Camera.CameraSubject = target_humanoid
+                    getgenv().Camera.CameraSubject = target.Character
                 end
             else
                 warn("No valid players to teleport to.")
@@ -4555,8 +4563,8 @@
             local target = others[math.random(1, #others)]
             local targetHRP = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
 
-            if target and targetHRP then
-                getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = targetHRP.CFrame
+            if target and target.Character and targetHRP then
+                getgenv().Character:PivotTo(target.Character)
             end
         else
             warn("No valid players to teleport to.")
@@ -4614,7 +4622,7 @@
         local LocalPlayer = getgenv().LocalPlayer
         local Character = getgenv().Character
         local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-        local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
+        local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
         
         local VOID_THRESHOLD = -50
         local UNVOID_THRESHOLD = 0
@@ -4627,7 +4635,7 @@
             OrgDestroyHeight = getgenv().Workspace.FallenPartsDestroyHeight
 
             getgenv().antiVoidLoop = getgenv().RunService.Stepped:Connect(function()
-                local root = getgenv().Character:FindFirstChild("HumanoidRootPart")
+                local root = getgenv().getRoot(getgenv().Character)
                 if root and root.Position.Y <= OrgDestroyHeight + 25 then
                     root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
                 end
@@ -4712,7 +4720,7 @@
         
                 if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
                     local bang_char_root = target.Character:FindFirstChild("HumanoidRootPart")
-                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = bang_char_root.CFrame * CFrame.new(0, 0, 1.1)
+                    getgenv().getRoot(getgenv().Character).CFrame = bang_char_root.CFrame * CFrame.new(0, 0, 1.1)
                 end
             end)
 
@@ -4753,7 +4761,7 @@
             cleanupConnections()
 
             if getgenv().Character:FindFirstChild("HumanoidRootPart") then
-                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
+                getgenv().getRoot(getgenv().Character).Anchored = false
             end
             
             getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
@@ -4773,7 +4781,7 @@
     PlaceholderText = "Speed",
     RemoveTextAfterFocusLost = true,
     Callback = function(getSpinSpeed)
-        local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
+        local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
         local spinSpeed = tonumber(getSpinSpeed)
         if spinSpeed and spinSpeed <= 200 then
             local Spin = Instance.new("BodyAngularVelocity")
@@ -4784,7 +4792,7 @@
         elseif spinSpeed and spinSpeed >= 200 then
             getgenv().notify("Limit Reached!", "We lowered speed, because you would be flung.", 5)
             wait(0.2)
-            if not getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Spinning") then
+            if not getgenv().getRoot(getgenv().Character):FindFirstChild("Spinning") then
                 local Spin = Instance.new("BodyAngularVelocity")
                 Spin.Name = "Spinning"
                 Spin.Parent = HumanoidRootPart
@@ -4793,17 +4801,17 @@
             else
                 HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,200,0)
             end
-        elseif spinSpeed <= 200 and getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Spinning") then
+        elseif spinSpeed <= 200 and getgenv().getRoot(getgenv().Character):FindFirstChild("Spinning") then
             getgenv().notify("Detected.", "Updated speed, detected duplicate spin.", 5)
             wait(0.3)
-            getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
+            getgenv().getRoot(getgenv().Character):FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
         end
     end,})
 
     getgenv().UnspinNow = Tab2:CreateButton({
     Name = "Unspin",
     Callback = function()
-        for i,v in pairs(getgenv().Character:FindFirstChild("HumanoidRootPart"):GetChildren()) do
+        for i,v in pairs(getgenv().getRoot(getgenv().Character):GetChildren()) do
             if v.Name == "Spinning" then
                 v:Destroy()
             end
@@ -5049,7 +5057,7 @@
     end
     
     local function isBangingWhitelistedPlayer()
-        local speakerRoot = speaker.Character and speaker.Character:FindFirstChild("HumanoidRootPart")
+        local speakerRoot = getgenv().getRoot(getgenv().Character)
         
         if not speakerRoot then return false end
     
@@ -5319,11 +5327,11 @@
                 wait(1)
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(ToWalkWhileEmoting)
                 wait(0.1)
-                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = true
+                getgenv().getRoot(getgenv().Character).Anchored = true
                 wait()
                 getgenv().Character:FindFirstChild("Animate").Disabled = true
                 wait(0.3)
-                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
+                getgenv().getRoot(getgenv().Character).Anchored = false
             end
         end,})
 
@@ -5391,7 +5399,7 @@
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
             end
             wait()
-            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = true
+            getgenv().getRoot(getgenv().Character).Anchored = true
             wait(0.2)
             getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = MichaelJackson_Speed
             wait(0.1)
@@ -5399,14 +5407,14 @@
             wait(0.2)
             getgenv().Character:FindFirstChild("Animate").Disabled = true
             wait(0.1)
-            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
+            getgenv().getRoot(getgenv().Character).Anchored = false
         else
             if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
             end
             wait()
-            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = true
+            getgenv().getRoot(getgenv().Character).Anchored = true
             wait()
             getgenv().Character:FindFirstChild("Animate").Disabled = false
             task.wait(.2)
@@ -5414,7 +5422,7 @@
             wait(0.2)
             getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
             wait(0.2)
-            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
+            getgenv().getRoot(getgenv().Character).Anchored = false
         end
     end,})
 
@@ -5435,7 +5443,7 @@
                 local LocalPlayer = getgenv().LocalPlayer
                 
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-                getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
+                getgenv().getRoot(getgenv().Character).Anchored = false
                 wait(1)
                 local function run_anims(character)
                     if not character then return warn("Character not found!") end
@@ -5529,7 +5537,7 @@
                 getgenv().ownerAnimsEnabled = false
                 if getgenv().Character:FindFirstChildWhichIsA("Humanoid") and getgenv().Character:FindFirstChild("HumanoidRootPart") then
                     getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-                    getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
+                    getgenv().getRoot(getgenv().Character).Anchored = false
                     wait(1.5)
                     local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
                     if humanoid then
@@ -5724,7 +5732,7 @@
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
             local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-            local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
+            local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
             local Workspace = getgenv().Workspace
             getgenv().SpamWhitelistTable = getgenv().SpamWhitelistTable or {}
             
@@ -6112,7 +6120,7 @@
                 local Character = getgenv().Character
 
                 if not getgenv().Oldest_AntiBoothStealer_CF then
-                    getgenv().Oldest_AntiBoothStealer_CF = Character:WaitForChild("HumanoidRootPart").CFrame
+                    getgenv().Oldest_AntiBoothStealer_CF = getgenv().getRoot(getgenv().Character).CFrame
                 end
             
                 local function getStall()
