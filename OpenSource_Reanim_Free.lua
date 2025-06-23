@@ -1,11 +1,11 @@
-Players = game:GetService("Players")
-Workspace = game:GetService("Workspace")
-UserInputService = game:GetService("UserInputService")
-RunService = game:GetService("RunService")
-ReplicatedStorage = game:GetService("ReplicatedStorage")
-TweenService = game:GetService("TweenService")
+Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+TweenService = cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
 LocalPlayer = Players.LocalPlayer
-HttpService = game:GetService("HttpService")
+HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 
 local ghostEnabled = false
 local originalCharacter
@@ -539,6 +539,7 @@ local BuiltInAnimationsR15 = {
     ["Big Dawgs"] = 84090608993841,
     ["Boing Swing"] = 83700935018360,
     ["Can Can"] = 123220715631267,
+    ["Renegade"] = 16067292716,
     ["Fast Flex"] = 110332761819297,
     ["Feel It"] = 131709887164498,
     ["Lo-fi"] = 96519329274556,
