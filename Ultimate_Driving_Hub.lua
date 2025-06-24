@@ -1380,8 +1380,6 @@ MultipleOptions = false,
 Flag = "weapon_slot_select",
 Callback = function(chosen_gun)
     selected_weapon = chosen_gun
-    print("Selected Weapon:", selected_weapon)
-    task.wait(.2)
     local Result_Weapon = get_specific_weapon(selected_weapon)
     if not Result_Weapon then return getgenv().notify("Failure:", "Weapon was not found in your Backpack/inventory!", 5) end
     
@@ -1391,7 +1389,7 @@ Callback = function(chosen_gun)
 end,})
 
 getgenv().LoopKill_Plr = Tab5:CreateInput({
-Name = "LoopKill Player",
+Name = "LoopKill Player (FE)",
 PlaceholderText = "User Here",
 RemoveTextAfterFocusLost = true,
 Callback = function(plr_to_loopkill)
