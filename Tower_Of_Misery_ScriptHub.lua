@@ -521,38 +521,50 @@ local function Touched_Door()
 end
 
 local function collect_all()
-   Update_Setting_RE:FireServer(30, false)
-   wait(0.2)
-   if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("CoinsEarned").Value >= 70 then return end
-   for _, v in ipairs(getgenv().Workspace:FindFirstChild("Tower"):GetDescendants()) do
-      if v:FindFirstChild("Pass Detector") then
-         tween_tp("Pass Detector")
-      end
-   end
+    Update_Setting_RE:FireServer(30, false)
+    wait(0.2)
+    if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("CoinsEarned").Value >= 70 then return end
+    for _, v in ipairs(getgenv().Workspace:FindFirstChild("Tower"):GetDescendants()) do
+        if v:FindFirstChild("Pass Detector") then
+            GodMode(true)
+            wait(0.2)
+            tween_tp("Pass Detector")
+        end
+    end
 end
 
 local function touch_door()
-   Update_Setting_RE:FireServer(30, false)
-   wait(0.1)
-   repeat task.wait() until getgenv().LocalPlayer.General.CoinsEarned.Value >= 70
-   repeat task.wait() until getgenv().Workspace:FindFirstChild("Tower") and getgenv().Workspace:FindFirstChild("Top_Section")
-   if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("CoinsEarned").Value >= 70 then
-      local Reward_Door = getgenv().Workspace:FindFirstChild("Top_Section"):FindFirstChild("Hallway"):FindFirstChild("RewardDoor")
+    Update_Setting_RE:FireServer(30, false)
+    wait(0.1)
+    repeat task.wait() until getgenv().LocalPlayer.General.CoinsEarned.Value >= 70
+    repeat task.wait() until getgenv().Workspace:FindFirstChild("Tower") and getgenv().Workspace:FindFirstChild("Top_Section")
+    if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("CoinsEarned").Value >= 70 then
+        local Reward_Door = getgenv().Workspace:FindFirstChild("Top_Section"):FindFirstChild("Hallway"):FindFirstChild("RewardDoor")
 
-      tween_tp("RewardDoor")
-   end
+        GodMode(true)
+        wait(0.2)
+        tween_tp("RewardDoor")
+    end
 end
 
-local Top_Section = getgenv().Workspace:FindFirstChild("Top_Section")
+local ws = getgenv().Workspace or workspace
+local Top_Section = ws:FindFirstChild("Top_Section")
+if not Top_Section then return warn("Top_Section not found") end
+
 local Practice_Stage = Top_Section:FindFirstChild("Practice_Stage")
-local Container = Practice_Stage:FindFirstChild("Container")
+if not Practice_Stage then return warn("Practice_Stage not found") end
 
-if Container:FindFirstChild("Floor #1") and Container:FindFirstChild("Reach Detector") and Container:FindFirstChild("Pass Detector") then
-   Container:FindFirstChild("Floor #1"):FindFirstChild("Reach Detector"):Destroy()
-   Container:FindFirstChild("Floor #1"):FindFirstChild("Pass Detector"):Destroy()
-else
-    warn("Floor #1 or Reach Detector or Pass Detector not found, skipping...")
-end
+local Container = Practice_Stage:FindFirstChild("Container")
+if not Container then return warn("Container not found") end
+
+local Floor1 = Container:FindFirstChild("Floor #1")
+if not Floor1 then return warn("Floor #1 not found") end
+
+local Reach = Floor1:FindFirstChild("Reach Detector")
+local Pass = Floor1:FindFirstChild("Pass Detector")
+
+if Reach then Reach:Destroy() else warn("Reach Detector not found") end
+if Pass then Pass:Destroy() else warn("Pass Detector not found") end
 
 local function LocalPlayer_loaded()
    local player = Players.LocalPlayer
@@ -604,7 +616,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Tower Of Misery ✅ | 1.0.9 | "..tostring(executor_Name),
+        Name = "✅ Tower Of Misery ✅ | 1.1.4 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "TowerOfMisery | Hub.",
         ConfigurationSaving = {
