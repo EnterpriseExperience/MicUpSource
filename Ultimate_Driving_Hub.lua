@@ -309,6 +309,7 @@ getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart"
 getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
 getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
 local Anti_Ragdoll_Active = false
+local Inf_Stamina_Active = false
 
 wait(0.2)
 
@@ -323,20 +324,32 @@ local function Dynamic_Character_Updater(character)
     local hum = character:FindFirstChildOfClass("Humanoid")
     getgenv().Humanoid = (hum and hum:IsA("Humanoid")) and hum
 
+    if Inf_Stamina_Active or Inf_Stamina_Active == true then
+        getgenv().inf_stamina = false
+        warn("Infinite-Stamina Toggle is [ENABLED], setting Stamina attribute to infinite.")
+        task.wait(.3)
+        getgenv().inf_stamina = true
+        while getgenv().inf_stamina == true do
+        wait(.3)
+            if hum:GetAttribute("Stamina") then
+                hum:SetAttribute("Stamina", 9e9)
+            else
+                getgenv().inf_stamina = false
+                Inf_Stamina_Active = false
+                if getgenv().notify then
+                    getgenv().notify("Heads Up:", "Unable to properly locate 'Stamina' Attribute in Humanoid.", 5)
+                else
+                    warn("[Heads Up!]:", "'Stamina' Attribute not found in Humanoid at Character runtime.")
+                end
+            end
+        end
+    end
+
     if Anti_Ragdoll_Active or Anti_Ragdoll_Active == true then
         warn("Anti-Ragdoll Toggle is [ENABLED], removing unpermitted/unnecessary included in-game pre-requisites...")
         task.wait(.3)
         if character and character:FindFirstChild("Humanoid") then
             character:FindFirstChild("RagdollConstraints"):Destroy()
-            if getgenv().LocalPlayer:FindFirstChild("PlayerScripts"):FindFirstChild("RagdollClient") then
-                getgenv().LocalPlayer:FindFirstChild("PlayerScripts"):FindFirstChild("RagdollClient").Parent = getgenv().SoundService
-            end
-            if getgenv().StarterPlayer:FindFirstChild("StarterPlayerScripts"):FindFirstChild("RagdollClient") then
-                getgenv().StarterPlayer:FindFirstChild("StarterPlayerScripts"):FindFirstChild("RagdollClient").Parent = getgenv().TweenService
-            end
-            if Modules:FindFirstChild("Ragdoll") then
-                Modules:FindFirstChild("Ragdoll").Parent = getgenv().AssetService
-            end
         end
     end
 
@@ -826,7 +839,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Ultimate Driving ✅ | 1.1.6 | "..tostring(executor_Name),
+        Name = "✅ Ultimate Driving ✅ | 1.1.8 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "Ultimate Driving | Hub.",
         ConfigurationSaving = {
@@ -1004,6 +1017,7 @@ Callback = function(inf_stamina)
         end
         wait(0.2)
         getgenv().inf_stamina = true
+        Inf_Stamina_Active = true
 
         if Stamina_Attribute then
             while getgenv().inf_stamina == true do
@@ -1266,7 +1280,7 @@ Callback = function(player_to_eliminate)
     end
     task.wait()
     kill_player(Target_To_Kill)
-    wait(1)
+    wait(0.5)
     getgenv().Character:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
 end,})
 
@@ -1287,6 +1301,7 @@ local function loop_kill_addon(target, toggled)
 
             if not target or not target:IsDescendantOf(game.Players) then
                 getgenv().looping_kills = false
+                getgenv().Humanoid:UnequipTools()
                 return getgenv().notify("Heads Up:", "Turned off LoopKill, player left or does not exist.", 5)
             end
 
@@ -1296,7 +1311,7 @@ local function loop_kill_addon(target, toggled)
                 end)
                 if success then
                     target.Character = char
-                    wait(0.5)
+                    wait(0.2)
                 end
             end
 
