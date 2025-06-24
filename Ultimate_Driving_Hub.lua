@@ -654,31 +654,28 @@ local function kill_player(player)
     local equipped = getgenv().Character:FindFirstChild(weapon_name)
     if not equipped then return end
 
-    local weapon_hit = getgenv().ReplicatedStorage:WaitForChild("WeaponsSystem")
-        :WaitForChild("Network"):WaitForChild("WeaponHit")
+    local weapon_hit = getgenv().ReplicatedStorage:WaitForChild("WeaponsSystem"):WaitForChild("Network"):WaitForChild("WeaponHit")
 
-    local function build_hit_packet()
-        return {
-            equipped,
-            {
-                p = Vector3.new(-1726.32080078125, 68.31084442138672, 5290.83837890625),
-                pid = 1,
-                origin = Vector3.new(-1705.4676513671875, 70.51872253417969, 5289.42578125),
-                part = hrp,
-                d = 21.017230987548828,
-                maxDist = 20.90093994140625,
-                h = humanoid,
-                m = Enum.Material.Plastic,
-                n = Vector3.new(0.9204065799713135, -0.36130234599113464, 0.14937283098697662),
-                t = 0.39954973860914855,
-                sid = 227
-            }
+    local args = {
+        equipped,
+        {
+            p = Vector3.new(-1726.32080078125, 68.31084442138672, 5290.83837890625),
+            pid = 1,
+            origin = Vector3.new(-1705.4676513671875, 70.51872253417969, 5289.42578125),
+            part = hrp,
+            d = 21.017230987548828,
+            maxDist = 20.90093994140625,
+            h = humanoid,
+            m = Enum.Material.Plastic,
+            n = Vector3.new(0.9204065799713135, -0.36130234599113464, 0.14937283098697662),
+            t = 0.39954973860914855,
+            sid = 227
         }
-    end
+    }
 
     for i = 1, 275 do
-        task.wait(0.3)
-        weapon_hit:FireServer(unpack(build_hit_packet()))
+        task.wait()
+        weapon_hit:FireServer(unpack(args))
     end
 end
 
@@ -829,7 +826,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Ultimate Driving ✅ | 1.1.5 | "..tostring(executor_Name),
+        Name = "✅ Ultimate Driving ✅ | 1.1.6 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "Ultimate Driving | Hub.",
         ConfigurationSaving = {
