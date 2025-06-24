@@ -270,6 +270,11 @@ local Events = ReplicatedStorage:FindFirstChild("Events")
 local Modules = ReplicatedStorage:FindFirstChild("Modules")
 local VehicleCustomizationsData = Modules:FindFirstChild("VehicleCustomizationsData")
 local Vehicle_Change_RF = VehicleCustomizationsData:FindFirstChild("WriteVehicleChanges")
+
+if getgenv().AllClipboards then
+    getgenv().AllClipboards("https://github.com/EnterpriseExperience/MicUpSource/releases -- check all my current patch notes and new updates/releases.")
+end
+
 wait(0.3)
 if not getgenv().Players then
     warn("getgenv().Players was not detected, fixing...")
