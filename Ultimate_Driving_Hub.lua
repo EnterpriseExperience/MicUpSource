@@ -296,8 +296,8 @@ task.wait(0.2)
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
 getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
-getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack")
-getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui")
+getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
+getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
 getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
@@ -381,6 +381,9 @@ function get_car_names()
     return carNames
 end
 
+-- To be input into script hub soon.
+--local Gun_Shop_Prompt = getgenv().Workspace:FindFirstChild("_Main"):FindFirstChild("GunGivers"):FindFirstChild("WeaponBuilding"):FindFirstChild("Building"):FindFirstChild("GunShop"):FindFirstChild("ShopPad"):FindFirstChildOfClass("ProximityPrompt")
+
 local all_vehicles = get_car_names()
 
 if not all_vehicles or #all_vehicles == 0 then
@@ -430,12 +433,290 @@ local function retrieve_vehicle()
     end
 end
 
+local Players = getgenv().Players
+local LocalPlayer = Players.LocalPlayer
+local Character = getgenv().Character
+local Backpack = getgenv().Backpack
+getgenv().specific_weapon_mod = false
+getgenv().all_weapon_mods = false
+local User_Configuration = User_Configuration or {}
+local guns = {}
+
+for _, v in ipairs(Character:GetChildren()) do
+    if v:IsA("Tool") and v:FindFirstChild("Configuration") then
+        v.Parent = Backpack
+    end
+end
+task.wait(0.1)
+local function get_all_weapons()
+    for _, tool in ipairs(Backpack:GetChildren()) do
+        if tool:IsA("Tool") and tool:FindFirstChild("Configuration") then
+            table.insert(guns, tool)
+        end
+    end
+
+    return guns
+end
+
+local function get_specific_weapon(weapon_name)
+    for _, v in ipairs(getgenv().Backpack:GetChildren()) do
+        if v:IsA("Tool") and v.Name == weapon_name and v:FindFirstChild("Configuration") then
+            return v
+        end
+    end
+end
+
+local function get_weapon()
+    for _, v in ipairs(getgenv().Backpack:GetChildren()) do
+        if v:IsA("Tool") and v:FindFirstChild("Configuration") then
+            return v
+        end
+    end
+end
+
+local function mod_weapon(gun)
+    local weapon = get_specific_weapon(gun)
+    if not weapon then return end
+    local Gun_Config = weapon:FindFirstChild("Configuration")
+
+    while getgenv().specific_weapon_mod == true do
+    task.wait()
+        if Gun_Config:FindFirstChild("FireMode") then
+            Gun_Config.FireMode.Value = "Automatic"
+        end
+        Gun_Config.AmmoCapacity = 9e9
+        Gun_Config.HitDamage = 9e9
+        Gun_Config.MaxSpread = 0
+        Gun_Config.RecoilDecay = 1
+        Gun_Config.RecoilMax = 0
+        Gun_Config.ShotCooldown = 0
+        Gun_Config.TotalRecoilMax = 0
+        if weapon:GetAttribute("Ammo") then
+            weapon:SetAttribute("Ammo", 9e9)
+        end
+    end
+end
+
+local function mod_all_guns()
+    local all_weapons = get_all_weapons()
+    for _, tool in ipairs(all_weapons) do
+        if not tool then return end
+        local Gun_Config = tool:FindFirstChild("Configuration")
+
+        if Gun_Config:FindFirstChild("FireMode") then
+            Gun_Config.FireMode.Value = "Automatic"
+        end
+        Gun_Config.AmmoCapacity.Value = 9e9
+        Gun_Config.HitDamage.Value = 9e9
+        Gun_Config.MaxSpread.Value = 0
+        Gun_Config.RecoilDecay.Value = 1
+        Gun_Config.RecoilMax.Value = 0
+        Gun_Config.ShotCooldown.Value = 0
+        Gun_Config.TotalRecoilMax.Value = 0
+        if tool:GetAttribute("Ammo") then
+            tool:SetAttribute("Ammo", 9e9)
+        end
+    end
+end
+
+local function buy_weapon(gun_name)
+    local args = {
+        "ToolEvent",
+        {
+            "Purchase",
+            {
+                tostring(gun_name)
+            }
+        }
+    }
+    getgenv().ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
+end
+
+local function switch_team(team_name)
+    getgenv().ReplicatedStorage:WaitForChild("Events"):WaitForChild("Data"):WaitForChild("ResetBounty"):InvokeServer()
+    wait(0.3)
+    local args = {
+        tostring(team_name)
+    }
+
+    getgenv().ReplicatedStorage:WaitForChild("Events"):WaitForChild("Admin"):WaitForChild("ChangeTeam"):InvokeServer(unpack(args))
+end
+
+function Can_Damage()
+    if executor_Name == "Solara" or executor_Name == "Xeno" or string.find(executor_Name, "JJSploit") then
+        local BOUNTY_THRESHOLD = getgenv().ReplicatedStorage:WaitForChild("GameSettings"):WaitForChild("BountyLevels"):GetAttribute("Level_Fine")
+        local TOOL_KEYS = {
+            IsWeapon = "IsWeapon"
+        }
+        local Weapons = {
+            ["Desert Eagle"] = { IsWeapon = true },
+            ["Pistol"] = { IsWeapon = true },
+            ["Bizon"] = { IsWeapon = true },
+            ["AUG"] = { IsWeapon = true },
+            ["M16"] = { IsWeapon = true },
+            ["MP5"] = { IsWeapon = true },
+            ["UZI"] = { IsWeapon = true },
+            ["P90"] = { IsWeapon = true },
+            ["SCAR"] = { IsWeapon = true },
+            ["SPAS-12"] = { IsWeapon = true },
+            ["Scout"] = { IsWeapon = true },
+            ["Sawed Off"] = { IsWeapon = true },
+            ["FAMAS"] = { IsWeapon = true },
+            ["Barrett"] = { IsWeapon = true },
+            ["G36C"] = { IsWeapon = true },
+            ["MP7"] = { IsWeapon = true },
+            ["AA12"] = { IsWeapon = true },
+            ["M249"] = { IsWeapon = true },
+            ["Vector"] = { IsWeapon = true },
+            ["Explosive Sniper"] = { IsWeapon = true },
+            ["Minigun"] = { IsWeapon = true },
+            ["AK"] = { IsWeapon = true },
+            ["TEC-9"] = { IsWeapon = true },
+        }
+
+        local function CanDamagePlayer(attacker, target, tool)
+            if not (target and target:GetAttribute("PvP_Active")) then
+                warn("[Error]:", "PvP is not enabled, got: false.")
+                return false
+            end
+
+            if tool and Weapons[tool.Name] and Weapons[tool.Name][TOOL_KEYS.IsWeapon] == false then
+                warn("None of the weapons in the table appear to be an actual weapon, how did you even get this error?")
+                return false
+            end
+
+            local attacker_team = attacker.Team and attacker.Team.Name or ""
+            local target_team = target.Team and target.Team.Name or ""
+
+            local is_attacker_criminal = attacker_team == "Criminal"
+            local is_other_criminal = target_team == "Criminal"
+
+            if attacker_team == "Police" then
+                local stats = target:FindFirstChild("leaderstats")
+                if is_other_criminal then
+                    return "KILL"
+                end
+                if stats and stats:FindFirstChild("Bounty") and stats.Bounty.Value >= BOUNTY_THRESHOLD then
+                    return "FINE"
+                end
+            elseif is_attacker_criminal and (is_other_criminal or target_team == "Police") then
+                return "KILL"
+            end
+
+            return false
+        end
+
+        return CanDamagePlayer
+    else
+        local ReplicatedStorage = getgenv().ReplicatedStorage
+        local Modules = ReplicatedStorage:FindFirstChild("Modules")
+        local Can_Damage = require(Modules:FindFirstChild("CanDamagePlayer"))
+        local Damage_Enabled = Can_Damage()
+
+        return Damage_Enabled
+    end
+end
+
+local function kill_player(player)
+    if not player or not player:IsDescendantOf(game.Players) then return end
+
+    local character = player.Character or player.CharacterAdded:Wait()
+    if not character then return end
+
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character:FindFirstChild("Humanoid")
+    if not hrp or not humanoid then return end
+
+    local weapon = get_weapon()
+    local weapon_name = "Pistol"
+
+    if not weapon then
+        buy_weapon(weapon_name)
+        task.wait(0.4)
+
+        if getgenv().LocalPlayer.Team.Name ~= "Criminal" then
+            switch_team("Criminal")
+        end
+
+        task.wait(0.3)
+    end
+
+    local tool = getgenv().Backpack:FindFirstChild(weapon_name)
+    if tool then
+        tool.Parent = getgenv().Character
+    end
+
+    local equipped = getgenv().Character:FindFirstChild(weapon_name)
+    if not equipped then return end
+
+    local weapon_hit = getgenv().ReplicatedStorage:WaitForChild("WeaponsSystem")
+        :WaitForChild("Network"):WaitForChild("WeaponHit")
+
+    local function build_hit_packet()
+        return {
+            equipped,
+            {
+                p = Vector3.new(-1726.32080078125, 68.31084442138672, 5290.83837890625),
+                pid = 1,
+                origin = Vector3.new(-1705.4676513671875, 70.51872253417969, 5289.42578125),
+                part = hrp,
+                d = 21.017230987548828,
+                maxDist = 20.90093994140625,
+                h = humanoid,
+                m = Enum.Material.Plastic,
+                n = Vector3.new(0.9204065799713135, -0.36130234599113464, 0.14937283098697662),
+                t = 0.39954973860914855,
+                sid = 227
+            }
+        }
+    end
+
+    for i = 1, 275 do
+        task.wait(0.3)
+        weapon_hit:FireServer(unpack(build_hit_packet()))
+    end
+end
+
+local script_errors = {}
+
+local function write_error_log_file(filepath, new_error)
+    if writefile and readfile then
+        local old_content = ""
+        local success, result = pcall(function()
+            old_content = readfile(filepath)
+        end)
+
+        local updated_log = (old_content ~= "" and (old_content .. "\n") or "") .. new_error
+        writefile(filepath, updated_log)
+    else
+        warn("writefile() or readfile() are unsupported, low level executor detected! Your executor: " .. tostring(executor_Name))
+    end
+end
+
+if isfile("UltimateDriving_ErrorLog.txt") then
+    warn("Skipping writefile error log part...")
+else
+    write_error_log_file("UltimateDriving_ErrorLog.txt", "[]")
+end
+task.wait(0.2)
+local error_logs_file = "UltimateDriving_ErrorLog.txt"
+
 local function Is_In_Race()
     local error_exited = false
 
+    if error_exited then
+        return warn("[DEBUG]:", "local function 'Is_In_Race()' | Exited with errors when ran last-time.")
+    end
+
     if executor_Name == "Solara" or executor_Name == "Xeno" or string.find(executor_Name, "JJSploit") then
         local racesOngoing = getgenv().ReplicatedStorage:FindFirstChild("ReplicatedData") and getgenv().ReplicatedStorage.ReplicatedData:FindFirstChild("RacesOngoing")
-        if not racesOngoing then return false end
+        if not racesOngoing then 
+            error_exited = true
+            table.insert(script_errors, '[Stack Begin]: "RacesOnGoing" is not a valid member of ReplicatedStorage "ReplicatedStorage" :[Stack End]')
+            write_error_log_file(error_logs_file, '[Stack Begin]: "RacesOnGoing" is not a valid member of ReplicatedStorage "ReplicatedStorage" :[Stack End]')
+            warn("[DEBUG]:", "An error occurred, please check the logs file 'UltimateDriving_ErrorLog.txt' in your 'workspace' Folder where-ever your executor is located for more information.")
+            return false
+        end
 
         for _, race in pairs(racesOngoing:GetChildren()) do
             local racers = race:FindFirstChild("ActiveRacers")
@@ -446,10 +727,22 @@ local function Is_In_Race()
         return false
     else
         local Modules = getgenv().ReplicatedStorage:FindFirstChild("Modules")
-        if not Modules then return false end
+        if not Modules then
+            error_exited = true
+            table.insert(script_errors, '[Stack Begin]: "Modules" is not a valid member of ReplicatedStorage "ReplicatedStorage" :[Stack End]')
+            write_error_log_file(error_logs_file, '[Stack Begin]: "Modules" is not a valid member of ReplicatedStorage "ReplicatedStorage" :[Stack End]')
+            warn("[DEBUG]:", "An error occurred, please check the logs file: 'UltimateDriving_ErrorLog.txt' in your 'workspace' Folder where-ever your executor is located for more information.")
+            return false
+        end
 
         local playerRaceModule = Modules:FindFirstChild("PlayerIsInRace")
-        if not playerRaceModule then return false end
+        if not playerRaceModule then
+            error_exited = true
+            table.insert(script_errors, '[Stack Begin]: "PlayerIsInRace" is not a valid member of Folder "Modules" :[Stack End]')
+            write_error_log_file(error_logs_file, '[Stack Begin]: "PlayerIsInRace" is not a valid member of Folder "Modules" :[Stack End]')
+            warn("[DEBUG]:", "An error occurred, please check the logs file: 'UltimateDriving_ErrorLog.txt' in your 'workspace' Folder where-ever your executor is located for more information.")
+            return false
+        end
 
         local Player_In_Race = require(playerRaceModule)
         return Player_In_Race()
@@ -531,7 +824,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✨ Ultimate Driving ✨ | 1.0.4 | "..tostring(executor_Name),
+        Name = "✅ Ultimate Driving ✅ | 1.1.5 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "Ultimate Driving | Hub.",
         ConfigurationSaving = {
@@ -548,7 +841,7 @@ if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
         KeySettings = {
             Title = "None",
             Subtitle = "No key system is provided.",
-            Note = "nice hidden dumper skid, it's useless (like you)",
+            Note = "nice hidden dumper skid, it's useless (like you), joking, take a joke, this is open source.",
             FileName = "Key",
             SaveKey = false,
             GrabKeyFromSite = false,
@@ -578,8 +871,10 @@ end
 task.wait(1)
 local Tab1 = Window:CreateTab("🏡 Main 🏡", 0)
 local Section1 = Tab1:CreateSection("| 🏡 Main 🏡 |")
-local Tab2 = Window:CreateTab("🧍 LocalPlayer 🧍", 0)
-local Section2 = Tab2:CreateSection("| 🧍 LocalPlayer 🧍 |")
+local Tab2 = Window:CreateTab("🧍 Character 🧍", 0)
+local Section2 = Tab2:CreateSection("| 🧍 Character Content 🧍 |")
+local Tab5 = Window:CreateTab("🔫 Weapon 🔫", 0)
+local Section5 = Tab5:CreateSection("| 🔫 Weapons Stuff 🔫 |")
 local Tab3 = Window:CreateTab("⭐ Extras ⭐", 0)
 local Section3 = Tab3:CreateSection("| ⭐ Extra Content ⭐ |")
 local Tab4 = Window:CreateTab("🚗 Vehicle 🚗", 0)
@@ -687,6 +982,51 @@ else
     warn("Didn't load these options, writefile/del/loadfile is unsupported.")
 end
 
+getgenv().InfStamina_FE = Tab2:CreateToggle({
+Name = "Infinite Stamina (FE)",
+CurrentValue = false,
+Flag = "InfStaminaScript",
+Callback = function(inf_stamina)
+    if inf_stamina then
+        local Players = getgenv().Players
+        local LocalPlayer = getgenv().LocalPlayer
+        local Character = getgenv().Character
+        local Humanoid = getgenv().Humanoid
+        local Modules = LocalPlayer:FindFirstChild("Modules")
+        local Managers_Folder = Modules:FindFirstChild("Managers")
+        local Sprint_Manager = require(Managers_Folder:FindFirstChild("SprintManager"))
+        local Stamina_Attribute = Humanoid:GetAttribute("Stamina")
+        if not Stamina_Attribute then
+            getgenv().inf_stamina = false
+            return warn("Unable to return Stamina value Attribute!") 
+        end
+        wait(0.2)
+        getgenv().inf_stamina = true
+
+        if Stamina_Attribute then
+            while getgenv().inf_stamina == true do
+            task.wait()
+                Humanoid:SetAttribute("Stamina", 9e9)
+            end
+        end
+    else
+        getgenv().inf_stamina = false
+        getgenv().inf_stamina = false
+        if getgenv().Humanoid:GetAttribute("Stamina") then
+            getgenv().Humanoid:SetAttribute("Stamina", 100)
+            return getgenv().notify("Success:", "Sprint stamina successfully reset to 100.", 5)
+        else
+            return getgenv().notify("Failure:", "Stamina Attribute was not found in Humanoid!", 5)
+        end
+    end
+end,})
+wait(0.2)
+if getgenv().inf_stamina == true then
+    getgenv().inf_stamina = false
+    getgenv().InfStamina_FE:Set(false)
+    getgenv().notify("Heads Up:", "Turned off InfiniteStamina, it was enabled at runtime.", 5)
+end
+
 getgenv().AntiRagdoll = Tab2:CreateToggle({
 Name = "Anti Ragdoll",
 CurrentValue = false,
@@ -705,6 +1045,9 @@ Callback = function(anti_ragdoll)
             end
             if getgenv().StarterPlayer:FindFirstChild("StarterPlayerScripts"):FindFirstChild("RagdollClient") then
                 getgenv().StarterPlayer:FindFirstChild("StarterPlayerScripts"):FindFirstChild("RagdollClient").Parent = getgenv().TweenService
+            end
+            if getgenv().ReplicatedStorage:FindFirstChild("WeaponsSystem"):FindFirstChild("Libraries"):FindFirstChild("Ragdoll") then
+                getgenv().ReplicatedStorage:FindFirstChild("WeaponsSystem"):FindFirstChild("Libraries"):FindFirstChild("Ragdoll").Parent = getgenv().ReplicatedFirst or game:GetService("ReplicatedFirst")
             end
             if Modules:FindFirstChild("Ragdoll") then
                 Modules:FindFirstChild("Ragdoll").Parent = getgenv().AssetService
@@ -732,6 +1075,96 @@ if getgenv().Anti_Ragdoll_Enabled == true then
     getgenv().notify("Heads Up:", "Turned off AntiRagdoll it was enabled at runtime.", 5)
     getgenv().Anti_Ragdoll_Enabled = false
     getgenv().AntiRagdoll:Set(false)
+end
+
+local shift_to_run_connection
+getgenv().run_Shift_Speed = 50
+getgenv().walkSpeed = 16
+getgenv().runningEnabled = false
+
+getgenv().ShifTToRunSpeed = Tab2:CreateInput({
+Name = "Shift_To_Run Speed",
+PlaceholderText = "Enter Speed",
+RemoveTextAfterFocusLost = true,
+Callback = function(get_speed)
+    local speed = tonumber(get_speed)
+    if speed then
+        getgenv().run_Shift_Speed = speed
+    else
+        warn("Invalid speed input. Please enter a number.")
+    end
+end,})
+wait(0.2)
+getgenv().ShiftToRun = Tab2:CreateToggle({
+Name = "Shift To Run (broken right now)",
+CurrentValue = false,
+Flag = "SpeedCoilAlt",
+Callback = function(shifting_run)
+    getgenv().runningEnabled = shifting_run
+
+    if shift_to_run_connection then
+        shift_to_run_connection:Disconnect()
+        shift_to_run_connection = nil
+    end
+
+    if shifting_run then
+        local UIS = getgenv().UserInputService
+        local Players = getgenv().Players
+        local player = getgenv().LocalPlayer
+        local character = getgenv().Character
+        local humanoid = character:WaitForChild("Humanoid")
+        local shiftHeld = false
+
+        shift_to_run_connection = getgenv().RunService.Heartbeat:Connect(function()
+            if getgenv().runningEnabled and humanoid then
+                if shiftHeld then
+                    humanoid.WalkSpeed = getgenv().run_Shift_Speed
+                else
+                    humanoid.WalkSpeed = getgenv().walkSpeed
+                end
+            end
+        end)
+
+        UIS.InputBegan:Connect(function(input, gameProcessed)
+            if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
+                shiftHeld = true
+            end
+        end)
+
+        UIS.InputEnded:Connect(function(input, gameProcessed)
+            if input.KeyCode == Enum.KeyCode.LeftShift and not gameProcessed and getgenv().runningEnabled then
+                shiftHeld = false
+            end
+        end)
+
+        player.CharacterAdded:Connect(function(newChar)
+            character = newChar
+            humanoid = character:WaitForChild("Humanoid")
+        end)
+    else
+        if shift_to_run_connection then
+            shift_to_run_connection:Disconnect()
+            shift_to_run_connection = nil
+        end
+        wait(0.2)
+        local character = getgenv().Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = getgenv().walkSpeed
+            end
+        end
+    end
+end,})
+wait(0.2)
+if getgenv().runningEnabled == true then
+    if shift_to_run_connection then
+        shift_to_run_connection:Disconnect()
+        shift_to_run_connection = nil
+    end
+    getgenv().Character:WaitForChild("Humanoid").WalkSpeed = getgenv().walkSpeed or 16
+    getgenv().runningEnabled = false
+    getgenv().ShiftToRun:Set(false)
 end
 
 getgenv().Rainbow_FE_Car = Tab4:CreateToggle({
@@ -801,7 +1234,7 @@ Callback = function(rainbow_car)
                 else
                     getgenv().rainbow_vehicle = false
                     getgenv().Rainbow_FE_Car:Set(false)
-                    return getgenv().notify("Failure:", "Please spawn a vehicle before using this.", 5)
+                    return getgenv().notify("Failure:", "Vehicle has been destroyed or de-spawned, please spawn one.", 5)
                 end
             end
         end
@@ -816,6 +1249,161 @@ if getgenv().rainbow_vehicle == true then
     getgenv().rainbow_vehicle = false
     getgenv().Rainbow_FE_Car:Set(false)
 end
+
+getgenv().Kill_Player_FE = Tab5:CreateInput({
+Name = "Kill Player (FE)",
+PlaceholderText = "User Here",
+RemoveTextAfterFocusLost = true,
+Callback = function(player_to_eliminate)
+    local Target_To_Kill = findplr(player_to_eliminate)
+
+    if not Target_To_Kill then return getgenv().notify("Failure:", "Player does not seem to exist.", 5) end
+    wait(0.2)
+    if Target_To_Kill.Team.Name == "Civilian" then
+        getgenv().notify("Heads Up:", "Player is a Civilian, they MAY not die or take damage.", 5)
+    end
+    task.wait()
+    kill_player(Target_To_Kill)
+    wait(1)
+    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
+end,})
+
+local function loop_kill_addon(target, toggled)
+    if not target then 
+        return warn("Target or Target's Character does not appear to exist.") 
+    end
+
+    if target.Team and target.Team.Name == "Civilian" then
+        getgenv().notify("Heads Up:", "Player is a Civilian, they MAY not die or take damage.", 5)
+    end
+
+    getgenv().looping_kills = true
+
+    coroutine.wrap(function()
+        while getgenv().looping_kills == true and toggled == true do
+            task.wait()
+
+            if not target or not target:IsDescendantOf(game.Players) then
+                getgenv().looping_kills = false
+                return getgenv().notify("Heads Up:", "Turned off LoopKill, player left or does not exist.", 5)
+            end
+
+            if not target.Character then
+                local success, char = pcall(function()
+                    return target.CharacterAdded:Wait()
+                end)
+                if success then
+                    target.Character = char
+                    wait(0.5)
+                end
+            end
+
+            if target.Character and target.Character:FindFirstChild("Humanoid") then
+                kill_player(target)
+            end
+        end
+    end)()
+end
+
+getgenv().ModAll_Weapons = Tab5:CreateToggle({
+Name = "Mod All Guns",
+CurrentValue = false,
+Flag = "ModifyingAllWeapons",
+Callback = function(modded_weapons_all)
+    if modded_weapons_all then
+        getgenv().modded_weapons_all_of_them = true
+        while getgenv().modded_weapons_all_of_them == true do
+        wait(0.5)
+            mod_all_guns()
+        end
+    else
+        getgenv().modded_weapons_all_of_them = false
+        getgenv().modded_weapons_all_of_them = false
+    end
+end,})
+
+local Weapons = {
+    ["Desert Eagle"] = { IsWeapon = true },
+    ["Pistol"] = { IsWeapon = true },
+    ["Bizon"] = { IsWeapon = true },
+    ["AUG"] = { IsWeapon = true },
+    ["M16"] = { IsWeapon = true },
+    ["MP5"] = { IsWeapon = true },
+    ["UZI"] = { IsWeapon = true },
+    ["P90"] = { IsWeapon = true },
+    ["SCAR"] = { IsWeapon = true },
+    ["SPAS-12"] = { IsWeapon = true },
+    ["Scout"] = { IsWeapon = true },
+    ["Sawed Off"] = { IsWeapon = true },
+    ["FAMAS"] = { IsWeapon = true },
+    ["Barrett"] = { IsWeapon = true },
+    ["G36C"] = { IsWeapon = true },
+    ["MP7"] = { IsWeapon = true },
+    ["AA12"] = { IsWeapon = true },
+    ["M249"] = { IsWeapon = true },
+    ["Vector"] = { IsWeapon = true },
+    ["Explosive Sniper"] = { IsWeapon = true },
+    ["Minigun"] = { IsWeapon = true },
+    ["AK"] = { IsWeapon = true },
+    ["TEC-9"] = { IsWeapon = true },
+}
+
+local Weapon_Options = {}
+for name, _ in pairs(Weapons) do
+    table.insert(Weapon_Options, name)
+end
+task.wait()
+local selected_weapon = nil
+
+getgenv().ModAWeapon = Tab5:CreateDropdown({
+Name = "Mod A Weapon",
+Options = Weapon_Options,
+CurrentOption = "",
+MultipleOptions = false,
+Flag = "weapon_slot_select",
+Callback = function(chosen_gun)
+    selected_weapon = chosen_gun
+    print("Selected Weapon:", selected_weapon)
+    task.wait(.2)
+    local Result_Weapon = get_specific_weapon(selected_weapon)
+    if not Result_Weapon then return getgenv().notify("Failure:", "Weapon was not found in your Backpack/inventory!", 5) end
+    
+    if Result_Weapon then
+        mod_weapon(selected_weapon)
+    end
+end,})
+
+getgenv().LoopKill_Plr = Tab5:CreateInput({
+Name = "LoopKill Player",
+PlaceholderText = "User Here",
+RemoveTextAfterFocusLost = true,
+Callback = function(plr_to_loopkill)
+    local Plr_LoopKill = findplr(plr_to_loopkill)
+
+    if not Plr_LoopKill then return getgenv().notify("Failure:", "Player does not seem to exist.", 5) end
+    wait(0.2)
+    loop_kill_addon(Plr_LoopKill, true)
+    wait(0.2)
+    Plr_LoopKill.CharacterAdded:Connect(function(their_new_character)
+        if their_new_character and their_new_character:FindFirstChild("Humanoid") then
+            kill_player(Plr_LoopKill)
+        end
+    end)
+end,})
+
+getgenv().StopLoopKill = Tab5:CreateButton({
+Name = "Shutdown/Stop LoopKill",
+Callback = function()
+    getgenv().looping_kills = false
+    wait(0.4)
+    if not getgenv().looping_kills then
+        getgenv().notify("Success:", "LoopKill has been successfully stopped.", 5)
+        return 
+    else
+        getgenv().notify("Failure:", "Could not properly shutdown LoopKill!", 5)
+        return 
+    end
+end,})
 
 getgenv().Rainbow_Tint_FE = Tab4:CreateToggle({
 Name = "Rainbow Tint (FE)",
@@ -976,20 +1564,17 @@ if getgenv().RainbowTires_Script == true then
     getgenv().Rainbow_Tires_FE:Set(false)
 end
 
-for _, v in pairs(all_vehicles) do
-    local Any_Car = v
-end
-
 local Owned_Vehicle_Slots = {}
+table.clear(Owned_Vehicle_Slots)
 
-for _, car in pairs(carNames) do
-    table.insert(Owned_Vehicle_Slots, car)
+for name, _ in pairs(carNames) do
+    table.insert(Owned_Vehicle_Slots, name)
 end
 wait()
 local vehicle_selected = nil
 
 getgenv().Spawn_Vehicle_Plr = Tab3:CreateDropdown({
-Name = "Spawn Vehicle",
+Name = "Spawn A Vehicle",
 Options = Owned_Vehicle_Slots,
 CurrentOption = "",
 MultipleOptions = false,
@@ -997,13 +1582,10 @@ Flag = "vehicle_slot",
 Callback = function(vehicle_slot_picker)
     if typeof(vehicle_slot_picker) == "table" then
         vehicle_slot_picker = vehicle_slot_picker[1]
-        wait(0.3)
-        print("Selected Vehicle: "..tostring(vehicle_slot_picker))
     end
-    wait(0.2)
+
     vehicle_selected = carNames[vehicle_slot_picker]
-    wait(0.3)
-    print("Spawning Vehicle: "..tostring(vehicle_slot_picker))
+    task.wait(.3)
     spawn_vehicle(vehicle_slot_picker)
 end,})
 
