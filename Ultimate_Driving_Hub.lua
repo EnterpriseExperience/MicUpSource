@@ -1412,6 +1412,7 @@ getgenv().StopLoopKill = Tab5:CreateButton({
 Name = "Shutdown/Stop LoopKill",
 Callback = function()
     getgenv().looping_kills = false
+    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
     wait(0.4)
     if not getgenv().looping_kills then
         getgenv().notify("Success:", "LoopKill has been successfully stopped.", 5)
