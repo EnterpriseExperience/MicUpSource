@@ -480,18 +480,54 @@ local function collect_session_rewards()
 	end
 end
 
+local function delete_other_fake_tower()
+    local ws = getgenv().Workspace or workspace
+    local Top_Section = ws:FindFirstChild("Top_Section")
+    if not Top_Section then warn("Top_Section not found") end
+
+    local Practice_Stage = Top_Section and Top_Section:FindFirstChild("Practice_Stage")
+    if not Practice_Stage then warn("Practice_Stage not found") end
+
+    local Container = Practice_Stage and Practice_Stage:FindFirstChild("Container")
+    if not Container then warn("Container not found") end
+
+    local Floor1 = Container and Container:FindFirstChild("Floor #1")
+    if not Floor1 then warn("Floor #1 not found") end
+
+    local Reach = Floor1 and Floor1:FindFirstChild("Reach Detector")
+    local Pass = Floor1 and Floor1:FindFirstChild("Pass Detector")
+
+    if Reach then
+        Reach:Destroy()
+    end
+
+    if Pass then
+        Pass:Destroy()
+    end
+end
+
 local function GodMode(toggle)
 	local General_Folder = getgenv().LocalPlayer:FindFirstChild("General")
 	local Temporary_Immunity = General_Folder:FindFirstChild("Temporary_Immunity")
 
 	if toggle == true then
-      Update_Setting_RE:FireServer(30, false)
+        Update_Setting_RE:FireServer(30, false)
 		Temporary_Immunity.Value = true
 	elseif toggle == false then
 		Temporary_Immunity.Value = false
 	else
 		return 
 	end
+end
+
+local function Give_Arcade_Points(number_of_points)
+    for i = 1, number_of_points do
+        local args = {
+            "Zombie_Slayer"
+        }
+
+        Remote_Events:WaitForChild("Add_Arcade_Points"):FireServer(unpack(args))
+    end
 end
 
 local function Spectate(toggle)
@@ -533,16 +569,27 @@ local function collect_all()
     end
 end
 
+local function enable_in_game_catalog(toggle)
+    if toggle == true then
+        getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled = true
+    elseif toggle == false then
+        getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled = false
+    else
+        return 
+    end
+end
+
 local function touch_door()
     Update_Setting_RE:FireServer(30, false)
     wait(0.1)
     repeat task.wait() until getgenv().LocalPlayer.General.CoinsEarned.Value >= 70
     repeat task.wait() until getgenv().Workspace:FindFirstChild("Tower") and getgenv().Workspace:FindFirstChild("Top_Section")
     if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("CoinsEarned").Value >= 70 then
+        delete_other_fake_tower()
         local Reward_Door = getgenv().Workspace:FindFirstChild("Top_Section"):FindFirstChild("Hallway"):FindFirstChild("RewardDoor")
 
         GodMode(true)
-        wait(0.2)
+        wait(0.3)
         tween_tp("RewardDoor")
     end
 end
@@ -574,6 +621,14 @@ if Pass then
 else
     warn("Pass Detector not found")
 end
+
+local container = getgenv().Workspace:WaitForChild("Top_Section"):WaitForChild("Practice_Stage"):WaitForChild("Container")
+
+container.ChildAdded:Connect(function(child)
+    if child.Name == "Floor #1" then
+        child:Destroy()
+    end
+end)
 
 local function LocalPlayer_loaded()
    local player = Players.LocalPlayer
@@ -704,14 +759,17 @@ end
 getgenv().Auto_Win = Tab1:CreateButton({
 Name = "Auto Win",
 Callback = function()
-   repeat wait() until getgenv().Workspace:FindFirstChild("Tower") and getgenv().Workspace:FindFirstChild("Top_Section")
-   if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("CoinsEarned").Value <= 70 then
-      collect_all()
-      wait(3.6)
-      touch_door()
-   else
-      touch_door()
-   end
+    repeat wait() until getgenv().Workspace:FindFirstChild("Tower") and getgenv().Workspace:FindFirstChild("Top_Section")
+    if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("CoinsEarned").Value <= 70 then
+        if getgenv().God_ModeLocalPlr then
+            getgenv().God_ModeLocalPlr:Set(true)
+        end
+        collect_all()
+        wait(3.6)
+        touch_door()
+    else
+        touch_door()
+    end
 end,})
 
 getgenv().God_ModeLocalPlr = Tab2:CreateToggle({
@@ -732,10 +790,214 @@ if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Temporary_Imm
    getgenv().notify("Heads Up:", "Turned off GodMode, it was enabled at runtime.", 5)
 end
 
+getgenv().InGame_Catalog = Tab2:CreateToggle({
+Name = "In-Game Catalog (FE, Free Items)",
+CurrentValue = false,
+Flag = "InGameCatalogItems",
+Callback = function(avatar_items_catalog)
+    if avatar_items_catalog then
+        enable_in_game_catalog(true)
+    else
+        enable_in_game_catalog(false)
+    end
+end,})
+wait(0.2)
+if getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled == true then
+    getgenv().InGame_Catalog:Set(false)
+    getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled = false
+    wait(0.1)
+    getgenv().notify("Heads Up:", "Disabled In-Game Catalog, it was enabled at runtime.", 5)
+end
+
+local Old_GUIs_States = {}
+
+local function get_old_gui_states()
+    for _, v in ipairs(getgenv().PlayerGui:GetChildren()) do
+        if v:IsA("ScreenGui") then
+            Old_GUIs_States[v] = v.Enabled
+        end
+    end
+end
+
+local function restore_old_guis()
+    for gui, wasEnabled in pairs(Old_GUIs_States) do
+        if gui and gui:IsA("ScreenGui") then
+            gui.Enabled = wasEnabled
+        end
+    end
+end
+
+get_old_gui_states()
+wait(0.6)
+
+getgenv().Inf_Coins = Tab3:CreateToggle({
+Name = "Infinite Coins (WORKING!, USE BEFORE PATCH!)",
+CurrentValue = false,
+Flag = "InfCoinsFEWorking",
+Callback = function(inf_coins_regen)
+    local General = getgenv().LocalPlayer:FindFirstChild("General")
+    local Viewing_Billboard = General and General:FindFirstChild("Viewing_Billboard")
+    local Free_Spin_Alert = getgenv().PlayerGui:FindFirstChild("Free_Spin_Received")
+
+    if not Viewing_Billboard or not Free_Spin_Alert then
+        getgenv().redeem_all_spins = false
+        getgenv().Inf_Coins:Set(false)
+        return getgenv().notify("Error:", "Viewing_Billboard or FreeSpin GUI not found.", 5)
+    end
+
+    if inf_coins_regen then
+        getgenv().redeem_all_spins = true
+        while getgenv().redeem_all_spins do
+            wait(3)
+            Viewing_Billboard.Value = true
+            wait(3)
+            Free_Spin_Alert.Enabled = true
+            wait(2)
+            Viewing_Billboard.Value = false
+            wait(2)
+            restore_old_guis()
+        end
+    else
+        getgenv().redeem_all_spins = false
+        wait(0.9)
+        Free_Spin_Alert.Enabled = false
+        Viewing_Billboard.Value = false
+        restore_old_guis()
+    end
+end,})
+
+getgenv().Anti_Fog_AndColor_Swap = Tab1:CreateToggle({
+Name = "Anti Fog (And Color Swap)",
+CurrentValue = false,
+Flag = "AntiFogAndColorSwap",
+Callback = function(anti_fog_color_swap)
+    if anti_fog_color_swap then
+        getgenv().anti_fog_and_the_color_swap = true
+        local Winner_Val = getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Winner")
+
+        Winner_Val.Value = true
+    else
+        getgenv().anti_fog_and_the_color_swap = false
+        local Winner_Val = getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Winner")
+
+        Winner_Val.Value = false
+    end
+end,})
+
 getgenv().CollectAll_PlayTimeRewards = Tab3:CreateButton({
 Name = "Collect All Playtime Rewards",
 Callback = function()
-   collect_session_rewards()
+    local Session_Rewards_Value = getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Session_Reward_Coins")
+    collect_session_rewards()
+    --[[local Crate_System_GUI = getgenv().PlayerGui:FindFirstChild("Crate_System_UI")
+    local UI = Crate_System_GUI:FindFirstChild("UI")
+    local HUD = UI:FindFirstChild("HUD")
+    local Tabs = HUD:FindFirstChild("Tabs")
+    local Session_Reard_v2 = Tabs:FindFirstChild("Session_Reward_v2")
+    local TextLabel = Session_Reward_v2:FindFirstChild("CanvasGroup"):FindFirstChild("TextLabel")
+    local Old_Text = TextLabel.Text
+    wait(0.2)
+    collect_session_rewards()
+    wait(0.2)
+    TextLabel.Text = "0/100"--]]
+end,})
+
+getgenv().GiveArcade_Points_50 = Tab2:CreateButton({
+Name = "Give 50 Arcade Points",
+Callback = function()
+    Give_Arcade_Points(50)
+end,})
+
+getgenv().GiveArcade_Points_100 = Tab2:CreateButton({
+Name = "Give 100 Arcade Points",
+Callback = function()
+    Give_Arcade_Points(100)
+end,})
+
+getgenv().GiveArcade_Points_1000 = Tab2:CreateButton({
+Name = "Give 1000 Arcade Points",
+Callback = function()
+    Give_Arcade_Points(1000)
+end,})
+
+getgenv().Rainbow_FE_Skin = Tab2:CreateToggle({
+Name = "Rainbow Skin (FE)",
+CurrentValue = false,
+Flag = "FERainbowSkinScript",
+Callback = function(rainbow_loop)
+    local Old_Main_Color = getgenv().Character:FindFirstChild("Body Colors").TorsoColor
+    wait()
+    if rainbow_loop then
+        getgenv().skin_rainbow_loop = true
+        while getgenv().skin_rainbow_loop == true do
+        wait()
+            local colorCycle = {
+                Color3.fromRGB(17, 17, 17),
+                Color3.fromRGB(101, 67, 33),
+                Color3.fromRGB(0, 102, 204),
+                Color3.fromRGB(0, 153, 0),
+                Color3.fromRGB(255, 255, 255),
+                Color3.fromRGB(128, 128, 128),
+                Color3.fromRGB(255, 255, 0),
+                Color3.fromRGB(255, 165, 0),
+                Color3.fromRGB(255, 0, 0),
+                Color3.fromRGB(128, 0, 128),
+                Color3.fromRGB(255, 105, 180),
+                Color3.fromRGB(0, 255, 255)
+            }
+
+            local remote = getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid")
+
+            for _, color in ipairs(colorCycle) do
+                task.wait(.3)
+                local payload = {
+                    { BodyColor = color }
+                }
+
+                remote:FireServer(unpack(payload))
+            end
+        end
+    else
+        getgenv().skin_rainbow_loop = false
+        getgenv().skin_rainbow_loop = false
+        wait(0.3)
+        if getgenv().Character:FindFirstChild("Body Colors") then
+            getgenv().notify("Hang On:", "Resetting Body Colors...", 5)
+            wait(1.2)
+            local args = {
+                {
+                    BodyColor = Old_Main_Color
+                }
+            }
+            getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid"):FireServer(unpack(args))
+            wait(1)
+            if getgenv().Character:FindFirstChild("Body Colors").TorsoColor == Old_Main_Color then
+                return getgenv().notify("Success:", "Reset fully body colors back to default.", 5)
+            else
+                return getgenv().notify("Alert:", "Could not determine if Body Colors we're reset properly.", 5)
+            end
+        end
+    end
+end,})
+wait(0.2)
+if getgenv().skin_rainbow_loop == true then
+    getgenv().Rainbow_FE_Skin:Set(false)
+    getgenv().skin_rainbow_loop = false
+    getgenv().notify("Heads Up:", "Disabled RainbowSkinFE, it was enabled at runtime.", 5)
+end
+
+getgenv().GiveArcade_Points_Other = Tab2:CreateInput({
+Name = "Give Arcade Points",
+PlaceholderText = "Number Here",
+RemoveTextAfterFocusLost = true,
+Callback = function(Number_Points)
+    local Number_Of_Points_Input = tonumber(Number_Points)
+
+    if Number_Of_Points_Input then
+        Give_Arcade_Points(Number_Points)
+    else
+        return getgenv().notify("Failure:", tostring(Number_Points).." isn't a number!", 5)
+    end
 end,})
 
 getgenv().SpectatePlayers = Tab3:CreateToggle({
