@@ -455,6 +455,7 @@ local Players = getgenv().Players
 local LocalPlayer = Players.LocalPlayer
 local Character = getgenv().Character
 local Backpack = getgenv().Backpack
+local Old_PVP_Enabled = getgenv().Character:GetAttribute("PVPDamageEnabled")
 getgenv().specific_weapon_mod = false
 getgenv().all_weapon_mods = false
 local User_Configuration = User_Configuration or {}
@@ -482,6 +483,8 @@ local function get_specific_weapon(weapon_name)
             return v
         end
     end
+
+    return nil
 end
 
 local function get_weapon()
@@ -490,6 +493,8 @@ local function get_weapon()
             return v
         end
     end
+
+    return nil
 end
 
 local function mod_weapon(gun)
@@ -535,6 +540,8 @@ local function mod_all_guns()
             tool:SetAttribute("Ammo", 9e9)
         end
     end
+    wait(0.2)
+    return 
 end
 
 local function buy_weapon(gun_name)
@@ -548,6 +555,7 @@ local function buy_weapon(gun_name)
         }
     }
     getgenv().ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
+    return 
 end
 
 local function switch_team(team_name)
@@ -558,6 +566,7 @@ local function switch_team(team_name)
     }
 
     getgenv().ReplicatedStorage:WaitForChild("Events"):WaitForChild("Admin"):WaitForChild("ChangeTeam"):InvokeServer(unpack(args))
+    return 
 end
 
 function Can_Damage()
@@ -638,56 +647,64 @@ end
 local function kill_player(player)
     if not player or not player:IsDescendantOf(game.Players) then return end
 
-    local character = player.Character or player.CharacterAdded:Wait()
-    if not character then return end
-
-    local hrp = character:FindFirstChild("HumanoidRootPart")
-    local humanoid = character:FindFirstChild("Humanoid")
-    if not hrp or not humanoid then return end
-
-    local weapon = get_weapon()
-    local weapon_name = "Pistol"
-
-    if not weapon then
-        buy_weapon(weapon_name)
-        task.wait(0.4)
-
-        if getgenv().LocalPlayer.Team.Name ~= "Criminal" then
-            switch_team("Criminal")
-        end
-
-        task.wait(0.3)
-    end
-
-    local tool = getgenv().Backpack:FindFirstChild(weapon_name)
-    if tool then
-        tool.Parent = getgenv().Character
-    end
-
-    local equipped = getgenv().Character:FindFirstChild(weapon_name)
-    if not equipped then return end
-
+    local char = getgenv().Character
+    local lp = getgenv().LocalPlayer
+    local hum = char:FindFirstChildWhichIsA("Humanoid")
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local backpack = lp:FindFirstChildWhichIsA("Backpack")
     local weapon_hit = getgenv().ReplicatedStorage:WaitForChild("WeaponsSystem"):WaitForChild("Network"):WaitForChild("WeaponHit")
 
-    local args = {
-        equipped,
-        {
-            p = Vector3.new(-1726.32080078125, 68.31084442138672, 5290.83837890625),
-            pid = 1,
-            origin = Vector3.new(-1705.4676513671875, 70.51872253417969, 5289.42578125),
-            part = hrp,
-            d = 21.017230987548828,
-            maxDist = 20.90093994140625,
-            h = humanoid,
-            m = Enum.Material.Plastic,
-            n = Vector3.new(0.9204065799713135, -0.36130234599113464, 0.14937283098697662),
-            t = 0.39954973860914855,
-            sid = 227
-        }
-    }
+    local victim_char = player.Character or player.CharacterAdded:Wait()
+    local victim_hum = victim_char:FindFirstChild("Humanoid")
+    local victim_hrp = victim_char:FindFirstChild("HumanoidRootPart")
 
-    for i = 1, 275 do
+    if not victim_hrp or not victim_hum then return end
+
+    if lp.Team.Name ~= "Criminal" then
+        if getgenv().notify then
+            getgenv().notify("Failure:", "Please become a Criminal to use this!", 5)
+        end
+        return
+    end
+
+    local equipped_correctly = false
+    for _, tool in ipairs(backpack:GetChildren()) do
+        if tool:IsA("Tool") and tool:FindFirstChild("Configuration") then
+            hum:EquipTool(tool)
+            repeat task.wait() until char:FindFirstChild(tool.Name)
+            equipped_correctly = true
+            break
+        end
+    end
+
+    if not equipped_correctly then
+        if getgenv().notify then
+            getgenv().notify("Error:", "No valid gun in backpack.", 5)
+        end
+        return
+    end
+
+    local equipped_tool = char:FindFirstChildWhichIsA("Tool")
+    if not equipped_tool then return end
+
+    for i = 1, 100 do
         task.wait()
+        local args = {
+            equipped_tool,
+            {
+                p = vector.create(1795.986328125, 59.66236877441406, 5395.9365234375),
+                pid = 1,
+                origin = vector.create(1787.1165771484375, 60.78240966796875, 5399.0166015625),
+                part = victim_hrp or victim_char:FindFirstChild("Hitbox"),
+                d = 9.455890655517578,
+                maxDist = 9.389322280883789,
+                h = victim_hum,
+                m = Enum.Material.Plastic,
+                n = vector.create(-0.008076800033450127, 0.9968878626823425, 0.07841799408197403),
+                t = 0.28342804913539854,
+                sid = 8
+            }
+        }
         weapon_hit:FireServer(unpack(args))
     end
 end
@@ -1275,7 +1292,7 @@ Callback = function(player_to_eliminate)
 
     if not Target_To_Kill then return getgenv().notify("Failure:", "Player does not seem to exist.", 5) end
     wait(0.2)
-    if Target_To_Kill.Team.Name == "Civilian" then
+    if Target_To_Kill.Team == getgenv().Teams.Citizen then
         getgenv().notify("Heads Up:", "Player is a Civilian, they MAY not die or take damage.", 5)
     end
     task.wait()
@@ -1380,13 +1397,47 @@ MultipleOptions = false,
 Flag = "weapon_slot_select",
 Callback = function(chosen_gun)
     selected_weapon = chosen_gun
-    local Result_Weapon = get_specific_weapon(selected_weapon)
+    local Result_Weapon = getgenv().Backpack:FindFirstChild(chosen_gun)
     if not Result_Weapon then return getgenv().notify("Failure:", "Weapon was not found in your Backpack/inventory!", 5) end
     
     if Result_Weapon then
         mod_weapon(selected_weapon)
     end
 end,})
+
+getgenv().PvPSetting = Tab2:CreateToggle({
+Name = "PvP",
+CurrentValue = false,
+Flag = "PvPToggle",
+Callback = function(is_pvp_on)
+    if is_pvp_on then
+        getgenv().pvp_damage_value = true
+        local Character = getgenv().Character
+        local PvP_Attribute = Character:GetAttribute("PVPDamageEnabled")
+        if not PvP_Attribute then
+            getgenv().pvp_damage_value = false
+            getgenv().PvPSetting:Set(false)
+            return getgenv().notify("Error:", "PvP Attribute was not found in Character, cannot set PvP.", 5)
+        end
+
+        if getgenv().pvp_damage_value == true then
+            Character:SetAttribute("PVPDamageEnabled", true)
+        end
+    else
+        getgenv().pvp_damage_value = false
+        if getgenv().Character:GetAttribute("PVPDamageEnabled") and getgenv().Character:GetAttribute("PVPDamageEnabled") == true then
+            getgenv().Character:SetAttribute("PVPDamageEnabled", false)
+        end
+    end
+end,})
+wait(0.3)
+if Old_PVP_Enabled == true then
+    warn("PVP was enabled before, re-enabling...")
+    getgenv().Character:SetAttribute("PVPDamageEnabled", true)
+else
+    warn("PVP was disabled before, disabling...")
+    getgenv().Character:SetAttribute("PVPDamageEnabled", false)
+end
 
 getgenv().LoopKill_Plr = Tab5:CreateInput({
 Name = "LoopKill Player (FE)",
