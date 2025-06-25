@@ -579,6 +579,16 @@ local function enable_in_game_catalog(toggle)
     end
 end
 
+local Shop_Folder = getgenv().ReplicatedStorage:WaitForChild("Remote_Functions"):WaitForChild("Shop")
+
+local function Purchase_Mutator(Mutator)
+    if not Shop_Folder then return end
+
+    if Shop_Folder:FindFirstChild("Purchase: "..tostring(Mutator)) then
+        Shop_Folder:FindFirstChild("Purchase: "..tostring(Mutator)):InvokeServer()
+    end
+end
+
 local function touch_door()
     Update_Setting_RE:FireServer(30, false)
     wait(0.1)
@@ -680,7 +690,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Tower Of Misery ✅ | 1.1.5 | "..tostring(executor_Name),
+        Name = "✅ Tower Of Misery ✅ | 1.1.9 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "TowerOfMisery | Hub.",
         ConfigurationSaving = {
@@ -756,6 +766,19 @@ if getgenv().AssetService:FindFirstChild("Send_Ads_Analytics") then
    getgenv().notify("Heads Up:", "Disabled AntiLogging, it was enabled at runtime.", 5)
 end
 
+local NoClip_Loop = nil
+local Clip = false
+
+local function NoclipLoop()
+    if Clip == false and getgenv().Character ~= nil then
+        for _, child in pairs(getgenv().Character:GetDescendants()) do
+            if child:IsA("BasePart") and child.CanCollide == true then
+                child.CanCollide = false
+            end
+        end
+    end
+end
+
 getgenv().Auto_Win = Tab1:CreateButton({
 Name = "Auto Win",
 Callback = function()
@@ -764,10 +787,16 @@ Callback = function()
         if getgenv().God_ModeLocalPlr then
             getgenv().God_ModeLocalPlr:Set(true)
         end
+        NoClip_Loop = getgenv().RunService.Stepped:Connect(NoclipLoop)
+        GodMode(true)
+        wait(0.1)
         collect_all()
         wait(3.6)
         touch_door()
     else
+        GodMode(true)
+        NoClip_Loop = getgenv().RunService.Stepped:Connect(NoclipLoop)
+        wait(0.2)
         touch_door()
     end
 end,})
@@ -830,7 +859,7 @@ end
 get_old_gui_states()
 wait(0.6)
 
-getgenv().Inf_Coins = Tab3:CreateToggle({
+--[[getgenv().Inf_Coins = Tab3:CreateToggle({
 Name = "Infinite Coins (WORKING!, USE BEFORE PATCH!)",
 CurrentValue = false,
 Flag = "InfCoinsFEWorking",
@@ -864,6 +893,33 @@ Callback = function(inf_coins_regen)
         Viewing_Billboard.Value = false
         restore_old_guis()
     end
+end,})--]]
+
+getgenv().PurchaseAll_Mutators = Tab1:CreateButton({
+Name = "Purchase All Mutators",
+Callback = function()
+    local Shop_Folder = getgenv().ReplicatedStorage:WaitForChild("Remote_Functions"):WaitForChild("Shop")
+
+    local function Purchase_Mutator(Mutator)
+        if not Shop_Folder then return end
+
+        if Shop_Folder:FindFirstChild("Purchase: "..tostring(Mutator)) then
+            Shop_Folder:FindFirstChild("Purchase: "..tostring(Mutator)):InvokeServer()
+        end
+    end
+
+    local Mutators = {
+        "Fog Clouds",
+        "Color Swap",
+        "Quick Spawn",
+        "Night Mode",
+        "High Speed",
+        "Low Gravity"
+    }
+
+    for _, mutator in ipairs(Mutators) do
+        Purchase_Mutator(mutator)
+    end
 end,})
 
 getgenv().Anti_Fog_AndColor_Swap = Tab1:CreateToggle({
@@ -875,9 +931,14 @@ Callback = function(anti_fog_color_swap)
         getgenv().anti_fog_and_the_color_swap = true
         local Winner_Val = getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Winner")
 
-        Winner_Val.Value = true
+        while getgenv().anti_fog_and_the_color_swap == true do
+        wait()
+            Winner_Val.Value = true
+        end
     else
         getgenv().anti_fog_and_the_color_swap = false
+        getgenv().anti_fog_and_the_color_swap = false
+        wait(0.2)
         local Winner_Val = getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Winner")
 
         Winner_Val.Value = false
