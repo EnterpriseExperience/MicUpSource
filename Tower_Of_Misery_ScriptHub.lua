@@ -549,22 +549,31 @@ end
 
 local ws = getgenv().Workspace or workspace
 local Top_Section = ws:FindFirstChild("Top_Section")
-if not Top_Section then return warn("Top_Section not found") end
+if not Top_Section then warn("Top_Section not found") end
 
-local Practice_Stage = Top_Section:FindFirstChild("Practice_Stage")
-if not Practice_Stage then return warn("Practice_Stage not found") end
+local Practice_Stage = Top_Section and Top_Section:FindFirstChild("Practice_Stage")
+if not Practice_Stage then warn("Practice_Stage not found") end
 
-local Container = Practice_Stage:FindFirstChild("Container")
-if not Container then return warn("Container not found") end
+local Container = Practice_Stage and Practice_Stage:FindFirstChild("Container")
+if not Container then warn("Container not found") end
 
-local Floor1 = Container:FindFirstChild("Floor #1")
-if not Floor1 then return warn("Floor #1 not found") end
+local Floor1 = Container and Container:FindFirstChild("Floor #1")
+if not Floor1 then warn("Floor #1 not found") end
 
-local Reach = Floor1:FindFirstChild("Reach Detector")
-local Pass = Floor1:FindFirstChild("Pass Detector")
+local Reach = Floor1 and Floor1:FindFirstChild("Reach Detector")
+local Pass = Floor1 and Floor1:FindFirstChild("Pass Detector")
 
-if Reach then Reach:Destroy() else warn("Reach Detector not found") end
-if Pass then Pass:Destroy() else warn("Pass Detector not found") end
+if Reach then
+    Reach:Destroy()
+else
+    warn("Reach Detector not found")
+end
+
+if Pass then
+    Pass:Destroy()
+else
+    warn("Pass Detector not found")
+end
 
 local function LocalPlayer_loaded()
    local player = Players.LocalPlayer
@@ -616,7 +625,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Tower Of Misery ✅ | 1.1.4 | "..tostring(executor_Name),
+        Name = "✅ Tower Of Misery ✅ | 1.1.5 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "TowerOfMisery | Hub.",
         ConfigurationSaving = {
