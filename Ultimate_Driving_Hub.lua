@@ -372,9 +372,11 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 end)
 task.wait(0.2)
 
-local carNames = {}
 local HttpService = getgenv().HttpService or getgenv().Service_Wrap("HttpService")
-task.wait(0.2)
+
+local carNames = {}
+local Owned_Vehicle_Slots = {}
+
 function get_car_names()
     local vehicleDataValue = getgenv().LocalPlayer:FindFirstChild("Values")
         and getgenv().LocalPlayer.Values:FindFirstChild("ExtraLeaderStats")
@@ -392,12 +394,17 @@ function get_car_names()
         return {}
     end
 
-    for carName, _ in pairs(decoded) do
-        table.insert(carNames, carName)
+    table.clear(carNames)
+    for carName, data in pairs(decoded) do
+        carNames[carName] = data
+        table.insert(Owned_Vehicle_Slots, carName)
     end
 
     return carNames
 end
+wait(0.1)
+get_car_names()
+task.wait()
 
 -- To be input into script hub soon.
 --local Gun_Shop_Prompt = getgenv().Workspace:FindFirstChild("_Main"):FindFirstChild("GunGivers"):FindFirstChild("WeaponBuilding"):FindFirstChild("Building"):FindFirstChild("GunShop"):FindFirstChild("ShopPad"):FindFirstChildOfClass("ProximityPrompt")
@@ -1835,9 +1842,15 @@ Callback = function()
     local Events_Folder = getgenv().ReplicatedStorage:FindFirstChild("Events")
     local Delete_Car_Remote = Events_Folder:FindFirstChild("RemoteEvent")
     local LocalPlayer = getgenv().LocalPlayer
+    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+    local SeatPart = Humanoid.SeatPart
     local Values_Folder = LocalPlayer:FindFirstChild("Values")
     local References_Folder = Values_Folder:FindFirstChild("References")
     local Vehicle_Seat_Car = References_Folder:FindFirstChild("CarSeat").Value
+
+    if not SeatPart or not SeatPart.Parent then
+        return getgenv().notify("Failure:", "You are NOT sitting in a Vehicle to delete it.", 5)
+    end
 
     Delete_Car_Remote:FireServer("VehicleDelete", { Vehicle_Seat_Car.Parent })
 end,})
