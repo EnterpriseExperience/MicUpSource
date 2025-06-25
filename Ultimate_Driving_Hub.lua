@@ -856,7 +856,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Ultimate Driving ✅ | 1.1.8 | "..tostring(executor_Name),
+        Name = "✅ Ultimate Driving ✅ | 1.2.4 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "Ultimate Driving | Hub.",
         ConfigurationSaving = {
@@ -1340,7 +1340,7 @@ local function loop_kill_addon(target, toggled)
 end
 
 getgenv().ModAll_Weapons = Tab5:CreateToggle({
-Name = "Mod All Guns",
+Name = "Mod All Guns (lower level executors method)",
 CurrentValue = false,
 Flag = "ModifyingAllWeapons",
 Callback = function(modded_weapons_all)
@@ -1353,6 +1353,177 @@ Callback = function(modded_weapons_all)
     else
         getgenv().modded_weapons_all_of_them = false
         getgenv().modded_weapons_all_of_them = false
+    end
+end,})
+
+getgenv().InfAmmo_AllGuns = Tab5:CreateButton({
+Name = "Infinite Ammo (Advanced Method, Any Weapon)",
+Callback = function()
+    if getrawmetatable and setreadonly and newcclosure then
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local old_namecall = mt.__namecall
+
+        mt.__namecall = newcclosure(function(self, ...)
+            local method = getnamecallmethod()
+            local args = {...}
+
+            if method == "GetAttribute" and tostring(args[1]) == "Ammo" then
+                return 9e9
+            end
+
+            return old_namecall(self, unpack(args))
+        end)
+    else
+        return getgenv().notify("Failure:", "Your executor cannot run this, sorry.", 5)
+    end
+end,})
+
+getgenv().NoRecoil_NameCall = Tab5:CreateButton({
+Name = "No Recoil (Advanced Method, Works Better)",
+Callback = function()
+    if getrawmetatable and setreadonly and newcclosure then
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local old_index = mt.__index
+
+        mt.__index = newcclosure(function(self, key)
+            if typeof(self) == "Instance" and key == "Value" then
+                local name = self.Name
+
+                if name == "RecoilMin" or name == "RecoilMax" then
+                    return 0
+                end
+            end
+
+            return old_index(self, key)
+        end)
+    else
+        return getgenv().notify("Failure:", "Your executor does not support this, sorry.", 5)
+    end
+end,})
+
+getgenv().NoSpread_IndexMethod = Tab5:CreateButton({
+Name = "No Spread (Advanced Method, Works Better)",
+Callback = function()
+    if getrawmetatable and setreadonly and newcclosure then
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local old_index = mt.__index
+
+        mt.__index = newcclosure(function(self, key)
+            if typeof(self) == "Instance" and key == "Value" then
+                local name = self.Name
+
+                if name == "MaxSpread" then
+                    return 0
+                end
+            end
+
+            return old_index(self, key)
+        end)
+    else
+        return getgenv().notify("Failure:", "Your executor does not support this, sorry.", 5)
+    end
+end,})
+
+getgenv().HighDamage_IndexMethod = Tab5:CreateButton({
+Name = "Mod Hit Damage (Advanced Method, Works Better)",
+Callback = function()
+    if getrawmetatable and setreadonly and newcclosure then
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local old_index = mt.__index
+
+        mt.__index = newcclosure(function(self, key)
+            if typeof(self) == "Instance" and key == "Value" then
+                local name = self.Name
+
+                if name == "HitDamage" then
+                    return 500
+                end
+            end
+
+            return old_index(self, key)
+        end)
+    else
+        return getgenv().notify("Failure:", "Your executor does not support this, sorry.", 5)
+    end
+end,})
+
+getgenv().FireModeMod_IndexMethod = Tab5:CreateButton({
+Name = "Automatic Weapons (Advanced Method, Works Better)",
+Callback = function()
+    if getrawmetatable and setreadonly and newcclosure then
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local old_index = mt.__index
+
+        mt.__index = newcclosure(function(self, key)
+            if typeof(self) == "Instance" and key == "Value" then
+                local name = self.Name
+
+                if name == "FireMode" then
+                    return "Automatic"
+                end
+            end
+
+            return old_index(self, key)
+        end)
+    else
+        return getgenv().notify("Failure:", "Your executor does not support this, sorry.", 5)
+    end
+end,})
+
+getgenv().AllGunMods_IndexMethod = Tab5:CreateButton({
+Name = "Mod All Guns (Advanced Method, Works Better)",
+Callback = function()
+    if getrawmetatable and setreadonly and newcclosure then
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local old_namecall = mt.__namecall
+
+        mt.__namecall = newcclosure(function(self, ...)
+            local method = getnamecallmethod()
+            local args = {...}
+
+            if method == "GetAttribute" and tostring(args[1]) == "Ammo" then
+                return 9e9
+            end
+
+            return old_namecall(self, unpack(args))
+        end)
+        wait(0.2)
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local old_index = mt.__index
+
+        mt.__index = newcclosure(function(self, key)
+            if typeof(self) == "Instance" and key == "Value" then
+                local name = self.Name
+
+                if name == "AmmoCapacity" then
+                    return 9e9
+                elseif name == "RecoilMin" or name == "RecoilMax" or name == "MaxSpread" then
+                    return 0
+                elseif name == "HitDamage" then
+                    return 500
+                elseif name == "FireMode" then
+                    return "Automatic"
+                end
+            end
+
+            return old_index(self, key)
+        end)
+    else
+        return getgenv().notify("Failure:", "Your executor does not support this, sorry.", 5)
     end
 end,})
 
@@ -1390,7 +1561,7 @@ task.wait()
 local selected_weapon = nil
 
 getgenv().ModAWeapon = Tab5:CreateDropdown({
-Name = "Mod A Weapon",
+Name = "Mod A Weapon (works for lower level executors)",
 Options = Weapon_Options,
 CurrentOption = "",
 MultipleOptions = false,
@@ -1433,9 +1604,11 @@ end,})
 wait(0.3)
 if Old_PVP_Enabled == true then
     warn("PVP was enabled before, re-enabling...")
+    getgenv().PvPSetting:Set(true)
     getgenv().Character:SetAttribute("PVPDamageEnabled", true)
 else
     warn("PVP was disabled before, disabling...")
+    getgenv().PvPSetting:Set(false)
     getgenv().Character:SetAttribute("PVPDamageEnabled", false)
 end
 
