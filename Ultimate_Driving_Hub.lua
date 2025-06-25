@@ -1308,6 +1308,62 @@ Callback = function(player_to_eliminate)
     getgenv().Character:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
 end,})
 
+getgenv().KillCrims = Tab5:CreateButton({
+Name = "Kill Criminals (FE)",
+Callback = function()
+    local Players = getgenv().Players
+    local Teams = getgenv().Teams
+    local LocalPlayer = getgenv().LocalPlayer
+
+    local crim_targets = {}
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.Team == Teams:FindFirstChild("Criminal") and player ~= LocalPlayer then
+            table.insert(crim_targets, player)
+        end
+    end
+
+    for i, player in ipairs(crim_targets) do
+        kill_player(player)
+    end
+
+    if #crim_targets > 0 then
+        local hum = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+
+        if hum then
+            hum:UnequipTools()
+        end
+    end
+end,})
+
+getgenv().KillCops = Tab5:CreateButton({
+Name = "Kill Police (FE)",
+Callback = function()
+    local Players = getgenv().Players
+    local Teams = getgenv().Teams
+    local LocalPlayer = getgenv().LocalPlayer
+
+    local cop_targets = {}
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.Team == Teams:FindFirstChild("Police") and player ~= LocalPlayer then
+            table.insert(cop_targets, player)
+        end
+    end
+
+    for i, player in ipairs(cop_targets) do
+        kill_player(player)
+    end
+
+    if #cop_targets > 0 then
+        local hum = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+
+        if hum then
+            hum:UnequipTools()
+        end
+    end
+end,})
+
 local function loop_kill_addon(target, toggled)
     if not target then 
         return warn("Target or Target's Character does not appear to exist.") 
@@ -1592,7 +1648,7 @@ Callback = function(is_pvp_on)
         getgenv().pvp_damage_value = true
         local Character = getgenv().Character
         local PvP_Attribute = Character:GetAttribute("PVPDamageEnabled")
-        if not PvP_Attribute then
+        if PvP_Attribute == nil then
             getgenv().pvp_damage_value = false
             getgenv().PvPSetting:Set(false)
             return getgenv().notify("Error:", "PvP Attribute was not found in Character, cannot set PvP.", 5)
