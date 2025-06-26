@@ -741,11 +741,88 @@ local Tab2 = Window:CreateTab("🧍 Character 🧍", 0)
 local Section2 = Tab2:CreateSection("| 🧍 Character Content 🧍 |")
 local Tab3 = Window:CreateTab("⭐ Extras ⭐", 0)
 local Section3 = Tab3:CreateSection("| ⭐ Extra Content ⭐ |")
+local AC_Bypass_Loaded = false
 wait(0.2)
 getgenv().AntiCheat_Bypass = Tab1:CreateButton({
 Name = "Anti Cheat Bypass",
 Callback = function()
-   bypass_anticheat()
+    if not AC_Bypass_Loaded or AC_Bypass_Loaded == false then
+        getgenv().notify("Hang On:", "Bypassing anti-cheat...", 5)
+        bypass_anticheat()
+        wait(0.3)
+        AC_Bypass_Loaded = true
+        getgenv().notify("Success:", "Bypassed anticheat, do what ever you want!", 5)
+    elseif AC_Bypass_Loaded then
+        return getgenv().notify("Heads Up:", "You've already loaded anti-cheat bypass!", 5)
+    end
+    task.wait()
+    if getgenv().loaded_custom_tp_bypass == false and getconnections then
+        getgenv().notify("Hang On:", "Loading Custom TP Bypass...", 5)
+        task.wait(0.1)
+
+        local hrp = getgenv().Character and getgenv().Character:WaitForChild("HumanoidRootPart")
+        if not hrp then
+            return getgenv().notify("Error:", "HumanoidRootPart not found, cannot load TP bypass.", 5)
+        end
+
+        local function disconnect_connection(prop)
+            for _, conn in pairs(getconnections(hrp.Changed)) do
+                if typeof(conn.Function) == "function" then
+                    local info = debug.getinfo(conn.Function)
+                    if info and info.source and string.find(info.source, prop) then
+                        pcall(function() conn:Disable() end)
+                    end
+                end
+            end
+
+            for _, conn in pairs(getconnections(hrp:GetPropertyChangedSignal(prop))) do
+                pcall(function() conn:Disable() end)
+            end
+        end
+        wait(0.1)
+        local StarterGui = getgenv().StarterGui
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
+
+        local ScreenGui = Instance.new("ScreenGui")
+        ScreenGui.Name = "TopBar_Label"
+        ScreenGui.ResetOnSpawn = false
+        ScreenGui.IgnoreGuiInset = true
+        ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+        if syn and syn.protect_gui then
+            syn.protect_gui(ScreenGui)
+        end
+
+        ScreenGui.Parent = getgenv().PlayerGui
+
+        local TextLabel = Instance.new("TextLabel")
+        TextLabel.Name = "FlexLabel"
+        TextLabel.Parent = ScreenGui
+        TextLabel.AnchorPoint = Vector2.new(0.5, 0)
+        TextLabel.Position = UDim2.new(0.5, 0, 0, 2)
+        TextLabel.Size = UDim2.new(0.9, 0, 0, 30)
+        TextLabel.BackgroundTransparency = 1
+        TextLabel.Text = "Custom TP Bypass was made by: weareupthereman_38879 on Discord."
+        TextLabel.Font = Enum.Font.GothamBold
+        TextLabel.TextColor3 = Color3.fromRGB(0, 170, 255)
+        TextLabel.TextScaled = true
+        TextLabel.TextWrapped = true
+
+        local UIStroke = Instance.new("UIStroke", TextLabel)
+        UIStroke.Color = Color3.new(0, 0, 0)
+        UIStroke.Thickness = 1.3
+
+        disconnect_connection("Position")
+        disconnect_connection("CFrame")
+
+        task.wait(0.1)
+        getgenv().loaded_custom_tp_bypass = true
+    elseif getgenv().loaded_custom_tp_bypass then
+        return getgenv().notify("Heads Up:", "You already loaded Custom TP Bypass.", 5)
+    elseif not getconnections then
+        getgenv().loaded_custom_tp_bypass = true
+        return getgenv().notify("Error:", "Cannot load Custom TP Bypass, missing 'getconnections'", 5)
+    end
 end,})
 
 getgenv().DisableLogging_AndMetricsData = Tab1:CreateToggle({
@@ -816,6 +893,339 @@ Callback = function()
         wait(0.5)
         getgenv().execCmd("jump")
     end
+end,})
+
+getgenv().AntiChat_Log = Tab3:CreateButton({
+Name = "Anti Chat Log (Working!)",
+Callback = function()
+    if not game:IsLoaded() then
+        game.Loaded:wait()
+    end
+
+    task.wait(3)
+
+    local ACL_LoadTime = tick()
+    local NotificationTitle = "Anthony's ACL"
+
+    local OldCoreTypeSettings = {}
+    local WhitelistedCoreTypes = {
+        "Chat",
+        "All",
+        Enum.CoreGuiType.Chat,
+        Enum.CoreGuiType.All
+    }
+
+    local OldCoreSetting = nil
+
+    local CoreGui = game:GetService("CoreGui")
+    local StarterGui = getgenv().StarterGui or game:GetService("StarterGui")
+    local TweenService = getgenv().TweenService or game:GetService("TweenService")
+    local TextChatService = getgenv().TextChatService or game:GetService("TextChatService")
+    local Players = getgenv().Players or game:GetService("Players")
+    local Player = getgenv().LocalPlayer or Players.LocalPlayer
+
+    local Notify = function(_Title, _Text , Time)
+        StarterGui:SetCore("SendNotification", {Title = _Title, Text = _Text, Icon = "rbxassetid://2541869220", Duration = Time})
+    end
+
+    local Tween = function(Object, Time, Style, Direction, Property)
+        return TweenService:Create(Object, TweenInfo.new(Time, Enum.EasingStyle[Style], Enum.EasingDirection[Direction]), Property)
+    end
+
+    local PlayerGui = Player:FindFirstChildWhichIsA("PlayerGui") do
+        if not PlayerGui then
+            local Timer = tick() + 5
+            repeat task.wait() until Player:FindFirstChildWhichIsA("PlayerGui") or (tick() > Timer)
+            PlayerGui = Player:FindFirstChildWhichIsA("PlayerGui") or false
+            if not PlayerGui then
+                return Notify(NotificationTitle, "Failed to find PlayerGui!", 10)
+            end
+        end
+    end
+
+    if getgenv().AntiChatLogger then
+        return Notify(NotificationTitle, "Anti Chat & Screenshot Logger already loaded!", 15)
+    else
+        getgenv().AntiChatLogger = true
+    end
+
+    local Metatable = getrawmetatable(StarterGui)
+    setreadonly(Metatable, false)
+
+    local MessageEvent = Instance.new("BindableEvent")
+
+    if hookmetamethod then
+        local CoreHook do
+            CoreHook = hookmetamethod(StarterGui, "__namecall", newcclosure(function(self, ...)
+                local Method = getnamecallmethod()
+                local Arguments = {...}
+                
+                if self == StarterGui and not checkcaller() then
+                    if Method == "SetCoreGuiEnabled" then
+                        local CoreType = Arguments[1]
+                        local Enabled = Arguments[2]
+                        
+                        if table.find(WhitelistedCoreTypes, CoreType) and Enabled == false then -- Thanks Harun for correcting me on the second argument
+                            OldCoreTypeSettings[CoreType] = Enabled
+                            return
+                        end
+                    elseif Method == "SetCore" then
+                        local Core = Arguments[1]
+                        local Connection = Arguments[2]
+                        
+                        if Core == "CoreGuiChatConnections" then
+                            OldCoreSetting = Connection
+                            return
+                        end
+                    end
+                end
+                
+                return CoreHook(self, ...)
+            end))
+        end
+
+        if not getgenv().ChattedFix then
+            if hookmetamethod then
+                getgenv().ChattedFix = true
+
+                local ChattedFix do
+                    ChattedFix = hookmetamethod(Player, "__index", newcclosure(function(self, index)
+                        if self == Player and tostring(index):lower():match("chatted") and MessageEvent.Event then
+                            return MessageEvent.Event
+                        end
+
+                        return ChattedFix(self, index)
+                    end))
+                end
+
+                local AnimateChattedFix = task.spawn(function()
+                    local ChattedSignal = false
+
+                    for _, x in next, getgc() do
+                        if type(x) == "function" and getfenv(x).script ~= nil and tostring(getfenv(x).script) == "Animate" then
+                            if islclosure(x) then
+                                local Constants = getconstants(x)
+
+                                for _, v in next, Constants do
+                                    if v == "Chatted" then
+                                        ChattedSignal = x
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                    if ChattedSignal then
+                        ChattedSignal()
+                    end
+                end)
+            end
+        end
+    end
+
+    local EnabledChat = task.spawn(function()
+        repeat
+            StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+            task.wait()
+        until StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
+    end)
+
+    if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+        getgenv().notify("Failure:", "Detected new chat, loading Anti Screenshot...", 5)
+        if setfflag then
+            pcall(function()
+                setfflag("AbuseReportScreenshot", "False")
+                setfflag("AbuseReportScreenshotPercentage", "0")
+                getgenv().notify("Success:", "Just Anti Screenshot was loaded.", 5)
+                task.wait(0.2)
+                getgenv().notify("Success:", "Because your using the new TextChatService.", 5)
+            end)
+        else
+            getgenv().notify("Warning:", "Your executor does not support 'fflag' to run this!", 6)
+        end
+        return 
+    end
+
+    local PlayerScripts = Player:WaitForChild("PlayerScripts")
+    local ChatMain = PlayerScripts:FindFirstChild("ChatMain", true) or false
+
+    if not ChatMain then
+        local Timer = tick()
+        
+        repeat task.wait() until PlayerScripts:FindFirstChild("ChatMain", true) or tick() > (Timer + 3)
+        ChatMain = PlayerScripts:FindFirstChild("ChatMain", true)
+        
+        if not ChatMain then
+            getgenv().notify("Failure:", "Did not find ChatMain, loading Anti Screenshot instead...", 5)
+            if setfflag then
+                pcall(function()
+                    setfflag("AbuseReportScreenshot", "False")
+                    setfflag("AbuseReportScreenshotPercentage", "0")
+                    getgenv().notify("Success:", "Just Anti Screenshot was loaded.", 5)
+                    task.wait(0.2)
+                    getgenv().notify("Success:", "Because we could not find ChatMain LocalScript.", 5)
+                end)
+            else
+                getgenv().notify("Warning:", "Your executor does not support 'fflag' to run this!", 6)
+            end
+            return
+        end
+    end
+
+    local PostMessage = require(ChatMain).MessagePosted
+
+    if not PostMessage then
+        getgenv().notify("Failure:", "PostMessage could not be located, loading Anti Screenshot...", 5)
+        if setfflag then
+            pcall(function()
+                setfflag("AbuseReportScreenshot", "False")
+                setfflag("AbuseReportScreenshotPercentage", "0")
+                getgenv().notify("Success:", "Just Anti Screenshot was loaded.", 5)
+                task.wait(0.2)
+                getgenv().notify("Success:", "Because we could not properly allocate PostMessage ModuleScript.", 5)
+            end)
+        else
+            getgenv().notify("Warning:", "Your executor does not support 'fflag' to run this!", 6)
+        end
+        return
+    end
+
+    local OldFunctionHook; OldFunctionHook = hookfunction(PostMessage.fire, function(self, Message)
+        if self == PostMessage then
+            MessageEvent:Fire(Message)
+            return
+        end
+        return OldFunctionHook(self, Message)
+    end)
+
+    if setfflag then
+        pcall(function()
+            setfflag("AbuseReportScreenshot", "False")
+            setfflag("AbuseReportScreenshotPercentage", "0")
+        end)
+    else
+        getgenv().notify("Warning:", "Your executor does not support 'fflag' to run this!", 6)
+    end -- To prevent roblox from taking screenshots of your client.
+
+    local Credits = task.spawn(function()
+        local UserIds = {
+            1414978355
+        }
+        
+        if table.find(UserIds, Player.UserId) then
+            return
+        end
+        
+        local Tag = Instance.new("BillboardGui")
+        local Title = Instance.new("TextLabel", Tag)
+        local Rank = Instance.new("TextLabel", Tag)
+        local Gradient = Instance.new("UIGradient", Title)
+        
+        Tag.Brightness = 2
+        Tag.Size = UDim2.new(4, 0, 1, 0)
+        Tag.StudsOffsetWorldSpace = Vector3.new(0, 5, 0)
+        
+        Title.BackgroundTransparency = 1
+        Title.Size = UDim2.new(1, 0, .6, 0)
+        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Title.TextScaled = true
+        
+        Rank.AnchorPoint = Vector2.new(.5, 0)
+        Rank.BackgroundTransparency = 1
+        Rank.Position = UDim2.new(.5, 0, .65, 0)
+        Rank.Size = UDim2.new(.75, 0, .5, 0)
+        Rank.TextColor3 = Color3.fromRGB(0, 0, 0)
+        Rank.TextScaled = true
+        Rank.Text = "< Anti Chat-Logger >"
+        
+        Gradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.new(.75, .75, .75)),
+            ColorSequenceKeypoint.new(.27, Color3.new(0, 0, 0)),
+            ColorSequenceKeypoint.new(.5, Color3.new(.3, 0, .5)),
+            ColorSequenceKeypoint.new(0.78, Color3.new(0, 0, 0)),
+            ColorSequenceKeypoint.new(1, Color3.new(.75, .75, .75))
+        })
+        Gradient.Offset = Vector2.new(-1, 0)
+        
+        local GradientTeen = Tween(Gradient, 2, "Circular", "Out", {Offset = Vector2.new(1, 0)})
+        
+        function PlayAnimation()
+            GradientTeen:Play()
+            GradientTeen.Completed:Wait()
+            Gradient.Offset = Vector2.new(-1, 0)
+            task.wait(.75)
+            PlayAnimation()
+        end
+        
+        local AddTitle = function(Character)
+            repeat task.wait() until Character
+            
+            local Humanoid = Character and Character:WaitForChild("Humanoid")
+            local RootPart = Humanoid and Humanoid.RootPart
+            
+            if Humanoid then
+                Humanoid:GetPropertyChangedSignal("RootPart"):Connect(function()
+                    if Humanoid.RootPart then
+                        Tag.Adornee = RootPart
+                    end
+                end)
+            end
+            
+            if RootPart then
+                Tag.Adornee = RootPart
+            end
+        end
+        
+        task.spawn(PlayAnimation)
+        
+        for _, x in next, Players:GetPlayers() do
+            if table.find(UserIds, x.UserId) then
+                Tag.Parent = workspace.Terrain
+                Title.Text = x.Name
+                AddTitle(x.Character)
+                x.CharacterAdded:Connect(AddTitle)
+            end
+        end
+        
+        Players.PlayerAdded:Connect(function(x)
+            if table.find(UserIds, x.UserId) then
+                Tag.Parent = workspace.Terrain
+                Title.Text = x.Name
+                x.CharacterAdded:Connect(AddTitle)
+            end
+        end)
+        
+        Players.PlayerRemoving:Connect(function(x)
+            if table.find(UserIds, x.UserId) then
+                Tag.Parent = game
+            end
+        end)
+    end)
+
+    for _, x in next, OldCoreTypeSettings do
+        if not x then
+            StarterGui:SetCore("ChatActive", false)
+        end
+        StarterGui:SetCoreGuiEnabled(_, x)
+    end
+
+    if OldCoreSetting then
+        StarterGui:SetCore("CoreGuiChatConnections", OldCoreSetting)
+    end
+
+    if StarterGui:GetCore("ChatActive") then
+        StarterGui:SetCore("ChatActive", false)
+        StarterGui:SetCore("ChatActive", true)
+    end
+
+    --Metatable.__namecall = CoreHook
+    if CoreHook then
+        setmetatable(Metatable, {__namecall = CoreHook}) 
+    end
+    setreadonly(Metatable, true)
+
+    Notify(NotificationTitle, "Anti Chat & Screenshot Logger Loaded!", 15)
+    print(string.format("AnthonyIsntHere's Anti Chat-Logger has loaded in %s seconds.", string.format("%.2f", tostring(tick() - ACL_LoadTime))))
 end,})
 
 getgenv().God_ModeLocalPlr = Tab2:CreateToggle({
@@ -1132,6 +1542,29 @@ Callback = function(Number_Points)
     end
 end,})
 
+getgenv().layered_painting_auto = Tab1:CreateToggle({
+Name = "Layered Painting Auto-Farm",
+CurrentValue = false,
+Flag = "LayeredPaintingAutoFarmSquares",
+Callback = function(layer_paint)
+    if layer_paint then
+        getgenv().layered_painting_autofarm = true
+        while getgenv().layered_painting_autofarm == true do
+
+        task.wait()
+            for _, v in ipairs(getgenv().Workspace:FindFirstChild("Top_Section").Layer_Painting.Clear:GetChildren()) do
+                if v:IsA("BasePart") then
+                    task.wait()
+                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = v.CFrame * CFrame.new(0, 5, 0)
+                end
+            end
+        end
+    else
+        getgenv().layered_painting_autofarm = false
+        getgenv().layered_painting_autofarm = false
+    end
+end,})
+
 getgenv().UnlimitedPoints_ReGen = Tab2:CreateToggle({
 Name = "Loop Generate Arcade Points (FE)",
 CurrentValue = false,
@@ -1140,9 +1573,21 @@ Callback = function(anypoints_i_want)
     if anypoints_i_want then
         getgenv().unlimited_number_of_points = true
         while getgenv().unlimited_number_of_points == true do
-        wait()
+        wait(0.3)
             local args = {
                 "Zombie_Slayer"
+            }
+
+            getgenv().ReplicatedStorage:WaitForChild("Remote_Events"):WaitForChild("Add_Arcade_Points"):FireServer(unpack(args))
+            task.wait(0.2)
+            local args = {
+                "Layer_Painting"
+            }
+
+            getgenv().ReplicatedStorage:WaitForChild("Remote_Events"):WaitForChild("Add_Arcade_Points"):FireServer(unpack(args))
+            task.wait(0.2)
+            local args = {
+                "Rocket_Blocks"
             }
 
             getgenv().ReplicatedStorage:WaitForChild("Remote_Events"):WaitForChild("Add_Arcade_Points"):FireServer(unpack(args))
