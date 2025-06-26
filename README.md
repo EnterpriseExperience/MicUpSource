@@ -4,6 +4,19 @@
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua'))()
 ```
 
+### My Other Scripts ###:
+
+## Tower Of Misery ##
+```lua
+-- Tower OF Misery Script Hub
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua'))()
+```
+## Ultimate Driving ##
+```lua
+-- Ultimate Driving Script Hub
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua'))()
+```
+
 ```lua
 Star this repo and save it for later!
 
