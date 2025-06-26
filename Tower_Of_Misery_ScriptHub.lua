@@ -325,9 +325,22 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	getgenv().LocalPlayer.CharacterAdded:Wait()
 	task.wait(0.5)
 	getgenv().Character = newCharacter
+    local HumanoidRootPart = newCharacter:FindFirstChild("HumanoidRootPart") or newCharacter:WaitForChild("HumanoidRootPart", 5)
+    local Humanoid = newCharacter:FindFirstChildWhichIsA("Humanoid") or newCharacter:FindFirstChildOfClass("Humanoid") or newCharacter:WaitForChild("Humanoid", 5)
 	getgenv().HumanoidRootPart = newCharacter:FindFirstChild("HumanoidRootPart") or newCharacter:WaitForChild("HumanoidRootPart", 5)
 	getgenv().Humanoid = newCharacter:FindFirstChild("Humanoid") or newCharacter:FindFirstChildWhichIsA("Humanoid") or newCharacter:WaitForChild("Humanoid", 5)
 	getgenv().Head = newCharacter:FindFirstChild("Head") or newCharacter:WaitForChild("Head", 5)
+    wait(0.2)
+    if getconnections and getgenv().loaded_custom_tp_bypass then
+        print("[Custom-TP-Bypass_DEBUG]: Custom TP Bypass has initialized reload from Character respawn, authorizing initialization...")
+        wait(0.2)
+        for _, conn in pairs(getconnections(humanoidRootPart:GetPropertyChangedSignal("CFrame"))) do
+            conn:Disable()
+        end
+        for _, conn in pairs(getconnections(humanoidRootPart:GetPropertyChangedSignal("Position"))) do
+            conn:Disable()
+        end
+    end
 end)
 
 local Remote_Events = getgenv().ReplicatedStorage:FindFirstChild("Remote_Events")
@@ -756,7 +769,7 @@ Callback = function()
         return getgenv().notify("Heads Up:", "You've already loaded anti-cheat bypass!", 5)
     end
     task.wait()
-    if getgenv().loaded_custom_tp_bypass == false and getconnections then
+    if not getgenv().loaded_custom_tp_bypass and getconnections then
         getgenv().notify("Hang On:", "Loading Custom TP Bypass...", 5)
         task.wait(0.1)
 
@@ -1555,7 +1568,7 @@ Callback = function(layer_paint)
             for _, v in ipairs(getgenv().Workspace:FindFirstChild("Top_Section").Layer_Painting.Clear:GetChildren()) do
                 if v:IsA("BasePart") then
                     task.wait()
-                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = v.CFrame * CFrame.new(0, 5, 0)
+                    getgenv().Character:PivotTo(v:GetPivot() * CFrame.new(0, 5, 0))
                 end
             end
         end
