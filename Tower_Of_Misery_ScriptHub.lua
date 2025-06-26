@@ -915,10 +915,22 @@ Callback = function()
         game.Loaded:wait()
     end
 
+    if not getrawmetatable then
+        return getgenv().notify("Failure:", "Your executor does not support 'getrawmetatable'.", 5)
+    end
+    if not setreadonly then
+        return getgenv().notify("Failure:", "Your executor does not support 'setreadonly'", 5)
+    end
+    if not hookmetamethod then
+        return getgenv().notify("Failure:", "Your executor does not support 'hookmetamethod'", 5)
+    end
+    if not setfflag then
+        return getgenv().notify("Failure:", "Your executor does not support 'setfflag'", 5)
+    end
     task.wait(3)
 
     local ACL_LoadTime = tick()
-    local NotificationTitle = "Anthony's ACL"
+    local NotificationTitle = "[Flame's ACL]"
 
     local OldCoreTypeSettings = {}
     local WhitelistedCoreTypes = {
@@ -978,9 +990,9 @@ Callback = function()
                         local CoreType = Arguments[1]
                         local Enabled = Arguments[2]
                         
-                        if table.find(WhitelistedCoreTypes, CoreType) and Enabled == false then -- Thanks Harun for correcting me on the second argument
+                        if table.find(WhitelistedCoreTypes, CoreType) and Enabled == false then
                             OldCoreTypeSettings[CoreType] = Enabled
-                            return
+                            return 
                         end
                     elseif Method == "SetCore" then
                         local Core = Arguments[1]
@@ -1237,8 +1249,8 @@ Callback = function()
     end
     setreadonly(Metatable, true)
 
-    Notify(NotificationTitle, "Anti Chat & Screenshot Logger Loaded!", 15)
-    print(string.format("AnthonyIsntHere's Anti Chat-Logger has loaded in %s seconds.", string.format("%.2f", tostring(tick() - ACL_LoadTime))))
+    Notify(NotificationTitle, "Flame's Anti Chat & Screenshot Logger Loaded!", 15)
+    print(string.format("Flame's Anti Chat-Logger has loaded in %s seconds.", string.format("%.2f", tostring(tick() - ACL_LoadTime))))
 end,})
 
 getgenv().God_ModeLocalPlr = Tab2:CreateToggle({
@@ -1402,18 +1414,8 @@ getgenv().CollectAll_PlayTimeRewards = Tab3:CreateButton({
 Name = "Collect All Playtime Rewards",
 Callback = function()
     local Session_Rewards_Value = getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Session_Reward_Coins")
+    
     collect_session_rewards()
-    --[[local Crate_System_GUI = getgenv().PlayerGui:FindFirstChild("Crate_System_UI")
-    local UI = Crate_System_GUI:FindFirstChild("UI")
-    local HUD = UI:FindFirstChild("HUD")
-    local Tabs = HUD:FindFirstChild("Tabs")
-    local Session_Reard_v2 = Tabs:FindFirstChild("Session_Reward_v2")
-    local TextLabel = Session_Reward_v2:FindFirstChild("CanvasGroup"):FindFirstChild("TextLabel")
-    local Old_Text = TextLabel.Text
-    wait(0.2)
-    collect_session_rewards()
-    wait(0.2)
-    TextLabel.Text = "0/100"--]]
 end,})
 
 getgenv().GiveArcade_Points_50 = Tab2:CreateButton({
