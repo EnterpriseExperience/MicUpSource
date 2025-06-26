@@ -10,7 +10,7 @@ Be sure to check out my other script hub's below!
 
 ## Tower Of Misery ##
 ```lua
--- Tower OF Misery Script Hub
+-- Tower Of Misery Script Hub
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua'))()
 ```
 ## Ultimate Driving ##
