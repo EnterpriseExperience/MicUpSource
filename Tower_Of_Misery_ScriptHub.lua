@@ -703,7 +703,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Tower Of Misery ✅ | 1.2.2-TOM | "..tostring(executor_Name),
+        Name = "✅ Tower Of Misery ✅ | 1.2.7-TOM | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "TowerOfMisery | Hub.",
         ConfigurationSaving = {
