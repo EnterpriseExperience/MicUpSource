@@ -690,7 +690,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Tower Of Misery ✅ | 1.2.2 | "..tostring(executor_Name),
+        Name = "✅ Tower Of Misery ✅ | 1.2.2-TOM | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "TowerOfMisery | Hub.",
         ConfigurationSaving = {
@@ -1061,7 +1061,7 @@ Callback = function(rainbow_loop)
                 }
             }
             getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid"):FireServer(unpack(args))
-            wait(1)
+            wait(2.5)
             if getgenv().Character:FindFirstChild("Body Colors").TorsoColor == Old_Main_Color then
                 return getgenv().notify("Success:", "Reset fully body colors back to default.", 5)
             else
@@ -1174,7 +1174,7 @@ else
 end
 wait(0.5)
 if getgenv().anti_fog_and_the_color_swap == true then
-    getgenv().anti_fog_and_the_color_swap = true
+    getgenv().notify("Hang On:", "Enabling AntiFog, it was enabled before initialization.", 5)
     getgenv().Anti_Fog_AndColor_Swap:Set(true)
 else
     getgenv().anti_fog_and_the_color_swap = false
@@ -1182,9 +1182,17 @@ else
 end
 task.wait()
 if getgenv().skin_rainbow_loop == true then
+    getgenv().notify("Hang On:", "Enabling RainbowSkinFE, it was enabled before initialization.", 5)
     getgenv().Rainbow_FE_Skin:Set(true)
-    getgenv().skin_rainbow_loop = true
 else
     getgenv().skin_rainbow_loop = false
     getgenv().Rainbow_FE_Skin:Set(false)
+end
+wait(0.1)
+if getgenv().unlimited_number_of_points == true then
+    getgenv().notify("Hang On:", "Enabling UnlimitedArcadePoints, it was enabled before load.", 5)
+    getgenv().UnlimitedPoints_ReGen:Set(true)
+else
+    getgenv().UnlimitedPoints_ReGen:Set(false)
+    getgenv().unlimited_number_of_points = false
 end
