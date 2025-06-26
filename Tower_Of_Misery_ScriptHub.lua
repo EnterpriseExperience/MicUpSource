@@ -761,9 +761,7 @@ Callback = function(logging_toggle)
 end,})
 wait(0.2)
 if getgenv().AssetService:FindFirstChild("Send_Ads_Analytics") then
-   getgenv().DisableLogging_AndMetricsData:Set(false)
-   disable_logging_metrics(false)
-   getgenv().notify("Heads Up:", "Disabled AntiLogging, it was enabled at runtime.", 5)
+   getgenv().DisableLogging_AndMetricsData:Set(true)
 end
 
 local NoClip_Loop = nil
@@ -779,33 +777,44 @@ local function NoclipLoop()
     end
 end
 
+wait(0.1)
 getgenv().Auto_Win = Tab1:CreateButton({
 Name = "Auto Win",
 Callback = function()
     repeat wait() until getgenv().Workspace:FindFirstChild("Tower") and getgenv().Workspace:FindFirstChild("Top_Section")
+
+    if not getgenv().GET_LOADED_IY or getgenv().GET_LOADED_IY == nil then
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua'))()
+    end
+    wait(0.1)
     if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("CoinsEarned").Value <= 70 then
         if getgenv().God_ModeLocalPlr then
             getgenv().God_ModeLocalPlr:Set(true)
         end
-        NoClip_Loop = getgenv().RunService.Stepped:Connect(NoclipLoop)
         GodMode(true)
         wait(0.1)
         collect_all()
-        wait(3.6)
+        wait(0.3)
+        getgenv().execCmd("noclip")
+        getgenv().execCmd("fly 3")
+        wait(3.5)
         touch_door()
-        wait(1.1)
-        if NoClip_Loop then
-            NoClip_Loop:Disconnect()
-        end
+        wait(3)
+        getgenv().execCmd("unfly")
+        getgenv().execCmd("clip")
+        getgenv().execCmd("clip")
+        wait(0.5)
+        getgenv().execCmd("jump")
     else
         GodMode(true)
-        NoClip_Loop = getgenv().RunService.Stepped:Connect(NoclipLoop)
         wait(0.2)
         touch_door()
-        wait(1.1)
-        if NoClip_Loop then
-            NoClip_Loop:Disconnect()
-        end
+        wait(3)
+        getgenv().execCmd("unfly")
+        getgenv().execCmd("clip")
+        getgenv().execCmd("clip")
+        wait(0.5)
+        getgenv().execCmd("jump")
     end
 end,})
 
@@ -822,9 +831,7 @@ Callback = function(real_godmode)
 end,})
 wait(0.2)
 if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Temporary_Immunity").Value == true then
-   GodMode(false)
-   getgenv().God_ModeLocalPlr:Set(false)
-   getgenv().notify("Heads Up:", "Turned off GodMode, it was enabled at runtime.", 5)
+   getgenv().God_ModeLocalPlr:Set(true)
 end
 
 getgenv().InGame_Catalog = Tab2:CreateToggle({
@@ -840,10 +847,11 @@ Callback = function(avatar_items_catalog)
 end,})
 wait(0.2)
 if getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled == true then
+    getgenv().InGame_Catalog:Set(true)
+    getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled = true
+else
     getgenv().InGame_Catalog:Set(false)
     getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled = false
-    wait(0.1)
-    getgenv().notify("Heads Up:", "Disabled In-Game Catalog, it was enabled at runtime.", 5)
 end
 
 local Old_GUIs_States = {}
@@ -902,6 +910,20 @@ Callback = function(inf_coins_regen)
         restore_old_guis()
     end
 end,})--]]
+
+local bodyColors = getgenv().Character:FindFirstChild("Body Colors")
+if not bodyColors then
+    warn("no Body Colors on chararacter.")
+end
+
+local Old_Body_Colors = {
+    HeadColor3     = bodyColors.HeadColor3,
+    LeftArmColor3  = bodyColors.LeftArmColor3,
+    RightArmColor3 = bodyColors.RightArmColor3,
+    LeftLegColor3  = bodyColors.LeftLegColor3,
+    RightLegColor3 = bodyColors.RightLegColor3,
+    TorsoColor3    = bodyColors.TorsoColor3
+}
 
 getgenv().PurchaseAll_Mutators = Tab1:CreateButton({
 Name = "Purchase All Mutators",
@@ -972,19 +994,19 @@ Callback = function()
 end,})
 
 getgenv().GiveArcade_Points_50 = Tab2:CreateButton({
-Name = "Give 50 Arcade Points",
+Name = "Give 50 Arcade Points (FE)",
 Callback = function()
     Give_Arcade_Points(50)
 end,})
 
 getgenv().GiveArcade_Points_100 = Tab2:CreateButton({
-Name = "Give 100 Arcade Points",
+Name = "Give 100 Arcade Points (FE)",
 Callback = function()
     Give_Arcade_Points(100)
 end,})
 
 getgenv().GiveArcade_Points_1000 = Tab2:CreateButton({
-Name = "Give 1000 Arcade Points",
+Name = "Give 1000 Arcade Points (FE)",
 Callback = function()
     Give_Arcade_Points(1000)
 end,})
@@ -1048,24 +1070,86 @@ Callback = function(rainbow_loop)
         end
     end
 end,})
-wait(0.2)
-if getgenv().skin_rainbow_loop == true then
-    getgenv().Rainbow_FE_Skin:Set(false)
-    getgenv().skin_rainbow_loop = false
-    getgenv().notify("Heads Up:", "Disabled RainbowSkinFE, it was enabled at runtime.", 5)
-end
+
+getgenv().ResetBody_Colors = Tab2:CreateButton({
+Name = "Reset Body Colors (FE)",
+Callback = function()
+    local args = {
+        {
+            BodyColor = Old_Body_Colors.TorsoColor3
+        }
+    }
+    getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid"):FireServer(unpack(args))
+    wait(0.1)
+    args = {
+        {
+            BodyColor = Old_Body_Colors.HeadColor3
+        }
+    }
+    getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid"):FireServer(unpack(args))
+    wait(0.1)
+    args = {
+        {
+            BodyColor = Old_Body_Colors.LeftArmColor3
+        }
+    }
+    getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid"):FireServer(unpack(args))
+    wait(0.1)
+    args = {
+        {
+            BodyColor = Old_Body_Colors.RightArmColor3
+        }
+    }
+    getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid"):FireServer(unpack(args))
+    wait(0.1)
+    args = {
+        {
+            BodyColor = Old_Body_Colors.LeftLegColor3
+        }
+    }
+    getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid"):FireServer(unpack(args))
+    wait(0.1)
+    args = {
+        {
+            BodyColor = Old_Body_Colors.RightLegColor3
+        }
+    }
+    getgenv().ReplicatedStorage:WaitForChild("BloxbizRemotes"):WaitForChild("CatalogOnApplyToRealHumanoid"):FireServer(unpack(args))
+end,})
 
 getgenv().GiveArcade_Points_Other = Tab2:CreateInput({
-Name = "Give Arcade Points",
+Name = "Give Arcade Points (FE)",
 PlaceholderText = "Number Here",
 RemoveTextAfterFocusLost = true,
 Callback = function(Number_Points)
     local Number_Of_Points_Input = tonumber(Number_Points)
 
     if Number_Of_Points_Input then
+        getgenv().notify("Hang On:", "Giving you "..tostring(Number_Points).." points.", 5)
         Give_Arcade_Points(Number_Points)
     else
         return getgenv().notify("Failure:", tostring(Number_Points).." isn't a number!", 5)
+    end
+end,})
+
+getgenv().UnlimitedPoints_ReGen = Tab2:CreateToggle({
+Name = "Loop Generate Arcade Points (FE)",
+CurrentValue = false,
+Flag = "KeepGeneratingPointsEz",
+Callback = function(anypoints_i_want)
+    if anypoints_i_want then
+        getgenv().unlimited_number_of_points = true
+        while getgenv().unlimited_number_of_points == true do
+        wait()
+            local args = {
+                "Zombie_Slayer"
+            }
+
+            getgenv().ReplicatedStorage:WaitForChild("Remote_Events"):WaitForChild("Add_Arcade_Points"):FireServer(unpack(args))
+        end
+    else
+        getgenv().unlimited_number_of_points = false
+        getgenv().unlimited_number_of_points = false
     end
 end,})
 
@@ -1082,7 +1166,25 @@ Callback = function(spectating_plrs)
 end,})
 wait(0.2)
 if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Spectating").Value == true then
-   Spectate(false)
-   getgenv().SpectatePlayers:Set(false)
-   getgenv().notify("Heads Up:", "Disabled Spectate, it was enabled at runtime.", 5)
+    Spectate(true)
+    getgenv().SpectatePlayers:Set(true)
+else
+    Spectate(false)
+    getgenv().SpectatePlayers:Set(false)
+end
+wait(0.5)
+if getgenv().anti_fog_and_the_color_swap == true then
+    getgenv().anti_fog_and_the_color_swap = true
+    getgenv().Anti_Fog_AndColor_Swap:Set(true)
+else
+    getgenv().anti_fog_and_the_color_swap = false
+    getgenv().Anti_Fog_AndColor_Swap:Set(false)
+end
+task.wait()
+if getgenv().skin_rainbow_loop == true then
+    getgenv().Rainbow_FE_Skin:Set(true)
+    getgenv().skin_rainbow_loop = true
+else
+    getgenv().skin_rainbow_loop = false
+    getgenv().Rainbow_FE_Skin:Set(false)
 end
