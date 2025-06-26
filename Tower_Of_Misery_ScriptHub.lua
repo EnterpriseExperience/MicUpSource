@@ -793,11 +793,19 @@ Callback = function()
         collect_all()
         wait(3.6)
         touch_door()
+        wait(1.1)
+        if NoClip_Loop then
+            NoClip_Loop:Disconnect()
+        end
     else
         GodMode(true)
         NoClip_Loop = getgenv().RunService.Stepped:Connect(NoclipLoop)
         wait(0.2)
         touch_door()
+        wait(1.1)
+        if NoClip_Loop then
+            NoClip_Loop:Disconnect()
+        end
     end
 end,})
 
