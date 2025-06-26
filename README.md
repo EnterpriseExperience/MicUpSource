@@ -5,7 +5,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 ```
 
 ```javascript
-console.log()
+  Be sure to check out my other script hub's below!
 ```
 
 ## Tower Of Misery ##
