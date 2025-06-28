@@ -334,10 +334,10 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     if getconnections and getgenv().loaded_custom_tp_bypass then
         print("[Custom-TP-Bypass_DEBUG]: Custom TP Bypass has initialized reload from Character respawn, authorizing initialization...")
         wait(0.2)
-        for _, conn in pairs(getconnections(humanoidRootPart:GetPropertyChangedSignal("CFrame"))) do
+        for _, conn in pairs(getconnections(HumanoidRootPart:GetPropertyChangedSignal("CFrame"))) do
             conn:Disable()
         end
-        for _, conn in pairs(getconnections(humanoidRootPart:GetPropertyChangedSignal("Position"))) do
+        for _, conn in pairs(getconnections(HumanoidRootPart:GetPropertyChangedSignal("Position"))) do
             conn:Disable()
         end
     end
@@ -372,7 +372,6 @@ local function bypass_anticheat()
 			args[1] = "Activity"
 			args[2] = true
 			return old(self,unpack(args))
-
 		end
 		return old(self,...)
 	end)
@@ -703,7 +702,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Tower Of Misery ✅ | 1.2.7-TOM | "..tostring(executor_Name),
+        Name = "✅ Tower Of Misery ✅ | 1.2.8-TOM | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "TowerOfMisery | Hub.",
         ConfigurationSaving = {
@@ -774,6 +773,7 @@ Callback = function()
         task.wait(0.1)
 
         local hrp = getgenv().Character and getgenv().Character:WaitForChild("HumanoidRootPart")
+
         if not hrp then
             return getgenv().notify("Error:", "HumanoidRootPart not found, cannot load TP bypass.", 5)
         end
