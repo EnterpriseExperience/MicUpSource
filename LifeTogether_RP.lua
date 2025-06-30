@@ -862,17 +862,6 @@ local function stop_vehicle_esp()
     clear_all_highlights()
 end
 
-function car_modifications(Vehicle, Modification_Type, New_Value)
-    if not Vehicle then return getgenv().notify("Failure:", "Vehicle does not seem to exist.", 5) end
-
-    local Car = Vehicle
-    local Attribute_To_Mod = Car:GetAttribute(Modification_Type)
-
-    if Attribute_To_Mod then
-        Car:SetAttribute(Modification_Type, New_Value)
-    end
-end
-
 function highlight_all_cars(Toggle)
     if Toggle == true then
         start_vehicle_esp()
@@ -1671,7 +1660,11 @@ Callback = function(new_accel_val)
 
     if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
 
-    car_modifications(Vehicle, "acc_0_60", new_accel_val)
+    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
+        if v.owner.Value == getgenv().LocalPlayer then
+            v:SetAttribute("acc_0_60", new_accel_val)
+        end
+    end
 end,})
 
 getgenv().SpeedModifier = Tab4:CreateSlider({
@@ -1686,7 +1679,12 @@ Callback = function(new_speed_val)
 
     if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
 
-    car_modifications(Vehicle, "max_speed", new_speed_val)
+    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
+        if v.owner.Value == getgenv().LocalPlayer then
+            v:SetAttribute("speed", new_speed_val)
+            v:SetAttribute("max_speed", new_speed_val)
+        end
+    end
 end,})
 
 getgenv().AccelModifier = Tab4:CreateSlider({
@@ -1701,7 +1699,11 @@ Callback = function(new_max_accel_val)
 
     if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
 
-    car_modifications(Vehicle, "max_accel", new_max_accel_val)
+    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
+        if v.owner.Value == getgenv().LocalPlayer then
+            v:SetAttribute("max_accel", new_max_accel_val)
+        end
+    end
 end,})
 
 getgenv().TurnAngleModifier = Tab4:CreateSlider({
@@ -1716,9 +1718,13 @@ Callback = function(new_turn_angle_val)
 
     if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
 
-    car_modifications(Vehicle, "turn_angle", new_turn_angle_val)
+    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
+        if v.owner.Value == getgenv().LocalPlayer then
+            v:SetAttribute("turn_angle", new_turn_angle_val)
+        end
+    end
 end,})
-
+wait(0.1)
 local Old_Skintone = getgenv().Character:FindFirstChild("Body Colors").TorsoColor
 wait(0.3)
 getgenv().RainbowSkin_FEScript = Tab2:CreateToggle({
