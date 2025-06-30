@@ -939,8 +939,27 @@ function create_kill_part()
     Kill_Part.Parent = Kill_Model_Script
 end
 
+function create_void_part()
+    if getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") then return end
+    task.wait(0.1)
+    local Kill_Model_Script = Instance.new("Model")
+    Kill_Model_Script.Name = "Void_Model_Script(KEEP)"
+    Kill_Model_Script.Parent = getgenv().Workspace
+    task.wait(0.1)
+    local Kill_Part = Instance.new("Part")
+    Kill_Part.Name = "SCRIPT_VOIDPART_VOID"
+    Kill_Part.Anchored = true
+    Kill_Part.CanCollide = false
+    Kill_Part.Size = Vector3.new(10, 10, 10)
+    Kill_Part.CFrame = CFrame.new(9e9, 9e9, 9e9)
+    Kill_Part.Parent = Kill_Model_Script
+end
+
 if not getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") then
     create_kill_part()
+end
+if not getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") then
+    create_void_part()
 end
 
 function vehicle_kill_player(TargetPlayer)
@@ -979,6 +998,130 @@ function vehicle_kill_player(TargetPlayer)
     end
 
     local maxTries = 30
+    for i = 1, maxTries do
+        local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
+        local isSitting = targetHumanoid and targetHumanoid.Sit
+        if isSitting then break end
+
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 3, 0))
+        task.wait(0.2)
+    end
+    wait(0.1)
+    MyBus:PivotTo(voidCF)
+    wait(0.4)
+    local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+    if getgenv().Humanoid.Sit then
+        getgenv().Humanoid:ChangeState(3)
+        wait(0.1)
+        myHRP.CFrame = Old_CF
+        wait(0.5)
+        spawn_any_vehicle("Chiron")
+    end
+    if myHRP then
+        myHRP.CFrame = Old_CF
+        wait(0.5)
+        spawn_any_vehicle("Chiron")
+    end
+end
+
+function vehicle_bring_player(TargetPlayer)
+    if not TargetPlayer or not TargetPlayer.Character then return end
+    local targetChar = TargetPlayer.Character
+    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
+    if not targetHRP then return end
+
+    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+
+    local voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)")
+    if not voidPart then create_kill_part() voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") end
+    local voidCF = voidPart:FindFirstChild("SCRIPT_KILLPART_VOID") and voidPart:FindFirstChild("SCRIPT_KILLPART_VOID").CFrame
+    if not voidCF then return end
+
+    local MyPlayer = game.Players.LocalPlayer
+    local MyChar = getgenv().Character or MyPlayer.Character
+    local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
+    local MyBus = nil
+
+    for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
+            if v:FindFirstChild("VehicleSeat") then
+                MyBus = v
+                break
+            end
+        end
+    end
+
+    if not MyBus then return warn("No owned SchoolBus found") end
+    local seat = MyBus:FindFirstChild("VehicleSeat")
+    if seat and MyHumanoid then
+        MyChar:PivotTo(seat.CFrame)
+        task.wait(0.2)
+        seat:Sit(MyHumanoid)
+    end
+
+    local maxTries = 30
+    for i = 1, maxTries do
+        local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
+        local isSitting = targetHumanoid and targetHumanoid.Sit
+        if isSitting then break end
+
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 3, 0))
+        task.wait(0.2)
+    end
+    wait(0.1)
+    MyBus:PivotTo(Old_CF)
+    wait(0.4)
+    local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+    if getgenv().Humanoid.Sit then
+        getgenv().Humanoid:ChangeState(3)
+        wait(0.1)
+        myHRP.CFrame = Old_CF
+        wait(0.5)
+        spawn_any_vehicle("Chiron")
+    end
+    if myHRP then
+        myHRP.CFrame = Old_CF
+        wait(0.5)
+        spawn_any_vehicle("Chiron")
+    end
+end
+
+function vehicle_void_player(TargetPlayer)
+    if not TargetPlayer or not TargetPlayer.Character then return end
+    local targetChar = TargetPlayer.Character
+    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
+    if not targetHRP then return end
+
+    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+
+    local voidPart = getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)")
+    if not voidPart then create_kill_part() voidPart = getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") end
+    local voidCF = voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID") and voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID").CFrame
+    if not voidCF then return end
+
+    local MyPlayer = game.Players.LocalPlayer
+    local MyChar = getgenv().Character or MyPlayer.Character
+    local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
+    local MyBus = nil
+
+    for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
+            if v:FindFirstChild("VehicleSeat") then
+                MyBus = v
+                break
+            end
+        end
+    end
+
+    if not MyBus then return warn("No owned SchoolBus found") end
+    local seat = MyBus:FindFirstChild("VehicleSeat")
+    if seat and MyHumanoid then
+        MyChar:PivotTo(seat.CFrame)
+        task.wait(0.2)
+        seat:Sit(MyHumanoid)
+    end
+
+    local maxTries = 50
     for i = 1, maxTries do
         local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
         local isSitting = targetHumanoid and targetHumanoid.Sit
@@ -1236,8 +1379,42 @@ Callback = function()
     end
 end,})
 
+getgenv().VehicleVoid = Tab3:CreateInput({
+Name = "Vehicle Void Player (FE)",
+PlaceholderText = "User Here, can be shortened",
+RemoveTextAfterFocusLost = true,
+Callback = function(user_to_void)
+    local target = findplr(user_to_void)
+    if not target then return getgenv().notify("Failure:", "User does not seem to exist.", 5) end
+
+    if target and target.Character then
+        spawn_any_vehicle("SchoolBus")
+        wait(1)
+        vehicle_void_player(target)
+    elseif target == getgenv().LocalPlayer or target == getgenv().LocalPlayer.Name then
+        return getgenv().notify("Failure:", "You cannot void yourself (wtf).", 5)
+    end
+end,})
+
+getgenv().VehicleBring = Tab1:CreateInput({
+Name = "Vehicle Bring Player (FE)",
+PlaceholderText = "User Here, can be shortened",
+RemoveTextAfterFocusLost = true,
+Callback = function(user_to_bring)
+    local target = findplr(user_to_bring)
+    if not target then return getgenv().notify("Failure:", "User does not seem to exist.", 5) end
+
+    if target and target.Character then
+        spawn_any_vehicle("SchoolBus")
+        wait(1)
+        vehicle_bring_player(target)
+    elseif target == getgenv().LocalPlayer or target == getgenv().LocalPlayer.Name then
+        return getgenv().notify("Failure:", "You cannot void yourself (wtf).", 5)
+    end
+end,})
+
 getgenv().VehicleKill = Tab3:CreateInput({
-Name = "Vehicle Kill (FE)",
+Name = "Vehicle Kill Player (FE)",
 PlaceholderText = "User Here, can be shortened",
 RemoveTextAfterFocusLost = true,
 Callback = function(user_to_kill)
@@ -1304,7 +1481,7 @@ if Tool_Folder then
 end
 
 getgenv().GiveAnyToolAllTools = Tab3:CreateDropdown({
-Name = "Tool Giver",
+Name = "Tool Giver (FE)",
 Options = tool_options,
 CurrentOption = "",
 MultipleOptions = false,
@@ -1335,7 +1512,7 @@ Callback = function(tool_name)
 end,})
 
 getgenv().RainbowSkin_FEScript = Tab2:CreateToggle({
-Name = "Rainbow Skin (FE)",
+Name = "Rainbow Skin (FE, Broken)",
 CurrentValue = false,
 Flag = "RainbowSkinScript_FE",
 Callback = function(rgb_skintone)
