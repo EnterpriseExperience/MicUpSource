@@ -862,6 +862,17 @@ local function stop_vehicle_esp()
     clear_all_highlights()
 end
 
+function car_modifications(Vehicle, Modification_Type, New_Value)
+    if not Vehicle then return getgenv().notify("Failure:", "Vehicle does not seem to exist.", 5) end
+
+    local Car = Vehicle
+    local Attribute_To_Mod = Car:GetAttribute(Modification_Type)
+
+    if Attribute_To_Mod then
+        Car:SetAttribute(Modification_Type, New_Value)
+    end
+end
+
 function highlight_all_cars(Toggle)
     if Toggle == true then
         start_vehicle_esp()
@@ -1646,6 +1657,66 @@ Callback = function(tool_name)
     else
         getgenv().notify("Error:", "Tool give failed: " .. tostring(err), 5)
     end
+end,})
+
+getgenv().Accel0To60 = Tab4:CreateSlider({
+Name = "Accel 0 To 60",
+Range = {0.1, 10},
+Increment = 0.1,
+Suffix = "",
+CurrentValue = 0.2,
+Flag = "Edit0To60ValueCar",
+Callback = function(new_accel_val)
+    local Vehicle = get_vehicle()
+
+    if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
+
+    car_modifications(Vehicle, "acc_0_60", new_accel_val)
+end,})
+
+getgenv().SpeedModifier = Tab4:CreateSlider({
+Name = "Vehicle Speed",
+Range = {5, 500},
+Increment = 5,
+Suffix = "",
+CurrentValue = 80,
+Flag = "EditSpeedOnVehicle",
+Callback = function(new_speed_val)
+    local Vehicle = get_vehicle()
+
+    if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
+
+    car_modifications(Vehicle, "max_speed", new_speed_val)
+end,})
+
+getgenv().AccelModifier = Tab4:CreateSlider({
+Name = "Acceleration Modifier",
+Range = {5, 250},
+Increment = 5,
+Suffix = "",
+CurrentValue = 75,
+Flag = "EditMaxAccelOnVehicle",
+Callback = function(new_max_accel_val)
+    local Vehicle = get_vehicle()
+
+    if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
+
+    car_modifications(Vehicle, "max_accel", new_max_accel_val)
+end,})
+
+getgenv().TurnAngleModifier = Tab4:CreateSlider({
+Name = "Turn Angle Modifier",
+Range = {10, 200},
+Increment = 5,
+Suffix = "",
+CurrentValue = 30,
+Flag = "EditTurnAngleOnVehicle",
+Callback = function(new_turn_angle_val)
+    local Vehicle = get_vehicle()
+
+    if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
+
+    car_modifications(Vehicle, "turn_angle", new_turn_angle_val)
 end,})
 
 getgenv().RainbowSkin_FEScript = Tab2:CreateToggle({
