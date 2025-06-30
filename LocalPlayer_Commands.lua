@@ -1,6 +1,6 @@
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
@@ -67,10 +67,12 @@ local function HandleMessage(sender, message)
 		end
 	elseif cmd == "hipheight" then
 		Humanoid.HipHeight = value
-    elseif cmd == "gr" or cmd == "gravity" then
-        Workspace.Gravity = value
 	elseif cmd == "sit" then
 		Humanoid.Sit = (value ~= 0)
+	elseif cmd == "damage" then
+		Humanoid.Health = value
+	elseif cmd == "gr" or cmd == "gravity" then
+		Workspace.Gravity = value
 	end
 
 	print("[LocalPlayer_Commands]: Executed command '" .. cmd .. "' from " .. sender.Name)
