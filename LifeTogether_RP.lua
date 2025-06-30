@@ -446,7 +446,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.0.4-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | 1.2.1-LIFE | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -1262,6 +1262,143 @@ Callback = function(flashlight_phone)
         flashlight(true)
     else
         flashlight(false)
+    end
+end,})
+
+getgenv().HD_FlyEnabled = false
+local FlyConnection
+local speed = 100
+
+function DisableFlyScript()
+    getgenv().HD_FlyEnabled = false
+
+    if FlyConnection then
+        FlyConnection:Disconnect()
+        FlyConnection = nil
+    end
+
+    local hrp = getgenv().getRoot(getgenv().Character)
+    if hrp:FindFirstChild("ExecutorFlyGyro") then
+        hrp.ExecutorFlyGyro:Destroy()
+    end
+    if hrp:FindFirstChild("ExecutorFlyPosition") then
+        hrp.ExecutorFlyPosition:Destroy()
+    end
+
+    if getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
+    end
+end
+
+getgenv().HDAdminFly_Speed = Tab2:CreateSlider({
+Name = "HD Admin Fly Speed",
+Range = {75, 300},
+Increment = 1,
+Suffix = "",
+CurrentValue = 50,
+Flag = "EditFlySpeedHDAdmin",
+Callback = function(HDAdminFlySpeed_Edit)
+    speed = tonumber(HDAdminFlySpeed_Edit)
+end,})
+wait(0.1)
+getgenv().HDAdminFly = Tab2:CreateToggle({
+Name = "HD Admin Fly (FE!)",
+CurrentValue = false,
+Flag = "FlyHDAdmin",
+Callback = function(toggle_hd_fly)
+    if toggle_hd_fly then
+        getgenv().notify("Note:", "E = Fly Up | Q = Fly Down.", 10)
+        getgenv().HD_FlyEnabled = true
+        getgenv().HD_FlySpeed = tonumber(speed)
+        speed = getgenv().HD_FlySpeed
+
+        local Players = getgenv().Players
+        local RunService = getgenv().RunService
+        local UserInputService = getgenv().UserInputService
+        local Workspace = getgenv().Workspace
+
+        local LocalPlayer = getgenv().LocalPlayer
+        repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+        local Character = getgenv().Character
+        local HRP = getgenv().getRoot(getgenv().Character)
+        local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        local Camera = getgenv().Camera
+
+        local KeysDown = {
+            W = false,
+            A = false,
+            S = false,
+            D = false,
+            E = false,
+            Q = false,
+        }
+
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            local key = input.KeyCode
+            if KeysDown[key.Name] ~= nil then
+                KeysDown[key.Name] = true
+            end
+        end)
+
+        UserInputService.InputEnded:Connect(function(input)
+            local key = input.KeyCode
+            if KeysDown[key.Name] ~= nil then
+                KeysDown[key.Name] = false
+            end
+        end)
+
+        local function GetInputDirection(cam)
+            local dir = Vector3.zero
+            if KeysDown.W then dir += cam.CFrame.LookVector end
+            if KeysDown.S then dir -= cam.CFrame.LookVector end
+            if KeysDown.D then dir += cam.CFrame.RightVector end
+            if KeysDown.A then dir -= cam.CFrame.RightVector end
+            if KeysDown.E then dir += cam.CFrame.UpVector end
+            if KeysDown.Q then dir -= cam.CFrame.UpVector end
+            return dir.Magnitude > 0 and dir.Unit or Vector3.zero
+        end
+
+        local function ToggleFly()
+            local bodyGyro = Instance.new("BodyGyro")
+            bodyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+            bodyGyro.P = 4000
+            bodyGyro.D = 150
+            bodyGyro.CFrame = HRP.CFrame
+            bodyGyro.Name = "ExecutorFlyGyro"
+            bodyGyro.Parent = HRP
+
+            local bodyPos = Instance.new("BodyPosition")
+            bodyPos.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+            bodyPos.P = 7500
+            bodyPos.D = 1000
+            bodyPos.Position = HRP.Position
+            bodyPos.Name = "ExecutorFlyPosition"
+            bodyPos.Parent = HRP
+
+            Humanoid.PlatformStand = true
+
+            FlyConnection = RunService.Heartbeat:Connect(function(dt)
+                if not getgenv().HD_FlyEnabled then
+                    bodyGyro:Destroy()
+                    bodyPos:Destroy()
+                    Humanoid.PlatformStand = false
+                    FlyConnection:Disconnect()
+                    return
+                end
+
+                local direction = GetInputDirection(Camera)
+                local move = direction * getgenv().HD_FlySpeed * dt
+
+                bodyPos.Position += move
+                bodyGyro.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector)
+            end)
+        end
+
+        ToggleFly()
+    else
+        DisableFlyScript()
     end
 end,})
 
