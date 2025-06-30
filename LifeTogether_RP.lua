@@ -935,7 +935,7 @@ function create_kill_part()
     Kill_Part.Anchored = true
     Kill_Part.CanCollide = false
     Kill_Part.Size = Vector3.new(10, 10, 10)
-    Kill_Part.CFrame = CFrame.new(99999, 9999, 99999)
+    Kill_Part.CFrame = CFrame.new(0, -470, 0)
     Kill_Part.Parent = Kill_Model_Script
 end
 
@@ -989,19 +989,19 @@ function vehicle_kill_player(TargetPlayer)
     end
     wait(0.1)
     MyBus:PivotTo(voidCF)
-    task.wait(1)
-
-    spawn_any_vehicle("SchoolBus")
-    task.wait(0.3)
-
+    wait(0.4)
     local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
     if getgenv().Humanoid.Sit then
         getgenv().Humanoid:ChangeState(3)
         wait(0.1)
         myHRP.CFrame = Old_CF
+        wait(0.5)
+        spawn_any_vehicle("Chiron")
     end
     if myHRP then
         myHRP.CFrame = Old_CF
+        wait(0.5)
+        spawn_any_vehicle("Chiron")
     end
 end
 
