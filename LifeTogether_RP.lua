@@ -1003,7 +1003,7 @@ function vehicle_kill_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 3, 0))
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
         task.wait(0.2)
     end
     wait(0.1)
@@ -1065,7 +1065,7 @@ function vehicle_bring_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 3, 0))
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
         task.wait(0.2)
     end
     wait(0.1)
@@ -1127,7 +1127,7 @@ function vehicle_void_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 3, 0))
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
         task.wait(0.2)
     end
     wait(0.1)
