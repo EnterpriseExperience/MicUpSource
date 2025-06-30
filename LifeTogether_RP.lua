@@ -1288,7 +1288,7 @@ function DisableFlyScript()
         FlyConnection = nil
     end
 
-    local hrp = getgenv().getRoot(getgenv().Character)
+    local hrp = getgenv().HumanoidRootPart
     if hrp:FindFirstChild("ExecutorFlyGyro") then
         hrp.ExecutorFlyGyro:Destroy()
     end
