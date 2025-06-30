@@ -1719,14 +1719,16 @@ Callback = function(new_turn_angle_val)
     car_modifications(Vehicle, "turn_angle", new_turn_angle_val)
 end,})
 
+local Old_Skintone = getgenv().Character:FindFirstChild("Body Colors").TorsoColor
+wait(0.3)
 getgenv().RainbowSkin_FEScript = Tab2:CreateToggle({
-Name = "Rainbow Skin (FE, Broken)",
+Name = "Rainbow Skin (FE)",
 CurrentValue = false,
 Flag = "RainbowSkinScript_FE",
 Callback = function(rgb_skintone)
     if rgb_skintone then
         getgenv().RainbowSkin_FE = true
-        while getgenv().RainbowSkin == true do
+        while getgenv().RainbowSkin_FE == true do
         wait(0.2)
             send_remote("skin_tone", Color3.fromRGB(0, 0, 0))
             wait(0.1)
@@ -1760,7 +1762,8 @@ Callback = function(rgb_skintone)
         end
     else
         getgenv().RainbowSkin_FE = false
-        getgenv().RainbowSkin_FE = false
+        repeat wait() until not getgenv().RainbowSkin_FE
+        send_remote("skin_tone", Old_Skintone)
     end
 end,})
 
