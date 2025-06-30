@@ -18,6 +18,11 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 -- Ultimate Driving Script Hub
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua'))()
 ```
+## Life Together RP ##
+```lua
+-- Life Together RP
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua'))()
+```
 
 ```lua
 Star this repo and save it for later!
