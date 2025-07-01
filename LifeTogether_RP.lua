@@ -349,6 +349,10 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
 	getgenv().Head = SafeGetHead(newCharacter)
 	wait(0.2)
+    newCharacter:FindFirstChild("Humanoid").JumpHeight = 7
+    newCharacter:FindFirstChild("Humanoid").JumpPower = 50
+    getgenv().Humanoid.JumpHeight = 7
+    getgenv().Humanoid.JumpPower = 50
 	Dynamic_Character_Updater(newCharacter)
 end)
 wait(0.2)
@@ -446,7 +450,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.2.1-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | 1.3.2-LIFE | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -513,7 +517,15 @@ local Section4 = Tab5:CreateSection("| 📱 Phone Section 📱 |")
 local Modules = ReplicatedStorage:FindFirstChild("Modules")
 local Core = Modules:FindFirstChild("Core")
 local Game = Modules:FindFirstChild("Game")
+local Invisible_Module = require(Game:FindFirstChild("InvisibleMode"))
+local Billboard_GUI = require(Game:FindFirstChild("CharacterBillboardGui"))
+local PlotMarker = require(Game:FindFirstChild("PlotMarker"))
+local Data = require(Core:FindFirstChild("Data"))
+local Phone_Module = Game:FindFirstChild("Phone")
 local Phone = require(Game:FindFirstChild("Phone"))
+local Privacy = require(Core:FindFirstChild("Privacy"))
+local AppModules = Phone_Module:FindFirstChild("AppModules")
+local Messages = require(AppModules:FindFirstChild("Messages"))
 local Network = require(Core:FindFirstChild("Net"))
 local CCTV = require(Game:FindFirstChild("CCTV"))
 wait(0.3)
@@ -562,50 +574,6 @@ local function get_vehicle()
 
     return nil
 end
-
--- This isn't FE, and I'm not sure if I can even make it FE.
---[[local InvisibleMode
-
-function FE_InvisGamePass(Boolean)
-   getgenv().LocalPlayer_Invisible = Boolean
-
-   if Boolean == true then
-      for _, v in ipairs(getgc(true)) do
-         if typeof(v) == "table" and rawget(v, "enabled") and rawget(v, "loaded") then
-            InvisibleMode = v
-            break
-         end
-      end
-
-      if InvisibleMode then
-         if typeof(InvisibleMode.loaded) == "function" then
-            pcall(InvisibleMode.loaded)
-            task.wait(0.2)
-         end
-
-         if typeof(InvisibleMode.enabled) == "table" and typeof(InvisibleMode.enabled.set) == "function" then
-            InvisibleMode.enabled.set(true)
-         end
-      end
-      task.wait()
-      Boolean = true
-   elseif Boolean == false then
-      for _, v in ipairs(getgc(true)) do
-         if typeof(v) == "table" and rawget(v, "enabled") and rawget(v, "loaded") then
-            InvisibleMode = v
-            break
-         end
-      end
-
-      if InvisibleMode and typeof(InvisibleMode.enabled) == "table" and typeof(InvisibleMode.enabled.set) == "function" then
-         InvisibleMode.enabled.set(false)
-      end
-      task.wait()
-      Boolean = false
-   else
-      return 
-   end
-end--]]
 
 function lock_vehicle(Vehicle)
    send_function("lock_vehicle", Vehicle)
@@ -1149,6 +1117,86 @@ function vehicle_void_player(TargetPlayer)
     end
 end
 
+getgenv().void_loop_enabled = false
+wait()
+function start_void_loop(TargetPlayer)
+    if getgenv().VoidLoopRunning then return end
+    getgenv().VoidLoopRunning = true
+
+    task.spawn(function()
+        while getgenv().void_loop_enabled == true do
+            repeat task.wait(0.2) until TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+            local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+
+            local voidPart = getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)")
+            if not voidPart then create_kill_part() voidPart = getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") end
+            local voidCF = voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID") and voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID").CFrame
+            if not voidCF then return warn("Void CF missing") end
+
+            local MyPlayer = game.Players.LocalPlayer
+            local MyChar = getgenv().Character or MyPlayer.Character
+            local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
+            local MyBus = nil
+
+            for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
+                if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
+                    if v:FindFirstChild("VehicleSeat") then
+                        MyBus = v
+                        break
+                    end
+                end
+            end
+
+            if not MyBus then
+                spawn_any_vehicle("SchoolBus")
+                task.wait(1)
+                continue
+            end
+
+            local seat = MyBus:FindFirstChild("VehicleSeat")
+            if seat and MyHumanoid then
+                MyChar:PivotTo(seat.CFrame)
+                task.wait(0.2)
+                seat:Sit(MyHumanoid)
+            end
+
+            local maxTries = 50
+            for i = 1, maxTries do
+                local targetHumanoid = TargetPlayer.Character and TargetPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if targetHumanoid and targetHumanoid.Sit then break end
+
+                local targetHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if not targetHRP then break end
+                MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+                task.wait(0.2)
+            end
+
+            task.wait(0.1)
+            MyBus:PivotTo(voidCF)
+
+            task.wait(0.4)
+            local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+            if getgenv().Humanoid and getgenv().Humanoid.Sit then
+                getgenv().Humanoid:ChangeState(3)
+                task.wait(0.1)
+                myHRP.CFrame = Old_CF
+                task.wait(0.5)
+                spawn_any_vehicle("Chiron")
+            elseif myHRP then
+                myHRP.CFrame = Old_CF
+                task.wait(0.5)
+                spawn_any_vehicle("Chiron")
+            end
+
+            repeat task.wait(0.5)
+            until not (TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("Humanoid") and TargetPlayer.Character.Humanoid.Health > 0)
+        end
+
+        getgenv().VoidLoopRunning = false
+    end)
+end
+
 function RGB_Vehicle(Boolean)
    getgenv().Rainbow_Vehicle = Boolean
 
@@ -1183,6 +1231,14 @@ function RGB_Vehicle(Boolean)
     end
 end
 
+wait(0.5)
+if getgenv().PlayerGui:FindFirstChild("Phone"):FindFirstChild("LifeSnap") then
+    local LifeSnap_Title = getgenv().PlayerGui:FindFirstChild("Phone"):FindFirstChild("LifeSnap"):FindFirstChild("MasterFrame").Holder.Snapblox.TitleGreyFrame.Frame.Title
+
+    LifeSnap_Title.Text = "-FlamesHub On TOP!-"
+    LifeSnap_Title.TextColor3 = Color3.fromRGB(50, 205, 0)
+end
+wait(0.1)
 getgenv().spawn_vehicle = Tab4:CreateDropdown({
 Name = "Spawn Vehicle (FE)",
 Options = {"Magic Carpet", "EClass", "TowTruck", "Bicycle", "Fiat500", "Cayenne", "Jetski", "LuggageScooter", "MiniCooper", "GarbageTruck", "EScooter", "Monster Truck", "Yacht", "Stingray", "FireTruck", "VespaPizza", "VespaPolice", "F150", "Police SUV", "Chiron", "Humvee", "Wrangler", "Box Van", "Ambulance", "Urus", "Tesla", "Cybertruck", "RollsRoyce", "GClass", "SVJ", "MX5", "SF90", "Charger SRT", "Evoque", "IceCream Truck", "Vespa", "ATV", "Limo", "Tank", "Smart Car", "Beauford", "SchoolBus", "Sprinter", "GolfKart", "TrackHawk", "Helicopter", "SnowPlow", "Camper Van"},
@@ -1228,6 +1284,29 @@ Callback = function(walking_state)
     else
         toggle_walk(false)
     end
+end,})
+
+getgenv().SpoofInvis = Tab2:CreateButton({
+Name = "Spoof Invisibility GamePass (free Invisibility)",
+Callback = function()
+    if not debug.getupvalue then return show_notification("[Error]:", "This is unsupported in your exploit!", "Warning") end
+
+    debug.getupvalue(Data.initiate, 2)("invisible_bought", true)
+    wait(0.3)
+    getgenv().notify("Success!", "Check the 'Eye' icon at the top left of the screen!", 5)
+    wait()
+    getgenv().notify("Warning:", "People can still see you even with 'Invisibility' enabled! (sadly)", 5)
+end,})
+
+getgenv().SpoofLifePay = Tab2:CreateButton({
+Name = "Spoof LifePay (free premium perks, items, cars, etc)",
+Callback = function()
+    if not debug.getupvalue then return show_notification("[Error]:", "This is unsupported in your exploit!", "Warning") end
+
+    local update = debug.getupvalue(Data.initiate, 2)
+    update("is_verified", true)
+    wait(0.2)
+    getgenv().notify("Heads Up:", "Unfortunately premium houses despawn after spawning them with this.", 5)
 end,})
 
 getgenv().FlashWallpapers = Tab5:CreateToggle({
@@ -1423,15 +1502,42 @@ Callback = function(new_color_for_phone)
     change_phone_color(new_color_for_phone)
 end,})
 
-getgenv().LockVehicle_FE = Tab4:CreateToggle({
+getgenv().CarLockLoopRunning = false
+wait()
+getgenv().LockVehicle_FE = Tab1:CreateToggle({
 Name = "Lock Vehicle (FE)",
 CurrentValue = false,
 Flag = "LockVehicleScriptFE",
-Callback = function(is_vehicle_locked)
-    if is_vehicle_locked then
-        lock_vehicle(get_vehicle())
+Callback = function(car_locked)
+    if car_locked then
+        if getgenv().CarLockLoopRunning then return end
+
+        getgenv().my_car_locked = true
+        getgenv().CarLockLoopRunning = true
+
+        task.spawn(function()
+            while getgenv().my_car_locked == true do
+                wait(0.1)
+
+                local vehicle = get_vehicle()
+                if vehicle then
+                    if vehicle:GetAttribute("locked") == false then
+                        lock_vehicle(vehicle)
+                    end
+                else
+                    getgenv().my_car_locked = false
+                    getgenv().CarLockLoopRunning = false
+                    getgenv().LockVehicle_FE:Set(false)
+                    task.wait(0.6)
+                    getgenv().notify("Heads Up:", "Disabled loop — vehicle was destroyed or despawned.", 5)
+                    return 
+                end
+            end
+
+            getgenv().CarLockLoopRunning = false
+        end)
     else
-        lock_vehicle(get_vehicle())
+        getgenv().my_car_locked = false
     end
 end,})
 
@@ -1478,7 +1584,7 @@ Callback = function()
 end,})
 
 getgenv().server_admin_teleport = Tab2:CreateInput({
-Name = "Server Admin TP (Broken)",
+Name = "(VIP-SERVER): Server Admin TP Plr",
 PlaceholderText = "User Here, can he shortened",
 RemoveTextAfterFocusLost = true,
 Callback = function(player_to_tp_to)
@@ -1581,6 +1687,47 @@ Callback = function()
     send_remote("body_scale", "WidthScale", 100)
     wait(1)
     getgenv().notify("Success:", "Successfully wore Owner Outfit 1.", 5)
+end,})
+
+getgenv().LockHouseLoopRunning = false
+wait()
+getgenv().LockHouse_FE = Tab1:CreateToggle({
+Name = "Lock House (FE)",
+CurrentValue = false,
+Flag = "LockHouseScriptFE",
+Callback = function(house_locked)
+    if house_locked then
+        if getgenv().LockHouseLoopRunning then return end
+        wait(0.1)
+        getgenv().my_home_locked = true
+        getgenv().LockHouseLoopRunning = true
+
+        task.spawn(function()
+            local lastLockedState = true
+
+            while getgenv().my_home_locked == true do
+                wait(0.2)
+                for _, plot in pairs(PlotMarker.class.objects) do
+                    local owner = plot.states.owner.get()
+
+                    if owner == game.Players.LocalPlayer then
+                        local isLocked = plot.states.locked.get()
+
+                        if isLocked == false and lastLockedState == true then
+                            send_remote("lock_home", plot.instance)
+                            lastLockedState = false
+                        elseif isLocked == true then
+                            lastLockedState = true
+                        end
+                    end
+                end
+            end
+
+            getgenv().LockHouseLoopRunning = false
+        end)
+    else
+        getgenv().my_home_locked = false
+    end
 end,})
 
 local ReplicatedStorage = getgenv().ReplicatedStorage
@@ -1709,6 +1856,25 @@ Callback = function(user_to_void)
     elseif target == getgenv().LocalPlayer or target == getgenv().LocalPlayer.Name then
         return getgenv().notify("Failure:", "You cannot void yourself (wtf).", 5)
     end
+end,})
+
+getgenv().LoopVehicleVoid_PlrFE = Tab3:CreateInput({
+Name = "Loop Vehicle Void Player (FE)",
+PlaceholderText = "User Here, can be shortened",
+RemoveTextAfterFocusLost = true,
+Callback = function(loop_void_this_plr)
+    local void_loop_plr = findplr(loop_void_this_plr)
+    if not void_loop_plr then return show_notification("Error:", "Player does not exist!", "Warning") end
+
+    getgenv().void_loop_enabled = true
+    start_void_loop(void_loop_plr)
+end,})
+
+getgenv().TurnOffLoopVehicleVoid = Tab3:CreateButton({
+Name = "Disable Vehicle Void Loop",
+Callback = function()
+    getgenv().void_loop_enabled = false
+    getgenv().void_loop_enabled = false
 end,})
 
 getgenv().VehicleBring = Tab1:CreateInput({
@@ -1881,6 +2047,119 @@ Callback = function(new_max_accel_val)
         if v.owner.Value == getgenv().LocalPlayer then
             v:SetAttribute("max_accel", new_max_accel_val)
         end
+    end
+end,})
+
+--[[getgenv().AutomaticallyPost_Story = Tab5:CreateInput({
+Name = "Automatically Post Snap (FE)",
+PlaceholderText = "User, AND text you want",
+RemoveTextAfterFocusLost = true,
+Callback = function(text_to_post_snap, Target)
+    if not firesignal then return show_notification("[Error]:", "Your exploit does not support 'firesignal'", "Warning") end
+    wait(0.2)
+    local snap_to_post_text = tostring(text_to_post_snap)
+    local PlrTo_SendTo = findplr(Target)
+
+    Phone_Module.holding.set(true)
+    wait(0.5)
+    Phone_Module.apps.LifeSnap.open()
+    wait(0.3)
+    local Phone_Gui = getgenv().PlayerGui:FindFirstChild("Phone")
+    local LifeSnap = Phone_Gui:FindFirstChild("LifeSnap")
+    local MasterFrame = LifeSnap:FindFirstChild("MasterFrame")
+    local Holder = MasterFrame:FindFirstChild("Holder")
+    local Snapblox = Holder:FindFirstChild("Snapblox")
+    local SnapbloxScreenSlider = Snapblox:FindFirstChild("SnapbloxScreenSlider")
+    local SnapbloxCameraHolder = SnapbloxScreenSlider:FindFirstChild("SnapbloxCameraHolder")
+    local SnapbloxSendButtons = SnapbloxCameraHolder:FindFirstChild("SnapbloxSendButtons")
+    local PictureSettings = SnapbloxCameraHolder:FindFirstChild("PictureSettings")
+    local TimeSelectorFrame = PictureSettings:FindFirstChild("TimeSelectorFrame")
+    local TimeSelector = SnapbloxCameraHolder:FindFirstChild("TimeSelector")
+    local InfSnap_Time = TimeSelector:FindFirstChild("SnapbloxTimeButtons")["10"]
+    local Snap_Time = TimeSelectorFrame:FindFirstChild("TimeSelectorButton")
+    local Send_To_Button = SnapbloxSendButtons:FindFirstChild("SnapbloxSendButton")
+    local Edit_Text = PictureSettings:FindFirstChild("EditSnapbloxText"):FindFirstChild("EditSnapbloxTextButton")
+    local Text_Holder_Button = SnapbloxCameraHolder:FindFirstChild("SnapbloxTextHolder"):FindFirstChild("SnapbloxTextBox")
+    local Take_Pic = SnapbloxCameraHolder:FindFirstChild("TakeSnapButton")
+    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+
+    for i,Signal in pairs(Signals) do
+        firesignal(Take_Pic[Signal])
+    end
+    wait(0.2)
+    for i,Signal in pairs(Signals) do
+        firesignal(Edit_Text[Signal])
+    end
+    wait(0.2)
+    Text_Holder_Button.Text = snap_to_post_text
+    wait(0.3)
+    for i,Signal in pairs(Signals) do
+        firesignal(Snap_Time[Signal])
+    end
+    wait(0.3)
+    for i,Signal in pairs(Signals) do
+        firesignal(InfSnap_Time[Signal])
+    end
+    task.wait(0.5)
+    for i,Signal in pairs(Signals) do
+        firesignal(Send_To_Button[Signal])
+    end
+end,})--]]
+
+getgenv().SpamCall_PlayerFE = Tab5:CreateInput({
+Name = "Spam Call Player (FE)",
+PlaceholderText = "Player Here",
+RemoveTextAfterFocusLost = true,
+Callback = function(spam_callin_plr)
+    local Calling_Target = findplr(spam_callin_plr)
+    if not Calling_Target then return show_notification("Error:", "Player does not exist!", "Warning") end
+    wait(0.1)
+
+    if Calling_Target then
+        getgenv().notify("Heads Up:", "This works even when the player blocks you!", 5)
+    end
+    wait()
+    send_remote("end_call", Calling_Target)
+    wait()
+    getgenv().spam_calling_the_player = true
+    while getgenv().spam_calling_the_player == true do
+    wait(0.1)
+        send_remote("request_call", Calling_Target)
+        wait(0.1)
+        send_remote("end_call", Calling_Target)
+    end
+end,})
+
+getgenv().StopSpamCallinPlr = Tab5:CreateButton({
+Name = "Stop Spam Calling Player",
+Callback = function()
+    getgenv().spam_calling_the_player = false
+    getgenv().spam_calling_the_player = false
+    wait(2)
+    for _, v in ipairs(getgenv().Players:GetPlayers()) do
+        if v ~= game.Players.LocalPlayer then
+            send_remote("end_call", v)
+        end
+    end
+end,})
+
+getgenv().DeclineAll_CallsFE = Tab5:CreateToggle({
+Name = "Block/Decline All Calls (FE)",
+CurrentValue = false,
+Flag = "BlockAnyIncomingCalls",
+Callback = function(block_any_new_calls)
+    if block_any_new_calls then
+        getgenv().decline_all_calls_fe = true
+        while getgenv().decline_all_calls_fe == true do
+        wait()
+            for _, v in ipairs(getgenv().Players:GetPlayers()) do
+                if v ~= game.Players.LocalPlayer then
+                    send_remote("end_call", v)
+                end
+            end
+        end
+    else
+        getgenv().decline_all_calls_fe = false
     end
 end,})
 
