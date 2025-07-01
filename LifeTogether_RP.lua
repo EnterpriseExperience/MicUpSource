@@ -1504,7 +1504,7 @@ end,})
 
 getgenv().CarLockLoopRunning = false
 wait()
-getgenv().LockVehicle_FE = Tab1:CreateToggle({
+getgenv().LockVehicle_FE = Tab4:CreateToggle({
 Name = "Lock Vehicle (FE)",
 CurrentValue = false,
 Flag = "LockVehicleScriptFE",
