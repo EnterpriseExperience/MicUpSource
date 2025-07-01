@@ -1516,6 +1516,88 @@ Callback = function()
     end
 end,})
 
+local Animations_Table = {
+    {
+        619535091,
+        "ClimbAnimation",
+        true
+    },
+    {
+        619535616,
+        "FallAnimation",
+        true
+    },
+    {
+        619535834,
+        "IdleAnimation",
+        true
+    },
+    {
+        619536283,
+        "JumpAnimation",
+        true
+    },
+    {
+        619536621,
+        "RunAnimation",
+        true
+    },
+    {
+        619537096,
+        "SwimAnimation",
+        true
+    },
+    {
+        619537468,
+        "WalkAnimation",
+        true
+    }
+}
+
+getgenv().ChangeIntoOwnerFit1 = Tab1:CreateButton({
+Name = "Change Into Owner (Outfit 1)",
+Callback = function()
+    getgenv().notify("Hold On:", "Wearing Owner Outfit 1...", 5)
+    wait()
+    send_function("wear", 114590304845243, "Pants")
+    wait(0.2)
+    send_function("wear", 16045355146, "Shirt")
+    wait(0.2)
+    send_remote("skin_tone", Color3.fromRGB(120, 65, 38))
+    wait(0.2)
+    send_function("batch_wear", Animations_Table)
+    wait(0.2)
+    send_function("wear", 98831355295667, "HairAccessory")
+    wait(0.2)
+    send_function("wear", 10430104072, "Hat")
+    wait(0.2)
+    send_function("wear", 10678423, "Face")
+    wait(0.2)
+    send_function("wear", 13734096288, "FaceAccessory")
+    wait(0.2)
+    send_remote("body_scale", "HeightScale", 100)
+    wait(0.2)
+    send_remote("body_scale", "WidthScale", 100)
+    wait(1)
+    getgenv().notify("Success:", "Successfully wore Owner Outfit 1.", 5)
+end,})
+
+--[[getgenv().ViewAnyHousesCCTVCameras = Tab1:CreateDropdown({
+Name = "View Any House's CCTV Camera(s)",
+Options = tool_options,
+CurrentOption = "",
+MultipleOptions = false,
+Flag = "tool_slot_select",
+Callback = function(cctv_camera_to_view)
+
+end,})
+
+getgenv().UnviewCCTVCamera = Tab1:CreateButton({
+Name = "Unview CCTV Camera",
+Callback = function()
+
+end,})--]]
+
 getgenv().VehicleVoid = Tab3:CreateInput({
 Name = "Vehicle Void Player (FE)",
 PlaceholderText = "User Here, can be shortened",
@@ -1725,7 +1807,7 @@ Callback = function(new_turn_angle_val)
     end
 end,})
 wait(0.1)
-local Old_Skintone = getgenv().Character:FindFirstChild("Body Colors").TorsoColor
+local Old_Skintone = getgenv().Character:FindFirstChild("Body Colors").TorsoColor3
 wait(0.3)
 getgenv().RainbowSkin_FEScript = Tab2:CreateToggle({
 Name = "Rainbow Skin (FE)",
@@ -1768,8 +1850,18 @@ Callback = function(rgb_skintone)
         end
     else
         getgenv().RainbowSkin_FE = false
-        repeat wait() until not getgenv().RainbowSkin_FE
-        send_remote("skin_tone", Old_Skintone)
+        wait(0.3)
+        getgenv().notify("Heads Up:", "Waiting until loop is fully disabled and resetting skintone...", 5)
+        wait(3)
+        if getgenv().RainbowSkin_FE == false then
+            getgenv().notify("Hang On:", "Loop is disabled resetting skintone...", 5)
+            wait()
+            send_remote("skin_tone", Old_Skintone)
+            wait(0.2)
+            send_remote("skin_tone", Old_Skintone)
+            wait(0.2)
+            send_remote("skin_tone", Old_Skintone)
+        end
     end
 end,})
 
