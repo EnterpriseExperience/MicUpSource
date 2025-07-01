@@ -515,6 +515,7 @@ local Core = Modules:FindFirstChild("Core")
 local Game = Modules:FindFirstChild("Game")
 local Phone = require(Game:FindFirstChild("Phone"))
 local Network = require(Core:FindFirstChild("Net"))
+local CCTV = require(Game:FindFirstChild("CCTV"))
 wait(0.3)
 function send_function(arg1, arg2, arg3)
     if arg1 and arg2 and arg3 then
@@ -1582,21 +1583,116 @@ Callback = function()
     getgenv().notify("Success:", "Successfully wore Owner Outfit 1.", 5)
 end,})
 
---[[getgenv().ViewAnyHousesCCTVCameras = Tab1:CreateDropdown({
+local ReplicatedStorage = getgenv().ReplicatedStorage
+local Workspace = getgenv().Workspace
+local LocalPlayer = getgenv().LocalPlayer
+local House_Options = {}
+local House_IDToPlot = {}
+
+local function GetHouseDropdownOptions()
+    local map = Workspace:FindFirstChild("Map")
+    local house_plots = map and map:FindFirstChild("HousePlots")
+    if not house_plots then return {} end
+
+    for _, plot in ipairs(house_plots:GetChildren()) do
+        if plot:IsA("Model") and plot:FindFirstChild("owner") and plot:FindFirstChild("built_house") then
+            local house_value = plot.built_house.Value
+            if not house_value then
+                continue
+            end
+
+            local house_name = house_value.Name
+
+            if plot.owner.Value == LocalPlayer then
+                house_name = house_name .. " (Your House)"
+            end
+
+            local unique_id = tostring(plot:GetDebugId())
+            local dropdown_name = house_name .. " [" .. unique_id .. "]"
+
+            table.insert(House_Options, dropdown_name)
+            House_IDToPlot[unique_id] = plot
+        end
+    end
+
+    return House_Options
+end
+
+local house_options = GetHouseDropdownOptions()
+
+local function GetCCTVFromHouseModel(house_model)
+    if not house_model then
+        return warn("No house model provided")
+    end
+
+    local exterior = house_model:FindFirstChild("Exterior")
+    if not exterior then
+        return warn("Missing 'Exterior' in house model: " .. house_model.Name)
+    end
+
+    local cams = exterior:FindFirstChild("SecurityCameras")
+    if not cams then
+        return warn("Missing 'SecurityCameras' in Exterior of: " .. house_model.Name)
+    end
+
+    local cam = cams:FindFirstChild("SecurityCamera")
+    if not cam then
+        return warn("Missing 'SecurityCamera' in SecurityCameras of: " .. house_model.Name)
+    end
+
+    local red_dot = cam:FindFirstChild("RedDot")
+    if not red_dot then
+        return warn("Missing 'RedDot' in SecurityCamera of: " .. house_model.Name)
+    end
+
+    return red_dot, cams
+end
+
+getgenv().ViewAnyHousesCCTVCameras = Tab1:CreateDropdown({
 Name = "View Any House's CCTV Camera(s)",
-Options = tool_options,
+Options = house_options,
 CurrentOption = "",
 MultipleOptions = false,
-Flag = "tool_slot_select",
-Callback = function(cctv_camera_to_view)
+Flag = "house_reddot_slot_select",
+Callback = function(selected_option)
+    local selected_str = typeof(selected_option) == "table" and selected_option[1] or selected_option
+    local house_id = selected_str:match("%[(.-)%]$")
+    local plot = House_IDToPlot[house_id]
 
+    if not plot then
+        return warn("Could not find plot for: " .. tostring(selected_option))
+    end
+
+    local house_model = plot.built_house.Value
+    if not house_model then
+        return warn("built_house has no value for plot: " .. plot.Name)
+    end
+
+    local red_dot, camera_folder = GetCCTVFromHouseModel(house_model)
+    if not red_dot or not camera_folder then return end
+
+    send_remote("replication_focus", red_dot)
+    wait(0.1)
+    CCTV.start(camera_folder)
+end,})
+
+getgenv().RefreshCCTVDropdown = Tab1:CreateButton({
+Name = "🔄 Refresh CCTV Dropdown 🔄",
+Callback = function()
+    table.clear(House_Options)
+    table.clear(House_IDToPlot)
+
+    local new_options = GetHouseDropdownOptions()
+    wait(0.1)
+    getgenv().ViewAnyHousesCCTVCameras:Refresh(new_options)
 end,})
 
 getgenv().UnviewCCTVCamera = Tab1:CreateButton({
 Name = "Unview CCTV Camera",
 Callback = function()
-
-end,})--]]
+    CCTV.stop()
+    send_remote("restore_replication_focus")
+end,})
 
 getgenv().VehicleVoid = Tab3:CreateInput({
 Name = "Vehicle Void Player (FE)",
