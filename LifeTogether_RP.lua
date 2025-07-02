@@ -1055,6 +1055,85 @@ function vehicle_bring_player(TargetPlayer)
     end
 end
 
+function bring_player_to_player(TargetPlayer, DestinationPlayer)
+    if not TargetPlayer or not TargetPlayer.Character then return end
+    if not DestinationPlayer or not DestinationPlayer.Character then return end
+
+    local targetChar = TargetPlayer.Character
+    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
+    local destinationHRP = DestinationPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not targetHRP or not destinationHRP then return end
+
+    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+
+    local voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)")
+    if not voidPart then create_kill_part() voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") end
+    local voidCF = voidPart:FindFirstChild("SCRIPT_KILLPART_VOID") and voidPart:FindFirstChild("SCRIPT_KILLPART_VOID").CFrame
+    if not voidCF then return end
+
+    local MyPlayer = game.Players.LocalPlayer
+    local MyChar = getgenv().Character or MyPlayer.Character
+    local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
+    local MyBus = nil
+
+    for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
+            if v:FindFirstChild("VehicleSeat") then
+                MyBus = v
+                break
+            end
+        end
+    end
+    wait(0.1)
+    if not MyBus then
+    spawn_any_vehicle("SchoolBus")
+    wait(0.5)
+        for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
+            if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
+                if v:FindFirstChild("VehicleSeat") then
+                    MyBus = v
+                    break
+                end
+            end
+        end
+    end
+    local seat = MyBus:FindFirstChild("VehicleSeat")
+    if seat and MyHumanoid then
+        MyChar:PivotTo(seat.CFrame)
+        task.wait(0.2)
+        seat:Sit(MyHumanoid)
+    end
+
+    local maxTries = 60
+    for i = 1, maxTries do
+        local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
+        local isSitting = targetHumanoid and targetHumanoid.Sit
+        if isSitting then break end
+
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+        task.wait(0.2)
+    end
+    wait(0.3)
+    MyBus:PivotTo(destinationHRP.CFrame + Vector3.new(0, 0.5, 0))
+    wait(0.5)
+    spawn_any_vehicle("SchoolBus")
+    wait(0.4)
+
+    local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+    if getgenv().Humanoid.Sit then
+        getgenv().Humanoid:ChangeState(3)
+        wait(0.2)
+        myHRP.CFrame = Old_CF
+        wait(0.4)
+        spawn_any_vehicle("Chiron")
+    end
+    if myHRP then
+        myHRP.CFrame = Old_CF
+        wait(0.4)
+        spawn_any_vehicle("Chiron")
+    end
+end
+
 function vehicle_void_player(TargetPlayer)
     if not TargetPlayer or not TargetPlayer.Character then return end
     local targetChar = TargetPlayer.Character
@@ -1858,7 +1937,7 @@ Callback = function(user_to_void)
     end
 end,})
 
-getgenv().LoopVehicleVoid_PlrFE = Tab3:CreateInput({
+--[[getgenv().LoopVehicleVoid_PlrFE = Tab3:CreateInput({
 Name = "Loop Vehicle Void Player (FE)",
 PlaceholderText = "User Here, can be shortened",
 RemoveTextAfterFocusLost = true,
@@ -1875,7 +1954,7 @@ Name = "Disable Vehicle Void Loop",
 Callback = function()
     getgenv().void_loop_enabled = false
     getgenv().void_loop_enabled = false
-end,})
+end,})--]]
 
 getgenv().VehicleBring = Tab1:CreateInput({
 Name = "Vehicle Bring Player (FE)",
@@ -1892,6 +1971,35 @@ Callback = function(user_to_bring)
     elseif target == getgenv().LocalPlayer or target == getgenv().LocalPlayer.Name then
         return getgenv().notify("Failure:", "You cannot void yourself (wtf).", 5)
     end
+end,})
+
+getgenv().VehiclePlayerToPlr2 = Tab1:CreateInput({
+Name = "Vehicle TP Player1 to Player2",
+PlaceholderText = "User1, User2 (comma separated)",
+RemoveTextAfterFocusLost = true,
+Callback = function(inputText)
+    local splitNames = {}
+    for name in string.gmatch(inputText, "([^,]+)") do
+        table.insert(splitNames, name:match("^%s*(.-)%s*$"))
+    end
+
+    if #splitNames < 2 then
+        return show_notification("Error:", "You must enter both Player1 and Player2 names separated by a comma!", "Warning")
+    end
+
+    local player1, player2 = splitNames[1], splitNames[2]
+
+    local Target1 = findplr(player1)
+    if not Target1 then
+        return show_notification("Error:", "Player1 does not exist!", "Warning")
+    end
+
+    local Target2 = findplr(player2)
+    if not Target2 then
+        return show_notification("Error:", "Player2 does not exist!", "Warning")
+    end
+
+    bring_player_to_player(Target1, Target2)
 end,})
 
 getgenv().VehicleKill = Tab3:CreateInput({
