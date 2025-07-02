@@ -4,6 +4,17 @@
 -- print(flames_api.ExecutorName)
 -- local randomPlayer = flames_api.FindPlayer("random")
 
+-- Flames API arguments:
+-- flames_api.FindPlayer("random") -- example of 'FindPlayer', supports: shortening names, displaynames, and usernames. (does not let you target yourself, will be fixed soon, had some issues with that part).
+-- flames_api.ExecutorName -- will let you display the executor's current name (just name, not version), works for TextLabels and stuff to, automatically defaults to "Unknown" if somehow not supported or not found, and is automatically a tostring.
+-- flames_api.Players -- Players service, any executor that supports "cloneref" it'll automatically sandbox Players into cloneref, if the executor somehow does not support "cloneref", it'll default to regular Players service.
+-- flames_api.LocalPlayer -- Should be obvious what this does, get's your LocalPlayer.
+-- flames_api.Workspace -- get's Workspace service, defaults to "cloneref" sandbox if supported, if not, it'll default to regular "Workspace" service grabber.
+-- flames_api.ReplicatedStorage -- get's ReplicatedStorage service, and just like Players and Workspace, defaults to "cloneref" if supported, if not, just grabs regular ReplicatedStorage service.
+-- flames_api.HttpService -- same thing here, same rules
+-- flames_api.RunService -- same thing once more.
+-- flames_api.RandomString(string) -- when inputting a string it'll randomize it for you automatically.
+
 return function()
     local fullpackage = {}
 
