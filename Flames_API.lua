@@ -13,6 +13,8 @@
 -- flames_api.HumanoidRootPart -- grabs your HumanoidRootPart (even if you die, respawn, etc).
 -- flames_api.Humanoid -- grabs your Humanoid (even if you die, respawn, etc).
 -- flames_api.Head -- grabs your Head (even if you die, respawn, etc).
+-- flames_api.SeatPart -- grabs your current SeatPart.
+-- flames_api.Vehicle -- uses "SeatPart" to get your Vehicle, and checks the Vehicle to see if it has wheels, if it's a Model as well.
 
 return function()
     local flames_api = {}
@@ -79,20 +81,45 @@ return function()
         flames_api.Humanoid = SafeGetHumanoid(character)
         flames_api.HumanoidRootPart = SafeGetHRP(character)
         flames_api.Head = SafeGetHead(character)
+        flames_api.SeatPart = Humanoid.SeatPart
     end
 
     flames_api.Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     Dynamic_Character_Updater(flames_api.Character)
 
     LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-        task.wait(0.2)
+        task.wait(0.3)
         Dynamic_Character_Updater(newCharacter)
         repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
         wait(0.6)
         flames_api.Humanoid = SafeGetHumanoid(newCharacter)
         flames_api.HumanoidRootPart = SafeGetHRP(newCharacter)
         flames_api.Head = SafeGetHead(newCharacter)
+        flames_api.SeatPart = Humanoid.SeatPart
+        wait(0.2)
+        Dynamic_Character_Updater(newCharacter)
     end)
+
+    flames_api.Vehicle = function()
+        local character = flames_api.Character
+        local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+        local hrp = character and character:FindFirstChild("HumanoidRootPart")
+    
+        if humanoid and humanoid.SeatPart then
+            local seatPart = humanoid.SeatPart
+            local model = seatPart:FindFirstAncestorOfClass("Model")
+    
+            if model and typeof(model.GetDescendants) == "function" then
+                for _, descendant in ipairs(model:GetDescendants()) do
+                    if descendant:IsA("BasePart") and descendant.Name and string.find(descendant.Name:lower(), "wheel") then
+                        return model
+                    end
+                end
+            end
+        end
+    
+        return nil
+    end
 
     flames_api.FindPlayer = function(arg)
         local tbl = Players:GetPlayers()
