@@ -1,4 +1,4 @@
-## [V9 Loadstring, BETA RELEASE!]:
+## [📜 Current 🔥 Flames Hub 🔥 Version: V9.4.1 📜]:
 
 ```lua
 -- 🎤 MIC UP 🎤 --
