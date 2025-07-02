@@ -92,11 +92,6 @@ return function()
         flames_api.Humanoid = SafeGetHumanoid(newCharacter)
         flames_api.HumanoidRootPart = SafeGetHRP(newCharacter)
         flames_api.Head = SafeGetHead(newCharacter)
-
-        if flames_api.Humanoid then
-            flames_api.Humanoid.JumpHeight = 7
-            flames_api.Humanoid.JumpPower = 50
-        end
     end)
 
     flames_api.FindPlayer = function(arg)
