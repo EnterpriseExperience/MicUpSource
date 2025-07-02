@@ -1,9 +1,8 @@
 -- Usage:
--- [[
-local fullpackage = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flames_API.lua"))()
-print(fullpackage.ExecutorName)
-local randomPlayer = fullpackage.FindPlayer("random")
---]]
+
+-- local flames_api = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flames_API.lua"))()
+-- print(flames_api.ExecutorName)
+-- local randomPlayer = flames_api.FindPlayer("random")
 
 return function()
     local fullpackage = {}
