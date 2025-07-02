@@ -1,0 +1,246 @@
+local flames_api = {}
+
+local function SafeGet(service)
+	return cloneref and cloneref(game:GetService(service)) or game:GetService(service)
+end
+
+getgenv().Game = game
+getgenv().JobID = game.JobId
+getgenv().PlaceID = game.PlaceId
+
+flames_api.Service = function(serviceName)
+	return SafeGet(serviceName)
+end
+
+local function getExecutor()
+	if identifyexecutor then
+		return { Name = identifyexecutor() }
+	end
+	return { Name = "Unknown Executor" }
+end
+
+local function executor_details()
+	return getExecutor().Name
+end
+
+flames_api.ExecutorName = executor_details()
+
+getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+
+flames_api.RandomString = function()
+	local length = math.random(10, 50)
+	local array = {}
+	for i = 1, length do
+		array[i] = string.char(math.random(32, 126))
+	end
+	return table.concat(array)
+end
+
+local Players = SafeGet("Players")
+local LocalPlayer = Players.LocalPlayer
+
+flames_api.Players = Players
+flames_api.LocalPlayer = LocalPlayer
+
+local function SafeGetHumanoid(char)
+	return char:FindFirstChildWhichIsA("Humanoid") or char:WaitForChild("Humanoid", 5)
+end
+
+local function SafeGetHRP(char)
+	return char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("HumanoidRootPart", 5)
+end
+
+local function SafeGetHead(char)
+	return char:FindFirstChild("Head") or char:WaitForChild("Head", 5)
+end
+
+local function Dynamic_Character_Updater(character)
+	flames_api.Character = character
+	wait(0.3)
+	flames_api.Humanoid = SafeGetHumanoid(character)
+	flames_api.HumanoidRootPart = SafeGetHRP(character)
+	flames_api.Head = SafeGetHead(character)
+	flames_api.SeatPart = Humanoid.SeatPart
+end
+
+flames_api.Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+Dynamic_Character_Updater(flames_api.Character)
+
+LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+	task.wait(0.3)
+	Dynamic_Character_Updater(newCharacter)
+	repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
+	wait(0.6)
+	flames_api.Humanoid = SafeGetHumanoid(newCharacter)
+	flames_api.HumanoidRootPart = SafeGetHRP(newCharacter)
+	flames_api.Head = SafeGetHead(newCharacter)
+	flames_api.SeatPart = Humanoid.SeatPart
+	wait(0.2)
+	Dynamic_Character_Updater(newCharacter)
+end)
+
+flames_api.Vehicle = function()
+	local character = flames_api.Character
+	local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+	local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+	if humanoid and humanoid.SeatPart then
+		local seatPart = humanoid.SeatPart
+		local model = seatPart:FindFirstAncestorOfClass("Model")
+
+		if model and typeof(model.GetDescendants) == "function" then
+				for _, descendant in ipairs(model:GetDescendants()) do
+					if descendant:IsA("BasePart") and descendant.Name and string.find(descendant.Name:lower(), "wheel") then
+						return model
+					end
+				end
+		end
+	end
+
+	return nil
+end
+
+flames_api.FindPlayer = function(arg)
+	local tbl = Players:GetPlayers()
+
+	if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
+		return getgenv().notify("Failure!", "You cannot target yourself!", 6)
+	end
+
+	if args == "random" then
+		local validPlayers = {}
+		for _, v in pairs(tbl) do
+				if v ~= cmdlp then
+					table.insert(validPlayers, v)
+				end
+		end
+		return #validPlayers > 0 and validPlayers[math.random(1, #validPlayers)] or nil
+	end
+
+	if args == "new" then
+		local vAges = {}
+		for _, v in pairs(tbl) do
+				if v.AccountAge < 30 and v ~= cmdlp then
+					table.insert(vAges, v)
+				end
+		end
+		return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+	end
+
+	if args == "old" then
+		local vAges = {}
+		for _, v in pairs(tbl) do
+				if v.AccountAge > 30 and v ~= cmdlp then
+					table.insert(vAges, v)
+				end
+		end
+		return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+	end
+
+	if args == "bacon" then
+		local vAges = {}
+		for _, v in pairs(tbl) do
+				if v ~= cmdlp and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
+					table.insert(vAges, v)
+				end
+		end
+		return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+	end
+
+	if args == "friend" then
+		local friendList = {}
+		for _, v in pairs(tbl) do
+				if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
+					table.insert(friendList, v)
+				end
+		end
+		return #friendList > 0 and friendList[math.random(1, #friendList)] or nil
+	end
+
+	if args == "notfriend" then
+		local vAges = {}
+		for _, v in pairs(tbl) do
+				if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
+					table.insert(vAges, v)
+				end
+		end
+		return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+	end
+
+	if args == "ally" then
+		local vAges = {}
+		for _, v in pairs(tbl) do
+				if v.Team == cmdlp.Team and v ~= cmdlp then
+					table.insert(vAges, v)
+				end
+		end
+		return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+	end
+
+	if args == "enemy" then
+		local vAges = {}
+		for _, v in pairs(tbl) do
+				if v.Team ~= cmdlp.Team and v ~= cmdlp then
+					table.insert(vAges, v)
+				end
+		end
+		return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+	end
+
+	if args == "near" then
+		local vAges = {}
+		for _, v in pairs(tbl) do
+				if v ~= cmdlp and v.Character and cmdlp.Character then
+					local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
+					local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+					if vRootPart and cmdlpRootPart then
+						local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
+						if distance < 30 then
+								table.insert(vAges, v)
+						end
+					end
+				end
+		end
+		return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+	end
+
+	if args == "far" then
+		local vAges = {}
+		for _, v in pairs(tbl) do
+				if v ~= cmdlp and v.Character and cmdlp.Character then
+					local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
+					local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+					if vRootPart and cmdlpRootPart then
+						local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
+						if distance > 30 then
+								table.insert(vAges, v)
+						end
+					end
+				end
+		end
+		return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+	end
+
+	for _, v in pairs(tbl) do
+		if (v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower())) and v ~= cmdlp then
+				return v
+		end
+	end
+end
+
+local serviceList = {
+	"Players", "Workspace", "Lighting", "ReplicatedStorage", "TweenService",
+	"RunService", "MaterialService", "ReplicatedFirst", "Teams", "StarterPack",
+	"StarterPlayer", "VoiceChatInternal", "VoiceChatService", "CoreGui", "SoundService",
+	"StarterGui", "MarketplaceService", "TeleportService", "Chat", "AssetService",
+	"HttpService", "UserInputService", "TextChatService", "ContextActionService",
+	"GuiService", "PhysicsService"
+}
+
+for _, serviceName in ipairs(serviceList) do
+	flames_api[serviceName] = SafeGet(serviceName)
+end
+
+return flames_api
