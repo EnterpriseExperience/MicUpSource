@@ -1424,6 +1424,60 @@ Callback = function(flashlight_phone)
     end
 end,})
 
+getgenv().AntiTeleport_Univ = Tab2:CreateToggle({
+Name = "Anti Teleport",
+CurrentValue = false,
+Flag = "AntiTeleportToggleUniversal",
+Callback = function(anti_teleport_toggle)
+    if anti_teleport_toggle then
+        getgenv().AntiTeleport = true
+        getgenv().AntiTeleportConnection = nil
+
+        local Players = getgenv().Players
+        local RunService = getgenv().RunService
+        local LocalPlayer = getgenv().LocalPlayer
+        repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+        local Character = getgenv().Character
+        local HRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+        local lastCFrame = HRP.CFrame
+
+        local maxDistance = 5
+        local checkInterval = 0.05
+
+        getgenv().AntiTeleportConnection = task.spawn(function()
+            while task.wait(checkInterval) do
+                if not getgenv().AntiTeleport then
+                    lastCFrame = HRP.CFrame
+                    continue
+                end
+
+                if LocalPlayer.Character ~= Character then
+                    Character = LocalPlayer.Character
+                    HRP = getgenv().HumanoidRootPart
+                    lastCFrame = HRP.CFrame
+                end
+
+                if (HRP.Position - lastCFrame.Position).Magnitude > maxDistance then
+                    warn("[Anti-Teleport_DEBUG]: Teleport detected. Reverting.")
+                    pcall(function()
+                        HRP.CFrame = lastCFrame
+                    end)
+                else
+                    lastCFrame = HRP.CFrame
+                end
+            end
+        end)
+    else
+        getgenv().AntiTeleport = false
+
+        pcall(function()
+            task.cancel(getgenv().AntiTeleportConnection)
+            getgenv().AntiTeleportConnection = nil
+        end)
+    end
+end,})
+
 getgenv().HD_FlyEnabled = false
 local FlyConnection
 local speed = 100
