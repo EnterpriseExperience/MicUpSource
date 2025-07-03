@@ -1478,6 +1478,121 @@ Callback = function(anti_teleport_toggle)
     end
 end,})
 
+getgenv().FrozenChar = Tab2:CreateToggle({
+Name = "Freeze Your Character",
+CurrentValue = false,
+Flag = "AntiMovement",
+Callback = function(hasFrozenChar)
+    if hasFrozenChar then
+        local Character = getgenv().Character
+        local Workspace_Service = getgenv().Workspace
+        local HumanoidRootPart = getgenv().HumanoidRootPart
+        getgenv().FreezingChar = true
+        if Character and HumanoidRootPart or Character:FindFirstChild("HuamnoidRootPart") then
+            if getgenv().FreezingChar == true then
+                HumanoidRootPart.Anchored = true
+            end
+        else
+            getgenv().FreezingChar = false
+        end
+    else
+        local Character = getgenv().Character
+        local HumanoidRootPart = getgenv().HumanoidRootPart
+        if Character and HumanoidRootPart or Character:FindFirstChild("HumanoidRootPart") then
+            getgenv().FreezingChar = false
+            wait(0.2)
+            HumanoidRootPart.Anchored = false
+        else
+            getgenv().FreezingChar = false
+        end
+    end
+end,})
+
+local anti_knockback_connection
+local antiKnockbackEnabled = false
+
+getgenv().AntiFlingToggle = Tab2:CreateToggle({
+Name = "Anti Fling",
+CurrentValue = false,
+Flag = "AntiFlingAbsolutelyInsane",
+Callback = function(EnableAntiFlingScript)
+    if EnableAntiFlingScript then
+        getgenv().antiFlingEnabled = true
+        getgenv().antiKnockbackEnabled = true
+
+        local RunService = getgenv().RunService
+        local Players = getgenv().Players
+        local lp = getgenv().LocalPlayer
+
+        local function getHRP()
+            local char = getgenv().Character
+            return char and char:FindFirstChild("HumanoidRootPart") or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        end
+
+        local function cleanUpForces()
+            local hrp = getHRP()
+            if not hrp then return end
+
+            for _, obj in ipairs(hrp:GetChildren()) do
+                if obj:IsA("BodyMover") or obj:IsA("VectorForce") or obj:IsA("Torque") or obj:IsA("LinearVelocity") then
+                    obj:Destroy()
+                end
+            end
+        end
+
+        local function onHeartbeat()
+            if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
+
+            local hrp = getHRP()
+            local humanoid = lp.Character and lp.Character:FindFirstChildWhichIsA("Humanoid")
+            if not hrp or not humanoid then return end
+
+            local maxSpeed = 45
+            local maxAngularSpeed = 60
+
+            if hrp.Velocity.Magnitude > maxSpeed then
+                hrp.Velocity = hrp.Velocity.Unit * maxSpeed
+            end
+
+            if hrp.AssemblyLinearVelocity.Magnitude > maxSpeed then
+                hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity.Unit * maxSpeed
+            end
+
+            if hrp.RotVelocity.Magnitude > maxAngularSpeed then
+                hrp.RotVelocity = Vector3.zero
+            end
+
+            if hrp.AssemblyAngularVelocity.Magnitude > maxAngularSpeed then
+                hrp.AssemblyAngularVelocity = Vector3.zero
+            end
+
+            if humanoid.PlatformStand then
+                humanoid.PlatformStand = false
+            end
+
+            cleanUpForces()
+        end
+
+        if anti_knockback_connection then
+            anti_knockback_connection:Disconnect()
+        end
+        wait(0.2)
+        anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
+    else
+        getgenv().antiFlingEnabled = false
+
+        if getgenv().antiFlingThing then
+            getgenv().antiFlingThing:Disconnect()
+            getgenv().antiFlingThing = nil
+        end
+        antiKnockbackEnabled = false
+        if anti_knockback_connection then
+            anti_knockback_connection:Disconnect()
+            anti_knockback_connection = nil
+        end
+    end
+end,})
+
 getgenv().HD_FlyEnabled = false
 local FlyConnection
 local speed = 100
