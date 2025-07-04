@@ -16,15 +16,16 @@ wait(0.2)
 local Release
 wait(0.1)
 if game.PlaceId == 15546218972 then
-	Release = "Build 1.6"
+	Release = "2.8.5"
 elseif game.PlaceId == 6884319169 then
-	Release = "1.7"
+	Release = "2.8.6"
 else
-	Release = "1.1.2"
+	Release = "2.8.2"
 end
 wait(0.2)
 local RayfieldFolder
-local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local MarketplaceService = cloneref and cloneref(game:GetService("MarketplaceService")) or game:GetService("MarketplaceService")
+local GameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local Version_Config = "V8.3.0"
 local Version_No_Config = "V8.3.0"
 wait(0.2)
@@ -45,43 +46,43 @@ local RayfieldLibrary = {
 		Default = {
 			TextColor = Color3.fromRGB(137, 135, 136),
 
-			Background = Color3.fromRGB(27, 42, 53),
-			Topbar = Color3.fromRGB(199, 193, 183),
-			Shadow = Color3.fromRGB(250, 250, 245),
+			Background = Color3.fromRGB(85, 0, 127),
+			Topbar = Color3.fromRGB(0, 0, 0),
+			Shadow = Color3.fromRGB(0, 0, 0),
 
-			NotificationBackground = Color3.fromRGB(110, 153, 202),
-			NotificationActionsBackground = Color3.fromRGB(110, 153, 202),
+			NotificationBackground = Color3.fromRGB(65, 0, 100),
+			NotificationActionsBackground = Color3.fromRGB(65, 0, 100),
 
-			TabBackground = Color3.fromRGB(109, 110, 108),
-			TabStroke = Color3.fromRGB(109, 110, 108),
-			TabBackgroundSelected = Color3.fromRGB(109, 110, 108),
-			TabTextColor = Color3.fromRGB(236, 232, 222),
-			SelectedTabTextColor = Color3.fromRGB(109, 110, 108),
+			TabBackground = Color3.fromRGB(25, 50, 85),
+			TabStroke = Color3.fromRGB(0, 0, 0),
+			TabBackgroundSelected = Color3.fromRGB(25, 50, 85),
+			TabTextColor = Color3.fromRGB(0, 255, 255),
+			SelectedTabTextColor = Color3.fromRGB(0, 255, 255),
 
-			ElementBackground = Color3.fromRGB(27, 42, 53),
-			ElementBackgroundHover = Color3.fromRGB(27, 42, 53),
-			SecondaryElementBackground = Color3.fromRGB(27, 42, 53),
-			ElementStroke = Color3.fromRGB(27, 42, 53),
-			SecondaryElementStroke = Color3.fromRGB(27, 42, 53),
+			ElementBackground = Color3.fromRGB(85, 0, 127),
+			ElementBackgroundHover = Color3.fromRGB(85, 0, 127),
+			SecondaryElementBackground = Color3.fromRGB(85, 0, 127),
+			ElementStroke = Color3.fromRGB(85, 0, 127),
+			SecondaryElementStroke = Color3.fromRGB(85, 0, 127),
 
-			SliderBackground = Color3.fromRGB(199, 193, 183),
+			SliderBackground = Color3.fromRGB(85, 0, 127),
 			SliderProgress = Color3.fromRGB(58, 125, 21),
-			SliderStroke = Color3.fromRGB(58, 163, 255),
+			SliderStroke = Color3.fromRGB(0, 0, 0),
 
-			ToggleBackground = Color3.fromRGB(199, 193, 183),
+			ToggleBackground = Color3.fromRGB(85, 0, 127),
 			ToggleEnabled = Color3.fromRGB(0, 255, 0),
 			ToggleDisabled = Color3.fromRGB(255, 0, 0),
-			ToggleEnabledStroke = Color3.fromRGB(0, 255, 0),
-			ToggleDisabledStroke = Color3.fromRGB(255, 0, 0),
-			ToggleEnabledOuterStroke = Color3.fromRGB(0, 255, 0),
-			ToggleDisabledOuterStroke = Color3.fromRGB(255, 0, 0),
+			ToggleEnabledStroke = Color3.fromRGB(0, 0, 0),
+			ToggleDisabledStroke = Color3.fromRGB(0, 0, 0),
+			ToggleEnabledOuterStroke = Color3.fromRGB(0, 0, 0),
+			ToggleDisabledOuterStroke = Color3.fromRGB(0, 0, 0),
 
-			DropdownSelected = Color3.fromRGB(140, 91, 159),
-			DropdownUnselected = Color3.fromRGB(27, 42, 53),
+			DropdownSelected = Color3.fromRGB(0, 91, 255),
+			DropdownUnselected = Color3.fromRGB(85, 0, 127),
 
-			InputBackground = Color3.fromRGB(58, 125, 21),
-			InputStroke = Color3.fromRGB(58, 125, 21),
-			PlaceholderColor = Color3.fromRGB(178, 178, 178)
+			InputBackground = Color3.fromRGB(85, 0, 127),
+			InputStroke = Color3.fromRGB(0, 0, 0),
+			PlaceholderColor = Color3.fromRGB(255, 255, 255)
 		},
 
 		Light = {
@@ -1405,7 +1406,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Button.Title.Text = ButtonSettings.Name
 			Button.Visible = true
 			Button.Parent = TabPage
-			Button.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
 
 			Button.BackgroundTransparency = 1
 			if Button:FindFirstChild("UIStroke") then
@@ -1498,7 +1498,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 			ColorPicker.Title.Text = ColorPickerSettings.Name
 			ColorPicker.Visible = true
 			ColorPicker.Parent = TabPage
-			ColorPicker.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
 			ColorPicker.Size = UDim2.new(1, -10, 0, 45)
 			Background.Size = UDim2.new(0, 39, 0, 22)
 			Display.BackgroundTransparency = 0
@@ -1838,7 +1837,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Input.BackgroundTransparency = 1
 			Input.UIStroke.Transparency = 1
 			Input.Title.TextTransparency = 1
-         Input.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Input.Title.TextColor3 = Color3.fromRGB(255, 255, 0)
 			Input.BackgroundColor3 = SelectedTheme.ElementBackground
 			
 			Input.InputFrame.BackgroundColor3 = SelectedTheme.InputBackground
@@ -2214,9 +2213,9 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Keybind.Visible = true
 			Keybind.Parent = TabPage
 			if Keybind.BackgroundColor3 then
-				Keybind.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+				Keybind.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
 			elseif Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 then
-				Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+				Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 = Color3.fromRGB(255, 255, 0)
 			end
 
 			Keybind.BackgroundTransparency = 1
@@ -2898,121 +2897,100 @@ if useStudio then
 
 	local Tab = Window:CreateTab("Tab Example", 4483362458) 
 	local Tab2 = Window:CreateTab("Tab Example 2", 4483362458) 
-
 	local Section = Tab2:CreateSection("Section")
 
 	local ColorPicker = Tab2:CreateColorPicker({
-		Name = "Color Picker",
-		Color = Color3.fromRGB(255,255,255),
-		Flag = "ColorPicker1", 
-		Callback = function(Value)
-			
-		end
-	})
+   Name = "Color Picker",
+   Color = Color3.fromRGB(255,255,255),
+   Flag = "ColorPicker1", 
+   Callback = function(Value)
+      
+   end,})
 
 	local Slider = Tab2:CreateSlider({
-		Name = "Slider Example",
-		Range = {0, 100},
-		Increment = 10,
-		Suffix = "Bananas",
-		CurrentValue = 40,
-		Flag = "Slider1", 
-		Callback = function(Value)
-			
-			
-		end,
-	})
+   Name = "Slider Example",
+   Range = {0, 100},
+   Increment = 10,
+   Suffix = "Bananas",
+   CurrentValue = 40,
+   Flag = "Slider1", 
+   Callback = function(Value)
+      
+   end,})
 
 	local Input = Tab2:CreateInput({
-		Name = "Input Example",
-		PlaceholderText = "Input Placeholder",
-		RemoveTextAfterFocusLost = false,
-		Callback = function(Text)
-			
-			
-		end,
-	})
+   Name = "Input Example",
+   PlaceholderText = "Input Placeholder",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+      
+   end,})
 
 	RayfieldLibrary:Notify({Title = "Rayfield Interface", Content = "Welcome to Rayfield. These - are the brand new notification design for Rayfield, with custom sizing and Rayfield calculated wait times.", Image = 4483362458})
 
 	local Section = Tab:CreateSection("Section Example")
 
 	local Button = Tab:CreateButton({
-		Name = "Change Theme",
-		Callback = function()
-			
-			Window.ModifyTheme('DarkBlue')
-		end,
-	})
+   Name = "Change Theme",
+   Callback = function()
+      Window.ModifyTheme('DarkBlue')
+   end,})
 
 	local Toggle = Tab:CreateToggle({
-		Name = "Toggle Example",
-		CurrentValue = false,
-		Flag = "Toggle1", 
-		Callback = function(Value)
-			
-			
-		end,
-	})
+   Name = "Toggle Example",
+   CurrentValue = false,
+   Flag = "Toggle1", 
+   Callback = function(Value)
+      
+   end,})
 
 	local ColorPicker = Tab:CreateColorPicker({
-		Name = "Color Picker",
-		Color = Color3.fromRGB(255,255,255),
-		Flag = "ColorPicker1", 
-		Callback = function(Value)
-			
-			
-		end
-	})
+   Name = "Color Picker",
+   Color = Color3.fromRGB(255,255,255),
+   Flag = "ColorPicker1", 
+   Callback = function(Value)
+      
+   end,})
 
 	local Slider = Tab:CreateSlider({
-		Name = "Slider Example",
-		Range = {0, 100},
-		Increment = 10,
-		Suffix = "Bananas",
-		CurrentValue = 40,
-		Flag = "Slider1", 
-		Callback = function(Value)
-			
-			
-		end,
-	})
+   Name = "Slider Example",
+   Range = {0, 100},
+   Increment = 10,
+   Suffix = "Bananas",
+   CurrentValue = 40,
+   Flag = "Slider1", 
+   Callback = function(Value)
+
+   end,})
 
 	local Input = Tab:CreateInput({
-		Name = "Input Example",
-		PlaceholderText = "Input Placeholder",
-		RemoveTextAfterFocusLost = false,
-		Callback = function(Text)
-			
-			
-		end,
-	})
+   Name = "Input Example",
+   PlaceholderText = "Input Placeholder",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+      
+   end,})
 
 	local Dropdown = Tab:CreateDropdown({
-		Name = "Dropdown Example",
-		Options = {"Option 1","Option 2"},
-		CurrentOption = {"Option 1"},
-		MultipleOptions = false,
-		Flag = "Dropdown1", 
-		Callback = function(Option)
-			
-			
-		end,
-	})
+   Name = "Dropdown Example",
+   Options = {"Option 1","Option 2"},
+   CurrentOption = {"Option 1"},
+   MultipleOptions = false,
+   Flag = "Dropdown1", 
+   Callback = function(Option)
+      
+   end,})
 
-	local Keybind = Tab:CreateKeybind({
-		Name = "Keybind Example",
-		CurrentKeybind = "Q",
-		HoldToInteract = false,
-		Flag = "Keybind1", 
-		Callback = function(Keybind)
-			
-			
-		end,
-	})
+   local Keybind = Tab:CreateKeybind({
+   Name = "Keybind Example",
+   CurrentKeybind = "Q",
+   HoldToInteract = false,
+   Flag = "Keybind1", 
+   Callback = function(Keybind)
+      
+   end,})
 
 	local Label = Tab:CreateLabel("Label Example")
-
 	local Paragraph = Tab:CreateParagraph({Title = "Paragraph Example", Content = "Paragraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph ExampleParagraph Example"})
 end
 
