@@ -287,6 +287,13 @@ if not getgenv().Lighting then
     warn("getgenv().Lighting was not detected, fixing...")
     getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 end
+if getgenv().performance_stats then
+    warn("Performance stats checked.")
+else
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
+    wait(0.1)
+    getgenv().performance_stats = true
+end
 
 task.wait(0.2)
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
@@ -427,7 +434,7 @@ local function load_rayfield()
         attempts += 1
         success, result = pcall(function()
             -- no fully internal function anymore, some exploits didn't like using internal functionality to load UI, would trip up errors about blocked URL's.
-            local raw = game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/main/Main_UI.lua")
+            local raw = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary")
             local func = loadstring(raw)
             return func()
         end)
