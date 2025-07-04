@@ -685,18 +685,21 @@ function RGB_Phone(Boolean)
 
     if Boolean == true then
         while getgenv().RGB_Rainbow_Phone == true do
-        wait(0.3)
+        wait(0)
             for _, color in ipairs(colors) do
                 if getgenv().RGB_Rainbow_Phone ~= true then return end
-                wait(0.2)
+                wait(0)
                 change_phone_color(color)
             end
         end
     elseif Boolean == false then
         Boolean = false
         getgenv().RGB_Rainbow_Phone = false
-        wait(0.3)
-        change_phone_color(Color3.fromRGB(255, 255, 255))
+        wait(0.4)
+        repeat wait() until Boolean == false
+        if getgenv().RGB_Rainbow_Phone == false then
+            change_phone_color(Color3.fromRGB(255, 255, 255))
+        end
     end
 end
 
@@ -1304,9 +1307,9 @@ function RGB_Vehicle(Boolean)
 
     if Boolean == true then
         while getgenv().Rainbow_Vehicle == true do
-            wait(0.3)
+            wait(0)
             for _, color in ipairs(colors) do
-                wait(0.2)
+                wait(0)
                 if getgenv().Rainbow_Vehicle ~= true then return end
                 change_vehicle_color(color, get_vehicle())
             end
