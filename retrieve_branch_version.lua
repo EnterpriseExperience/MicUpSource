@@ -620,7 +620,7 @@
     wait(1.7)
     RBXGeneral:DisplaySystemMessage("Flames Hub, with version:")
     wait(1.8)
-    RBXGeneral:DisplaySystemMessage("V-5.4.1")
+    RBXGeneral:DisplaySystemMessage("V-9.9.7")
     wait(1.5)
     RBXGeneral:DisplaySystemMessage("Welcome, "..tostring(game.Players.LocalPlayer).." | We hope you enjoy scripting.")
     wait(0.5)
@@ -1259,7 +1259,7 @@
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/total_main.lua')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()")
         end
     end)
     wait(0.2)
@@ -1855,9 +1855,9 @@
     Name = "Copy Link To See Latest Updates",
     Callback = function()
         if getgenv().AllClipboards then
-            getgenv().AllClipboards("https://github.com/LmaoItsCrazyBro/new_main/releases")
+            getgenv().AllClipboards("https://github.com/EnterpriseExperience/MicUpSource/releases")
         else
-            warn("https://github.com/LmaoItsCrazyBro/new_main/releases")
+            warn("https://github.com/EnterpriseExperience/MicUpSource/releases")
             getgenv().notify("Failure", "Posted the link in Developer Console, couldn't copy.", 6)
         end
     end,})
