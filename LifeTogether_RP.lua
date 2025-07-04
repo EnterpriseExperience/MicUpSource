@@ -2444,9 +2444,9 @@ Callback = function(spam_callin_plr)
     wait()
     getgenv().spam_calling_the_player = true
     while getgenv().spam_calling_the_player == true do
-    wait(0.1)
+    wait()
         send_remote("request_call", Calling_Target)
-        wait(0.1)
+        wait()
         send_remote("end_call", Calling_Target)
     end
 end,})
