@@ -1488,6 +1488,14 @@ Callback = function(anti_teleport_toggle)
     end
 end,})
 wait(0.2)
+local PlotAreas = {}
+
+for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+    if v:IsA("BasePart") and v.Name == "PlotArea" then
+        table.insert(PlotAreas, v)
+    end
+end
+wait(0.2)
 getgenv().AutoAntiBan_House = Tab1:CreateToggle({
 Name = "Anti Ban From Houses",
 CurrentValue = false,
@@ -1501,10 +1509,8 @@ Callback = function(anti_ban_from_homes)
         getgenv().never_banned_houses = true
         while getgenv().never_banned_houses == true do
         wait()
-            for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-                if v:IsA("BasePart") and v.Name == "PlotArea" then
-                    v.CanCollide = false
-                end
+            for _, v in ipairs(PlotAreas) do
+                v.CanCollide = false
             end
         end
     else
