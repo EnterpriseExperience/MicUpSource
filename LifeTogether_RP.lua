@@ -1487,6 +1487,34 @@ Callback = function(anti_teleport_toggle)
         end)
     end
 end,})
+wait(0.2)
+getgenv().AutoAntiBan_House = Tab1:CreateToggle({
+Name = "Anti Ban From Houses",
+CurrentValue = false,
+Flag = "NoBanningFromHomes",
+Callback = function(anti_ban_from_homes)
+    if anti_ban_from_homes then
+        if getgenv().AntiTeleport_Univ then
+            getgenv().AntiTeleport_Univ:Set(true)
+        end
+        wait()
+        getgenv().never_banned_houses = true
+        while getgenv().never_banned_houses == true do
+        wait()
+            for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+                if v:IsA("BasePart") and v.Name == "PlotArea" then
+                    v.CanCollide = false
+                end
+            end
+        end
+    else
+        getgenv().never_banned_houses = false
+        wait(0.1)
+        if getgenv().AntiTeleport_Univ then
+            getgenv().AntiTeleport_Univ:Set(false)
+        end
+    end
+end,})
 
 getgenv().FrozenChar = Tab2:CreateToggle({
 Name = "Freeze Your Character",
