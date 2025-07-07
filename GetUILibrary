@@ -2214,9 +2214,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Keybind.Visible = true
 			Keybind.Parent = TabPage
 			if Keybind.BackgroundColor3 then
-				Keybind.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-			elseif Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 then
-				Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+				Keybind.BackgroundColor3 = Color3.fromRGB(85, 0, 127)
 			end
 
 			Keybind.BackgroundTransparency = 1
