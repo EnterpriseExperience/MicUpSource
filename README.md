@@ -32,7 +32,7 @@ https://github.com/EnterpriseExperience/MicUpSource/wiki
 ```lua
 -- Usage:
 
-local flames_api = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flames_API.lua"))()
+local flames_api = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flames_Hub_API.lua"))()
 
 -- Flames API arguments:
 -- flames_api.FindPlayer("random") -- example of 'FindPlayer', supports: shortening names, displaynames, and usernames. (does not let you target yourself, will be fixed soon, had some issues with that part).
