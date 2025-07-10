@@ -457,7 +457,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.3.9-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | 1.4.8-LIFE | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -1870,7 +1870,7 @@ getgenv().SitIn_Vehicle_FE = Tab4:CreateButton({
 Name = "Sit In Vehicle",
 Callback = function()
     local My_Vehicle = get_vehicle()
-    if not My_Vehicle then return show_notification("Error:", "No car, spawn one!", "Warning") end
+    if not My_Vehicle then return getgenv().notify("Error:", "No car, spawn one!", 5) end
 
     sit_in_vehicle(My_Vehicle)
 end,})
@@ -1909,9 +1909,14 @@ Callback = function()
     local MetalDetector = Other:FindFirstChild("MetalDetector")
     if not MetalDetector:FindFirstChild("RemoveRadius") then return end
     local RemoveRadius_Part = MetalDetector:FindFirstChild("RemoveRadius")
+    local ScanRadius_Part = MetalDetector:FindFirstChild("ScanRadius")
     if not RemoveRadius_Part:FindFirstChildOfClass("TouchTransmitter") then return end
+    if not ScanRadius_Part:FindFirstChildOfClass("TouchTransmitter") then return end
     if RemoveRadius_Part:FindFirstChildWhichIsA("TouchTransmitter") then
         RemoveRadius_Part:FindFirstChildOfClass("TouchTransmitter"):Destroy()
+    end
+    if ScanRadius_Part:FindFirstChildWhichIsA("TouchTransmitter") then
+        ScanRadius_Part:FindFirstChildOfClass("TouchTransmitter"):Destroy()
     end
 end,})
 
@@ -2377,26 +2382,67 @@ Callback = function(new_max_accel_val)
     end
 end,})
 
+-- Don't worry I'm working on it.
 --[[getgenv().AutomaticallyPost_Story = Tab5:CreateInput({
 Name = "Automatically Post Snap (FE)",
-PlaceholderText = "User, AND text you want",
+PlaceholderText = "User,Text to post",
 RemoveTextAfterFocusLost = true,
-Callback = function(text_to_post_snap, Target)
-    if not firesignal then return show_notification("[Error]:", "Your exploit does not support 'firesignal'", "Warning") end
-    wait(0.2)
-    local snap_to_post_text = tostring(text_to_post_snap)
-    local PlrTo_SendTo = findplr(Target)
+Callback = function(input)
+    if not firesignal then 
+        return show_notification("[Error]:", "Your exploit does not support 'firesignal'", "Warning") 
+    end
 
-    Phone_Module.holding.set(true)
+    local is_holding_phone = Phone.holding.get()
+    local Holding_WaitTime = 2
+    local Was_Holding = false
+    local NonHolding_WaitTime = 0.5
+
+    if is_holding_phone or is_holding_phone == true then
+        Phone.holding.set(false)
+        Was_Holding = true
+    else
+        Was_Holding = false
+    end
+    if Was_Holding == true then
+        wait(Holding_WaitTime)
+    else
+        wait(NonHolding_WaitTime)
+    end
+    local split = string.split(input, ",")
+    local targetName = split[1] and split[1]:gsub("^%s*(.-)%s*$", "%1")
+    local text_to_post_snap = split[2] and split[2]:gsub("^%s*(.-)%s*$", "%1")
+
+    if not targetName or targetName == "" or not text_to_post_snap or text_to_post_snap == "" then
+        return show_notification("[Error]:", "Please enter both a user and text, separated by a comma.", "Warning")
+    end
+
+    local PlrTo_SendTo = findplr(targetName)
+    if not PlrTo_SendTo then 
+        return show_notification("[Error]:", "Target does not exist or was not found.", "Warning") 
+    end
+
+    wait(0.2)
+    Phone.holding.set(true)
     wait(0.5)
-    Phone_Module.apps.LifeSnap.open()
+    Phone.apps.LifeSnap.open()
     wait(0.3)
-    local Phone_Gui = getgenv().PlayerGui:FindFirstChild("Phone")
+    local PlayerGui = getgenv().PlayerGui
+    local Phone_Gui = PlayerGui:FindFirstChild("Phone")
+    if not Phone_Gui then return show_notification("[Error]:", "Phone GUI not found.", "Warning") end
     local LifeSnap = Phone_Gui:FindFirstChild("LifeSnap")
     local MasterFrame = LifeSnap:FindFirstChild("MasterFrame")
     local Holder = MasterFrame:FindFirstChild("Holder")
     local Snapblox = Holder:FindFirstChild("Snapblox")
     local SnapbloxScreenSlider = Snapblox:FindFirstChild("SnapbloxScreenSlider")
+    local Snapblox_Snaps = SnapbloxScreenSlider:FindFirstChild("SnapbloxSnaps")
+    local SnapbloxSnaps_Frame = Snapblox_Snaps:FindFirstChild("Frame")
+    local Snapblox_CameraChange = SnapbloxSnaps_Frame:FindFirstChild("SnapbloxChangeToCameraButton")
+    local Snapblox_Contacts = SnapbloxScreenSlider:FindFirstChild("SnapbloxContacts")
+    local SendToConfirmation_Frame = Snapblox_Contacts:FindFirstChild("SendToConfirmation")
+    local SnapConfirm_SendButton = SendToConfirmation_Frame:FindFirstChild("SnapConfirmSendButton")
+    local Scrolling_FrameContacts = Snapblox_Contacts:FindFirstChild("ScrollingFrame")
+    local Snapblox_RecentsSend = Scrolling_FrameContacts:FindFirstChild("SnapbloxRecentsSend")
+    local Snap_BloxRecents_Send_Holder = Snapblox_RecentsSend:FindFirstChild("SnapbloxRecentsSendHolder")
     local SnapbloxCameraHolder = SnapbloxScreenSlider:FindFirstChild("SnapbloxCameraHolder")
     local SnapbloxSendButtons = SnapbloxCameraHolder:FindFirstChild("SnapbloxSendButtons")
     local PictureSettings = SnapbloxCameraHolder:FindFirstChild("PictureSettings")
@@ -2404,33 +2450,59 @@ Callback = function(text_to_post_snap, Target)
     local TimeSelector = SnapbloxCameraHolder:FindFirstChild("TimeSelector")
     local InfSnap_Time = TimeSelector:FindFirstChild("SnapbloxTimeButtons")["10"]
     local Snap_Time = TimeSelectorFrame:FindFirstChild("TimeSelectorButton")
-    local Send_To_Button = SnapbloxSendButtons:FindFirstChild("SnapbloxSendButton")
     local Edit_Text = PictureSettings:FindFirstChild("EditSnapbloxText"):FindFirstChild("EditSnapbloxTextButton")
     local Text_Holder_Button = SnapbloxCameraHolder:FindFirstChild("SnapbloxTextHolder"):FindFirstChild("SnapbloxTextBox")
     local Take_Pic = SnapbloxCameraHolder:FindFirstChild("TakeSnapButton")
+    local Send_To_Button = SnapbloxSendButtons:FindFirstChild("SnapbloxSendButton")
+    local App_BackButton = Holder:FindFirstChild("AppBackButton")
+    local App_HomeButton = Holder:FindFirstChild("AppHomeButton")
+
     local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
 
-    for i,Signal in pairs(Signals) do
-        firesignal(Take_Pic[Signal])
+    local function get_sendToTarget(user)
+        for _, v in ipairs(Snap_BloxRecents_Send_Holder:GetChildren()) do
+            if v:IsA("TextButton") and v.Name == "Contact" and v:FindFirstChild("TextLabel") then
+                if string.lower(v.TextLabel.Text) == string.lower(user.Name) then
+                    return v
+                end
+            end
+        end
+        return nil
     end
+    wait(0.1)
+    local function click(button)
+        for _, signal in ipairs(Signals) do
+            if button and button[signal] then
+                firesignal(button[signal])
+            end
+        end
+    end
+    wait()
+    click(Take_Pic)
     wait(0.2)
-    for i,Signal in pairs(Signals) do
-        firesignal(Edit_Text[Signal])
-    end
+    click(Edit_Text)
     wait(0.2)
-    Text_Holder_Button.Text = snap_to_post_text
+    Text_Holder_Button.Text = text_to_post_snap
     wait(0.3)
-    for i,Signal in pairs(Signals) do
-        firesignal(Snap_Time[Signal])
-    end
+    click(Snap_Time)
     wait(0.3)
-    for i,Signal in pairs(Signals) do
-        firesignal(InfSnap_Time[Signal])
+    click(InfSnap_Time)
+    wait(0.5)
+    click(Send_To_Button)
+    wait(0.5)
+    local User_TextButton = get_sendToTarget(PlrTo_SendTo)
+    if not User_TextButton then
+        return show_notification("[Error]:", "Couldn't find the target user in Snap contacts.", "Warning")
     end
-    task.wait(0.5)
-    for i,Signal in pairs(Signals) do
-        firesignal(Send_To_Button[Signal])
-    end
+    click(User_TextButton)
+    wait(0.5)
+    click(SnapConfirm_SendButton)
+    wait(0.1)
+    show_notification("Success", "Snap sent successfully to "..PlrTo_SendTo.Name, "Success")
+    wait(1)
+    click(Snapblox_CameraChange)
+    wait(1)
+    Phone.holding.set(false)
 end,})--]]
 
 getgenv().SpamCall_PlayerFE = Tab5:CreateInput({
