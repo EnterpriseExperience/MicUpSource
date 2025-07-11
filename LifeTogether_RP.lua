@@ -1810,17 +1810,20 @@ Callback = function(car_locked)
         task.spawn(function()
             while getgenv().my_car_locked == true do
                 wait(0.1)
-
                 local vehicle = get_vehicle()
+
                 if vehicle then
                     if vehicle:GetAttribute("locked") == false then
                         lock_vehicle(vehicle)
                     end
                 else
+                    local Vehicle = get_vehicle()
+
                     getgenv().my_car_locked = false
                     getgenv().CarLockLoopRunning = false
                     getgenv().LockVehicle_FE:Set(false)
                     task.wait(0.6)
+                    lock_vehicle(Vehicle)
                     getgenv().notify("Heads Up:", "Disabled loop — vehicle was destroyed or despawned.", 5)
                     return 
                 end
@@ -1830,6 +1833,8 @@ Callback = function(car_locked)
         end)
     else
         getgenv().my_car_locked = false
+        wait(0.2)
+        lock_vehicle(Vehicle)
     end
 end,})
 
