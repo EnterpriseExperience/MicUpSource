@@ -254,7 +254,7 @@ local function init_services()
 end
 wait()
 init_services()
-task.wait()
+wait()
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
@@ -391,7 +391,7 @@ elseif getgenv().advanced_workaround_method == true then
     warn("Advanced level exploit already reviewed and secured.")
     wait(0.1)
 end
-wait(0.5)
+wait(0.3)
 local Workspace = getgenv().Workspace
 local Players = getgenv().Players
 local LocalPlayer = getgenv().LocalPlayer or getgenv().Players.LocalPlayer
@@ -457,7 +457,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.4.8-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | 1.5.4-LIFE | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -494,8 +494,8 @@ getgenv().notify = function(title, content, duration)
         Actions = {
             Ignore = {
                 Name = "Okay.",
-                Callback = function() 
-                    print("...") 
+                Callback = function()
+                    print("...")
                 end
             },
         },
@@ -758,6 +758,46 @@ local Workspace = cloneref(game:GetService("Workspace"))
 local vehicles_folder = Workspace:WaitForChild("Vehicles")
 local run_service = cloneref(game:GetService("RunService"))
 
+function anti_report_func()
+    if setfflag then
+        pcall(function()
+            setfflag("AbuseReportScreenshot", "False")
+            setfflag("AbuseReportScreenshotPercentage", "0")
+            setfflag("DFFlagAbuseReportScreenshot", "False")
+            setfflag("AbuseReportScreenshotType", "0")
+            setfflag("AbuseReportDialogScreenshot", "False")
+            setfflag("ScreenshotReportEnabled", "False")
+            setfflag("DFLogScreenshotSender", "False")
+            setfflag("ScreenshotSubmitPercentage", "0")
+            setfflag("EnableBugReporting", "False")
+            setfflag("EnableInternalBugReporting", "False")
+            setfflag("EnableSilentModeForAbuseReport", "True")
+            setfflag("CrashUploadToBacktraceToBacktracePercentage", "0")
+            setfflag("CrashUploadToBacktracePercentage", "0")
+            setfflag("CrashUploadToBacktraceWindows", "False")
+            setfflag("UserReportedCrashUpload", "False")
+            setfflag("EnableTraceLogging", "False")
+            setfflag("DFLogEnableTraceLogging", "False")
+            setfflag("TaskSchedulerEnableLuaGCLog", "False")
+            setfflag("DFLogUploadHttpPerformance", "False")
+            setfflag("UploadMemoryStats", "False")
+            setfflag("UploadImproperShutdownTelemetry", "False")
+        end)
+        wait()
+        print("[Success]:", "Anti Report (__SETUP) has been successfully loaded.")
+    else
+        warn("[Error]:", "Your executor does not support 'setfflag' to run this!")
+    end
+end
+
+if getgenv().loaded_anti_report then
+    warn("Already loaded anti-report utility!")
+else
+    anti_report_func()
+    wait(0.1)
+    getgenv().loaded_anti_report = true
+end
+
 getgenv().rainbow_highlight_mode = false
 local default_fill_color = Color3.fromRGB(75, 94, 60)
 local default_outline_color = Color3.fromRGB(255, 255, 255)
@@ -976,7 +1016,7 @@ function vehicle_kill_player(TargetPlayer)
         seat:Sit(MyHumanoid)
     end
 
-    local maxTries = 30
+    local maxTries = 100
     for i = 1, maxTries do
         local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
         local isSitting = targetHumanoid and targetHumanoid.Sit
@@ -1038,7 +1078,7 @@ function vehicle_bring_player(TargetPlayer)
         seat:Sit(MyHumanoid)
     end
 
-    local maxTries = 30
+    local maxTries = 100
     for i = 1, maxTries do
         local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
         local isSitting = targetHumanoid and targetHumanoid.Sit
@@ -1114,7 +1154,7 @@ function bring_player_to_player(TargetPlayer, DestinationPlayer)
         seat:Sit(MyHumanoid)
     end
 
-    local maxTries = 60
+    local maxTries = 100
     for i = 1, maxTries do
         local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
         local isSitting = targetHumanoid and targetHumanoid.Sit
@@ -1140,6 +1180,69 @@ function bring_player_to_player(TargetPlayer, DestinationPlayer)
     if myHRP then
         myHRP.CFrame = Old_CF
         wait(0.4)
+        spawn_any_vehicle("Chiron")
+    end
+end
+
+function vehicle_skydive_player(TargetPlayer)
+    if not TargetPlayer or not TargetPlayer.Character then return end
+    local targetChar = TargetPlayer.Character
+    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
+    if not targetHRP then return end
+
+    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+
+    local skydive_pos = Vector3.new(-250.02537536621094, 4000.80411911010742, 194.1149139404297)
+    local skydive_cf = CFrame.new(skydive_pos)
+
+    local MyPlayer = game.Players.LocalPlayer
+    local MyChar = getgenv().Character or MyPlayer.Character
+    local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
+    local MyBus = nil
+
+    for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
+        if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
+            if v:FindFirstChild("VehicleSeat") then
+                MyBus = v
+                break
+            end
+        end
+    end
+
+    if not MyBus then return warn("No owned SchoolBus found") end
+    local seat = MyBus:FindFirstChild("VehicleSeat")
+    if seat and MyHumanoid then
+        MyChar:PivotTo(seat.CFrame)
+        task.wait(0.2)
+        seat:Sit(MyHumanoid)
+    end
+
+    local maxTries = 100
+    for i = 1, maxTries do
+        local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
+        local isSitting = targetHumanoid and targetHumanoid.Sit
+        if isSitting then break end
+
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+        task.wait(0.2)
+    end
+
+    wait(0.1)
+    MyBus:PivotTo(skydive_cf)
+    wait(0.4)
+
+    local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+    if getgenv().Humanoid.Sit then
+        getgenv().Humanoid:ChangeState(3)
+        wait(0.1)
+        myHRP.CFrame = Old_CF
+        wait(0.5)
+        spawn_any_vehicle("Chiron")
+    end
+
+    if myHRP then
+        myHRP.CFrame = Old_CF
+        wait(0.5)
         spawn_any_vehicle("Chiron")
     end
 end
@@ -1179,7 +1282,7 @@ function vehicle_void_player(TargetPlayer)
         seat:Sit(MyHumanoid)
     end
 
-    local maxTries = 50
+    local maxTries = 100
     for i = 1, maxTries do
         local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
         local isSitting = targetHumanoid and targetHumanoid.Sit
@@ -1250,7 +1353,7 @@ function start_void_loop(TargetPlayer)
                 seat:Sit(MyHumanoid)
             end
 
-            local maxTries = 50
+            local maxTries = 100
             for i = 1, maxTries do
                 local targetHumanoid = TargetPlayer.Character and TargetPlayer.Character:FindFirstChildOfClass("Humanoid")
                 if targetHumanoid and targetHumanoid.Sit then break end
@@ -2198,7 +2301,24 @@ Callback = function(user_to_bring)
         wait(1)
         vehicle_bring_player(target)
     elseif target == getgenv().LocalPlayer or target == getgenv().LocalPlayer.Name then
-        return getgenv().notify("Failure:", "You cannot void yourself (wtf).", 5)
+        return getgenv().notify("Failure:", "You cannot Bring yourself (wtf).", 5)
+    end
+end,})
+
+getgenv().VehicleSkydive = Tab1:CreateInput({
+Name = "Vehicle Skydive Player (FE)",
+PlaceholderText = "User Here, can be shortened",
+RemoveTextAfterFocusLost = true,
+Callback = function(user_to_skydive)
+    local target = findplr(user_to_skydive)
+    if not target then return getgenv().notify("Failure:", "User does not seem to exist.", 5) end
+
+    if target and target.Character then
+        spawn_any_vehicle("SchoolBus")
+        wait(1)
+        vehicle_skydive_player(target)
+    elseif target == getgenv().LocalPlayer or target == getgenv().LocalPlayer.Name then
+        return getgenv().notify("Failure:", "You cannot Skydive yourself (wtf).", 5)
     end
 end,})
 
@@ -2244,7 +2364,7 @@ Callback = function(user_to_kill)
         wait(1)
         vehicle_kill_player(target)
     elseif target == getgenv().LocalPlayer or target == getgenv().LocalPlayer.Name then
-        return getgenv().notify("Failure:", "You cannot kill yourself (wtf).", 5)
+        return getgenv().notify("Failure:", "You cannot Kill yourself (wtf).", 5)
     end
 end,})
 
