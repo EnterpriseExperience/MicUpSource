@@ -457,7 +457,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.5.2-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | 1.5.6-LIFE | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -1022,7 +1022,7 @@ function vehicle_kill_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame)
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
         task.wait(0.2)
     end
     wait(0.1)
@@ -1084,7 +1084,7 @@ function vehicle_bring_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame)
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
         task.wait(0.2)
     end
     wait(0.1)
@@ -1103,6 +1103,67 @@ function vehicle_bring_player(TargetPlayer)
         wait(0.5)
         spawn_any_vehicle("Chiron")
     end
+end
+
+local running_destroy_vehicles = false
+
+function destroy_all_vehicles()
+    if running_destroy_vehicles then return end
+    running_destroy_vehicles = true
+
+    local Players = getgenv().Players
+    local LocalPlayer = getgenv().LocalPlayer
+    local Character = getgenv().Character
+    local Humanoid = getgenv().Humanoid
+    local HRP = getgenv().HumanoidRootPart
+
+    if not Character or not Humanoid or not HRP then
+        running_destroy_vehicles = false
+        return warn("Missing Character, Humanoid, or HumanoidRootPart")
+    end
+
+    local voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)")
+    if not voidPart then
+        create_kill_part()
+        voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)")
+    end
+
+    local voidCF = voidPart:FindFirstChild("SCRIPT_KILLPART_VOID") and voidPart:FindFirstChild("SCRIPT_KILLPART_VOID").CFrame
+    if not voidCF then
+        running_destroy_vehicles = false
+        return warn("Kill part missing")
+    end
+
+    local vehicles = getgenv().Workspace:FindFirstChild("Vehicles")
+    if not vehicles then
+        running_destroy_vehicles = false
+        return warn("Vehicles folder not found")
+    end
+
+    local oldCF = HRP.CFrame
+
+    for _, vehicle in ipairs(vehicles:GetChildren()) do
+        if vehicle:IsA("Model") and vehicle:FindFirstChild("owner") and vehicle.owner.Value == LocalPlayer then
+            local isLocked = vehicle:GetAttribute("locked")
+            if isLocked == true then continue end
+
+            local seat = vehicle:FindFirstChildWhichIsA("VehicleSeat")
+            if seat then
+                Character:PivotTo(seat.CFrame)
+                task.wait(0.2)
+                seat:Sit(Humanoid)
+                task.wait(0.4)
+                vehicle:PivotTo(voidCF)
+                task.wait(0.5)
+            end
+        end
+    end
+    wait(0.1)
+    Humanoid:ChangeState(3)
+    task.wait(0.1)
+    HRP.CFrame = oldCF
+    wait()
+    running_destroy_vehicles = false
 end
 
 function bring_player_to_player(TargetPlayer, DestinationPlayer)
@@ -1160,7 +1221,7 @@ function bring_player_to_player(TargetPlayer, DestinationPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame)
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
         task.wait(0.2)
     end
     wait(0.3)
@@ -1223,7 +1284,7 @@ function vehicle_skydive_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame)
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
         task.wait(0.2)
     end
 
@@ -1288,7 +1349,7 @@ function vehicle_void_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame)
+        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
         task.wait(0.2)
     end
     wait(0.1)
@@ -1360,7 +1421,7 @@ function start_void_loop(TargetPlayer)
 
                 local targetHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
                 if not targetHRP then break end
-                MyBus:PivotTo(targetHRP.CFrame)
+                MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
                 task.wait(0.2)
             end
 
@@ -2303,6 +2364,12 @@ Callback = function(user_to_bring)
     elseif target == getgenv().LocalPlayer or target == getgenv().LocalPlayer.Name then
         return getgenv().notify("Failure:", "You cannot Bring yourself (wtf).", 5)
     end
+end,})
+
+getgenv().VehicleBring = Tab3:CreateButton({
+Name = "Destroy All Vehicles (FE)",
+Callback = function()
+    destroy_all_vehicles()
 end,})
 
 getgenv().VehicleSkydive = Tab1:CreateInput({
