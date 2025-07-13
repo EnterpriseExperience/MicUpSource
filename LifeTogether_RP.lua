@@ -457,7 +457,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.5.4-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | 1.5.2-LIFE | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -1022,7 +1022,7 @@ function vehicle_kill_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+        MyBus:PivotTo(targetHRP.CFrame)
         task.wait(0.2)
     end
     wait(0.1)
@@ -1084,7 +1084,7 @@ function vehicle_bring_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+        MyBus:PivotTo(targetHRP.CFrame)
         task.wait(0.2)
     end
     wait(0.1)
@@ -1160,7 +1160,7 @@ function bring_player_to_player(TargetPlayer, DestinationPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+        MyBus:PivotTo(targetHRP.CFrame)
         task.wait(0.2)
     end
     wait(0.3)
@@ -1223,7 +1223,7 @@ function vehicle_skydive_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+        MyBus:PivotTo(targetHRP.CFrame)
         task.wait(0.2)
     end
 
@@ -1288,7 +1288,7 @@ function vehicle_void_player(TargetPlayer)
         local isSitting = targetHumanoid and targetHumanoid.Sit
         if isSitting then break end
 
-        MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+        MyBus:PivotTo(targetHRP.CFrame)
         task.wait(0.2)
     end
     wait(0.1)
@@ -1360,7 +1360,7 @@ function start_void_loop(TargetPlayer)
 
                 local targetHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
                 if not targetHRP then break end
-                MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+                MyBus:PivotTo(targetHRP.CFrame)
                 task.wait(0.2)
             end
 
