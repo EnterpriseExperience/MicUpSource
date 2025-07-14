@@ -41,6 +41,7 @@ local flames_api = loadstring(game:HttpGet("https://raw.githubusercontent.com/En
 -- flames_api.Service("Service_Name") -- Service getter, will obviously check if the service even exists before getting it, but will default to "cloneref" sandboxing the service if supported, if not somehow, it'll default to regular service fetcher.
 -- flames_api.LocalPlayer -- Should be obvious what this does, get's your LocalPlayer.
 -- flames_api.RandomString(string) -- when inputting a string it'll randomize it for you automatically.
+-- flames_api.Character -- returns your Character, doesn't matter if you respawn, or what not, it'll always automatically update it.
 -- flames_api.HumanoidRootPart -- grabs your HumanoidRootPart (even if you die, respawn, etc).
 -- flames_api.Humanoid -- grabs your Humanoid (even if you die, respawn, etc).
 -- flames_api.Head -- grabs your Head (even if you die, respawn, etc).
