@@ -19,6 +19,8 @@
 -- flames_api.JumpPower(new_jumppower_here) -- Allows you to set your JumpHeight/JumpPower in this API, has detection for JumpHeight AND JumpPower, so if your game uses JumpPower, it'll know, and if JumpHeight, it'll know.
 -- flames_api.BypassWalkSpeed() -- Will attempt to use 'getconnections', if supported, to bypass WalkSpeed checks from games (this method only works if the game detects using "GetPropertyChangedSignal")
 -- flames_api.BypassJumpPower() -- Will attempt to use 'getconnections', if supported, to bypass JumpHeight/JumPower checks from games (this method only works if the game detects using "GetPropertyChangedSignal")
+-- flames_api.JobID() -- returns the current JobID of your current game session/server.
+-- flames_api.PlaceID() -- returns the current PlaceID of your current game.
 -- EXTRA-1: getgenv().AllClipboards("text you want to copy here") -- Checks if the clipboard functions are available and allows you to let the user copy what ever you put in here.
 -- EXTRA-2: getgenv().httprequest_Init -- For more advanced users, but includes ALL functions for httprequest, and making requests to Discord, and such.
 -- EXTRA-3: getgenv().getgenv().queueteleport -- For more advanced users, but includes queue-teleport functionality, allowing you to make scripts like auto-execute on rejoin scripts, if done correctly of course.
