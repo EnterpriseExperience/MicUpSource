@@ -1108,7 +1108,7 @@ end
 local running_destroy_vehicles = false
 
 function destroy_all_vehicles()
-    if running_destroy_vehicles then return end
+    if running_destroy_vehicles then return warn("Destroy All Vehicles is already running!") end
     running_destroy_vehicles = true
 
     local Players = getgenv().Players
@@ -1143,7 +1143,7 @@ function destroy_all_vehicles()
     local oldCF = HRP.CFrame
 
     for _, vehicle in ipairs(vehicles:GetChildren()) do
-        if vehicle:IsA("Model") and vehicle:FindFirstChild("owner") and vehicle.owner.Value == LocalPlayer then
+        if vehicle:IsA("Model") and vehicle:FindFirstChild("owner") then
             local isLocked = vehicle:GetAttribute("locked")
             if isLocked == true then continue end
 
@@ -1485,11 +1485,30 @@ function RGB_Vehicle(Boolean)
 end
 
 wait(0.5)
-if getgenv().PlayerGui:FindFirstChild("Phone"):FindFirstChild("LifeSnap") then
+function change_lifesnap_title(text, color)
     local LifeSnap_Title = getgenv().PlayerGui:FindFirstChild("Phone"):FindFirstChild("LifeSnap"):FindFirstChild("MasterFrame").Holder.Snapblox.TitleGreyFrame.Frame.Title
+    if not LifeSnap_Title then
+        text = ""
+        return warn("function change_lifesnap_title [ERROR]:", "LifeSnap_Title does not exist!")
+    end
 
-    LifeSnap_Title.Text = "-FlamesHub On TOP!-"
-    LifeSnap_Title.TextColor3 = Color3.fromRGB(50, 205, 0)
+    LifeSnap_Title.Text = tostring(text)
+    LifeSnap_Title.TextColor3 = color
+end
+
+if getgenv().PlayerGui:FindFirstChild("Phone"):FindFirstChild("LifeSnap") then
+    change_lifesnap_title("-FlamesHub On TOP!-", Color3.fromRGB(50, 205, 0))
+else
+    warn("LifeSnap doesn't exist in Phone!")
+end
+wait(0.1)
+if getgenv().Humanoid.JumpHeight <= 4.50 then
+    getgenv().notify("Done:", "Hooking JumpHeight/JumpPower, one sec...", 5)
+    wait(0.2)
+    getgenv().Humanoid.JumpHeight = 7
+    getgenv().Humanoid.JumpPower = 50
+else
+    getgenv().notify("Passed:", "JumpHeight/JumpPower seems to already be normal.", 5)
 end
 wait(0.1)
 getgenv().spawn_vehicle = Tab4:CreateDropdown({
@@ -1998,7 +2017,7 @@ Callback = function(car_locked)
     else
         getgenv().my_car_locked = false
         wait(0.2)
-        lock_vehicle(Vehicle)
+        lock_vehicle(get_vehicle())
     end
 end,})
 
@@ -2046,7 +2065,7 @@ end,})
 
 getgenv().server_admin_teleport = Tab2:CreateInput({
 Name = "(VIP-SERVER): Server Admin TP Plr",
-PlaceholderText = "User Here, can he shortened",
+PlaceholderText = "User Here, can be shortened",
 RemoveTextAfterFocusLost = true,
 Callback = function(player_to_tp_to)
     local Target_Plr = findplr(player_to_tp_to)
@@ -2241,27 +2260,27 @@ local house_options = GetHouseDropdownOptions()
 
 local function GetCCTVFromHouseModel(house_model)
     if not house_model then
-        return warn("No house model provided")
+        return getgenv().notify("Failure:", "No house model provided", 5)
     end
 
     local exterior = house_model:FindFirstChild("Exterior")
     if not exterior then
-        return warn("Missing 'Exterior' in house model: " .. house_model.Name)
+        return getgenv().notify("Failure:", "Missing 'Exterior' in house model: " .. house_model.Name, 5)
     end
 
     local cams = exterior:FindFirstChild("SecurityCameras")
     if not cams then
-        return warn("Missing 'SecurityCameras' in Exterior of: " .. house_model.Name)
+        return getgenv().notify("Failure:", "Missing 'SecurityCameras' in Exterior of: " .. house_model.Name, 5)
     end
 
     local cam = cams:FindFirstChild("SecurityCamera")
     if not cam then
-        return warn("Missing 'SecurityCamera' in SecurityCameras of: " .. house_model.Name)
+        return getgenv().notify("Failure:", "Missing 'SecurityCamera' in SecurityCameras of: " .. house_model.Name, 5)
     end
 
     local red_dot = cam:FindFirstChild("RedDot")
     if not red_dot then
-        return warn("Missing 'RedDot' in SecurityCamera of: " .. house_model.Name)
+        return getgenv().notify("Failure:", "Missing 'RedDot' in SecurityCamera of: " .. house_model.Name, 5)
     end
 
     return red_dot, cams
@@ -2279,12 +2298,12 @@ Callback = function(selected_option)
     local plot = House_IDToPlot[house_id]
 
     if not plot then
-        return warn("Could not find plot for: " .. tostring(selected_option))
+        return getgenv().notify("Failure:", "Could not find plot for: " .. tostring(selected_option), 5)
     end
 
     local house_model = plot.built_house.Value
     if not house_model then
-        return warn("built_house has no value for plot: " .. plot.Name)
+        return getgenv().notify("Failure:", "built_house has no value for plot: " .. plot.Name, 5)
     end
 
     local red_dot, camera_folder = GetCCTVFromHouseModel(house_model)
@@ -2294,7 +2313,7 @@ Callback = function(selected_option)
     wait(0.1)
     CCTV.start(camera_folder)
 end,})
-
+wait(0.1)
 getgenv().RefreshCCTVDropdown = Tab1:CreateButton({
 Name = "🔄 Refresh CCTV Dropdown 🔄",
 Callback = function()
@@ -2330,6 +2349,7 @@ Callback = function(user_to_void)
     end
 end,})
 
+-- This is broken right now, and is currently being worked on.
 --[[getgenv().LoopVehicleVoid_PlrFE = Tab3:CreateInput({
 Name = "Loop Vehicle Void Player (FE)",
 PlaceholderText = "User Here, can be shortened",
