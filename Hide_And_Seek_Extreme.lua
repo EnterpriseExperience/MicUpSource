@@ -562,6 +562,12 @@ function safe_spot_tp()
     local Base_Plate
 
     for _, v in pairs(Lobby:GetChildren()) do
+        if v:IsA("BasePart") and v.CanCollide == false then
+            v.CanCollide = true
+        end
+    end
+    wait(0.1)
+    for _, v in pairs(Lobby:GetChildren()) do
         if v:IsA("BasePart") and v.Name == "BasePlate" and v.BrickColor == BrickColor.new("Electric blue") then
             Base_Plate = v
         end
@@ -708,6 +714,16 @@ function toggle_ESP(state)
 	end
 end
 
+function pivot_to_plr(Player)
+    if not Player then return end
+
+    local Targets_Char = Player.Character or Player.CharacterAdded:Wait()
+
+    if Targets_Char and Targets_Char:FindFirstChild("Humanoid") then
+        getgenv().Character:PivotTo(Targets_Char:GetPivot())
+    end
+end
+
 local function count_parts(model)
 	if not model or not model:IsA("Model") then
 		return false
@@ -726,17 +742,15 @@ end
 
 function collect_all_coins(method)
     if method == "no_tp" then
-        if not firetouchinterest then return getgenv("Failure:", "Your exploit does not support 'firetouchinterest'!", 5) end
+        if not firetouchinterest then return getgenv.notify("Failure:", "Your exploit does not support 'firetouchinterest'!", 5) end
 
         for _, v in pairs(Game_Objects:GetChildren()) do
             if v:IsA("BasePart") and v.Name == "Credit" then
-                for i = 1, 5 do
-                    firetouchinterest(v, HumanoidRootPart, 0)
-                    task.wait(0.01)
-                    firetouchinterest(v, HumanoidRootPart, 1)
-                    task.wait(0.01)
-                end
-                task.wait(0.01)
+                wait(0.1)
+                firetouchinterest(getgenv().HumanoidRootPart, v, 0)
+                wait(0.1)
+                firetouchinterest(getgenv().HumanoidRootPart, v, 1)
+                wait(0.1)
             end
         end
     elseif method == "teleport" then
@@ -877,6 +891,30 @@ end)
 
 Main:Button("Safe Spot TP", function()
     safe_spot_tp()
+end)
+
+Players_Tab:Slider("WalkSpeed",16,500,16, function(WalkSpeed)
+    getgenv().Humanoid.WalkSpeed = WalkSpeed
+end)
+
+Players_Tab:Slider("JumpPower",50,500,50, function(New_JP)
+    if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
+        getgenv().Humanoid.JumpPower = New_JP
+    else
+        getgenv().Humanoid.JumpHeight = New_JP
+    end
+end)
+
+Players_Tab:Slider("Gravity",0,300,196, function(New_Gravity)
+    getgenv().Workspace.Gravity = New_Gravity
+end)
+
+Players_Tab:Box("Goto Plr", function(Target)
+    local Player_To_Teleport_To = findplr(Target)
+
+    if not Player_To_Teleport_To then return getgenv().notify("Failure:", "Player does not exist!", 5) end
+
+    pivot_to_plr(Player_To_Teleport_To)
 end)
 
 Extras:Toggle("Rainbow Timer", false, function(rainbow_timer_text)
