@@ -726,6 +726,8 @@ end
 
 function collect_all_coins(method)
     if method == "no_tp" then
+        if not firetouchinterest then return getgenv("Failure:", "Your exploit does not support 'firetouchinterest'!", 5) end
+
         for _, v in pairs(Game_Objects:GetChildren()) do
             if v:IsA("BasePart") and v.Name == "Credit" then
                 for i = 1, 5 do
