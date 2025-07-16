@@ -543,7 +543,7 @@ function find_all_players_no_whitelist()
 end
 
 local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes")
-local Play_Sound_Others_RE = Remotes:FindFirstChild("Play_Sound_Others")
+local Play_Sound_Others_RE = Remotes:FindFirstChild("PlaySoundOthers")
 local espTransparency = 0.3
 local Players = getgenv().Players or getgenv().Service_Wrap("Players") or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local RunService = getgenv().RunService
@@ -636,7 +636,7 @@ function play_music_others(ID)
                 {
                     Parent = Target_HRP,
                     Pitch = 1,
-                    Volume = 1
+                    Volume = 2
                 }
             }
 
@@ -647,6 +647,82 @@ end
 
 local function is_player_it(p)
 	return It_Val and (It_Val.Value == p or It_Val.Value == p.Name)
+end
+
+local Is_On_Cooldown = false
+local Cooldown_Time = 30
+local Cooldown_End_Time = 0
+
+function Try_To_predict_IT_Plr()
+    local Players = getgenv().Players
+    local LocalPlayer = getgenv().LocalPlayer
+
+    if Is_On_Cooldown then
+        local time_left = math.ceil(Cooldown_End_Time - tick())
+        if time_left < 1 then time_left = 1 end
+        return getgenv().notify("Wait!", "You are on prediction cooldown (" .. time_left .. " seconds left)!", 5)
+    end
+
+    Is_On_Cooldown = true
+    Cooldown_End_Time = tick() + Cooldown_Time
+
+    local function create_dice_gui()
+        local screen = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+        screen.Name = "IT_Predictor_GUI"
+        screen.ResetOnSpawn = false
+
+        local frame = Instance.new("Frame", screen)
+        frame.Size = UDim2.new(0, 500, 0, 200)
+        frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+        frame.AnchorPoint = Vector2.new(0.5, 0.5)
+        frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        frame.BackgroundTransparency = 0.1
+        frame.BorderSizePixel = 0
+
+        local label = Instance.new("TextLabel", frame)
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.TextScaled = true
+        label.BackgroundTransparency = 1
+        label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        label.Font = Enum.Font.GothamBold
+        label.Text = "Rolling Dice..."
+
+        return screen, label
+    end
+
+    local function get_random_player()
+        local all_players = Players:GetPlayers()
+        if #all_players == 0 then return nil end
+        return all_players[math.random(1, #all_players)]
+    end
+
+    local gui, label = create_dice_gui()
+
+    local roll_times = 15
+    for i = 1, roll_times do
+        local temp_player = get_random_player()
+        if temp_player then
+            label.Text = "🎲 " .. temp_player.Name
+        else
+            label.Text = "No players..."
+        end
+        wait(0.1 + i * 0.01)
+    end
+
+    local predicted_player = get_random_player()
+    if predicted_player and Players:FindFirstChild(predicted_player.Name) then
+        label.Text = "🎯 Predicted IT: " .. predicted_player.Name
+    else
+        label.Text = "⚠️ Prediction Failed (player left)"
+    end
+
+    task.delay(3, function()
+        if gui then gui:Destroy() end
+    end)
+
+    task.delay(Cooldown_Time, function()
+        Is_On_Cooldown = false
+    end)
 end
 
 function ESP(plr)
@@ -836,15 +912,20 @@ function collect_all_coins(method)
     end
 end
 
+local Current_ID = 0
 wait(0.2)
 Audio:Box("(FE): Music", function(text, focuslost)
     if focuslost then
         local id = tonumber(text)
-
-        Play_Sound_Boombox_RE:FireServer(id)
+        wait()
+        Current_ID = id
     end
 end)
-
+wait(0.1)
+Audio:Button("Play Music (FE)", function()
+    Play_Sound_Boombox_RE:FireServer(Current_ID)
+end)
+wait(0.1)
 Audio:Button("Stop Music", function()
     Stop_Sound_Boombox_FE:FireServer()
 end)
@@ -1122,8 +1203,19 @@ Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
    end
 end)
 
+Extras:Button("Try To Predict IT/Seeker", function()
+    Try_To_predict_IT_Plr()
+end)
+
 Audio:Box("Music Others", function(music_ID)
     play_music_others(music_ID)
 end)
 
--- 133381881709184
+--[[ Bypassed Audios Working As Of: 7/15/2025 -- ]]
+
+-- 133381881709184 -- unleaked
+-- 81127387662817 -- unleaked
+-- 96502224821858 -- cool unleaked phonk
+-- 91233243522140 -- cool unleaked phonk
+
+--[[ Bypassed Audios Working As Of: 7/15/2025 -- ]]
