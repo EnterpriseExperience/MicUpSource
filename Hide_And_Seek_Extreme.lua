@@ -479,8 +479,25 @@ function add_whitelist_plr(user)
         return getgenv().notify("FAILURE:", "Player doesn't exist!", 5)
     end
 
-    WHITELIST[user.Name] = true
-    getgenv().notify("[WHITELISTED]:", user.Name .. " has been added to the whitelist.", 5)
+    if not WHITELIST[user.Name] then
+        WHITELIST[user.Name] = true
+        getgenv().notify("[WHITELISTED]:", user.Name .. " has been added to the whitelist.", 5)
+    else
+        getgenv().notify("INFO:", user.Name .. " is already in the whitelist.", 5)
+    end
+end
+wait(0.1)
+function remove_whitelist_plr(user)
+    if not user or not user.Name then
+        return getgenv().notify("FAILURE:", "Player doesn't exist!", 5)
+    end
+
+    if WHITELIST[user.Name] then
+        WHITELIST[user.Name] = nil
+        getgenv().notify("[REMOVED]:", user.Name .. " has been removed from the whitelist.", 5)
+    else
+        getgenv().notify("INFO:", user.Name .. " is not in the whitelist.", 5)
+    end
 end
 wait(0.3)
 local Game_Objects = Workspace:FindFirstChild("GameObjects")
@@ -525,6 +542,8 @@ function find_all_players_no_whitelist()
     end
 end
 
+local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes")
+local Play_Sound_Others_RE = Remotes:FindFirstChild("Play_Sound_Others")
 local espTransparency = 0.3
 local Players = getgenv().Players or getgenv().Service_Wrap("Players") or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local RunService = getgenv().RunService
@@ -568,12 +587,62 @@ function safe_spot_tp()
     end
     wait(0.1)
     for _, v in pairs(Lobby:GetChildren()) do
-        if v:IsA("BasePart") and v.Name == "BasePlate" and v.BrickColor == BrickColor.new("Electric blue") then
+        if v:IsA("BasePart") and v.Name == "BasePlate" and v.BrickColor == BrickColor.new("Ghost grey") then
             Base_Plate = v
         end
     end
     wait(0.3)
     getgenv().HumanoidRootPart.CFrame = CFrame.new(Base_Plate.Position + Vector3.new(0, 3, 0))
+end
+
+getgenv().toggle_spawn_box_visible = getgenv().toggle_spawn_box_visible or false
+
+function toggle_visible_spawn_box(state)
+    local ws = getgenv().Workspace or workspace
+    local Lobby = ws:FindFirstChild("Lobby")
+    if not Lobby or not Lobby:IsA("Model") then return end
+
+    local visible
+    if typeof(state) == "boolean" then
+        visible = state
+        getgenv().toggle_spawn_box_visible = state
+    else
+        getgenv().toggle_spawn_box_visible = not getgenv().toggle_spawn_box_visible
+        visible = getgenv().toggle_spawn_box_visible
+    end
+
+    for _, v in ipairs(Lobby:GetChildren()) do
+        if v:IsA("BasePart") then
+            v.Transparency = visible and 0 or 1
+        end
+    end
+
+    local status = visible and "VISIBLE" or "INVISIBLE"
+    if getgenv().notify then
+        getgenv().notify("SPAWN BOX TOGGLE", "Lobby parts are now " .. status, 3)
+    end
+end
+
+function play_music_others(ID)
+    for _, v in ipairs(getgenv().Players:GetChildren()) do
+        if v ~= getgenv().LocalPlayer then
+            local Target_Char = v.Character or v.CharacterAdded:Wait()
+            local Target_HRP = Target_Char and Target_Char:FindFirstChild("HumanoidRootPart") or Target_Char:WaitForChild("HumanoidRootPart", 3)
+            if not Target_Char then return getgenv().notify("Failure:", "Player's Character does not exist!", 5) end
+            if not Target_HRP then return getgenv().notify("Failure:", "Player's HumanoidRootPart is missing1", 5) end
+        
+            local args = {
+                tonumber(ID),
+                {
+                    Parent = Target_HRP,
+                    Pitch = 1,
+                    Volume = 1
+                }
+            }
+
+            Play_Sound_Others_RE:FireServer(unpack(args))
+        end
+    end
 end
 
 local function is_player_it(p)
@@ -810,6 +879,16 @@ Main:Box("Whitelist Plr:", function(target_whitelist, focuslost)
     end
 end)
 
+Main:Box("Remove Plr:", function(target_remove_whitelist, focuslost)
+    local target_unwhitelist = findplr(target_remove_whitelist)
+
+    if focuslost and target_unwhitelist then
+        remove_whitelist_plr(target_unwhitelist)
+    elseif not target_unwhitelist then
+        return getgenv().notify("Failure:", "Target does not exist!", 5)
+    end
+end)
+
 Main:Button("Find All (No Whitelist)", function()
     if not InGame_LocalPlr_Value.Value then
         return getgenv().notify("Failure:", "You are not currently in-game!", 5)
@@ -893,6 +972,14 @@ Main:Button("Safe Spot TP", function()
     safe_spot_tp()
 end)
 
+Extras:Toggle("Visible Spawn", false, function(is_spawn_visible)
+    if is_spawn_visible then
+        toggle_visible_spawn_box(true)
+    else
+        toggle_visible_spawn_box(false)
+    end
+end)
+
 Players_Tab:Slider("WalkSpeed",16,500,16, function(WalkSpeed)
     getgenv().Humanoid.WalkSpeed = WalkSpeed
 end)
@@ -909,7 +996,7 @@ Players_Tab:Slider("Gravity",0,300,196, function(New_Gravity)
     getgenv().Workspace.Gravity = New_Gravity
 end)
 
-Players_Tab:Box("Goto Plr", function(Target)
+Players_Tab:Box("TP To Player:", function(Target)
     local Player_To_Teleport_To = findplr(Target)
 
     if not Player_To_Teleport_To then return getgenv().notify("Failure:", "Player does not exist!", 5) end
@@ -1033,6 +1120,10 @@ Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
 
         getgenv().OriginalColors = nil
    end
+end)
+
+Audio:Box("Music Others", function(music_ID)
+    play_music_others(music_ID)
 end)
 
 -- 133381881709184
