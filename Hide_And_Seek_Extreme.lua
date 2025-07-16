@@ -484,6 +484,9 @@ function add_whitelist_plr(user)
 end
 wait(0.3)
 local Game_Objects = Workspace:FindFirstChild("GameObjects")
+local Player_Data = getgenv().LocalPlayer:FindFirstChild("PlayerData")
+local It_LocalPlr_Value = Player_Data:FindFirstChild("It")
+local InGame_LocalPlr_Value = Player_Data:FindFirstChild("InGame")
 local Is_Seeking = Game_Data:FindFirstChild("ItSeeking")
 local Selecting_Map = Game_Data:FindFirstChild("SelectingMap")
 local Selecting_It = Game_Data:FindFirstChild("SelectingIt")
@@ -769,9 +772,9 @@ Extras:Button("Get Coins (TP)", function()
    local result_parts = count_parts(Game_Objects)
 
    if result_parts == false then
-      return getgenv().notify("Failure:", "Model doesn't exist, try again!", 5)
+      return getgenv().notify("Failure:", "GameObjects doesn't exist, try again!", 5)
    elseif result_parts == 0 then
-      return getgenv().notify("Failure:", "No Parts inside this Model!", 5)
+      return getgenv().notify("Failure:", "No Credit's found to collect!", 5)
    elseif result_parts > 0 then
       local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
       wait(0.2)
@@ -792,10 +795,27 @@ Main:Box("Whitelist Plr:", function(target_whitelist, focuslost)
 end)
 
 Main:Button("Find All (No Whitelist)", function()
+    if not InGame_LocalPlr_Value.Value then
+        return getgenv().notify("Failure:", "You are not currently in-game!", 5)
+    end
+
+    if not It_LocalPlr_Value.Value then
+        return getgenv().notify("Failure:", "You are not currently IT/seeker!", 5)
+    end
+
+    task.wait(0.1)
     find_all_players_no_whitelist()
 end)
 
 Main:Button("Find All (Whitelist)", function()
+        if not InGame_LocalPlr_Value.Value then
+        return getgenv().notify("Failure:", "You are not currently in-game!", 5)
+    end
+
+    if not It_LocalPlr_Value.Value then
+        return getgenv().notify("Failure:", "You are not currently IT/seeker!", 5)
+    end
+    task.wait(0.1)
     find_all_players_whitelist()
 end)
 
@@ -976,5 +996,3 @@ Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
 end)
 
 -- 133381881709184
--- Feel free to use this bypassed audio code ;).
--- Works as of 7/13/2025.
