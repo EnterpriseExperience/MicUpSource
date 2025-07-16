@@ -457,7 +457,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.5.6-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | 1.5.9-LIFE | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -1108,7 +1108,7 @@ end
 local running_destroy_vehicles = false
 
 function destroy_all_vehicles()
-    if running_destroy_vehicles then return warn("Destroy All Vehicles is already running!") end
+    if running_destroy_vehicles then return getgenv().notify("Failure:", "Destroy All Vehicles is already running!", 5) end
     running_destroy_vehicles = true
 
     local Players = getgenv().Players
@@ -1119,7 +1119,7 @@ function destroy_all_vehicles()
 
     if not Character or not Humanoid or not HRP then
         running_destroy_vehicles = false
-        return warn("Missing Character, Humanoid, or HumanoidRootPart")
+        return getgenv().notify("Failure:", "Missing Character, Humanoid, or HumanoidRootPart", 5)
     end
 
     local voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)")
@@ -1131,33 +1131,51 @@ function destroy_all_vehicles()
     local voidCF = voidPart:FindFirstChild("SCRIPT_KILLPART_VOID") and voidPart:FindFirstChild("SCRIPT_KILLPART_VOID").CFrame
     if not voidCF then
         running_destroy_vehicles = false
-        return warn("Kill part missing")
+        return getgenv().notify("Failure:", "Kill part missing", 5)
     end
 
     local vehicles = getgenv().Workspace:FindFirstChild("Vehicles")
     if not vehicles then
         running_destroy_vehicles = false
-        return warn("Vehicles folder not found")
+        return getgenv().notify("Failure:", "Vehicles folder not found", 5)
+    end
+
+    local valid_vehicles = {}
+
+    for _, vehicle in ipairs(vehicles:GetChildren()) do
+        if vehicle:IsA("Model") then
+            local owner = vehicle:FindFirstChild("owner")
+            if owner and owner:IsA("ObjectValue") and owner.Value then
+                local isLocked = vehicle:GetAttribute("locked")
+                if isLocked ~= true then
+                    local seat = vehicle:FindFirstChildWhichIsA("VehicleSeat")
+                    if seat and not seat.Occupant then
+                        table.insert(valid_vehicles, {model = vehicle, seat = seat})
+                    end
+                end
+            end
+        end
+    end
+
+    if #valid_vehicles == 0 then
+        running_destroy_vehicles = false
+        return getgenv().notify("Failure:", "No valid vehicles found to destroy.", 5)
     end
 
     local oldCF = HRP.CFrame
 
-    for _, vehicle in ipairs(vehicles:GetChildren()) do
-        if vehicle:IsA("Model") and vehicle:FindFirstChild("owner") then
-            local isLocked = vehicle:GetAttribute("locked")
-            if isLocked == true then continue end
+    for _, entry in ipairs(valid_vehicles) do
+        local vehicle = entry.model
+        local seat = entry.seat
 
-            local seat = vehicle:FindFirstChildWhichIsA("VehicleSeat")
-            if seat then
-                Character:PivotTo(seat.CFrame)
-                task.wait(0.2)
-                seat:Sit(Humanoid)
-                task.wait(0.4)
-                vehicle:PivotTo(voidCF)
-                task.wait(0.5)
-            end
-        end
+        Character:PivotTo(seat.CFrame)
+        task.wait(0.2)
+        seat:Sit(Humanoid)
+        task.wait(0.4)
+        vehicle:PivotTo(voidCF)
+        task.wait(0.5)
     end
+
     wait(0.1)
     Humanoid:ChangeState(3)
     task.wait(0.1)
@@ -1602,6 +1620,30 @@ Callback = function(toggle_phone_script)
         Toggle_Phone(true)
     else
         Toggle_Phone(false)
+    end
+end,})
+
+getgenv().Anti_Sit_Func = Tab2:CreateToggle({
+Name = "Anti Sit (FE)",
+CurrentValue = false,
+Flag = "AntiSitScriptFunc",
+Callback = function(is_antisit_enabled)
+    if is_antisit_enabled then
+        for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+            if v:IsA("Seat") then
+                v.CanCollide = false
+                v.Disabled = true
+                v:SetAttribute("Disabled", true)
+            end
+        end
+    else
+        for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+            if v:IsA("Seat") then
+                v.CanCollide = true
+                v.Disabled = true
+                v:SetAttribute("Disabled", false)
+            end
+        end
     end
 end,})
 
