@@ -24,6 +24,12 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua'))()
 ```
 
+## 🏃 Hide And Seek Extreme 🏃 ##
+```lua
+-- 🏃 Hide And Seek Extreme 🏃 --
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua'))()
+```
+
 ```lua
 -- 🌟 Star this repo and save it for later 🌟 --
 https://github.com/EnterpriseExperience/MicUpSource/wiki
