@@ -13,12 +13,13 @@ local TextLabel_5 = Instance.new("TextLabel")
 local UserIdLabel = Instance.new("TextLabel")
 local GamerPicture = Instance.new("ImageLabel")
 
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local TeleportService = game:GetService("TeleportService")
+local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local TeleportService = cloneref and cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
+local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 
 Screenguini.Name = HttpService:GenerateGUID(false)
-Screenguini.Parent = game:GetService("CoreGui")
+Screenguini.Parent = CoreGui
 
 Frame.Parent = Screenguini
 Frame.Active = true
@@ -67,7 +68,7 @@ TextLabel_3.BorderColor3 = Color3.fromRGB(31, 31, 31)
 TextLabel_3.Position = UDim2.new(0, 10, 0, 130)
 TextLabel_3.Size = UDim2.new(0, 150, 0, 20)
 TextLabel_3.Font = Enum.Font.SourceSansLight
-TextLabel_3.Text = "Place Id:"
+TextLabel_3.Text = "Place ID:"
 TextLabel_3.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextLabel_3.TextSize = 16.000
 
@@ -79,7 +80,7 @@ PlaceIdBox.Position = UDim2.new(0, 10, 0, 157)
 PlaceIdBox.Size = UDim2.new(0, 150, 0, 35)
 PlaceIdBox.Font = Enum.Font.SourceSansLight
 PlaceIdBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
-PlaceIdBox.PlaceholderText = "Enter PlaceId Here"
+PlaceIdBox.PlaceholderText = "Enter PlaceID Here"
 PlaceIdBox.Text = ""
 PlaceIdBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlaceIdBox.TextSize = 18.000
@@ -133,7 +134,7 @@ TextLabel_5.Position = UDim2.new(0, 200, 0, 69)
 TextLabel_5.Size = UDim2.new(0, 0, 0, 20)
 TextLabel_5.AutomaticSize = Enum.AutomaticSize.X
 TextLabel_5.Font = Enum.Font.SourceSansBold
-TextLabel_5.Text = "UserId:"
+TextLabel_5.Text = "UserID:"
 TextLabel_5.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextLabel_5.TextSize = 16.000
 TextLabel_5.TextWrapped = true
@@ -173,7 +174,7 @@ local function HttpGet(url)
 end
 
 local function Status(text, tout)
-StartButton.Text = text
+   StartButton.Text = text
 
    if tout then
        task.delay(tout, function()
@@ -262,7 +263,7 @@ StartButton.MouseButton1Click:Connect(function()
     end)
 
     if not s then
-    return Status("Username or UserId does not exist!", 3)
+        return Status("Username or UserId does not exist!", 3)
     end
 
    local s, thumbUrl = pcall(Players.GetUserThumbnailAsync, Players, UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
@@ -273,7 +274,6 @@ StartButton.MouseButton1Click:Connect(function()
 
    Status("Getting user's thumbnail...")
    local s, response = HttpGet("https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=" .. UserId .. "&format=Png&size=150x150&isCircular=false")
-   --local s, response = HttpGet("https://www.roblox.com/headshot-thumbnail/json?userId=" .. UserId .. "&width=150&height=150")
    local thumbnail = s and response['data'][1].imageUrl
 
    Status("Searching for (".. UserId ..")")
@@ -334,7 +334,6 @@ StartButton.MouseButton1Click:Connect(function()
                                end
                            else
                                Status("token failed, id:", playerThumb.requestId, playerThumb.state, playerThumb.errorMessage)
-                               --print("token failed, id:", playerThumb.requestId, playerThumb.state, playerThumb.errorMessage)
                            end
                        end
                    else
