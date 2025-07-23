@@ -30,6 +30,12 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua'))()
 ```
 
+## 🤖 Player Or AI? 🤖 ##
+```lua
+-- 🤖 Player Or AI? 🤖 --
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua'))()
+```
+
 ```lua
 -- 🌟 Star this repo and save it for later 🌟 --
 https://github.com/EnterpriseExperience/MicUpSource/wiki
