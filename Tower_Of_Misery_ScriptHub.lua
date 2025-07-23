@@ -303,7 +303,11 @@ local Anti_Ragdoll_Active = false
 local Inf_Stamina_Active = false
 
 wait(0.2)
-
+-- This is here to automatically fix the warning messages in the console, so you don't have to respawn to apply it.
+-- Your welcome.
+if getgenv().Character:FindFirstChild("Character Initializer") then
+    getgenv().Character:FindFirstChild("Character Initializer").Disabled = true
+end
 local function Dynamic_Character_Updater(character)
 	getgenv().Character = character or getgenv().LocalPlayer.Character
 	task.wait(0.3)
@@ -333,13 +337,17 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     wait(0.2)
     if getconnections and getgenv().loaded_custom_tp_bypass then
         print("[Custom-TP-Bypass_DEBUG]: Custom TP Bypass has initialized reload from Character respawn, authorizing initialization...")
-        wait(0.2)
+        wait(0.1)
         for _, conn in pairs(getconnections(HumanoidRootPart:GetPropertyChangedSignal("CFrame"))) do
             conn:Disable()
         end
         for _, conn in pairs(getconnections(HumanoidRootPart:GetPropertyChangedSignal("Position"))) do
             conn:Disable()
         end
+    end
+    -- Here to fix warning messages be rapidly spammed in the console.
+    if newCharacter:FindFirstChild("Character Initializer") then
+        newCharacter:FindFirstChild("Character Initializer").Disabled = true
     end
 end)
 
@@ -352,6 +360,7 @@ local Open_Crate_RE = Crate_System_Remote_Events:FindFirstChild("Open_Crate")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
+-- This is here to prevent spam errors in the console, your welcome.
 for _, v in ipairs(Players:GetDescendants()) do
 	if v:IsA("ScreenGui") and string.find(v.Name, "Height_Meter_V2") then
 		for _, k in ipairs(v:GetDescendants()) do
@@ -362,6 +371,28 @@ for _, v in ipairs(Players:GetDescendants()) do
 	end
 end
 
+-- Fixes the other errors in the console.
+if getgenv().PlayerGui:FindFirstChild("Client_Side_GUI") then
+	local Temporary_LocalScript = getgenv().PlayerGui:WaitForChild("Client_Side_GUI"):FindFirstChild("Temporary")
+
+	Temporary_LocalScript.Disabled = true
+end
+
+-- Fixes the "Fling Glove" error in the console.
+if getgenv().PlayerGui:FindFirstChild("Player Scripts") then
+   for _, v in ipairs(getgenv().PlayerGui:FindFirstChild("Player Scripts"):GetChildren()) do
+        if v:IsA("Frame") and v.Name == "General" then
+            local Main_Frame = v
+            local Fling_Glove_UI_LocalScript = v:FindFirstChild("Fling Glove UI")
+
+            if Fling_Glove_UI_LocalScript then
+                v.Disabled = true
+            end
+        end
+    end
+end
+
+-- Special thanks to: c0rr4t, over on Discord.
 local function bypass_anticheat()
 	local old
 	old = hookmetamethod(game, "__namecall", function(self,...)
@@ -459,36 +490,36 @@ end
 
 local function collect_session_rewards()
 	if Remote_Events:FindFirstChild("Collect_Session_Reward") then
-        local args = {
-            200
-        }
-
-        Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
-        local args = {
-            100
-        }
-
-        Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
-        local args = {
-            50
-        }
-
-        Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
-        local args = {
-            300
-        }
-
-        Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
-        local args = {
-            400
-        }
-
-        Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
-        local args = {
-            500
-        }
-
-        Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
+		local args = {
+		    200
+		}
+	
+		Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
+		local args = {
+		    100
+		}
+	
+		Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
+		local args = {
+		    50
+		}
+	
+		Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
+		local args = {
+		    300
+		}
+	
+		Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
+		local args = {
+		    400
+		}
+	
+		Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
+		local args = {
+		    500
+		}
+	
+		Remote_Events:WaitForChild("Collect_Session_Reward"):FireServer(unpack(args))
 	end
 end
 
@@ -523,7 +554,7 @@ local function GodMode(toggle)
 	local Temporary_Immunity = General_Folder:FindFirstChild("Temporary_Immunity")
 
 	if toggle == true then
-        Update_Setting_RE:FireServer(30, false)
+        	Update_Setting_RE:FireServer(30, false)
 		Temporary_Immunity.Value = true
 	elseif toggle == false then
 		Temporary_Immunity.Value = false
