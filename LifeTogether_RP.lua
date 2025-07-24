@@ -994,7 +994,7 @@ function vehicle_kill_player(TargetPlayer)
     local voidCF = voidPart:FindFirstChild("SCRIPT_KILLPART_VOID") and voidPart:FindFirstChild("SCRIPT_KILLPART_VOID").CFrame
     if not voidCF then return end
 
-    local MyPlayer = game.Players.LocalPlayer
+    local MyPlayer = getgenv().LocalPlayer
     local MyChar = getgenv().Character or MyPlayer.Character
     local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
     local MyBus = nil
@@ -1056,7 +1056,7 @@ function vehicle_bring_player(TargetPlayer)
     local voidCF = voidPart:FindFirstChild("SCRIPT_KILLPART_VOID") and voidPart:FindFirstChild("SCRIPT_KILLPART_VOID").CFrame
     if not voidCF then return end
 
-    local MyPlayer = game.Players.LocalPlayer
+    local MyPlayer = getgenv().LocalPlayer
     local MyChar = getgenv().Character or MyPlayer.Character
     local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
     local MyBus = nil
@@ -1611,6 +1611,154 @@ Callback = function(all_wallpapers)
     end
 end,})
 
+local VEHICLE_NAME = "SchoolBus"
+local FLING_SPEED = 200
+local ANGULAR_FORCE = Vector3.new(200, 200, 200)
+local REJOIN_TIMEOUT = 30
+local REJOIN_POLL_RATE = 0.1
+
+getgenv().CarFlingEnabled = false
+getgenv().CarFlingConnection = nil
+
+function disable_car_fling()
+    getgenv().CarFlingEnabled = false
+    if getgenv().CarFlingConnection then
+        getgenv().CarFlingConnection:Disconnect()
+        getgenv().CarFlingConnection = nil
+    end
+    getgenv().notify("Success:", "Car Fling has been disabled.", 5)
+end
+
+function toggle_car_fling(target_player)
+    if getgenv().CarFlingEnabled then
+        disable_car_fling()
+        return getgenv().notify("Error:", "Car fling already running. Disabling.", 5)
+    end
+
+    spawn_any_vehicle(VEHICLE_NAME)
+    task.wait(1)
+
+    local vehicle
+    for i = 1, 50 do
+        for _, v in ipairs(Workspace.Vehicles:GetChildren()) do
+            if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == LocalPlayer then
+                vehicle = v
+                break
+            end
+        end
+        if vehicle then break end
+        task.wait(0.1)
+    end
+
+    if not vehicle then
+        return getgenv().notify("Failure:", "Could not find owned SchoolBus!", 5)
+    end
+
+    if vehicle:GetAttribute("locked") == false then
+        lock_vehicle(vehicle)
+    end
+
+    if not vehicle.PrimaryPart then
+        local root = vehicle:FindFirstChild("Chassis") or vehicle:FindFirstChildWhichIsA("BasePart")
+        if root then
+            vehicle.PrimaryPart = root
+        end
+    end
+
+    local seat = vehicle:FindFirstChildWhichIsA("VehicleSeat", true)
+    if seat and getgenv().Humanoid then
+        getgenv().Character:PivotTo(seat.CFrame * CFrame.new(0, 2, 0))
+        task.wait(0.2)
+        for i = 1, 10 do
+            seat:Sit(getgenv().Humanoid)
+            if seat.Occupant == getgenv().Humanoid then break end
+            task.wait(0.1)
+        end
+    else
+        return getgenv().notify("Failure:", "Seat not found or no Humanoid!", 5)
+    end
+
+    for _, part in ipairs(vehicle:GetDescendants()) do
+        if part:IsA("BasePart") then
+            local name = part.Name:lower()
+            if not string.find(name, "wheel") and not string.find(name, "tire") then
+                part.CanCollide = false
+            end
+        end
+    end
+
+    getgenv().CarFlingEnabled = true
+    getgenv().notify("Success:", "🚗 Car Fling enabled on: " .. tostring(target_player.Name), 5)
+
+    target_player.CharacterAdded:Connect(function()
+        getgenv().notify("Info:", "Target respawned. Retargeting...", 3)
+    end)
+
+    getgenv().CarFlingConnection = RunService.Heartbeat:Connect(function()
+        if not getgenv().CarFlingEnabled then return end
+
+        if not Players:FindFirstChild(target_player.Name) then
+            local rejoined = false
+            for i = 1, REJOIN_TIMEOUT / REJOIN_POLL_RATE do
+                if Players:FindFirstChild(target_player.Name) then
+                    rejoined = true
+                    target_player = Players:FindFirstChild(target_player.Name)
+                    break
+                end
+                task.wait(REJOIN_POLL_RATE)
+            end
+
+            if not rejoined then
+                getgenv().notify("Shutdown:", "Player did not return. Stopping fling.", 5)
+                return disable_car_fling()
+            end
+        end
+
+        local char = target_player.Character
+        local targetHRP = char and char:FindFirstChild("HumanoidRootPart")
+        local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+        if not targetHRP or not humanoid or not vehicle or not vehicle:IsDescendantOf(Workspace) then return end
+
+        if humanoid.SeatPart then
+            humanoid.Sit = false
+        end
+
+        local direction = (targetHRP.Position - vehicle:GetPivot().Position).Unit
+
+        vehicle:PivotTo(targetHRP.CFrame * CFrame.new(0, 2, 0))
+
+        if vehicle.PrimaryPart then
+            vehicle.PrimaryPart.AssemblyLinearVelocity = direction * FLING_SPEED
+            vehicle.PrimaryPart.AssemblyAngularVelocity = Vector3.new(100, 100, 100)
+        end
+
+        targetHRP.AssemblyLinearVelocity = direction * FLING_SPEED + Vector3.new(0, 100, 0)
+        targetHRP.AssemblyAngularVelocity = ANGULAR_FORCE
+    end)
+end
+
+getgenv().Car_Fling_FE = Tab3:CreateInput({
+Name = "Car Fling Plr (FE)",
+PlaceholderText = "User Here, can shorten",
+RemoveTextAfterFocusLost = true,
+Callback = function(car_fling_plr)
+    local Target_Car_Fling = findplr(car_fling_plr)
+
+    if not Target_Car_Fling then
+        return getgenv().notify("Failure:", tostring(car_fling_plr).." does not exist!", 5)
+    end
+
+    if Target_Car_Fling.Character and Target_Car_Fling.Character:FindFirstChild("Humanoid") and getgenv().Character then
+        toggle_car_fling(Target_Car_Fling)
+    end
+end,})
+
+getgenv().StopCar_FlingScript = Tab3:CreateButton({
+Name = "Stop/Shutdown Car Fling",
+Callback = function()
+    disable_car_fling()
+end,})
+
 getgenv().TogglePhoneFE = Tab5:CreateToggle({
 Name = "Toggle Phone (FE)",
 CurrentValue = false,
@@ -1623,24 +1771,46 @@ Callback = function(toggle_phone_script)
     end
 end,})
 
+local Anti_Sit_Connection
+wait(0.1)
 getgenv().Anti_Sit_Func = Tab2:CreateToggle({
 Name = "Anti Sit (FE)",
 CurrentValue = false,
 Flag = "AntiSitScriptFunc",
 Callback = function(is_antisit_enabled)
-    if is_antisit_enabled then
-        for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-            if v:IsA("Seat") then
-                v.CanCollide = false
-                v.Disabled = true
-                v:SetAttribute("Disabled", true)
-            end
+    local Workspace = getgenv().Workspace or game:GetService("Workspace")
+    local function handleSeat(seat)
+        if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
+            seat.CanCollide = false
+            seat.Disabled = true
+            seat:SetAttribute("Disabled", true)
         end
+    end
+
+    if is_antisit_enabled then
+        getgenv().Anti_Sit_Enabled = true
+
+        for _, v in ipairs(Workspace:GetDescendants()) do
+            handleSeat(v)
+        end
+
+        Anti_Sit_Connection = Workspace.DescendantAdded:Connect(function(v)
+            if getgenv().Anti_Sit_Enabled then
+                handleSeat(v)
+            end
+        end)
     else
-        for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-            if v:IsA("Seat") then
+        getgenv().Anti_Sit_Enabled = false
+
+        if Anti_Sit_Connection then
+            Anti_Sit_Connection:Disconnect()
+            Anti_Sit_Connection = nil
+        end
+
+        for _, v in ipairs(Workspace:GetDescendants()) do
+            if v:IsA("Seat") or v:IsA("VehicleSeat") then
                 v.CanCollide = true
-                v.Disabled = true
+                v.Disabled = false
                 v:SetAttribute("Disabled", false)
             end
         end
@@ -1659,6 +1829,8 @@ Callback = function(flashlight_phone)
     end
 end,})
 
+local Anti_Teleport_Toggled_Saved = false
+wait(0.1)
 getgenv().AntiTeleport_Univ = Tab2:CreateToggle({
 Name = "Anti Teleport",
 CurrentValue = false,
@@ -1667,6 +1839,7 @@ Callback = function(anti_teleport_toggle)
     if anti_teleport_toggle then
         getgenv().AntiTeleport = true
         getgenv().AntiTeleportConnection = nil
+        Anti_Teleport_Toggled_Saved = true
 
         local Players = getgenv().Players
         local RunService = getgenv().RunService
@@ -1705,6 +1878,7 @@ Callback = function(anti_teleport_toggle)
         end)
     else
         getgenv().AntiTeleport = false
+        Anti_Teleport_Toggled_Saved = false
 
         pcall(function()
             task.cancel(getgenv().AntiTeleportConnection)
@@ -1720,14 +1894,16 @@ for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
         table.insert(PlotAreas, v)
     end
 end
-wait(0.2)
+wait(0.1)
 getgenv().AutoAntiBan_House = Tab1:CreateToggle({
-Name = "Anti Ban From Houses",
+Name = "Anti Ban/Kick From Houses",
 CurrentValue = false,
-Flag = "NoBanningFromHomes",
-Callback = function(anti_ban_from_homes)
-    if anti_ban_from_homes then
-        if getgenv().AntiTeleport_Univ then
+Flag = "NoBanningOrKickingFromHomes",
+Callback = function(anti_ban_kick_from_homes)
+    if anti_ban_kick_from_homes then
+        if Anti_Teleport_Toggled_Saved == true then
+            notify(".", ".", 0.2)
+        else
             getgenv().AntiTeleport_Univ:Set(true)
         end
         wait()
@@ -1741,7 +1917,9 @@ Callback = function(anti_ban_from_homes)
     else
         getgenv().never_banned_houses = false
         wait(0.1)
-        if getgenv().AntiTeleport_Univ then
+        if Anti_Teleport_Toggled_Saved == true then
+            getgenv().AntiTeleport_Univ:Set(true)
+        else
             getgenv().AntiTeleport_Univ:Set(false)
         end
     end
@@ -1769,7 +1947,7 @@ Callback = function(hasFrozenChar)
         local HumanoidRootPart = getgenv().HumanoidRootPart
         if Character and HumanoidRootPart or Character:FindFirstChild("HumanoidRootPart") then
             getgenv().FreezingChar = false
-            wait(0.2)
+            wait(0.1)
             HumanoidRootPart.Anchored = false
         else
             getgenv().FreezingChar = false
@@ -1779,7 +1957,7 @@ end,})
 
 local anti_knockback_connection
 local antiKnockbackEnabled = false
-
+wait()
 getgenv().AntiFlingToggle = Tab2:CreateToggle({
 Name = "Anti Fling",
 CurrentValue = false,
@@ -1986,7 +2164,7 @@ Callback = function(toggle_hd_fly)
                 end
 
                 local direction = GetInputDirection(Camera)
-                local move = direction * getgenv().HD_FlySpeed * dt
+                local move = direction * speed * dt
 
                 bodyPos.Position += move
                 bodyGyro.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector)
@@ -2005,9 +2183,32 @@ CurrentValue = false,
 Flag = "BlockAllIncomingCallsNotifs",
 Callback = function(block_all_call_notifs)
     if block_all_call_notifs then
-        set_call_notifications(true)
+        getgenv().loop_turn_off_notifications = true
+        while getgenv().loop_turn_off_notifications == true do
+        wait()
+            set_call_notifications(true)
+        end
     else
-        set_call_notifications(false)
+        getgenv().loop_turn_off_notifications = false
+        wait(1)
+        if getgenv().loop_turn_off_notifications == false then
+            getgenv().notify("Success:", "Disabling 'Black All Call Notifs'...", 5)
+            wait()
+            set_call_notifications(false)
+            wait(0.2)
+            getgenv().notify("Success:", "Successfully disabled 'Black Call Notifs'.", 5)
+        else
+            getgenv().notify("Waiting:", "Waiting until loop is fully turned off.", 5)
+            repeat task.wait() until getgenv().loop_turn_off_notifications == false
+
+            if getgenv().loop_turn_off_notifications == false then
+                getgenv().notify("Success:", "Disabling 'Black All Call Notifs'...", 5)
+                wait()
+                set_call_notifications(false)
+                wait(0.2)
+                getgenv().notify("Success:", "Successfully disabled 'Black Call Notifs'.", 5)
+            end
+        end
     end
 end,})
 
@@ -2102,6 +2303,10 @@ Callback = function()
     local My_Vehicle = get_vehicle()
     if not My_Vehicle then return getgenv().notify("Error:", "No car, spawn one!", 5) end
 
+    if not My_Vehicle:FindFirstChild("VehicleSeat") then
+        return getgenv().notify("Failure:", "The vehicle spawned does not have a Vehicle Seat!", 5)
+    end
+
     sit_in_vehicle(My_Vehicle)
 end,})
 
@@ -2112,7 +2317,7 @@ RemoveTextAfterFocusLost = true,
 Callback = function(player_to_tp_to)
     local Target_Plr = findplr(player_to_tp_to)
     if not Target_Plr then return show_notification("Error:", "Player does not exist!", "Warning") end
-    
+
     server_admin_tp(Target_Plr)
 end,})
 
