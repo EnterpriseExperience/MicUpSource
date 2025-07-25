@@ -1401,7 +1401,7 @@ local function handleCommand(sender, message)
       if not Vehicle then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
 
       if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") then
-         getgenv().Character:PivotTo(get_vehicle:GetPivot() * CFrame.new(0, 5, 0))
+         getgenv().Character:PivotTo(get_vehicle():GetPivot() * CFrame.new(0, 5, 0))
       end
    elseif cmd == "tpcar" then
       local Vehicle = get_vehicle()
