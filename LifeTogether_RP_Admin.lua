@@ -1077,6 +1077,10 @@ local function CommandsMenu()
 
       {prefix}despawn - Despawn your car
 
+      {prefix}antifling - Fully prevents you from being flung, by other exploiters/cheaters, and fling outfits as well (FULL BYPASS)
+
+      {prefix}unantifling - Disables "antifling" allowing you to also teleport to places and what not like normal
+
       {prefix}bringcar - Teleport car to you and sit in it
 
       {prefix}nosit - Disable all VehicleSeats and Seats (anti-sit)
@@ -1094,6 +1098,8 @@ local function CommandsMenu()
       {prefix}skydive [player] - Skydives target
 
       {prefix}freepay - Gives you LifePay Premium for free
+
+      {prefix}rejoin / {prefix}rj - Rejoins you, but does NOT execute automatically
 
       {prefix}caraccel [number] - Modifies your "max_acc" on your car/vehicle
 
@@ -1401,6 +1407,8 @@ local function handleCommand(sender, message)
    local Anti_Sit_Connection
    local Noclip_Connection
    local Clip = false
+   local anti_knockback_connection
+   local antiKnockbackEnabled = false
 
    if cmd == "prefix" and split[1] then
       getgenv().AdminPrefix = split[1]
@@ -1734,6 +1742,85 @@ local function handleCommand(sender, message)
          notify("Kill", "Killing player: "..target.Name, 3)
       else
          notify("Kill", "Failed to spawn/find SchoolBus.", 3)
+      end
+   elseif cmd == "rejoin" or cmd == "rj" then
+      if #getgenv().Players:GetPlayers() <= 1 then
+         getgenv().LocalPlayer:Kick("\nRejoining...")
+         wait()
+         getgenv().TeleportService:Teleport(getgenv().PlaceID, getgenv().LocalPlayer)
+      else
+         getgenv().TeleportService:TeleportToPlaceInstance(getgenv().PlaceID, getgenv().JobID, getgenv().LocalPlayer)
+      end
+   elseif cmd == "antifling" then
+      getgenv().antiFlingEnabled = true
+      getgenv().antiKnockbackEnabled = true
+
+      local RunService = getgenv().RunService
+      local Players = getgenv().Players
+      local lp = getgenv().LocalPlayer
+
+      local function cleanUpForces()
+         local hrp = getgenv().HumanoidRootPart
+         if not hrp then return end
+
+         for _, obj in ipairs(hrp:GetChildren()) do
+            if obj:IsA("BodyMover") or obj:IsA("VectorForce") or obj:IsA("Torque") or obj:IsA("LinearVelocity") then
+               obj:Destroy()
+            end
+         end
+      end
+
+      local function onHeartbeat()
+         if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
+
+         local hrp = getgenv().HumanoidRootPart
+         local humanoid = lp.Character and lp.Character:FindFirstChildWhichIsA("Humanoid")
+         if not hrp or not humanoid then return end
+
+         local maxSpeed = 45
+         local maxAngularSpeed = 60
+
+         if hrp.Velocity.Magnitude > maxSpeed then
+            hrp.Velocity = hrp.Velocity.Unit * maxSpeed
+         end
+
+         if hrp.AssemblyLinearVelocity.Magnitude > maxSpeed then
+            hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity.Unit * maxSpeed
+         end
+
+         if hrp.RotVelocity.Magnitude > maxAngularSpeed then
+            hrp.RotVelocity = Vector3.zero
+         end
+
+         if hrp.AssemblyAngularVelocity.Magnitude > maxAngularSpeed then
+            hrp.AssemblyAngularVelocity = Vector3.zero
+         end
+
+         if humanoid.PlatformStand then
+            humanoid.PlatformStand = false
+         end
+         wait()
+         cleanUpForces()
+      end
+
+      if anti_knockback_connection then
+         anti_knockback_connection:Disconnect()
+      end
+      wait(0.2)
+      anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
+   elseif cmd == "unantifling" then
+      getgenv().antiFlingEnabled = false
+
+      if getgenv().antiFlingThing then
+         getgenv().antiFlingThing:Disconnect()
+         getgenv().antiFlingThing = nil
+      end
+
+      antiKnockbackEnabled = false
+
+      if anti_knockback_connection then
+         anti_knockback_connection:Disconnect()
+         anti_knockback_connection = nil
       end
    elseif cmd == "bring" and split[1] then
       local target = findplr(split[1])
