@@ -1,6 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
+local Script_Version = "V2.0.7"
 
 getgenv().Service_Wrap = function(serviceName)
     if cloneref then
@@ -277,7 +278,14 @@ local Messages = require(AppModules:FindFirstChild("Messages"))
 local Network = require(Core:FindFirstChild("Net"))
 local CCTV = require(Game:FindFirstChild("CCTV"))
 local Tween = require(Core:FindFirstChild("Tween"))
-wait(0.3)
+local Modules = ReplicatedStorage:FindFirstChild("Modules")
+local CCTV = require(Game:FindFirstChild("CCTV"))
+wait(0.2)
+getgenv().Modules = Modules
+getgenv().Core = Core
+getgenv().Game_Folder = Game
+getgenv().Net = Network
+wait(0.1)
 function send_function(arg1, arg2, arg3)
    if arg1 and arg2 and arg3 then
       Network.get(arg1, arg2, arg3)
@@ -297,6 +305,9 @@ function send_remote(arg1, arg2, arg3)
       Network.send(arg1)
    end
 end
+wait(0.1)
+getgenv().Get = send_function
+getgenv().Send = send_remote
 wait()
 function change_vehicle_color(Color, Vehicle)
    send_remote("vehicle_color", Color, Vehicle)
@@ -327,10 +338,12 @@ local function get_vehicle()
 
    return nil
 end
+wait(0.2)
+getgenv().get_vehicle = get_vehicle
 wait()
 task.wait(0.2)
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
-getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
+getgenv().Camera = getgenv().Workspace.CurrentCamera
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
 getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
 getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
@@ -871,6 +884,30 @@ function RGB_Phone(Boolean)
    end
 end
 
+function water_skie_trailer(Bool, Vehicle)
+   if not Vehicle then
+      return notify("Failure:", "You do not have a Vehicle spawned!", 5)
+   end
+
+   local HasTrailer = Vehicle:FindFirstChild("WaterSkies")
+
+   if Bool == true then
+      if HasTrailer then
+         return notify("Error:", "You already have the WaterSkies trailer!", 5)
+      else
+         send_function("add_trailer", Vehicle, "WaterSkies")
+      end
+   elseif Bool == false then
+      if HasTrailer then
+         send_function("add_trailer", Vehicle, "WaterSkies")
+      else
+         return notify("Failure:", "You do not have the WaterSkies trailer to take it off!", 5)
+      end
+   else
+      return notify("Failure:", "Invalid toggle value (expected true/false)", 5)
+   end
+end
+
 function EnableFly(speed)
    local HRP = getgenv().HumanoidRootPart
    local Humanoid = getgenv().Humanoid
@@ -953,9 +990,9 @@ local function CommandsMenu()
    cmdsUI.Parent = getgenv().PlayerGui
 
    local mainFrame = Instance.new("Frame")
-   mainFrame.Size = UDim2.new(0, 350, 0, 300)
+   mainFrame.Size = UDim2.new(0, 600, 0, 500)
    mainFrame.Position = UDim2.new(0.5, -175, 0.5, -150)
-   mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+   mainFrame.BackgroundColor3 = Color3.fromRGB(5, 0, 75)
    mainFrame.BorderSizePixel = 0
    mainFrame.Active = true
    mainFrame.Draggable = true
@@ -1001,38 +1038,78 @@ local function CommandsMenu()
 
    local cmdsString = [[
       {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle)
+
       {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
+
       {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone)
+
       {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone)
+
       {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone)
+
       {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone)
+
       {prefix}name [new name] - Change RP name
+
       {prefix}bio [bio] - Change RP bio
+
       {prefix}fly [speed] - Enable/disable flying
-      {prefix}unfly - Disables (Fly) command.
-      {prefix}autolockcar - Automatically (loop) locks your vehicle/car when there is one spawned.
-      {prefix}unautolockcar - Turn off/disables the loop that automatically locks your vehicle/car.
+
+      {prefix}unfly - Disables (Fly) command
+
+      {prefix}noclip - Enables Noclip, letting you walk through everything
+
+      {prefix}clip - Disables Noclip, so you cannot walk through everything
+
+      {prefix}trailer - Gives you the WaterSkies trailer (on any car/vehicle)
+
+      {prefix}autolockcar - Automatically (loop) locks your vehicle/car when there is one spawned
+
+      {prefix}unautolockcar - Turn off/disables the loop that automatically locks your vehicle/car
+
       {prefix}lockcar - Lock your car
+
       {prefix}unlockcar - Unlock your car
+
       {prefix}despawn - Despawn your car
+
       {prefix}bringcar - Teleport car to you and sit in it
+
       {prefix}nosit - Disable all VehicleSeats and Seats (anti-sit)
+
       {prefix}resit - Re-enable all Seats (undo anti-sit)
+
+      {prefix}view [player] - Smooth view's the target's Character
+
       {prefix}kill [player] - Kill target
+
       {prefix}bring [player] - Bring target
+
       {prefix}goto [player] - Teleports your Character to the target player
+
       {prefix}skydive [player] - Skydives target
-      {prefix}freepay - Gives you LifePremium for free
+
+      {prefix}freepay - Gives you LifePay Premium for free
+
       {prefix}caraccel [number] - Modifies your "max_acc" on your car/vehicle
+
       {prefix}carspeed [number] - Modifies your "max_speed" on your car/vehicle
+
       {prefix}accel [number] - Modifies your "acc_0_60" on your car/vehicle (take off time/speed)
+
       {prefix}gotocar - Teleports you straight to your car/vehicle directly
+
       {prefix}tpcar [player] - Teleports your vehicle/car to the specified target
+
       {prefix}antihouseban - Prevents you from being banned/kicked/teleported out of houses
+
       {prefix}unantiban - Turns off 'antihouseban' command completely
+
       {prefix}spawn [carName] - Spawn any car
+
       {prefix}prefix [symbol] - Change prefix
-      {prefix}inject / {prefix}attach - Secret.
+
+      {prefix}inject / {prefix}attach - Secret (???).
    ]]
 
    cmdsString = string.gsub(cmdsString, "{prefix}", currentPrefix)
@@ -1042,10 +1119,11 @@ local function CommandsMenu()
    cmdsText.Position = UDim2.new(0, 0, 0, 0)
    cmdsText.TextWrapped = true
    cmdsText.TextYAlignment = Enum.TextYAlignment.Top
-   cmdsText.TextColor3 = Color3.fromRGB(255, 255, 255)
-   cmdsText.TextSize = 15
+   cmdsText.TextColor3 = Color3.fromRGB(255, 0, 0)
+   cmdsText.TextSize = 18
    cmdsText.BackgroundTransparency = 1
-   cmdsText.Font = Enum.Font.Gotham
+   cmdsText.Font = Enum.Font.GothamBold
+   cmdsText.FontSize = Enum.FontSize.Size18
    cmdsText.TextXAlignment = Enum.TextXAlignment.Left
    cmdsText.Text = cmdsString
    cmdsText.Parent = scrollFrame
@@ -1085,9 +1163,9 @@ function CreateCreditsLabel()
    label.AnchorPoint = Vector2.new(0.5, 1)
    label.Position = UDim2.new(0.5, 0, 1, -10)
    label.Size = UDim2.new(0.6, 0, 0, 28)
-   label.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-   label.TextColor3 = Color3.fromRGB(255, 255, 255)
-   label.Text = "Made By: computerbinaries on Discord, Current Prefix: " .. tostring(getgenv().AdminPrefix)
+   label.BackgroundColor3 = Color3.fromRGB(175, 0, 0)
+   label.TextColor3 = Color3.fromRGB(0, 0, 0)
+   label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. tostring(getgenv().AdminPrefix)
    label.Font = Enum.Font.GothamBold
    label.TextScaled = true
    label.TextStrokeTransparency = 1
@@ -1109,7 +1187,7 @@ function CreateCreditsLabel()
    if typeof(getgenv().AdminPrefix) == "Instance" and getgenv().AdminPrefix:IsA("StringValue") then
       getgenv()._PrefixUpdateConnection = getgenv().AdminPrefix.Changed:Connect(function()
          lastPrefix = tostring(getgenv().AdminPrefix)
-         label.Text = ("Made By: computerbinaries on Discord, Current Prefix: %s"):format(lastPrefix)
+         label.Text = (tostring(Script_Version).."| ".."Made By: computerbinaries on Discord. | Current Prefix: %s"):format(lastPrefix)
       end)
    else
       task.spawn(function()
@@ -1118,7 +1196,7 @@ function CreateCreditsLabel()
             task.wait(0.3)
             if tostring(getgenv().AdminPrefix) ~= lastPrefix then
                lastPrefix = tostring(getgenv().AdminPrefix)
-               label.Text = ("Made By: computerbinaries on Discord, Current Prefix: %s"):format(lastPrefix)
+               label.Text = (tostring(Script_Version).."| ".."Made By: computerbinaries on Discord. | Current Prefix: %s"):format(lastPrefix)
             end
          end
       end)
@@ -1146,6 +1224,67 @@ end
 function lock_vehicle(Vehicle)
    send_function("lock_vehicle", Vehicle)
 end
+
+local originalCFrame
+local originalCameraType
+if getgenv().PlayerControls == nil then
+   local PlayerModule = require(getgenv().PlayerScripts:WaitForChild("PlayerModule"))
+   getgenv().PlayerControls = PlayerModule:GetControls()
+end
+wait(0.1)
+getgenv().viewTarget = function(targetCFrame, tweenTime)
+   print("Viewing Enabled.")
+   tweenTime = tweenTime or 0.5
+   local camera = getgenv().Camera
+   originalCFrame = camera.CFrame
+   originalCameraType = camera.CameraType
+
+   if getgenv().PlayerControls then
+      getgenv().PlayerControls:Disable()
+   end
+   wait(0.1)
+   camera.CameraType = Enum.CameraType.Scriptable
+
+   getgenv().Viewing_A_Player = true
+   local ts = getgenv().TweenService
+   local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+   local tween = ts:Create(camera, tweenInfo, {CFrame = targetCFrame})
+   tween:Play()
+end
+wait(0.1)
+getgenv().unview_player = function()
+   warn("Viewing Disabled.")
+   if not getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == false then
+      return warn("Unview was turned off, not viewing anybody.")
+   end
+
+   local camera = getgenv().Camera
+
+   if originalCFrame then
+      camera.CFrame = getgenv().originalCFrame
+   end
+   if originalCameraType then
+      camera.CameraType = getgenv().originalCameraType
+   else
+      camera.CameraType = Enum.CameraType.Custom
+   end
+   getgenv().Viewing_A_Player = false
+   wait(0.1)
+   if getgenv().PlayerControls then
+      getgenv().PlayerControls:Enable()
+      getgenv().Viewing_A_Player = false
+   else
+      notify("Failure:", "getgenv().PlayerControls does not exist, creating...", 5)
+      wait(0.2)
+      local PlayerModule = require(getgenv().PlayerScripts:WaitForChild("PlayerModule"))
+      getgenv().PlayerControls = PlayerModule:GetControls()
+      wait(0.5)
+      getgenv().PlayerControls:Enable()
+      getgenv().Viewing_A_Player = false
+   end
+end
+wait(0.1)
+warn("Setup viewing/spectating functions.")
 
 function attach_with_script()
    local Methods = {
@@ -1244,7 +1383,6 @@ wait()
 update_plot_areas()
 local AutoLockOn = false
 local AutoLockConnection = nil
-local AutoLockOn = false
 
 local function handleCommand(sender, message)
    if not Admins[sender.Name] then return end
@@ -1257,6 +1395,8 @@ local function handleCommand(sender, message)
    local cmd = table.remove(split, 1):lower()
    local args = split
    local Anti_Sit_Connection
+   local Noclip_Connection
+   local Clip = false
 
    if cmd == "prefix" and split[1] then
       getgenv().AdminPrefix = split[1]
@@ -1338,6 +1478,66 @@ local function handleCommand(sender, message)
       getgenv().ToggleAutoLock(true)
    elseif cmd == "unautolockcar" then
       getgenv().ToggleAutoLock(false)
+   elseif cmd == "noclip" then
+      if getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == true then
+         return notify("Failure:", "Noclip is already enabled!", 5)
+      end
+
+      Clip = false
+      getgenv().Noclip_Enabled = true
+      getgenv()._noclipModifiedParts = {}
+
+      local function NoclipLoop()
+         if not Clip and Character then
+            for _, part in ipairs(Character:GetDescendants()) do
+               if part:IsA("BasePart") and part.CanCollide then
+                  part.CanCollide = false
+                  getgenv()._noclipModifiedParts[part] = true
+               end
+            end
+         end
+      end
+
+      Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
+   elseif cmd == "clip" then
+      if not getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == false then
+         return notify("Failure:", "Noclip is not enabled!", 5)
+      end
+
+      if Noclip_Connection then
+         Noclip_Connection:Disconnect()
+      end
+      Clip = true
+      getgenv().Noclip_Enabled = false
+
+      if getgenv()._noclipModifiedParts then
+         for part, _ in pairs(getgenv()._noclipModifiedParts) do
+            if part and part:IsA("BasePart") then
+               part.CanCollide = true
+            end
+         end
+         getgenv()._noclipModifiedParts = nil
+      end
+   elseif cmd == "view" then
+      local View_Target = findplr(split[1])
+      if not View_Target then return notify("Failure:", "Target was not found or does not exist!", 5) end
+      wait(0.1)
+      if getgenv().Viewing_A_Player then return notify("Failure:", "Your already viewing someone, do {prefix}unview to stop.", 5) end
+
+      if View_Target and View_Target.Character and View_Target.Character:FindFirstChild("Humanoid") then
+         local Target_Char = View_Target.Character or View_Target.CharacterAdded:Wait()
+         local Target_HRP = Target_Char:FindFirstChild("HumanoidRootPart") or Target_Char:WaitForChild("Humanoid", 5)
+         
+         getgenv().viewTarget(Target_HRP.CFrame * CFrame.new(0, 5, 0), 1)
+      end
+   elseif cmd == "unview" then
+      if not getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == false then
+         return notify("Failure:", "Your not viewing anybody!", 5)
+      end
+
+      if getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == true then
+         getgenv().unview_player()
+      end
    elseif cmd == "lockcar" then
       local Current_Car = get_vehicle()
       if not Current_Car then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
@@ -1369,6 +1569,10 @@ local function handleCommand(sender, message)
       elseif Current_Car.Name == "Chiron" then
          spawn_any_vehicle("Chiron")
       end
+   elseif cmd == "trailer" then
+      water_skie_trailer(true, get_vehicle())
+   elseif cmd == "notrailer" then
+      water_skie_trailer(false, get_vehicle())
    elseif cmd == "bringcar" then
       local Vehicle = get_vehicle()
       if not Vehicle then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
@@ -1386,13 +1590,13 @@ local function handleCommand(sender, message)
       end
 
       if not myVehicle then return notify("Failure:", "No owned SchoolBus found", 5) end
-      --[[local seat = myVehicle:FindFirstChild("VehicleSeat")
+      local seat = myVehicle:FindFirstChild("VehicleSeat")
       if seat and getgenv().Humanoid then
          getgenv().Character:PivotTo(seat.CFrame)
          task.wait(0.2)
          seat:Sit(getgenv().Humanoid)
-      end--]]
-
+      end
+      wait(0.1)
       myVehicle:PivotTo(Old_CF_BringCar * CFrame.new(0, 10, 0))
       wait(0.1)
       notify("Success:", "Brung car to player: "..tostring(getgenv().LocalPlayer), 5)
@@ -1444,11 +1648,10 @@ local function handleCommand(sender, message)
          notify("Success:", "Teleported vehicle to player: "..tostring(Goto_Player), 5)
       end
    elseif cmd == "nosit" then
-      if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
+      if getgenv().Anti_Sit_Enabled then
          return notify("Error:", "You've already enabled no-sit!", 5)
       end
 
-      local Workspace = getgenv().Workspace or game:GetService("Workspace")
       local function handleSeat(seat)
          if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
             seat.CanCollide = false
@@ -1457,17 +1660,23 @@ local function handleCommand(sender, message)
          end
       end
 
-      notify("Success:", "Successfully enabled 'anti-sit'!", 5)
+      local function scanAndHandle(instance)
+         handleSeat(instance)
+         for _, child in ipairs(instance:GetDescendants()) do
+            handleSeat(child)
+         end
+      end
 
+      notify("Success:", "Successfully enabled 'anti-sit'!", 5)
       getgenv().Anti_Sit_Enabled = true
-      wait()
-      for _, v in ipairs(Workspace:GetDescendants()) do
+
+      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
          handleSeat(v)
       end
 
-      Anti_Sit_Connection = Workspace.DescendantAdded:Connect(function(v)
+      Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
          if getgenv().Anti_Sit_Enabled then
-            handleSeat(v)
+            scanAndHandle(v)
          end
       end)
    elseif cmd == "resit" then
@@ -1774,14 +1983,16 @@ local function handleCommand(sender, message)
       CommandsMenu()
    end
 end
+wait(0.5)
+notify("Success:", "We have hooked the Camera successfully.", 5)
 wait(0.2)
 print("[Life Together-RP : Admin_Commands]: Setting up command receiver...")
 getgenv().TextChatService.MessageReceived:Connect(function(msg)
-    if not msg.TextSource then return end
-    local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
-    if sender and msg.Text then
-        handleCommand(sender, msg.Text)
-    end
+   if not msg.TextSource then return end
+   local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
+   if sender and msg.Text then
+      handleCommand(sender, msg.Text)
+   end
 end)
 wait(0.2)
 getgenv().LifeTogetherRP_Admin = true
