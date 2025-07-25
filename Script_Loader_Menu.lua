@@ -484,6 +484,8 @@ for name, data in pairs(scripts) do
 	m:Button(name, function()
 		if game.PlaceId == data.id then
 			loadstring(game:HttpGet(data.link))()
+            wait(0.5)
+            p:DestroyGui()
 		else
 			getgenv().notify("Failure:", "You're not in the correct game: " .. name .. ".", 5)
 		end
