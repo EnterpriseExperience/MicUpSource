@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.1.2"
+local Script_Version = "V2.1.5"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1435,11 +1435,10 @@ local function handleCommand(sender, message)
    local split = message:split(" ")
    local cmd = table.remove(split, 1):lower()
    local args = split
-   local Anti_Sit_Connection
-   local Noclip_Connection
+   getgenv().Anti_Sit_Connection = nil
+   getgenv().anti_knockback_connection = nil
+   getgenv().Noclip_Connection = nil
    local Clip = false
-   local anti_knockback_connection
-   local antiKnockbackEnabled = false
 
    if cmd == "prefix" and split[1] then
       getgenv().AdminPrefix = split[1]
@@ -1485,14 +1484,15 @@ local function handleCommand(sender, message)
       DisableFlyScript()
    elseif cmd == "autolockcar" then
       local RunService = getgenv().RunService
+      getgenv().AutoLockConnection = nil
 
       getgenv().ToggleAutoLock = function(state)
          if not state then
-            AutoLockOn = false
+            getgenv().AutoLockOn = false
 
-            if AutoLockConnection then
-               AutoLockConnection:Disconnect()
-               AutoLockConnection = nil
+            if getgenv().AutoLockConnection then
+               getgenv().AutoLockConnection:Disconnect()
+               getgenv().AutoLockConnection = nil
             end
 
             local car = get_vehicle()
@@ -1505,12 +1505,12 @@ local function handleCommand(sender, message)
             end
             return 
          else
-            AutoLockOn = true
+            getgenv().AutoLockOn = true
          end
 
          notify("AutoLock", "AutoLock enabled. Waiting for vehicle...", 5)
 
-         AutoLockConnection = RunService.Heartbeat:Connect(function()
+         getgenv().AutoLockConnection = getgenv().RunService.Heartbeat:Connect(function()
             local car = get_vehicle()
             if car and car:GetAttribute("locked") ~= true then
                lock_vehicle(car)
@@ -1531,27 +1531,31 @@ local function handleCommand(sender, message)
       getgenv()._noclipModifiedParts = {}
 
       local function NoclipLoop()
-         if not Clip and Character then
-            for _, part in ipairs(Character:GetDescendants()) do
+         if not Clip and getgenv().Character then
+            for _, part in ipairs(getgenv().Character:GetDescendants()) do
                if part:IsA("BasePart") and part.CanCollide then
                   part.CanCollide = false
-                  getgenv()._noclipModifiedParts[part] = true
+                  if getgenv()._noclipModifiedParts then
+                     getgenv()._noclipModifiedParts[part] = true
+                  end
                end
             end
          end
       end
 
-      Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
+      getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
    elseif cmd == "clip" then
       if not getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == false then
          return notify("Failure:", "Noclip is not enabled!", 5)
       end
 
-      if Noclip_Connection then
-         Noclip_Connection:Disconnect()
+      if getgenv().Noclip_Connection then
+         getgenv().Noclip_Connection:Disconnect()
+         getgenv().Noclip_Connection = nil
       end
-      Clip = true
+
       getgenv().Noclip_Enabled = false
+      Clip = true
 
       if getgenv()._noclipModifiedParts then
          for part, _ in pairs(getgenv()._noclipModifiedParts) do
@@ -1717,7 +1721,7 @@ local function handleCommand(sender, message)
          handleSeat(v)
       end
 
-      Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
+      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
          if getgenv().Anti_Sit_Enabled then
             scanAndHandle(v)
          end
@@ -1729,9 +1733,9 @@ local function handleCommand(sender, message)
 
       getgenv().Anti_Sit_Enabled = false
 
-      if Anti_Sit_Connection then
-         Anti_Sit_Connection:Disconnect()
-         Anti_Sit_Connection = nil
+      if getgenv().Anti_Sit_Connection then
+         getgenv().Anti_Sit_Connection:Disconnect()
+         getgenv().Anti_Sit_Connection = nil
       end
 
       for _, v in ipairs(Workspace:GetDescendants()) do
@@ -1836,27 +1840,22 @@ local function handleCommand(sender, message)
          cleanUpForces()
       end
 
-      if anti_knockback_connection then
-         anti_knockback_connection:Disconnect()
+      if getgenv().anti_knockback_connection then
+         getgenv().anti_knockback_connection:Disconnect()
+         getgenv().anti_knockback_connection = nil
       end
       wait(0.2)
-      anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
+      getgenv().anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
    elseif cmd == "unantifling" then
-      getgenv().antiFlingEnabled = false
+   getgenv().antiFlingEnabled = false
+   getgenv().antiKnockbackEnabled = false
 
-      if getgenv().antiFlingThing then
-         getgenv().antiFlingThing:Disconnect()
-         getgenv().antiFlingThing = nil
-      end
+   notify("Success:", "Disabled anti-fling", 5)
 
-      antiKnockbackEnabled = false
-
-      notify("Success:", "Disabled anti-fling", 5)
-
-      if anti_knockback_connection then
-         anti_knockback_connection:Disconnect()
-         anti_knockback_connection = nil
-      end
+   if getgenv().anti_knockback_connection then
+      getgenv().anti_knockback_connection:Disconnect()
+      getgenv().anti_knockback_connection = nil
+   end
    elseif cmd == "bring" and split[1] then
       local target = findplr(split[1])
       if not target then return notify("Bring:", "Target not found.", 3) end
