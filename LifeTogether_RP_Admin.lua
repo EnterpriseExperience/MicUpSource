@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.1.1"
+local Script_Version = "V2.1.2"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1093,6 +1093,8 @@ local function CommandsMenu()
       {prefix}clip - Disables Noclip, so you cannot walk through everything
 
       {prefix}trailer - Gives you the WaterSkies trailer (on any car/vehicle)
+
+      {prefix}notrailer - Removes the WaterSkies trailer (on your current spawned car/vehicle)
 
       {prefix}autolockcar - Automatically (loop) locks your vehicle/car when there is one spawned
 
