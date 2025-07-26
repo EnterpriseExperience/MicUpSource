@@ -1023,7 +1023,7 @@ local function CommandsMenu()
    local mainFrame = Instance.new("Frame")
    mainFrame.Size = UDim2.new(0, 600, 0, 500)
    mainFrame.Position = UDim2.new(0.5, -175, 0.5, -150)
-   mainFrame.BackgroundColor3 = Color3.fromRGB(5, 0, 75)
+   mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
    mainFrame.BorderSizePixel = 0
    mainFrame.Active = true
    mainFrame.Draggable = true
