@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.1.5"
+local Script_Version = "V2.1.5-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
