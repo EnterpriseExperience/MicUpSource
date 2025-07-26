@@ -630,6 +630,33 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
 end)
+wait(0.5)
+local success, response = pcall(function()
+   local Net = require(getgenv().Core:FindFirstChild("Net"))
+
+   Net.get("spawn_vehicle", "SVJ")
+   wait(2)
+
+   return get_vehicle()
+end)
+
+if success and response then
+   print("[✅] This script CAN run in this executor! Got successful response: "..tostring(response).." [✅]")
+   wait(1)
+   if get_vehicle() and getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
+      getgenv().Humanoid:ChangeState(3)
+      wait(0.2)
+      require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", "SVJ")
+   elseif get_vehicle() and getgenv().Humanoid.Sit == false then
+      require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", "SVJ")
+   end
+else
+   warn("[❌] | Vehicle spawn failed | Failed Response | [❌]")
+   if not success then
+      notify("Failure:", "This script does not work on this executor!", 8)
+      return notify("Error:", "You cannot run this script, we're sorry!", 10)
+   end
+end
 wait()
 local Admins = {
    [getgenv().LocalPlayer.Name] = true
@@ -1088,6 +1115,8 @@ local function CommandsMenu()
       {prefix}resit - Re-enable all Seats (undo anti-sit)
 
       {prefix}view [player] - Smooth view's the target's Character
+
+      {prefix}unview - Disables the 'view' command
 
       {prefix}kill [player] - Kill target
 
@@ -1770,6 +1799,8 @@ local function handleCommand(sender, message)
          end
       end
 
+      notify("Success:", "Enabled anti-fling, you will not be able to be flung.", 5)
+
       local function onHeartbeat()
          if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
 
@@ -1817,6 +1848,8 @@ local function handleCommand(sender, message)
       end
 
       antiKnockbackEnabled = false
+
+      notify("Success:", "Disabled anti-fling", 5)
 
       if anti_knockback_connection then
          anti_knockback_connection:Disconnect()
@@ -1892,6 +1925,7 @@ local function handleCommand(sender, message)
       local Char_Pos = Target_Char:GetPivot() * CFrame.new(0, 5, 0)
 
       if Target_Char and getgenv().Character and Target_Char:FindFirstChild("HumanoidRootPart") then
+         notify("Success:", "Teleporting to player: "..tostring(target), 5)
          if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
             getgenv().Humanoid:ChangeState(3)
             wait(0.2)
