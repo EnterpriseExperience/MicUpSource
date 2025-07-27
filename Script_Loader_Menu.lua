@@ -477,7 +477,11 @@ local scripts = {
     ["Player or AI"] = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
-    }
+    },
+    ["LifeTogether ADMIN"] = {
+        id = 13967668166,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
+    },
 }
 
 for name, data in pairs(scripts) do
