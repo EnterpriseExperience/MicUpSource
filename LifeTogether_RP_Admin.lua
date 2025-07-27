@@ -1112,9 +1112,9 @@ local function CommandsMenu()
 
       {prefix}bringcar - Teleport car to you and sit in it
 
-      {prefix}nosit - Disable all VehicleSeats and Seats (anti-sit)
+      {prefix}nosit / {prefix}antisit - Disable all VehicleSeats and Seats (anti-sit)
 
-      {prefix}resit - Re-enable all Seats (undo anti-sit)
+      {prefix}resit / {prefix}unantisit - Re-enable all Seats (undo anti-sit)
 
       {prefix}view [player] - Smooth view's the target's Character
 
@@ -1719,7 +1719,7 @@ local function handleCommand(sender, message)
          wait(0.1)
          notify("Success:", "Teleported vehicle to player: "..tostring(Goto_Player), 5)
       end
-   elseif cmd == "nosit" then
+   elseif cmd == "nosit" or cmd == "antisit" then
       if getgenv().Anti_Sit_Enabled then
          return notify("Error:", "You've already enabled no-sit!", 5)
       end
@@ -1751,7 +1751,7 @@ local function handleCommand(sender, message)
             scanAndHandle(v)
          end
       end)
-   elseif cmd == "resit" then
+   elseif cmd == "resit" or cmd == "unantisit" then
       if not getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == false then
          return notify("Failure:", "Anti Sit is not enabled!", 5)
       end
