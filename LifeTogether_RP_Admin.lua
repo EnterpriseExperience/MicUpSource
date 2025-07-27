@@ -1595,6 +1595,7 @@ local function handleCommand(sender, message)
       Clip = false
       getgenv().Noclip_Enabled = true
       getgenv()._noclipModifiedParts = {}
+      notify("Success:", "Enabled Noclip.", 5)
 
       local function NoclipLoop()
          if not Clip and getgenv().Character then
@@ -1622,6 +1623,7 @@ local function handleCommand(sender, message)
 
       getgenv().Noclip_Enabled = false
       Clip = true
+      notify("Success:", "Disabled Noclip", 5)
 
       if getgenv()._noclipModifiedParts then
          for part, _ in pairs(getgenv()._noclipModifiedParts) do
