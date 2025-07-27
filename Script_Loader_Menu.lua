@@ -458,6 +458,10 @@ wait()
 local m = mainTab:CreateFolder("Scripts")
 
 local scripts = {
+    ["Flames Hub (UNIVERSAL)"] = {
+		id = 0,
+		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"
+	},
 	["Tower Of Misery"] = {
 		id = 4954752502,
 		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua"
@@ -503,3 +507,11 @@ for name, data in pairs(scripts) do
 		ts:Teleport(data.id, lp)
 	end)
 end
+
+m:Button("Flames Hub (Universal)", function()
+    local data = scripts["Flames Hub (UNIVERSAL)"]
+    
+    loadstring(game:HttpGet(data.link))()
+    wait(0.5)
+    p:DestroyGui()
+end)
