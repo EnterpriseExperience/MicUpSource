@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.1.7-LifeAdmin"
+local Script_Version = "V2.2.1-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -453,6 +453,14 @@ function vehicle_kill_player(TargetPlayer)
    end
 end
 
+local function decodeHTMLEntities(str)
+    return str:gsub("&gt;", ">")
+              :gsub("&lt;", "<")
+              :gsub("&amp;", "&")
+              :gsub("&quot;", '"')
+              :gsub("&#39;", "'")
+end
+
 function vehicle_skydive_player(TargetPlayer)
    if not TargetPlayer or not TargetPlayer.Character then return end
    local targetChar = TargetPlayer.Character
@@ -658,11 +666,28 @@ else
    end
 end
 wait()
+local fileName = "LifeTogether_Admin_Configuration.json"
+
+local function loadPrefix()
+   if isfile and isfile(fileName) then
+      local raw = readfile(fileName)
+      local success, decoded = pcall(function()
+         return HttpService:JSONDecode(raw)
+      end)
+      if success and decoded and decoded.prefix then
+         return tostring(decoded.prefix)
+      end
+   end
+   return ";"
+end
+wait(0.3)
 local Admins = {
    [getgenv().LocalPlayer.Name] = true
 }
 wait()
-getgenv().AdminPrefix = "-"
+getgenv().AdminPrefix = loadPrefix() or ";"
+wait(0.2)
+print("[Prefix]: Loaded prefix ->", tostring(getgenv().AdminPrefix))
 wait(0.5)
 local Workspace = getgenv().Workspace
 local Players = getgenv().Players
@@ -764,6 +789,15 @@ function rainbow_skin(boolean)
          send_remote("skin_tone", Old_Skintone)
       end
    end
+end
+
+local function savePrefix(newPrefix)
+    if writefile then
+        local data = { prefix = newPrefix }
+        writefile(fileName, HttpService:JSONEncode(data))
+    else
+        warn("Your executor does not support 'writefile'")
+    end
 end
 
 function anti_report_func()
@@ -1206,9 +1240,11 @@ function CreateCreditsLabel()
    label.Size = UDim2.new(0.6, 0, 0, 28)
    label.BackgroundColor3 = Color3.fromRGB(175, 0, 0)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
-   label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. tostring(getgenv().AdminPrefix)
+   local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
+   label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. prefix
    label.Font = Enum.Font.GothamBold
    label.TextScaled = true
+   label.RichText = false
    label.TextStrokeTransparency = 1
    label.BackgroundTransparency = 0
    label.ZIndex = 10
@@ -1228,7 +1264,8 @@ function CreateCreditsLabel()
    if typeof(getgenv().AdminPrefix) == "Instance" and getgenv().AdminPrefix:IsA("StringValue") then
       getgenv()._PrefixUpdateConnection = getgenv().AdminPrefix.Changed:Connect(function()
          lastPrefix = tostring(getgenv().AdminPrefix)
-         label.Text = (tostring(Script_Version).." | ".."Made By: computerbinaries on Discord. | Current Prefix: %s"):format(lastPrefix)
+         local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
+         label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. prefix
       end)
    else
       task.spawn(function()
@@ -1237,7 +1274,8 @@ function CreateCreditsLabel()
             task.wait(0.3)
             if tostring(getgenv().AdminPrefix) ~= lastPrefix then
                lastPrefix = tostring(getgenv().AdminPrefix)
-               label.Text = (tostring(Script_Version).." | ".."Made By: computerbinaries on Discord. | Current Prefix: %s"):format(lastPrefix)
+               local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
+               label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. prefix
             end
          end
       end)
@@ -1446,6 +1484,8 @@ function update_plot_areas()
    end
 end
 wait()
+savePrefix(getgenv().AdminPrefix)
+wait()
 update_plot_areas()
 local AutoLockOn = false
 local AutoLockConnection = nil
@@ -1467,6 +1507,7 @@ local function handleCommand(sender, message)
 
    if cmd == "prefix" and split[1] then
       getgenv().AdminPrefix = split[1]
+      savePrefix(getgenv().AdminPrefix)
       wait(0.1)
       notify("Prefix", "Prefix changed to '" .. split[1] .. "'", 5)
       return 
