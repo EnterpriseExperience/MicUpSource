@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.1.5-LifeAdmin"
+local Script_Version = "V2.1.7-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -301,11 +301,11 @@ function send_function(arg1, arg2, arg3)
 end
 
 function send_remote(arg1, arg2, arg3)
-   if arg1 and arg2 and arg3 then
+   if arg1 ~= nil and arg2 ~= nil and arg3 ~= nil then
       Network.send(arg1, arg2, arg3)
-   elseif arg1 and arg2 then
+   elseif arg1 ~= nil and arg2 ~= nil then
       Network.send(arg1, arg2)
-   elseif arg1 then
+   elseif arg1 ~= nil then
       Network.send(arg1)
    end
 end
@@ -1228,7 +1228,7 @@ function CreateCreditsLabel()
    if typeof(getgenv().AdminPrefix) == "Instance" and getgenv().AdminPrefix:IsA("StringValue") then
       getgenv()._PrefixUpdateConnection = getgenv().AdminPrefix.Changed:Connect(function()
          lastPrefix = tostring(getgenv().AdminPrefix)
-         label.Text = (tostring(Script_Version).."| ".."Made By: computerbinaries on Discord. | Current Prefix: %s"):format(lastPrefix)
+         label.Text = (tostring(Script_Version).." | ".."Made By: computerbinaries on Discord. | Current Prefix: %s"):format(lastPrefix)
       end)
    else
       task.spawn(function()
@@ -1237,7 +1237,7 @@ function CreateCreditsLabel()
             task.wait(0.3)
             if tostring(getgenv().AdminPrefix) ~= lastPrefix then
                lastPrefix = tostring(getgenv().AdminPrefix)
-               label.Text = (tostring(Script_Version).."| ".."Made By: computerbinaries on Discord. | Current Prefix: %s"):format(lastPrefix)
+               label.Text = (tostring(Script_Version).." | ".."Made By: computerbinaries on Discord. | Current Prefix: %s"):format(lastPrefix)
             end
          end
       end)
@@ -1273,47 +1273,73 @@ if getgenv().PlayerControls == nil then
    getgenv().PlayerControls = PlayerModule:GetControls()
 end
 wait(0.1)
-getgenv().viewTarget = function(targetCFrame, tweenTime)
+getgenv().viewTarget = function(targetHRP, tweenTime)
    print("Viewing Enabled.")
    tweenTime = tweenTime or 0.5
+
    local camera = getgenv().Camera
-   originalCFrame = camera.CFrame
-   originalCameraType = camera.CameraType
+   local ts = getgenv().TweenService
+   local RunService = getgenv().RunService
+
+   getgenv().ORIGINAL_CAMERA_CFRAME = camera.CFrame
+   getgenv().ORIGINAL_CAMERA_TYPE = camera.CameraType
 
    if getgenv().PlayerControls then
       getgenv().PlayerControls:Disable()
    end
+
    wait(0.1)
    camera.CameraType = Enum.CameraType.Scriptable
-
    getgenv().Viewing_A_Player = true
-   local ts = getgenv().TweenService
+
+   local offset = CFrame.new(0, 3, 8) * CFrame.Angles(0, math.rad(180), 0)
+   local initialPosition = targetHRP.CFrame * offset
+
    local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
-   local tween = ts:Create(camera, tweenInfo, {CFrame = targetCFrame})
+   local tween = ts:Create(camera, tweenInfo, {CFrame = initialPosition})
    tween:Play()
+
+   if getgenv().ViewConnection then
+      getgenv().ViewConnection:Disconnect()
+      getgenv().ViewConnection = nil
+   end
+
+   tween.Completed:Connect(function()
+      getgenv().ViewConnection = RunService.RenderStepped:Connect(function()
+         if targetHRP and targetHRP.Parent then
+            camera.CFrame = targetHRP.CFrame * offset
+         end
+      end)
+   end)
 end
 wait(0.1)
 getgenv().unview_player = function()
    warn("Viewing Disabled.")
-   if not getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == false then
+   if not getgenv().Viewing_A_Player then
       return warn("Unview was turned off, not viewing anybody.")
    end
 
    local camera = getgenv().Camera
 
-   if originalCFrame then
-      camera.CFrame = getgenv().originalCFrame
+   if getgenv().ViewConnection then
+      getgenv().ViewConnection:Disconnect()
+      getgenv().ViewConnection = nil
    end
-   if originalCameraType then
-      camera.CameraType = getgenv().originalCameraType
+
+   if getgenv().ORIGINAL_CAMERA_CFRAME then
+      camera.CFrame = getgenv().ORIGINAL_CAMERA_CFRAME
+   end
+   if getgenv().ORIGINAL_CAMERA_TYPE then
+      camera.CameraType = getgenv().ORIGINAL_CAMERA_TYPE
    else
       camera.CameraType = Enum.CameraType.Custom
    end
+
    getgenv().Viewing_A_Player = false
    wait(0.1)
+
    if getgenv().PlayerControls then
       getgenv().PlayerControls:Enable()
-      getgenv().Viewing_A_Player = false
    else
       notify("Failure:", "getgenv().PlayerControls does not exist, creating...", 5)
       wait(0.2)
@@ -1321,7 +1347,6 @@ getgenv().unview_player = function()
       getgenv().PlayerControls = PlayerModule:GetControls()
       wait(0.5)
       getgenv().PlayerControls:Enable()
-      getgenv().Viewing_A_Player = false
    end
 end
 wait(0.1)
@@ -1575,7 +1600,7 @@ local function handleCommand(sender, message)
          local Target_Char = View_Target.Character or View_Target.CharacterAdded:Wait()
          local Target_HRP = Target_Char:FindFirstChild("HumanoidRootPart") or Target_Char:WaitForChild("Humanoid", 5)
          
-         getgenv().viewTarget(Target_HRP.CFrame * CFrame.new(0, 5, 0), 1)
+         getgenv().viewTarget(Target_HRP, 1)
       end
    elseif cmd == "unview" then
       if not getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == false then
