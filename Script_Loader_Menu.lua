@@ -458,10 +458,6 @@ wait()
 local m = mainTab:CreateFolder("Scripts")
 
 local scripts = {
-    ["Flames Hub (UNIVERSAL)"] = {
-		id = 0,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"
-	},
 	["Tower Of Misery"] = {
 		id = 4954752502,
 		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua"
@@ -470,7 +466,7 @@ local scripts = {
 		id = 54865335,
 		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"
 	},
-	["Life Together RP"] = {
+	["LifeTogether RP"] = {
 		id = 13967668166,
 		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
 	},
@@ -482,16 +478,12 @@ local scripts = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
     },
-    ["LifeTogether ADMIN"] = {
-        id = 13967668166,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
-    },
 }
 
 for name, data in pairs(scripts) do
 	m:Button(name, function()
-		if game.PlaceId == data.id then
-			loadstring(game:HttpGet(data.link))()
+		if getgenv().PlaceID == data.id then
+			loadstring(getgenv().Game:HttpGet(data.link))()
             wait(0.5)
             p:DestroyGui()
 		else
@@ -509,9 +501,13 @@ for name, data in pairs(scripts) do
 end
 
 m:Button("Flames Hub (Universal)", function()
-    local data = scripts["Flames Hub (UNIVERSAL)"]
-    
-    loadstring(game:HttpGet(data.link))()
-    wait(0.5)
+    loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
+end)
+
+m:Button("LifeTogether Cmds", function()
+    loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"))()
+end)
+
+m:Button("Destroy GUI", function()
     p:DestroyGui()
 end)
