@@ -457,7 +457,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.5.9-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | 1.6.4-LIFE | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -520,7 +520,7 @@ local Tab4 = Window:CreateTab("🏎️ Vehicle 🏎️", 0)
 local Section4 = Tab4:CreateSection("| 🏎️ Vehicle Content 🏎️ |")
 local Tab5 = Window:CreateTab("📱 Phone 📱", 0)
 local Section4 = Tab5:CreateSection("| 📱 Phone Section 📱 |")
-
+wait()
 local Modules = ReplicatedStorage:FindFirstChild("Modules")
 local Core = Modules:FindFirstChild("Core")
 local Game = Modules:FindFirstChild("Game")
@@ -535,26 +535,37 @@ local AppModules = Phone_Module:FindFirstChild("AppModules")
 local Messages = require(AppModules:FindFirstChild("Messages"))
 local Network = require(Core:FindFirstChild("Net"))
 local CCTV = require(Game:FindFirstChild("CCTV"))
-wait(0.3)
+local Tween = require(Core:FindFirstChild("Tween"))
+local Modules = ReplicatedStorage:FindFirstChild("Modules")
+local CCTV = require(Game:FindFirstChild("CCTV"))
+wait(0.2)
+getgenv().Modules = Modules
+getgenv().Core = Core
+getgenv().Game_Folder = Game
+getgenv().Net = Network
+wait(0.1)
 function send_function(arg1, arg2, arg3)
-    if arg1 and arg2 and arg3 then
-        Network.get(arg1, arg2, arg3)
-    elseif arg1 and arg2 then
-        Network.get(arg1, arg2)
-    elseif arg1 then
-        Network.get(arg1)
-    end
+   if arg1 and arg2 and arg3 then
+      Network.get(arg1, arg2, arg3)
+   elseif arg1 and arg2 then
+      Network.get(arg1, arg2)
+   elseif arg1 then
+      Network.get(arg1)
+   end
 end
 
 function send_remote(arg1, arg2, arg3)
-    if arg1 and arg2 and arg3 then
-        Network.send(arg1, arg2, arg3)
-    elseif arg1 and arg2 then
-        Network.send(arg1, arg2)
-    elseif arg1 then
-        Network.send(arg1)
-    end
+   if arg1 ~= nil and arg2 ~= nil and arg3 ~= nil then
+      Network.send(arg1, arg2, arg3)
+   elseif arg1 ~= nil and arg2 ~= nil then
+      Network.send(arg1, arg2)
+   elseif arg1 ~= nil then
+      Network.send(arg1)
+   end
 end
+wait(0.1)
+getgenv().Get = send_function
+getgenv().Send = send_remote
 wait(0.2)
 function sit_in_vehicle(Vehicle)
     if not Vehicle then return getgenv().notify("Failure:", "You do not have a Vehicle! spawn one.", 5) end
@@ -1339,7 +1350,7 @@ function vehicle_void_player(TargetPlayer)
     local voidCF = voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID") and voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID").CFrame
     if not voidCF then return end
 
-    local MyPlayer = game.Players.LocalPlayer
+    local MyPlayer = getgenv().LocalPlayer
     local MyChar = getgenv().Character or MyPlayer.Character
     local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
     local MyBus = nil
@@ -1814,6 +1825,168 @@ Callback = function(is_antisit_enabled)
                 v:SetAttribute("Disabled", false)
             end
         end
+    end
+end,})
+
+local Phone_GUI = getgenv().PlayerGui:FindFirstChild("Phone")
+if not Phone_GUI then
+    if getgenv().NoNotifications_Phone then
+        getgenv().NoNotifications_Phone:Set(false)
+    end
+    getgenv().notify("Failure:", "Phone GUI does not exist in LocalPlayer's PlayerGui!", 5)
+end
+local Settings_Gui_Phone = Phone_GUI:FindFirstChild("Settings")
+if not Settings_Gui_Phone then
+    if getgenv().NoNotifications_Phone then
+        getgenv().NoNotifications_Phone:Set(false)
+    end
+    getgenv().notify("Failure:", "Settings GUI does not exist in Phone GUI!", 5)
+end
+local Master_Frame = Settings_Gui_Phone:FindFirstChild("MasterFrame")
+if not Master_Frame then
+    if getgenv().NoNotifications_Phone then
+        getgenv().NoNotifications_Phone:Set(false)
+    end
+    getgenv().notify("Failure:", "MasterFrame : Frame does not exist in Settings-Phone GUI!", 5)
+end
+local Holder_Frame = Master_Frame:FindFirstChild("Holder")
+if not Holder_Frame then
+    if getgenv().NoNotifications_Phone then
+        getgenv().NoNotifications_Phone:Set(false)
+    end
+end
+local Settings_Frame = Holder_Frame:FindFirstChild("Settings")
+if not Settings_Frame then
+    if getgenv().NoNotifications_Phone then
+        getgenv().NoNotifications_Phone:Set(false)
+    end
+end
+local SettingsSliderFrame = Settings_Frame:FindFirstChild("SettingsSliderFrame")
+if not SettingsSliderFrame then
+    if getgenv().NoNotifications_Phone then
+        getgenv().NoNotifications_Phone:Set(false)
+    end
+end
+
+local all_buttons_parent = SettingsSliderFrame:FindFirstChild("SettingsNotificationsHolder")
+if not all_buttons_parent then
+    if getgenv().NoNotifications_Phone then
+        getgenv().NoNotifications_Phone:Set(false)
+    end
+    getgenv().notify("Error:", "This was probably patched, cannot find SettingsNotifsHolder", 5)
+end
+local Phone_Module = getgenv().Game_Folder:FindFirstChild("Phone")
+local App_Modules = Phone_Module:FindFirstChild("AppModules")
+local Games = App_Modules:FindFirstChild("Games")
+local All_Apps = {}
+local all_buttons_tbl = {}
+
+local function FindModule(folder, name)
+    local found = folder:FindFirstChild(name)
+    if not found then
+        warn("Missing module:", name)
+    end
+    return found
+end
+
+local function collect_all_buttons()
+    for _, v in ipairs(all_buttons_parent:GetChildren()) do
+        if v:IsA("TextButton") then
+            table.insert(all_buttons_tbl, v)
+        end
+    end
+end
+
+local function isColorClose(color1, color2, tolerance)
+    tolerance = tolerance or 2
+    return math.abs(color1.R - color2.R) < tolerance / 255 and
+        math.abs(color1.G - color2.G) < tolerance / 255 and
+        math.abs(color1.B - color2.B) < tolerance / 255
+end
+
+local function isEnabled(button)
+    local toggleFrame = button:FindFirstChild("NotificationsToggle")
+    if toggleFrame and toggleFrame:IsA("Frame") then
+        return isColorClose(toggleFrame.BackgroundColor3, Color3.fromRGB(110, 220, 95))
+    end
+    return false
+end
+
+if type(all_buttons_tbl) == "table" and next(all_buttons_tbl) == nil then
+    collect_all_buttons()
+end
+
+local preset_modules = {
+    ["Balloon Game"] = FindModule(Games, "Balloon Game"),
+    ["Bouncy Bird"] = FindModule(Games, "Bouncy Bird"),
+    ["Monster Slayer"] = FindModule(Games, "Monster Slayer"),
+    ["Pocket Cookies"] = FindModule(Games, "Pocket Cookies"),
+    ["Stacking Blocks"] = FindModule(Games, "Stacking Blocks"),
+}
+
+for _, v in ipairs(App_Modules:GetChildren()) do
+    table.insert(All_Apps, v)
+end
+wait(0.3)
+getgenv().NoNotifications_Phone = Tab5:CreateToggle({
+Name = "No Phone Notifications",
+CurrentValue = false,
+Flag = "DisableNotifsForPhone",
+Callback = function(phone_notifs_off)
+    if phone_notifs_off then
+        wait(0.1)
+        local Phone_Module = getgenv().Game_Folder:FindFirstChild("Phone")
+        local App_Modules = Phone_Module:FindFirstChild("AppModules")
+        local Games = App_Modules:FindFirstChild("Games")
+        local Games_Module = require(App_Modules:FindFirstChild("Games"))
+        getgenv().Notifications_Off = true
+        if not firesignal then
+            if getgenv().NoNotifications_Phone then
+                getgenv().NoNotifications_Phone:Set(false)
+            end
+            return getgenv().notify("Error:", "You cannot use this! 'firesignal' not supported!", 5)
+        end
+
+        function FireButtonEvent(button)
+            local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+            if button and (button:IsA("ImageButton") or button:IsA("TextButton")) then
+                for _, signal in pairs(Signals) do
+                    if button[signal] then
+                        local success, err = pcall(function()
+                            firesignal(button[signal])
+                        end)
+                        if not success then
+                            warn("Failed to fire:", signal, err)
+                        end
+                    end
+                end
+            else
+                warn("Invalid button:", button)
+            end
+        end
+
+        task.wait(0.3)
+
+        for _, button in ipairs(all_buttons_tbl) do
+            if isEnabled(button) then
+                FireButtonEvent(button)
+            end
+        end
+        wait(0.1)
+        while getgenv().Notifications_Off == true do
+        wait(0.3)
+            for _, app in pairs(All_Apps) do
+                getgenv().Send("clear_notification_log", tostring(app.Name))
+                getgenv().Send("notification_settings", "Messages", false)
+                getgenv().Send("notification_settings", "LifeSnap", false)
+                getgenv().Send("notification_settings", "PhoneApp", false)
+                getgenv().Send("notification_settings", "Home", false)
+                getgenv().Send("notification_settings", "Matcher", false)
+            end
+        end
+    else
+        getgenv().Notifications_Off = false
+        getgenv().Notifications_Off = false
     end
 end,})
 
@@ -2579,6 +2752,83 @@ Callback = function()
     send_remote("restore_replication_focus")
 end,})
 
+getgenv().Hiding_NameLoop = Tab2:CreateToggle({
+Name = "Hide/Unhide Name Loop (FE)",
+CurrentValue = false,
+Flag = "HidingNameCoolLoop",
+Callback = function(hiding_name_looping)
+    if hiding_name_looping then
+        getgenv().cool_naming_loop_hiding = true
+        while getgenv().cool_naming_loop_hiding == true do
+        wait()
+            getgenv().Send("hide_name", true)
+            wait(0.1)
+            getgenv().Send("hide_name", false)
+        end
+    else
+        getgenv().cool_naming_loop_hiding = false
+        getgenv().cool_naming_loop_hiding = false
+        wait(1)
+        if getgenv().cool_naming_loop_hiding == false then
+            getgenv().Send("hide_name", false)
+        else
+            getgenv().notify("Hang On:", "The loop has not shutdown yet, waiting...", 5)
+            wait(3)
+            if getgenv().cool_naming_loop_hiding == false then
+                getgenv().notify("Success:", "Shut down loop, enabling name...", 5)
+                wait()
+                getgenv().Send("hide_name", false)
+                wait(0.3)
+                getgenv().notify("Success:", "Enabled name visual setting.", 5)
+            end
+        end
+    end
+end,})
+
+function disableRainbowEffect()
+    getgenv().rainbow_flashlight_enabled = false
+    if getgenv().heartbeatConnection then
+        getgenv().heartbeatConnection:Disconnect()
+        getgenv().heartbeatConnection = nil
+    end
+    getgenv().notify("Success:", "Rainbow Flashlight effect has been disabled!", 5)
+end
+wait(0.2)
+getgenv().RainbowFlashlight_NotFE = Tab2:CreateToggle({
+Name = "Smooth Rainbow Flashlight (Not FE!)",
+CurrentValue = false,
+Flag = "SmootheningFlashlightColoring",
+Callback = function(smooth_RGB_flashlight)
+    if smooth_RGB_flashlight then
+        local ts = getgenv().TweenService
+        local rs = getgenv().RunService
+        getgenv().heartbeatConnection = nil
+        getgenv().rainbow_flashlight_enabled = true
+
+        local flashlight = getgenv().HumanoidRootPart:FindFirstChild("Flashlight") 
+        if not flashlight or not flashlight:IsA("SpotLight") then
+            return getgenv().notify("Error:", "Flashlight/SpotLight doesn't exist in HumanoidRootPart!", 5)
+        end
+        flashlight.Brightness = 10
+
+        getgenv().heartbeatConnection = rs.Heartbeat:Connect(function()
+            if getgenv().rainbow_flashlight_enabled then
+                local hue = (tick() * 10) % 360
+                local color = Color3.fromHSV(hue / 360, 1, 1)
+
+                local tween = ts:Create(flashlight, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {
+                    Color = color
+                })
+                tween:Play()
+            else
+                flashlight.Color = Color3.fromRGB(255, 255, 255)
+            end
+        end)
+    else
+        disableRainbowEffect()
+    end
+end,})
+
 getgenv().VehicleVoid = Tab3:CreateInput({
 Name = "Vehicle Void Player (FE)",
 PlaceholderText = "User Here, can be shortened",
@@ -2595,6 +2845,21 @@ Callback = function(user_to_void)
         return getgenv().notify("Failure:", "You cannot void yourself (wtf).", 5)
     end
 end,})
+
+--[[getgenv().View_Plr_SmoothTween = Tab3:CreateInput({
+Name = "View Player (Smooth)",
+PlaceholderText = "User Here, can be shortened",
+RemoveTextAfterFocusLost = true,
+Callback = function(user_to_view)
+    local target_to_view = findplr(user_to_view)
+    if not target_to_view then return notify("Failure:", "User does not seem to exist.", 5) end
+
+    local Cam = require(getgenv().Core:FindFirstChild("Cam"))
+    local Ambulance = getgenv().Vehicles:FindFirstChild("Ambulance")
+
+    local part = Ambulance:FindFirstChild("Base")
+    Cam.tween_to_character(1)
+end,})--]]
 
 -- This is broken right now, and is currently being worked on.
 --[[getgenv().LoopVehicleVoid_PlrFE = Tab3:CreateInput({
