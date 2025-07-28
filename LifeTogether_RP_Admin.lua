@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.2.4-LifeAdmin"
+local Script_Version = "V2.2.6-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -806,11 +806,11 @@ function RGB_Vehicle_Others(Player, Boolean)
          wait(0)
          for _, color in ipairs(colors) do
             wait(0)
-            if getgenv().Rainbow_Vehicle ~= true then return end
-            if get_other_vehicle(Player):GetAttribute("locked") == false then
+            if getgenv().Rainbow_Others_Vehicle ~= true then return end
+            if get_other_vehicle(Player):GetAttribute("locked") == true then
                return notify("Failure:", "Players vehicle is locked!", 5)
             end
-            change_vehicle_color(color, get_other_vehicle(Player))
+            change_vehicle_color(color, Player)
          end
       end
    elseif Boolean == false then
@@ -1373,7 +1373,7 @@ local function rainbow_others_car(Player)
 end
 
 local function stop_rainbow_others_car(Player)
-   RGB_Vehicle_Others(findplr(Player), false)
+   RGB_Vehicle_Others(Player, false)
 end
 
 function lock_vehicle(Vehicle)
@@ -1600,13 +1600,41 @@ local function handleCommand(sender, message)
       if not PlayerToRGBCar then return notify("Failure:", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCar) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
 
-      rainbow_others_car(PlayerToRGBCar)
+      getgenv().Rainbow_Others_Vehicle = true
+
+      local colors = {
+         Color3.fromRGB(255, 255, 255),
+         Color3.fromRGB(128, 128, 128),
+         Color3.fromRGB(0, 0, 0),
+         Color3.fromRGB(0, 0, 255),
+         Color3.fromRGB(0, 255, 0),
+         Color3.fromRGB(0, 255, 255),
+         Color3.fromRGB(255, 165, 0),
+         Color3.fromRGB(139, 69, 19),
+         Color3.fromRGB(255, 255, 0),
+         Color3.fromRGB(50, 205, 50),
+         Color3.fromRGB(255, 0, 0),
+         Color3.fromRGB(255, 155, 172),
+         Color3.fromRGB(128, 0, 128),
+      }
+
+      while getgenv().Rainbow_Others_Vehicle == true do
+         wait(0)
+         for _, color in ipairs(colors) do
+            wait(0)
+            if getgenv().Rainbow_Others_Vehicle ~= true then return end
+            if get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]):GetAttribute("locked") == true then
+               return notify("Failure:", "Players vehicle is locked!", 5)
+            end
+            change_vehicle_color(color, get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]))
+         end
+      end
    elseif cmd == "norainbowcar" then
-      local PlayerToRGBCarStop = findplr(split[1])
+   local PlayerToRGBCarStop = findplr(split[1])
       if not PlayerToRGBCarStop then return notify("Failure:", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCarStop) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
 
-      stop_rainbow_others_car(PlayerToRGBCarStop)
+      getgenv().Rainbow_Others_Vehicle = false
    elseif cmd == "stoprgbskin" then
       rainbow_skin(false)
    elseif cmd == "startrgbphone" then
