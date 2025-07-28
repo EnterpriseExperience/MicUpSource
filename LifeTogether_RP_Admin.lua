@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.2.1-LifeAdmin"
+local Script_Version = "V2.2.4-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -643,7 +643,7 @@ local success, response = pcall(function()
    local Net = require(getgenv().Core:FindFirstChild("Net"))
 
    Net.get("spawn_vehicle", "SVJ")
-   wait(2)
+   wait(3)
 
    return get_vehicle()
 end)
@@ -665,6 +665,23 @@ else
       return notify("Error:", "You cannot run this script, we're sorry!", 10)
    end
 end
+wait()
+--[[local Defaults = {
+   ["Vehicle"] = "None", -- Or the vehicle name, example: "SVJ".
+   ["AntiSit"] = false,
+   ["RGBPhone"] = false,
+   ["RGBVehicle"] = false,
+   ["Noclip"] = false,
+   ["AntiHouseBan"] = false,
+   ["AntiFling"] = false,
+   ["FreePay"] = false,
+   ["Vehicle0To60"] = 0.2,
+   ["VehicleSpeed"] = 300, -- The default maximum speed for Life Together RP vehicles (when you have LifePay Premium, but can be higher to what ever you want here).
+   ["VehicleAcceleration"] = 200, -- Just to be clear, this is the vehicle Maximum Acceleration, not the take off time (that's "Vehicle0To60")
+   -- These are my two personal setups I use, even though I am not a developer or an admin lol.
+   ["Name"] = "Server-Admin",
+   ["Bio"] = "Developer",
+}--]]
 wait()
 local fileName = "LifeTogether_Admin_Configuration.json"
 
@@ -719,6 +736,16 @@ function notify(title, msg, duration)
    })
 end
 wait()
+local function get_other_vehicle(Player)
+   for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
+      if v.owner.Value == Player then
+         return v
+      end
+   end
+
+   return nil
+end
+wait()
 getgenv().notify = notify
 wait()
 function RGB_Vehicle(Boolean)
@@ -751,6 +778,43 @@ function RGB_Vehicle(Boolean)
       end
    elseif Boolean == false then
       getgenv().Rainbow_Vehicle = false
+      Boolean = false
+   end
+end
+wait()
+function RGB_Vehicle_Others(Player, Boolean)
+   getgenv().Rainbow_Others_Vehicle = Boolean
+
+   local colors = {
+      Color3.fromRGB(255, 255, 255),
+      Color3.fromRGB(128, 128, 128),
+      Color3.fromRGB(0, 0, 0),
+      Color3.fromRGB(0, 0, 255),
+      Color3.fromRGB(0, 255, 0),
+      Color3.fromRGB(0, 255, 255),
+      Color3.fromRGB(255, 165, 0),
+      Color3.fromRGB(139, 69, 19),
+      Color3.fromRGB(255, 255, 0),
+      Color3.fromRGB(50, 205, 50),
+      Color3.fromRGB(255, 0, 0),
+      Color3.fromRGB(255, 155, 172),
+      Color3.fromRGB(128, 0, 128),
+   }
+
+   if Boolean == true then
+      while getgenv().Rainbow_Others_Vehicle == true do
+         wait(0)
+         for _, color in ipairs(colors) do
+            wait(0)
+            if getgenv().Rainbow_Vehicle ~= true then return end
+            if get_other_vehicle(Player):GetAttribute("locked") == false then
+               return notify("Failure:", "Players vehicle is locked!", 5)
+            end
+            change_vehicle_color(color, get_other_vehicle(Player))
+         end
+      end
+   elseif Boolean == false then
+      getgenv().Rainbow_Others_Vehicle = false
       Boolean = false
    end
 end
@@ -1105,6 +1169,10 @@ local function CommandsMenu()
       {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle)
 
       {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
+      
+      {prefix}rainbowcar [player] - Makes a players car RGB (FE!)
+
+      {prefix}norainbowcar [player] - Disables the RGB for a player's car (FE!)
 
       {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone)
 
@@ -1298,6 +1366,14 @@ end
 
 local function stop_rainbow_car()
    RGB_Vehicle(false)
+end
+
+local function rainbow_others_car(Player)
+   RGB_Vehicle_Others(Player, true)
+end
+
+local function stop_rainbow_others_car(Player)
+   RGB_Vehicle_Others(findplr(Player), false)
 end
 
 function lock_vehicle(Vehicle)
@@ -1519,6 +1595,18 @@ local function handleCommand(sender, message)
       stop_rainbow_car()
    elseif cmd == "startrgbskin" then
       rainbow_skin(true)
+   elseif cmd == "rainbowcar" then
+      local PlayerToRGBCar = findplr(split[1])
+      if not PlayerToRGBCar then return notify("Failure:", "Player does not exist!", 5) end
+      if not get_other_vehicle(PlayerToRGBCar) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
+
+      rainbow_others_car(PlayerToRGBCar)
+   elseif cmd == "norainbowcar" then
+      local PlayerToRGBCarStop = findplr(split[1])
+      if not PlayerToRGBCarStop then return notify("Failure:", "Player does not exist!", 5) end
+      if not get_other_vehicle(PlayerToRGBCarStop) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
+
+      stop_rainbow_others_car(PlayerToRGBCarStop)
    elseif cmd == "stoprgbskin" then
       rainbow_skin(false)
    elseif cmd == "startrgbphone" then
@@ -1595,7 +1683,6 @@ local function handleCommand(sender, message)
       Clip = false
       getgenv().Noclip_Enabled = true
       getgenv()._noclipModifiedParts = {}
-      notify("Success:", "Enabled Noclip.", 5)
 
       local function NoclipLoop()
          if not Clip and getgenv().Character then
@@ -1623,7 +1710,6 @@ local function handleCommand(sender, message)
 
       getgenv().Noclip_Enabled = false
       Clip = true
-      notify("Success:", "Disabled Noclip", 5)
 
       if getgenv()._noclipModifiedParts then
          for part, _ in pairs(getgenv()._noclipModifiedParts) do
