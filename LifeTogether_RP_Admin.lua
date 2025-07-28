@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.2.6-LifeAdmin"
+local Script_Version = "V2.3.2-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1379,6 +1379,122 @@ end
 function lock_vehicle(Vehicle)
    send_function("lock_vehicle", Vehicle)
 end
+wait()
+getgenv().player_admins = getgenv().player_admins or {}
+getgenv().friend_checked = getgenv().friend_checked or {}
+getgenv().cmds_loaded_plr = getgenv().cmds_loaded_plr or {}
+wait(0.2)
+local function alreadyCheckedUser(player)
+   if not getgenv().friend_checked[player.Name] then
+      getgenv().player_admins[player.Name] = player
+   end
+   if not getgenv().friend_checked[player.Name] then
+      getgenv().friend_checked[player.Name] = player
+   end
+   if not getgenv().cmds_loaded_plr[player.Name] then
+      getgenv().cmds_loaded_plr[player.Name] = player
+   end
+end
+
+local function setup_cmd_handler_plr(player)
+   local TextChatService = getgenv().TextChatService
+   local prefix = ";"
+
+   local function watchForRgbCarCommand(plr)
+      TextChatService.MessageReceived:Connect(function(chatMessage)
+         local speaker = chatMessage.TextSource
+
+         if speaker and speaker.Name ~= getgenv().LocalPlayer.Name and getgenv().player_admins[speaker.Name] then
+            local function trim(str)
+               return str:match("^%s*(.-)%s*$")
+            end
+
+            local normalizedMessage = trim(chatMessage.Text:lower())
+            local command = prefix .. "rgbcar"
+
+            if normalizedMessage:sub(1, #command) == command then
+               getgenv().Rainbow_Others_Vehicle = true
+               wait(0.2)
+
+               local colors = {
+                  Color3.fromRGB(255, 255, 255),
+                  Color3.fromRGB(128, 128, 128),
+                  Color3.fromRGB(0, 0, 0),
+                  Color3.fromRGB(0, 0, 255),
+                  Color3.fromRGB(0, 255, 0),
+                  Color3.fromRGB(0, 255, 255),
+                  Color3.fromRGB(255, 165, 0),
+                  Color3.fromRGB(139, 69, 19),
+                  Color3.fromRGB(255, 255, 0),
+                  Color3.fromRGB(50, 205, 50),
+                  Color3.fromRGB(255, 0, 0),
+                  Color3.fromRGB(255, 155, 172),
+                  Color3.fromRGB(128, 0, 128),
+               }
+
+               while getgenv().Rainbow_Others_Vehicle == true do
+                  wait(0)
+                  for _, color in ipairs(colors) do
+                     wait(0)
+                     if getgenv().Rainbow_Others_Vehicle ~= true then return end
+
+                     local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
+                     if vehicle and vehicle:GetAttribute("locked") == true then
+                        notify("Failure:", "Player's vehicle is locked!", 5)
+                        return
+                     end
+
+                     change_vehicle_color(color, vehicle)
+                  end
+               end
+            end
+         end
+      end)
+   end
+
+   watchForRgbCarCommand(player)
+end
+
+local function addPlayerToScriptWhitelistTable(player)
+   if not getgenv().player_admins[player.Name] then
+      getgenv().player_admins[player.Name] = player
+      wait(0.3)
+      if getgenv().player_admins[player.Name] then
+         notify("Success!", tostring(player.Name)..", was added to Script Whitelist!", 5)
+      end
+   end
+end
+wait(0.2)
+local function removePlayerFromScriptWhitelistTable(player)
+   if getgenv().player_admins[player.Name] then
+      getgenv().player_admins[player.Name] = nil
+      wait(0.2)
+      if getgenv().player_admins[player.Name] == nil then
+         getgenv().notify("Success!", tostring(player.Name)..", was removed from the Script Whitelist!", 5)
+      else
+         return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
+      end
+   end
+end
+wait()
+function check_friends()
+   for _, v in ipairs(getgenv().Players:GetPlayers()) do
+      if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         alreadyCheckedUser(v)
+      end
+   end
+end
+wait(0.1)
+function auto_add_friends()
+   for _, v in ipairs(getgenv().Players:GetPlayers()) do
+      if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         check_friends()
+         addPlayerToScriptWhitelistTable(v)
+      end
+   end
+end
+wait(0.1)
+auto_add_friends()
 
 local originalCFrame
 local originalCameraType
@@ -2302,7 +2418,21 @@ getgenv().TextChatService.MessageReceived:Connect(function(msg)
       handleCommand(sender, msg.Text)
    end
 end)
+wait(0.1)
+setup_cmd_handler_plr(v)
 wait(0.2)
 getgenv().LifeTogetherRP_Admin = true
 notify("Success:", "Life Together RP-Admin has been loaded!", 5)
 print("[Life Together-RP : Admin_Commands]: Loaded!")
+wait(0.3)
+function auto_add_friends()
+   for _, v in ipairs(getgenv().Players:GetPlayers()) do
+      if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         alreadyCheckedUser(v)
+      end
+   end
+end
+wait(0.1)
+getgenv().Players.PlayerAdded:Connect(function(Player)
+   auto_add_friends()
+end)
