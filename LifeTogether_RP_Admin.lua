@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.3.2-LifeAdmin"
+local Script_Version = "V2.3.7-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -808,7 +808,7 @@ function RGB_Vehicle_Others(Player, Boolean)
             wait(0)
             if getgenv().Rainbow_Others_Vehicle ~= true then return end
             if get_other_vehicle(Player):GetAttribute("locked") == true then
-               return notify("Failure:", "Players vehicle is locked!", 5)
+               
             end
             change_vehicle_color(color, Player)
          end
@@ -1383,6 +1383,9 @@ wait()
 getgenv().player_admins = getgenv().player_admins or {}
 getgenv().friend_checked = getgenv().friend_checked or {}
 getgenv().cmds_loaded_plr = getgenv().cmds_loaded_plr or {}
+getgenv().Rainbow_Vehicles = getgenv().Rainbow_Vehicles or {}
+getgenv().Locked_Vehicles = getgenv().Locked_Vehicles or {}
+getgenv().Unlocked_Vehicles = getgenv().Unlocked_Vehicles or {}
 wait(0.2)
 local function alreadyCheckedUser(player)
    if not getgenv().friend_checked[player.Name] then
@@ -1400,59 +1403,123 @@ local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
    local prefix = ";"
 
-   local function watchForRgbCarCommand(plr)
-      TextChatService.MessageReceived:Connect(function(chatMessage)
-         local speaker = chatMessage.TextSource
+   TextChatService.MessageReceived:Connect(function(chatMessage)
+      local speaker = chatMessage.TextSource
 
-         if speaker and speaker.Name ~= getgenv().LocalPlayer.Name and getgenv().player_admins[speaker.Name] then
-            local function trim(str)
-               return str:match("^%s*(.-)%s*$")
+      if speaker and speaker.Name ~= getgenv().LocalPlayer.Name and getgenv().player_admins[speaker.Name] then
+         local function trim(str)
+            return str:match("^%s*(.-)%s*$")
+         end
+
+         local normalizedMessage = trim(chatMessage.Text:lower())
+
+         if normalizedMessage:sub(1, #prefix + 6) == prefix .. "rgbcar" then
+            local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
+            if not vehicle then
+               getgenv().Rainbow_Vehicles[speaker.Name] = false
+               return getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync("/w "..tostring(speaker.DisplayName).." you don't got a vehicle (this message was automatically sent)")
             end
+            wait(0.1)
+            getgenv().Rainbow_Vehicles[speaker.Name] = true
 
-            local normalizedMessage = trim(chatMessage.Text:lower())
-            local command = prefix .. "rgbcar"
-
-            if normalizedMessage:sub(1, #command) == command then
-               getgenv().Rainbow_Others_Vehicle = true
-               wait(0.2)
-
-               local colors = {
-                  Color3.fromRGB(255, 255, 255),
-                  Color3.fromRGB(128, 128, 128),
-                  Color3.fromRGB(0, 0, 0),
-                  Color3.fromRGB(0, 0, 255),
-                  Color3.fromRGB(0, 255, 0),
-                  Color3.fromRGB(0, 255, 255),
-                  Color3.fromRGB(255, 165, 0),
-                  Color3.fromRGB(139, 69, 19),
-                  Color3.fromRGB(255, 255, 0),
-                  Color3.fromRGB(50, 205, 50),
-                  Color3.fromRGB(255, 0, 0),
-                  Color3.fromRGB(255, 155, 172),
-                  Color3.fromRGB(128, 0, 128),
-               }
-
-               while getgenv().Rainbow_Others_Vehicle == true do
-                  wait(0)
+            local colors = {
+               Color3.fromRGB(255, 255, 255),
+               Color3.fromRGB(128, 128, 128),
+               Color3.fromRGB(0, 0, 0),
+               Color3.fromRGB(0, 0, 255),
+               Color3.fromRGB(0, 255, 0),
+               Color3.fromRGB(0, 255, 255),
+               Color3.fromRGB(255, 165, 0),
+               Color3.fromRGB(139, 69, 19),
+               Color3.fromRGB(255, 255, 0),
+               Color3.fromRGB(50, 205, 50),
+               Color3.fromRGB(255, 0, 0),
+               Color3.fromRGB(255, 155, 172),
+               Color3.fromRGB(128, 0, 128),
+            }
+            wait(0.1)
+            task.spawn(function()
+               while getgenv().Rainbow_Vehicles[speaker.Name] do
                   for _, color in ipairs(colors) do
-                     wait(0)
-                     if getgenv().Rainbow_Others_Vehicle ~= true then return end
+                     if not getgenv().Rainbow_Vehicles[speaker.Name] then return end
 
                      local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
-                     if vehicle and vehicle:GetAttribute("locked") == true then
-                        notify("Failure:", "Player's vehicle is locked!", 5)
-                        return
+                     if vehicle then
+                        change_vehicle_color(color, vehicle)
+                     else
+                        getgenv().Rainbow_Vehicles[speaker.Name] = false
                      end
-
-                     change_vehicle_color(color, vehicle)
+                     wait(0.1)
                   end
                end
+            end)
+         end
+
+         if normalizedMessage:sub(1, #prefix + 8) == prefix .. "norgbcar" then
+            if getgenv().Rainbow_Vehicles[speaker.Name] then
+               getgenv().Rainbow_Vehicles[speaker.Name] = false
             end
          end
-      end)
-   end
 
-   watchForRgbCarCommand(player)
+         if normalizedMessage:sub(1, #prefix + 7) == prefix .. "lockcar" then
+            local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
+            if not vehicle then
+               getgenv().LockLoop_Vehicles[speaker.Name] = false
+               return getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync("/w " .. tostring(speaker.DisplayName) .. " you don't got a vehicle (this message was automatically sent)")
+            end
+
+            if getgenv().Unlocked_Vehicles[speaker.Name] then
+               getgenv().Unlocked_Vehicles[speaker.Name] = false
+            end
+
+            getgenv().Locked_Vehicles[speaker.Name] = true
+            wait(0.2)
+
+            task.spawn(function()
+               while getgenv().Locked_Vehicles[speaker.Name] do
+                  wait()
+                  local v = get_other_vehicle(getgenv().Players[speaker.Name])
+                  if v then
+                     if v:GetAttribute("locked") == false then
+                        getgenv().Get("lock_vehicle", v)
+                     end
+                  else
+                     getgenv().Locked_Vehicles[speaker.Name] = false
+                  end
+               end
+            end)
+         end
+
+         if normalizedMessage:sub(1, #prefix + 9) == prefix .. "unlockcar" then
+            local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
+            if not vehicle then
+               getgenv().Unlocked_Vehicles[speaker.Name] = false
+               return getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync("/w " .. tostring(speaker.DisplayName) .. " you don't got a vehicle (this message was automatically sent)")
+            end
+
+            if getgenv().Locked_Vehicles[speaker.Name] then
+               getgenv().Locked_Vehicles[speaker.Name] = false
+            end
+
+            getgenv().Unlocked_Vehicles[speaker.Name] = true
+            wait(0.2)
+
+            task.spawn(function()
+               while getgenv().Unlocked_Vehicles[speaker.Name] do
+                  wait()
+                  local v = get_other_vehicle(getgenv().Players[speaker.Name])
+                  if v then
+                     if v:GetAttribute("locked") == true then
+                        getgenv().Get("lock_vehicle", v)
+                     end
+                  else
+                     getgenv().Unlocked_Vehicles[speaker.Name] = false
+                  end
+               end
+            end)
+         end
+      end
+   end)
 end
 
 local function addPlayerToScriptWhitelistTable(player)
@@ -1460,7 +1527,7 @@ local function addPlayerToScriptWhitelistTable(player)
       getgenv().player_admins[player.Name] = player
       wait(0.3)
       if getgenv().player_admins[player.Name] then
-         notify("Success!", tostring(player.Name)..", was added to Script Whitelist!", 5)
+         notify("Success!", tostring(player.Name)..", was added to Admins Whitelist!", 5)
       end
    end
 end
@@ -1470,7 +1537,7 @@ local function removePlayerFromScriptWhitelistTable(player)
       getgenv().player_admins[player.Name] = nil
       wait(0.2)
       if getgenv().player_admins[player.Name] == nil then
-         getgenv().notify("Success!", tostring(player.Name)..", was removed from the Script Whitelist!", 5)
+         getgenv().notify("Success!", tostring(player.Name)..", was removed from the Admins Whitelist!", 5)
       else
          return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
       end
@@ -1739,9 +1806,6 @@ local function handleCommand(sender, message)
          for _, color in ipairs(colors) do
             wait(0)
             if getgenv().Rainbow_Others_Vehicle ~= true then return end
-            if get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]):GetAttribute("locked") == true then
-               return notify("Failure:", "Players vehicle is locked!", 5)
-            end
             change_vehicle_color(color, get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]))
          end
       end
@@ -2432,7 +2496,27 @@ function auto_add_friends()
       end
    end
 end
+
+function auto_remove_friends()
+   for _, v in ipairs(getgenv().Players:GetPlayers()) do
+      if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) and v.Character == nil then
+         getgenv().Rainbow_Others_Vehicle = false
+      end
+   end
+end
 wait(0.1)
 getgenv().Players.PlayerAdded:Connect(function(Player)
    auto_add_friends()
+end)
+
+getgenv().Players.PlayerRemoving:Connect(function(Player)
+   if getgenv().Rainbow_Vehicles[Player.Name] then
+      getgenv().Rainbow_Vehicles[Player.Name] = false
+   end
+   if getgenv().Locked_Vehicles[Player.Name] then
+      getgenv().Locked_Vehicles[Player.Name] = false
+   end
+   if getgenv().Unlocked_Vehicles[Player.Name] then
+      getgenv().Unlocked_Vehicles[Player.Name] = false
+   end
 end)
