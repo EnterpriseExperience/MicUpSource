@@ -378,7 +378,7 @@ print("getmetatable:", has_getmetatable)
 print("setmetatable:", has_setmetatable)
 print("getgenv().advanced_workaround_method:", getgenv().advanced_workaround_method)
 
-if not getgenv().advanced_workaround_method and has_hookfunction and has_hookmetamethod and has_getmetatable then
+if not getgenv().advanced_workaround_method and has_hookfunction and has_hookmetamethod and has_getmetatable and not (executor_Name and executor_Name:lower():find("macsploit")) then
     print("Advanced exploit detected, using bypass method.")
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua"))()
     wait(0.1)
@@ -390,6 +390,10 @@ elseif not (has_hookfunction or has_hookmetamethod or has_getmetatable or has_se
 elseif getgenv().advanced_workaround_method == true then
     warn("Advanced level exploit already reviewed and secured.")
     wait(0.1)
+elseif executor_Name and executor_Name:lower():find("macsploit") then
+    warn("Macsploit detected, skipping...")
+    wait(0.1)
+    getgenv().advanced_workaround_method = true
 end
 wait(0.3)
 local Workspace = getgenv().Workspace
