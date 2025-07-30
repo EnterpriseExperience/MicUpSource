@@ -981,7 +981,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 		dragBar.Visible = true
 	end
 
-
 	if Settings.Theme then
 		local success = pcall(ChangeTheme, Settings.Theme)
 		if not success then
@@ -1002,7 +1001,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Settings.ConfigurationSaving.FileName = tostring(game.PlaceId)
 		end
 		if not isfolder(RayfieldFolder.."/".."Configuration Folders") then
-
+			-- I don't know?
 		end
 		if Settings.ConfigurationSaving.Enabled == nil then
 			Settings.ConfigurationSaving.Enabled = false
@@ -1011,10 +1010,15 @@ function RayfieldLibrary:CreateWindow(Settings)
 		ConfigurationFolder = Settings.ConfigurationSaving.FolderName or ConfigurationFolder
 		CEnabled = Settings.ConfigurationSaving.Enabled
 
+		local executor_Lower = (executor_Name or ""):lower()
+		local isMacsploit = executor_Lower:find("macsploit")
+
 		if Settings.ConfigurationSaving.Enabled then
-			if not isfolder(ConfigurationFolder) then
-				makefolder(ConfigurationFolder)
-			end	
+			if not isMacsploit then
+				if not isfolder(ConfigurationFolder) then
+					makefolder(ConfigurationFolder)
+				end
+			end
 		end
 	end)
 
@@ -2214,7 +2218,9 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Keybind.Visible = true
 			Keybind.Parent = TabPage
 			if Keybind.BackgroundColor3 then
-				Keybind.BackgroundColor3 = Color3.fromRGB(85, 0, 127)
+				Keybind.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+			elseif Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 then
+				Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 = Color3.fromRGB(255, 255, 0)
 			end
 
 			Keybind.BackgroundTransparency = 1
