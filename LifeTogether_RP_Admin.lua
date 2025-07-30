@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.4.1-LifeAdmin"
+local Script_Version = "V2.3.9-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -923,30 +923,6 @@ end
 getgenv().HD_FlyEnabled = false
 local FlyConnection
 local speed = 75
-
-function DisableFlyScript()
-   getgenv().HD_FlyEnabled = false
-
-   if FlyConnection then
-      FlyConnection:Disconnect()
-      FlyConnection = nil
-   end
-
-   local hrp = getgenv().HumanoidRootPart
-   if hrp:FindFirstChild("ExecutorFlyGyro") then
-      hrp.ExecutorFlyGyro:Destroy()
-   end
-   if hrp:FindFirstChild("ExecutorFlyPosition") then
-      hrp.ExecutorFlyPosition:Destroy()
-   end
-
-   if getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
-      getgenv().Humanoid.PlatformStand = false
-   end
-end
-
-getgenv().HD_FlyEnabled = false
-local FlyConnection
 local FlyKeysDown = {}
 
 function DisableFlyScript()
@@ -966,7 +942,7 @@ function DisableFlyScript()
    end
 
    if getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
-      getgenv().Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
+      getgenv().Humanoid.PlatformStand = false
    end
 end
 
@@ -1571,84 +1547,59 @@ if getgenv().PlayerControls == nil then
    getgenv().PlayerControls = PlayerModule:GetControls()
 end
 wait(0.1)
-getgenv().viewTarget = function(targetHRP, tweenTime)
-   print("Viewing Enabled.")
-   tweenTime = tweenTime or 0.5
-
-   local camera = getgenv().Camera
-   local ts = getgenv().TweenService
-   local RunService = getgenv().RunService
-
-   getgenv().ORIGINAL_CAMERA_CFRAME = camera.CFrame
-   getgenv().ORIGINAL_CAMERA_TYPE = camera.CameraType
-
-   if getgenv().PlayerControls then
-      getgenv().PlayerControls:Disable()
+getgenv().Viewing_Plr_Tbl = getgenv().Viewing_Plr_Tbl or {}
+wait(0.1)
+getgenv().viewTarget = function(Player)
+   if getgenv().Viewing_A_Player then
+      return notify("Failure:", "You're already viewing: " .. tostring(getgenv().Viewing_Plr_Tbl[Player.Name]), 5)
    end
 
-   wait(0.1)
-   camera.CameraType = Enum.CameraType.Scriptable
-   getgenv().Viewing_A_Player = true
+   if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+      local Target_Char = Player.Character or Player.CharacterAdded:Wait()
 
-   local offset = CFrame.new(0, 3, 8) * CFrame.Angles(0, math.rad(180), 0)
-   local initialPosition = targetHRP.CFrame * offset
+      getgenv().Camera.CameraSubject = Target_Char:FindFirstChildWhichIsA("Humanoid")
+      wait(0.1)
+      getgenv().Viewing_A_Player = true
 
-   local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
-   local tween = ts:Create(camera, tweenInfo, {CFrame = initialPosition})
-   tween:Play()
-
-   if getgenv().ViewConnection then
-      getgenv().ViewConnection:Disconnect()
-      getgenv().ViewConnection = nil
+      getgenv().Viewing_Plr_Tbl[Player.Name] = {
+         Name = Player.Name,
+         DisplayName = Player.DisplayName,
+         UserId = Player.UserId,
+         Character = Target_Char,
+         Humanoid = Target_Char:FindFirstChildWhichIsA("Humanoid"),
+         HumanoidRootPart = Target_Char:FindFirstChild("HumanoidRootPart") or Target_Char:WaitForChild("HumanoidRootPart", 1)
+      }
    end
-
-   tween.Completed:Connect(function()
-      getgenv().ViewConnection = RunService.RenderStepped:Connect(function()
-         if targetHRP and targetHRP.Parent then
-            camera.CFrame = targetHRP.CFrame * offset
-         end
-      end)
-   end)
 end
 wait(0.1)
 getgenv().unview_player = function()
-   warn("Viewing Disabled.")
    if not getgenv().Viewing_A_Player then
-      return warn("Unview was turned off, not viewing anybody.")
+      return notify("Failure:", "You're not viewing anyone!", 5)
    end
 
-   local camera = getgenv().Camera
-
-   if getgenv().ViewConnection then
-      getgenv().ViewConnection:Disconnect()
-      getgenv().ViewConnection = nil
-   end
-
-   if getgenv().ORIGINAL_CAMERA_CFRAME then
-      camera.CFrame = getgenv().ORIGINAL_CAMERA_CFRAME
-   end
-   if getgenv().ORIGINAL_CAMERA_TYPE then
-      camera.CameraType = getgenv().ORIGINAL_CAMERA_TYPE
+   if getgenv().Humanoid or getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
+      getgenv().Camera.CameraSubject = getgenv().Humanoid
    else
-      camera.CameraType = Enum.CameraType.Custom
+      getgenv().Camera.CameraSubject = getgenv().Character
    end
 
    getgenv().Viewing_A_Player = false
-   wait(0.1)
-
-   if getgenv().PlayerControls then
-      getgenv().PlayerControls:Enable()
-   else
-      notify("Failure:", "getgenv().PlayerControls does not exist, creating...", 5)
-      wait(0.2)
-      local PlayerModule = require(getgenv().PlayerScripts:WaitForChild("PlayerModule"))
-      getgenv().PlayerControls = PlayerModule:GetControls()
-      wait(0.5)
-      getgenv().PlayerControls:Enable()
-   end
+   notify("Success:", "Stopped viewing other player.", 5)
 end
 wait(0.1)
 warn("Setup viewing/spectating functions.")
+
+local function check_friend(Player)
+   for _, v in ipairs(getgenv().Players:GetPlayers()) do
+      if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         return true
+      else
+         return false
+      end
+   end
+
+   return 
+end
 
 function attach_with_script()
    local Methods = {
@@ -1783,6 +1734,11 @@ local function handleCommand(sender, message)
       local PlayerToRGBCar = findplr(split[1])
       if not PlayerToRGBCar then return notify("Failure:", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCar) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
+      local Checker = check_friend(PlayerToRGBCar)
+
+      if not Checker or Checker ~= true then
+         return notify("Failure:", "Player is not your friend, add them to use this!", 5)
+      end
 
       getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] = true
 
@@ -1811,9 +1767,18 @@ local function handleCommand(sender, message)
          end
       end--]]
    elseif cmd == "norainbowcar" then
-   local PlayerToRGBCarStop = findplr(split[1])
+      local PlayerToRGBCarStop = findplr(split[1])
       if not PlayerToRGBCarStop then return notify("Failure:", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCarStop) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
+      local Checker = check_friend(PlayerToRGBCarStop)
+
+      if not Checker or Checker ~= true then
+         return notify("Failure:", "Player is not your friend, add them to use this!", 5)
+      end
+
+      if not getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] then
+         return notify("Failure:", "Player is not currently in the RGB car table!", 5)
+      end
 
       getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] = false
    elseif cmd == "stoprgbskin" then
@@ -1836,13 +1801,12 @@ local function handleCommand(sender, message)
       local flySpeed = tonumber(split[1]) or 100
 
       if getgenv().HD_FlyEnabled then
-         DisableFlyScript()
-         notify("Fly", "HD Admin Fly has been disabled.", 3)
-      else
-         EnableFly(flySpeed)
-         notify("Fly", "Fly enabled at speed: " .. flySpeed, 5)
-         notify("Controls", "E = up, Q = down, WASD to move", 5)
+         return notify("Failure:", "HD Admin Fly is already enabled!", 5)
       end
+      wait(0.2)
+      EnableFly(flySpeed)
+      notify("Fly", "Fly enabled at speed: " .. flySpeed, 5)
+      notify("Controls", "E = up, Q = down, WASD to move", 5)
    elseif cmd == "unfly" then
       DisableFlyScript()
    elseif cmd == "autolockcar" then
@@ -1906,6 +1870,8 @@ local function handleCommand(sender, message)
          end
       end
 
+      notify("Success:", "Noclip has been enabled.", 5)
+
       getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
    elseif cmd == "clip" then
       if not getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == false then
@@ -1928,6 +1894,8 @@ local function handleCommand(sender, message)
          end
          getgenv()._noclipModifiedParts = nil
       end
+      wait()
+      notify("Success:", "Disabled Noclip sucessfully.", 5)
    elseif cmd == "view" then
       local View_Target = findplr(split[1])
       if not View_Target then return notify("Failure:", "Target was not found or does not exist!", 5) end
@@ -1938,7 +1906,7 @@ local function handleCommand(sender, message)
          local Target_Char = View_Target.Character or View_Target.CharacterAdded:Wait()
          local Target_HRP = Target_Char:FindFirstChild("HumanoidRootPart") or Target_Char:WaitForChild("Humanoid", 5)
          
-         getgenv().viewTarget(Target_HRP, 1)
+         getgenv().viewTarget(View_Target)
       end
    elseif cmd == "unview" then
       if not getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == false then
