@@ -539,8 +539,13 @@ local function SaveConfiguration()
 		else
 			Data[i] = v.CurrentValue or v.CurrentKeybind or v.CurrentOption or v.Color
 		end
-	end	
-	writefile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
+	end
+	local executor_Lower = (executor_Name or ""):lower()
+	local isMacsploit = executor_Lower:find("macsploit")
+
+	if not isMacsploit then
+		writefile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
+	end
 end
 
 function RayfieldLibrary:Notify(data) 
@@ -1094,8 +1099,13 @@ function RayfieldLibrary:CreateWindow(Settings)
 				end
 			end			
 
-			if Settings.Discord.RememberJoins then 
-				writefile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Rayfield RememberJoins is true for this invite, this invite will not ask you to join again")
+			local executor_Lower = (executor_Name or ""):lower()
+			local isMacsploit = executor_Lower:find("macsploit")
+
+			if not isMacsploit then
+				if Settings.Discord.RememberJoins then 
+					writefile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Rayfield RememberJoins is true for this invite, this invite will not ask you to join again")
+				end
 			end
 		end
 	end
@@ -1231,12 +1241,17 @@ function RayfieldLibrary:CreateWindow(Settings)
 					TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 					TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
 					task.wait(0.51)
-					Passthrough = true
-					if Settings.KeySettings.SaveKey then
-						if writefile then
-							writefile(RayfieldFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, FoundKey)
+					local executor_Lower = (executor_Name or ""):lower()
+					local isMacsploit = executor_Lower:find("macsploit")
+
+					if not isMacsploit then
+						Passthrough = true
+						if Settings.KeySettings.SaveKey then
+							if writefile then
+								writefile(RayfieldFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, FoundKey)
+							end
+							RayfieldLibrary:Notify({Title = "Key System", Content = "The key for this script has been saved successfully."})
 						end
-						RayfieldLibrary:Notify({Title = "Key System", Content = "The key for this script has been saved successfully."})
 					end
 				else
 					if AttemptsRemaining == 0 then
