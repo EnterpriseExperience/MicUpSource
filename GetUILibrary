@@ -517,15 +517,15 @@ local function LoadConfiguration(Configuration)
 	local Data = HttpService:JSONDecode(Configuration)
 	for FlagName, FlagValue in next, Data do
 		if RayfieldLibrary.Flags[FlagName] then
-			task.spawn(function() 
+			task.spawn(function()
 				if RayfieldLibrary.Flags[FlagName].Type == "ColorPicker" then
 					RayfieldLibrary.Flags[FlagName]:Set(UnpackColor(FlagValue))
 				else
 					if RayfieldLibrary.Flags[FlagName].CurrentValue or RayfieldLibrary.Flags[FlagName].CurrentKeybind or RayfieldLibrary.Flags[FlagName].CurrentOption or RayfieldLibrary.Flags[FlagName].Color ~= FlagValue then RayfieldLibrary.Flags[FlagName]:Set(FlagValue) end
-				end    
+				end
 			end)
 		else
-			RayfieldLibrary:Notify({Title = "Flag Error", Content = "Rayfield was unable to find: '"..FlagName.. "'' in the current script. Check docs.sirius.menu for help."})
+			RayfieldLibrary:Notify({Title = "Flag Error", Content = "Rayfield was unable to find: '"..FlagName.. "'' in the current script."})
 		end
 	end
 end
@@ -1035,8 +1035,13 @@ function RayfieldLibrary:CreateWindow(Settings)
 	end
 
 	if Settings.Discord and not useStudio then
-		if not isfolder(RayfieldFolder.."/Discord Invites") then
-			makefolder(RayfieldFolder.."/Discord Invites")
+		local executor_Lower = (executor_Name or ""):lower()
+		local isMacsploit = executor_Lower:find("macsploit")
+
+		if not isMacsploit then
+			if not isfolder(RayfieldFolder.."/Discord Invites") then
+				makefolder(RayfieldFolder.."/Discord Invites")
+			end
 		end
 
 		if not isfile(RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
@@ -1101,8 +1106,13 @@ function RayfieldLibrary:CreateWindow(Settings)
 			return
 		end
 
-		if not isfolder(RayfieldFolder.."/Key System") then
-			makefolder(RayfieldFolder.."/Key System")
+		local executor_Lower = (executor_Name or ""):lower()
+		local isMacsploit = executor_Lower:find("macsploit")
+
+		if not isMacsploit then
+			if not isfolder(RayfieldFolder.."/Key System") then
+				makefolder(RayfieldFolder.."/Key System")
+			end
 		end
 
 		if typeof(Settings.KeySettings.Key) == "string" then Settings.KeySettings.Key = {Settings.KeySettings.Key} end
@@ -1115,7 +1125,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 				end)
 				if not Success then
 					print("Rayfield | "..Key.." Error " ..tostring(Response))
-					warn('Check docs.sirius.menu for help with Rayfield specific development.')
 				end
 			end
 		end
@@ -1866,7 +1875,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Input.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 					Input.Title.Text = "Callback Error"
 					print("Rayfield | "..InputSettings.Name.." Callback Error " ..tostring(Response))
-					warn('Check docs.sirius.menu for help with Rayfield specific development.')
 					task.wait(0.5)
 					Input.Title.Text = InputSettings.Name
 					TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2078,7 +2086,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 							TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 							Dropdown.Title.Text = "Callback Error"
 							print("Rayfield | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
-							warn('Check docs.sirius.menu for help with Rayfield specific development.')
 							task.wait(0.5)
 							Dropdown.Title.Text = DropdownSettings.Name
 							TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2166,7 +2173,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 					Dropdown.Title.Text = "Callback Error"
 					print("Rayfield | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
-					warn('Check docs.sirius.menu for help with Rayfield specific development.')
 					task.wait(0.5)
 					Dropdown.Title.Text = DropdownSettings.Name
 					TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2284,7 +2290,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 							TweenService:Create(Keybind.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 							Keybind.Title.Text = "Callback Error"
 							print("Rayfield | "..KeybindSettings.Name.." Callback Error " ..tostring(Response))
-							warn('Check docs.sirius.menu for help with Rayfield specific development.')
 							task.wait(0.5)
 							Keybind.Title.Text = KeybindSettings.Name
 							TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2453,7 +2458,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 					Toggle.Title.Text = "Callback Error"
 					print("Rayfield | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
-					warn('Check docs.sirius.menu for help with Rayfield specific development.')
 					task.wait(0.5)
 					Toggle.Title.Text = ToggleSettings.Name
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2592,7 +2596,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 								TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 								Slider.Title.Text = "Callback Error"
 								print("Rayfield | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
-								warn('Check docs.sirius.menu for help with Rayfield specific development.')
 								task.wait(0.5)
 								Slider.Title.Text = SliderSettings.Name
 								TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2874,34 +2877,34 @@ end
 
 if useStudio then
 	local Window = RayfieldLibrary:CreateWindow({
-		Name = "Rayfield Example Window",
-		LoadingTitle = "Rayfield Interface Suite",
+		Name = "The system could not find the file specified.",
+		LoadingTitle = "debug.setupvalue(mov rbx[wasm[FFFF], CALL)",
 		Theme = 'Light',
-		LoadingSubtitle = "by ???",
+		LoadingSubtitle = "PORTFORWARDING_ERROR",
 		ConfigurationSaving = {
 			Enabled = true,
-			FolderName = nil, 
-			FileName = "ACK_SEND-PORT_FORWARD[window[65535::allocate_maximum_port_range_Function(65535)-?? 00 FF ?? 00 AC - debug.getupvalue(null, 0xFFFFFFFFFFFF).]nil-Hu??UNALLO_CATED_M?-?EMORY_STU00?BYTECKb_DIVIS?ENTRY_ACCESS??ION"
+			FolderName = nil,
+			FileName = "ACK_SEND-PORT_FORWARD[window[80001::allocate_maximum_port_range_Function(83A05)-3C NUL -FF ?? 2A 03 AC - debug.getupvalue(null, 0xFFFFFFFFFFFF).]nil-Hu??UNALLO_CATED_M?-?EMORY_STU00?BYTECKb_DIVIS?ENTRY_ACCESS??ION"
 		},
 		Discord = {
 			Enabled = false,
-			Invite = "noinvitelink", 
-			RememberJoins = true 
+			Invite = "noinvitelink",
+			RememberJoins = false
 		},
-		KeySystem = false, 
+		KeySystem = false,
 		KeySettings = {
 			Title = "The system could not find the file specified.",
 			Subtitle = "0xFFFFFFFFFFFFFFF",
 			Note = "debug.getconstant",
-			FileName = "Key", 
-			SaveKey = true, 
-			GrabKeyFromSite = false, 
-			Key = {"Hello"} 
+			FileName = "debug.getupvalue(mov rbx[wasm[FFFF])",
+			SaveKey = true,
+			GrabKeyFromSite = false,
+			Key = {"Hello"}
 		}
 	})
 
-	local Tab = Window:CreateTab("Tab Example", 4483362458) 
-	local Tab2 = Window:CreateTab("Tab Example 2", 4483362458) 
+	local Tab = Window:CreateTab("Tab Example", 4483362458)
+	local Tab2 = Window:CreateTab("Tab Example 2", 4483362458)
 	local Section = Tab2:CreateSection("Section")
 
 	local ColorPicker = Tab2:CreateColorPicker({
