@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.3.7-LifeAdmin"
+local Script_Version = "V2.4.1-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1174,6 +1174,10 @@ local function CommandsMenu()
 
       {prefix}norainbowcar [player] - Disables the RGB for a player's car (FE!)
 
+      {prefix}unadmin [player] - Removes the player's FE commands (if they're your friend).
+
+      {prefix}admin [player] - Adds the player to the FE commands whitelist (if they're your friend).
+
       {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone)
 
       {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone)
@@ -1402,122 +1406,119 @@ end
 local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
    local prefix = ";"
+   local localPlayerName = getgenv().LocalPlayer.Name
+   local channel = TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
+
+   local function trim(str)
+      return str:match("^%s*(.-)%s*$")
+   end
+
+   local function levenshtein(s, t)
+      local d = {}
+      local len_s, len_t = #s, #t
+      for i = 0, len_s do d[i] = {[0] = i} end
+      for j = 0, len_t do d[0][j] = j end
+
+      for i = 1, len_s do
+         for j = 1, len_t do
+            local cost = (s:sub(i,i) == t:sub(j,j)) and 0 or 1
+            d[i][j] = math.min(
+               d[i-1][j] + 1,
+               d[i][j-1] + 1,
+               d[i-1][j-1] + cost
+            )
+         end
+      end
+      return d[len_s][len_t]
+   end
+
+   local function chat_reply(speaker, msg)
+      if channel then
+         channel:SendAsync("/w " .. tostring(speaker.DisplayName) .. " " .. msg .. " (this message was automatically sent)")
+      end
+   end
 
    TextChatService.MessageReceived:Connect(function(chatMessage)
       local speaker = chatMessage.TextSource
+      if not (speaker and speaker.Name ~= localPlayerName and getgenv().player_admins[speaker.Name]) then return end
 
-      if speaker and speaker.Name ~= getgenv().LocalPlayer.Name and getgenv().player_admins[speaker.Name] then
-         local function trim(str)
-            return str:match("^%s*(.-)%s*$")
+      local normalizedMessage = trim(chatMessage.Text:lower())
+      if normalizedMessage:sub(1, #prefix) ~= prefix then return end
+
+      local command = normalizedMessage:sub(#prefix + 1)
+      local playerVehicle = get_other_vehicle(getgenv().Players[speaker.Name])
+
+      if levenshtein(command, "rgbcar") <= 2 then
+         if not playerVehicle then
+            getgenv().Rainbow_Vehicles[speaker.Name] = false
+            return chat_reply(speaker, "you don't got a vehicle")
          end
 
-         local normalizedMessage = trim(chatMessage.Text:lower())
+         getgenv().Rainbow_Vehicles[speaker.Name] = true
+         local colors = {
+            Color3.fromRGB(255, 255, 255), Color3.fromRGB(128, 128, 128), Color3.fromRGB(0, 0, 0),
+            Color3.fromRGB(0, 0, 255), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 255, 255),
+            Color3.fromRGB(255, 165, 0), Color3.fromRGB(139, 69, 19), Color3.fromRGB(255, 255, 0),
+            Color3.fromRGB(50, 205, 50), Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 155, 172),
+            Color3.fromRGB(128, 0, 128),
+         }
 
-         if normalizedMessage:sub(1, #prefix + 6) == prefix .. "rgbcar" then
-            local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
-            if not vehicle then
-               getgenv().Rainbow_Vehicles[speaker.Name] = false
-               return getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync("/w "..tostring(speaker.DisplayName).." you don't got a vehicle (this message was automatically sent)")
-            end
-            wait(0.1)
-            getgenv().Rainbow_Vehicles[speaker.Name] = true
-
-            local colors = {
-               Color3.fromRGB(255, 255, 255),
-               Color3.fromRGB(128, 128, 128),
-               Color3.fromRGB(0, 0, 0),
-               Color3.fromRGB(0, 0, 255),
-               Color3.fromRGB(0, 255, 0),
-               Color3.fromRGB(0, 255, 255),
-               Color3.fromRGB(255, 165, 0),
-               Color3.fromRGB(139, 69, 19),
-               Color3.fromRGB(255, 255, 0),
-               Color3.fromRGB(50, 205, 50),
-               Color3.fromRGB(255, 0, 0),
-               Color3.fromRGB(255, 155, 172),
-               Color3.fromRGB(128, 0, 128),
-            }
-            wait(0.1)
-            task.spawn(function()
-               while getgenv().Rainbow_Vehicles[speaker.Name] do
-                  for _, color in ipairs(colors) do
-                     if not getgenv().Rainbow_Vehicles[speaker.Name] then return end
-
-                     local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
-                     if vehicle then
-                        change_vehicle_color(color, vehicle)
-                     else
-                        getgenv().Rainbow_Vehicles[speaker.Name] = false
-                     end
-                     wait(0.1)
-                  end
-               end
-            end)
-         end
-
-         if normalizedMessage:sub(1, #prefix + 8) == prefix .. "norgbcar" then
-            if getgenv().Rainbow_Vehicles[speaker.Name] then
-               getgenv().Rainbow_Vehicles[speaker.Name] = false
-            end
-         end
-
-         if normalizedMessage:sub(1, #prefix + 7) == prefix .. "lockcar" then
-            local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
-            if not vehicle then
-               getgenv().LockLoop_Vehicles[speaker.Name] = false
-               return getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync("/w " .. tostring(speaker.DisplayName) .. " you don't got a vehicle (this message was automatically sent)")
-            end
-
-            if getgenv().Unlocked_Vehicles[speaker.Name] then
-               getgenv().Unlocked_Vehicles[speaker.Name] = false
-            end
-
-            getgenv().Locked_Vehicles[speaker.Name] = true
-            wait(0.2)
-
-            task.spawn(function()
-               while getgenv().Locked_Vehicles[speaker.Name] do
-                  wait()
+         task.spawn(function()
+            while getgenv().Rainbow_Vehicles[speaker.Name] do
+               for _, color in ipairs(colors) do
+                  if not getgenv().Rainbow_Vehicles[speaker.Name] then return end
                   local v = get_other_vehicle(getgenv().Players[speaker.Name])
                   if v then
-                     if v:GetAttribute("locked") == false then
-                        getgenv().Get("lock_vehicle", v)
-                     end
+                     change_vehicle_color(color, v)
                   else
-                     getgenv().Locked_Vehicles[speaker.Name] = false
+                     getgenv().Rainbow_Vehicles[speaker.Name] = false
                   end
+                  task.wait(0.1)
                end
-            end)
+            end
+         end)
+      elseif levenshtein(command, "norgbcar") <= 2 then
+         getgenv().Rainbow_Vehicles[speaker.Name] = false
+      elseif levenshtein(command, "lockcar") <= 2 then
+         if not playerVehicle then
+            getgenv().LockLoop_Vehicles[speaker.Name] = false
+            return chat_reply(speaker, "you don't got a vehicle")
          end
 
-         if normalizedMessage:sub(1, #prefix + 9) == prefix .. "unlockcar" then
-            local vehicle = get_other_vehicle(getgenv().Players[speaker.Name])
-            if not vehicle then
-               getgenv().Unlocked_Vehicles[speaker.Name] = false
-               return getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync("/w " .. tostring(speaker.DisplayName) .. " you don't got a vehicle (this message was automatically sent)")
-            end
+         getgenv().Unlocked_Vehicles[speaker.Name] = false
+         getgenv().Locked_Vehicles[speaker.Name] = true
 
-            if getgenv().Locked_Vehicles[speaker.Name] then
-               getgenv().Locked_Vehicles[speaker.Name] = false
-            end
-
-            getgenv().Unlocked_Vehicles[speaker.Name] = true
-            wait(0.2)
-
-            task.spawn(function()
-               while getgenv().Unlocked_Vehicles[speaker.Name] do
-                  wait()
-                  local v = get_other_vehicle(getgenv().Players[speaker.Name])
-                  if v then
-                     if v:GetAttribute("locked") == true then
-                        getgenv().Get("lock_vehicle", v)
-                     end
-                  else
-                     getgenv().Unlocked_Vehicles[speaker.Name] = false
-                  end
+         task.spawn(function()
+            while getgenv().Locked_Vehicles[speaker.Name] do
+               task.wait()
+               local v = get_other_vehicle(getgenv().Players[speaker.Name])
+               if v and not v:GetAttribute("locked") then
+                  getgenv().Get("lock_vehicle", v)
+               elseif not v then
+                  getgenv().Locked_Vehicles[speaker.Name] = false
                end
-            end)
+            end
+         end)
+      elseif levenshtein(command, "unlockcar") <= 2 then
+         if not playerVehicle then
+            getgenv().Unlocked_Vehicles[speaker.Name] = false
+            return chat_reply(speaker, "you don't got a vehicle")
          end
+
+         getgenv().Locked_Vehicles[speaker.Name] = false
+         getgenv().Unlocked_Vehicles[speaker.Name] = true
+
+         task.spawn(function()
+            while getgenv().Unlocked_Vehicles[speaker.Name] do
+               task.wait()
+               local v = get_other_vehicle(getgenv().Players[speaker.Name])
+               if v and v:GetAttribute("locked") then
+                  getgenv().Get("lock_vehicle", v)
+               elseif not v then
+                  getgenv().Unlocked_Vehicles[speaker.Name] = false
+               end
+            end
+         end)
       end
    end)
 end
@@ -1783,9 +1784,9 @@ local function handleCommand(sender, message)
       if not PlayerToRGBCar then return notify("Failure:", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCar) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
 
-      getgenv().Rainbow_Others_Vehicle = true
+      getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] = true
 
-      local colors = {
+      --[[local colors = {
          Color3.fromRGB(255, 255, 255),
          Color3.fromRGB(128, 128, 128),
          Color3.fromRGB(0, 0, 0),
@@ -1808,13 +1809,13 @@ local function handleCommand(sender, message)
             if getgenv().Rainbow_Others_Vehicle ~= true then return end
             change_vehicle_color(color, get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]))
          end
-      end
+      end--]]
    elseif cmd == "norainbowcar" then
    local PlayerToRGBCarStop = findplr(split[1])
       if not PlayerToRGBCarStop then return notify("Failure:", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCarStop) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
 
-      getgenv().Rainbow_Others_Vehicle = false
+      getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] = false
    elseif cmd == "stoprgbskin" then
       rainbow_skin(false)
    elseif cmd == "startrgbphone" then
