@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.4.3-LifeAdmin"
+local Script_Version = "V2.4.4-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -2239,6 +2239,10 @@ local function handleCommand(sender, message)
          getgenv().TeleportService:TeleportToPlaceInstance(getgenv().PlaceID, getgenv().JobID, getgenv().LocalPlayer)
       end
    elseif cmd == "antifling" then
+      if getgenv().antiFlingEnabled or getgenv().antiFlingEnabled == true then
+         return notify("Failure:", "Anti Fling is already enabled!", 5)
+      end
+
       getgenv().antiFlingEnabled = true
       getgenv().antiKnockbackEnabled = true
 
@@ -2299,15 +2303,15 @@ local function handleCommand(sender, message)
       wait(0.2)
       getgenv().anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
    elseif cmd == "unantifling" then
-   getgenv().antiFlingEnabled = false
-   getgenv().antiKnockbackEnabled = false
+      getgenv().antiFlingEnabled = false
+      getgenv().antiKnockbackEnabled = false
 
-   notify("Success:", "Disabled anti-fling", 5)
+      notify("Success:", "Disabled anti-fling", 5)
 
-   if getgenv().anti_knockback_connection then
-      getgenv().anti_knockback_connection:Disconnect()
-      getgenv().anti_knockback_connection = nil
-   end
+      if getgenv().anti_knockback_connection then
+         getgenv().anti_knockback_connection:Disconnect()
+         getgenv().anti_knockback_connection = nil
+      end
    elseif cmd == "bring" and split[1] then
       local target = findplr(split[1])
       if not target then return notify("Bring:", "Target not found.", 3) end
@@ -2444,6 +2448,10 @@ local function handleCommand(sender, message)
       end
       notify("Invalid Car:", "Name not matched.", 5)
    elseif cmd == "antihouseban" then
+      if getgenv().AntiTeleport or getgenv().AntiTeleport == true then
+         return notify("Failure:", "AntiHouseBan is already enabled!", 5)
+      end
+      wait(0.2)
       update_plot_areas()
       wait(0.2)
       getgenv().AntiTeleport = true
