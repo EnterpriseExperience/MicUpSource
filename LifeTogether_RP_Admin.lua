@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.4.4-LifeAdmin"
+local Script_Version = "V2.4.6-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1277,6 +1277,10 @@ local function CommandsMenu()
 
       {prefix}bringcar - Teleport car to you and sit in it
 
+      {prefix}flashname - Enables the flashing of your "Bio" and "Name" (above your head)
+
+      {prefix}noflashname - Disables the flashing of your "Bio" and "Name" (above your head)
+
       {prefix}nosit / {prefix}antisit - Disable all VehicleSeats and Seats (anti-sit)
 
       {prefix}resit / {prefix}unantisit - Re-enable all Seats (undo anti-sit)
@@ -1439,6 +1443,34 @@ end
 
 local function stop_rainbow_others_car(Player)
    RGB_Vehicle_Others(Player, false)
+end
+
+function toggle_name_func(boolean)
+   if boolean == true then
+      getgenv().Send("hide_name", true)
+   elseif boolean == false then
+      getgenv().Send("hide_name", false)
+   else
+      return notify("Failure:", "Invalid arguments provided.", 5)
+   end
+end
+wait(0.2)
+function flashy_name(Toggle)
+   if Toggle == true then
+      getgenv().Flashing_Name_Title = true
+      while getgenv().Flashing_Name_Title == true do
+      wait(0)
+         toggle_name_func(true)
+         wait(0)
+         toggle_name_func(false)
+      end
+   elseif Toggle == false then
+      getgenv().Flashing_Name_Title = false
+      wait(1.5)
+      toggle_name_func(false)
+   else
+      return notify("Failure:", "Invalid argument(s) provided.", 5)
+   end
 end
 
 function lock_vehicle(Vehicle)
@@ -2168,6 +2200,18 @@ local function handleCommand(sender, message)
       end
       wait()
       notify("Success:", "Successfully disabled 'anti-sit'!", 5)
+   elseif cmd == "flashname" then
+      if getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == true then
+         return notify("Failure:", "Your already running Flash Name!", 5)
+      end
+
+      flashy_name(true)
+   elseif cmd == "noflashname" then
+      if not getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == false then
+         return notify("Failure:", "Your not currently running Flash Name!", 5)
+      end
+      
+      flashy_name(false)
    elseif cmd == "kill" and split[1] then
       local target = findplr(split[1])
       if not target then return notify("Kill:", "Target not found.", 5) end
