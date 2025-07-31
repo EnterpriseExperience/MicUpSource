@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.3.9-LifeAdmin"
+local Script_Version = "V2.4.1-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -374,6 +374,23 @@ if not getgenv().Lighting then
    warn("getgenv().Lighting was not detected, fixing...")
    getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 end
+
+function create_void_part()
+   if getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") then return end
+   task.wait(0.1)
+   local Kill_Model_Script = Instance.new("Model")
+   Kill_Model_Script.Name = "Void_Model_Script(KEEP)"
+   Kill_Model_Script.Parent = getgenv().Workspace
+   task.wait(0.1)
+   local Kill_Part = Instance.new("Part")
+   Kill_Part.Name = "SCRIPT_VOIDPART_VOID"
+   Kill_Part.Anchored = true
+   Kill_Part.CanCollide = false
+   Kill_Part.Size = Vector3.new(10, 10, 10)
+   Kill_Part.CFrame = CFrame.new(9e9, 9e9, 9e9)
+   Kill_Part.Parent = Kill_Model_Script
+end
+
 wait()
 function create_kill_part()
    if getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") then return end
@@ -453,6 +470,75 @@ function vehicle_kill_player(TargetPlayer)
    end
 end
 
+function vehicle_void_player(TargetPlayer)
+   if not TargetPlayer or not TargetPlayer.Character then return end
+   local targetChar = TargetPlayer.Character
+   local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
+   if not targetHRP then return end
+
+   local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
+
+   local voidPart = getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)")
+   if not voidPart then create_kill_part() voidPart = getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") end
+   local voidCF = voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID") and voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID").CFrame
+   if not voidCF then return end
+
+   local MyPlayer = getgenv().LocalPlayer
+   local MyChar = getgenv().Character or MyPlayer.Character
+   local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
+   local MyBus = nil
+
+   for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
+      if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
+         if v:FindFirstChild("VehicleSeat") then
+               MyBus = v
+               break
+         end
+      end
+   end
+
+   if not MyBus then return warn("No owned SchoolBus found") end
+   local seat = MyBus:FindFirstChild("VehicleSeat")
+   if seat and MyHumanoid then
+      MyChar:PivotTo(seat.CFrame)
+      task.wait(0.2)
+      seat:Sit(MyHumanoid)
+   end
+
+   local maxTries = 100
+   for i = 1, maxTries do
+      local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
+      local isSitting = targetHumanoid and targetHumanoid.Sit
+      if isSitting then break end
+
+      MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+      task.wait(0.2)
+   end
+   wait(0.1)
+   MyBus:PivotTo(voidCF)
+   wait(0.4)
+   local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
+   if getgenv().Humanoid.Sit then
+      getgenv().Humanoid:ChangeState(3)
+      wait(0.1)
+      myHRP.CFrame = Old_CF
+      wait(0.5)
+      spawn_any_vehicle("Chiron")
+   end
+   if myHRP then
+      myHRP.CFrame = Old_CF
+      wait(0.5)
+      spawn_any_vehicle("Chiron")
+   end
+end
+
+if not getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") then
+   create_kill_part()
+end
+if not getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") then
+   create_void_part()
+end
+
 local function decodeHTMLEntities(str)
     return str:gsub("&gt;", ">")
               :gsub("&lt;", "<")
@@ -524,9 +610,6 @@ function vehicle_skydive_player(TargetPlayer)
    end
 end
 
-if not getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") then
-    create_kill_part()
-end
 wait()
 function vehicle_bring_player(TargetPlayer)
    if not TargetPlayer or not TargetPlayer.Character then return end
@@ -1202,9 +1285,11 @@ local function CommandsMenu()
 
       {prefix}unview - Disables the 'view' command
 
-      {prefix}kill [player] - Kill target
+      {prefix}void [player] - Voids target
 
-      {prefix}bring [player] - Bring target
+      {prefix}kill [player] - Kills target
+
+      {prefix}bring [player] - Brings target
 
       {prefix}goto [player] - Teleports your Character to the target player
 
@@ -2108,6 +2193,37 @@ local function handleCommand(sender, message)
          notify("Kill", "Killing player: "..target.Name, 3)
       else
          notify("Kill", "Failed to spawn/find SchoolBus.", 3)
+      end
+   elseif cmd == "void" and split[1] then
+      local target = findplr(split[1])
+      if not target then return notify("Void:", "Target not found.", 5) end
+
+      local function wait_for_bus(timeout)
+         local t = 0
+         while t < timeout do
+            for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
+               if v:IsA("Model") and v.Name == "SchoolBus" and v:FindFirstChild("owner") and v.owner.Value == getgenv().LocalPlayer then
+                  return v
+               end
+            end
+            task.wait(0.2)
+            t += 0.2
+         end
+         return nil
+      end
+
+      local Vehicle = get_vehicle()
+      if not Vehicle or Vehicle.Name ~= "SchoolBus" then
+         spawn_any_vehicle("SchoolBus")
+         wait(0.5)
+         Vehicle = wait_for_bus(5)
+      end
+
+      if Vehicle and Vehicle.Name == "SchoolBus" then
+         vehicle_void_player(target)
+         notify("Void", "Sending player to the void | player: "..target.Name, 3)
+      else
+         notify("Void", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "rejoin" or cmd == "rj" then
       if #getgenv().Players:GetPlayers() <= 1 then
