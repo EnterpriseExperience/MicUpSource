@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.4.1-LifeAdmin"
+local Script_Version = "V2.4.3-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1642,17 +1642,17 @@ getgenv().viewTarget = function(Player)
    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
       local Target_Char = Player.Character or Player.CharacterAdded:Wait()
 
-      getgenv().Camera.CameraSubject = Target_Char:FindFirstChildWhichIsA("Humanoid")
+      getgenv().Camera.CameraSubject = Target_Char:FindFirstChildWhichIsA("Humanoid") or Target_Char:WaitForChild("Humanoid", 3)
       wait(0.1)
       getgenv().Viewing_A_Player = true
-
+      wait()
       getgenv().Viewing_Plr_Tbl[Player.Name] = {
          Name = Player.Name,
          DisplayName = Player.DisplayName,
          UserId = Player.UserId,
          Character = Target_Char,
-         Humanoid = Target_Char:FindFirstChildWhichIsA("Humanoid"),
-         HumanoidRootPart = Target_Char:FindFirstChild("HumanoidRootPart") or Target_Char:WaitForChild("HumanoidRootPart", 1)
+         Humanoid = Target_Char:FindFirstChildWhichIsA("Humanoid") or Target_Char:WaitForChild("Humanoid", 3),
+         HumanoidRootPart = Target_Char:FindFirstChild("HumanoidRootPart") or Target_Char:WaitForChild("HumanoidRootPart", 3)
       }
    end
 end
@@ -1668,19 +1668,24 @@ getgenv().unview_player = function()
       getgenv().Camera.CameraSubject = getgenv().Character
    end
 
+   local viewedName
+   for name, data in pairs(getgenv().Viewing_Plr_Tbl) do
+      viewedName = data.DisplayName or name
+      break
+   end
+
    getgenv().Viewing_A_Player = false
-   notify("Success:", "Stopped viewing other player.", 5)
+   getgenv().Viewing_Plr_Tbl = {}
+   notify("Success:", "Stopped viewing: " .. tostring(viewedName), 5)
 end
 wait(0.1)
 warn("Setup viewing/spectating functions.")
 
 local function check_friend(Player)
-   for _, v in ipairs(getgenv().Players:GetPlayers()) do
-      if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
-         return true
-      else
-         return false
-      end
+   if Player ~= getgenv().LocalPlayer and Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+      return true
+   else
+      return false
    end
 
    return 
