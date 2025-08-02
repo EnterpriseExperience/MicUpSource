@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.4.6-LifeAdmin"
+local Script_Version = "V2.4.8-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -413,6 +413,28 @@ function vehicle_kill_player(TargetPlayer)
    local targetChar = TargetPlayer.Character
    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
    if not targetHRP then return end
+   local Anti_Sit_Was_Enabled = false
+
+   if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
+      Anti_Sit_Was_Enabled = true
+      wait(0.3)
+      getgenv().Anti_Sit_Enabled = false
+
+      if getgenv().Anti_Sit_Connection then
+         getgenv().Anti_Sit_Connection:Disconnect()
+         getgenv().Anti_Sit_Connection = nil
+      end
+
+      for _, v in ipairs(Workspace:GetDescendants()) do
+         if v:IsA("Seat") or v:IsA("VehicleSeat") then
+            v.CanCollide = true
+            v.Disabled = false
+            v:SetAttribute("Disabled", false)
+         end
+      end
+   else
+      Anti_Sit_Was_Enabled = false
+   end
 
    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -468,6 +490,40 @@ function vehicle_kill_player(TargetPlayer)
       wait(0.5)
       spawn_any_vehicle("Chiron")
    end
+   wait(0.2)
+   if Anti_Sit_Was_Enabled == true then
+      local function handleSeat(seat)
+         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
+            seat.CanCollide = false
+            seat.Disabled = true
+            seat:SetAttribute("Disabled", true)
+         end
+      end
+
+      getgenv().Anti_Sit_Connection = nil
+      wait(0.1)
+      local function scanAndHandle(instance)
+         handleSeat(instance)
+         for _, child in ipairs(instance:GetDescendants()) do
+            handleSeat(child)
+         end
+      end
+
+      Anti_Sit_Was_Enabled = false
+
+      notify("Success:", "Successfully re-enabled 'anti-sit'!", 5)
+      getgenv().Anti_Sit_Enabled = true
+
+      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+         handleSeat(v)
+      end
+
+      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
+         if getgenv().Anti_Sit_Enabled then
+            scanAndHandle(v)
+         end
+      end)
+   end
 end
 
 function vehicle_void_player(TargetPlayer)
@@ -475,6 +531,28 @@ function vehicle_void_player(TargetPlayer)
    local targetChar = TargetPlayer.Character
    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
    if not targetHRP then return end
+   local Anti_Sit_Was_Enabled = false
+
+   if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
+      Anti_Sit_Was_Enabled = true
+      wait(0.3)
+      getgenv().Anti_Sit_Enabled = false
+
+      if getgenv().Anti_Sit_Connection then
+         getgenv().Anti_Sit_Connection:Disconnect()
+         getgenv().Anti_Sit_Connection = nil
+      end
+
+      for _, v in ipairs(Workspace:GetDescendants()) do
+         if v:IsA("Seat") or v:IsA("VehicleSeat") then
+            v.CanCollide = true
+            v.Disabled = false
+            v:SetAttribute("Disabled", false)
+         end
+      end
+   else
+      Anti_Sit_Was_Enabled = false
+   end
 
    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -491,8 +569,8 @@ function vehicle_void_player(TargetPlayer)
    for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
       if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
          if v:FindFirstChild("VehicleSeat") then
-               MyBus = v
-               break
+            MyBus = v
+            break
          end
       end
    end
@@ -511,7 +589,7 @@ function vehicle_void_player(TargetPlayer)
       local isSitting = targetHumanoid and targetHumanoid.Sit
       if isSitting then break end
 
-      MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
+      MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.1, 0))
       task.wait(0.2)
    end
    wait(0.1)
@@ -529,6 +607,40 @@ function vehicle_void_player(TargetPlayer)
       myHRP.CFrame = Old_CF
       wait(0.5)
       spawn_any_vehicle("Chiron")
+   end
+   wait(0.2)
+   if Anti_Sit_Was_Enabled == true then
+      local function handleSeat(seat)
+         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
+            seat.CanCollide = false
+            seat.Disabled = true
+            seat:SetAttribute("Disabled", true)
+         end
+      end
+
+      getgenv().Anti_Sit_Connection = nil
+      wait(0.1)
+      local function scanAndHandle(instance)
+         handleSeat(instance)
+         for _, child in ipairs(instance:GetDescendants()) do
+            handleSeat(child)
+         end
+      end
+
+      Anti_Sit_Was_Enabled = false
+
+      notify("Success:", "Successfully re-enabled 'anti-sit'!", 5)
+      getgenv().Anti_Sit_Enabled = true
+
+      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+         handleSeat(v)
+      end
+
+      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
+         if getgenv().Anti_Sit_Enabled then
+            scanAndHandle(v)
+         end
+      end)
    end
 end
 
@@ -552,6 +664,28 @@ function vehicle_skydive_player(TargetPlayer)
    local targetChar = TargetPlayer.Character
    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
    if not targetHRP then return end
+   local Anti_Sit_Was_Enabled = false
+
+   if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
+      Anti_Sit_Was_Enabled = true
+      wait(0.3)
+      getgenv().Anti_Sit_Enabled = false
+
+      if getgenv().Anti_Sit_Connection then
+         getgenv().Anti_Sit_Connection:Disconnect()
+         getgenv().Anti_Sit_Connection = nil
+      end
+
+      for _, v in ipairs(Workspace:GetDescendants()) do
+         if v:IsA("Seat") or v:IsA("VehicleSeat") then
+            v.CanCollide = true
+            v.Disabled = false
+            v:SetAttribute("Disabled", false)
+         end
+      end
+   else
+      Anti_Sit_Was_Enabled = false
+   end
 
    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -608,6 +742,40 @@ function vehicle_skydive_player(TargetPlayer)
       wait(0.5)
       spawn_any_vehicle("Chiron")
    end
+   wait(0.2)
+   if Anti_Sit_Was_Enabled == true then
+      local function handleSeat(seat)
+         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
+            seat.CanCollide = false
+            seat.Disabled = true
+            seat:SetAttribute("Disabled", true)
+         end
+      end
+
+      getgenv().Anti_Sit_Connection = nil
+      wait(0.1)
+      local function scanAndHandle(instance)
+         handleSeat(instance)
+         for _, child in ipairs(instance:GetDescendants()) do
+            handleSeat(child)
+         end
+      end
+
+      Anti_Sit_Was_Enabled = false
+
+      notify("Success:", "Successfully re-enabled 'anti-sit'!", 5)
+      getgenv().Anti_Sit_Enabled = true
+
+      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+         handleSeat(v)
+      end
+
+      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
+         if getgenv().Anti_Sit_Enabled then
+            scanAndHandle(v)
+         end
+      end)
+   end
 end
 
 wait()
@@ -616,7 +784,29 @@ function vehicle_bring_player(TargetPlayer)
    local targetChar = TargetPlayer.Character
    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
    if not targetHRP then return end
+   local Anti_Sit_Was_Enabled = false
 
+   if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
+      Anti_Sit_Was_Enabled = true
+      wait(0.3)
+      getgenv().Anti_Sit_Enabled = false
+
+      if getgenv().Anti_Sit_Connection then
+         getgenv().Anti_Sit_Connection:Disconnect()
+         getgenv().Anti_Sit_Connection = nil
+      end
+
+      for _, v in ipairs(Workspace:GetDescendants()) do
+         if v:IsA("Seat") or v:IsA("VehicleSeat") then
+            v.CanCollide = true
+            v.Disabled = false
+            v:SetAttribute("Disabled", false)
+         end
+      end
+   else
+      Anti_Sit_Was_Enabled = false
+   end
+   wait(0.2)
    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
    local MyPlayer = getgenv().LocalPlayer
@@ -665,6 +855,40 @@ function vehicle_bring_player(TargetPlayer)
       myHRP.CFrame = Old_CF
       wait(0.5)
       spawn_any_vehicle("Chiron")
+   end
+   wait(0.2)
+   if Anti_Sit_Was_Enabled == true then
+      local function handleSeat(seat)
+         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
+            seat.CanCollide = false
+            seat.Disabled = true
+            seat:SetAttribute("Disabled", true)
+         end
+      end
+
+      getgenv().Anti_Sit_Connection = nil
+      wait(0.1)
+      local function scanAndHandle(instance)
+         handleSeat(instance)
+         for _, child in ipairs(instance:GetDescendants()) do
+            handleSeat(child)
+         end
+      end
+
+      Anti_Sit_Was_Enabled = false
+
+      notify("Success:", "Successfully re-enabled 'anti-sit'!", 5)
+      getgenv().Anti_Sit_Enabled = true
+
+      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+         handleSeat(v)
+      end
+
+      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
+         if getgenv().Anti_Sit_Enabled then
+            scanAndHandle(v)
+         end
+      end)
    end
 end
 
@@ -1097,41 +1321,29 @@ function water_skie_trailer(Bool, Vehicle)
 end
 
 function EnableFly(speed)
+   local player = getgenv().LocalPlayer
    local HRP = getgenv().HumanoidRootPart
    local Humanoid = getgenv().Humanoid
    local Camera = getgenv().Camera
    local RunService = getgenv().RunService
-   local UserInputService = getgenv().UserInputService
+   local UIS = getgenv().UserInputService
+
+   if not (HRP and Humanoid and Camera) then return end
 
    getgenv().HD_FlyEnabled = true
+   local vertical = 0
 
-   FlyKeysDown = {W = false, A = false, S = false, D = false, E = false, Q = false}
-
-   UserInputService.InputBegan:Connect(function(input, gameProcessed)
-      if gameProcessed then return end
-      local key = input.KeyCode
-      if FlyKeysDown[key.Name] ~= nil then
-         FlyKeysDown[key.Name] = true
-      end
+   UIS.InputBegan:Connect(function(input, gpe)
+      if gpe then return end
+      if input.KeyCode == Enum.KeyCode.E then vertical = 1 end
+      if input.KeyCode == Enum.KeyCode.Q then vertical = -1 end
    end)
 
-   UserInputService.InputEnded:Connect(function(input)
-      local key = input.KeyCode
-      if FlyKeysDown[key.Name] ~= nil then
-         FlyKeysDown[key.Name] = false
+   UIS.InputEnded:Connect(function(input)
+      if input.KeyCode == Enum.KeyCode.E or input.KeyCode == Enum.KeyCode.Q then
+         vertical = 0
       end
    end)
-
-   local function GetInputDirection(cam)
-      local dir = Vector3.zero
-      if FlyKeysDown.W then dir += cam.CFrame.LookVector end
-      if FlyKeysDown.S then dir -= cam.CFrame.LookVector end
-      if FlyKeysDown.D then dir += cam.CFrame.RightVector end
-      if FlyKeysDown.A then dir -= cam.CFrame.RightVector end
-      if FlyKeysDown.E then dir += cam.CFrame.UpVector end
-      if FlyKeysDown.Q then dir -= cam.CFrame.UpVector end
-      return dir.Magnitude > 0 and dir.Unit or Vector3.zero
-   end
 
    local bodyGyro = Instance.new("BodyGyro")
    bodyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
@@ -1151,7 +1363,7 @@ function EnableFly(speed)
 
    Humanoid.PlatformStand = true
 
-   FlyConnection = RunService.Heartbeat:Connect(function(dt)
+   FlyConnection = RunService.RenderStepped:Connect(function(dt)
       if not getgenv().HD_FlyEnabled then
          bodyGyro:Destroy()
          bodyPos:Destroy()
@@ -1160,10 +1372,10 @@ function EnableFly(speed)
          return
       end
 
-      local direction = GetInputDirection(Camera)
-      local move = direction * speed * dt
-
-      bodyPos.Position += move
+      local moveDir = Humanoid.MoveDirection
+      local movement = moveDir * speed * dt
+      local verticalMove = Vector3.new(0, vertical * speed * dt, 0)
+      bodyPos.Position = HRP.Position + movement + verticalMove
       bodyGyro.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector)
    end)
 end
