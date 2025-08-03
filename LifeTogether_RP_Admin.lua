@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.5.5-LifeAdmin"
+local Script_Version = "V2.5.7-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -224,38 +224,38 @@ getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport o
 queueteleport = getgenv().queueteleport
 
 local function init_services()
-    local services = {
-        "Players",
-        "Workspace",
-        "Lighting",
-        "ReplicatedStorage",
-        "TweenService",
-        "RunService",
-        "MaterialService",
-        "ReplicatedFirst",
-        "Teams",
-        "StarterPack",
-        "StarterPlayer",
-        "VoiceChatInternal",
-        "VoiceChatService",
-        "CoreGui",
-        "SoundService",
-        "StarterGui",
-        "MarketplaceService",
-        "TeleportService",
-        "Chat",
-        "AssetService",
-        "HttpService",
-        "UserInputService",
-        "TextChatService",
-        "ContextActionService",
-        "GuiService",
-        "PhysicsService"
-    }
+   local services = {
+      "Players",
+      "Workspace",
+      "Lighting",
+      "ReplicatedStorage",
+      "TweenService",
+      "RunService",
+      "MaterialService",
+      "ReplicatedFirst",
+      "Teams",
+      "StarterPack",
+      "StarterPlayer",
+      "VoiceChatInternal",
+      "VoiceChatService",
+      "CoreGui",
+      "SoundService",
+      "StarterGui",
+      "MarketplaceService",
+      "TeleportService",
+      "Chat",
+      "AssetService",
+      "HttpService",
+      "UserInputService",
+      "TextChatService",
+      "ContextActionService",
+      "GuiService",
+      "PhysicsService"
+   }
 
-    for _, serviceName in pairs(services) do
-        getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
-    end
+   for _, serviceName in pairs(services) do
+      getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
+   end
 end
 wait()
 init_services()
@@ -266,6 +266,46 @@ local RunService = cloneref and cloneref(game:GetService("RunService")) or game:
 local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+
+local NetModule
+for _, v in ipairs(getgc(true)) do
+   if typeof(v) == "table" and rawget(v, "send") and rawget(v, "get") then
+      if typeof(v.send) == "function" and typeof(v.get) == "function" then
+         NetModule = v
+      end
+   end
+end
+
+if not NetModule then
+   --loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/ExecutorNot_SupportedGUI.lua'))()
+   getgenv().notify("Failure:", "Net ModuleScript not found!", 5)
+end
+
+local counterTable
+for _, v in ipairs(getgc(true)) do
+   if typeof(v) == "table" and rawget(v, "event") and rawget(v, "func") then
+      if typeof(v.event) == "number" and typeof(v.func) == "number" then
+         counterTable = v
+      end
+   end
+end
+
+if not counterTable then
+   --loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/ExecutorNot_SupportedGUI.lua'))()
+   getgenv().notify("Failure:", "counterTable not found.", 5)
+end
+
+local ReplicatedFirst = cloneref and cloneref(game:GetService("ReplicatedFirst")) or game:GetService("ReplicatedFirst")
+
+local NetEventCount = Instance.new("IntValue")
+NetEventCount.Name = "Net_RemoteEvent_Counter"
+NetEventCount.Value = counterTable.event
+NetEventCount.Parent = ReplicatedFirst
+
+local NetFuncCount = Instance.new("IntValue")
+NetFuncCount.Name = "Get_RemoteFunction_Counter"
+NetFuncCount.Value = counterTable.func
+NetFuncCount.Parent = ReplicatedFirst
 wait(0.2)
 local Modules = ReplicatedStorage:FindFirstChild("Modules")
 local Core = Modules:FindFirstChild("Core")
@@ -1807,7 +1847,7 @@ local function setup_cmd_handler_plr(player)
 
    local function chat_reply(speaker, msg)
       if channel then
-         channel:SendAsync("/w " .. tostring(speaker.DisplayName) .. " " .. msg .. " (this message was automatically sent)")
+         channel:SendAsync("/w " .. tostring(getgenv().Players[speaker.Name].DisplayName) .. " " .. msg .. " (this message was automatically sent)")
       end
    end
 
@@ -1824,7 +1864,7 @@ local function setup_cmd_handler_plr(player)
       if levenshtein(command, "rgbcar") <= 2 then
          if not playerVehicle then
             getgenv().Rainbow_Vehicles[speaker.Name] = false
-            return chat_reply(speaker, "you don't got a vehicle")
+            return chat_reply(speaker, "you don't have a vehicle")
          end
 
          getgenv().Rainbow_Vehicles[speaker.Name] = true
@@ -2142,9 +2182,13 @@ local function handleCommand(sender, message)
          return notify("Failure:", "Player is not your friend, add them to use this!", 5)
       end
 
+      if getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] then
+         return notify("Failure:", "Player already has they're car rainbow!", 5)
+      end
+      wait(0.1)
       getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] = true
-
-      --[[local colors = {
+      wait(0.1)
+      local colors = {
          Color3.fromRGB(255, 255, 255),
          Color3.fromRGB(128, 128, 128),
          Color3.fromRGB(0, 0, 0),
@@ -2167,7 +2211,7 @@ local function handleCommand(sender, message)
             if getgenv().Rainbow_Others_Vehicle ~= true then return end
             change_vehicle_color(color, get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]))
          end
-      end--]]
+      end
    elseif cmd == "norainbowcar" then
       local PlayerToRGBCarStop = findplr(split[1])
       if not PlayerToRGBCarStop then return notify("Failure:", "Player does not exist!", 5) end
@@ -2940,5 +2984,12 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
    end
    if getgenv().Unlocked_Vehicles[Player.Name] then
       getgenv().Unlocked_Vehicles[Player.Name] = false
+   end
+end)
+wait(0.2)
+task.spawn(function()
+   while task.wait() do
+      NetEventCount.Value = counterTable.event
+      NetFuncCount.Value = counterTable.func
    end
 end)
