@@ -2987,9 +2987,9 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
    end
 end)
 wait(0.2)
-task.spawn(function()
+--[[task.spawn(function()
    while task.wait() do
       NetEventCount.Value = counterTable.event
       NetFuncCount.Value = counterTable.func
    end
-end)
+end)--]]
