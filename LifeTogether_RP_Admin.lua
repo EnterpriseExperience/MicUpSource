@@ -1240,6 +1240,10 @@ function DisableFlyScript()
       FlyConnection = nil
    end
 
+   if getgenv().PlayerGui:FindFirstChild("FlyControls") then
+      getgenv().PlayerGui:FindFirstChild("FlyControls"):Destroy()
+   end
+
    local hrp = getgenv().HumanoidRootPart
    if hrp:FindFirstChild("ExecutorFlyGyro") then
       hrp.ExecutorFlyGyro:Destroy()
@@ -1338,7 +1342,8 @@ function EnableFly(speed)
       local ScreenGui = Instance.new("ScreenGui")
       ScreenGui.Name = "FlyControls"
       ScreenGui.ResetOnSpawn = false
-      ScreenGui.Parent = player:FindFirstChildOfClass("PlayerGui") or game.CoreGui
+      ScreenGui.IgnoreGuiInset = true
+      ScreenGui.Parent = getgenv().PlayerGui
 
       local function makeArrowButton(name, position, text)
          local btn = Instance.new("TextButton")
@@ -1346,6 +1351,7 @@ function EnableFly(speed)
          btn.Text = text
          btn.Size = UDim2.new(0, 60, 0, 60)
          btn.Position = position
+         btn.AnchorPoint = Vector2.new(1, 1)
          btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
          btn.TextColor3 = Color3.new(1, 1, 1)
          btn.TextScaled = true
@@ -1356,8 +1362,8 @@ function EnableFly(speed)
          return btn
       end
 
-      local upBtn = makeArrowButton("FlyUp", UDim2.new(1, -80, 0.8, -70), "↑")
-      local downBtn = makeArrowButton("FlyDown", UDim2.new(1, -80, 0.8, 10), "↓")
+      local upBtn = makeArrowButton("FlyUp", UDim2.new(1, -20, 1, -140), "↑")
+      local downBtn = makeArrowButton("FlyDown", UDim2.new(1, -20, 1, -70), "↓")
 
       upBtn.MouseButton1Down:Connect(function()
          vertical = 1
