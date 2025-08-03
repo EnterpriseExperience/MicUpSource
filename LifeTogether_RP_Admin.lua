@@ -1374,8 +1374,8 @@ function EnableFly(speed)
       end
 
       local moveDir = Humanoid.MoveDirection
-      local movement = moveDir * speed * dt
-      local verticalMove = Vector3.new(0, vertical * speed * dt, 0)
+      local movement = moveDir * speed
+      local verticalMove = Vector3.new(0, vertical * speed, 0)
       bodyPos.Position = HRP.Position + movement + verticalMove
       bodyGyro.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector)
    end)
@@ -1425,7 +1425,7 @@ local function CommandsMenu()
 
    userInputService.InputChanged:Connect(function(input)
       if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-         targetDelta = input.Position - dragStart
+         targetDelta = Vector2.new(input.Position.X, input.Position.Y) - dragStart
       end
    end)
 
