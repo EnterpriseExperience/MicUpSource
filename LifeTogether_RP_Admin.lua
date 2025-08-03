@@ -1334,6 +1334,53 @@ function EnableFly(speed)
    getgenv().HD_FlyEnabled = true
    local vertical = 0
 
+   local function createMobileFlyButtons()
+      local ScreenGui = Instance.new("ScreenGui")
+      ScreenGui.Name = "FlyControls"
+      ScreenGui.ResetOnSpawn = false
+      ScreenGui.Parent = player:FindFirstChildOfClass("PlayerGui") or game.CoreGui
+
+      local function makeArrowButton(name, position, text)
+         local btn = Instance.new("TextButton")
+         btn.Name = name
+         btn.Text = text
+         btn.Size = UDim2.new(0, 60, 0, 60)
+         btn.Position = position
+         btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         btn.TextColor3 = Color3.new(1, 1, 1)
+         btn.TextScaled = true
+         btn.BorderSizePixel = 0
+         btn.AutoButtonColor = true
+         btn.BackgroundTransparency = 0.2
+         btn.Parent = ScreenGui
+         return btn
+      end
+
+      local upBtn = makeArrowButton("FlyUp", UDim2.new(1, -80, 0.8, -70), "↑")
+      local downBtn = makeArrowButton("FlyDown", UDim2.new(1, -80, 0.8, 10), "↓")
+
+      upBtn.MouseButton1Down:Connect(function()
+         vertical = 1
+      end)
+      upBtn.MouseButton1Up:Connect(function()
+         vertical = 0
+      end)
+      downBtn.MouseButton1Down:Connect(function()
+         vertical = -1
+      end)
+      downBtn.MouseButton1Up:Connect(function()
+         vertical = 0
+      end)
+
+      return ScreenGui
+   end
+
+   local isTouch = UIS.TouchEnabled or UIS.KeyboardEnabled == false
+   local mobileGui
+   if isTouch then
+      mobileGui = createMobileFlyButtons()
+   end
+
    UIS.InputBegan:Connect(function(input, gpe)
       if gpe then return end
       if input.KeyCode == Enum.KeyCode.E then vertical = 1 end
@@ -1370,6 +1417,7 @@ function EnableFly(speed)
          bodyPos:Destroy()
          Humanoid.PlatformStand = false
          FlyConnection:Disconnect()
+         if mobileGui then mobileGui:Destroy() end
          return
       end
 
