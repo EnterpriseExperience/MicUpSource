@@ -1412,7 +1412,7 @@ local function CommandsMenu()
    dragFrame.InputBegan:Connect(function(input)
       if input.UserInputType == Enum.UserInputType.MouseButton1 then
          dragging = true
-         dragStart = input.Position
+         dragStart = Vector2.new(input.Position.X, input.Position.Y)
          startPos = dragFrame.Position
 
          input.Changed:Connect(function()
