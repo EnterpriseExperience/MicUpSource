@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.4.8-LifeAdmin"
+local Script_Version = "V2.5.5-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1327,6 +1327,7 @@ function EnableFly(speed)
    local Camera = getgenv().Camera
    local RunService = getgenv().RunService
    local UIS = getgenv().UserInputService
+   speed = tonumber(speed) or 125
 
    if not (HRP and Humanoid and Camera) then return end
 
@@ -1391,12 +1392,49 @@ local function CommandsMenu()
 
    local mainFrame = Instance.new("Frame")
    mainFrame.Size = UDim2.new(0, 600, 0, 500)
-   mainFrame.Position = UDim2.new(0.5, -175, 0.5, -150)
-   mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+   mainFrame.Position = UDim2.new(0.5, -300, 0.5, -250)
+   mainFrame.BackgroundColor3 = Color3.fromRGB(95, 212, 195)
    mainFrame.BorderSizePixel = 0
    mainFrame.Active = true
    mainFrame.Draggable = true
    mainFrame.Parent = cmdsUI
+
+   local dragFrame = mainFrame
+   local userInputService = getgenv().UserInputService
+   local runService = getgenv().RunService
+   local dragging = false
+   local dragStart
+   local startPos
+   local currentDelta = Vector2.zero
+   local targetDelta = Vector2.zero
+   local smoothSpeed = 0.3
+
+   dragFrame.InputBegan:Connect(function(input)
+      if input.UserInputType == Enum.UserInputType.MouseButton1 then
+         dragging = true
+         dragStart = input.Position
+         startPos = dragFrame.Position
+
+         input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+               dragging = false
+            end
+         end)
+      end
+   end)
+
+   userInputService.InputChanged:Connect(function(input)
+      if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+         targetDelta = input.Position - dragStart
+      end
+   end)
+
+   runService.RenderStepped:Connect(function()
+      if dragging then
+         currentDelta = currentDelta:Lerp(targetDelta, smoothSpeed)
+         dragFrame.Position = startPos + UDim2.new(0, currentDelta.X, 0, currentDelta.Y)
+      end
+   end)
 
    Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
 
@@ -1427,6 +1465,11 @@ local function CommandsMenu()
    scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
    scrollFrame.Parent = mainFrame
 
+   local layout = Instance.new("UIListLayout")
+   layout.Padding = UDim.new(0, 6)
+   layout.SortOrder = Enum.SortOrder.LayoutOrder
+   layout.Parent = scrollFrame
+
    local padding = Instance.new("UIPadding")
    padding.PaddingTop = UDim.new(0, 5)
    padding.PaddingLeft = UDim.new(0, 5)
@@ -1435,136 +1478,107 @@ local function CommandsMenu()
    padding.Parent = scrollFrame
 
    local currentPrefix = getgenv().AdminPrefix
+   local channel = getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
 
    local cmdsString = [[
       {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle)
-
       {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
-      
-      {prefix}rainbowcar [player] - Makes a players car RGB (FE!)
-
-      {prefix}norainbowcar [player] - Disables the RGB for a player's car (FE!)
-
-      {prefix}unadmin [player] - Removes the player's FE commands (if they're your friend).
-
-      {prefix}admin [player] - Adds the player to the FE commands whitelist (if they're your friend).
-
+      {prefix}rainbowcar player - Makes a players car RGB (FE)
+      {prefix}norainbowcar player - Disables the RGB for a player's car (FE)
+      {prefix}unadmin player - Removes the player's FE commands (if they're your friend).
+      {prefix}admin player - Adds the player to the FE commands whitelist (if they're your friend).
       {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone)
-
       {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone)
-
       {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone)
-
       {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone)
-
-      {prefix}name [new name] - Change RP name
-
-      {prefix}bio [bio] - Change RP bio
-
-      {prefix}fly [speed] - Enable/disable flying
-
+      {prefix}name NewName - Change RP name
+      {prefix}bio NewBio - Change RP bio
+      {prefix}fly SpeedNumber - Enable/disable flying
       {prefix}unfly - Disables (Fly) command
-
       {prefix}noclip - Enables Noclip, letting you walk through everything
-
       {prefix}clip - Disables Noclip, so you cannot walk through everything
-
       {prefix}trailer - Gives you the WaterSkies trailer (on any car/vehicle)
-
       {prefix}notrailer - Removes the WaterSkies trailer (on your current spawned car/vehicle)
-
       {prefix}autolockcar - Automatically (loop) locks your vehicle/car when there is one spawned
-
       {prefix}unautolockcar - Turn off/disables the loop that automatically locks your vehicle/car
-
       {prefix}lockcar - Lock your car
-
       {prefix}unlockcar - Unlock your car
-
       {prefix}despawn - Despawn your car
-
       {prefix}antifling - Fully prevents you from being flung, by other exploiters/cheaters, and fling outfits as well (FULL BYPASS)
-
       {prefix}unantifling - Disables "antifling" allowing you to also teleport to places and what not like normal
-
       {prefix}bringcar - Teleport car to you and sit in it
-
       {prefix}flashname - Enables the flashing of your "Bio" and "Name" (above your head)
-
       {prefix}noflashname - Disables the flashing of your "Bio" and "Name" (above your head)
-
-      {prefix}nosit / {prefix}antisit - Disable all VehicleSeats and Seats (anti-sit)
-
-      {prefix}resit / {prefix}unantisit - Re-enable all Seats (undo anti-sit)
-
-      {prefix}view [player] - Smooth view's the target's Character
-
+      {prefix}nosit - Disable all VehicleSeats and Seats (anti-sit)
+      {prefix}resit - Re-enable all Seats (undo anti-sit)
+      {prefix}view player - Smooth view's the target's Character
       {prefix}unview - Disables the 'view' command
-
-      {prefix}void [player] - Voids target
-
-      {prefix}kill [player] - Kills target
-
-      {prefix}bring [player] - Brings target
-
-      {prefix}goto [player] - Teleports your Character to the target player
-
-      {prefix}skydive [player] - Skydives target
-
+      {prefix}void player - Voids target
+      {prefix}kill player - Kills target
+      {prefix}bring player - Brings target
+      {prefix}goto player - Teleports your Character to the target player
+      {prefix}skydive player - Skydives target
       {prefix}freepay - Gives you LifePay Premium for free
-
-      {prefix}rejoin / {prefix}rj - Rejoins you, but does NOT execute automatically
-
-      {prefix}caraccel [number] - Modifies your "max_acc" on your car/vehicle
-
-      {prefix}carspeed [number] - Modifies your "max_speed" on your car/vehicle
-
-      {prefix}accel [number] - Modifies your "acc_0_60" on your car/vehicle (take off time/speed)
-
+      {prefix}rejoin - Rejoins you, but does NOT execute the script automatically
+      {prefix}caraccel number - Modifies your "max_acc" on your car/vehicle
+      {prefix}carspeed number - Modifies your "max_speed" on your car/vehicle
+      {prefix}accel number - Modifies your "acc_0_60" on your car/vehicle (take off time/speed)
       {prefix}gotocar - Teleports you straight to your car/vehicle directly
-
-      {prefix}tpcar [player] - Teleports your vehicle/car to the specified target
-
+      {prefix}tpcar player - Teleports your vehicle/car to the specified target
       {prefix}antihouseban - Prevents you from being banned/kicked/teleported out of houses
-
       {prefix}unantiban - Turns off 'antihouseban' command completely
-
-      {prefix}spawn [carName] - Spawn any car
-
-      {prefix}prefix [symbol] - Change prefix
-
-      {prefix}inject / {prefix}attach - Secret (???).
+      {prefix}spawn CarName - Spawn any car
+      {prefix}prefix symbol - Change prefix
+      {prefix}inject - Secret (???).
    ]]
 
    cmdsString = string.gsub(cmdsString, "{prefix}", currentPrefix)
-   wait(0.1)
-   local cmdsText = Instance.new("TextLabel")
-   cmdsText.Size = UDim2.new(1, -10, 0, 0)
-   cmdsText.Position = UDim2.new(0, 0, 0, 0)
-   cmdsText.TextWrapped = true
-   cmdsText.TextYAlignment = Enum.TextYAlignment.Top
-   cmdsText.TextColor3 = Color3.fromRGB(255, 0, 0)
-   cmdsText.TextSize = 18
-   cmdsText.BackgroundTransparency = 1
-   cmdsText.Font = Enum.Font.GothamBold
-   cmdsText.FontSize = Enum.FontSize.Size18
-   cmdsText.TextXAlignment = Enum.TextXAlignment.Left
-   cmdsText.Text = cmdsString
-   cmdsText.Parent = scrollFrame
 
-   local TextService = cloneref and cloneref(game:GetService("TextService")) or game:GetService("TextService")
-   local function updateTextSize()
-      local textSize = TextService:GetTextSize(
-         cmdsText.Text,
-         cmdsText.TextSize,
-         cmdsText.Font,
-         Vector2.new(scrollFrame.AbsoluteSize.X - 20, math.huge)
-      )
-      cmdsText.Size = UDim2.new(1, -10, 0, textSize.Y)
+   for line in string.gmatch(cmdsString, "[^\r\n]+") do
+      local cmdText, desc = string.match(line, "^(.-)%s*%-+%s*(.+)$")
+      cmdText = cmdText or line
+      desc = desc or ""
+
+      local frame = Instance.new("Frame")
+      frame.Size = UDim2.new(1, -10, 0, 60)
+      frame.BackgroundTransparency = 1
+      frame.Parent = scrollFrame
+
+      local label = Instance.new("TextLabel")
+      label.Size = UDim2.new(1, -110, 0.5, 0)
+      label.Position = UDim2.new(0, 0, 0, 0)
+      label.BackgroundTransparency = 1
+      label.Font = Enum.Font.GothamSemibold
+      label.TextSize = 16
+      label.TextColor3 = Color3.new(1, 0.4, 0.4)
+      label.TextXAlignment = Enum.TextXAlignment.Left
+      label.Text = cmdText .. "\n" .. desc
+      label.TextWrapped = true
+      label.TextYAlignment = Enum.TextYAlignment.Top
+      label.Parent = frame
+
+      local button = Instance.new("TextButton")
+      button.Size = UDim2.new(0, 100, 0, 30)
+      button.Position = UDim2.new(1, -100, 0, 15)
+      button.Text = "Run"
+      button.Font = Enum.Font.GothamBold
+      button.TextSize = 14
+      button.TextColor3 = Color3.new(1, 1, 1)
+      button.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+      button.Parent = frame
+
+      Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+
+      local commandToSend = cmdText
+
+      button.MouseButton1Click:Connect(function()
+         if channel then
+            channel:SendAsync(commandToSend)
+         else
+            warn("RBXGeneral channel not found!")
+         end
+      end)
    end
-
-   task.wait()
-   updateTextSize()
 
    closeButton.MouseButton1Click:Connect(function()
       cmdsUI:Destroy()
@@ -1587,7 +1601,7 @@ function CreateCreditsLabel()
    label.AnchorPoint = Vector2.new(0.5, 1)
    label.Position = UDim2.new(0.5, 0, 1, -10)
    label.Size = UDim2.new(0.6, 0, 0, 28)
-   label.BackgroundColor3 = Color3.fromRGB(175, 0, 0)
+   label.BackgroundColor3 = Color3.fromRGB(0, 172, 175)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
    local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
    label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. prefix
@@ -2132,7 +2146,7 @@ local function handleCommand(sender, message)
 
       change_bio(new_bio)
    elseif cmd == "fly" then
-      local flySpeed = tonumber(split[1]) or 100
+      local flySpeed = tonumber(split[1])
 
       if getgenv().HD_FlyEnabled then
          return notify("Failure:", "HD Admin Fly is already enabled!", 5)
