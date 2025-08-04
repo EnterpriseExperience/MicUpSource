@@ -1736,7 +1736,7 @@ else
    textLabel.Size = UDim2.new(0.45, 0.5, 0.45, 0.10)
    textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
    textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-   textLabel.Text = "Welcome to:\n\nFlames Life Together Admin V2.5.7!\n\nEnjoy."
+   textLabel.Text = "Welcome to:\n\nFlames Life Together Admin V2.6.2!\n\nEnjoy."
    if getgenv().Lighting.ClockTime <= 5 then
       textLabel.TextColor3 = Color3.fromRGB(3, 3, 3)
    elseif getgenv().Lighting.ClockTime >= 9 then
