@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.5.7-LifeAdmin"
+local Script_Version = "V2.6.1-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -255,6 +255,12 @@ local function init_services()
 
    for _, serviceName in pairs(services) do
       getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
+   end
+   if getgenv().StarterPlayer:FindFirstChildOfClass("StarterPlayerScripts") then
+      getgenv().StarterPlayerScripts = getgenv().StarterPlayer:FindFirstChildOfClass("StarterPlayerScripts") or getgenv().StarterPlayer:FindFirstChildWhichIsA("StarterPlayerScripts")
+   end
+   if getgenv().StarterPlayer:FindFirstChildOfClass("StarterCharacterScripts") then
+      getgenv().StarterCharacterScripts = getgenv().StarterPlayer:FindFirstChildOfClass("StarterCharacterScripts") or getgenv().StarterPlayer:FindFirstChildWhichIsA("StarterCharacterScripts")
    end
 end
 wait()
@@ -985,6 +991,62 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
 end)
+
+-- try and outsmart directory wide searching with effective-ness Life Together RP, you'll never patch this Logs disabler, you'd have to remove it other-wise.
+-- there is quite literally no where else these dick-heads could put it to beat this system, they'd have to remove it entirely to "patch this".
+-- and even if they did, it wouldn't touch my script at all so, they are forced to do 1 thing and 1 thing only.
+local Directories = {
+   ["ReplicatedFirst"] = true,
+   ["ReplicatedStorage"] = true,
+   ["Workspace"] = true,
+   ["TweenService"] = true,
+   ["SoundService"] = true,
+   ["Players"] = true,
+   ["Lighting"] = true,
+   ["MaterialService"] = true,
+   ["Teams"] = true,
+   ["StarterGui"] = true,
+   ["StarterPack"] = true,
+   ["Chat"] = true,
+   ["TextChatService"] = true,
+   ["StarterPlayer"] = true,
+}
+
+for serviceName in pairs(Directories) do
+   local service = getgenv().Game:GetService(serviceName)
+   if service then
+      for _, descendant in ipairs(service:GetDescendants()) do
+         if descendant:IsA("LocalScript") and descendant.Name:lower():find("logs") then
+            descendant.Disabled = true
+         end
+      end
+   end
+end
+
+local playerScripts = getgenv().PlayerScripts
+if playerScripts then
+   local clientBase = playerScripts:FindFirstChild("ClientBase")
+   if clientBase then
+      local logsScript = clientBase:FindFirstChild("Logs")
+      if logsScript and logsScript:IsA("LocalScript") then
+         logsScript.Disabled = true
+      end
+   end
+end
+
+local sps = getgenv().StarterPlayerScripts
+if sps then
+   local package = sps:FindFirstChild("StarterPlayerScripts_Package")
+   if package then
+      local clientBase = package:FindFirstChild("ClientBase")
+      if clientBase then
+         local logsScript = clientBase:FindFirstChild("Logs")
+         if logsScript and logsScript:IsA("LocalScript") then
+               logsScript.Disabled = true
+         end
+      end
+   end
+end
 wait(0.5)
 local success, response = pcall(function()
    local Net = require(getgenv().Core:FindFirstChild("Net"))
@@ -1163,6 +1225,43 @@ function RGB_Vehicle_Others(Player, Boolean)
    elseif Boolean == false then
       getgenv().Rainbow_Others_Vehicle = false
       Boolean = false
+   end
+end
+wait(0.1)
+local GameAnalytics
+local GA_Client
+
+local GA_Directories = {
+   ["ReplicatedFirst"] = true,
+   ["ReplicatedStorage"] = true,
+   ["Workspace"] = true,
+   ["Players"] = true,
+   ["Lighting"] = true,
+   ["StarterGui"] = true,
+   ["StarterPack"] = true,
+   ["StarterPlayer"] = true,
+}
+
+-- bypass this Life Together, I'd love to see you try, I'd update it instantly to if you somehow did, say goodbye to them stupid ass logs lmfao.
+if getgenv().ReplicatedStorage:FindFirstChild("GameAnalytics") then
+   GameAnalytics = getgenv().ReplicatedStorage:FindFirstChild("GameAnalytics")
+
+   if GameAnalytics:FindFirstChild("GameAnalyticsClient") then
+      GA_Client = require(GameAnalytics:FindFirstChild("GameAnalyticsClient"))
+
+      GA_Client.initClient = function() return end
+   end
+else
+   for service in pairs(GA_Directories) do
+      local service = getgenv().Game:GetService(service)
+
+      if service then
+         for _, descendant in ipairs(service:GetDescendants()) do
+            if descendant:IsA("ModuleScript") and descendant.Name:lower():find("GameAnalyticsClient") then
+               descendant.Disabled = true
+            end
+         end
+      end
    end
 end
 wait()
@@ -1474,6 +1573,14 @@ function EnableFly(speed)
       bodyGyro.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector)
    end)
 end
+
+function create_or_get_blur()
+   local Blur_Effect = getgenv().Lighting:FindFirstChildOfClass("BlurEffect") or Instance.new("BlurEffect")
+   Blur_Effect.Enabled = false
+   Blur_Effect.Size = 0
+end
+
+create_or_get_blur()
 
 local Prefix = getgenv().AdminPrefix
 wait(0.1)
@@ -1796,6 +1903,107 @@ end
 function lock_vehicle(Vehicle)
    send_function("lock_vehicle", Vehicle)
 end
+wait(0.1)
+if getgenv().HasSeen_Loading_Screen then
+   warn("Already seen loading screen.")
+else
+   local Blur_Module = require(getgenv().Core:FindFirstChild("Blur"))
+
+   Blur_Module.tween(24, 10)
+   wait(0.1)
+   local Blur_Effect = getgenv().Lighting:FindFirstChildOfClass("BlurEffect") or Instance.new("BlurEffect")
+   Blur_Effect.Enabled = true
+   wait(0.1)
+   local Blur_Module = require(getgenv().Core:FindFirstChild("Blur"))
+
+   Blur_Module.tween(21, 10)
+   wait(2.5)
+
+   local gui = Instance.new("ScreenGui")
+   gui.Name = getgenv().randomString()
+   gui.ResetOnSpawn = false
+   gui.IgnoreGuiInset = true
+   gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+   gui.Parent = getgenv().CoreGui
+
+   local textLabel = Instance.new("TextLabel")
+   textLabel.Parent = gui
+   textLabel.BackgroundTransparency = 1
+   textLabel.Size = UDim2.new(0.45, 0.5, 0.45, 0.10)
+   textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+   textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+   textLabel.Text = "Welcome to:\n\nFlames Life Together Admin V2.5.7!\n\nEnjoy."
+   if getgenv().Lighting.ClockTime <= 5 then
+      textLabel.TextColor3 = Color3.fromRGB(3, 3, 3)
+   elseif getgenv().Lighting.ClockTime >= 9 then
+      textLabel.TextColor3 = Color3.fromRGB(210, 210, 210)
+   elseif getgenv().Lighting.ClockTime >= 20 then
+      textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+   end
+   textLabel.Font = Enum.Font.GothamBlack
+   textLabel.TextScaled = true
+   textLabel.TextTransparency = 1
+   textLabel.RichText = false
+
+   local aspect = Instance.new("UIAspectRatioConstraint")
+   aspect.AspectRatio = 4.8
+   aspect.Parent = textLabel
+
+   local TweenService = getgenv().TweenService
+   TweenService:Create(textLabel, TweenInfo.new(0.8, Enum.EasingStyle.Quad), {
+      TextTransparency = 0
+   }):Play()
+
+   local RunService = getgenv().RunService
+   local originalSize = textLabel.Size
+   local amplitude = UDim2.new(0.015, 0, 0.0075, 0)
+   local frequency = 2
+
+   local function scaleUDim2(udim2, scalar)
+      return UDim2.new(
+         udim2.X.Scale * scalar,
+         udim2.X.Offset * scalar,
+         udim2.Y.Scale * scalar,
+         udim2.Y.Offset * scalar
+      )
+   end
+
+   local running = true
+
+   local function updateSize(val)
+      textLabel.Size = originalSize + scaleUDim2(amplitude, val)
+   end
+
+   local pulseIn = TweenService:Create(textLabel, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+      Size = originalSize + amplitude
+   })
+   local pulseOut = TweenService:Create(textLabel, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+      Size = originalSize
+   })
+
+   task.spawn(function()
+      local endTime = tick() + 5
+      while tick() < endTime do
+         pulseIn:Play()
+         pulseIn.Completed:Wait()
+         pulseOut:Play()
+         pulseOut.Completed:Wait()
+      end
+
+      textLabel.Size = originalSize
+
+      TweenService:Create(textLabel, TweenInfo.new(0.5), {
+         TextTransparency = 1
+      }):Play()
+
+      wait(1.5)
+      Blur_Module.tween(0, 5)
+      wait(3)
+      gui:Destroy()
+   end)
+   wait(0.2)
+   getgenv().HasSeen_Loading_Screen = true
+end
 wait()
 getgenv().player_admins = getgenv().player_admins or {}
 getgenv().friend_checked = getgenv().friend_checked or {}
@@ -1803,6 +2011,7 @@ getgenv().cmds_loaded_plr = getgenv().cmds_loaded_plr or {}
 getgenv().Rainbow_Vehicles = getgenv().Rainbow_Vehicles or {}
 getgenv().Locked_Vehicles = getgenv().Locked_Vehicles or {}
 getgenv().Unlocked_Vehicles = getgenv().Unlocked_Vehicles or {}
+getgenv().Rainbow_Tasks = getgenv().Rainbow_Tasks or {}
 wait(0.2)
 local function alreadyCheckedUser(player)
    if not getgenv().friend_checked[player.Name] then
@@ -1847,7 +2056,7 @@ local function setup_cmd_handler_plr(player)
 
    local function chat_reply(speaker, msg)
       if channel then
-         channel:SendAsync("/w " .. tostring(getgenv().Players[speaker.Name].DisplayName) .. " " .. msg .. " (this message was automatically sent)")
+         channel:SendAsync("/w " .. tostring(speaker) .. " " .. msg .. " (this message was automatically sent)")
       end
    end
 
@@ -1862,12 +2071,13 @@ local function setup_cmd_handler_plr(player)
       local playerVehicle = get_other_vehicle(getgenv().Players[speaker.Name])
 
       if levenshtein(command, "rgbcar") <= 2 then
-         if not playerVehicle then
+         if not get_other_vehicle(getgenv().Players[speaker.Name]) then
             getgenv().Rainbow_Vehicles[speaker.Name] = false
-            return chat_reply(speaker, "you don't have a vehicle")
+            return chat_reply(getgenv().Players[speaker.Name].DisplayName, "you don't have a vehicle")
          end
 
          getgenv().Rainbow_Vehicles[speaker.Name] = true
+
          local colors = {
             Color3.fromRGB(255, 255, 255), Color3.fromRGB(128, 128, 128), Color3.fromRGB(0, 0, 0),
             Color3.fromRGB(0, 0, 255), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 255, 255),
@@ -1876,22 +2086,35 @@ local function setup_cmd_handler_plr(player)
             Color3.fromRGB(128, 0, 128),
          }
 
-         task.spawn(function()
-            while getgenv().Rainbow_Vehicles[speaker.Name] do
-               for _, color in ipairs(colors) do
-                  if not getgenv().Rainbow_Vehicles[speaker.Name] then return end
-                  local v = get_other_vehicle(getgenv().Players[speaker.Name])
-                  if v then
-                     change_vehicle_color(color, v)
-                  else
-                     getgenv().Rainbow_Vehicles[speaker.Name] = false
-                  end
-                  task.wait(0.1)
-               end
+         local RunService = getgenv().RunService
+         wait()
+         local i = 0
+         getgenv().Rainbow_Tasks[speaker.Name] = RunService.Heartbeat:Connect(function()
+            if not getgenv().Rainbow_Vehicles[speaker.Name] then
+               getgenv().Rainbow_Tasks[speaker.Name]:Disconnect()
+               getgenv().Rainbow_Tasks[speaker.Name] = nil
+               return notify("Success:", "Disconnected Rainbow Task For: "..tostring(speaker.Name), 5)
+            end
+
+            local color = colors[(i % #colors) + 1]
+            i += 1
+
+            local v = get_other_vehicle(getgenv().Players[speaker.Name])
+            if v then
+               change_vehicle_color(color, v)
+            else
+               getgenv().Rainbow_Vehicles[speaker.Name] = false
             end
          end)
       elseif levenshtein(command, "norgbcar") <= 2 then
          getgenv().Rainbow_Vehicles[speaker.Name] = false
+         if not getgenv().Rainbow_Vehicles[speaker.Name] then
+            if getgenv().Rainbow_Tasks[speaker.Name] then
+               getgenv().Rainbow_Tasks[speaker.Name]:Disconnect()
+               getgenv().Rainbow_Tasks[speaker.Name] = nil
+            end
+            return 
+         end
       elseif levenshtein(command, "lockcar") <= 2 then
          if not playerVehicle then
             getgenv().LockLoop_Vehicles[speaker.Name] = false
@@ -2204,11 +2427,10 @@ local function handleCommand(sender, message)
          Color3.fromRGB(128, 0, 128),
       }
 
-      while getgenv().Rainbow_Others_Vehicle == true do
+      while getgenv().Rainbow_Vehicles[PlayerToRGBCar] do
          wait(0)
          for _, color in ipairs(colors) do
             wait(0)
-            if getgenv().Rainbow_Others_Vehicle ~= true then return end
             change_vehicle_color(color, get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]))
          end
       end
@@ -2472,58 +2694,31 @@ local function handleCommand(sender, message)
          notify("Success:", "Teleported vehicle to player: "..tostring(Goto_Player), 5)
       end
    elseif cmd == "nosit" or cmd == "antisit" then
-      if getgenv().Anti_Sit_Enabled then
-         return notify("Error:", "You've already enabled no-sit!", 5)
+      local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
+      
+      if not is_enabled or is_enabled == false then
+         Phone.show_notification("Failure:", "NoSit/AntiSit is already enabled!")
+         return notify("Failure:", "NoSit/AntiSit is already enabled!", 5)
       end
 
-      local function handleSeat(seat)
-         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
-            seat.CanCollide = false
-            seat.Disabled = true
-            seat:SetAttribute("Disabled", true)
-         end
-      end
-
-      local function scanAndHandle(instance)
-         handleSeat(instance)
-         for _, child in ipairs(instance:GetDescendants()) do
-            handleSeat(child)
-         end
-      end
-
-      notify("Success:", "Successfully enabled 'anti-sit'!", 5)
-      getgenv().Anti_Sit_Enabled = true
-
-      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-         handleSeat(v)
-      end
-
-      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
-         if getgenv().Anti_Sit_Enabled then
-            scanAndHandle(v)
-         end
-      end)
+      require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
+      wait(0.1)
+      -- might as well use both 🤷
+      notify("Success:", "Anti-Sit/No-Sit is now enabled!", 5)
+      Phone.show_notification("Success:", "AntiSit/NoSit is now enabled!")
    elseif cmd == "resit" or cmd == "unantisit" then
-      if not getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == false then
-         return notify("Failure:", "Anti Sit is not enabled!", 5)
+      local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
+      
+      if is_enabled or is_enabled == true then
+         Phone.show_notification("Failure:", "Sitting is already enabled!")
+         return notify("Failure:", "Sitting is already enabled!", 5)
       end
 
-      getgenv().Anti_Sit_Enabled = false
-
-      if getgenv().Anti_Sit_Connection then
-         getgenv().Anti_Sit_Connection:Disconnect()
-         getgenv().Anti_Sit_Connection = nil
-      end
-
-      for _, v in ipairs(Workspace:GetDescendants()) do
-         if v:IsA("Seat") or v:IsA("VehicleSeat") then
-            v.CanCollide = true
-            v.Disabled = false
-            v:SetAttribute("Disabled", false)
-         end
-      end
-      wait()
-      notify("Success:", "Successfully disabled 'anti-sit'!", 5)
+      require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
+      wait(0.1)
+      -- might as well use both 🤷
+      notify("Success:", "Sitting is now enabled!", 5)
+      Phone.show_notification("Success:", "Sitting is now enabled!")
    elseif cmd == "flashname" then
       if getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == true then
          return notify("Failure:", "Your already running Flash Name!", 5)
