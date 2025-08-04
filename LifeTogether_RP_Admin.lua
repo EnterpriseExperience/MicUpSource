@@ -8,213 +8,240 @@ if getgenv().LifeTogetherRP_Admin then
 end
 
 getgenv().Service_Wrap = function(serviceName)
-    if cloneref then
-        return cloneref(getgenv().Game:GetService(serviceName))
-    else
-        return getgenv().Game:GetService(serviceName)
-    end
+   if cloneref then
+      return cloneref(getgenv().Game:GetService(serviceName))
+   else
+      return getgenv().Game:GetService(serviceName)
+   end
 end
 
 local function getExecutor()
-    local name
-    if identifyexecutor then
-        name = identifyexecutor()
-    end
-    return { Name = name or "Unknown Executor"}
+   local name
+   if identifyexecutor then
+      name = identifyexecutor()
+   end
+   return { Name = name or "Unknown Executor"}
 end
 
 local function executor_details()
-    local executorDetails = getExecutor()
-    return string.format("%s", executorDetails.Name)
+   local executorDetails = getExecutor()
+   return string.format("%s", executorDetails.Name)
 end
 
 local executor_Name = executor_details()
 
 getgenv().print_executor = function()
-    local function retrieve_executor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
-    end
+   local function retrieve_executor()
+      local name
+      if identifyexecutor then
+         name = identifyexecutor()
+      end
+      return { Name = name or "Unknown Executor"}
+   end
 
-    local function identify_executor()
-        local executorDetails = retrieve_executor()
-        return string.format("%s", executorDetails.Name)
-    end
-    wait(0.1)
-    local executor_string = identify_executor()
+   local function identify_executor()
+      local executorDetails = retrieve_executor()
+      return string.format("%s", executorDetails.Name)
+   end
+   wait(0.1)
+   local executor_string = identify_executor()
 
-    return print(executor_string)
+   return print(executor_string)
 end
 
 getgenv().warn_executor = function()
-    local function retrieve_executor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
-    end
+   local function retrieve_executor()
+      local name
+      if identifyexecutor then
+         name = identifyexecutor()
+      end
+      return { Name = name or "Unknown Executor"}
+   end
 
-    local function identify_executor()
-        local executorDetails = retrieve_executor()
-        return string.format("%s", executorDetails.Name)
-    end
-    wait(0.1)
-    local executor_string = identify_executor()
+   local function identify_executor()
+      local executorDetails = retrieve_executor()
+      return string.format("%s", executorDetails.Name)
+   end
+   wait(0.1)
+   local executor_string = identify_executor()
 
-    return warn(executor_string)
+   return warn(executor_string)
 end
 
 function randomString()
-    local length = math.random(10,20)
-    local array = {}
-    for i = 1, length do
-        array[i] = string.char(math.random(32, 126))
-    end
-    return table.concat(array)
+   local length = math.random(10,20)
+   local array = {}
+   for i = 1, length do
+      array[i] = string.char(math.random(32, 126))
+   end
+   return table.concat(array)
 end
 
 getgenv().randomString = function()
-    local length = math.random(10,20)
-    local array = {}
-    for i = 1, length do
-        array[i] = string.char(math.random(32, 126))
-    end
-    return table.concat(array)
+   local length = math.random(10,20)
+   local array = {}
+   for i = 1, length do
+      array[i] = string.char(math.random(32, 126))
+   end
+   return table.concat(array)
 end
 
+local Players = getgenv().Service_Wrap("Players")
+local LocalPlayer = Players.LocalPlayer
+local GroupId = getgenv().Game.CreatorId
+local staffRoles = {
+   "Admin", "Technical Assistance", "Developer A", "Technical Lead", "Finance", "Owner", "QA Lead"
+}
+
+local function isStaffRole(role)
+	for _, staff in ipairs(staffRoles) do
+		if role:lower():find(staff) then
+			return true
+		end
+	end
+	return false
+end
+
+if GroupId and GroupId > 0 and LocalPlayer:IsInGroup(GroupId) then
+	local role = LocalPlayer:GetRoleInGroup(GroupId)
+	if isStaffRole(role) then
+		LocalPlayer:Kick("\n\nRolewatch\nYou are in the group with a staff role: \"" .. role .. "\"")
+      wait(0.2)
+      while true do end
+   else
+      print("Not a staff member.")
+	end
+end
+wait(0.2)
 local cmdp = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local cmdlp = cmdp.LocalPlayer
 
 function findplr(args)
-    local tbl = cmdp:GetPlayers()
+   local tbl = cmdp:GetPlayers()
 
-    if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
-        return warn("Failure!", "You cannot target yourself!")
-    end
+   if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
+      return warn("Failure!", "You cannot target yourself!")
+   end
 
-    if args == "random" then
-        local validPlayers = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp then
-                table.insert(validPlayers, v)
+   if args == "random" then
+      local validPlayers = {}
+      for _, v in pairs(tbl) do
+         if v ~= cmdlp then
+            table.insert(validPlayers, v)
+         end
+      end
+      return #validPlayers > 0 and validPlayers[math.random(1, #validPlayers)] or nil
+   end
+
+   if args == "new" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v.AccountAge < 30 and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "old" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v.AccountAge > 30 and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "bacon" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v ~= cmdlp and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "friend" then
+      local friendList = {}
+      for _, v in pairs(tbl) do
+         if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
+            table.insert(friendList, v)
+         end
+      end
+      return #friendList > 0 and friendList[math.random(1, #friendList)] or nil
+   end
+
+   if args == "notfriend" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "ally" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v.Team == cmdlp.Team and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "enemy" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v.Team ~= cmdlp.Team and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "near" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v ~= cmdlp and v.Character and cmdlp.Character then
+            local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
+            local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+            if vRootPart and cmdlpRootPart then
+               local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
+               if distance < 30 then
+                  table.insert(vAges, v)
+               end
             end
-        end
-        return #validPlayers > 0 and validPlayers[math.random(1, #validPlayers)] or nil
-    end
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
 
-    if args == "new" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.AccountAge < 30 and v ~= cmdlp then
-                table.insert(vAges, v)
+   if args == "far" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v ~= cmdlp and v.Character and cmdlp.Character then
+            local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
+            local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+            if vRootPart and cmdlpRootPart then
+               local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
+               if distance > 30 then
+                  table.insert(vAges, v)
+               end
             end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
 
-    if args == "old" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.AccountAge > 30 and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "bacon" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "friend" then
-        local friendList = {}
-        for _, v in pairs(tbl) do
-            if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                table.insert(friendList, v)
-            end
-        end
-        return #friendList > 0 and friendList[math.random(1, #friendList)] or nil
-    end
-
-    if args == "notfriend" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "ally" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.Team == cmdlp.Team and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "enemy" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.Team ~= cmdlp.Team and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "near" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and v.Character and cmdlp.Character then
-                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                if vRootPart and cmdlpRootPart then
-                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                    if distance < 30 then
-                        table.insert(vAges, v)
-                    end
-                end
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "far" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and v.Character and cmdlp.Character then
-                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                if vRootPart and cmdlpRootPart then
-                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                    if distance > 30 then
-                        table.insert(vAges, v)
-                    end
-                end
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    for _, v in pairs(tbl) do
-        if (v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower())) and v ~= cmdlp then
-            return v
-        end
-    end
+   for _, v in pairs(tbl) do
+      if (v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower())) and v ~= cmdlp then
+         return v
+      end
+   end
 end
 
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
@@ -256,6 +283,7 @@ local function init_services()
    for _, serviceName in pairs(services) do
       getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
    end
+   wait(0.1)
    if getgenv().StarterPlayer:FindFirstChildOfClass("StarterPlayerScripts") then
       getgenv().StarterPlayerScripts = getgenv().StarterPlayer:FindFirstChildOfClass("StarterPlayerScripts") or getgenv().StarterPlayer:FindFirstChildWhichIsA("StarterPlayerScripts")
    end
@@ -459,28 +487,6 @@ function vehicle_kill_player(TargetPlayer)
    local targetChar = TargetPlayer.Character
    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
    if not targetHRP then return end
-   local Anti_Sit_Was_Enabled = false
-
-   if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
-      Anti_Sit_Was_Enabled = true
-      wait(0.3)
-      getgenv().Anti_Sit_Enabled = false
-
-      if getgenv().Anti_Sit_Connection then
-         getgenv().Anti_Sit_Connection:Disconnect()
-         getgenv().Anti_Sit_Connection = nil
-      end
-
-      for _, v in ipairs(Workspace:GetDescendants()) do
-         if v:IsA("Seat") or v:IsA("VehicleSeat") then
-            v.CanCollide = true
-            v.Disabled = false
-            v:SetAttribute("Disabled", false)
-         end
-      end
-   else
-      Anti_Sit_Was_Enabled = false
-   end
 
    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -536,40 +542,6 @@ function vehicle_kill_player(TargetPlayer)
       wait(0.5)
       spawn_any_vehicle("Chiron")
    end
-   wait(0.2)
-   if Anti_Sit_Was_Enabled == true then
-      local function handleSeat(seat)
-         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
-            seat.CanCollide = false
-            seat.Disabled = true
-            seat:SetAttribute("Disabled", true)
-         end
-      end
-
-      getgenv().Anti_Sit_Connection = nil
-      wait(0.1)
-      local function scanAndHandle(instance)
-         handleSeat(instance)
-         for _, child in ipairs(instance:GetDescendants()) do
-            handleSeat(child)
-         end
-      end
-
-      Anti_Sit_Was_Enabled = false
-
-      notify("Success:", "Successfully re-enabled 'anti-sit'!", 5)
-      getgenv().Anti_Sit_Enabled = true
-
-      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-         handleSeat(v)
-      end
-
-      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
-         if getgenv().Anti_Sit_Enabled then
-            scanAndHandle(v)
-         end
-      end)
-   end
 end
 
 function vehicle_void_player(TargetPlayer)
@@ -577,28 +549,6 @@ function vehicle_void_player(TargetPlayer)
    local targetChar = TargetPlayer.Character
    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
    if not targetHRP then return end
-   local Anti_Sit_Was_Enabled = false
-
-   if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
-      Anti_Sit_Was_Enabled = true
-      wait(0.3)
-      getgenv().Anti_Sit_Enabled = false
-
-      if getgenv().Anti_Sit_Connection then
-         getgenv().Anti_Sit_Connection:Disconnect()
-         getgenv().Anti_Sit_Connection = nil
-      end
-
-      for _, v in ipairs(Workspace:GetDescendants()) do
-         if v:IsA("Seat") or v:IsA("VehicleSeat") then
-            v.CanCollide = true
-            v.Disabled = false
-            v:SetAttribute("Disabled", false)
-         end
-      end
-   else
-      Anti_Sit_Was_Enabled = false
-   end
 
    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -654,40 +604,6 @@ function vehicle_void_player(TargetPlayer)
       wait(0.5)
       spawn_any_vehicle("Chiron")
    end
-   wait(0.2)
-   if Anti_Sit_Was_Enabled == true then
-      local function handleSeat(seat)
-         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
-            seat.CanCollide = false
-            seat.Disabled = true
-            seat:SetAttribute("Disabled", true)
-         end
-      end
-
-      getgenv().Anti_Sit_Connection = nil
-      wait(0.1)
-      local function scanAndHandle(instance)
-         handleSeat(instance)
-         for _, child in ipairs(instance:GetDescendants()) do
-            handleSeat(child)
-         end
-      end
-
-      Anti_Sit_Was_Enabled = false
-
-      notify("Success:", "Successfully re-enabled 'anti-sit'!", 5)
-      getgenv().Anti_Sit_Enabled = true
-
-      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-         handleSeat(v)
-      end
-
-      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
-         if getgenv().Anti_Sit_Enabled then
-            scanAndHandle(v)
-         end
-      end)
-   end
 end
 
 if not getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") then
@@ -710,28 +626,6 @@ function vehicle_skydive_player(TargetPlayer)
    local targetChar = TargetPlayer.Character
    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
    if not targetHRP then return end
-   local Anti_Sit_Was_Enabled = false
-
-   if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
-      Anti_Sit_Was_Enabled = true
-      wait(0.3)
-      getgenv().Anti_Sit_Enabled = false
-
-      if getgenv().Anti_Sit_Connection then
-         getgenv().Anti_Sit_Connection:Disconnect()
-         getgenv().Anti_Sit_Connection = nil
-      end
-
-      for _, v in ipairs(Workspace:GetDescendants()) do
-         if v:IsA("Seat") or v:IsA("VehicleSeat") then
-            v.CanCollide = true
-            v.Disabled = false
-            v:SetAttribute("Disabled", false)
-         end
-      end
-   else
-      Anti_Sit_Was_Enabled = false
-   end
 
    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -788,40 +682,6 @@ function vehicle_skydive_player(TargetPlayer)
       wait(0.5)
       spawn_any_vehicle("Chiron")
    end
-   wait(0.2)
-   if Anti_Sit_Was_Enabled == true then
-      local function handleSeat(seat)
-         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
-            seat.CanCollide = false
-            seat.Disabled = true
-            seat:SetAttribute("Disabled", true)
-         end
-      end
-
-      getgenv().Anti_Sit_Connection = nil
-      wait(0.1)
-      local function scanAndHandle(instance)
-         handleSeat(instance)
-         for _, child in ipairs(instance:GetDescendants()) do
-            handleSeat(child)
-         end
-      end
-
-      Anti_Sit_Was_Enabled = false
-
-      notify("Success:", "Successfully re-enabled 'anti-sit'!", 5)
-      getgenv().Anti_Sit_Enabled = true
-
-      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-         handleSeat(v)
-      end
-
-      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
-         if getgenv().Anti_Sit_Enabled then
-            scanAndHandle(v)
-         end
-      end)
-   end
 end
 
 wait()
@@ -830,28 +690,6 @@ function vehicle_bring_player(TargetPlayer)
    local targetChar = TargetPlayer.Character
    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
    if not targetHRP then return end
-   local Anti_Sit_Was_Enabled = false
-
-   if getgenv().Anti_Sit_Enabled or getgenv().Anti_Sit_Enabled == true then
-      Anti_Sit_Was_Enabled = true
-      wait(0.3)
-      getgenv().Anti_Sit_Enabled = false
-
-      if getgenv().Anti_Sit_Connection then
-         getgenv().Anti_Sit_Connection:Disconnect()
-         getgenv().Anti_Sit_Connection = nil
-      end
-
-      for _, v in ipairs(Workspace:GetDescendants()) do
-         if v:IsA("Seat") or v:IsA("VehicleSeat") then
-            v.CanCollide = true
-            v.Disabled = false
-            v:SetAttribute("Disabled", false)
-         end
-      end
-   else
-      Anti_Sit_Was_Enabled = false
-   end
    wait(0.2)
    local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -901,40 +739,6 @@ function vehicle_bring_player(TargetPlayer)
       myHRP.CFrame = Old_CF
       wait(0.5)
       spawn_any_vehicle("Chiron")
-   end
-   wait(0.2)
-   if Anti_Sit_Was_Enabled == true then
-      local function handleSeat(seat)
-         if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
-            seat.CanCollide = false
-            seat.Disabled = true
-            seat:SetAttribute("Disabled", true)
-         end
-      end
-
-      getgenv().Anti_Sit_Connection = nil
-      wait(0.1)
-      local function scanAndHandle(instance)
-         handleSeat(instance)
-         for _, child in ipairs(instance:GetDescendants()) do
-            handleSeat(child)
-         end
-      end
-
-      Anti_Sit_Was_Enabled = false
-
-      notify("Success:", "Successfully re-enabled 'anti-sit'!", 5)
-      getgenv().Anti_Sit_Enabled = true
-
-      for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-         handleSeat(v)
-      end
-
-      getgenv().Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
-         if getgenv().Anti_Sit_Enabled then
-            scanAndHandle(v)
-         end
-      end)
    end
 end
 
