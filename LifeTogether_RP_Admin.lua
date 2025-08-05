@@ -1894,8 +1894,8 @@ local function setup_cmd_handler_plr(player)
          wait()
          local i = 0
          getgenv().Rainbow_Tasks[speaker.Name] = RunService.Heartbeat:Connect(function()
+            wait(0)
             if not getgenv().Rainbow_Vehicles[speaker.Name] then
-               getgenv().Rainbow_Tasks[speaker.Name]:Disconnect()
                getgenv().Rainbow_Tasks[speaker.Name] = nil
                return notify("Success:", "Disconnected Rainbow Task For: "..tostring(speaker.Name), 5)
             end
@@ -1906,6 +1906,7 @@ local function setup_cmd_handler_plr(player)
             local v = get_other_vehicle(getgenv().Players[speaker.Name])
             if v then
                change_vehicle_color(color, v)
+               wait(0.2)
             else
                getgenv().Rainbow_Vehicles[speaker.Name] = false
             end
@@ -1914,7 +1915,6 @@ local function setup_cmd_handler_plr(player)
          getgenv().Rainbow_Vehicles[speaker.Name] = false
          if not getgenv().Rainbow_Vehicles[speaker.Name] then
             if getgenv().Rainbow_Tasks[speaker.Name] then
-               getgenv().Rainbow_Tasks[speaker.Name]:Disconnect()
                getgenv().Rainbow_Tasks[speaker.Name] = nil
             end
             return 
@@ -2983,6 +2983,9 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
    end
    if getgenv().Unlocked_Vehicles[Player.Name] then
       getgenv().Unlocked_Vehicles[Player.Name] = false
+   end
+   if getgenv().Rainbow_Tasks[Player.Name] then
+      getgenv().Rainbow_Tasks[Player.Name] = nil
    end
 end)
 wait(0.2)
