@@ -2252,7 +2252,12 @@ local function handleCommand(sender, message)
          return notify("Failure:", "Player is not currently in the RGB car table!", 5)
       end
 
-      getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] = false
+      if getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] then
+         getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] = false
+      end
+      if getgenv().Rainbow_Tasks[PlayerToRGBCarStop.Name] then
+         getgenv().Rainbow_Tasks[PlayerToRGBCarStop.Name] = nil
+      end
    elseif cmd == "stoprgbskin" then
       rainbow_skin(false)
    elseif cmd == "startrgbphone" then
