@@ -1894,17 +1894,31 @@ local function setup_cmd_handler_plr(player)
          wait()
          local i = 0
          getgenv().Rainbow_Tasks[speaker.Name] = RunService.Heartbeat:Connect(function()
-            wait(0)
-            if not getgenv().Rainbow_Vehicles[speaker.Name] then
-               getgenv().Rainbow_Tasks[speaker.Name] = nil
-               return notify("Success:", "Disconnected Rainbow Task For: "..tostring(speaker.Name), 5)
-            end
+            wait(0.2)
+            local rainbowState = getgenv().Rainbow_Vehicles[speaker.Name]
+            local rainbowTask = getgenv().Rainbow_Tasks[speaker.Name]
 
-            local color = colors[(i % #colors) + 1]
-            i += 1
+            if not rainbowState then
+               if rainbowTask then
+                  rainbowTask:Disconnect()
+                  getgenv().Rainbow_Tasks[speaker.Name] = nil
+               end
+
+               if not getgenv().NotifiedRainbowStop then
+                  getgenv().NotifiedRainbowStop = {}
+               end
+               if not getgenv().NotifiedRainbowStop[speaker.Name] then
+                  getgenv().NotifiedRainbowStop[speaker.Name] = true
+                  notify("Success:", "Disconnected Rainbow Task For: "..tostring(speaker.Name), 5)
+               end
+               return
+            end
 
             local v = get_other_vehicle(getgenv().Players[speaker.Name])
             if v then
+               wait(0.2)
+               local color = colors[(i % #colors) + 1]
+               i += 1
                change_vehicle_color(color, v)
                wait(0.2)
             else
@@ -2980,17 +2994,19 @@ getgenv().Players.PlayerAdded:Connect(function(Player)
 end)
 
 getgenv().Players.PlayerRemoving:Connect(function(Player)
-   if getgenv().Rainbow_Vehicles[Player.Name] then
-      getgenv().Rainbow_Vehicles[Player.Name] = false
+   local Name = Player.Name
+
+   if getgenv().Rainbow_Vehicles[Name] then
+      getgenv().Rainbow_Vehicles[Name] = false
    end
-   if getgenv().Locked_Vehicles[Player.Name] then
-      getgenv().Locked_Vehicles[Player.Name] = false
+   if getgenv().Locked_Vehicles[Name] then
+      getgenv().Locked_Vehicles[Name] = false
    end
-   if getgenv().Unlocked_Vehicles[Player.Name] then
-      getgenv().Unlocked_Vehicles[Player.Name] = false
+   if getgenv().Unlocked_Vehicles[Name] then
+      getgenv().Unlocked_Vehicles[Name] = false
    end
-   if getgenv().Rainbow_Tasks[Player.Name] then
-      getgenv().Rainbow_Tasks[Player.Name] = nil
+   if getgenv().Rainbow_Tasks[Name] then
+      getgenv().Rainbow_Tasks[Name] = nil
    end
 end)
 wait(0.2)
