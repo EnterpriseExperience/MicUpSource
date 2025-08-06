@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.6.2-LifeAdmin"
+local Script_Version = "V2.6.5-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1021,7 +1021,7 @@ function RGB_Vehicle_Others(Player, Boolean)
             wait(0)
             if getgenv().Rainbow_Others_Vehicle ~= true then return end
             if get_other_vehicle(Player):GetAttribute("locked") == true then
-               
+               return 
             end
             change_vehicle_color(color, Player)
          end
@@ -1512,8 +1512,10 @@ local function CommandsMenu()
       {prefix}antifling - Fully prevents you from being flung, by other exploiters/cheaters, and fling outfits as well (FULL BYPASS)
       {prefix}unantifling - Disables "antifling" allowing you to also teleport to places and what not like normal
       {prefix}bringcar - Teleport car to you and sit in it
-      {prefix}flashname - Enables the flashing of your "Bio" and "Name" (above your head)
-      {prefix}noflashname - Disables the flashing of your "Bio" and "Name" (above your head)
+      {prefix}flashname - Enables the flashing of you're "Bio" and "Name" (above your head)
+      {prefix}noflashname - Disables the flashing of you're "Bio" and "Name" (above your head)
+      {prefix}flashinvis - Enables the flashing of the invisibility GamePass for you're character (you need to actually own the GamePass).
+      {prefix}noflashinvis - Disables the flashing of the invisibility GamePass for you're character (you need to actually own the GamePass).
       {prefix}nosit - Disable all VehicleSeats and Seats (anti-sit)
       {prefix}resit - Re-enable all Seats (undo anti-sit)
       {prefix}view player - Smooth view's the target's Character
@@ -1736,7 +1738,7 @@ else
    textLabel.Size = UDim2.new(0.45, 0.5, 0.45, 0.10)
    textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
    textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-   textLabel.Text = "Welcome to:\n\nFlames Life Together Admin V2.6.2!\n\nEnjoy."
+   textLabel.Text = "Welcome to:\n\nFlames Life Together Admin V2.6.5!\n\nEnjoy."
    if getgenv().Lighting.ClockTime <= 5 then
       textLabel.TextColor3 = Color3.fromRGB(3, 3, 3)
    elseif getgenv().Lighting.ClockTime >= 9 then
@@ -1880,6 +1882,10 @@ local function setup_cmd_handler_plr(player)
             return chat_reply(getgenv().Players[speaker.Name].DisplayName, "you don't have a vehicle")
          end
 
+         if getgenv().Rainbow_Vehicles[speaker.Name] then
+            return 
+         end
+
          getgenv().Rainbow_Vehicles[speaker.Name] = true
 
          local colors = {
@@ -1926,6 +1932,9 @@ local function setup_cmd_handler_plr(player)
             end
          end)
       elseif levenshtein(command, "norgbcar") <= 2 then
+         if getgenv().Rainbow_Vehicles[speaker.Name] then
+            getgenv().Rainbow_Vehicles[speaker.Name] = false
+         end
          getgenv().Rainbow_Vehicles[speaker.Name] = false
          if not getgenv().Rainbow_Vehicles[speaker.Name] then
             if getgenv().Rainbow_Tasks[speaker.Name] then
@@ -1939,13 +1948,24 @@ local function setup_cmd_handler_plr(player)
             return chat_reply(speaker, "you don't got a vehicle")
          end
 
+         if getgenv().Locked_Vehicles[speaker.Name] then
+            return 
+         end
+
          getgenv().Unlocked_Vehicles[speaker.Name] = false
+         wait(0.1)
          getgenv().Locked_Vehicles[speaker.Name] = true
 
          task.spawn(function()
             while getgenv().Locked_Vehicles[speaker.Name] do
-               task.wait()
-               local v = get_other_vehicle(getgenv().Players[speaker.Name])
+               wait()
+               local player = getgenv().Players[speaker.Name]
+               if not player then
+                  getgenv().Locked_Vehicles[speaker.Name] = false
+                  break
+               end
+
+               local v = get_other_vehicle(player)
                if v and not v:GetAttribute("locked") then
                   getgenv().Get("lock_vehicle", v)
                elseif not v then
@@ -1959,19 +1979,109 @@ local function setup_cmd_handler_plr(player)
             return chat_reply(speaker, "you don't got a vehicle")
          end
 
+         if getgenv().Unlocked_Vehicles[speaker.Name] then
+            return 
+         end
+
          getgenv().Locked_Vehicles[speaker.Name] = false
+         wait(0.1)
          getgenv().Unlocked_Vehicles[speaker.Name] = true
 
          task.spawn(function()
             while getgenv().Unlocked_Vehicles[speaker.Name] do
-               task.wait()
-               local v = get_other_vehicle(getgenv().Players[speaker.Name])
+               wait()
+               local player = getgenv().Players[speaker.Name]
+               if not player then
+                  getgenv().Unlocked_Vehicles[speaker.Name] = false
+                  break
+               end
+
+               local v = get_other_vehicle(player)
                if v and v:GetAttribute("locked") then
                   getgenv().Get("lock_vehicle", v)
                elseif not v then
                   getgenv().Unlocked_Vehicles[speaker.Name] = false
                end
             end
+         end)
+      elseif levenshtein(command, "trailer") <= 2 then
+         local player = getgenv().Players[speaker.Name]
+
+         if not playerVehicle then
+            getgenv().Unlocked_Vehicles[speaker.Name] = false
+            return chat_reply(speaker, "you don't got a vehicle")
+         end
+
+         local Vehicle = get_other_vehicle(player)
+
+         if not Vehicle then
+            return 
+         end
+
+         if Vehicle:FindFirstChild("WaterSkies") then
+            return 
+         end
+         wait(0.1)
+         water_skie_trailer(true, Vehicle)
+      elseif levenshtein(command, "notrailer") <= 2 then
+         local player = getgenv().Players[speaker.Name]
+
+         if not playerVehicle then
+            getgenv().Unlocked_Vehicles[speaker.Name] = false
+            return chat_reply(speaker, "you don't got a vehicle")
+         end
+
+         local Vehicle = get_other_vehicle(player)
+
+         if not Vehicle then
+            return 
+         end
+
+         if not Vehicle:FindFirstChild("WaterSkies") then
+            return 
+         end
+
+         water_skie_trailer(false, Vehicle)
+      elseif command:sub(1, 5) == "check" then
+         if getgenv().Check_Cooldown then return end
+
+         getgenv().Check_Cooldown = true
+         task.delay(15, function()
+            getgenv().Check_Cooldown = false
+         end)
+
+         local args = command:split(" ")
+         local checkTargetName = args[2]
+         if not checkTargetName or #checkTargetName <= 0 then
+            return
+         end
+
+         local target = findplr(checkTargetName)
+         if not target then
+            return
+         end
+
+         local isVerified = target:GetAttribute("is_verified")
+         local generalChannel = TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
+         if generalChannel then
+            if isVerified == true then
+               generalChannel:SendAsync("Player: " .. target.DisplayName .. " has premium.")
+            else
+               generalChannel:SendAsync("Player: " .. target.DisplayName .. " does not have premium.")
+            end
+         end
+      elseif levenshtein(command, "cmds") <= 2 then
+         if getgenv().Is_OnCooldown then return end
+
+         getgenv().Is_OnCooldown = true
+         getgenv().Wait_Time_Cooldown = 30
+
+         getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync(
+            ";lockcar | ;rgbcar | ;norgbcar | ;unlockcar | ;check Player | ;trailer | ;notrailer"
+         )
+
+         task.delay(getgenv().Wait_Time_Cooldown, function()
+            getgenv().Is_OnCooldown = false
          end)
       end
    end)
@@ -2554,6 +2664,26 @@ local function handleCommand(sender, message)
       end
       
       flashy_name(false)
+   elseif cmd == "flashinvis" then
+      local is_verified = Data.is_verified
+      local invis_bought = Data.invisible_bought
+
+      if not is_verified and not invis_bought then
+         return notify("Failure:", "You do not have LifePay or the Invisible GamePass!", 5)
+      end
+      wait(0.2)
+      local Is_Invis = Invisible_Module.enabled.get()
+      getgenv().Invisible_Flash = true
+
+      if Is_Invis then
+         Invisible_Module.enabled.set(false)
+      end
+      wait(0.1)
+      while getgenv().Invisible_Flash == true do
+         Invisible_Module.enabled.set(true)
+         wait()
+         Invisible_Module.enabled.set(false)
+      end
    elseif cmd == "kill" and split[1] then
       local target = findplr(split[1])
       if not target then return notify("Kill:", "Target not found.", 5) end
