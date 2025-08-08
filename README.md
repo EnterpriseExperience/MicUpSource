@@ -8,7 +8,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 ```
 ## ⬇️ Be sure to check out my other script hub's below! ⬇️ ##
 
-https://github.com/EnterpriseExperience/MicUpSource/wiki/My-script-hubs-for-other-games.
+[https://github.com/EnterpriseExperience/MicUpSource/wiki/My-script-hubs-for-other-games.](https://github.com/EnterpriseExperience/MicUpSource/wiki/My-script-hubs-for-other-games.)
 
 
 ```lua
