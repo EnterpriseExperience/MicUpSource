@@ -8,39 +8,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 ```
 ## ⬇️ Be sure to check out my other script hub's below! ⬇️ ##
 
-## 🏢 Tower Of Misery 🏢 ##
-```lua
--- 🏢 Tower Of Misery 🏢 --
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua'))()
-```
-## 🚗 Ultimate Driving 🚗 ##
-```lua
--- 🚗 Ultimate Driving 🚗 --
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua'))()
-```
-## 🏠 Life Together RP 🏠 ##
-```lua
--- 🏠 Life Together RP 🏠 --
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua'))()
-```
-
-## 🏃 Hide And Seek Extreme 🏃 ##
-```lua
--- 🏃 Hide And Seek Extreme 🏃 --
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua'))()
-```
-
-## 🤖 Player Or AI? 🤖 ##
-```lua
--- 🤖 Player Or AI? 🤖 --
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua'))()
-```
-
-## Main Street 🏡RP ##
-```lua
--- 🏡 Main Street RP 🏡 --
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua'))()
-```
+https://github.com/EnterpriseExperience/MicUpSource/wiki/My-script-hubs-for-other-games.
 
 ```lua
 -- 🌟 Star this repo and save it for later 🌟 --
