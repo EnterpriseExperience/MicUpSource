@@ -36,6 +36,12 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua'))()
 ```
 
+## Main Street 🏡RP ##
+```lua
+-- 🏡 Main Street RP 🏡 --
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua'))()
+```
+
 ```lua
 -- 🌟 Star this repo and save it for later 🌟 --
 https://github.com/EnterpriseExperience/MicUpSource/wiki
