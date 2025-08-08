@@ -15,8 +15,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 -- 🌟 Star this repo and save it for later 🌟 --
 ```
 
-## Wiki: ##
-https://github.com/EnterpriseExperience/MicUpSource/wiki
+[Wiki with more information.](https://github.com/EnterpriseExperience/MicUpSource/wiki)
 
 ## NEW: 🔥 FLAMES HUB API! 🔥 ##
 ```lua
