@@ -72,6 +72,7 @@ flames_api.Players = Players
 flames_api.LocalPlayer = LocalPlayer
 flames_api.PlaceID = getgenv().PlaceID
 flames_api.JobID = getgenv().JobID
+flames_api.PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 3)
 
 local function SafeGetHumanoid(char)
 	return char:FindFirstChildWhichIsA("Humanoid") or char:WaitForChild("Humanoid", 5)
