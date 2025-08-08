@@ -64,6 +64,7 @@ local flames_api = loadstring(game:HttpGet("https://raw.githubusercontent.com/En
 -- flames_api.Humanoid -- grabs your Humanoid (even if you die, respawn, etc).
 -- flames_api.Head -- grabs your Head (even if you die, respawn, etc).
 -- flames_api.SeatPart -- grabs your current SeatPart.
+-- flames_api.PlayerGui -- grabs you're PlayerGui (self explanatory).
 -- flames_api.Vehicle() -- uses "SeatPart" to get your Vehicle, and checks the Vehicle to see if it has wheels, and if it's a Model as well.
 -- flames_api.GoTo("Player You Want To Teleport To Here") -- usage: flames_api.GoTo("Player") and it will attempt to Pivot your Character to they're Character if the target name is correct and exists.
 -- flames_api.WalkSpeed(new_walkspeed_here) -- Allows you to set your WalkSpeed in this API.
