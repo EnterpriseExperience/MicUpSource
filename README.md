@@ -10,10 +10,13 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 
 https://github.com/EnterpriseExperience/MicUpSource/wiki/My-script-hubs-for-other-games.
 
+
 ```lua
 -- 🌟 Star this repo and save it for later 🌟 --
-https://github.com/EnterpriseExperience/MicUpSource/wiki
 ```
+
+## Wiki: ##
+https://github.com/EnterpriseExperience/MicUpSource/wiki
 
 ## NEW: 🔥 FLAMES HUB API! 🔥 ##
 ```lua
