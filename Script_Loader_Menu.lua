@@ -478,6 +478,10 @@ local scripts = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
     },
+    ["Main Street RP"] = {
+        id = 18753889337,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua"
+    }
 }
 
 for name, data in pairs(scripts) do
@@ -500,7 +504,7 @@ for name, data in pairs(scripts) do
 	end)
 end
 
-m:Button("Flames Hub (Universal)", function()
+m:Button("Flames Hub (Univ)", function()
     loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
 end)
 
