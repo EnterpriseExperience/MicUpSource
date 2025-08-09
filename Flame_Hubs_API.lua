@@ -27,8 +27,11 @@
 
 local flames_api = {}
 
-local function SafeGet(service)
-     return cloneref and cloneref(game:GetService(service)) or game:GetService(service)
+local function SafeGet(serviceName)
+    local ok, service = pcall(function()
+        return cloneref and cloneref(game:GetService(serviceName)) or game:GetService(serviceName)
+    end)
+    return ok and service or nil
 end
 
 getgenv().Game = game
@@ -36,7 +39,7 @@ getgenv().JobID = game.JobId
 getgenv().PlaceID = game.PlaceId
 
 flames_api.Service = function(serviceName)
-	return SafeGet(serviceName)
+    return SafeGet(serviceName)
 end
 
 local function getExecutor()
