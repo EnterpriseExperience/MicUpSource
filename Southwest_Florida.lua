@@ -479,7 +479,7 @@ Callback = function(theTeamChosen)
 end,})
 
 getgenv().TeleportToPurchaseCarMenu = Tab6:CreateButton({
-Name = 'Purchase Vehicle Menu',
+Name = 'TP To Purchase Vehicle Menu',
 Callback = function()
     local DealershipPart = Workspace:FindFirstChild('DealershipPart')
     if not DealershipPart then return end
