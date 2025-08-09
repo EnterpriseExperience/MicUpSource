@@ -420,39 +420,39 @@ local Noclip_Connection
 local Clip = false
 wait(0.1)
 p:Toggle("Noclip",function(Noclip)
-   if Noclip then
-      Clip = false
-      getgenv().Noclip_Enabled = true
-      getgenv()._noclipModifiedParts = {}
+    if Noclip then
+        Clip = false
+        getgenv().Noclip_Enabled = true
+        getgenv()._noclipModifiedParts = {}
 
-      local function NoclipLoop()
-         if not Clip and getgenv().Character then
-            for _, part in ipairs(getgenv().Character:GetDescendants()) do
-               if part:IsA("BasePart") and part.CanCollide then
-                  part.CanCollide = false
-                  getgenv()._noclipModifiedParts[part] = true
-               end
+        local function NoclipLoop()
+            if not Clip and getgenv().Character then
+                for _, part in ipairs(getgenv().Character:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CanCollide then
+                        part.CanCollide = false
+                        getgenv()._noclipModifiedParts[part] = true
+                    end
+                end
             end
-         end
-      end
+        end
 
-      Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
-   else
-      if Noclip_Connection then
-         Noclip_Connection:Disconnect()
-      end
-      Clip = true
-      getgenv().Noclip_Enabled = false
+        Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
+    else
+        if Noclip_Connection then
+            Noclip_Connection:Disconnect()
+        end
+        Clip = true
+        getgenv().Noclip_Enabled = false
 
-      if getgenv()._noclipModifiedParts then
-         for part, _ in pairs(getgenv()._noclipModifiedParts) do
-            if part and part:IsA("BasePart") then
-               part.CanCollide = true
+        if getgenv()._noclipModifiedParts then
+            for part, _ in pairs(getgenv()._noclipModifiedParts) do
+                if part and part:IsA("BasePart") then
+                    part.CanCollide = true
+                end
             end
-         end
-         getgenv()._noclipModifiedParts = nil
-      end
-   end
+            getgenv()._noclipModifiedParts = nil
+        end
+    end
 end)
 wait()
 local m = mainTab:CreateFolder("Scripts")
