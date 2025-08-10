@@ -10,6 +10,8 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
+local Script_Version = "1.8.3-LIFE"
+
 local function getExecutor()
     local name
     if identifyexecutor then
@@ -465,7 +467,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏠 Life Together RP 🏠 | 1.8.1-LIFE | "..tostring(executor_Name),
+        Name = "🏠 Life Together RP 🏠 | "..tostring(Script_Version).." | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "LifeTogether | Hub.",
         ConfigurationSaving = {
@@ -2393,6 +2395,42 @@ Callback = function(toggle_hd_fly)
         EnableFly(getgenv().HD_Admin_Fly_Speed)
     else
         DisableFlyScript()
+    end
+end,})
+
+local JumpPower_Old = getgenv().Humanoid.JumpPower
+local JumpHeight_Old = getgenv().Humanoid.JumpHeight
+wait(0.2)
+getgenv().CatInvisGlitchOutfit = Tab2:CreateToggle({
+Name = "Cat Invisible Glitch Outfit (FE)",
+CurrentValue = false,
+Flag = "CatInvisGlitchOutfitWearFEFunc",
+Callback = function(Invis_Cat_Glitch_Outfit)
+    if Invis_Cat_Glitch_Outfit then
+        getgenv().Invisible_Glitch_Cat_Fit = true
+        if getgenv().Invisible_Glitch_Cat_Fit == true then
+            getgenv().Get("save_outfit")
+            wait(0.3)
+            getgenv().Send("code", 116433640227939, "JacketAccessory")
+            wait()
+            getgenv().Send("hide_name", true)
+            wait(0.1)
+            getgenv().Humanoid.JumpPower = 0
+            getgenv().Humanoid.JumpHeight = 0
+        end
+    else
+        notify("Success:", "Disabling 'Invisible Cat Glitch Outfit'...", 5)
+        wait(0.1)
+        getgenv().Invisible_Glitch_Cat_Fit = false
+        wait(0.1)
+        getgenv().Send("wear", 116433640227939, "JacketAccessory")
+        wait(0.2)
+        getgenv().Humanoid.JumpPower = JumpPower_Old
+        getgenv().Humanoid.JumpHeight = JumpHeight_Old
+        wait(0.1)
+        getgenv().Send("hide_name", false)
+        wait(0.2)
+        notify("Success:", "Disabled 'Invisible Cat Glitch Outfit'.", 5)
     end
 end,})
 
