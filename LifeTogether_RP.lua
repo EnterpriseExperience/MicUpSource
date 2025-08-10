@@ -2414,6 +2414,8 @@ Callback = function(Invis_Cat_Glitch_Outfit)
             getgenv().Send("code", 116433640227939, "JacketAccessory")
             wait()
             getgenv().Send("hide_name", true)
+            wait(0.2)
+            getgenv().Get("age", "baby")
             wait(0.1)
             getgenv().Humanoid.JumpPower = 0
             getgenv().Humanoid.JumpHeight = 0
@@ -2427,6 +2429,8 @@ Callback = function(Invis_Cat_Glitch_Outfit)
         wait(0.2)
         getgenv().Humanoid.JumpPower = JumpPower_Old
         getgenv().Humanoid.JumpHeight = JumpHeight_Old
+        wait(0.3)
+        getgenv().Get("age", "Adult")
         wait(0.1)
         getgenv().Send("hide_name", false)
         wait(0.2)
