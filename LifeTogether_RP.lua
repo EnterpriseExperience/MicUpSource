@@ -2400,6 +2400,8 @@ end,})
 
 local JumpPower_Old = getgenv().Humanoid.JumpPower
 local JumpHeight_Old = getgenv().Humanoid.JumpHeight
+local Humanoid_DescriptionApplied = getgenv().Humanoid:GetAppliedDescription()
+local Hair_Accessory = Humanoid_DescriptionApplied.HairAccessory
 wait(0.2)
 getgenv().CatInvisGlitchOutfit = Tab2:CreateToggle({
 Name = "Cat Invisible Glitch Outfit (FE)",
@@ -2416,6 +2418,10 @@ Callback = function(Invis_Cat_Glitch_Outfit)
             getgenv().Send("hide_name", true)
             wait(0.2)
             getgenv().Get("age", "baby")
+            wait()
+            getgenv().Send("wear", Hair_Accessory, "HairAccessory")
+            wait(0.2)
+            getgenv().Send("code", 15093053680, "DynamicHead")
             wait(0.1)
             getgenv().Humanoid.JumpPower = 0
             getgenv().Humanoid.JumpHeight = 0
@@ -2426,6 +2432,10 @@ Callback = function(Invis_Cat_Glitch_Outfit)
         getgenv().Invisible_Glitch_Cat_Fit = false
         wait(0.1)
         getgenv().Send("wear", 116433640227939, "JacketAccessory")
+        wait(0.2)
+        getgenv().Send("code", Hair_Accessory, "HairAccessory")
+        wait(0.2)
+        getgenv().Send("wear", 15093053680, "DynamicHead")
         wait(0.2)
         getgenv().Humanoid.JumpPower = JumpPower_Old
         getgenv().Humanoid.JumpHeight = JumpHeight_Old
