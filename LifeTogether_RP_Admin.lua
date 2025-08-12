@@ -1,7 +1,9 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Script_Version = "V2.6.5-LifeAdmin"
+local Raw_Version = "V2.6.8"
+task.wait(0.1)
+local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return 
@@ -1738,7 +1740,7 @@ else
    textLabel.Size = UDim2.new(0.45, 0.5, 0.45, 0.10)
    textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
    textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-   textLabel.Text = "Welcome to:\n\nFlames Life Together Admin V2.6.5!\n\nEnjoy."
+   textLabel.Text = "Welcome to:\n\nFlames Life Together Admin "..tostring(Raw_Version).."!\n\nEnjoy."
    if getgenv().Lighting.ClockTime <= 5 then
       textLabel.TextColor3 = Color3.fromRGB(3, 3, 3)
    elseif getgenv().Lighting.ClockTime >= 9 then
@@ -2557,6 +2559,42 @@ local function handleCommand(sender, message)
       water_skie_trailer(true, get_vehicle())
    elseif cmd == "notrailer" then
       water_skie_trailer(false, get_vehicle())
+   elseif cmd == "admin" then
+      local Player = findplr(split[1])
+      if not Player then return notify("Failure:", "Player does not exist!", 5) end
+
+      if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         if not getgenv().player_admins[Player.Name] then
+            alreadyCheckedUser(Player)
+         end
+      else
+         return notify("Failure:", "This player isn't friends with you! add them!", 5)
+      end
+   elseif cmd == "unadmin" then
+      local Player = findplr(split[1])
+      if not Player then return notify("Failure:", "Player does not exist!", 5) end
+
+      if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         local Name = Player.Name
+
+         if getgenv().player_admins[Name] then
+            getgenv().player_admins[Name] = nil
+         end
+         if getgenv().Rainbow_Vehicles[Name] then
+            getgenv().Rainbow_Vehicles[Name] = false
+         end
+         if getgenv().Locked_Vehicles[Name] then
+            getgenv().Locked_Vehicles[Name] = false
+         end
+         if getgenv().Unlocked_Vehicles[Name] then
+            getgenv().Unlocked_Vehicles[Name] = false
+         end
+         if getgenv().Rainbow_Tasks[Name] then
+            getgenv().Rainbow_Tasks[Name] = nil
+         end
+      else
+         return notify("Failure:", "This player isn't friends with you! add them!", 5)
+      end
    elseif cmd == "bringcar" then
       local Vehicle = get_vehicle()
       if not Vehicle then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
