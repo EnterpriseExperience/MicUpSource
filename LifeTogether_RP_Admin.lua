@@ -2566,6 +2566,10 @@ local function handleCommand(sender, message)
       if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
          if not getgenv().player_admins[Player.Name] then
             alreadyCheckedUser(Player)
+            wait(0.5)
+            notify("Success:", "Added "..tostring(Player.Name).." to the admin's table!", 5)
+         else
+            return notify("Failure:", "Player is already an admin!", 5)
          end
       else
          return notify("Failure:", "This player isn't friends with you! add them!", 5)
@@ -2575,10 +2579,14 @@ local function handleCommand(sender, message)
       if not Player then return notify("Failure:", "Player does not exist!", 5) end
 
       if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         notify("Hang On:", "Removing admin for: "..tostring(Player.Name), 5)
+         task.wait()
          local Name = Player.Name
 
          if getgenv().player_admins[Name] then
             getgenv().player_admins[Name] = nil
+            wait(0.2)
+            notify("Success:", "Player removed from getgenv().player_admins table!", 5)
          end
          if getgenv().Rainbow_Vehicles[Name] then
             getgenv().Rainbow_Vehicles[Name] = false
@@ -2591,6 +2599,12 @@ local function handleCommand(sender, message)
          end
          if getgenv().Rainbow_Tasks[Name] then
             getgenv().Rainbow_Tasks[Name] = nil
+         end
+         wait(0.5)
+         if not getgenv().player_admins[Name] then
+            notify("Success:", "Player's admin has been removed successfully.", 5)
+         else
+            notify("Failure:", "Player's admin abilities we're not removed.", 5)
          end
       else
          return notify("Failure:", "This player isn't friends with you! add them!", 5)
