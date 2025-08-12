@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.6.8"
+local Raw_Version = "V2.6.9"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -2724,7 +2724,7 @@ local function handleCommand(sender, message)
    elseif cmd == "flashinvis" then
       local is_verified = Data.is_verified
       local invis_bought = Data.invisible_bought
-      local Invisible_Module = getgenv().Game_Folder:FindFirstChild("InvisibleMode")
+      local Invisible_Module = require(getgenv().Game_Folder:FindFirstChild("InvisibleMode"))
 
       if not is_verified and not invis_bought then
          return notify("Failure:", "You do not have LifePay or the Invisible GamePass!", 5)
