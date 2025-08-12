@@ -1862,7 +1862,11 @@ local function setup_cmd_handler_plr(player)
 
    local function chat_reply(speaker, msg)
       if channel then
-         channel:SendAsync("/w " .. tostring(speaker) .. " " .. msg .. " (this message was automatically sent)")
+         channel:SendAsync("/w " ..tostring(speaker))
+         wait(0.2)
+         channel:SendAsync(tostring(msg) .. " (this message was automatically sent")
+         wait(0.1)
+         channel:SendAsync("")
       end
    end
 
@@ -2053,16 +2057,17 @@ local function setup_cmd_handler_plr(player)
          local args = command:split(" ")
          local checkTargetName = args[2]
          if not checkTargetName or #checkTargetName <= 0 then
-            return
+            warn("Args entered: "..tostring(args))
+            return warn("Target player invalid: "..tostring(checkTargetName))
          end
 
          local target = findplr(checkTargetName)
          if not target then
-            return
+            return warn("Could not find: "..tostring(target))
          end
 
          local isVerified = target:GetAttribute("is_verified")
-         local generalChannel = TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
+         local generalChannel = getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
          if generalChannel then
             if isVerified == true then
                generalChannel:SendAsync("Player: " .. target.DisplayName .. " has premium.")
@@ -2667,23 +2672,30 @@ local function handleCommand(sender, message)
    elseif cmd == "flashinvis" then
       local is_verified = Data.is_verified
       local invis_bought = Data.invisible_bought
+      local Invisible_Module = getgenv().Game_Folder:FindFirstChild("InvisibleMode")
 
       if not is_verified and not invis_bought then
          return notify("Failure:", "You do not have LifePay or the Invisible GamePass!", 5)
       end
-      wait(0.2)
+
+      task.wait(0.2)
       local Is_Invis = Invisible_Module.enabled.get()
       getgenv().Invisible_Flash = true
 
       if Is_Invis then
+         notify("Hold On:", "You we're already invisible, turning off invisibility...", 5)
          Invisible_Module.enabled.set(false)
       end
-      wait(0.1)
+
+      task.wait(0.1)
       while getgenv().Invisible_Flash == true do
          Invisible_Module.enabled.set(true)
-         wait()
+         task.wait(0.05)
          Invisible_Module.enabled.set(false)
+         task.wait(0.05)
       end
+   elseif cmd == "noflashinvis" then
+      getgenv().Invisible_Flash = false
    elseif cmd == "kill" and split[1] then
       local target = findplr(split[1])
       if not target then return notify("Kill:", "Target not found.", 5) end
