@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.6.9"
+local Raw_Version = "V2.7.2"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1888,6 +1888,8 @@ local function setup_cmd_handler_plr(player)
             return chat_reply(getgenv().Players[speaker.Name].DisplayName, "you don't have a vehicle")
          end
 
+         local name = speaker.Name
+
          if getgenv().Rainbow_Vehicles[speaker.Name] then
             return 
          end
@@ -1902,50 +1904,32 @@ local function setup_cmd_handler_plr(player)
             Color3.fromRGB(128, 0, 128),
          }
 
-         local RunService = getgenv().RunService
-         wait()
-         local i = 0
-         getgenv().Rainbow_Tasks[speaker.Name] = RunService.Heartbeat:Connect(function()
-            wait(0.2)
-            local rainbowState = getgenv().Rainbow_Vehicles[speaker.Name]
-            local rainbowTask = getgenv().Rainbow_Tasks[speaker.Name]
+         if getgenv().Rainbow_Vehicles[name] then return end
+         getgenv().Rainbow_Vehicles[name] = true
 
-            if not rainbowState then
-               if rainbowTask then
-                  rainbowTask:Disconnect()
-                  getgenv().Rainbow_Tasks[speaker.Name] = nil
+         local thread = coroutine.create(function()
+            local i = 0
+            while getgenv().Rainbow_Vehicles[name] do
+               local v = get_other_vehicle(getgenv().Players[name])
+               if not v then
+                  getgenv().Rainbow_Vehicles[name] = false
+                  break
                end
-
-               if not getgenv().NotifiedRainbowStop then
-                  getgenv().NotifiedRainbowStop = {}
-               end
-               if not getgenv().NotifiedRainbowStop[speaker.Name] then
-                  getgenv().NotifiedRainbowStop[speaker.Name] = true
-                  notify("Success:", "Disconnected Rainbow Task For: "..tostring(speaker.Name), 5)
-               end
-               return
-            end
-
-            local v = get_other_vehicle(getgenv().Players[speaker.Name])
-            if v then
-               wait(0.2)
-               local color = colors[(i % #colors) + 1]
+               change_vehicle_color(colors[(i % #colors) + 1], v)
                i += 1
-               change_vehicle_color(color, v)
-               wait(0.2)
-            else
-               getgenv().Rainbow_Vehicles[speaker.Name] = false
+               task.wait(0.2)
             end
          end)
+
+         getgenv().Rainbow_Tasks[name] = thread
+         coroutine.resume(thread)
       elseif levenshtein(command, "norgbcar") <= 2 then
-         if getgenv().Rainbow_Vehicles[speaker.Name] then
-            getgenv().Rainbow_Vehicles[speaker.Name] = false
-         end
-         getgenv().Rainbow_Vehicles[speaker.Name] = false
-         if not getgenv().Rainbow_Vehicles[speaker.Name] then
-            if getgenv().Rainbow_Tasks[speaker.Name] then
-               getgenv().Rainbow_Tasks[speaker.Name] = nil
-            end
+         local name = speaker.Name
+         if not speaker then return end
+         getgenv().Rainbow_Vehicles[name] = false
+         if getgenv().Rainbow_Tasks[name] then
+            getgenv().Rainbow_Tasks[name] = nil
+         else
             return 
          end
       elseif levenshtein(command, "lockcar") <= 2 then
@@ -1962,23 +1946,18 @@ local function setup_cmd_handler_plr(player)
          wait(0.1)
          getgenv().Locked_Vehicles[speaker.Name] = true
 
-         task.spawn(function()
-            while getgenv().Locked_Vehicles[speaker.Name] do
-               wait()
-               local player = getgenv().Players[speaker.Name]
-               if not player then
-                  getgenv().Locked_Vehicles[speaker.Name] = false
-                  break
-               end
+         local player = getgenv().Players[speaker.Name]
+         if not player then
+            getgenv().Locked_Vehicles[speaker.Name] = false
+         end
 
-               local v = get_other_vehicle(player)
-               if v and not v:GetAttribute("locked") then
-                  getgenv().Get("lock_vehicle", v)
-               elseif not v then
-                  getgenv().Locked_Vehicles[speaker.Name] = false
-               end
-            end
-         end)
+         local v = get_other_vehicle(player)
+
+         if v and not v:GetAttribute("locked") then
+            getgenv().Get("lock_vehicle", v)
+         elseif not v then
+            getgenv().Locked_Vehicles[speaker.Name] = false
+         end
       elseif levenshtein(command, "unlockcar") <= 2 then
          if not playerVehicle then
             getgenv().Unlocked_Vehicles[speaker.Name] = false
@@ -1993,23 +1972,17 @@ local function setup_cmd_handler_plr(player)
          wait(0.1)
          getgenv().Unlocked_Vehicles[speaker.Name] = true
 
-         task.spawn(function()
-            while getgenv().Unlocked_Vehicles[speaker.Name] do
-               wait()
-               local player = getgenv().Players[speaker.Name]
-               if not player then
-                  getgenv().Unlocked_Vehicles[speaker.Name] = false
-                  break
-               end
+         local player = getgenv().Players[speaker.Name]
+         if not player then
+            getgenv().Unlocked_Vehicles[speaker.Name] = false
+         end
 
-               local v = get_other_vehicle(player)
-               if v and v:GetAttribute("locked") then
-                  getgenv().Get("lock_vehicle", v)
-               elseif not v then
-                  getgenv().Unlocked_Vehicles[speaker.Name] = false
-               end
-            end
-         end)
+         local v = get_other_vehicle(player)
+         if v and v:GetAttribute("locked") then
+            getgenv().Get("lock_vehicle", v)
+         elseif not v then
+            getgenv().Unlocked_Vehicles[speaker.Name] = false
+         end
       elseif levenshtein(command, "trailer") <= 2 then
          local player = getgenv().Players[speaker.Name]
 
@@ -2362,7 +2335,7 @@ local function handleCommand(sender, message)
          Color3.fromRGB(128, 0, 128),
       }
 
-      while getgenv().Rainbow_Vehicles[PlayerToRGBCar] do
+      while getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] do
          wait(0)
          for _, color in ipairs(colors) do
             wait(0)
