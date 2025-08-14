@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.7.2"
+local Raw_Version = "V2.7.4"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1862,14 +1862,12 @@ local function setup_cmd_handler_plr(player)
       return d[len_s][len_t]
    end
 
-   local function chat_reply(speaker, msg)
-      if channel then
-         channel:SendAsync("/w " ..tostring(speaker))
-         wait(0.2)
-         channel:SendAsync(tostring(msg) .. " (this message was automatically sent")
-         wait(0.1)
-         channel:SendAsync("")
-      end
+   local function chat_reply(speakerName, msg)
+      local channel = TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
+      
+      channel:SendAsync("/w " .. speakerName .. " " .. msg .. " (this message was automatically sent)")
+      wait(0.2)
+      channel:SendAsync("/w " .. speakerName .. " " .. msg .. " (this message was automatically sent)")
    end
 
    TextChatService.MessageReceived:Connect(function(chatMessage)
@@ -1888,8 +1886,6 @@ local function setup_cmd_handler_plr(player)
             return chat_reply(getgenv().Players[speaker.Name].DisplayName, "you don't have a vehicle")
          end
 
-         local name = speaker.Name
-
          if getgenv().Rainbow_Vehicles[speaker.Name] then
             return 
          end
@@ -1904,15 +1900,12 @@ local function setup_cmd_handler_plr(player)
             Color3.fromRGB(128, 0, 128),
          }
 
-         if getgenv().Rainbow_Vehicles[name] then return end
-         getgenv().Rainbow_Vehicles[name] = true
-
          local thread = coroutine.create(function()
             local i = 0
-            while getgenv().Rainbow_Vehicles[name] do
-               local v = get_other_vehicle(getgenv().Players[name])
+            while getgenv().Rainbow_Vehicles[speaker.Name] do
+               local v = get_other_vehicle(getgenv().Players[speaker.Name])
                if not v then
-                  getgenv().Rainbow_Vehicles[name] = false
+                  getgenv().Rainbow_Vehicles[speaker.Name] = false
                   break
                end
                change_vehicle_color(colors[(i % #colors) + 1], v)
@@ -1921,21 +1914,22 @@ local function setup_cmd_handler_plr(player)
             end
          end)
 
-         getgenv().Rainbow_Tasks[name] = thread
+         getgenv().Rainbow_Tasks[speaker.Name] = thread
          coroutine.resume(thread)
       elseif levenshtein(command, "norgbcar") <= 2 then
          local name = speaker.Name
          if not speaker then return end
-         getgenv().Rainbow_Vehicles[name] = false
-         if getgenv().Rainbow_Tasks[name] then
-            getgenv().Rainbow_Tasks[name] = nil
-         else
-            return 
+
+         if getgenv().Rainbow_Vehicles[name] then
+            getgenv().Rainbow_Vehicles[name] = false
+            task.wait()
          end
+
+         getgenv().Rainbow_Tasks[name] = nil
       elseif levenshtein(command, "lockcar") <= 2 then
          if not playerVehicle then
             getgenv().LockLoop_Vehicles[speaker.Name] = false
-            return chat_reply(speaker, "you don't got a vehicle")
+            return chat_reply(speaker, "you don't have a vehicle")
          end
 
          if getgenv().Locked_Vehicles[speaker.Name] then
