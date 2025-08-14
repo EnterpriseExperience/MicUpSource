@@ -6,10 +6,10 @@
 local flames_api = {}
 
 local function SafeGet(serviceName)
-    local ok, service = pcall(function()
-        return cloneref and cloneref(game:GetService(serviceName)) or game:GetService(serviceName)
-    end)
-    return ok and service or nil
+	local ok, service = pcall(function()
+		return cloneref and cloneref(game:GetService(serviceName)) or game:GetService(serviceName)
+	end)
+	return ok and service or nil
 end
 
 getgenv().Game = game
@@ -17,7 +17,7 @@ getgenv().JobID = game.JobId
 getgenv().PlaceID = game.PlaceId
 
 flames_api.Service = function(serviceName)
-    return SafeGet(serviceName)
+   return SafeGet(serviceName)
 end
 
 local function getExecutor()
@@ -67,6 +67,12 @@ local function SafeGetHead(char)
 	return char:FindFirstChild("Head") or char:WaitForChild("Head", 5)
 end
 
+local FlyConnections
+
+FlyConnections = FlyConnections or {}
+getgenv().FlyPart = getgenv().FlyPart or nil
+getgenv().FlySpeed = getgenv().FlySpeed or 10
+
 local function Dynamic_Character_Updater(character)
 	flames_api.Character = character
 	wait(0.3)
@@ -112,6 +118,121 @@ flames_api.Vehicle = function()
 	end
 
 	return nil
+end
+
+flames_api.notify = function(title, content, duration)
+   flames_api.Service("StarterGui"):SetCore("SendNotification", {
+      Title = tostring(title);
+      Text = tostring(content);
+      Duration = tonumber(duration);
+   })
+end
+
+flames_api.Fly = function(speed)
+	if getgenv().FlyEnabled then return flames_api.notify("Failure:", "Fly is already enabled!", 5) end
+	local HumanoidRootPart = flames_api.HumanoidRootPart
+	local Workspace = flames_api.Service("Workspace")
+	local StarterPack = flames_api.Service("StarterPack")
+	local RunService = flames_api.Service("RunService")
+	local UserInputService = flames_api.Service("UserInputService")
+	local character = flames_api.Character
+	local humanoid = flames_api.Humanoid
+	local camera = Workspace.CurrentCamera
+	getgenv().FlySpeed = tonumber(speed) or 5
+	getgenv().FlyEnabled = getgenv().FlyEnabled or false
+
+	getgenv().StartFly = function()
+		if getgenv().FlyEnabled then return flames_api.notify("Failure:", "Fly is already enabled!", 5) end
+		getgenv().FlyEnabled = true
+
+		local dir = {w = false, a = false, s = false, d = false, q = false, e = false}
+		local cf = Instance.new("CFrameValue")
+
+		getgenv().FlyPart = Instance.new("Part")
+		getgenv().FlyPart.Name = "RUNPART-SURF"
+		getgenv().FlyPart.Anchored = true
+		getgenv().FlyPart.Parent = StarterPack
+		getgenv().FlyPart.CFrame = HumanoidRootPart and HumanoidRootPart.CFrame or CFrame.new()
+
+		FlyConnections.render = RunService.RenderStepped:Connect(function()
+			if not getgenv().FlyEnabled or not HumanoidRootPart then return end
+			local primaryPart = HumanoidRootPart
+			local speed = getgenv().FlySpeed
+
+			local x, y, z = 0, 0, 0
+			if dir.w then z = -1 * speed end
+			if dir.a then x = -1 * speed end
+			if dir.s then z = 1 * speed end
+			if dir.d then x = 1 * speed end
+			if dir.q then y = 1 * speed end
+			if dir.e then y = -1 * speed end
+
+			for i, v in pairs(character:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.Velocity = Vector3.new(0, 0, 0)
+					v.RotVelocity = Vector3.new(0, 0, 0)
+				end
+			end
+
+			getgenv().FlyPart.CFrame = CFrame.new(
+				getgenv().FlyPart.CFrame.p,
+				(camera.CFrame * CFrame.new(0, 0, -100)).p
+			)
+
+			local moveDir = CFrame.new(x, y, z)
+			cf.Value = cf.Value:lerp(moveDir, 0.2)
+			getgenv().FlyPart.CFrame = getgenv().FlyPart.CFrame:lerp(getgenv().FlyPart.CFrame * cf.Value, 0.2)
+			primaryPart.CFrame = getgenv().FlyPart.CFrame
+			humanoid.PlatformStand = true
+		end)
+
+		FlyConnections.inputBegan = UserInputService.InputBegan:Connect(function(input, event)
+			if event or not getgenv().FlyEnabled then return end
+			local code, codes = input.KeyCode, Enum.KeyCode
+			if code == codes.W then dir.w = true
+			elseif code == codes.A then dir.a = true
+			elseif code == codes.S then dir.s = true
+			elseif code == codes.D then dir.d = true
+			elseif code == codes.Q then dir.q = true
+			elseif code == codes.E then dir.e = true
+			elseif code == codes.Space then dir.q = true
+			end
+		end)
+
+		FlyConnections.inputEnded = UserInputService.InputEnded:Connect(function(input, event)
+			if event or not getgenv().FlyEnabled then return end
+			local code, codes = input.KeyCode, Enum.KeyCode
+			if code == codes.W then dir.w = false
+			elseif code == codes.A then dir.a = false
+			elseif code == codes.S then dir.s = false
+			elseif code == codes.D then dir.d = false
+			elseif code == codes.Q then dir.q = false
+			elseif code == codes.E then dir.e = false
+			elseif code == codes.Space then dir.q = false
+			end
+		end)
+	end
+
+	getgenv().StartFly()
+end
+
+flames_api.Unfly = function()
+	if not getgenv().FlyEnabled then return end
+	getgenv().FlyEnabled = false
+
+	for _, conn in pairs(FlyConnections) do
+		if conn then conn:Disconnect() end
+	end
+	FlyConnections = {}
+
+	if getgenv().FlyPart then
+		getgenv().FlyPart:Destroy()
+		getgenv().FlyPart = nil
+	end
+
+	if flames_api.Humanoid then
+		flames_api.Humanoid.PlatformStand = false
+	end
 end
 
 flames_api.FindPlayer = function(arg)
