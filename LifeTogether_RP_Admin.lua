@@ -1918,13 +1918,13 @@ local function setup_cmd_handler_plr(player)
          coroutine.resume(thread)
       elseif levenshtein(command, "norgbcar") <= 2 then
          local name = speaker.Name
-         if not speaker then return end
+         if not speaker then return notify("Failure:", "Player does not exist!", 5) end
 
          if getgenv().Rainbow_Vehicles[name] then
             getgenv().Rainbow_Vehicles[name] = false
-            task.wait()
+            task.wait(0.25)
          end
-
+         wait(0.1)
          getgenv().Rainbow_Tasks[name] = nil
       elseif levenshtein(command, "lockcar") <= 2 then
          if not playerVehicle then
