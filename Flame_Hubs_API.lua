@@ -88,7 +88,7 @@ LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	flames_api.Humanoid = SafeGetHumanoid(newCharacter)
 	flames_api.HumanoidRootPart = SafeGetHRP(newCharacter)
 	flames_api.Head = SafeGetHead(newCharacter)
-	flames_api.SeatPart = Humanoid.SeatPart
+	flames_api.SeatPart = SafeGetHumanoid(newCharacter).SeatPart
 	wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
 end)
