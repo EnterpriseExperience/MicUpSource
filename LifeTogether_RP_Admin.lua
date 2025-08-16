@@ -1185,10 +1185,10 @@ function RGB_Phone(Boolean)
 
    if Boolean == true then
       while getgenv().RGB_Rainbow_Phone == true do
-      task.wait(.3)
+      task.wait(0)
          for _, color in ipairs(colors) do
             if getgenv().RGB_Rainbow_Phone ~= true then return end
-            task.wait(.2)
+            task.wait(.1)
             change_phone_color(color)
          end
       end
