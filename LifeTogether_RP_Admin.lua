@@ -302,47 +302,6 @@ local RunService = cloneref and cloneref(game:GetService("RunService")) or game:
 local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-
-local NetModule
-for _, v in ipairs(getgc(true)) do
-   if typeof(v) == "table" and rawget(v, "send") and rawget(v, "get") then
-      if typeof(v.send) == "function" and typeof(v.get) == "function" then
-         NetModule = v
-      end
-   end
-end
-
-if not NetModule then
-   --loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/ExecutorNot_SupportedGUI.lua'))()
-   getgenv().notify("Failure:", "Net ModuleScript not found!", 5)
-end
-
-local counterTable
-for _, v in ipairs(getgc(true)) do
-   if typeof(v) == "table" and rawget(v, "event") and rawget(v, "func") then
-      if typeof(v.event) == "number" and typeof(v.func) == "number" then
-         counterTable = v
-      end
-   end
-end
-
-if not counterTable then
-   --loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/ExecutorNot_SupportedGUI.lua'))()
-   getgenv().notify("Failure:", "counterTable not found.", 5)
-end
-
-local ReplicatedFirst = cloneref and cloneref(game:GetService("ReplicatedFirst")) or game:GetService("ReplicatedFirst")
-
-local NetEventCount = Instance.new("IntValue")
-NetEventCount.Name = "Net_RemoteEvent_Counter"
-NetEventCount.Value = counterTable.event
-NetEventCount.Parent = ReplicatedFirst
-
-local NetFuncCount = Instance.new("IntValue")
-NetFuncCount.Name = "Get_RemoteFunction_Counter"
-NetFuncCount.Value = counterTable.func
-NetFuncCount.Parent = ReplicatedFirst
-wait(0.2)
 local Modules = ReplicatedStorage:FindFirstChild("Modules")
 local Core = Modules:FindFirstChild("Core")
 local Game = Modules:FindFirstChild("Game")
@@ -519,7 +478,7 @@ function vehicle_kill_player(TargetPlayer)
       seat:Sit(MyHumanoid)
    end
 
-   local maxTries = 100
+   local maxTries = 40
    for i = 1, maxTries do
       local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
       local isSitting = targetHumanoid and targetHumanoid.Sit
@@ -581,7 +540,7 @@ function vehicle_void_player(TargetPlayer)
       seat:Sit(MyHumanoid)
    end
 
-   local maxTries = 100
+   local maxTries = 40
    for i = 1, maxTries do
       local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
       local isSitting = targetHumanoid and targetHumanoid.Sit
@@ -656,7 +615,7 @@ function vehicle_skydive_player(TargetPlayer)
       seat:Sit(MyHumanoid)
    end
 
-   local maxTries = 100
+   local maxTries = 40
    for i = 1, maxTries do
       local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
       local isSitting = targetHumanoid and targetHumanoid.Sit
@@ -717,14 +676,14 @@ function vehicle_bring_player(TargetPlayer)
       seat:Sit(MyHumanoid)
    end
 
-   local maxTries = 100
+   local maxTries = 40
    for i = 1, maxTries do
       local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
       local isSitting = targetHumanoid and targetHumanoid.Sit
       if isSitting then break end
 
       MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
-      task.wait(0.2)
+      task.wait(0.4)
    end
    wait(0.1)
    MyBus:PivotTo(Old_CF)
@@ -800,7 +759,7 @@ end)
 
 -- try and outsmart directory wide searching with effective-ness Life Together RP, you'll never patch this Logs disabler, you'd have to remove it other-wise.
 -- there is quite literally no where else these dick-heads could put it to beat this system, they'd have to remove it entirely to "patch this".
--- and even if they did, it wouldn't touch my script at all so, they are forced to do 1 thing and 1 thing only.
+-- and even if they did, it wouldn't touch my script at all, since I have if checks everywhere, so, they are forced to do 1 thing and 1 thing only (delete it).
 local Directories = {
    ["ReplicatedFirst"] = true,
    ["ReplicatedStorage"] = true,
@@ -818,7 +777,7 @@ local Directories = {
    ["StarterPlayer"] = true,
 }
 
-for serviceName in pairs(Directories) do
+--[[for serviceName in pairs(Directories) do
    local service = getgenv().Game:GetService(serviceName)
    if service then
       for _, descendant in ipairs(service:GetDescendants()) do
@@ -827,7 +786,7 @@ for serviceName in pairs(Directories) do
          end
       end
    end
-end
+end--]]
 
 local playerScripts = getgenv().PlayerScripts
 if playerScripts then
@@ -848,7 +807,7 @@ if sps then
       if clientBase then
          local logsScript = clientBase:FindFirstChild("Logs")
          if logsScript and logsScript:IsA("LocalScript") then
-               logsScript.Disabled = true
+            logsScript.Disabled = true
          end
       end
    end
@@ -864,8 +823,7 @@ local success, response = pcall(function()
 end)
 
 if success and response then
-   print("[✅] This script CAN run in this executor! Got successful response: "..tostring(response).." [✅]")
-   wait(1)
+   task.wait(0.5)
    if get_vehicle() and getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
       getgenv().Humanoid:ChangeState(3)
       wait(0.2)
@@ -874,13 +832,13 @@ if success and response then
       require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", "SVJ")
    end
 else
-   warn("[❌] | Vehicle spawn failed | Failed Response | [❌]")
    if not success then
       notify("Failure:", "This script does not work on this executor!", 8)
       return notify("Error:", "You cannot run this script, we're sorry!", 10)
    end
 end
 wait()
+-- [[ Coming Soon ]] --
 --[[local Defaults = {
    ["Vehicle"] = "None", -- Or the vehicle name, example: "SVJ".
    ["AntiSit"] = false,
@@ -984,9 +942,9 @@ function RGB_Vehicle(Boolean)
 
    if Boolean == true then
       while getgenv().Rainbow_Vehicle == true do
-         wait(0)
+         task.wait(0)
          for _, color in ipairs(colors) do
-            wait(0)
+            task.wait(0)
             if getgenv().Rainbow_Vehicle ~= true then return end
             change_vehicle_color(color, get_vehicle())
          end
@@ -1018,9 +976,9 @@ function RGB_Vehicle_Others(Player, Boolean)
 
    if Boolean == true then
       while getgenv().Rainbow_Others_Vehicle == true do
-         wait(0)
+         task.wait(.2)
          for _, color in ipairs(colors) do
-            wait(0)
+            task.wait(.2)
             if getgenv().Rainbow_Others_Vehicle ~= true then return end
             if get_other_vehicle(Player):GetAttribute("locked") == true then
                return 
@@ -1048,14 +1006,16 @@ local GA_Directories = {
    ["StarterPlayer"] = true,
 }
 
--- bypass this Life Together, I'd love to see you try, I'd update it instantly to if you somehow did, say goodbye to them stupid ass logs lmfao.
+-- bypass this Life Together RP, I'd love to see you try, I'd update it instantly to if you somehow did, say goodbye to them stupid ass logs lmfao.
 if getgenv().ReplicatedStorage:FindFirstChild("GameAnalytics") then
    GameAnalytics = getgenv().ReplicatedStorage:FindFirstChild("GameAnalytics")
 
    if GameAnalytics:FindFirstChild("GameAnalyticsClient") then
-      GA_Client = require(GameAnalytics:FindFirstChild("GameAnalyticsClient"))
+      GA_Client = GameAnalytics:FindFirstChild("GameAnalyticsClient")
 
-      GA_Client.initClient = function() return end
+      if GA_Client then
+         GA_Client:Destroy()
+      end
    end
 else
    for service in pairs(GA_Directories) do
@@ -1064,7 +1024,7 @@ else
       if service then
          for _, descendant in ipairs(service:GetDescendants()) do
             if descendant:IsA("ModuleScript") and descendant.Name:lower():find("GameAnalyticsClient") then
-               descendant.Disabled = true
+               descendant:Destroy()
             end
          end
       end
@@ -1077,7 +1037,7 @@ function rainbow_skin(boolean)
    if boolean == true then
       getgenv().RainbowSkin_FE = true
       while getgenv().RainbowSkin_FE == true do
-         wait()
+         task.wait(.3)
          local colors = {
             Color3.fromRGB(0, 0, 0), Color3.fromRGB(217, 101, 30),
             Color3.fromRGB(93, 171, 195), Color3.fromRGB(49, 34, 21),
@@ -1092,7 +1052,7 @@ function rainbow_skin(boolean)
          for _, c in ipairs(colors) do
             if not getgenv().RainbowSkin_FE then return end
             send_remote("skin_tone", c)
-            wait()
+            task.wait(0.2)
          end
       end
    else
@@ -1101,73 +1061,71 @@ function rainbow_skin(boolean)
       repeat task.wait() until getgenv().RainbowSkin_FE == false
       if getgenv().RainbowSkin_FE == false then
          notify("Success:", "Disabling Rainbow Skin...", 5)
-         wait(0.5)
+         task.wait(0.5)
          send_remote("skin_tone", Old_Skintone)
       end
    end
 end
 
 local function savePrefix(newPrefix)
-    if writefile then
-        local data = { prefix = newPrefix }
-        writefile(fileName, HttpService:JSONEncode(data))
-    else
-        warn("Your executor does not support 'writefile'")
-    end
+   if writefile then
+      local data = { prefix = newPrefix }
+      writefile(fileName, HttpService:JSONEncode(data))
+   end
 end
 
 function anti_report_func()
-    if setfflag then
-        pcall(function()
-            setfflag("AbuseReportScreenshot", "False")
-            setfflag("AbuseReportScreenshotPercentage", "0")
-            setfflag("DFFlagAbuseReportScreenshot", "False")
-            setfflag("AbuseReportScreenshotType", "0")
-            setfflag("AbuseReportDialogScreenshot", "False")
-            setfflag("ScreenshotReportEnabled", "False")
-            setfflag("DFLogScreenshotSender", "False")
-            setfflag("ScreenshotSubmitPercentage", "0")
-            setfflag("EnableBugReporting", "False")
-            setfflag("EnableInternalBugReporting", "False")
-            setfflag("EnableSilentModeForAbuseReport", "True")
-            setfflag("CrashUploadToBacktraceToBacktracePercentage", "0")
-            setfflag("CrashUploadToBacktracePercentage", "0")
-            setfflag("CrashUploadToBacktraceWindows", "False")
-            setfflag("UserReportedCrashUpload", "False")
-            setfflag("EnableTraceLogging", "False")
-            setfflag("DFLogEnableTraceLogging", "False")
-            setfflag("TaskSchedulerEnableLuaGCLog", "False")
-            setfflag("DFLogUploadHttpPerformance", "False")
-            setfflag("UploadMemoryStats", "False")
-            setfflag("UploadImproperShutdownTelemetry", "False")
-        end)
-        wait()
-        print("[Success]:", "Anti Report (__SETUP) has been successfully loaded.")
-    else
-        warn("[Error]:", "Your executor does not support 'setfflag' to run this!")
-    end
+   if setfflag then
+      pcall(function()
+         setfflag("AbuseReportScreenshot", "False")
+         setfflag("AbuseReportScreenshotPercentage", "0")
+         setfflag("DFFlagAbuseReportScreenshot", "False")
+         setfflag("AbuseReportScreenshotType", "0")
+         setfflag("AbuseReportDialogScreenshot", "False")
+         setfflag("ScreenshotReportEnabled", "False")
+         setfflag("DFLogScreenshotSender", "False")
+         setfflag("ScreenshotSubmitPercentage", "0")
+         setfflag("EnableBugReporting", "False")
+         setfflag("EnableInternalBugReporting", "False")
+         setfflag("EnableSilentModeForAbuseReport", "True")
+         setfflag("CrashUploadToBacktraceToBacktracePercentage", "0")
+         setfflag("CrashUploadToBacktracePercentage", "0")
+         setfflag("CrashUploadToBacktraceWindows", "False")
+         setfflag("UserReportedCrashUpload", "False")
+         setfflag("EnableTraceLogging", "False")
+         setfflag("DFLogEnableTraceLogging", "False")
+         setfflag("TaskSchedulerEnableLuaGCLog", "False")
+         setfflag("DFLogUploadHttpPerformance", "False")
+         setfflag("UploadMemoryStats", "False")
+         setfflag("UploadImproperShutdownTelemetry", "False")
+      end)
+      wait()
+      print("[Success]:", "Anti Report (__SETUP) has been successfully loaded.")
+   else
+      warn("[Error]:", "Your executor does not support 'setfflag' to run this!")
+   end
 end
 
 if getgenv().loaded_anti_report then
-    warn("Already loaded anti-report utility!")
+   warn("Already loaded anti-report utility!")
 else
-    anti_report_func()
-    wait(0.1)
-    getgenv().loaded_anti_report = true
+   anti_report_func()
+   task.wait(0.2)
+   getgenv().loaded_anti_report = true
 end
 
 local function stop_rainbow_skin()
    getgenv().RainbowSkin_FE = false
-   wait(0.3)
+   task.wait(0.3)
    notify("Heads Up:", "Waiting until loop is fully disabled and resetting skintone...", 5)
-   wait(3)
+   task.wait(3)
    if getgenv().RainbowSkin_FE == false then
       notify("Hang On:", "Loop is disabled, resetting skintone...", 5)
-      wait()
+      task.wait(0.2)
       send_remote("skin_tone", Old_Skintone)
-      wait(0.2)
+      task.wait(0.2)
       send_remote("skin_tone", Old_Skintone)
-      wait(0.2)
+      task.wait(0.2)
       send_remote("skin_tone", Old_Skintone)
    end
 end
@@ -1205,7 +1163,7 @@ end
 function change_phone_color(New_Color)
    send_remote("phone_color", New_Color)
 end
-wait(0.2)
+task.wait(0.2)
 function RGB_Phone(Boolean)
    getgenv().RGB_Rainbow_Phone = Boolean
 
@@ -1227,17 +1185,17 @@ function RGB_Phone(Boolean)
 
    if Boolean == true then
       while getgenv().RGB_Rainbow_Phone == true do
-      wait(0)
+      task.wait(.3)
          for _, color in ipairs(colors) do
             if getgenv().RGB_Rainbow_Phone ~= true then return end
-            wait(0)
+            task.wait(.2)
             change_phone_color(color)
          end
       end
    elseif Boolean == false then
       Boolean = false
       getgenv().RGB_Rainbow_Phone = false
-      wait(0.4)
+      task.wait(0.5)
       repeat wait() until Boolean == false
       if getgenv().RGB_Rainbow_Phone == false then
          change_phone_color(Color3.fromRGB(255, 255, 255))
@@ -1694,9 +1652,9 @@ function flashy_name(Toggle)
    if Toggle == true then
       getgenv().Flashing_Name_Title = true
       while getgenv().Flashing_Name_Title == true do
-      wait(0)
+      task.wait(0)
          toggle_name_func(true)
-         wait(0)
+         task.wait(0)
          toggle_name_func(false)
       end
    elseif Toggle == false then
@@ -2330,9 +2288,9 @@ local function handleCommand(sender, message)
       }
 
       while getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] do
-         wait(0)
+         task.wait(.2)
          for _, color in ipairs(colors) do
-            wait(0)
+            task.wait(.2)
             change_vehicle_color(color, get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]))
          end
       end
@@ -3170,10 +3128,3 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
       getgenv().Rainbow_Tasks[Name] = nil
    end
 end)
-wait(0.2)
---[[task.spawn(function()
-   while task.wait() do
-      NetEventCount.Value = counterTable.event
-      NetFuncCount.Value = counterTable.func
-   end
-end)--]]
