@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "1.8.3-LIFE"
+local Script_Version = "1.8.5-LIFE"
 
 local function getExecutor()
     local name
@@ -2012,6 +2012,61 @@ Callback = function(flashlight_phone)
     end
 end,})
 
+local rainbowConnection
+task.wait(0.2)
+getgenv().startRainbow = function()
+    if rainbowConnection then rainbowConnection:Disconnect() end
+
+    local hue = 0
+    rainbowConnection = RunService.RenderStepped:Connect(function(deltaTime)
+        hue = (hue + deltaTime * 0.1) % 1
+        Rain:SetColor(Color3.fromHSV(hue, 1, 1))
+    end)
+end
+task.wait(0.2)
+getgenv().stopRainbow = function()
+    if rainbowConnection then
+        rainbowConnection:Disconnect()
+        rainbowConnection = nil
+    end
+    Rain:Disable()
+    Rain:SetColor(Color3.fromRGB(255, 255, 255))
+    Rain:SetVolume(0.2)
+    Rain:SetTransparency(0)
+end
+task.wait(0.1)
+getgenv().RainbowRain_NotFE = Tab3:CreateToggle({
+Name = "Rainbow Rain (Not FE)",
+CurrentValue = false,
+Flag = "NotFERainbowRain",
+Callback = function(rainbow_rain_toggle)
+    if rainbow_rain_toggle then
+        local RunService = getgenv().RunService
+        local Rain_Script = getgenv().LocalPlayer:FindFirstChild("PlayerScripts"):FindFirstChild("RainScript")
+        local Rain_Module = Rain_Script:FindFirstChild("Rain")
+        if not Rain_Module then
+            return getgenv().notify("Failure:", "Rain ModuleScript was not found!", 5)
+        end
+        local Rain = require(Rain_Script:FindFirstChild("Rain"))
+        wait(0.1)
+        getgenv().Rainbow_Rain = true
+        wait()
+        Rain:Enable()
+        Rain:SetVolume(0.8)
+        Rain:SetDirection(Vector3.new(0, -1, 0))
+        Rain:SetTransparency(0)
+        getgenv().startRainbow()
+    else
+        getgenv().stopRainbow()
+    end
+end,})
+task.wait(0.2)
+if getgenv().Rainbow_Rain or getgenv().Rainbow_Rain == true then
+    getgenv().Rainbow_Rain = false
+    getgenv().RainbowRain_NotFE:Set(false)
+    getgenv().stopRainbow()
+end
+
 local Anti_Teleport_Toggled_Saved = false
 wait(0.1)
 getgenv().AntiTeleport_Univ = Tab2:CreateToggle({
@@ -2664,38 +2719,115 @@ local Animations_Table = {
     }
 }
 
+local function is_empty(desc, slot)
+    local v = desc and desc[slot]
+    return (not v or v == "" or v == "0")
+end
+
+local function unequip_slot(desc, slot)
+    if not is_empty(desc, slot) then
+        for id in string.gmatch(desc[slot], "[^,]+") do
+            getgenv().Get("wear", tonumber(id), slot)
+            task.wait(0.2)
+        end
+    end
+end
+
+local desc = getgenv().Humanoid and getgenv().Humanoid:FindFirstChildWhichIsA("HumanoidDescription")
+
+local AccessorySlots = {
+    "BackAccessory",
+    "ShouldersAccessory",
+    "FrontAccessory",
+    "WaistAccessory",
+    "NeckAccessory",
+    "HairAccessory",
+    "HatAccessory",
+    "FaceAccessory",
+    "Shirt",
+    "Pants",
+}
+
+local function change_outfit(notify_title, notify_msg, success_msg, items)
+    getgenv().notify(notify_title, notify_msg, 5)
+
+    if desc then
+        for _, slot in ipairs(AccessorySlots) do
+            getgenv().notify("Hang On:", "Unequipping old accessories...", 5)
+            unequip_slot(desc, slot)
+            task.wait(0.3)
+        end
+    end
+    task.wait(0.2)
+    for _, v in ipairs(items) do
+        if v[1] == "wear" then
+            getgenv().Get("wear", v[2], v[3])
+        elseif v[1] == "remote" then
+            getgenv().Send(v[2], v[3], v[4])
+        elseif v[1] == "wearBatch" then
+            getgenv().Get("batch_wear", v[2])
+        elseif v[1] == "code" then
+            getgenv().Get("code", v[2], v[3])
+        end
+        task.wait(0.8)
+    end
+
+    getgenv().notify("Success:", success_msg, 5)
+end
+
 getgenv().ChangeIntoOwnerFit1 = Tab1:CreateButton({
-Name = "Change Into Owner (Outfit 1)",
+Name = "Change Into Owner (Mine, Outfit 1)",
 Callback = function()
-    getgenv().notify("Hold On:", "Wearing Owner Outfit 1...", 5)
-    wait()
-    send_function("wear", 114590304845243, "Pants")
-    wait(0.2)
-    send_function("wear", 16045355146, "Shirt")
-    wait(0.2)
-    send_remote("skin_tone", Color3.fromRGB(120, 65, 38))
-    wait(0.2)
-    send_function("batch_wear", Animations_Table)
-    wait(0.2)
-    send_function("wear", 98831355295667, "HairAccessory")
-    wait(0.2)
-    send_function("wear", 10430104072, "Hat")
-    wait(0.2)
-    send_function("wear", 10678423, "Face")
-    wait(0.2)
-    send_function("wear", 13734096288, "FaceAccessory")
-    wait(0.2)
-    send_function("wear", 17652885791, "ShoulderAccessory")
-    wait(0.2)
-    send_function("wear", 79729101518083, "ShoulderAccessory")
-    wait(0.2)
-    send_function("wear", 76070025258274, "ShoulderAccessory")
-    wait(0.2)
-    send_remote("body_scale", "HeightScale", 100)
-    wait(0.2)
-    send_remote("body_scale", "WidthScale", 100)
-    wait(1)
-    getgenv().notify("Success:", "Successfully wore Owner Outfit 1.", 5)
+    change_outfit(
+        "Hold On:", "Wearing Owner Outfit 1...",
+        "Successfully wore Owner Outfit 1.",
+        {
+            {"code", 114590304845243, "Pants"},
+            {"code", 16045355146, "Shirt"},
+            {"remote", "skin_tone", Color3.fromRGB(120, 65, 38)},
+            {"wearBatch", Animations_Table},
+            {"code", 98831355295667, "HairAccessory"},
+            {"code", 10430104072, "Hat"},
+            {"code", 10678423, "Face"},
+            {"code", 13734096288, "FaceAccessory"},
+            {"code", 17652885791, "ShoulderAccessory"},
+            {"code", 79729101518083, "ShoulderAccessory"},
+            {"code", 76070025258274, "ShoulderAccessory"},
+            {"remote", "body_scale", "HeightScale", 100},
+            {"remote", "body_scale", "WidthScale", 100}
+        }
+    )
+end,})
+
+getgenv().ChangeIntoOwnerFit2 = Tab1:CreateButton({
+Name = "Change Into Owner (Mine, Outfit 2)",
+Callback = function()
+    change_outfit(
+        "Hang On:", "Wearing Owner Outfit 2...",
+        "Successfully wore Owner Outfit 2.",
+        {
+            {"code", 11532061305, "Pants"},
+            {"code", 6267476410, "Shirt"},
+            {"remote", "skin_tone", Color3.fromRGB(120, 65, 38)},
+            {"wearBatch", Animations_Table},
+            {"code", 15056056442, "Hat"},
+            {"code", 87719366970131, "HairAccessory"},
+            {"code", 13265134760, "FaceAccessory"},
+            {"code", 15655024838, "Hat"},
+            {"code", 150182378, "Face"},
+            {"code", 14123983540, "FaceAccessory"},
+            {"code", 17223945302, "NeckAccessory"},
+            {"code", 18312780078, "BackAccessory"},
+            {"code", 80104766014684, "WaistAccessory"},
+            {"code", 84418052877367, "RightLeg"},
+            {"code", 124343282827669, "LeftLeg"},
+            {"code", 92757812011061, "Torso"},
+            {"code", 99519402284266, "RightArm"},
+            {"code", 115905570886697, "LeftArm"},
+            {"remote", "body_scale", "HeightScale", 105},
+            {"remote", "body_scale", "WidthScale", 95}
+        }
+    )
 end,})
 
 getgenv().LockHouseLoopRunning = false
