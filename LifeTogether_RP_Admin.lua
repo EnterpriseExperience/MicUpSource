@@ -1450,6 +1450,7 @@ local function CommandsMenu()
       {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
       {prefix}rainbowcar player - Makes a players car RGB (FE)
       {prefix}norainbowcar player - Disables the RGB for a player's car (FE)
+      {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed
       {prefix}unadmin player - Removes the player's FE commands (if they're your friend).
       {prefix}admin player - Adds the player to the FE commands whitelist (if they're your friend).
       {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone)
