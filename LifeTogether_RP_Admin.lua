@@ -3181,6 +3181,7 @@ end
 wait(0.1)
 getgenv().Players.PlayerAdded:Connect(function(Player)
    local Name = Player.Name
+   getgenv().Blacklisted_Friends = getgenv().Blacklisted_Friends or {}
 
    if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
       if not getgenv().Blacklisted_Friends[Name] then
