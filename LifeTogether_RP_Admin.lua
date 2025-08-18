@@ -1842,25 +1842,25 @@ local function setup_cmd_handler_plr(player)
       local playerVehicle = get_other_vehicle(getgenv().Players[speaker.Name])
 
       if levenshtein(command, "rgbcar") <= 2 then
-         local player = speaker
-         local Name = speaker.Name
+         local Player = getgenv().Players[speaker.Name]
+         local Name = getgenv().Players[speaker.Name].Name
 
-         if not get_other_vehicle(getgenv().Players[speaker.Name]) then
-            getgenv().Rainbow_Vehicles[speaker.Name] = false
-            return chat_reply(getgenv().Players[speaker.Name].DisplayName, "you don't have a vehicle")
+         if not get_other_vehicle(Player) then
+            getgenv().Rainbow_Vehicles[Name] = false
+            return chat_reply(Player.DisplayName, "you don't have a vehicle")
          end
 
-         local vehicle = get_other_vehicle(player)
+         local vehicle = get_other_vehicle(Player)
          if not vehicle then
-            getgenv().Rainbow_Vehicles[speaker.Name] = false
-            return chat_reply(player.DisplayName, "you don't have a vehicle")
+            getgenv().Rainbow_Vehicles[Name] = false
+            return chat_reply(Player.DisplayName, "you don't have a vehicle")
          end
 
          getgenv().Rainbow_Vehicles = getgenv().Rainbow_Vehicles or {}
          getgenv().Rainbow_Delays = getgenv().Rainbow_Delays or {}
          getgenv().Rainbow_Tasks = getgenv().Rainbow_Tasks or {}
-         getgenv().Rainbow_Vehicles[speaker.Name] = true
-         getgenv().Rainbow_Delays[speaker.Name] = getgenv().Rainbow_Delays[speaker.Name] or 0.2
+         getgenv().Rainbow_Vehicles[Name] = true
+         getgenv().Rainbow_Delays[Name] = getgenv().Rainbow_Delays[Name] or 0.2
 
          local colors = {
             Color3.fromRGB(255, 255, 255), Color3.fromRGB(128, 128, 128), Color3.fromRGB(0, 0, 0),
@@ -1872,10 +1872,10 @@ local function setup_cmd_handler_plr(player)
 
          local thread = coroutine.create(function()
             local i = 0
-            while getgenv().Rainbow_Vehicles[speaker.Name] do
-               local v = get_other_vehicle(player)
+            while getgenv().Rainbow_Vehicles[Name] do
+               local v = get_other_vehicle(Player)
                if not v then
-                  getgenv().Rainbow_Vehicles[speaker.Name] = false
+                  getgenv().Rainbow_Vehicles[Name] = false
                   break
                end
 
