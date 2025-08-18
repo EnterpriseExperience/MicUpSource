@@ -1842,15 +1842,23 @@ local function setup_cmd_handler_plr(player)
       local playerVehicle = get_other_vehicle(getgenv().Players[speaker.Name])
 
       if levenshtein(command, "rgbcar") <= 2 then
+         local player = speaker
+         local Name = speaker.Name
+
          if not get_other_vehicle(getgenv().Players[speaker.Name]) then
             getgenv().Rainbow_Vehicles[speaker.Name] = false
             return chat_reply(getgenv().Players[speaker.Name].DisplayName, "you don't have a vehicle")
          end
 
-         if getgenv().Rainbow_Vehicles[speaker.Name] then
-            return 
+         local vehicle = get_other_vehicle(player)
+         if not vehicle then
+            getgenv().Rainbow_Vehicles[speaker.Name] = false
+            return chat_reply(player.DisplayName, "you don't have a vehicle")
          end
 
+         getgenv().Rainbow_Vehicles = getgenv().Rainbow_Vehicles or {}
+         getgenv().Rainbow_Delays = getgenv().Rainbow_Delays or {}
+         getgenv().Rainbow_Tasks = getgenv().Rainbow_Tasks or {}
          getgenv().Rainbow_Vehicles[speaker.Name] = true
          getgenv().Rainbow_Delays[speaker.Name] = getgenv().Rainbow_Delays[speaker.Name] or 0.2
 
@@ -1865,14 +1873,17 @@ local function setup_cmd_handler_plr(player)
          local thread = coroutine.create(function()
             local i = 0
             while getgenv().Rainbow_Vehicles[speaker.Name] do
-               local v = get_other_vehicle(getgenv().Players[speaker.Name])
-               if not get_other_vehicle(getgenv().Players[speaker.Name]) then
+               local v = get_other_vehicle(player)
+               if not v then
                   getgenv().Rainbow_Vehicles[speaker.Name] = false
                   break
                end
-               change_vehicle_color(colors[(i % #colors) + 1], get_other_vehicle(getgenv().Players[speaker.Name]))
+
+               change_vehicle_color(colors[(i % #colors) + 1], v)
                i += 1
-               task.wait(getgenv().Rainbow_Delays[speaker.Name] or 0.2)
+
+               local delay = getgenv().Rainbow_Delays[speaker.Name] or 0.2
+               task.wait(delay)
             end
          end)
 
@@ -2514,11 +2525,11 @@ local function handleCommand(sender, message)
       local Name = Player.Name
       local new_delay = tonumber(split[2]) or 1
 
-      if getgenv().Rainbow_Delays[Name] then
-         getgenv().Rainbow_Delays[Name] = new_delay
-         wait(0.2)
-         notify("Success:", "Set rainbow delay for " .. Name .. " to " .. new_delay)
-      end
+      getgenv().Rainbow_Delays = getgenv().Rainbow_Delays or {}
+      getgenv().Rainbow_Delays[Name] = new_delay
+
+      task.wait(0.2)
+      notify("Success:", "Set rainbow delay for " .. Name .. " to " .. new_delay)
    elseif cmd == "blacklist" then
       local Player = findplr(split[1])
       if not Player then return end
