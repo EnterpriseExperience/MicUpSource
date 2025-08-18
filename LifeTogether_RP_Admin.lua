@@ -1877,7 +1877,7 @@ local function setup_cmd_handler_plr(player)
 
          getgenv().Rainbow_Tasks[speaker.Name] = thread
          coroutine.resume(thread)
-      elseif levenshtein(command, "rgbtime") <= 2 then
+      elseif levenshtein(command:split(" ")[1], "rgbtime") <= 2 then
          local parts = command:split(" ")
          local delayStr = parts[2]
          local newDelay = tonumber(delayStr)
