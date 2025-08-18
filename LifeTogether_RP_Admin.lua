@@ -2518,7 +2518,6 @@ local function handleCommand(sender, message)
          wait(0.2)
          notify("Success:", "Set rainbow delay for " .. Name .. " to " .. new_delay)
       end
-   end
    elseif cmd == "blacklist" then
       local Player = findplr(split[1])
       if not Player then return end
