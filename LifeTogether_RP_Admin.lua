@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.7.4"
+local Raw_Version = "V2.7.7"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1469,6 +1469,8 @@ local function CommandsMenu()
       {prefix}lockcar - Lock your car
       {prefix}unlockcar - Unlock your car
       {prefix}despawn - Despawn your car
+      {prefix}blacklist Player - Blacklists friends you specify from using the admin commands (even if they are already on)
+      {prefix}unblacklist Player - Removes the blacklist from the friend you specified in the 'blacklist' command, allowing them to do ;rgbcar and such again.
       {prefix}antifling - Fully prevents you from being flung, by other exploiters/cheaters, and fling outfits as well (FULL BYPASS)
       {prefix}unantifling - Disables "antifling" allowing you to also teleport to places and what not like normal
       {prefix}bringcar - Teleport car to you and sit in it
@@ -1791,6 +1793,8 @@ local function alreadyCheckedUser(player)
    end
 end
 
+getgenv().Rainbow_Delays = getgenv().Rainbow_Delays or {}
+
 local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
    local prefix = ";"
@@ -1824,8 +1828,6 @@ local function setup_cmd_handler_plr(player)
       local channel = TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
       
       channel:SendAsync("/w " .. speakerName .. " " .. msg .. " (this message was automatically sent)")
-      wait(0.2)
-      channel:SendAsync("/w " .. speakerName .. " " .. msg .. " (this message was automatically sent)")
    end
 
    TextChatService.MessageReceived:Connect(function(chatMessage)
@@ -1849,6 +1851,7 @@ local function setup_cmd_handler_plr(player)
          end
 
          getgenv().Rainbow_Vehicles[speaker.Name] = true
+         getgenv().Rainbow_Delays[speaker.Name] = getgenv().Rainbow_Delays[speaker.Name] or 0.2
 
          local colors = {
             Color3.fromRGB(255, 255, 255), Color3.fromRGB(128, 128, 128), Color3.fromRGB(0, 0, 0),
@@ -1862,18 +1865,32 @@ local function setup_cmd_handler_plr(player)
             local i = 0
             while getgenv().Rainbow_Vehicles[speaker.Name] do
                local v = get_other_vehicle(getgenv().Players[speaker.Name])
-               if not v then
+               if not get_other_vehicle(getgenv().Players[speaker.Name]) then
                   getgenv().Rainbow_Vehicles[speaker.Name] = false
                   break
                end
-               change_vehicle_color(colors[(i % #colors) + 1], v)
+               change_vehicle_color(colors[(i % #colors) + 1], get_other_vehicle(getgenv().Players[speaker.Name]))
                i += 1
-               task.wait(0.2)
+               task.wait(getgenv().Rainbow_Delays[speaker.Name] or 0.2)
             end
          end)
 
          getgenv().Rainbow_Tasks[speaker.Name] = thread
          coroutine.resume(thread)
+      elseif levenshtein(command, "rgbtime") <= 2 then
+         local parts = command:split(" ")
+         local delayStr = parts[2]
+         local newDelay = tonumber(delayStr)
+
+         if not newDelay then
+            return chat_reply(getgenv().Players[speaker.Name].DisplayName, "invalid time value")
+         end
+
+         if newDelay < 0.01 then
+            newDelay = 0.01
+         end
+
+         getgenv().Rainbow_Delays[speaker.Name] = newDelay
       elseif levenshtein(command, "norgbcar") <= 2 then
          local name = speaker.Name
          if not speaker then return notify("Failure:", "Player does not exist!", 5) end
@@ -2009,7 +2026,7 @@ local function setup_cmd_handler_plr(player)
          getgenv().Wait_Time_Cooldown = 30
 
          getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral"):SendAsync(
-            ";lockcar | ;rgbcar | ;norgbcar | ;unlockcar | ;check Player | ;trailer | ;notrailer"
+            ";lockcar | ;rgbcar | ;norgbcar | ;unlockcar | ;check Player | ;trailer | ;notrailer | ;rgbtime NUMBER"
          )
 
          task.delay(getgenv().Wait_Time_Cooldown, function()
@@ -2484,6 +2501,42 @@ local function handleCommand(sender, message)
       water_skie_trailer(true, get_vehicle())
    elseif cmd == "notrailer" then
       water_skie_trailer(false, get_vehicle())
+   elseif cmd == "blacklist" then
+      local Player = findplr(split[1])
+      if not Player then return end
+      local Name = Player.Name
+
+      if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         if not getgenv().Blacklisted_Friends[Player.Name] then
+            getgenv().Blacklisted_Friends[Player.Name] = Player
+         end
+      end
+      wait(0.3)
+      if getgenv().player_admins[Name] then
+         getgenv().player_admins[Name] = nil
+      end
+      if getgenv().Rainbow_Vehicles[Name] then
+         getgenv().Rainbow_Vehicles[Name] = false
+      end
+      if getgenv().Locked_Vehicles[Name] then
+         getgenv().Locked_Vehicles[Name] = false
+      end
+      if getgenv().Unlocked_Vehicles[Name] then
+         getgenv().Unlocked_Vehicles[Name] = false
+      end
+      if getgenv().Rainbow_Tasks[Name] then
+         getgenv().Rainbow_Tasks[Name] = nil
+      end
+   elseif cmd == "unblacklist" then
+      local Player = findplr(split[1])
+      if not Player then return end
+      local Name = Player.Name
+
+      if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         if getgenv().Blacklisted_Friends[Name] then
+            getgenv().Blacklisted_Friends[Name] = nil
+         end
+      end
    elseif cmd == "admin" then
       local Player = findplr(split[1])
       if not Player then return notify("Failure:", "Player does not exist!", 5) end
@@ -3109,7 +3162,13 @@ function auto_remove_friends()
 end
 wait(0.1)
 getgenv().Players.PlayerAdded:Connect(function(Player)
-   auto_add_friends()
+   local Name = Player.Name
+
+   if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+      if not getgenv().Blacklisted_Friends[Name] then
+         auto_add_friends()
+      end
+   end
 end)
 
 getgenv().Players.PlayerRemoving:Connect(function(Player)
