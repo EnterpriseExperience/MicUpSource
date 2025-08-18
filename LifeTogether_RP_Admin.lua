@@ -2501,6 +2501,24 @@ local function handleCommand(sender, message)
       water_skie_trailer(true, get_vehicle())
    elseif cmd == "notrailer" then
       water_skie_trailer(false, get_vehicle())
+   elseif cmd == "rainbowtime" then
+      local Player = findplr(split[1])
+      if not Player then
+         return notify("Error:", "Player doesn't exist or has left!")
+      end
+      if not Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+         return notify("Failure:", "Player is not friends with you, add them!")
+      end
+
+      local Name = Player.Name
+      local new_delay = tonumber(split[2]) or 1
+
+      if getgenv().Rainbow_Delays[Name] then
+         getgenv().Rainbow_Delays[Name] = new_delay
+         wait(0.2)
+         notify("Success:", "Set rainbow delay for " .. Name .. " to " .. new_delay)
+      end
+   end
    elseif cmd == "blacklist" then
       local Player = findplr(split[1])
       if not Player then return end
