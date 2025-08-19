@@ -35,6 +35,7 @@
         return string.format("%s", executorDetails.Name)
     end
     wait(0.1)
+    local Script_Version = "V10.0.6"
     local executor_Name = detectExecutor()
     wait(0.1)
     print("2") -- And throughout the beginning of the script there might be these random print statements, don't mind them, it's just my way of debugging, like if something doesn't load, then I'll count my steps back and see where it stopped loading at or what not.
@@ -45,9 +46,9 @@
     local Notification
     wait(0.3)
     -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful functions.
-    httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+    httprequest_loader = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
-    local response = httprequest({
+    local response = httprequest_loader({
         Url = "https://raw.githubusercontent.com/laagginq/ui-libraries/main/dxhooknotify/src.lua",
         Method = "GET"
     })
@@ -55,6 +56,33 @@
     -- Definitely doesn't bypass Football Fusion or popular anticheats or anything, that'd be wrong of me to publicly release a bypass for loading UI libraries and scripts fully internally and bypassed.
     -- You get what I'm saying, now go fuck off and skid it.
 
+    getgenv().SCRIPT_EXECUTED = getgenv().SCRIPT_EXECUTED or false
+    getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE or false
+
+    if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
+        if not getgenv().notify then
+            getgenv().notify = function(title, content, duration)
+                local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
+                StarterGui:SetCore("SendNotification", {
+                    Title = tostring(title),
+                    Text = tostring(content),
+                    Duration = tonumber(duration),
+                    Icon = "rbxassetid://0"
+                })
+            end
+        end
+
+        getgenv().notify("CRITICAL:", "Flames Hub seems to have failed to load last time, re-running...", 5)
+        task.wait(0.2)
+        getgenv().notify("Alert:", "If Flames Hub does not fix itself, it's probably down!", 5)
+
+        task.wait(0.1)
+        getgenv().SCRIPT_EXECUTED = false
+        task.wait(0.3)
+
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
+    end
+    wait(0.2)
     if response and response.StatusCode == 200 then
         Notification = loadstring(response.Body)()
         -- This is actually believe it or not a very neat system, I'll tell you why, when utilizing Loadstring, some people execute HTTP loggers/HTTP spies, and when utilizing this, you can put in an anti HTTP Loadstring loader, and this'll still work like normal, go test it.
@@ -65,6 +93,7 @@
     if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then  
         return Notification:Notify("Heads Up!", "Flames Hub is already running!", 5)
     end
+
     pcall(function() getgenv().SCRIPT_EXECUTED = true end)
     -- Sometimes would fuck up, but that's because I accidentally removed the "not _G.SCRIPT_EXECUTED == true" part, didn't know it was necessary, so oops.
     wait(0.3)
@@ -129,10 +158,10 @@
             if color == Color3.fromRGB(255, 255, 255) then
                 local head = character:FindFirstChild("Head")
                 if not head then return warn("Head does not exist!") end
-                if head:FindFirstChild("ZacksEasyBillboard") then return end
+                if head:FindFirstChild("FlamesHubBillboard") then return end
 
                 local billboardGui = Instance.new("BillboardGui")
-                billboardGui.Name = "ZacksEasyBillboard"
+                billboardGui.Name = "FlamesHubBillboard"
                 billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
                 billboardGui.MaxDistance = math.huge
                 billboardGui.LightInfluence = 0
@@ -164,10 +193,10 @@
                 textLabel.Parent = background
             else
                 local head = character:FindFirstChild("Head")
-                if head:FindFirstChild("ZacksEasyBillboard") then return end
+                if head:FindFirstChild("FlamesHubBillboard") then return end
 
                 local billboardGui = Instance.new("BillboardGui")
-                billboardGui.Name = "ZacksEasyBillboard"
+                billboardGui.Name = "FlamesHubBillboard"
                 billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
                 billboardGui.MaxDistance = math.huge
                 billboardGui.LightInfluence = 0
@@ -211,10 +240,8 @@
         -- If you want a Title, update it below, I and the people below don't really play MIC UP or any game anymore, so you can do what ever you want with it lol.
         if isWatchedPlayer(player.Name) then
             make_title(player, "👑 Flames Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
-        elseif player.Name == specialPlayer then
-            make_title(player, "👧 Flames Hub | Daughter 👧", Color3.fromRGB(89, 34, 89), 0.3)
         elseif beta_tester(player.Name) then
-            make_title(player, "✨ Flames Hub | Beta Tester ✨", Color3.fromRGB(0, 0, 0), 0.1)
+            make_title(player, "✨ Flames Hub | BETA-PLAYER ✨", Color3.fromRGB(0, 0, 0), 0.1)
         end
     end
 
@@ -313,6 +340,8 @@
     getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
     queueteleport = getgenv().queueteleport
 
+    local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
+    wait(0.1)
     print("14")
 
     local function init_services()
@@ -385,18 +414,16 @@
     task.wait(0.2)
     getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
     getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
-    getgenv().LocalPlayer = getgenv().Players.LocalPlayer
+    getgenv().LocalPlayer = Flames_API.LocalPlayer
     getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
-    getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
+    getgenv().PlayerGui = Flames_API.PlayerGui
     getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
-    getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
-    getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart")
-    getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
-    getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
+    getgenv().Character = Flames_API.Character
+    getgenv().HumanoidRootPart = Flames_API.HumanoidRootPart
+    getgenv().Humanoid = Flames_API.Humanoid
+    getgenv().Head = Flames_API.Head
     wait(0.2)
     local function Dynamic_Character_Updater(character)
-        warn("[Flames Hub]: Waiting for Character to fully load...")
-        task.wait(0.2)
         getgenv().Character = character or getgenv().LocalPlayer.Character
         task.wait(0.3)
         local hrp = character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart", 3)
@@ -412,8 +439,8 @@
     Dynamic_Character_Updater(getgenv().Character)
     task.wait(0.2)
     getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-        task.wait(1)
-        warn("[Flames Hub]: New Character being added, pre-fetching and initializing.")
+        task.wait(0.5)
+        warn("[Flames Hub]: New Character added, pre-fetching and initializing.")
         Dynamic_Character_Updater(newCharacter)
         getgenv().LocalPlayer.CharacterAdded:Wait()
         task.wait(0.5)
@@ -421,10 +448,6 @@
         getgenv().HumanoidRootPart = newCharacter:FindFirstChild("HumanoidRootPart") or newCharacter:WaitForChild("HumanoidRootPart", 5)
         getgenv().Humanoid = newCharacter:FindFirstChild("Humanoid") or newCharacter:FindFirstChildWhichIsA("Humanoid") or newCharacter:WaitForChild("Humanoid", 5)
         getgenv().Head = newCharacter:FindFirstChild("Head") or newCharacter:WaitForChild("Head", 5)
-        wait(0.5)
-        if Use_Jump_Power or Use_Jump_Power == true then
-            getgenv().Humanoid.UseJumpPower = true
-        end
     end)
 
     getgenv().check_marketplace_has_gamepass = function(userid, GamePassID)
@@ -521,18 +544,8 @@
         return rootPart
     end
     wait(0.2)
-    getgenv().getRoot = function(char)
-        rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-        return rootPart
-    end
+    getgenv().getRoot = getRoot
     wait()
-    if not getgenv().StarterPlayer.CharacterUseJumpPower or getgenv().StarterPlayer.CharacterUseJumpPower == false then
-        getgenv().StarterPlayer.CharacterUseJumpPower = true
-        task.wait(.3)
-    else
-        print("CharacterUseJumpPower: "..tostring(getgenv().StarterPlayer.CharacterUseJumpPower))
-    end
-
     -- [] -->> Check supported functions in the current executor, that are necessary for the script. <<-- [] --
     if getgenv().has_checked_funcs then
         print("Functions Checking | True") 
@@ -587,7 +600,7 @@
     end
     wait(0.1)
     -- Correctly initialize our Folder we put into Workspace, since we can use this for later in the script as well.
-    if game:GetService("Workspace"):FindFirstChild("PartStorage") then
+    if getgenv().Workspace:FindFirstChild("PartStorage") then
         print("Already found Folder")
     else
         local NewFolder = Instance.new("Folder")
@@ -600,7 +613,7 @@
         warn("Already loaded BasePlate check.")
     else
         function do_baseplate_check()
-            local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+            local Workspace = getgenv().Workspace
             local TerrainFolder = Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", Workspace)
             TerrainFolder.Name = "TERRAIN_EDITOR"
             
@@ -654,7 +667,7 @@
     wait(1.7)
     RBXGeneral:DisplaySystemMessage("Flames Hub, with version:")
     wait(1.8)
-    RBXGeneral:DisplaySystemMessage("V-10.0.3")
+    RBXGeneral:DisplaySystemMessage(tostring(Script_Version))
     wait(1.5)
     RBXGeneral:DisplaySystemMessage("Welcome, "..tostring(game.Players.LocalPlayer).." | We hope you enjoy scripting.")
     wait(0.5)
@@ -902,34 +915,19 @@
         delfile(file_2)
     end
     wait(0.2)
-    local image_id_zacks = 93594537601787
-    getgenv().image_use_zacks = image_id_zacks
-    local Flames_Module
-    if executor_Name == "Nihon" then
-        warn("Nihon detected, using custom loadstring collector.")
-        local response = getgenv().httprequest_Init({
-            Url = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua",
-            Method = "GET"
-        })
-        
-        if response and response.StatusCode == 200 then
-            Flames_Module = loadstring(response.Body)()
-        else
-            print("Failed to fetch script:", response.StatusCode)
-        end
-    else
-        Flames_Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
-    end
+    local image_id_flames = 93594537601787
+    getgenv().image_flames_hub = image_id_flames
+    local Flames_Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
     wait()
     getgenv().Module_For_Flames_Hub = Flames_Module
-    -- Current UI is automatically hidden, shoutout to Rayfield (and the hiddenUI function.).
+
     getgenv().AllClipboards("https://github.com/EnterpriseExperience/MicUpSource/releases <-- make sure to stay updated.")
     wait()
     local Window 
     wait(0.2)
-    if executor_Name == "Solara" or executor_Name == "Sonar" then
+    if executor_Name == "Solara" or executor_Name == "Sonar" or executor_Name == "Xeno" or executor_Name == "Macsploit" then
         Window = Rayfield:CreateWindow({
-            Name = "💀 Flames Hub 💀 | V10.0.3 | "..tostring(executor_Name),
+            Name = "👽 Flames Hub 👽 | "..tostring(Script_Version).." | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Flames Hub | Wassup!",
             ConfigurationSaving = {
@@ -955,7 +953,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "💀 Flames Hub 💀 | V10.0.3 | "..tostring(executor_Name),
+            Name = "👽 Flames Hub 👽 | "..tostring(Script_Version).." | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Flames Hub | Wassup!",
             ConfigurationSaving = {
@@ -984,7 +982,7 @@
     --getgenv().notify("Heads Up!", "We have now defaulted to Infinite Premium [mine].", 7)
     wait(0.1)
     -- [] -->> Initialize our Tabs and Sections <<-- [] --
-    local Tab1 = Window:CreateTab("🏡 Home 🏡", getgenv().image_use_zacks)
+    local Tab1 = Window:CreateTab("🏡 Home 🏡", getgenv().image_flames_hub)
     local Section1 = Tab1:CreateSection("||| 🏡 Home 🏡 Section |||")
 
     local Tab21
@@ -995,24 +993,24 @@
     local Section11
     wait(0.2)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        Tab11 = Window:CreateTab("🚪 Booths 🚪", getgenv().image_use_zacks)
+        Tab11 = Window:CreateTab("🚪 Booths 🚪", getgenv().image_flames_hub)
         Section11 = Tab11:CreateSection("||| 🚪 Booths 🚪 Section |||")
     else
         Tab11 = nil
         Section11 = nil
     end
     wait(0.2)
-    local Tab2 = Window:CreateTab("🧍 LocalPlayer 🧍", getgenv().image_use_zacks)
+    local Tab2 = Window:CreateTab("🧍 LocalPlayer 🧍", getgenv().image_flames_hub)
     local Section2 = Tab2:CreateSection("||| 🧍 LocalPlayer 🧍 Section |||")
 
-    local Tab13 = Window:CreateTab("👩‍👩‍👧‍👦 Players 👩‍👩‍👧‍👦", getgenv().image_use_zacks)
+    local Tab13 = Window:CreateTab("👩‍👩‍👧‍👦 Players 👩‍👩‍👧‍👦", getgenv().image_flames_hub)
     local Section13 = Tab13:CreateSection("||| 👩‍👩‍ Players 👩‍👩‍ Section |||")
 
-    local Tab22 = Window:CreateTab("📏 Baseplate 📏", getgenv().image_use_zacks)
+    local Tab22 = Window:CreateTab("📏 Baseplate 📏", getgenv().image_flames_hub)
     local Section22 = Tab22:CreateSection("||| 📏‍ Baseplate 📏‍ Section |||")
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        Tab10 = Window:CreateTab("🦿 Teleports 🦿", getgenv().image_use_zacks)
+        Tab10 = Window:CreateTab("🦿 Teleports 🦿", getgenv().image_flames_hub)
         Section10 = Tab10:CreateSection("||| 🦿 Teleports 🦿 Section |||")
     else
         Tab10 = nil
@@ -1020,48 +1018,48 @@
         warn("Not loading Teleports, not 'MIC UP' or 'MIC UP 17+'.")
     end
     wait(0.2)
-    Tab18 = Window:CreateTab("🗺️ Map 🗺️", getgenv().image_use_zacks)
+    Tab18 = Window:CreateTab("🗺️ Map 🗺️", getgenv().image_flames_hub)
     Section18 = Tab18:CreateSection("||| 🗺️ Map 🗺️ Section |||")
 
     if getgenv().LocalPlayer:FindFirstChildOfClass("AudioDeviceInput") then
-        Tab21 = Window:CreateTab("🎤 VC 🎤", getgenv().image_use_zacks)
+        Tab21 = Window:CreateTab("🎤 VC 🎤", getgenv().image_flames_hub)
         Section21 = Tab21:CreateSection("||| 🎤 VC 🎤 Section |||")
     else
-        Tab21 = Window:CreateTab("🎙️ VoiceChat 🎙️", getgenv().image_use_zacks)
+        Tab21 = Window:CreateTab("🎙️ VoiceChat 🎙️", getgenv().image_flames_hub)
         Section21 = Tab21:CreateSection("||| 🎙️ VoiceChat 🎙️ Section |||")
     end
     wait()
-    Tab4 = Window:CreateTab("💬 Chat 💬", getgenv().image_use_zacks)
+    Tab4 = Window:CreateTab("💬 Chat 💬", getgenv().image_flames_hub)
     Section4 = Tab4:CreateSection("||| 💬 Chat 💬 Section |||")
 
-    Tab5 = Window:CreateTab("🤖 Exploits 🤖", getgenv().image_use_zacks)
+    Tab5 = Window:CreateTab("🤖 Exploits 🤖", getgenv().image_flames_hub)
     Section5 = Tab5:CreateSection("||| 🤖 Exploits 🤖 Section |||")
 
-    Tab16 = Window:CreateTab("🌎 Universal 🌎", getgenv().image_use_zacks)
+    Tab16 = Window:CreateTab("🌎 Universal 🌎", getgenv().image_flames_hub)
     Section16 = Tab16:CreateSection("||| 🌎 Global 🌎 Section |||")
 
-    local Tab7 = Window:CreateTab("❓ Whitelist ❓", getgenv().image_use_zacks)
+    local Tab7 = Window:CreateTab("❓ Whitelist ❓", getgenv().image_flames_hub)
     local Section7 = Tab7:CreateSection("||| ❓ Whitelist ❓ Section |||")
 
-    Tab17 = Window:CreateTab("🕺 Animations 🕺", getgenv().image_use_zacks)
+    Tab17 = Window:CreateTab("🕺 Animations 🕺", getgenv().image_flames_hub)
     Section17 = Tab17:CreateSection("||| 🕺 Animations 🕺 Section |||")
 
-    Tab9 = Window:CreateTab("💡 Lighting 💡", getgenv().image_use_zacks)
+    Tab9 = Window:CreateTab("💡 Lighting 💡", getgenv().image_flames_hub)
     Section9 = Tab9:CreateSection("||| 💡 Lighting 💡 Section |||")
 
-    Tab12 = Window:CreateTab("🏃‍♂️ Emotes 🏃‍♂️", getgenv().image_use_zacks)
+    Tab12 = Window:CreateTab("🏃‍♂️ Emotes 🏃‍♂️", getgenv().image_flames_hub)
     Section12 = Tab12:CreateSection("||| 🏃‍♂️ Emotes 🏃‍♂️ Section |||")
 
-    local Tab19 = Window:CreateTab("👁️ Visuals 👁️", getgenv().image_use_zacks)
+    local Tab19 = Window:CreateTab("👁️ Visuals 👁️", getgenv().image_flames_hub)
     local Section19 = Tab19:CreateSection("||| 👁️ Visuals 👁️ Section |||")
     wait()
-    Tab14 = Window:CreateTab("💫 CopyAnimation 💫", getgenv().image_use_zacks)
+    Tab14 = Window:CreateTab("💫 CopyAnimation 💫", getgenv().image_flames_hub)
     Section14 = Tab14:CreateSection("||| 💫 Copy Animation 💫 Section |||")
 
-    Tab15 = Window:CreateTab("📝 Settings 📝", getgenv().image_use_zacks)
+    Tab15 = Window:CreateTab("📝 Settings 📝", getgenv().image_flames_hub)
     Section15 = Tab15:CreateSection("||| 📝 Settings 📝 Section |||")
 
-    Tab20 = Window:CreateTab("📜 Config 📜", getgenv().image_use_zacks)
+    Tab20 = Window:CreateTab("📜 Config 📜", getgenv().image_flames_hub)
     Section20 = Tab20:CreateSection("||| 📜 Configuration 📜 Section |||")
     wait(0.2)
     if getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS" then
@@ -2274,13 +2272,15 @@
         warn("Did not load Booth's stuff [1].")
     end
 
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+    if getgenv().PlaceID == 6884319169 or getgenv().PlaceID == 15546218972 then
         getgenv().FreeReanimationGUI = Tab1:CreateButton({
         Name = "Free Reanimations GUI (Best Anim Speed = 110-125)",
         Callback = function()
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/OpenSource_Reanim_Free.lua'))()
+            loadstring(getgenv().Game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/OpenSource_Reanim_Free.lua'))()
         end,})
     end
+
+    local esplib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/esp_library.lua"))()
 
     getgenv().AntiVoidPlayer = Tab2:CreateToggle({
     Name = "Anti Void Baseplate (Goes under Character)",
@@ -3655,17 +3655,46 @@
         end
     end,})
 
+    local Anti_Sit_Connection
+    wait(0.1)
     getgenv().AntiSit_Func = Tab2:CreateToggle({
     Name = "Anti Sit",
     CurrentValue = false,
     Flag = "noSittingDown",
     Callback = function(theSitDownAntiToggle)
         if theSitDownAntiToggle then
-            getgenv().disabled_sit_function = true
+            local function handle_seat(seat)
+                if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
+                    seat.CanCollide = false
+                    seat.Disabled = true
+                    seat:SetAttribute("Disabled", true)
+                end
+            end
+            wait()
+            getgenv().Anti_Sit_Enabled = true
             getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            task.wait(0.1)
+            Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
+                if getgenv().Anti_Sit_Enabled then
+                    handle_seat(v)
+                end
+            end)
         else
-            getgenv().disabled_sit_function = false
             getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            getgenv().Anti_Sit_Enabled = false
+
+            if Anti_Sit_Connection then
+                Anti_Sit_Connection:Disconnect()
+                Anti_Sit_Connection = nil
+            end
+            wait(0.2)
+            for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+                if v:IsA("Seat") or v:IsA("VehicleSeat") then
+                    v.CanCollide = true
+                    v.Disabled = false
+                    v:SetAttribute("Disabled", false)
+                end
+            end
         end
     end,})
     wait()
@@ -4856,7 +4885,7 @@
                     getgenv().Camera.CameraSubject = target.Character
                 end
             else
-                warn("No valid players to teleport to.")
+                warn("No valid players to view.")
             end
         else
             getgenv().Camera.CameraSubject = getgenv().Character or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
@@ -5134,213 +5163,209 @@
         end
     end,})
 
-    if getgenv().MarketplaceService:UserOwnsGamePassAsync(getgenv().LocalPlayer.UserId, 951459548) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
-        getgenv().CharIntoOwnerOfScript = Tab2:CreateButton({
-        Name = "Char Into: Owner Of Script",
-        Callback = function()
-            getgenv().ReplicatedStorage:FindFirstChild("ModifyUsername"):FireServer("L0CKED_1N1")
-            wait(0.3)
-            Zombie_Idle_1 = "10921344533"
-            Zombie_Idle_2 = "10921345304"
-            Zombie_Walk = "10921355261"
-            Zombie_Run = "616163682"
-            Zombie_Jump = "10921351278"
-            Zombie_Climb = "10921343576"
-            Zombie_Fall = "10921350320"
-            Catwalk_Idle_1 = "133806214992291"
-            Catwalk_Idle_2 = "94970088341563"
-            Catwalk_Walk = "109168724482748"
-            Catwalk_Run = "81024476153754"
-            Catwalk_Jump = "116936326516985"
-            Catwalk_Climb = "119377220967554"
-            Catwalk_Fall = "92294537340807"
-            Elder_Idle_1 = "10921101664"
-            Elder_Idle_2 = "10921102574"
-            Elder_Walk = "10921111375"
-            Elder_Run = "10921104374"
-            Elder_Jump = "10921107367"
-            Elder_Climb = "10921100400"
-            Elder_Fall = "10921105765"
-            Cartoony_Idle_1 = "10921071918"
-            Cartoony_Idle_2 = "10921072875"
-            Cartoony_Walk = "10921082452"
-            Cartoony_Run = "10921076136"
-            Cartoony_Jump = "10921078135"
-            Cartoony_Climb = "10921070953"
-            Cartoony_Fall = "10921077030"
-            Adidas_Idle_1 = "18537376492"
-            Adidas_Idle_2 = "18537371272"
-            Adidas_Walk = "18537392113"
-            Adidas_Run = "18537384940"
-            Adidas_Jump = "18537380791"
-            Adidas_Climb = "18537363391"
-            Adidas_Fall = "18537367238"
-            Werewolf_Idle_1 = "10921330408"
-            Werewolf_Idle_2 = "10921333667"
-            Werewolf_Walk = "10921342074"
-            Werewolf_Run = "10921336997"
-            Werewolf_Jump = "1083218792"
-            Werewolf_Climb = "10921329322"
-            Werewolf_Fall = "10921337907"
-            Vampire_Idle_1 = "10921315373"
-            Vampire_Idle_2 = "10921316709"
-            Vampire_Walk = "10921326949"
-            Vampire_Run = "10921320299"
-            Vampire_Jump = "10921322186"
-            Vampire_Climb = "10921314188"
-            Vampire_Fall = "10921321317"
-            Astronaut_Idle_1 = "10921034824"
-            Astronaut_Idle_2 = "10921036806"
-            Astronaut_Walk = "10921046031"
-            Astronaut_Run = "10921039308"
-            Astronaut_Jump = "10921042494"
-            Astronaut_Climb = "10921032124"
-            Astronaut_Fall = "10921040576"
-            Superhero_Idle_1 = "10921288909"
-            Superhero_Idle_2 = "10921290167"
-            Superhero_Walk = "10921298616"
-            Superhero_Run = "10921291831"
-            Superhero_Jump = "10921294559"
-            Superhero_Climb = "10921286911"
-            Superhero_Fall = "10921293373"
-            Knight_Idle_1 = "10921117521"
-            Knight_Idle_2 = "10921118894"
-            Knight_Walk = "10921127095"
-            Knight_Run = "10921121197"
-            Knight_Jump = "10921123517"
-            Knight_Climb = "10921116196"
-            Knight_Fall = "10921122579"
-            Mage_Idle_1 = "10921144709"
-            Mage_Idle_2 = "10921145797"
-            Mage_Walk = "10921152678"
-            Mage_Run = "10921148209"
-            Mage_Jump = "10921149743"
-            Mage_Climb = "10921143404"
-            Mage_Fall = "10921148939"
-            Ninja_Idle_1 = "10921155160"
-            Ninja_Idle_2 = "10921155867"
-            Ninja_Walk = "10921162768"
-            Ninja_Run = "10921157929"
-            Ninja_Jump = "10921160088"
-            Ninja_Climb = "10921154678"
-            Ninja_Fall = "10921159222"
-            Toy_Idle_1 = "10921301576"
-            Toy_Idle_2 = "10921302207"
-            Toy_Walk = "10921312010"
-            Toy_Run = "10921306285"
-            Toy_Jump = "10921308158"
-            Toy_Climb = "10921300839"
-            Toy_Fall = "10921307241"
-            NFL_Idle_1 = "92080889861410"
-            NFL_Idle_2 = "74451233229259"
-            NFL_Walk = "110358958299415"
-            NFL_Run = "117333533048078"
-            NFL_Jump = "119846112151352"
-            NFL_Climb = "134630013742019"
-            NFL_Fall = "129773241321032"
-            NoBoundaries_Idle_1 = "18747067405"
-            NoBoundaries_Idle_2 = "18747063918"
-            NoBoundaries_Walk = "18747074203"
-            NoBoundaries_Run = "18747070484"
-            NoBoundaries_Jump = "18747069148"
-            NoBoundaries_Climb = "18747060903"
-            NoBoundaries_Fall = "18747062535"
-            Oldschool_Idle_1 = "10921230744"
-            Oldschool_Idle_2 = "10921232093"
-            Oldschool_Walk = "10921244891"
-            Oldschool_Run = "10921240218"
-            Oldschool_Jump = "10921242013"
-            Oldschool_Climb = "10921229866"
-            Oldschool_Fall = "10921241244"
-            Pirate_Idle_1 = "750781874"
-            Pirate_Idle_2 = "750782770"
-            Pirate_Walk = "750785693"
-            Pirate_Run = "750783738"
-            Pirate_Jump = "750782230"
-            Pirate_Climb = "750779899"
-            Pirate_Fall = "750780242"
-            Levitation_Idle_1 = "10921132962"
-            Levitation_Idle_2 = "10921133721"
-            Levitation_Walk = "10921140719"
-            Levitation_Run = "10921135644"
-            Levitation_Jump = "10921137402"
-            Levitation_Climb = "10921132092"
-            Levitation_Fall = "10921136539"
-            Bubbly_Idle_1 = "10921054344"
-            Bubbly_Idle_2 = "10921055107"
-            Bubbly_Walk = "10980888364"
-            Bubbly_Run = "10921057244"
-            Bubbly_Jump = "10921062673"
-            Bubbly_Climb = "10921053544"
-            Bubbly_Fall = "10921061530"
-            Robot_Idle_1 = "10921248039"
-            Robot_Idle_2 = "10921248831"
-            Robot_Walk = "10921255446"
-            Robot_Run = "10921250460"
-            Robot_Jump = "10921252123"
-            Robot_Climb = "10921247141"
-            Robot_Fall = "10921251156"
-            WickedPopular_Idle_1 = "118832222982049"
-            WickedPopular_Idle_2 = "76049494037641"
-            WickedPopular_Walk = "92072849924640"
-            WickedPopular_Run = "72301599441680"
-            WickedPopular_Jump = "104325245285198"
-            WickedPopular_Climb = "131326830509784"
-            WickedPopular_Fall = "121152442762481"
-            Bold_Idle_1 = "16738333868"
-            Bold_Idle_2 = "16738334710"
-            Bold_Walk = "16738340646"
-            Bold_Run = "16738337225"
-            Bold_Jump = "16738336650"
-            Bold_Climb = "16738332169"
-            Bold_Fall = "16738333171"
-            Stylish_Idle_1 = "10921272275"
-            Stylish_Idle_2 = "10921273958"
-            Stylish_Walk = "10921283326"
-            Stylish_Run = "10921276116"
-            Stylish_Jump = "10921279832"
-            Stylish_Climb = "10921271391"
-            Stylish_Fall = "10921278648"
-            Rthro_Idle_1 = "10921259953"
-            Rthro_Idle_2 = "10921258489"
-            Rthro_Walk = "10921269718"
-            Rthro_Run = "10921261968"
-            Rthro_Jump = "10921263860"
-            Rthro_Climb = "10921257536"
-            Rthro_Fall = "10921262864"
+    getgenv().CharIntoOwnerOfScript = Tab2:CreateButton({
+    Name = "Char Into: Owner Of Script",
+    Callback = function()
+        getgenv().ReplicatedStorage:FindFirstChild("ModifyUsername"):FireServer("L0CKED_1N1")
+        wait(0.3)
+        Zombie_Idle_1 = "10921344533"
+        Zombie_Idle_2 = "10921345304"
+        Zombie_Walk = "10921355261"
+        Zombie_Run = "616163682"
+        Zombie_Jump = "10921351278"
+        Zombie_Climb = "10921343576"
+        Zombie_Fall = "10921350320"
+        Catwalk_Idle_1 = "133806214992291"
+        Catwalk_Idle_2 = "94970088341563"
+        Catwalk_Walk = "109168724482748"
+        Catwalk_Run = "81024476153754"
+        Catwalk_Jump = "116936326516985"
+        Catwalk_Climb = "119377220967554"
+        Catwalk_Fall = "92294537340807"
+        Elder_Idle_1 = "10921101664"
+        Elder_Idle_2 = "10921102574"
+        Elder_Walk = "10921111375"
+        Elder_Run = "10921104374"
+        Elder_Jump = "10921107367"
+        Elder_Climb = "10921100400"
+        Elder_Fall = "10921105765"
+        Cartoony_Idle_1 = "10921071918"
+        Cartoony_Idle_2 = "10921072875"
+        Cartoony_Walk = "10921082452"
+        Cartoony_Run = "10921076136"
+        Cartoony_Jump = "10921078135"
+        Cartoony_Climb = "10921070953"
+        Cartoony_Fall = "10921077030"
+        Adidas_Idle_1 = "18537376492"
+        Adidas_Idle_2 = "18537371272"
+        Adidas_Walk = "18537392113"
+        Adidas_Run = "18537384940"
+        Adidas_Jump = "18537380791"
+        Adidas_Climb = "18537363391"
+        Adidas_Fall = "18537367238"
+        Werewolf_Idle_1 = "10921330408"
+        Werewolf_Idle_2 = "10921333667"
+        Werewolf_Walk = "10921342074"
+        Werewolf_Run = "10921336997"
+        Werewolf_Jump = "1083218792"
+        Werewolf_Climb = "10921329322"
+        Werewolf_Fall = "10921337907"
+        Vampire_Idle_1 = "10921315373"
+        Vampire_Idle_2 = "10921316709"
+        Vampire_Walk = "10921326949"
+        Vampire_Run = "10921320299"
+        Vampire_Jump = "10921322186"
+        Vampire_Climb = "10921314188"
+        Vampire_Fall = "10921321317"
+        Astronaut_Idle_1 = "10921034824"
+        Astronaut_Idle_2 = "10921036806"
+        Astronaut_Walk = "10921046031"
+        Astronaut_Run = "10921039308"
+        Astronaut_Jump = "10921042494"
+        Astronaut_Climb = "10921032124"
+        Astronaut_Fall = "10921040576"
+        Superhero_Idle_1 = "10921288909"
+        Superhero_Idle_2 = "10921290167"
+        Superhero_Walk = "10921298616"
+        Superhero_Run = "10921291831"
+        Superhero_Jump = "10921294559"
+        Superhero_Climb = "10921286911"
+        Superhero_Fall = "10921293373"
+        Knight_Idle_1 = "10921117521"
+        Knight_Idle_2 = "10921118894"
+        Knight_Walk = "10921127095"
+        Knight_Run = "10921121197"
+        Knight_Jump = "10921123517"
+        Knight_Climb = "10921116196"
+        Knight_Fall = "10921122579"
+        Mage_Idle_1 = "10921144709"
+        Mage_Idle_2 = "10921145797"
+        Mage_Walk = "10921152678"
+        Mage_Run = "10921148209"
+        Mage_Jump = "10921149743"
+        Mage_Climb = "10921143404"
+        Mage_Fall = "10921148939"
+        Ninja_Idle_1 = "10921155160"
+        Ninja_Idle_2 = "10921155867"
+        Ninja_Walk = "10921162768"
+        Ninja_Run = "10921157929"
+        Ninja_Jump = "10921160088"
+        Ninja_Climb = "10921154678"
+        Ninja_Fall = "10921159222"
+        Toy_Idle_1 = "10921301576"
+        Toy_Idle_2 = "10921302207"
+        Toy_Walk = "10921312010"
+        Toy_Run = "10921306285"
+        Toy_Jump = "10921308158"
+        Toy_Climb = "10921300839"
+        Toy_Fall = "10921307241"
+        NFL_Idle_1 = "92080889861410"
+        NFL_Idle_2 = "74451233229259"
+        NFL_Walk = "110358958299415"
+        NFL_Run = "117333533048078"
+        NFL_Jump = "119846112151352"
+        NFL_Climb = "134630013742019"
+        NFL_Fall = "129773241321032"
+        NoBoundaries_Idle_1 = "18747067405"
+        NoBoundaries_Idle_2 = "18747063918"
+        NoBoundaries_Walk = "18747074203"
+        NoBoundaries_Run = "18747070484"
+        NoBoundaries_Jump = "18747069148"
+        NoBoundaries_Climb = "18747060903"
+        NoBoundaries_Fall = "18747062535"
+        Oldschool_Idle_1 = "10921230744"
+        Oldschool_Idle_2 = "10921232093"
+        Oldschool_Walk = "10921244891"
+        Oldschool_Run = "10921240218"
+        Oldschool_Jump = "10921242013"
+        Oldschool_Climb = "10921229866"
+        Oldschool_Fall = "10921241244"
+        Pirate_Idle_1 = "750781874"
+        Pirate_Idle_2 = "750782770"
+        Pirate_Walk = "750785693"
+        Pirate_Run = "750783738"
+        Pirate_Jump = "750782230"
+        Pirate_Climb = "750779899"
+        Pirate_Fall = "750780242"
+        Levitation_Idle_1 = "10921132962"
+        Levitation_Idle_2 = "10921133721"
+        Levitation_Walk = "10921140719"
+        Levitation_Run = "10921135644"
+        Levitation_Jump = "10921137402"
+        Levitation_Climb = "10921132092"
+        Levitation_Fall = "10921136539"
+        Bubbly_Idle_1 = "10921054344"
+        Bubbly_Idle_2 = "10921055107"
+        Bubbly_Walk = "10980888364"
+        Bubbly_Run = "10921057244"
+        Bubbly_Jump = "10921062673"
+        Bubbly_Climb = "10921053544"
+        Bubbly_Fall = "10921061530"
+        Robot_Idle_1 = "10921248039"
+        Robot_Idle_2 = "10921248831"
+        Robot_Walk = "10921255446"
+        Robot_Run = "10921250460"
+        Robot_Jump = "10921252123"
+        Robot_Climb = "10921247141"
+        Robot_Fall = "10921251156"
+        WickedPopular_Idle_1 = "118832222982049"
+        WickedPopular_Idle_2 = "76049494037641"
+        WickedPopular_Walk = "92072849924640"
+        WickedPopular_Run = "72301599441680"
+        WickedPopular_Jump = "104325245285198"
+        WickedPopular_Climb = "131326830509784"
+        WickedPopular_Fall = "121152442762481"
+        Bold_Idle_1 = "16738333868"
+        Bold_Idle_2 = "16738334710"
+        Bold_Walk = "16738340646"
+        Bold_Run = "16738337225"
+        Bold_Jump = "16738336650"
+        Bold_Climb = "16738332169"
+        Bold_Fall = "16738333171"
+        Stylish_Idle_1 = "10921272275"
+        Stylish_Idle_2 = "10921273958"
+        Stylish_Walk = "10921283326"
+        Stylish_Run = "10921276116"
+        Stylish_Jump = "10921279832"
+        Stylish_Climb = "10921271391"
+        Stylish_Fall = "10921278648"
+        Rthro_Idle_1 = "10921259953"
+        Rthro_Idle_2 = "10921258489"
+        Rthro_Walk = "10921269718"
+        Rthro_Run = "10921261968"
+        Rthro_Jump = "10921263860"
+        Rthro_Climb = "10921257536"
+        Rthro_Fall = "10921262864"
 
-            local function disguise_anims(character)
-                if not character then return warn("Character not found!") end
-                local Animate = character:FindFirstChild("Animate")
-                if not Animate then return warn("Animate script is missing!") end
+        local function disguise_anims(character)
+            if not character then return warn("Character not found!") end
+            local Animate = character:FindFirstChild("Animate")
+            if not Animate then return warn("Animate script is missing!") end
 
-                Animate.Disabled = true
-                task.wait(0.1)
-                Animate.Disabled = false
+            Animate.Disabled = true
+            task.wait(0.1)
+            Animate.Disabled = false
 
-                local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-                if humanoid then
-                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:Stop()
-                    end
+            local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            if humanoid then
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop()
                 end
-
-                task.wait(0.2)
-
-                Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
-                Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
-                Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
-                Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
-                Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
-                Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
-                Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
             end
-            wait()
-            disguise_anims(getgenv().Character)
-        end,})
-    else
-        warn("User does not own GamePass, skipping.")
-    end
+
+            task.wait(0.2)
+
+            Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+            Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+            Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
+            Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
+            Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
+            Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
+            Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
+        end
+        wait()
+        disguise_anims(getgenv().Character)
+    end,})
     wait()
     local Players = getgenv().Players
     local RunService = getgenv().RunService
@@ -5790,8 +5815,8 @@
 
                     task.wait(0.2)
 
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+                    Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+                    Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
                     Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
                     Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
                     Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
@@ -5834,8 +5859,8 @@
 
                     task.wait(0.2)
 
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+                    Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+                    Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
                     Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
                     Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
                     Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
@@ -8627,65 +8652,52 @@
         distSlider = max_distance
     end,})
 
+    local Noclip_Connection
+    wait(0.2)
     getgenv().noclipToggle = Tab2:CreateToggle({
     Name = "Noclip",
     CurrentValue =  false,
     Flag = "toggleNoclipChar",
     Callback = function(noclip_toggle)
-        function reset_collide(reset_bool)
-            if reset_bool == true and getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
-                HumanoidRootPart.CanCollide = true
-                getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
-                getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
-            elseif reset_bool == false and getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
-                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
-                getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
-                getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
-            elseif reset_bool == true and getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
-                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = true
-            elseif reset_bool == false and getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
-                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
-            else
-                return warn("Invalid input BoolValue.")
-            end
-        end
-
         if noclip_toggle then
-            getgenv().ez_noclip_use = true
-            while getgenv().ez_noclip_use == true do
-            task.wait()
-                reset_collide(false)
+            Clip = false
+            getgenv().Noclip_Enabled = true
+            getgenv()._noclipModifiedParts = {}
+
+            local function NoclipLoop()
+                if not Clip and getgenv().Character then
+                    for _, part in ipairs(getgenv().Character:GetDescendants()) do
+                        if part:IsA("BasePart") and part.CanCollide then
+                            part.CanCollide = false
+                            getgenv()._noclipModifiedParts[part] = true
+                        end
+                    end
+                end
             end
-        elseif not getgenv().Character and noclip_toggle then
-            getgenv().noclipToggle:Set(false)
-            getgenv().ez_noclip_use = false
-            getgenv().ez_noclip_use = false
-            wait(0.5)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-            wait(0.7)
-            reset_collide(true)
-            wait(0.3)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
-            wait(1)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+
+            Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
         else
-            getgenv().ez_noclip_use = false
-            getgenv().ez_noclip_use = false
-            wait(0.5)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-            getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-            wait(0.7)
-            reset_collide(true)
-            wait(0.3)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
-            wait(1)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+            if Noclip_Connection then
+                Noclip_Connection:Disconnect()
+            end
+            Clip = true
+            getgenv().Noclip_Enabled = false
+
+            if getgenv()._noclipModifiedParts then
+                for part, _ in pairs(getgenv()._noclipModifiedParts) do
+                    if part and part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+                getgenv()._noclipModifiedParts = nil
+            end
         end
     end,})
     wait()
     if game.PlaceId == 135275461271957 or game.PlaceId == 78589782053833 then
-        getgenv().PlayerGui:FindFirstChild("Notification"):Destroy()
+        if getgenv().PlayerGui:FindFirstChild("Notification") then
+            getgenv().PlayerGui:FindFirstChild("Notification"):Destroy()
+        end
     end
     wait()
     getgenv().FlyNoclip = Tab16:CreateToggle({
@@ -8693,36 +8705,13 @@
     CurrentValue = false,
     Flag = "toggleNoclipForFly",
     Callback = function(noclipToggleFly)
-        function reset_collide(reset_bool)
-            if reset_bool == true then
-                getgenv().Character:FindFirstChild("LowerTorso").CanCollide = true
-                getgenv().Character:FindFirstChild("UpperTorso").CanCollide = true
-                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = true
-            elseif reset_bool == false then
-                getgenv().Character:FindFirstChild("LowerTorso").CanCollide = false
-                getgenv().Character:FindFirstChild("UpperTorso").CanCollide = false
-                getgenv().Character:FindFirstChild("HumanoidRootPart").CanCollide = false
-            else
-                return warn("Invalid input BoolValue.")
-            end
-        end
-
         if noclipToggleFly then
-            getgenv().non_fly_use = true
-            while getgenv().non_fly_use == true do
-            wait()
-                reset_collide(false)
+            if getgenv().Noclip_Enabled then
+                getgenv().FlyNoclip:Set(false)
+                return getgenv().notify("Failure:", "Noclip is already enabled.", 5)
+            else
+                getgenv().noclipToggle:Set(true)
             end
-        elseif not getgenv().Character and noclipToggleFly then
-            getgenv().FlyNoClip = false
-            getgenv().non_fly_use = false
-            getgenv().non_fly_use = false
-            reset_collide(true)
-        else
-            getgenv().non_fly_use = false
-            getgenv().non_fly_use = false
-            getgenv().non_fly_use = false
-            reset_collide(true)
         end
     end,})
 
@@ -8817,7 +8806,7 @@
                 local RunService = game:GetService("RunService")
                 local Players = game:GetService("Players")
                 local player = Players.LocalPlayer
-                local character = player.Character or player.CharacterAdded:Wait()
+                local character = getgenv().Character
                 local rootPart = getRoot(character)
                 local humanoid = character:FindFirstChildOfClass("Humanoid")
 
@@ -8913,7 +8902,7 @@
             sFLY(false)
         else
             local player = game:GetService("Players").LocalPlayer
-            local character = player.Character or player.CharacterAdded:Wait()
+            local character = getgenv().Character
 
             local rootPart = getgenv().Character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart")
             local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
@@ -9020,7 +9009,7 @@
             getgenv().glitchActive = true
         
             local player = game.Players.LocalPlayer
-            local character = player.Character or player.CharacterAdded:Wait()
+            local character = getgenv().Character
             local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
             local runService = game:GetService("RunService")
             local tp_distance = teleportDistance
@@ -9102,7 +9091,6 @@
         getgenv().settings_flashback.Speed = tonumber(gotSpeedFlashback)
     end,})
 
-    -- >> Big Thanks to: sa.ya (Discord)
     getgenv().flashBackRewindScript = Tab16:CreateButton({
     Name = "Flashback Rewind",
     Callback = function()
@@ -9331,7 +9319,7 @@
                     getgenv().flyLoop = false
                     wait(0.2)
                     local player = getgenv().LocalPlayer
-                    local character = player.Character or player.CharacterAdded:Wait()
+                    local character = getgenv().Character
                     local humanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
                     local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
 
@@ -10506,43 +10494,76 @@
 
         local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 
+        -- You don't really need this, we don't really care for configuration that much right now.
+        getgenv().esplib = {
+            box = {
+                enabled = true, -- Not necessary either especially, and that goes for healthbar, name, etc.
+                type = "normal",
+                padding = 1.15,
+                fill = Color3.new(1,1,1), -- Filler options tbh.
+                outline = Color3.new(0,0,0),
+            },
+            healthbar = {
+                enabled = true,
+                fill = Color3.new(0,1,0),
+                outline = Color3.new(0,0,0),
+            },
+            name = {
+                enabled = true,
+                fill = Color3.new(1,1,1),
+                size = 16,
+            },
+            distance = {
+                enabled = true,
+                fill = Color3.new(1,1,1),
+                size = 150,
+            },
+            tracer = {
+                enabled = true,
+                fill = Color3.new(1,1,1),
+                outline = Color3.new(0,0,0),
+                from = "mouse",
+            },
+        }
+
         getgenv().EspBox = Tab19:CreateToggle({
         Name = "Box",
         CurrentValue = false,
         Flag = "TogglingBoxESP",
         Callback = function(box_Esp)
             if box_Esp then
-                for _, player in ipairs(Players:GetPlayers()) do
-                    box_esp_main(player)
+                for _, player in pairs(getgenv().Players:GetPlayers()) do
+                    -- Added partial checks to ensure everything is properly initialized first, before actually loading, ensuring we run into 0 errors.
+                    if player ~= getgenv().LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+                        wait(0.5)
+                        local character = player.Character or player.CharacterAdded:Wait() -- Actually wait for the Character to load, unlike other ESP menu's.
+
+                        esplib.add_box(character)
+                    end
                 end
 
-                table.insert(Connections, Players.PlayerAdded:Connect(box_esp_main))
-                table.insert(Connections, Players.PlayerRemoving:Connect(remove_box_esp))
-
-                if box_Esp then
-                    RenderConnection = RunService.RenderStepped:Connect(function()
-                        for player, box in pairs(ESP_Boxes) do
-                            refresh_box(player, box)
+                getgenv().Players.PlayerAdded:Connect(function(player)
+                    player.CharacterAdded:Connect(function(char)
+                        player.CharacterAdded:Wait()
+                        repeat wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
+                        task.wait(0.5)
+                        if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
+                            esplib.add_box(char)
                         end
                     end)
-                end
+                end)
             else
-                if RenderConnection then
-                    RenderConnection:Disconnect()
-                    RenderConnection = nil
-                end
-                for _, conn in ipairs(Connections) do
-                    conn:Disconnect()
-                end
-                for _, box in pairs(ESP_Boxes) do
-                    delete_box(box)
-                end
-                table.clear(ESP_Boxes)
-                table.clear(Connections)
+                -- to be honest, smarter than a bunch of other scripts, like Infinite Yield who don't do this for some reason, so it never turns off fully if someone joins again (or resets and respawns).
+                wait(0.1)
+                esplib.remove_box()
+                wait(0.2)
+                esplib.remove_box()
+                wait(0.2)
+                esplib.remove_box()
             end
         end,})
     else
-        warn("❌ - Drawing - ❌ | Unsupported, ESP is not able to initialize due to 'Drawing' being unsupported or unavailable.")
+        warn("❌ - Drawing - ❌ | Unsupported, ESP is not able to initialize due to 'Drawing' being unsupported or unavailable.") -- Also not a prominent option to display public warnings about ESP.
     end
 
     local highlights = {}
@@ -10563,14 +10584,14 @@
         end
 
         local hl = Instance.new("Highlight")
-        hl.Name = "ESP_Highlight"
+        hl.Name = "ESP_Highlight" -- Not a secure name at all for ESP, since game's can search the "game" DataModel for the string: "ESP" or "esp", and kick you if found.
         hl.Adornee = char
         hl.FillColor = highlight_color
-        hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+        hl.OutlineColor = Color3.fromRGB(255, 255, 255) -- Default to white to preserve user personalization's and preferences.
         hl.FillTransparency = 0.5
         hl.OutlineTransparency = 0
-        hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        hl.Parent = char
+        hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Not always recommended, but recommended since it works more than other options.
+        hl.Parent = char -- nil sometimes, parented to Workspace but usually not helpful in games like Bad Business which put Character's in other Folders and not directly in Workspace.
         highlights[player] = hl
     end
 
@@ -10579,9 +10600,11 @@
             highlights[player]:Destroy()
             highlights[player] = nil
         end
+        -- should add extra security here.
     end
 
     wait(0.2)
+    -- just wrap both in the same function, you'll be fine ( [ clear_highlights(), and: disconnect_all() ] )
     local function disconnect_all()
         for _, conn in ipairs(connections) do
             if conn.Disconnect then conn:Disconnect() end
@@ -10591,10 +10614,12 @@
 
     local function clear_highlights()
         for _, hl in pairs(highlights) do
-            if hl and hl.Destroy then
+            if hl and hl.Destroy then -- tbh, I will admit ChatGPT wrote that part, never needed a check for destroying Highlight ESP.
                 hl:Destroy()
             end
         end
+        -- actually ensure ESP is cleared out fully, since you don't need leftover table highlights when disabling Highlight ESP, since Highlight ESP is weird.
+        -- since it's not made using the Drawing API, basically.
         table.clear(highlights)
     end
 
@@ -10607,44 +10632,79 @@
         end
     end
 
-    getgenv().InfYield_ESP = Tab19:CreateToggle({
-    Name = "Infinite Yield Player ESP",
+    getgenv().Name_DrawingESP = Tab19:CreateToggle({
+    Name = "Name ESP",
     CurrentValue = false,
-    Flag = "MainESP_InfYield",
-    Callback = function(esp_inf_yield)
-        if esp_inf_yield then
-            if not getgenv().Holder_Frame then
-                loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/Infinite_Premium.lua'))()
-                wait(0.5)
-                if getgenv().execCmd then
-                    getgenv().execCmd("esp")
-                    task.wait(.5)
-                    getgenv().notify("Success:", "Infinite Yield ESP has been loaded successfully!", 5)
-                else
-                    getgenv().InfYield_ESP:Set(false)
-                    return getgenv().notify("Failure:", "Load Infinite Premium to load this ESP!", 5)
-                end
-            elseif getgenv().Holder_Frame then
-                if getgenv().execCmd then
-                    getgenv().execCmd("esp")
-                    task.wait(.5)
-                    getgenv().notify("Success:", "Infinite Yield ESP has been loaded successfully!", 5)
+    Flag = "MainESP_Name",
+    Callback = function(esp_name_ESP)
+        if esp_name_ESP then
+            for _, player in pairs(getgenv().Players:GetPlayers()) do
+                if player ~= getgenv().LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+                    wait(0.5)
+                    local character = player.Character or player.CharacterAdded:Wait()
+
+                    esplib.add_name(character)
                 end
             end
+
+            getgenv().Players.PlayerAdded:Connect(function(player)
+                player.CharacterAdded:Connect(function(char)
+                    player.CharacterAdded:Wait()
+                    repeat wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
+                    task.wait(0.5)
+                    if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
+                        esplib.add_name(char)
+                    end
+                end)
+            end)
         else
-            if getgenv().Holder_Frame then
-                if getgenv().execCmd then
-                    getgenv().execCmd("unesp")
-                    task.wait(0.3)
-                    getgenv().notify("Success:", "Successfully unloaded Infinite Yield ESP", 5)
-                else
-                    return getgenv().notify("Failure:", "Infinite Premium is needed to run this ESP!", 5)
-                end
-            else
-                return getgenv().notify("Heads Up:", "Could not find Infinite Yield, ESP not on.", 5)
-            end
+            -- add checks here to ensure user does not still have Name ESP loaded on-screen, since Drawing Library on other executors, like Solara tend to bug out often.
+            wait(0.1)
+            esplib.remove_name()
+            wait(0.2)
+            esplib.remove_name()
+            wait(0.2)
+            esplib.remove_name()
         end
     end,})
+
+    getgenv().Distance_DrawingESP = Tab19:CreateToggle({
+    Name = "Distance ESP",
+    CurrentValue = false,
+    Flag = "MainESP_Distance",
+    Callback = function(esp_distance_ESP)
+        if esp_distance_ESP then
+            for _, player in pairs(getgenv().Players:GetPlayers()) do
+                if player ~= getgenv().LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+                    wait(0.5)
+                    local character = player.Character or player.CharacterAdded:Wait()
+
+                    esplib.add_distance(character)
+                end
+            end
+
+            getgenv().Players.PlayerAdded:Connect(function(player)
+                player.CharacterAdded:Connect(function(char)
+                    player.CharacterAdded:Wait()
+                    repeat wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
+                    task.wait(0.5)
+                    if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
+                        esplib.add_distance(char)
+                    end
+                end)
+            end)
+        else
+            -- also add extra assurance here, since Drawing API is weird on other executors.
+            wait(0.1)
+            esplib.remove_distance()
+            wait(0.2)
+            esplib.remove_distance()
+            wait(0.2)
+            esplib.remove_distance()
+        end
+    end,})
+
+
 
     wait(0.2)
     getgenv().HighlightESP_Drawing = Tab19:CreateToggle({
@@ -11823,7 +11883,7 @@
         if getgenv().inf_yield_side then
             return getgenv().notify("Alert!", "Infinite Yield has already been loaded.", 6)
         else
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/Infinite_Premium.lua", true))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/refs/heads/main/InfYieldOther.lua", true))()
             getgenv().notify("Heads Up!", "We have now defaulted to a new Infinite Yield script [mine].", 5)
             getgenv().inf_yield_side = true
         end
@@ -13129,8 +13189,8 @@
 
             task.wait(0.2)
 
-            Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
-            Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+            Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+            Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
             Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
             Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
             Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
@@ -13173,8 +13233,8 @@
 
             task.wait(0.2)
 
-            Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
-            Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
+            Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
+            Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
             Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
             Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
             Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
@@ -13205,35 +13265,63 @@
         })
     end
 
-    create_Button(CatWalkGlamAnim, "'Catwalk Glam' Animation Package", function()
-        wait(0.7)
-        local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local Animate = character:WaitForChild("Animate")
-        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
+    function refresh_anims()
+        local Char = getgenv().Character
+        local Human = getgenv().Humanoid
+        local Animate = getgenv().Character:FindFirstChild("Animate", true) or getgenv().Character:WaitForChild("Animate", 5)
 
-        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+        if not Human or not Animate then
+            return getgenv().notify('Failure:', 'Failed to get Animate LocalScript or Humanoid!', 5)
+        end
+        if Animate then
+            Animate.Disabled = true
+        end
+        wait(0.1)
+        for _, v in ipairs(Human:GetPlayingAnimationTracks()) do
+            v:Stop()
+        end
+        wait(0.1)
+        Animate.Disabled = false
+    end
+
+    local apply_anims_delay = 2
+
+    wait(0.2)
+    create_Button(CatWalkGlamAnim, "'Catwalk Glam' Animation Package", function()
+        local StarterPlayer = getgenv().Service_Wrap("StarterPlayer")
+
+        if not StarterPlayer.AllowCustomAnimations or StarterPlayer.AllowCustomAnimations == false then
+            StarterPlayer.AllowCustomAnimations = true
+            refresh_anims()
+        end
+        wait(1)
+        local player = getgenv().LocalPlayer
+        local character = getgenv().Character
+        local Animate = character:WaitForChild("Animate", 3)
+        local Old_WS = getgenv().Humanoid.WalkSpeed
+
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
         if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
         
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        getgenv().Humanoid.WalkSpeed = 0
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
 
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        local humanoid = getgenv().Humanoid
         if humanoid then
             for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                 track:Stop()
             end
         end
 
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=133806214992291"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=94970088341563"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=109168724482748"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=81024476153754"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=116936326516985"
@@ -13243,14 +13331,13 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(WickedPopularAnim, "'Wicked Popular' Animation Package", function()
-        wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
@@ -13262,7 +13349,7 @@
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13274,8 +13361,8 @@
             end
         end
 
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=118832222982049"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=76049494037641"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=118832222982049"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=76049494037641"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=92072849924640"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=72301599441680"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=104325245285198"
@@ -13285,14 +13372,13 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(RThroAnim, "RThro Animation Package", function()
-        wait(0.5)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
@@ -13312,7 +13398,7 @@
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13324,8 +13410,8 @@
             end
         end
 
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Idle_1
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Idle_1
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Idle_1
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Idle_1
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Walk
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Run
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id="..Rthro_Jump
@@ -13335,18 +13421,17 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
+        wait(apply_anims_delay)
+        getgenv().Humanoid.WalkSpeed = Old_WS
     end)
 
     create_Button(adidasAnim, "Adidas Animation Package", function()
-        wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local Animate = character:WaitForChild("Animate")
-        local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
+        local character = getgenv().Character
+        local Animate = character:WaitForChild("Animate", 3)
+        local Old_WS = getgenv().Humanoid.WalkSpeed
 
-        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You must be in R15 to use animation packages.", 6)
         end
 
@@ -13354,37 +13439,37 @@
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
 
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        local humanoid = getgenv().Humanoid
+
         if humanoid then
             for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                 track:Stop()
             end
         end
 
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=18537376492"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18537371272"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=18537376492"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=18537371272"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537392113"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537384940"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537380791"
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537363391"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18537367238"
         wait(0.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        getgenv().Humanoid:ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
+        wait(apply_anims_delay)
+        getgenv().Humanoid.WalkSpeed = Old_WS
     end)
 
     create_Button(NFLAnim, "NFL Animation Package", function()
-        wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
@@ -13395,8 +13480,8 @@
         if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-        getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        getgenv().HumanoidRootPart.Anchored = false
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13408,8 +13493,8 @@
             end
         end
 
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=92080889861410"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=74451233229259"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=92080889861410"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=74451233229259"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=110358958299415"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=117333533048078"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=119846112151352"
@@ -13419,14 +13504,13 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(BoldAnim, "Bold Animation Package", function()
-        wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
@@ -13438,7 +13522,7 @@
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13450,8 +13534,8 @@
             end
         end
 
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=16738333868"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=16738334710"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=16738333868"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=16738334710"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738340646"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738337225"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=16738336650"
@@ -13461,14 +13545,14 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(noBoundariesAnim, "No Boundaries Animation Package", function()
         wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
@@ -13480,7 +13564,7 @@
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13492,8 +13576,8 @@
             end
         end
 
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=18747067405"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=18747063918"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=18747067405"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=18747063918"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747074203"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747070484"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=18747069148"
@@ -13503,14 +13587,14 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(robotAnim, "Robot Animation Package", function()
         wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
         
@@ -13521,7 +13605,7 @@
         if not Animate then return getgenv().notify("Failure:", "Animate LocalScript does not exist in Character!", 5) end
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13533,8 +13617,8 @@
             end
         end
 
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=10921248039"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=10921248831"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=10921248039"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=10921248831"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921255446"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921250460"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=10921252123"
@@ -13544,14 +13628,14 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(zombieAnim, "Zombie Animation Package", function()
         wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
@@ -13565,7 +13649,7 @@
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13574,8 +13658,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616158929"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616160636"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=616158929"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=616160636"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616168032"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616163682"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616161997"
@@ -13585,14 +13669,14 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(HeroAnim, "Hero Animation Package", function()
         wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
@@ -13606,7 +13690,7 @@
 
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13615,8 +13699,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616111295"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616113536"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=616111295"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=616113536"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616122287"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616117076"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616115533"
@@ -13626,14 +13710,14 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = Old_WS
     end)
 
     create_Button(vampireAnim, "Vampire Animation Package", function()
         wait(0.7)
         local player = getgenv().LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local character = getgenv().Character
         local Animate = character:WaitForChild("Animate")
         local Old_WS = character:FindFirstChildWhichIsA("Humanoid").WalkSpeed
 
@@ -13644,7 +13728,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13653,8 +13737,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083445855"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083450166"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=1083445855"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=1083450166"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083473930"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083462077"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083455352"
@@ -13664,7 +13748,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13676,7 +13760,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13685,8 +13769,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=707742142"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=707855907"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=707742142"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=707855907"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707897309"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707861613"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=707853694"
@@ -13696,7 +13780,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13708,7 +13792,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13717,8 +13801,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=616006778"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=616008087"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616010382"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616013216"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616008936"
@@ -13728,7 +13812,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13740,7 +13824,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13749,8 +13833,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=845397899"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=845400520"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=845397899"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=845400520"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845403856"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845386501"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=845398858"
@@ -13760,7 +13844,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13772,7 +13856,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13781,8 +13865,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=616006778"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=616008087"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616013216"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616010382"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616008936"
@@ -13792,7 +13876,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13804,7 +13888,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13813,8 +13897,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=891621366"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=891633237"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891667138"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891636393"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=891627522"
@@ -13824,7 +13908,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13836,7 +13920,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13845,8 +13929,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=656117400"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=656118341"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=656117400"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=656118341"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656121766"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656118852"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=656117878"
@@ -13856,7 +13940,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13868,7 +13952,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13877,8 +13961,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083195517"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083214717"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=1083195517"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=1083214717"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083178339"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083216690"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1083218792"
@@ -13888,7 +13972,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13900,7 +13984,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13909,8 +13993,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=742637544"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=742638445"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=742637544"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=742638445"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742640026"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742638842"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=742637942"
@@ -13920,7 +14004,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13932,7 +14016,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13941,8 +14025,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=750781874"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=750782770"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750785693"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750783738"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=750782230"
@@ -13952,7 +14036,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13964,7 +14048,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -13973,8 +14057,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1132473842"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1132477671"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=1132473842"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=1132477671"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132510133"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132494274"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1132489853"
@@ -13984,7 +14068,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -13996,7 +14080,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -14005,8 +14089,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=782841498"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=782845736"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=782841498"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=782845736"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782843345"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782842708"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=782847020"
@@ -14016,7 +14100,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -14028,7 +14112,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -14037,8 +14121,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=657595757"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=657568135"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=657595757"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=657568135"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=657552124"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=657564596"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=658409194"
@@ -14048,7 +14132,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -14060,7 +14144,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -14069,8 +14153,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1069977950"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1069987858"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=1069977950"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=1069987858"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1070017263"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1070001516"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1069984524"
@@ -14080,7 +14164,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -14092,7 +14176,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -14101,8 +14185,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=1212900985"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=1212900985"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212980338"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212980348"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1212954642"
@@ -14112,7 +14196,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -14124,7 +14208,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -14133,8 +14217,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=941003647"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=941013098"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=941003647"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=941013098"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941028902"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941015281"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=941008832"
@@ -14144,7 +14228,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -14156,7 +14240,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -14165,8 +14249,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1014390418"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1014398616"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=1014390418"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=1014398616"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014421541"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014401683"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1014394726"
@@ -14176,7 +14260,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -14188,7 +14272,7 @@
         local Animate = getgenv().LocalPlayer.Character.Animate
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -14197,8 +14281,8 @@
             track:Stop()
         end
         wait()
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1149612882"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1150842221"
+        Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=1149612882"
+        Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=1150842221"
         Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1151231493"
         Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1150967949"
         Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=1150944216"
@@ -14208,7 +14292,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
 
@@ -14220,7 +14304,7 @@
         local Animate = getgenv().Character:FindFirstChild("Animate")
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
         getgenv().Character:FindFirstChild("HumanoidRootPart").Anchored = false
-        wait(1.1)
+        wait(apply_anims_delay)
         Animate.Disabled = true
         wait()
         Animate.Disabled = false
@@ -14240,7 +14324,7 @@
         getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
         wait(0.3)
         Animate.Disabled = false
-        wait(1.1)
+        wait(apply_anims_delay)
         getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
     end)
     -- Also, all of these animations do NOT jump, because while moving, jumping causes issues, and it should also stop you from walking when applying an animation, and it also has a delay to, because of how buggy the animations can be.
@@ -15211,7 +15295,7 @@
     end,})
 
     getgenv().sysBroken_Other_Mod = Tab20:CreateToggle({
-    Name = "Zacks System Broken (Auto-Load)",
+    Name = "Flames System Broken (Auto-Load)",
     CurrentValue = readConfigValue("System_Broken") or false,
     Flag = "SystemBrokenBeingLoaded",
     Callback = function(hasEnabledSysBroken)
@@ -15388,6 +15472,18 @@
         wait(0.1)
         getgenv().performance_stats = true
     end
+    wait(0.1)
+    local Workspace = getgenv().Workspace
+    local TerrainFolder = Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", Workspace)
+    TerrainFolder.Name = "TERRAIN_EDITOR"
+
+    local Transparency_Selected = 1
+
+    for _, v in ipairs(TerrainFolder:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Transparency = Transparency_Selected
+        end
+    end
     --[[wait(0.2)
     getgenv().Easies_Configuration["Fully_Loaded_Message"] = "Flames Hub - On TOP!"
     wait(0.3)
@@ -15470,6 +15566,8 @@
             end
         end
     end
+    wait(0.1)
+    getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = true
     wait(0.4)
     if getgenv().seen_output_zeh then
         warn("Already seen notification output.")
