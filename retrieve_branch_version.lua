@@ -35,7 +35,7 @@
         return string.format("%s", executorDetails.Name)
     end
     wait(0.1)
-    local Script_Version = "V10.0.6"
+    local Script_Version = "V10.0.8"
     local executor_Name = detectExecutor()
     wait(0.1)
     print("2") -- And throughout the beginning of the script there might be these random print statements, don't mind them, it's just my way of debugging, like if something doesn't load, then I'll count my steps back and see where it stopped loading at or what not.
