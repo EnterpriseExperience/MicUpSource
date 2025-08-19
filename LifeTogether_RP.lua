@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "1.8.5-LIFE"
+local Script_Version = "1.9.3-LIFE"
 
 local function getExecutor()
     local name
@@ -544,6 +544,7 @@ local Privacy = require(Core:FindFirstChild("Privacy"))
 local AppModules = Phone_Module:FindFirstChild("AppModules")
 local Messages = require(AppModules:FindFirstChild("Messages"))
 local Network = require(Core:FindFirstChild("Net"))
+local AvatarModule = require(AppModules:FindFirstChild("Avatar"))
 local CCTV = require(Game:FindFirstChild("CCTV"))
 local Tween = require(Core:FindFirstChild("Tween"))
 local Modules = ReplicatedStorage:FindFirstChild("Modules")
@@ -771,6 +772,13 @@ function show_notification(Title, Text, Method, Image)
             tostring(Text),
             nil,
             "rbxassetid://13828984843"
+        )
+    elseif Method == "Error" then
+        Phone.show_notification(
+            tostring(Title),
+            tostring(Text),
+            nil,
+            "rbxassetid://14930908086"
         )
     end
 end
@@ -1597,10 +1605,32 @@ Callback = function(walking_state)
     end
 end,})
 
+local Has_Spoofed_Invis
+local Has_Spoofed_LifePay
+getgenv().Spoofed_LifePay_Premium = getgenv().Spoofed_LifePay_Premium or false
+getgenv().Spoofed_Invisibility = getgenv().Spoofed_Invisibility or false
+wait(0.1)
+if getgenv().Spoofed_Invisibility or getgenv().Spoofed_Invisibility == true then
+    Has_Spoofed_Invis = true
+else
+    Has_Spoofed_Invis = false
+end
+wait(0.1)
+if getgenv().Spoofed_LifePay_Premium or getgenv().Spoofed_LifePay_Premium == true then
+    Has_Spoofed_LifePay = true
+else
+    Has_Spoofed_LifePay = false
+end
+wait(0.2)
 getgenv().SpoofInvis = Tab2:CreateButton({
 Name = "Spoof Invisibility GamePass (free Invisibility)",
 Callback = function()
-    if not debug.getupvalue then return show_notification("[Error]:", "This is unsupported in your exploit!", "Warning") end
+    if Has_Spoofed_Invis or Has_Spoofed_Invis == true then
+        return getgenv().notify("Failure:", "You've already ran the Invisibility spoofer!", 5)
+    end
+
+    wait(0.1)
+    if not debug.getupvalue then return show_notification("[Error]:", "Not unsupported in your exploit!", "Error") end
 
     debug.getupvalue(Data.initiate, 2)("invisible_bought", true)
     wait(0.3)
@@ -1612,7 +1642,12 @@ end,})
 getgenv().SpoofLifePay = Tab2:CreateButton({
 Name = "Spoof LifePay (free premium perks, items, cars, etc)",
 Callback = function()
-    if not debug.getupvalue then return show_notification("[Error]:", "This is unsupported in your exploit!", "Warning") end
+    if Has_Spoofed_LifePay or Has_Spoofed_LifePay == true then
+        return getgenv().notify("Failure:", "You've already ran the LifePay spoofer!", 5)
+    end
+
+    wait(0.1)
+    if not debug.getupvalue then return show_notification("[Error]:", "Not unsupported in your exploit!", "Error") end
 
     local update = debug.getupvalue(Data.initiate, 2)
     update("is_verified", true)
@@ -1759,7 +1794,7 @@ function toggle_car_fling(target_player)
 end
 
 getgenv().Car_Fling_FE = Tab3:CreateInput({
-Name = "Car Fling Plr (FE)",
+Name = "Car Fling Plr (FE, Broken!)",
 PlaceholderText = "User Here, can shorten",
 RemoveTextAfterFocusLost = true,
 Callback = function(car_fling_plr)
@@ -1795,49 +1830,44 @@ end,})
 local Anti_Sit_Connection
 wait(0.1)
 getgenv().Anti_Sit_Func = Tab2:CreateToggle({
-Name = "Anti Sit (FE)",
+Name = "Anti Sit (FE, Fully Fixed!)",
 CurrentValue = false,
 Flag = "AntiSitScriptFunc",
 Callback = function(is_antisit_enabled)
-    local Workspace = getgenv().Workspace or game:GetService("Workspace")
-    local function handleSeat(seat)
-        if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
-            seat.CanCollide = false
-            seat.Disabled = true
-            seat:SetAttribute("Disabled", true)
-        end
-    end
-
     if is_antisit_enabled then
-        getgenv().Anti_Sit_Enabled = true
+        local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
 
-        for _, v in ipairs(Workspace:GetDescendants()) do
-            handleSeat(v)
+        getgenv().Not_Ever_Sitting = true
+
+        if not is_enabled or is_enabled == false then
+            Phone.show_notification("Failure:", "NoSit/AntiSit is already enabled!")
+            return notify("Failure:", "NoSit/AntiSit is already enabled!", 5)
         end
 
-        Anti_Sit_Connection = Workspace.DescendantAdded:Connect(function(v)
-            if getgenv().Anti_Sit_Enabled then
-                handleSeat(v)
-            end
-        end)
+        getgenv().notify("Success:", "Anti-Sit/No-Sit is now enabled!", 5)
+        Phone.show_notification("Success:", "AntiSit/NoSit is now enabled!")
+        wait(0.2)
+        while getgenv().Not_Ever_Sitting == true do
+        task.wait()
+            require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
+        end
     else
-        getgenv().Anti_Sit_Enabled = false
-
-        if Anti_Sit_Connection then
-            Anti_Sit_Connection:Disconnect()
-            Anti_Sit_Connection = nil
+        local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
+      
+        if is_enabled or is_enabled == true then
+            Phone.show_notification("Failure:", "Sitting is already enabled!")
+            return notify("Failure:", "Sitting is already enabled!", 5)
         end
 
-        for _, v in ipairs(Workspace:GetDescendants()) do
-            if v:IsA("Seat") or v:IsA("VehicleSeat") then
-                v.CanCollide = true
-                v.Disabled = false
-                v:SetAttribute("Disabled", false)
-            end
-        end
+        getgenv().Not_Ever_Sitting = false
+        wait(1)
+        require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
+        wait(0.1)
+        notify("Success:", "Sitting is now enabled!", 5)
+        Phone.show_notification("Success:", "Sitting is now enabled!")
     end
 end,})
-
+wait(0.2)
 local Phone_GUI = getgenv().PlayerGui:FindFirstChild("Phone")
 if not Phone_GUI then
     if getgenv().NoNotifications_Phone then
@@ -1885,8 +1915,9 @@ if not all_buttons_parent then
     end
     getgenv().notify("Error:", "This was probably patched, cannot find SettingsNotifsHolder", 5)
 end
-local Phone_Module = getgenv().Game_Folder:FindFirstChild("Phone")
+
 local App_Modules = Phone_Module:FindFirstChild("AppModules")
+local Phone_Module = getgenv().Game_Folder:FindFirstChild("Phone")
 local Games = App_Modules:FindFirstChild("Games")
 local All_Apps = {}
 local all_buttons_tbl = {}
@@ -2012,19 +2043,21 @@ Callback = function(flashlight_phone)
     end
 end,})
 
+local Rain = getgenv().LocalPlayer:FindFirstChild("Rain", true) or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain")
 local rainbowConnection
 task.wait(0.2)
 getgenv().startRainbow = function()
     if rainbowConnection then rainbowConnection:Disconnect() end
-
+    
     local hue = 0
-    rainbowConnection = RunService.RenderStepped:Connect(function(deltaTime)
+    rainbowConnection = getgenv().RunService.RenderStepped:Connect(function(deltaTime)
         hue = (hue + deltaTime * 0.1) % 1
         Rain:SetColor(Color3.fromHSV(hue, 1, 1))
     end)
 end
 task.wait(0.2)
 getgenv().stopRainbow = function()
+    local Rain = getgenv().LocalPlayer:FindFirstChild("Rain", true) or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain")
     if rainbowConnection then
         rainbowConnection:Disconnect()
         rainbowConnection = nil
@@ -2042,12 +2075,12 @@ Flag = "NotFERainbowRain",
 Callback = function(rainbow_rain_toggle)
     if rainbow_rain_toggle then
         local RunService = getgenv().RunService
-        local Rain_Script = getgenv().LocalPlayer:FindFirstChild("PlayerScripts"):FindFirstChild("RainScript")
-        local Rain_Module = Rain_Script:FindFirstChild("Rain")
+        local Rain_Script = getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts"):FindFirstChild("RainScript")
+        local Rain_Module = Rain_Script:FindFirstChild("Rain") or Rain_Script:WaitForChild("Rain", 3)
         if not Rain_Module then
             return getgenv().notify("Failure:", "Rain ModuleScript was not found!", 5)
         end
-        local Rain = require(Rain_Script:FindFirstChild("Rain"))
+        local Rain = require(Rain_Module)
         wait(0.1)
         getgenv().Rainbow_Rain = true
         wait()
@@ -2453,56 +2486,6 @@ Callback = function(toggle_hd_fly)
     end
 end,})
 
-local JumpPower_Old = getgenv().Humanoid.JumpPower
-local JumpHeight_Old = getgenv().Humanoid.JumpHeight
-local Humanoid_DescriptionApplied = getgenv().Humanoid:GetAppliedDescription()
-local Hair_Accessory = Humanoid_DescriptionApplied.HairAccessory
-wait(0.2)
-getgenv().CatInvisGlitchOutfit = Tab2:CreateToggle({
-Name = "Cat Invisible Glitch Outfit (FE)",
-CurrentValue = false,
-Flag = "CatInvisGlitchOutfitWearFEFunc",
-Callback = function(Invis_Cat_Glitch_Outfit)
-    if Invis_Cat_Glitch_Outfit then
-        getgenv().Invisible_Glitch_Cat_Fit = true
-        if getgenv().Invisible_Glitch_Cat_Fit == true then
-            getgenv().Get("save_outfit")
-            wait(0.3)
-            getgenv().Send("code", 116433640227939, "JacketAccessory")
-            wait()
-            getgenv().Send("hide_name", true)
-            wait(0.2)
-            getgenv().Get("age", "baby")
-            wait()
-            getgenv().Send("wear", Hair_Accessory, "HairAccessory")
-            wait(0.2)
-            getgenv().Send("code", 15093053680, "DynamicHead")
-            wait(0.1)
-            getgenv().Humanoid.JumpPower = 0
-            getgenv().Humanoid.JumpHeight = 0
-        end
-    else
-        notify("Success:", "Disabling 'Invisible Cat Glitch Outfit'...", 5)
-        wait(0.1)
-        getgenv().Invisible_Glitch_Cat_Fit = false
-        wait(0.1)
-        getgenv().Send("wear", 116433640227939, "JacketAccessory")
-        wait(0.2)
-        getgenv().Send("code", Hair_Accessory, "HairAccessory")
-        wait(0.2)
-        getgenv().Send("wear", 15093053680, "DynamicHead")
-        wait(0.2)
-        getgenv().Humanoid.JumpPower = JumpPower_Old
-        getgenv().Humanoid.JumpHeight = JumpHeight_Old
-        wait(0.3)
-        getgenv().Get("age", "Adult")
-        wait(0.1)
-        getgenv().Send("hide_name", false)
-        wait(0.2)
-        notify("Success:", "Disabled 'Invisible Cat Glitch Outfit'.", 5)
-    end
-end,})
-
 getgenv().BlockAllCallNotifications = Tab5:CreateToggle({
 Name = "Block All Call Notifications (FE)",
 CurrentValue = false,
@@ -2829,8 +2812,120 @@ Callback = function()
         }
     )
 end,})
+wait(0.2)
+local function is_empty(desc, slot)
+    local v = desc and desc[slot]
+    return (not v or v == "" or v == "0")
+end
 
-getgenv().LockHouseLoopRunning = false
+local function split_ids(str)
+    local t = {}
+    for id in string.gmatch(str, "[^,]+") do
+        table.insert(t, tonumber(id))
+    end
+    return t
+end
+
+local AccessorySlots = {
+    "BackAccessory","ShouldersAccessory","FrontAccessory",
+    "WaistAccessory","NeckAccessory","HairAccessory",
+    "HatAccessory","FaceAccessory","Shirt","Pants"
+}
+
+local function snapshot_outfit()
+    local desc = getgenv().Humanoid and getgenv().Humanoid:GetAppliedDescription()
+    local snapshot = {}
+    if desc then
+        for _, slot in ipairs(AccessorySlots) do
+            if not is_empty(desc, slot) then
+                snapshot[slot] = split_ids(desc[slot])
+            end
+        end
+
+        if desc.Face and desc.Face ~= 0 then
+            snapshot["Face"] = {desc.Face}
+        end
+        if desc.Head and desc.Head ~= 0 then
+            snapshot["Head"] = {desc.Head}
+        end
+    end
+    return snapshot
+end
+
+local function unequip_all()
+    local desc = getgenv().Humanoid:GetAppliedDescription()
+    if desc then
+        for _, slot in ipairs(AccessorySlots) do
+            if not is_empty(desc, slot) then
+                for _, id in ipairs(split_ids(desc[slot])) do
+                    getgenv().Get("wear", id, slot)
+                    task.wait(0.15)
+                end
+            end
+        end
+    end
+end
+
+local function restore_outfit(snapshot)
+    for slot, ids in pairs(snapshot) do
+        for _, id in ipairs(ids) do
+            getgenv().Send("code", id, slot)
+            task.wait(0.2)
+        end
+    end
+end
+
+local OldSnapshot
+local JumpPower_Old, JumpHeight_Old
+local CurrentAge = AvatarModule.age.get()
+
+getgenv().CatInvisGlitchOutfit = Tab2:CreateToggle({
+Name = "Cat Invisible Glitch Outfit (FE)",
+CurrentValue = false,
+Flag = "CatInvisGlitchOutfitWearFEFunc",
+Callback = function(using_cat_glitch_outfit)
+    if using_cat_glitch_outfit then
+        OldSnapshot = snapshot_outfit()
+        CurrentAge = AvatarModule.age.get()
+        JumpPower_Old = getgenv().Humanoid.JumpPower
+        JumpHeight_Old = getgenv().Humanoid.JumpHeight
+        wait(0.2)
+        getgenv().Get("save_outfit")
+        wait(0.5)
+        unequip_all()
+        task.wait(0.3)
+        getgenv().Send("code", 116433640227939, "JacketAccessory")
+        task.wait(0.2)
+        getgenv().Send("hide_name", true)
+        task.wait(0.2)
+        getgenv().Get("age", "baby")
+        task.wait(0.2)
+        getgenv().Send("code", 15093053680, "DynamicHead")
+        getgenv().Humanoid.JumpPower = 0
+        getgenv().Humanoid.JumpHeight = 0
+
+    else
+        notify("Success:", "Disabling Cat Glitch, restoring avatar, please WAIT...", 5)
+
+        if OldSnapshot then
+            restore_outfit(OldSnapshot)
+        end
+        wait(2.5)
+        getgenv().Send("wear", 15093053680, "DynamicHead")
+        getgenv().Send("wear", 116433640227939, "JacketAccessory")
+        getgenv().Humanoid.JumpPower = JumpPower_Old
+        getgenv().Humanoid.JumpHeight = JumpHeight_Old
+        getgenv().Get("age", CurrentAge)
+        getgenv().Send("hide_name", false)
+    end
+end,})
+wait(0.2)
+if getgenv().LockHouseLoopRunning or getgenv().LockHouseLoopRunning == true then
+    getgenv().LockHouseLoopRunning = false
+end
+if getgenv().my_home_locked or getgenv().my_home_locked == true then
+    getgenv().my_home_locked = false
+end
 wait()
 getgenv().LockHouse_FE = Tab1:CreateToggle({
 Name = "Lock House (FE)",
@@ -3030,12 +3125,41 @@ CurrentValue = false,
 Flag = "SmootheningFlashlightColoring",
 Callback = function(smooth_RGB_flashlight)
     if smooth_RGB_flashlight then
+        local Phone_GUI = getgenv().PlayerGui:FindFirstChild("Phone") or getgenv().PlayerGui:FindFirstChild("Phone", true) or getgenv().PlayerGui:WaitForChild("Phone", 3)
+        if not Phone_GUI then return notify("Failure:", "Phone GUI not found in PlayerGui! (maybe patched?)", 5) end
+        local Phone_Settings = Phone_GUI:FindFirstChild("Settings")
+        if not Phone_Settings then return notify("Failure:", "Phone Settings Frame not found in Phone GUI! (maybe patched?)", 5) end
+        local Master_Frame = Phone_Settings:FindFirstChild("MasterFrame")
+        if not Master_Frame then return notify("Failure:", "Master Frame not found in Phone Settings Frame! (maybe patched?)", 5) end
+        local Holder_Frame = Master_Frame:FindFirstChild("Holder")
+        if not Master_Frame then return notify("Failure:", "Holder Frame not found in Master Frame (maybe patched?)", 5) end
+        local Settings_Frame = Holder_Frame:FindFirstChild("Settings")
+        if not Settings_Frame then return notify("Failure:", "Settings Frame not found in Holder Frame! (maybe patched?)", 5) end
+        local Settings_SliderFrame = Settings_Frame:FindFirstChild("SettingsSliderFrame")
+        if not Settings_SliderFrame then return notify("Failure:", "Settings Frame not found in Settings Frame! (maybe patched?)", 5) end
+        local Settings_Main_Options = Settings_SliderFrame:FindFirstChild("SettingsMainOptions")
+        if not Settings_Main_Options then return notify("Failure:", "Settings Main Frame not found in Slider Frame! (maybe patched?)", 5) end
+        local Flashlight_SettingsOption = Settings_Main_Options:FindFirstChild("FlashlightSettingsOption")
+        if not Flashlight_SettingsOption then return notify("Failure:", "Flashlight Option not found in Settings Main Options! (maybe patched?)", 5) end
+        local Notifications_ToggleFlashlight = Flashlight_SettingsOption:FindFirstChild("NotificationsToggle")
+        if not Notifications_ToggleFlashlight then return notify("Failure:", "Flashlight Toggle not found in Flashlight Option Frame! (maybe patched?)", 5) end
+        wait(0.3)
         local ts = getgenv().TweenService
         local rs = getgenv().RunService
         getgenv().heartbeatConnection = nil
         getgenv().rainbow_flashlight_enabled = true
 
-        local flashlight = getgenv().HumanoidRootPart:FindFirstChild("Flashlight") 
+        if Notifications_ToggleFlashlight.BackgroundColor3 == Color3.new(110, 220, 95) then
+            warn("Flashlight already enabled.")
+        elseif Notifications_ToggleFlashlight.BackgroundColor3 == Color3.fromRGB(110, 220, 95) then
+            warn("Flashlight already enabled.")
+        elseif Notifications_ToggleFlashlight.BackgroundColor3 == Color3.new(221, 221, 221) then
+            getgenv().Send("flashlight", true)
+        elseif Notifications_ToggleFlashlight.BackgroundColor3 == Color3.fromRGB(221, 221, 221) then
+            getgenv().Send("flashlight", true)
+        end
+
+        local flashlight = getgenv().HumanoidRootPart:FindFirstChild("Flashlight")
         if not flashlight or not flashlight:IsA("SpotLight") then
             return getgenv().notify("Error:", "Flashlight/SpotLight doesn't exist in HumanoidRootPart!", 5)
         end
@@ -3059,6 +3183,50 @@ Callback = function(smooth_RGB_flashlight)
     end
 end,})
 
+getgenv().BeEveryJob = Tab2:CreateToggle({
+Name = "Job Spammer (FE)",
+CurrentValue = false,
+Flag = "JobSpammerEzPz",
+Callback = function(spamming_jobs)
+    if spamming_jobs then
+        getgenv().Every_Job = true
+        while getgenv().Every_Job == true do
+        task.wait(0)
+            getgenv().Send("job", "Police")
+            task.wait()
+            getgenv().Send("job", "Firefighter")
+            task.wait()
+            getgenv().Send("job", "Baker")
+            task.wait()
+            getgenv().Send("job", "Pizza Worker")
+            task.wait()
+            getgenv().Send("job", "Janitor")
+            task.wait()
+            getgenv().Send("job", "Mechanic")
+            task.wait()
+            getgenv().Send("job", "Barista")
+            task.wait()
+            getgenv().Send("job", "Doctor")
+            task.wait()
+            getgenv().Send("job", "Prisoner")
+            task.wait()
+            getgenv().Send("job", "Nurse")
+            task.wait()
+            getgenv().Send("job", "Student")
+            task.wait()
+            getgenv().Send("job", "Teacher")
+            task.wait()
+            getgenv().Send("job", "Principal")
+            task.wait()
+            getgenv().Send("job", "Lifeguard")
+            task.wait()
+            getgenv().Send("job")
+        end
+    else
+        getgenv().Every_Job = false
+    end
+end,})
+
 getgenv().VehicleVoid = Tab3:CreateInput({
 Name = "Vehicle Void Player (FE)",
 PlaceholderText = "User Here, can be shortened",
@@ -3076,6 +3244,7 @@ Callback = function(user_to_void)
     end
 end,})
 
+-- I don't think this will ever work lmao.
 --[[getgenv().View_Plr_SmoothTween = Tab3:CreateInput({
 Name = "View Player (Smooth)",
 PlaceholderText = "User Here, can be shortened",
@@ -3459,6 +3628,8 @@ Callback = function(input)
     Phone.holding.set(false)
 end,})--]]
 
+local CurrentlyCalling_ObjValue = getgenv().LocalPlayer:FindFirstChild("InCallWith", true) or getgenv().LocalPlayer:WaitForChild("InCallWith", 3)
+task.wait(0.3)
 getgenv().SpamCall_PlayerFE = Tab5:CreateInput({
 Name = "Spam Call Player (FE)",
 PlaceholderText = "Player Here",
@@ -3472,14 +3643,20 @@ Callback = function(spam_callin_plr)
         getgenv().notify("Heads Up:", "This works even when the player blocks you!", 5)
     end
     wait()
-    send_remote("end_call", Calling_Target)
+    if CurrentlyCalling_ObjValue.Value then
+        for _, v in ipairs(getgenv().Players:GetPlayers()) do
+            if v ~= getgenv().LocalPlayer then -- If you think about it, it's necessary lmao.
+                getgenv().Send("end_call", v)
+            end
+        end
+    end
     wait()
     getgenv().spam_calling_the_player = true
     while getgenv().spam_calling_the_player == true do
     wait()
-        send_remote("request_call", Calling_Target)
+        getgenv().Send("request_call", Calling_Target)
         wait()
-        send_remote("end_call", Calling_Target)
+        getgenv().Send("end_call", Calling_Target)
     end
 end,})
 
@@ -3487,11 +3664,22 @@ getgenv().StopSpamCallinPlr = Tab5:CreateButton({
 Name = "Stop Spam Calling Player",
 Callback = function()
     getgenv().spam_calling_the_player = false
-    getgenv().spam_calling_the_player = false
-    wait(2)
-    for _, v in ipairs(getgenv().Players:GetPlayers()) do
-        if v ~= game.Players.LocalPlayer then
-            send_remote("end_call", v)
+    repeat wait() until not getgenv().spam_calling_the_player or getgenv().spam_calling_the_player == false
+    if getgenv().spam_calling_the_player == false then
+        for _, v in ipairs(getgenv().Players:GetPlayers()) do
+            if v ~= game.Players.LocalPlayer then
+                getgenv().Send("end_call", v)
+            end
+        end
+    else
+        getgenv().notify("Waiting:", "Loop is not disabled yet, waiting...", 5)
+        repeat task.wait() until not getgenv().spam_calling_the_player or getgenv().spam_calling_the_player == false
+        if getgenv().spam_calling_the_player == false then
+            for _, v in ipairs(getgenv().Players:GetPlayers()) do
+                if v ~= game.Players.LocalPlayer then
+                    getgenv().Send("end_call", v)
+                end
+            end
         end
     end
 end,})
@@ -3504,10 +3692,18 @@ Callback = function(block_any_new_calls)
     if block_any_new_calls then
         getgenv().decline_all_calls_fe = true
         while getgenv().decline_all_calls_fe == true do
-        wait()
+        task.wait(0)
             for _, v in ipairs(getgenv().Players:GetPlayers()) do
-                if v ~= game.Players.LocalPlayer then
-                    send_remote("end_call", v)
+                if v ~= getgenv().LocalPlayer then
+                    getgenv().Send("end_call", v)
+                    task.wait()
+                end
+            end
+            task.wait(.2)
+            for _, v in ipairs(getgenv().Players:GetPlayers()) do
+                if v ~= getgenv().LocalPlayer then
+                    getgenv().Send("end_call", v)
+                    task.wait()
                 end
             end
         end
@@ -3525,7 +3721,6 @@ CurrentValue = 30,
 Flag = "EditTurnAngleOnVehicle",
 Callback = function(new_turn_angle_val)
     local Vehicle = get_vehicle()
-
     if not Vehicle then return show_notification("Failure:", "Please spawn a vehicle!", "Warning") end
 
     for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
@@ -3545,50 +3740,64 @@ Callback = function(rgb_skintone)
     if rgb_skintone then
         getgenv().RainbowSkin_FE = true
         while getgenv().RainbowSkin_FE == true do
-        wait(0)
+        task.wait(0)
             send_remote("skin_tone", Color3.fromRGB(0, 0, 0))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(217, 101, 30))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(93, 171, 195))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(49, 34, 21))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(8, 62, 11))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(30, 146, 19))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(97, 97, 97))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(206, 158, 196))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(14, 25, 43))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(63, 17, 126))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(0, 0, 175))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(183, 25, 25))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(213, 208, 29))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(175, 146, 50))
-            wait(0)
+            task.wait(.1)
             send_remote("skin_tone", Color3.fromRGB(202, 28, 120))
         end
     else
         getgenv().RainbowSkin_FE = false
         wait(0.3)
         getgenv().notify("Heads Up:", "Waiting until loop is fully disabled and resetting skintone...", 5)
+        repeat task.wait() until not getgenv().RainbowSkin_FE or getgenv().RainbowSkin_FE == false
         wait(3)
         if getgenv().RainbowSkin_FE == false then
             getgenv().notify("Hang On:", "Loop is disabled resetting skintone...", 5)
             wait()
-            send_remote("skin_tone", Old_Skintone)
+            getgenv().Send("skin_tone", Old_Skintone)
             wait(0.2)
-            send_remote("skin_tone", Old_Skintone)
+            getgenv().Send("skin_tone", Old_Skintone)
             wait(0.2)
-            send_remote("skin_tone", Old_Skintone)
+            getgenv().Send("skin_tone", Old_Skintone)
+        else
+            notify("Waiting:", "Waiting for the Rainbow Skin loop to shutdown...", 5)
+            repeat task.wait() until not getgenv().RainbowSkin_FE or getgenv().RainbowSkin_FE == false
+            wait(5)
+            getgenv().notify("Hang On:", "Loop shutdown, resetting skintone to normal...", 5)
+            wait()
+            getgenv().Send("skin_tone", Old_Skintone)
+            wait(0.2)
+            getgenv().Send("skin_tone", Old_Skintone)
+            wait(0.2)
+            getgenv().Send("skin_tone", Old_Skintone)
+            wait(0.5)
+            getgenv().notify("Success:", "Skintone should be normal now!", 5)
         end
     end
 end,})
