@@ -1678,20 +1678,33 @@
         for _, child in pairs(Workspace:GetDescendants()) do
             optimize(child)
         end
-
-        Workspace.ChildAdded:Connect(function(child)
-            task.wait(0.1)
-            optimize(child)
-            
-            if child:IsA("Model") or child:IsA("Folder") then
-                child.DescendantAdded:Connect(optimize)
-            end
-        end)
         wait(0.1)
         getgenv().AbsoluteAntiLagFlamesHub = true
     else
         warn("Anti-Lag already loaded for Flames Hub!")
     end
+    wait(0.2)
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        if getgenv().reparented_model then
+            warn("Already reparented Avatar-UI Model")
+        else
+            for _, model in pairs(workspace:GetDescendants()) do
+                if model:IsA("Model") and model.Name == "AvatarUI" then
+                    local parent_to = game:GetService("Workspace"):FindFirstChild("PartStorage")
+                    model.Parent = parent_to
+                    if model.Parent == parent_to then
+                        print("True - AvatarUI [Avatar-Screen = 1/single]")
+                    else
+                        warn("False - AvatarUI [Unable to identify location./nil] = nil")
+                    end
+                end
+            end
+        end
+    else
+        warn("User isn't in MIC UP or MIC UP 17+, not loading.")
+    end
+    wait()
+    print("Loading emotes...")
     wait()
     local safeEmotes = {
         "DearALICE - Ariana",
@@ -1883,25 +1896,7 @@
         "Stray Kids Walkin On Water"
     }
     wait(0.2)
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        if getgenv().reparented_model then
-            warn("Already reparented Avatar-UI Model")
-        else
-            for _, model in pairs(workspace:GetDescendants()) do
-                if model:IsA("Model") and model.Name == "AvatarUI" then
-                    local parent_to = game:GetService("Workspace"):FindFirstChild("PartStorage")
-                    model.Parent = parent_to
-                    if model.Parent == parent_to then
-                        print("True - AvatarUI [Avatar-Screen = 1/single]")
-                    else
-                        warn("False - AvatarUI [Unable to identify location./nil] = nil")
-                    end
-                end
-            end
-        end
-    else
-        warn("User isn't in MIC UP or MIC UP 17+, not loading.")
-    end
+    print("Loading emotes table.")
     wait(0.2)
     getgenv().CopyURLLinkToUpdatesLink = Tab1:CreateButton({
     Name = "Copy Link To See Latest Updates",
