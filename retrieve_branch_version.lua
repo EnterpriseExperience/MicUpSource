@@ -59,7 +59,7 @@
     getgenv().SCRIPT_EXECUTED = getgenv().SCRIPT_EXECUTED or false
     getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE or false
 
-    if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
+    --[[if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
         if not getgenv().notify then
             getgenv().notify = function(title, content, duration)
                 local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
@@ -81,7 +81,7 @@
         task.wait(0.3)
 
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
-    end
+    end--]]
     wait(0.2)
     if response and response.StatusCode == 200 then
         Notification = loadstring(response.Body)()
@@ -449,41 +449,6 @@
         getgenv().Humanoid = newCharacter:FindFirstChild("Humanoid") or newCharacter:FindFirstChildWhichIsA("Humanoid") or newCharacter:WaitForChild("Humanoid", 5)
         getgenv().Head = newCharacter:FindFirstChild("Head") or newCharacter:WaitForChild("Head", 5)
     end)
-
-    getgenv().check_marketplace_has_gamepass = function(userid, GamePassID)
-        if executor_Name == "Arceus X" then
-            local MarketplaceService = cloneref and cloneref(game:GetService("MarketplaceService")) or game:GetService("MarketplaceService")
-
-            local function ownsGamePass(userid, gamepassid)
-                local success, result = pcall(function()
-                    return MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(gamepassid)) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613)
-                end)
-
-                if success then
-                    return result
-                else
-                    warn("Error checking game pass:", result)
-                    return false
-                end
-            end
-
-            local gamepassid = GamePassID
-            wait(1)
-            if ownsGamePass(userid, gamepassid) then
-                print("Player Owns GamePass!")
-                return true
-            else
-                return false
-            end
-        else
-            if getgenv().MarketplaceService:UserOwnsGamePassAsync(userid, tonumber(GamePassID)) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
-                return true
-            else
-                getgenv().notify("Failure:", "You do not own this GamePass.", 5)
-                return false
-            end
-        end
-    end
 
     if getgenv().advanced_workaround_method == false and getmetatable and setmetatable and hookmetamethod and hookfunction then
         print("Advanced exploit detected, using bypass method.")
@@ -1683,28 +1648,6 @@
     else
         warn("Anti-Lag already loaded for Flames Hub!")
     end
-    wait(0.2)
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        if getgenv().reparented_model then
-            warn("Already reparented Avatar-UI Model")
-        else
-            for _, model in pairs(workspace:GetDescendants()) do
-                if model:IsA("Model") and model.Name == "AvatarUI" then
-                    local parent_to = game:GetService("Workspace"):FindFirstChild("PartStorage")
-                    model.Parent = parent_to
-                    if model.Parent == parent_to then
-                        print("True - AvatarUI [Avatar-Screen = 1/single]")
-                    else
-                        warn("False - AvatarUI [Unable to identify location./nil] = nil")
-                    end
-                end
-            end
-        end
-    else
-        warn("User isn't in MIC UP or MIC UP 17+, not loading.")
-    end
-    wait()
-    print("Loading emotes...")
     wait()
     local safeEmotes = {
         "DearALICE - Ariana",
@@ -1896,7 +1839,7 @@
         "Stray Kids Walkin On Water"
     }
     wait(0.2)
-    print("Loading emotes table.")
+    print("Loaded emotes names table.")
     wait(0.2)
     getgenv().CopyURLLinkToUpdatesLink = Tab1:CreateButton({
     Name = "Copy Link To See Latest Updates",
@@ -2388,10 +2331,20 @@
     end,})
     wait(0.2)
     if getgenv().Workspace:FindFirstChild("ANTI_VOID_BASEPLATE") then
-        getgenv().AntiVoidPlayer:Set(false)
+        if getgenv().AntiVoidPlayer then
+            getgenv().AntiVoidPlayer:Set(false)
+        else
+            warn("getgenv().AntiVoidPlayer doesn't exist in Rayfield UI Library!")
+        end
         getgenv().keepMyPlateOn = false
-        getgenv().Character:FindFirstChild("ANTI_VOID_BASEPLATE"):Destroy()
-        getgenv().myPlateThingy = nil
+        if getgenv().Character:FindFirstChild("ANTI_VOID_BASEPLATE") then
+            getgenv().Character:FindFirstChild("ANTI_VOID_BASEPLATE"):Destroy()
+        else
+            warn("ANTI_VOID_BASEPLATE was not found inside Character!")
+        end
+        if getgenv().myPlateThingy then
+            getgenv().myPlateThingy = nil
+        end
         getgenv().letItFollow = false
     end
     wait(0.1)
@@ -2403,9 +2356,11 @@
     CurrentValue = 0.6,
     Flag = "SlidingTransBasePlate",
     Callback = function(transBasePlate)
-        local Baseplate_AntiVoid = getgenv().myPlateThingy
+        if getgenv().myPlateThingy then
+            local Baseplate_AntiVoid = getgenv().myPlateThingy
 
-        Baseplate_AntiVoid.Transparency = transBasePlate
+            Baseplate_AntiVoid.Transparency = transBasePlate
+        end
     end,})
 
     getgenv().Change_Map_Color = Tab2:CreateColorPicker({
@@ -2413,9 +2368,11 @@
     Color = Color3.fromRGB(107, 50, 124),
     Flag = "PickThatBasePlateColor",
     Callback = function(AntiVoid_Color)
-        local Baseplate_AntiVoid = getgenv().myPlateThingy
-        
-        Baseplate_AntiVoid.Color = AntiVoid_Color
+        if getgenv().myPlateThingy then
+            local Baseplate_AntiVoid = getgenv().myPlateThingy
+            
+            Baseplate_AntiVoid.Color = AntiVoid_Color
+        end
     end,})
 
     getgenv().RainbowAntiVoidBasePlate = Tab2:CreateToggle({
@@ -2431,12 +2388,17 @@
             local TweenService = getgenv().TweenService
             local Workspace = getgenv().Workspace
             local PartStorage = Workspace:FindFirstChild("PartStorage")
+            if not PartStorage then return getgenv().notify("Failure:", "PartStorage does not exist in Workspace.", 5) end
             local Baseplate_AntiVoid = getgenv().myPlateThingy
+
+            if not getgenv().myPlateThingy then
+                return getgenv().notify("Failure:", "Anti Void Baseplate does not exist.", 5)
+            end
             
             if not Baseplate_AntiVoid then
                 getgenv().RainbowAntiVoidBasePlate:Set(false)
                 getgenv().parts_rainbow_anti_void = false
-                return getgenv().notify("Failure", "Anti Void Part does not exist!")
+                return getgenv().notify("Failure", "Anti Void Part does not exist!", 5)
             end
             
             local colors = {
@@ -2498,71 +2460,17 @@
         end
     end
     task.wait(0.2)
-    getgenv().AntiVoidPlayer:Set(false)
+    if getgenv().AntiVoidPlayer then
+        getgenv().AntiVoidPlayer:Set(false)
+    end
     wait(0.1)
     getgenv().Baseplate_Exists = false
-    getgenv().AntiVoidTransparency = nil
-    getgenv().Change_Map_Color = nil
-    
-    local Workspace = getgenv().Workspace
-    local PartStorage = Workspace:FindFirstChild("PartStorage")
-    
-    local function create_frame()
-        if not getgenv().Rayfield.Main.Elements:FindFirstChild("\240\159\167\141 LocalPlayer \240\159\167\141"):FindFirstChild("Anti Void BasePlate Transparency") then
-            warn("Not detected Frame's yet.")
-        else
-            getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Anti Void BasePlate Transparency"].Visible = true
-            getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Anti Void BasePlate Color"].Visible = true
-            getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Rainbow Anti Void Baseplate"].Visible = true
-        end
+    if getgenv().AntiVoidTransparency then
+        getgenv().AntiVoidTransparency = nil
     end
-    
-    local function remove_frame()
-        if not getgenv().Rayfield.Main.Elements:FindFirstChild("\240\159\167\141 LocalPlayer \240\159\167\141"):FindFirstChild("Anti Void BasePlate Transparency") then
-            warn("Not detected Frame's yet.")
-        else
-            getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Anti Void BasePlate Transparency"].Visible = false
-            getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Anti Void BasePlate Color"].Visible = false
-            getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Rainbow Anti Void Baseplate"].Visible = false
-        end
+    if getgenv().Change_Map_Color then
+        getgenv().Change_Map_Color = nil
     end
-
-    if getgenv().Baseplate_Exists == false then
-        getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Anti Void BasePlate Transparency"].Visible = false
-        getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Anti Void BasePlate Color"].Visible = false
-        getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Rainbow Anti Void Baseplate"].Visible = false
-    elseif getgenv().Baseplate_Exists or getgenv().Baseplate_Exists == true then
-        getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Anti Void BasePlate Transparency"].Visible = true
-        getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Anti Void BasePlate Color"].Visible = true
-        getgenv().Rayfield.Main.Elements["\240\159\167\141 LocalPlayer \240\159\167\141"]["Rainbow Anti Void Baseplate"].Visible = true
-    end
-    wait()
-    local function check_anti_void_part()
-        local baseplate = PartStorage and PartStorage:FindFirstChild("ANTI_VOID_BASEPLATE")
-        if baseplate and not getgenv().Baseplate_Exists then
-            getgenv().Baseplate_Exists = true
-            create_frame()
-        elseif not baseplate and getgenv().Baseplate_Exists then
-            getgenv().Baseplate_Exists = false
-            remove_frame()
-        end
-    end
-
-    if PartStorage then
-        PartStorage.ChildAdded:Connect(function(child)
-            if child.Name == "ANTI_VOID_BASEPLATE" then
-                check_anti_void_part()
-            end
-        end)
-    
-        PartStorage.ChildRemoved:Connect(function(child)
-            if child.Name == "ANTI_VOID_BASEPLATE" then
-                check_anti_void_part()
-            end
-        end)
-    end
-    
-    check_anti_void_part()
     wait()
     getgenv().RainbowBaseplate_Speed_Value = getgenv().RainbowBaseplate_Speed_Value or 0.5
     getgenv().RainbowSpeed = getgenv().RainbowSpeed or 2
@@ -2698,7 +2606,7 @@
     Range = {0, 1},
     Increment = 0.1,
     Suffix = "",
-    CurrentValue = 0,
+    CurrentValue = 1,
     Flag = "transSelectorForBaseplate",
     Callback = function(sliderTransparencySelected)
         local Workspace = getgenv().Workspace
@@ -2713,58 +2621,9 @@
             end
         end
     end,})
-
-    for _, v in ipairs(getgenv().Workspace:FindFirstChild("TERRAIN_EDITOR"):GetDescendants()) do
-        if v:IsA("BasePart") and v.Transparency == 1 then
-            getgenv().TransparencySelectorForBaseplate:Set(0)
-        end
-    end
     wait()
-    getgenv().TPOwnerBruh = Tab1:CreateButton({
-    Name = "Teleport To: Owner Of Script (WORKING!)",
-    Callback = function()
-        local Owner_Found = getgenv().Players:FindFirstChild("L0CKED_1N1") or getgenv().Players:FindFirstChild("CHEATING_B0SS") or getgenv().Players:FindFirstChild("ImClipFarmingForSure") or getgenv().Players:FindFirstChild("AmazingDontUKnowIt") or getgenv().Players:FindFirstChild("LolOperationSuccess")
-
-        if Owner_Found then
-            getgenv().Character:PivotTo(Owner_Found.Character:GetPivot())
-        else
-            return getgenv().notify("Failure:", "Unable to teleport to owner, player not found.", 5)
-        end
-    end,})
-
-    getgenv().ViewOwnerBruh = Tab1:CreateToggle({
-    Name = "View: Owner Of Script",
-    CurrentValue = false,
-    Flag = "viewOwner",
-    Callback = function(viewingOwner)
-        if viewingOwner then
-            getgenv().spectateOwner = true
-            local OwnerName = "L0CKED_1N1" or "CHEATING_B0SS" or "ImClipFarmingForSure" or "AmazingDontUKnowIt" or "LolOperationSuccess"
-            local Workspace = getgenv().Workspace
-            local Camera = Workspace:FindFirstChild("Camera")
-            if not getgenv().Players:FindFirstChild(OwnerName) then
-                getgenv().ViewOwnerBruh:Set(false)
-                wait(0.1)
-                getgenv().Camera = getgenv().Character or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-            end
-        
-            if getgenv().Players:FindFirstChild(OwnerName) then
-                local OwnerOfScript = game.Players:FindFirstChild(OwnerName)
-                local Owner_Char = OwnerOfScript.Character
-                Camera.CameraSubject = Owner_Char
-            else
-                return getgenv().notify("Failure!", "Owner not found in current server", 5)
-            end
-        else
-            local Workspace = getgenv().Workspace
-            local Camera = Workspace:FindFirstChild("Camera")
-
-            getgenv().spectateOwner = false
-            wait(0.2)
-            Camera.CameraSubject = getgenv().Character
-        end
-    end,})
-
+    print("Loading MIC UP Features...")
+    wait()
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().coloredBooth = Tab11:CreateToggle({
         Name = "Booth Color Changer (FE)",
@@ -3111,126 +2970,125 @@
             end
         end,})
         wait(0.1)
-        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
-            if v:IsA("Model") and v:FindFirstChild("Activate") then
-                v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
+        if getgenv().Workspace:FindFirstChild("Map") then
+            if getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth") then
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+                    if v:IsA("Model") and v:FindFirstChild("Activate") then
+                        v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
+                    end
+                end
+            else
+                warn("Booth doesn't exist in Map in Workspace!")
             end
+        else
+            warn("Map doesn't exist in Workspace!")
         end
         wait()
-        if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
-            getgenv().CopyAPlayersAv = Tab2:CreateInput({
-            Name = "Copy Player Avatar",
-            PlaceholderText = "Player",
-            RemoveTextAfterFocusLost = true,
-            Callback = function(copyUserAvatar)
-                local findAPlayerToCopy = findplr(copyUserAvatar)
-                if not getgenv().PlayerGui:FindFirstChild("Menu") then return end
+        getgenv().CopyAPlayersAv = Tab2:CreateInput({
+        Name = "Copy Player Avatar",
+        PlaceholderText = "Player",
+        RemoveTextAfterFocusLost = true,
+        Callback = function(copyUserAvatar)
+            local findAPlayerToCopy = findplr(copyUserAvatar)
+            if not getgenv().PlayerGui:FindFirstChild("Menu") then return end
+            local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
+            -- Bet you ain't never seen a proper check like this in other MIC UP scripts, it ACTUALLY checks if your allowing users to copy your avatar, and sets it for you if it's disabled/off, and if it is on, it does nothing :)
+            if CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "No" and firesignal then
+                local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
                 local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
 
-                if not getgenv().PlayerGui:FindFirstChild("Menu") then
-                    return getgenv().notify("Failure", "Menu was not found, probably removed.", 5)
-                else
-                    -- Bet you ain't never seen a proper check like this in other MIC UP scripts, it ACTUALLY checks if your allowing users to copy your avatar, and sets it for you if it's disabled/off, and if it is on, it does nothing :)
-                    if CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "No" and firesignal then
-                        local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-                        local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
-
-                        for _,v in pairs(CopyToggleToButton:GetDescendants()) do
-                            if v:IsA("ImageButton") or v:IsA("TextButton") then
-                                for i,Signal in pairs(Signals) do
-                                    firesignal(v[Signal])
-                                end
-                            end
+                for _,v in pairs(CopyToggleToButton:GetDescendants()) do
+                    if v:IsA("ImageButton") or v:IsA("TextButton") then
+                        for i,Signal in pairs(Signals) do
+                            firesignal(v[Signal])
                         end
-                    elseif not firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "No" then
-                        getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.new(0.168627, 0.521569, 0.552941)
-                        getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0
-                        getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "Yes"
-                        getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
                     end
                 end
-                wait(0.2)
-                if not findAPlayerToCopy and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
-                    local args = {
-                        [1] = tostring(copyUserAvatar)
-                    }
+            elseif not firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "No" then
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.new(0.168627, 0.521569, 0.552941)
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "Yes"
+                getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
+            end
+            wait(0.2)
+            if not findAPlayerToCopy and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
+                local args = {
+                    [1] = tostring(copyUserAvatar)
+                }
 
-                    getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
-                elseif CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
-                    local args = {
-                        [1] = tostring(findAPlayerToCopy)
-                    }
-                    
-                    getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
-                end
-            end,})
-
-            getgenv().GoBackToNormalAvatar = Tab2:CreateButton({
-            Name = "Change Back To Regular Avatar",
-            Callback = function()
-                if not getgenv().PlayerGui:FindFirstChild("Menu") then
-                    return getgenv().notify("Failure", "Menu GUI not found in PlayerGui, probably removed.", 5)
-                end
-                wait()
-                local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+            elseif CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
+                local args = {
+                    [1] = tostring(findAPlayerToCopy)
+                }
                 
-                if firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
-                    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-                    local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
+            end
+        end,})
 
-                    for _,v in pairs(CopyToggleToButton:GetDescendants()) do
-                        if v:IsA("ImageButton") or v:IsA("TextButton") then
-                            for i,Signal in pairs(Signals) do
-                                firesignal(v[Signal])
-                            end
+        getgenv().GoBackToNormalAvatar = Tab2:CreateButton({
+        Name = "Change Back To Regular Avatar",
+        Callback = function()
+            if not getgenv().PlayerGui:FindFirstChild("Menu") then
+                return getgenv().notify("Failure", "Menu GUI not found in PlayerGui, probably removed.", 5)
+            end
+            wait()
+            local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
+            
+            if firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
+                local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
+                local CopyToggleToButton = getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle")
+
+                for _,v in pairs(CopyToggleToButton:GetDescendants()) do
+                    if v:IsA("ImageButton") or v:IsA("TextButton") then
+                        for i,Signal in pairs(Signals) do
+                            firesignal(v[Signal])
                         end
                     end
-                elseif not firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then -- Bet you all those other scripts don't make checks like these.
-                    getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
-                    wait(0.1)
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
                 end
+            elseif not firesignal and CopyToggleToButton:FindFirstChild("TextButton") and CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then -- Bet you all those other scripts don't make checks like these.
+                getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
                 wait(0.1)
-                if CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
-                    getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
-                    wait(0.1)
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
-                    wait(0.5)
-                    local args = {
-                        [1] = tostring(getgenv().LocalPlayer.Name)
-                    }
-                    
-                    getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
-                    wait(0.3)
-                    local args = {
-                        [1] = tostring(getgenv().LocalPlayer.Name)
-                    }
-                    
-                    getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
-                else
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
-                    getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
-                    wait(0.5)
-                    local args = {
-                        [1] = tostring(getgenv().LocalPlayer.Name)
-                    }
-                    
-                    getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
-                    local args = {
-                        [1] = tostring(getgenv().LocalPlayer.Name)
-                    }
-                    
-                    getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
-                end
-            end,})
-        else
-            warn("Player does not own the GamePass (Admin).")
-        end
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
+            end
+            wait(0.1)
+            if CopyToggleToButton:FindFirstChild("TextButton").Text == "Yes" then
+                getgenv().ReplicatedStorage:FindFirstChild("ToggleDisallowEvent"):FireServer()
+                wait(0.1)
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
+                wait(0.5)
+                local args = {
+                    [1] = tostring(getgenv().LocalPlayer.Name)
+                }
+                
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                wait(0.3)
+                local args = {
+                    [1] = tostring(getgenv().LocalPlayer.Name)
+                }
+                
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
+            else
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").BackgroundTransparency = 0.9
+                getgenv().PlayerGui:FindFirstChild("Menu"):WaitForChild("Background"):WaitForChild("ModifyUser"):WaitForChild("Toggle"):WaitForChild("Toggle"):WaitForChild("TextButton").Text = "No"
+                wait(0.5)
+                local args = {
+                    [1] = tostring(getgenv().LocalPlayer.Name)
+                }
+                
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                local args = {
+                    [1] = tostring(getgenv().LocalPlayer.Name)
+                }
+                
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent"):FireServer(unpack(args))
+            end
+        end,})
     else
         warn("Did not load these Booth tabs [2].")
     end
@@ -6773,10 +6631,8 @@
             local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             local GetWorkspace = getgenv().Workspace
             local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
-            
-            local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
+            local Rep_Storage = getgenv().ReplicatedStorage
             local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
-
             local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
             local function fireAndUnclaimStall(stall)
@@ -7802,11 +7658,11 @@
                 animTrack:Stop()
             end
             wait(0.2)
-            getgenv().notify("Failed", "Player was not found!", 5)
+            getgenv().notify("Failed:", "Player was not found!", 5)
         end
     end,})
 
-    getgenv().PlayEmoteButFrozen = Tab12:CreateDropdown({
+    --[[getgenv().PlayEmoteButFrozen = Tab12:CreateDropdown({
     Name = "Play Emote (Loop)",
     Options = safeEmotes,
     CurrentOption = "Shuffle",
@@ -7890,8 +7746,8 @@
         for _, v in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks(getgenv().Humanoid)) do
             v.Looped = true
         end
-    end,})
-
+    end,})--]]
+    print("30")
     getgenv().StopEmoteLooping = Tab12:CreateButton({
     Name = "Stop Loop Emoting",
     Callback = function()
@@ -7919,6 +7775,8 @@
         end
     end,})
 
+    print("31")
+
     getgenv().PlayEmoteWithIDNum = Tab12:CreateInput({
     Name = "Play Emote (ID)",
     PlaceholderText = "Enter ID",
@@ -7941,6 +7799,8 @@
         end
     end,})
 
+    print("32")
+
     getgenv().StopTheEmotes = Tab12:CreateButton({
     Name = "Stop Emoting",
     Callback = function()
@@ -7958,105 +7818,80 @@
         end
     end,})
 
-    function check_GamePass(id)
-        local MarketplaceService = game:GetService("MarketplaceService")
-        local player = getgenv().LocalPlayer
-        local gamePassId = tonumber(id)
-
-        local success, hasPass = pcall(function()
-            return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamePassId) or MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, gamePassId)
-        end)
-
-        if success then
-            if hasPass then
-                print("Player owns the Game Pass! Loading :: Action")
-            else
-                print("Player does not own the GamePass! Not loading :: Action")
-            end
-        else
-            warn("Error checking Game Pass ownership:", hasPass)
-        end
-    end
-
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        if check_GamePass(951459548) then
-            getgenv().quickAvChange = Tab13:CreateToggle({
-            Name = "Change Avatar Quick [WILL Lag!⚠️]",
-            CurrentValue = false,
-            Flag = "quickAvChange",
-            Callback = function(quickAv)
-                if quickAv then
-                    local players = game:GetService("Players")
-                    getgenv().ava_switch = true
+        getgenv().quickAvChange = Tab13:CreateToggle({
+        Name = "Change Avatar Quick [WILL Lag!⚠️]",
+        CurrentValue = false,
+        Flag = "quickAvChange",
+        Callback = function(quickAv)
+            if quickAv then
+                local players = getgenv().Players
+                getgenv().ava_switch = true
 
-                    local usernames = {
-                        "DenisDaily",
-                        "ItsFunneh",
-                        "Flamingo",
-                        "KreekCraft",
-                        "GamingWithKev",
-                        "RussoTalks",
-                        "Tofuu",
-                        "Sketch",
-                        "AshleytheUnicorn",
-                        "TanqR",
-                        "LeahAshe",
-                        "Thinknoodles",
-                        "iamSanna",
-                        "FGTEEV",
-                        "ZacharyZaxor",
-                        "Builderman",
-                        "Roblox",
-                        "Minitoon",
-                        "Asimo3089",
-                        "Badcc",
-                        "Callmehbob",
-                        "Loleris",
-                        "Beeism",
-                        "MeganPlays",
-                        "ChadAlly",
-                        "AussieVixen",
-                        "Thinknoodles",
-                        "GDad",
-                        "SuperShiftery",
-                        "SimplyBlox",
-                        "MeganPlays",
-                        "GoldenGlove",
-                        "TeraBrite",
-                    }
+                local usernames = {
+                    "DenisDaily",
+                    "ItsFunneh",
+                    "Flamingo",
+                    "KreekCraft",
+                    "GamingWithKev",
+                    "RussoTalks",
+                    "Tofuu",
+                    "Sketch",
+                    "AshleytheUnicorn",
+                    "TanqR",
+                    "LeahAshe",
+                    "Thinknoodles",
+                    "iamSanna",
+                    "FGTEEV",
+                    "ZacharyZaxor",
+                    "Builderman",
+                    "Roblox",
+                    "Minitoon",
+                    "Asimo3089",
+                    "Badcc",
+                    "Callmehbob",
+                    "Loleris",
+                    "Beeism",
+                    "MeganPlays",
+                    "ChadAlly",
+                    "AussieVixen",
+                    "Thinknoodles",
+                    "GDad",
+                    "SuperShiftery",
+                    "SimplyBlox",
+                    "MeganPlays",
+                    "GoldenGlove",
+                    "TeraBrite",
+                }
 
-                    local function gatherCurrentPlayers()
-                        
-                        for _, player in ipairs(players:GetPlayers()) do
-                            table.insert(usernames, player.Name)
-                        end
+                local function gatherCurrentPlayers()
+                    for _, player in ipairs(players:GetPlayers()) do
+                        table.insert(usernames, player.Name)
                     end
-
-                    gatherCurrentPlayers()
-
-                    while getgenv().ava_switch == true do
-                        wait()
-                        for _, username in ipairs(usernames) do
-                            local args = {
-                                [1] = username
-                            }
-                            
-                            game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
-                        end
-                    end
-                else
-                    getgenv().ava_switch = false
-                    wait(0.3)
-                    local args = {
-                        [1] = tostring(getgenv().LocalPlayer.Name)
-                    }
-                    
-                    game:GetService("ReplicatedStorage"):WaitForChild("ModifyUsername"):FireServer(unpack(args))
                 end
-            end,})
-        else
-            warn("User does not own GamePass - Not loading this option.")
-        end
+
+                gatherCurrentPlayers()
+
+                while getgenv().ava_switch == true do
+                    wait()
+                    for _, username in ipairs(usernames) do
+                        local args = {
+                            [1] = username
+                        }
+                        
+                        getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+                    end
+                end
+            else
+                getgenv().ava_switch = false
+                wait(0.3)
+                local args = {
+                    [1] = tostring(getgenv().LocalPlayer.Name)
+                }
+                
+                getgenv().ReplicatedStorage:WaitForChild("ModifyUsername"):FireServer(unpack(args))
+            end
+        end,})
     else
         warn("Not in MIC UP or MIC UP 17+, not loading this part.")
     end
@@ -9227,15 +9062,11 @@
             RemoveTextAfterFocusLost = true,
             Callback = function(GetSpeed)
                 if tonumber(GetSpeed) then
-                    if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
-                        local args = {
-                            [1] = "Hoverboard"
-                        }
-                        
-                        getgenv().ReplicatedStorage:WaitForChild("ToolEvent"):FireServer(unpack(args))
-                    else
-                        getgenv().notify("Failure", "Cannot pickup Hoverboard, GamePass not owned.", 6)
-                    end
+                    local args = {
+                        [1] = "Hoverboard"
+                    }
+                    
+                    getgenv().ReplicatedStorage:WaitForChild("ToolEvent"):FireServer(unpack(args))
                     wait(0.3)
                     if getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Hoverboard") then
                         getgenv().LocalPlayer:FindFirstChildOfClass("Backpack"):FindFirstChild("Hoverboard").Parent = getgenv().Character
@@ -9879,6 +9710,8 @@
         end
     end
 
+    print("33")
+
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().DelInventory = Tab5:CreateButton({
         Name = "Delete Inventory",
@@ -9889,88 +9722,83 @@
             Delete_Inv_RemoteEvent:FireServer()
         end,})
 
-        if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
-            function Tools_Grab_Func()
-                local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-                local MarketplaceService = cloneref and cloneref(game:GetService("MarketplaceService")) or game:GetService("MarketplaceService")
-                local player = Players.LocalPlayer
-                local gamepassId = 951459548
+        function Tools_Grab_Func()
+            local Players = getgenv().Players
+            local MarketplaceService = cloneref and cloneref(game:GetService("MarketplaceService")) or game:GetService("MarketplaceService")
+            local player = Players.LocalPlayer
+            local gamepassId = 951459548
 
-                local success, hasPass = pcall(function()
-                    return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassId) or MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, gamepassId)
-                end)
-                if success and hasPass then
-                    print(tostring(player.Name).." owns this GamePass, moving on.")
-                else
-                    getgenv().shouldGrabTools = false
-                    getgenv().shouldGrabTools = false
-                    getgenv().getEverything:Set(false)
-                end
-                wait(0.2)
-                local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage") or getgenv().ReplicatedStorage
-                local ToolEvent = ReplicatedStorage and ReplicatedStorage:FindFirstChild("ToolEvent") or ReplicatedStorage:WaitForChild("ToolEvent", 3)
-                local Randomizer = math.random(5, 9)
+            local success, hasPass = pcall(function()
+                return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassId) or MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, gamepassId)
+            end)
+            if success and hasPass then
+                print(tostring(player.Name).." owns this GamePass, moving on.")
+            else
+                getgenv().shouldGrabTools = false
+                getgenv().shouldGrabTools = false
+                getgenv().getEverything:Set(false)
+            end
+            wait(0.2)
+            local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage") or getgenv().ReplicatedStorage
+            local ToolEvent = ReplicatedStorage and ReplicatedStorage:FindFirstChild("ToolEvent") or ReplicatedStorage:WaitForChild("ToolEvent", 3)
+            local Randomizer = math.random(5, 9)
 
-                local function PickUp_Tool(Tool)
-                    ToolEvent:FireServer(tostring(Tool))
-                end
-
-                for i = 1, Randomizer do
-                    PickUp_Tool("Announcer")
-                    PickUp_Tool("Bag")
-                    PickUp_Tool("BlowDryer")
-                    PickUp_Tool("Brick")
-                    PickUp_Tool("Camera")
-                    PickUp_Tool("Coil")
-                    PickUp_Tool("Design")
-                    PickUp_Tool("Doll")
-                    PickUp_Tool("FireworkLaunch")
-                    PickUp_Tool("Firework")
-                    PickUp_Tool("Fit")
-                    PickUp_Tool("Gun")
-                    PickUp_Tool("Horrible")
-                    PickUp_Tool("Hoverboard")
-                    PickUp_Tool("Knife")
-                    PickUp_Tool("Motor")
-                    PickUp_Tool("Pistol")
-                    PickUp_Tool("Spray")
-                    PickUp_Tool("Suitbag")
-                    PickUp_Tool("Tele")
-                    PickUp_Tool("Torch")
-                    PickUp_Tool("Wand")
-                end
+            local function PickUp_Tool(Tool)
+                ToolEvent:FireServer(tostring(Tool))
             end
 
-            getgenv().GrabEverything = Tab5:CreateButton({
-            Name = "Grab All Tools",
-            Callback = function()
-                Tools_Grab_Func()
-            end,})
-
-            getgenv().getEverything = Tab5:CreateToggle({
-            Name = "Loop Grab All Tools",
-            CurrentValue = false,
-            Flag = "grabbedAllThat",
-            Callback = function(grabFreeTools)
-                if grabFreeTools then
-                    getgenv().shouldGrabTools = true
-                    while getgenv().shouldGrabTools == true do
-                    task.wait()
-                        Tools_Grab_Func()
-                    end
-                else
-                    local Rep_Storage = getgenv().ReplicatedStorage
-                    local Delete_Inv_Event = Rep_Storage:WaitForChild("DeleteInventory") or Rep_Storage:FindFirstChild("DeleteInventory")
-                    getgenv().shouldGrabTools = false
-                    getgenv().shouldGrabTools = false
-                    wait(0.5)
-                    Delete_Inv_Event:FireServer()
-                end
-            end,})
-        else
-            warn("LocalPlayer does not own this GamePass.")
-            getgenv().notify("Skipped:", "You do not own the 'Admin' GamePass.", 5)
+            for i = 1, Randomizer do
+                PickUp_Tool("Announcer")
+                PickUp_Tool("Bag")
+                PickUp_Tool("BlowDryer")
+                PickUp_Tool("Brick")
+                PickUp_Tool("Camera")
+                PickUp_Tool("Coil")
+                PickUp_Tool("Design")
+                PickUp_Tool("Doll")
+                PickUp_Tool("FireworkLaunch")
+                PickUp_Tool("Firework")
+                PickUp_Tool("Fit")
+                PickUp_Tool("Gun")
+                PickUp_Tool("Horrible")
+                PickUp_Tool("Hoverboard")
+                PickUp_Tool("Knife")
+                PickUp_Tool("Motor")
+                PickUp_Tool("Pistol")
+                PickUp_Tool("Spray")
+                PickUp_Tool("Suitbag")
+                PickUp_Tool("Tele")
+                PickUp_Tool("Torch")
+                PickUp_Tool("Wand")
+            end
         end
+
+        getgenv().GrabEverything = Tab5:CreateButton({
+        Name = "Grab All Tools",
+        Callback = function()
+            Tools_Grab_Func()
+        end,})
+
+        getgenv().getEverything = Tab5:CreateToggle({
+        Name = "Loop Grab All Tools",
+        CurrentValue = false,
+        Flag = "grabbedAllThat",
+        Callback = function(grabFreeTools)
+            if grabFreeTools then
+                getgenv().shouldGrabTools = true
+                while getgenv().shouldGrabTools == true do
+                task.wait()
+                    Tools_Grab_Func()
+                end
+            else
+                local Rep_Storage = getgenv().ReplicatedStorage
+                local Delete_Inv_Event = Rep_Storage:WaitForChild("DeleteInventory") or Rep_Storage:FindFirstChild("DeleteInventory")
+                getgenv().shouldGrabTools = false
+                getgenv().shouldGrabTools = false
+                wait(0.5)
+                Delete_Inv_Event:FireServer()
+            end
+        end,})
     else
         warn("Not on MIC UP, not loading these features.")
     end
@@ -10974,73 +10802,69 @@
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         local gamePassId = 951459548
 
-        if getgenv().check_marketplace_has_gamepass(getgenv().LocalPlayer.UserId, 951459548) or getgenv().MarketplaceService:PlayerOwnsAsset(getgenv().LocalPlayer, 2937412613) then
-            getgenv().DoCharacterFlicking = Tab2:CreateToggle({
-            Name = "Character Flicker (FE)",
-            CurrentValue = false,
-            Flag = "CharFlickeringLmao",
-            Callback = function(Flick)
-                if Flick then
-                    getgenv().CharFlick = true
-                    while getgenv().CharFlick == true do
-                        task.wait()
-                        local Update_Height_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateHeight")
-                        local Update_Depth_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateDepth")
-                        local Update_Width_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateWidth")
+        getgenv().DoCharacterFlicking = Tab2:CreateToggle({
+        Name = "Character Flicker (FE)",
+        CurrentValue = false,
+        Flag = "CharFlickeringLmao",
+        Callback = function(Flick)
+            if Flick then
+                getgenv().CharFlick = true
+                while getgenv().CharFlick == true do
+                    task.wait()
+                    local Update_Height_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateHeight")
+                    local Update_Depth_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateDepth")
+                    local Update_Width_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateWidth")
 
-                        local args = {
-                            [1] = 0
-                        }
-                        
-                        Update_Height_Remote:FireServer(unpack(args))
-                        wait()
-                        local args = {
-                            [1] = 0
-                        }
-                        
-                        Update_Depth_Remote:FireServer(unpack(args))
-                        wait()
-                        local args = {
-                            [1] = 0
-                        }
-                        
-                        Update_Width_Remote:FireServer(unpack(args))
-                        wait()
-                        local args = {
-                            [1] = 1
-                        }
-                        
-                        Update_Height_Remote:FireServer(unpack(args))
-                        wait()
-                        local args = {
-                            [1] = 1
-                        }
-                        
-                        Update_Depth_Remote:FireServer(unpack(args))
-                        wait()
-                        local args = {
-                            [1] = 1
-                        }
-                        
-                        Update_Width_Remote:FireServer(unpack(args))
-                    end
-                else
-                    local Modify_User_Remote = getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent")
-                    local Local_Player = getgenv().LocalPlayer
-                    local Local_Plr_Name = Local_Player.Name or tostring(Local_Player.Name)
-
-                    getgenv().CharFlick = false
-                    wait(0.3)
                     local args = {
-                        [1] = tostring(Local_Plr_Name)
+                        [1] = 0
                     }
                     
-                    Modify_User_Remote:FireServer(unpack(args))
+                    Update_Height_Remote:FireServer(unpack(args))
+                    wait()
+                    local args = {
+                        [1] = 0
+                    }
+                    
+                    Update_Depth_Remote:FireServer(unpack(args))
+                    wait()
+                    local args = {
+                        [1] = 0
+                    }
+                    
+                    Update_Width_Remote:FireServer(unpack(args))
+                    wait()
+                    local args = {
+                        [1] = 1
+                    }
+                    
+                    Update_Height_Remote:FireServer(unpack(args))
+                    wait()
+                    local args = {
+                        [1] = 1
+                    }
+                    
+                    Update_Depth_Remote:FireServer(unpack(args))
+                    wait()
+                    local args = {
+                        [1] = 1
+                    }
+                    
+                    Update_Width_Remote:FireServer(unpack(args))
                 end
-            end,})
-        else
-            warn("You do not own the Admin GamePass, not loading Tab: [Character Flicker (FE)]")
-        end
+            else
+                local Modify_User_Remote = getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent")
+                local Local_Player = getgenv().LocalPlayer
+                local Local_Plr_Name = Local_Player.Name or tostring(Local_Player.Name)
+
+                getgenv().CharFlick = false
+                wait(0.3)
+                local args = {
+                    [1] = tostring(Local_Plr_Name)
+                }
+                
+                Modify_User_Remote:FireServer(unpack(args))
+            end
+        end,})
     else
         warn("Not loading this part, not on MIC UP or MIC UP 17+")
     end
