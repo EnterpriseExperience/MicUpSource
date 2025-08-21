@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.7.7"
+local Raw_Version = "V2.7.9"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1459,6 +1459,8 @@ local function CommandsMenu()
       {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone)
       {prefix}name NewName - Change RP name
       {prefix}bio NewBio - Change RP bio
+      {prefix}alljobs - Repeatedly spams all jobs
+      {prefix}jobsoff - Stops spamming all jobs
       {prefix}fly SpeedNumber - Enable/disable flying
       {prefix}unfly - Disables (Fly) command
       {prefix}noclip - Enables Noclip, letting you walk through everything
@@ -2343,6 +2345,42 @@ local function handleCommand(sender, message)
       if getgenv().Rainbow_Tasks[PlayerToRGBCarStop.Name] then
          getgenv().Rainbow_Tasks[PlayerToRGBCarStop.Name] = nil
       end
+   elseif cmd == "alljobs" then
+      getgenv().Every_Job = true
+      while getgenv().Every_Job == true do
+      task.wait(0)
+         getgenv().Send("job", "Police")
+         task.wait()
+         getgenv().Send("job", "Firefighter")
+         task.wait()
+         getgenv().Send("job", "Baker")
+         task.wait()
+         getgenv().Send("job", "Pizza Worker")
+         task.wait()
+         getgenv().Send("job", "Janitor")
+         task.wait()
+         getgenv().Send("job", "Mechanic")
+         task.wait()
+         getgenv().Send("job", "Barista")
+         task.wait()
+         getgenv().Send("job", "Doctor")
+         task.wait()
+         getgenv().Send("job", "Prisoner")
+         task.wait()
+         getgenv().Send("job", "Nurse")
+         task.wait()
+         getgenv().Send("job", "Student")
+         task.wait()
+         getgenv().Send("job", "Teacher")
+         task.wait()
+         getgenv().Send("job", "Principal")
+         task.wait()
+         getgenv().Send("job", "Lifeguard")
+         task.wait()
+         getgenv().Send("job")
+      end
+   elseif cmd == "jobsoff" then
+      getgenv().Every_Job = false
    elseif cmd == "stoprgbskin" then
       rainbow_skin(false)
    elseif cmd == "startrgbphone" then
@@ -2698,11 +2736,15 @@ local function handleCommand(sender, message)
          return notify("Failure:", "NoSit/AntiSit is already enabled!", 5)
       end
 
-      require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
-      wait(0.1)
-      -- might as well use both 🤷
       notify("Success:", "Anti-Sit/No-Sit is now enabled!", 5)
       Phone.show_notification("Success:", "AntiSit/NoSit is now enabled!")
+      wait(0.2)
+      getgenv().Not_Ever_Sitting = true
+
+      while getgenv().Not_Ever_Sitting == true do
+      task.wait()
+         require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
+      end
    elseif cmd == "resit" or cmd == "unantisit" then
       local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
       
@@ -2711,6 +2753,8 @@ local function handleCommand(sender, message)
          return notify("Failure:", "Sitting is already enabled!", 5)
       end
 
+      getgenv().Not_Ever_Sitting = false
+      wait(0.2)
       require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
       wait(0.1)
       -- might as well use both 🤷
