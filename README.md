@@ -1,4 +1,4 @@
-## [📜 Current 🔥 Flames Hub 🔥 Version: V10.0.3 📜]:
+## [📜 Current 🔥 Flames Hub 🔥 Version: V10.0.8 📜]:
 
 ```lua
 -- 🎤 MIC UP 🎤 --
@@ -8,7 +8,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 ```
 ## ⬇️ Be sure to check out my other script hub's below! ⬇️ ##
 
-[All my other script hubs (7 games)](https://github.com/EnterpriseExperience/MicUpSource/wiki/My-script-hubs-for-other-games.)
+[All my other script hubs (8 games)](https://github.com/EnterpriseExperience/MicUpSource/wiki/My-script-hubs-for-other-games.)
 
 
 ```lua
