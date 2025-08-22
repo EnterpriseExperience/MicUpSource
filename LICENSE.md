@@ -19,7 +19,8 @@ subject to the following conditions:
    Each distributed copy may include a License ID or reference tag.  
    Verification of authenticity may be required for online or API-based use.  
 
-3. **Prohibited Uses**  
+3. **Prohibited Uses**
+
    - Unauthorized resale, misrepresentation, or use of the Software under another 
      brand or entity is strictly prohibited.  
    - Distribution of modified versions must retain attribution and may not imply 
@@ -27,7 +28,7 @@ subject to the following conditions:
    - Unauthorized automation or scraping of the Flames Hub API is not permitted 
      under this License.  
 
-4. **Permitted Uses**  
+4. **Permitted Uses**
    - Personal, educational, and commercial projects are allowed within the scope 
      of this License.  
    - Redistribution via online repositories or package managers is allowed, provided 
