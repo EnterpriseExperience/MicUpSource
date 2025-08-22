@@ -486,6 +486,10 @@ local scripts = {
         id = 5104202731,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Southwest_Florida.lua"
     },
+    ["Driving Empire"] = {
+        id = 3351674303,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"
+    },
 }
 
 for name, data in pairs(scripts) do
