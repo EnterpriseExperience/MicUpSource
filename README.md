@@ -18,4 +18,4 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 [Wiki with more information.](https://github.com/EnterpriseExperience/MicUpSource/wiki)
 
 ## NEW: 🔥 FLAMES HUB API! 🔥 CHECK IT OUT HERE: ##
-[Flames Hub API](https://enterpriseexperience.github.io)
+[Flames Hub API | Documentation](https://enterpriseexperience.github.io)
