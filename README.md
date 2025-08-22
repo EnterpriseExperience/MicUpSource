@@ -20,5 +20,4 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 ## NEW: 🔥 FLAMES HUB API! 🔥 CHECK IT OUT HERE: ##
 [Flames Hub API | Documentation](https://enterpriseexperience.github.io)
 
-LICENSE AGREEMENT:
-https://github.com/EnterpriseExperience/MicUpSource/blob/main/LICENSE.md
+[LICENSE AGREEMENT](https://github.com/EnterpriseExperience/MicUpSource/blob/main/LICENSE.md)
