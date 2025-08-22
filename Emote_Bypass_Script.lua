@@ -307,6 +307,35 @@ params.IncludeOffSale = true
 params.CreatorName = "Roblox"
 params.Limit = 120
 
+local function FetchAllEmotes()
+	local params = CatalogSearchParams.new()
+	params.AssetTypes = {Enum.AvatarAssetType.EmoteAnimation}
+	params.SortType = Enum.CatalogSortType.Relevance
+	params.SortAggregation = Enum.CatalogSortAggregation.AllTime
+	params.IncludeOffSale = true
+	params.Limit = 120
+
+	local page = game:GetService("AvatarEditorService"):SearchCatalog(params)
+	local results = {}
+
+	repeat
+		for _, item in ipairs(page:GetCurrentPage()) do
+			table.insert(results, {
+				Name = item.Name,
+				Id = item.Id,
+				Price = item.PriceInRobux or 0
+			})
+		end
+		if not page.IsFinished then
+			page:AdvanceToNextPageAsync()
+		end
+	until page.IsFinished
+
+	return results
+end
+wait(0.1)
+FetchAllEmotes()
+
 local function getCatalogPage()
 	local success, catalogPage = pcall(function()
 		return AvatarEditorService:SearchCatalog(params)
@@ -351,15 +380,12 @@ for i, Emote in pairs(totalEmotes) do
 	AddEmote(Emote.Name, Emote.Id, Emote.Price)
 end
 
---unreleased emotes
 AddEmote("Arm Wave", 5915773155)
 AddEmote("Head Banging", 5915779725)
 AddEmote("Face Calisthenics", 9830731012)
 
---finished loading
 Loading:Destroy()
 
---sorting options setup
 table.sort(Emotes, function(a, b)
 	return a.index < b.index
 end)
@@ -454,8 +480,7 @@ if not IsStudio then
 	end
 end
 
-
-local function CharacterAdded(Character)
+local function CharacterAddedWithUI(Character)
 	for i,v in pairs(Frame:GetChildren()) do
 		if not v:IsA("UIGridLayout") then
 			v:Destroy()
@@ -562,7 +587,31 @@ local function CharacterAdded(Character)
 	end
 end
 
+local function RegisterAllEmotesToHumanoid(Humanoid)
+	local desc = Humanoid:FindFirstChildOfClass("HumanoidDescription")
+	if not desc then
+		desc = Instance.new("HumanoidDescription")
+		desc.Parent = Humanoid
+	end
+
+	for _, emote in pairs(Emotes) do
+		pcall(function()
+			desc:AddEmote(emote.name, emote.id)
+		end)
+	end
+end
+
+local function CharacterAdded(Character)
+	local humanoid = Character and Character:WaitForChild("Humanoid")
+	RegisterAllEmotesToHumanoid(humanoid)
+end
+
 if LocalPlayer.Character then
+	CharacterAddedWithUI(LocalPlayer.Character)
 	CharacterAdded(LocalPlayer.Character)
 end
-LocalPlayer.CharacterAdded:Connect(CharacterAdded)
+
+LocalPlayer.CharacterAdded:Connect(function(Character)
+	CharacterAddedWithUI(Character)
+	CharacterAdded(Character)
+end)
