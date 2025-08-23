@@ -1811,7 +1811,7 @@ local function alreadyCheckedUser(player)
 end
 
 local function enable_rgb_for(name)
-   local plr = g.Players and g.Players[name]
+   local plr = getgenv().Players and getgenv().Players[name]
    if not plr then return false, "Player not found" end
 
    local v = get_other_vehicle(plr)
@@ -1898,7 +1898,7 @@ local function setup_cmd_handler_plr(player)
 
       if levenshtein(command, "rgbcar") <= 2 then
          local Player = getgenv().Players[speaker.Name]
-         local Name = getgenv().Players[speaker.Name].Name
+         local Name = Player.Name
 
          if not get_other_vehicle(Player) then
             getgenv().Rainbow_Vehicles[Name] = false
@@ -1914,9 +1914,9 @@ local function setup_cmd_handler_plr(player)
          if not g.Rainbow_LoopConn then
             g.Rainbow_LoopConn = RunService.Heartbeat:Connect(function()
             if (g.Rainbow_ActiveCount or 0) <= 0 then return end
-            local now = time()
+               local now = time()
 
-            for name, enabled in next, g.Rainbow_Vehicles do
+               for name, enabled in next, g.Rainbow_Vehicles do
                   if enabled then
                      local nextAt = g.Rainbow_Next[name] or 0
                      if now >= nextAt then
@@ -1949,7 +1949,7 @@ local function setup_cmd_handler_plr(player)
             end)
          end
 
-         enable_rgb_for(name)
+         enable_rgb_for(Name)
       elseif levenshtein(command:split(" ")[1], "rgbtime") <= 2 then
          local parts = command:split(" ")
          local delayStr = parts[2]
