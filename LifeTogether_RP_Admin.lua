@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.7.9"
+local Raw_Version = "V2.8.1"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1863,6 +1863,7 @@ local function setup_cmd_handler_plr(player)
          getgenv().Rainbow_Tasks = getgenv().Rainbow_Tasks or {}
          getgenv().Rainbow_Vehicles[Name] = true
          getgenv().Rainbow_Delays[Name] = getgenv().Rainbow_Delays[Name] or 0.2
+         getgenv().Rainbow_Indices = getgenv().Rainbow_Indices or {}
 
          local colors = {
             Color3.fromRGB(255, 255, 255), Color3.fromRGB(128, 128, 128), Color3.fromRGB(0, 0, 0),
@@ -1872,25 +1873,34 @@ local function setup_cmd_handler_plr(player)
             Color3.fromRGB(128, 0, 128),
          }
 
-         local thread = coroutine.create(function()
-            local i = 0
-            while getgenv().Rainbow_Vehicles[Name] do
-               local v = get_other_vehicle(Player)
-               if not v then
-                  getgenv().Rainbow_Vehicles[Name] = false
-                  break
+         if not getgenv().Rainbow_MainLoop then
+            getgenv().Rainbow_MainLoop = true
+
+            RunService.Heartbeat:Connect(function(dt)
+               for name, enabled in pairs(getgenv().Rainbow_Vehicles) do
+                  if enabled then
+                     local player = getgenv().Players[name]
+                     local vehicle = player and get_other_vehicle(player)
+
+                     if vehicle then
+                        getgenv().Rainbow_Indices[name] = (getgenv().Rainbow_Indices[name] or 0) + 1
+
+                        local index = (getgenv().Rainbow_Indices[name] % #colors) + 1
+                        change_vehicle_color(colors[index], vehicle)
+
+                        local delay = getgenv().Rainbow_Delays[name] or 0.2
+                        player._rainbowNext = player._rainbowNext or 0
+                        if tick() < player._rainbowNext then
+                           continue
+                        end
+                        player._rainbowNext = tick() + delay
+                     else
+                        getgenv().Rainbow_Vehicles[name] = false
+                     end
+                  end
                end
-
-               change_vehicle_color(colors[(i % #colors) + 1], v)
-               i += 1
-
-               local delay = getgenv().Rainbow_Delays[speaker.Name] or 0.2
-               task.wait(delay)
-            end
-         end)
-
-         getgenv().Rainbow_Tasks[speaker.Name] = thread
-         coroutine.resume(thread)
+            end)
+         end
       elseif levenshtein(command:split(" ")[1], "rgbtime") <= 2 then
          local parts = command:split(" ")
          local delayStr = parts[2]
@@ -1907,14 +1917,14 @@ local function setup_cmd_handler_plr(player)
          getgenv().Rainbow_Delays[speaker.Name] = newDelay
       elseif levenshtein(command, "norgbcar") <= 2 then
          local name = speaker.Name
-         if not speaker then return notify("Failure:", "Player does not exist!", 5) end
+         if not speaker then 
+            return notify("Failure:", "Player does not exist!", 5) 
+         end
 
          if getgenv().Rainbow_Vehicles[name] then
             getgenv().Rainbow_Vehicles[name] = false
-            task.wait(0.25)
+            getgenv().Rainbow_Indices[name] = nil
          end
-         wait(0.1)
-         getgenv().Rainbow_Tasks[name] = nil
       elseif levenshtein(command, "lockcar") <= 2 then
          if not playerVehicle then
             getgenv().LockLoop_Vehicles[speaker.Name] = false
