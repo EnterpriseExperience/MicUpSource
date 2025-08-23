@@ -1783,6 +1783,20 @@ getgenv().Rainbow_Vehicles = getgenv().Rainbow_Vehicles or {}
 getgenv().Locked_Vehicles = getgenv().Locked_Vehicles or {}
 getgenv().Unlocked_Vehicles = getgenv().Unlocked_Vehicles or {}
 getgenv().Rainbow_Tasks = getgenv().Rainbow_Tasks or {}
+local g = getgenv()
+g.Rainbow_Delays         = g.Rainbow_Delays         or {}
+g.Rainbow_Indices        = g.Rainbow_Indices        or {}
+g.Rainbow_Next           = g.Rainbow_Next           or {}
+g.Rainbow_CachedVehicle  = g.Rainbow_CachedVehicle  or {}
+g.Rainbow_ActiveCount    = g.Rainbow_ActiveCount    or 0
+g.Rainbow_MIN_DELAY      = g.Rainbow_MIN_DELAY      or 0.04
+g.Rainbow_Colors = g.Rainbow_Colors or {
+   Color3.fromRGB(255,255,255), Color3.fromRGB(128,128,128), Color3.fromRGB(0,0,0),
+   Color3.fromRGB(0,0,255),     Color3.fromRGB(0,255,0),     Color3.fromRGB(0,255,255),
+   Color3.fromRGB(255,165,0),   Color3.fromRGB(139,69,19),   Color3.fromRGB(255,255,0),
+   Color3.fromRGB(50,205,50),   Color3.fromRGB(255,0,0),     Color3.fromRGB(255,155,172),
+   Color3.fromRGB(128,0,128),
+}
 wait(0.2)
 local function alreadyCheckedUser(player)
    if not getgenv().friend_checked[player.Name] then
@@ -1796,7 +1810,46 @@ local function alreadyCheckedUser(player)
    end
 end
 
-getgenv().Rainbow_Delays = getgenv().Rainbow_Delays or {}
+local function enable_rgb_for(name)
+   local plr = g.Players and g.Players[name]
+   if not plr then return false, "Player not found" end
+
+   local v = get_other_vehicle(plr)
+   if not v then
+      g.Rainbow_Vehicles[name] = false
+      return false, "you don't have a vehicle"
+   end
+
+   local firstEnable = not g.Rainbow_Vehicles[name]
+   g.Rainbow_Vehicles[name] = true
+   g.Rainbow_Delays[name]   = g.Rainbow_Delays[name] or 0.03
+   g.Rainbow_Indices[name]  = g.Rainbow_Indices[name] or 0
+   g.Rainbow_CachedVehicle[name] = v
+   g.Rainbow_Next[name] = time() + math.random() * 0.015
+
+   if firstEnable then
+      g.Rainbow_ActiveCount = (g.Rainbow_ActiveCount or 0) + 1
+   end
+   return true
+end
+
+local function disable_rgb_for(name)
+   if g.Rainbow_Vehicles[name] then
+      g.Rainbow_Vehicles[name] = false
+      g.Rainbow_Indices[name] = nil
+      g.Rainbow_Next[name] = nil
+      g.Rainbow_CachedVehicle[name] = nil
+      g.Rainbow_ActiveCount = math.max(0, (g.Rainbow_ActiveCount or 1) - 1)
+   end
+end
+
+local function set_rgb_delay(name, newDelay)
+   if type(newDelay) ~= "number" then return false, "invalid time value" end
+   if newDelay < g.Rainbow_MIN_DELAY then newDelay = g.Rainbow_MIN_DELAY end
+   g.Rainbow_Delays[name] = newDelay
+   g.Rainbow_Next[name] = 0
+   return true
+end
 
 local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
@@ -1858,49 +1911,45 @@ local function setup_cmd_handler_plr(player)
             return chat_reply(Player.DisplayName, "you don't have a vehicle")
          end
 
-         getgenv().Rainbow_Vehicles = getgenv().Rainbow_Vehicles or {}
-         getgenv().Rainbow_Delays = getgenv().Rainbow_Delays or {}
-         getgenv().Rainbow_Tasks = getgenv().Rainbow_Tasks or {}
-         getgenv().Rainbow_Vehicles[Name] = true
-         getgenv().Rainbow_Delays[Name] = getgenv().Rainbow_Delays[Name] or 0.2
-         getgenv().Rainbow_Indices = getgenv().Rainbow_Indices or {}
+         if not g.Rainbow_LoopConn then
+            g.Rainbow_LoopConn = RunService.Heartbeat:Connect(function()
+            if (g.Rainbow_ActiveCount or 0) <= 0 then return end
+            local now = time()
 
-         local colors = {
-            Color3.fromRGB(255, 255, 255), Color3.fromRGB(128, 128, 128), Color3.fromRGB(0, 0, 0),
-            Color3.fromRGB(0, 0, 255), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 255, 255),
-            Color3.fromRGB(255, 165, 0), Color3.fromRGB(139, 69, 19), Color3.fromRGB(255, 255, 0),
-            Color3.fromRGB(50, 205, 50), Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 155, 172),
-            Color3.fromRGB(128, 0, 128),
-         }
-
-         if not getgenv().Rainbow_MainLoop then
-            getgenv().Rainbow_MainLoop = true
-
-            RunService.Heartbeat:Connect(function(dt)
-               for name, enabled in pairs(getgenv().Rainbow_Vehicles) do
+            for name, enabled in next, g.Rainbow_Vehicles do
                   if enabled then
-                     local player = getgenv().Players[name]
-                     local vehicle = player and get_other_vehicle(player)
-
-                     if vehicle then
-                        getgenv().Rainbow_Indices[name] = (getgenv().Rainbow_Indices[name] or 0) + 1
-
-                        local index = (getgenv().Rainbow_Indices[name] % #colors) + 1
-                        change_vehicle_color(colors[index], vehicle)
-
-                        local delay = getgenv().Rainbow_Delays[name] or 0.2
-                        player._rainbowNext = player._rainbowNext or 0
-                        if tick() < player._rainbowNext then
-                           continue
+                     local nextAt = g.Rainbow_Next[name] or 0
+                     if now >= nextAt then
+                        local v = g.Rainbow_CachedVehicle[name]
+                        if not (v and v.Parent) then
+                           local plr = g.Players and g.Players[name]
+                           v = plr and get_other_vehicle(plr) or nil
+                           g.Rainbow_CachedVehicle[name] = v
                         end
-                        player._rainbowNext = tick() + delay
-                     else
-                        getgenv().Rainbow_Vehicles[name] = false
+
+                        if v then
+                           local i = (g.Rainbow_Indices[name] or 0) + 1
+                           g.Rainbow_Indices[name] = i
+                           local color = g.Rainbow_Colors[(i % #g.Rainbow_Colors) + 1]
+                           change_vehicle_color(color, v)
+
+                           local d = g.Rainbow_Delays[name] or 0.2
+                           if d < g.Rainbow_MIN_DELAY then d = g.Rainbow_MIN_DELAY end
+                           g.Rainbow_Next[name] = now + d
+                        else
+                           g.Rainbow_Vehicles[name] = false
+                           g.Rainbow_Indices[name] = nil
+                           g.Rainbow_Next[name] = nil
+                           g.Rainbow_CachedVehicle[name] = nil
+                           g.Rainbow_ActiveCount = math.max(0, (g.Rainbow_ActiveCount or 1) - 1)
+                        end
                      end
                   end
                end
             end)
          end
+
+         enable_rgb_for(name)
       elseif levenshtein(command:split(" ")[1], "rgbtime") <= 2 then
          local parts = command:split(" ")
          local delayStr = parts[2]
@@ -1910,21 +1959,15 @@ local function setup_cmd_handler_plr(player)
             return chat_reply(getgenv().Players[speaker.Name].DisplayName, "invalid time value")
          end
 
-         if newDelay < 0.01 then
-            newDelay = 0.01
+         if newDelay < 0.03 then
+            newDelay = 0.03
          end
 
-         getgenv().Rainbow_Delays[speaker.Name] = newDelay
+         local name = getgenv().Players[speaker.Name].Name
+         g.Rainbow_Delays[name] = newDelay
+         g.Rainbow_Next[name] = time()
       elseif levenshtein(command, "norgbcar") <= 2 then
-         local name = speaker.Name
-         if not speaker then 
-            return notify("Failure:", "Player does not exist!", 5) 
-         end
-
-         if getgenv().Rainbow_Vehicles[name] then
-            getgenv().Rainbow_Vehicles[name] = false
-            getgenv().Rainbow_Indices[name] = nil
-         end
+         disable_rgb_for(getgenv().Players[speaker.Name].Name)
       elseif levenshtein(command, "lockcar") <= 2 then
          if not playerVehicle then
             getgenv().LockLoop_Vehicles[speaker.Name] = false
