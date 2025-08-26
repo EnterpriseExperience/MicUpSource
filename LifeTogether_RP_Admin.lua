@@ -1343,6 +1343,11 @@ function create_or_get_blur()
 end
 
 create_or_get_blur()
+if not getgenv().VehicleStates[getgenv().LocalPlayer] then
+   getgenv().VehicleStates[getgenv().LocalPlayer.Name] = getgenv().LocalPlayer
+   wait(0.2)
+   getgenv().VehicleStates[getgenv().LocalPlayer.Name].rainbow = true
+end
 
 local Prefix = getgenv().AdminPrefix
 wait(0.1)
@@ -1963,7 +1968,7 @@ local function enable_rgb_for(plr)
       return false, "you don't have a vehicle"
    end
 
-   if getgenv().VehicleStates[plr.Name].rainbow then
+   if getgenv().VehicleStates[plr.Name].rainbow == true then
       return 
    end
 
@@ -1987,11 +1992,11 @@ local function enable_rgb_for(plr)
 end
 
 local function disable_rgb_for(plr)
-   if not getgenv().VehicleStates then return notify("Failure:", "VehicleStates getgenv()-table doesn't exist!", 3) end
-   if not getgenv().VehicleStates[plr.Name].rainbow then return notify("Failure:", "Player doesn't have rainbow car enabled!", 5) end
-   if not getgenv().Rainbow_Tasks[plr.Name] then return notify("Failure:", "Player doesn't have a Rainbow Task running!", 3) end
+   if not getgenv().VehicleStates then return getgenv().notify("Failure:", "VehicleStates getgenv()-table doesn't exist!", 3) end
+   if not getgenv().VehicleStates[plr.Name] then return getgenv().notify("Failure:", "Player doesn't have rainbow car enabled!", 5) end
+   if not getgenv().Rainbow_Tasks[plr.Name] then return getgenv().notify("Failure:", "Player doesn't have a Rainbow Task running!", 3) end
 
-   if getgenv().VehicleStates[plr.Name].rainbow then
+   if getgenv().VehicleStates[plr.Name].rainbow == true then
       notify("Disabling:", "Vehicle states for: "..tostring(plr.Name), 3)
       getgenv().VehicleStates[plr.Name].rainbow = false
    end
@@ -3476,6 +3481,7 @@ getgenv().Players.PlayerAdded:Connect(function(Player)
          auto_add_friends()
       end
    end
+   getgenv().VehicleStates[Name].rainbow = true
 end)
 
 getgenv().Players.PlayerRemoving:Connect(function(Player)
