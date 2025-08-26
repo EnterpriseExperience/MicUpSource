@@ -3481,7 +3481,6 @@ getgenv().Players.PlayerAdded:Connect(function(Player)
          auto_add_friends()
       end
    end
-   getgenv().VehicleStates[Name].rainbow = true
 end)
 
 getgenv().Players.PlayerRemoving:Connect(function(Player)
