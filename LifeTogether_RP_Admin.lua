@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.8.1"
+local Raw_Version = "V2.8.3"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -110,8 +110,6 @@ if GroupId and GroupId > 0 and LocalPlayer:IsInGroup(GroupId) then
 		LocalPlayer:Kick("\n\nRolewatch\nYou are in the group with a staff role: \"" .. role .. "\"")
       wait(0.2)
       while true do end
-   else
-      print("Not a staff member.")
 	end
 end
 wait(0.2)
@@ -1643,6 +1641,154 @@ local function stop_rainbow_others_car(Player)
    RGB_Vehicle_Others(Player, false)
 end
 
+function Enable_Fly_2(Speed)
+   local Speed = tonumber(Speed) or 75
+   local Flying = false
+   getgenv().Enabled_Flying = Flying
+   local Controls = {F=0,B=0,L=0,R=0,U=0,D=0}
+   local RainbowColors = {
+      Color3.fromRGB(255,0,0),
+      Color3.fromRGB(255,128,0),
+      Color3.fromRGB(255,255,0),
+      Color3.fromRGB(0,255,0),
+      Color3.fromRGB(0,255,255),
+      Color3.fromRGB(0,0,255),
+      Color3.fromRGB(128,0,255)
+   }
+   local HRP = getgenv().HumanoidRootPart
+   local gyro, velocity, hold
+   local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+
+   local function startFlying()
+      if Flying then return end
+      Flying = true
+      getgenv().Enabled_Flying = true
+
+      gyro = Instance.new("BodyGyro")
+      gyro.P = 10000
+      gyro.MaxTorque = Vector3.new(1,1,1)*1e7
+      gyro.CFrame = HRP.CFrame
+      gyro.Parent = HRP
+
+      velocity = Instance.new("BodyVelocity")
+      velocity.MaxForce = Vector3.new(1,1,1)*1e7
+      velocity.Velocity = Vector3.new()
+      velocity.P = 1000
+      velocity.Parent = HRP
+
+      hold = Instance.new("BodyPosition")
+      hold.MaxForce = Vector3.new(0,0,0)
+      hold.P = 100000
+      hold.Position = HRP.Position
+      hold.Parent = HRP
+   end
+   wait(0.1)
+   getgenv().Start_Flying = startFlying
+
+   function stopFlying()
+      Flying = false
+      getgenv().Enabled_Flying = false
+      if gyro then gyro:Destroy() gyro=nil end
+      if velocity then velocity:Destroy() velocity=nil end
+      if hold then hold:Destroy() hold=nil end
+      getgenv().HumanoidRootPart.Velocity = Vector3.new()
+   end
+   wait(0.1)
+   getgenv().Stop_Flying = stopFlying
+
+   local lastPos
+   RunService.Heartbeat:Connect(function(dt)
+      if Flying and HRP and HRP.Parent then
+         local camCF = workspace.CurrentCamera.CFrame
+         local moveDir = (camCF.LookVector*(Controls.F-Controls.B))+(camCF.RightVector*(Controls.R-Controls.L))+Vector3.new(0,(Controls.U-Controls.D),0)
+         if moveDir.Magnitude > 0 then
+            moveDir = moveDir.Unit*Speed
+            velocity.Velocity = moveDir
+            hold.MaxForce = Vector3.new(0,0,0)
+         else
+            velocity.Velocity = Vector3.new()
+            hold.MaxForce = Vector3.new(1,1,1)*1e7
+            hold.Position = HRP.Position
+         end
+         gyro.CFrame = camCF
+
+         local pos = HRP.Position
+         if not lastPos or (pos-lastPos).Magnitude > 1 then
+            local part = Instance.new("Part")
+            local Debris = cloneref and cloneref(game:GetService("Debris")) or game:GetService("Debris")
+            part.Anchored = true
+            part.CanCollide = false
+            part.Material = Enum.Material.Neon
+            part.Size = Vector3.new(1,1,(pos-(lastPos or pos)).Magnitude+2)
+            part.CFrame = CFrame.new((lastPos or pos)+((pos-(lastPos or pos))/2), pos)
+            part.Color = RainbowColors[math.random(1,#RainbowColors)]
+            part.Parent = workspace
+            Debris:AddItem(part,1)
+            lastPos = pos
+         end
+      end
+   end)
+
+   UserInputService.InputBegan:Connect(function(input,gpe)
+      if gpe then return end
+      if input.KeyCode==Enum.KeyCode.W then Controls.F=1 end
+      if input.KeyCode==Enum.KeyCode.S then Controls.B=1 end
+      if input.KeyCode==Enum.KeyCode.A then Controls.L=1 end
+      if input.KeyCode==Enum.KeyCode.D then Controls.R=1 end
+      if input.KeyCode==Enum.KeyCode.Space then Controls.U=1 end
+      if input.KeyCode==Enum.KeyCode.LeftShift then Controls.D=1 end
+   end)
+   UserInputService.InputEnded:Connect(function(input)
+      if input.KeyCode==Enum.KeyCode.W then Controls.F=0 end
+      if input.KeyCode==Enum.KeyCode.S then Controls.B=0 end
+      if input.KeyCode==Enum.KeyCode.A then Controls.L=0 end
+      if input.KeyCode==Enum.KeyCode.D then Controls.R=0 end
+      if input.KeyCode==Enum.KeyCode.Space then Controls.U=0 end
+      if input.KeyCode==Enum.KeyCode.LeftShift then Controls.D=0 end
+   end)
+
+   local function createMobileUI()
+      if not UserInputService.TouchEnabled then return end
+      local gui = Instance.new("ScreenGui", PlayerGui)
+      gui.Name = "FlyControls"
+
+      local function makeBtn(txt,pos,callback)
+         local btn = Instance.new("TextButton", gui)
+         btn.Size = UDim2.new(0,60,0,60)
+         btn.Position = pos
+         btn.Text = txt
+         btn.Font = Enum.Font.GothamBold
+         btn.TextSize = 20
+         btn.TextColor3 = Color3.new(1,1,1)
+         btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
+         btn.MouseButton1Down:Connect(function() callback(true) end)
+         btn.MouseButton1Up:Connect(function() callback(false) end)
+      end
+
+      local baseY = 0.75
+      makeBtn("↑",UDim2.new(0,10,baseY,0),function(d) Controls.F=d and 1 or 0 end)
+      makeBtn("↓",UDim2.new(0,10,baseY+0.12,0),function(d) Controls.B=d and 1 or 0 end)
+      makeBtn("←",UDim2.new(0,-50,baseY+0.06,0),function(d) Controls.L=d and 1 or 0 end)
+      makeBtn("→",UDim2.new(0,70,baseY+0.06,0),function(d) Controls.R=d and 1 or 0 end)
+      makeBtn("⤒",UDim2.new(0,140,baseY,0),function(d) Controls.U=d and 1 or 0 end)
+      makeBtn("⤓",UDim2.new(0,140,baseY+0.12,0),function(d) Controls.D=d and 1 or 0 end)
+      makeBtn("FLY",UDim2.new(0,220,baseY+0.06,0),function()
+         if Flying then stopFlying() else startFlying() end
+      end)
+   end
+
+   if Flying then 
+      getgenv().Stop_Flying()
+   else
+      startFlying()
+   end
+   createMobileUI()
+end
+wait(0.2)
+function Disable_Flying()
+   getgenv().Stop_Flying()
+end
+
 function toggle_name_func(boolean)
    if boolean == true then
       getgenv().Send("hide_name", true)
@@ -1810,38 +1956,57 @@ local function alreadyCheckedUser(player)
    end
 end
 
-local function enable_rgb_for(name)
-   local plr = getgenv().Players and getgenv().Players[name]
-   if not plr then return false, "Player not found" end
-
+local function enable_rgb_for(plr)
    local v = get_other_vehicle(plr)
    if not v then
-      g.Rainbow_Vehicles[name] = false
+      getgenv().VehicleStates[plr.Name].rainbow = false
       return false, "you don't have a vehicle"
    end
 
-   local firstEnable = not g.Rainbow_Vehicles[name]
-   g.Rainbow_Vehicles[name] = true
-   g.Rainbow_Delays[name]   = g.Rainbow_Delays[name] or 0.03
-   g.Rainbow_Indices[name]  = g.Rainbow_Indices[name] or 0
-   g.Rainbow_CachedVehicle[name] = v
-   g.Rainbow_Next[name] = time() + math.random() * 0.015
-
-   if firstEnable then
-      g.Rainbow_ActiveCount = (g.Rainbow_ActiveCount or 0) + 1
+   if getgenv().VehicleStates[plr.Name].rainbow then
+      return 
    end
-   return true
+
+   getgenv().VehicleStates[plr.Name].rainbow = true
+   getgenv().Rainbow_Indices[plr.Name] = 0
+   local state = getgenv().VehicleStates[plr.Name]
+
+   getgenv().Rainbow_Tasks[plr.Name] = task.spawn(function()
+      while state.rainbow do
+         local vehicle = get_other_vehicle(plr)
+         if not vehicle then break end
+
+         local i = (state.rainbowIndex or 0) + 1
+         state.rainbowIndex = i
+         local color = g.Rainbow_Colors[(i % #g.Rainbow_Colors) + 1]
+         change_vehicle_color(color, vehicle)
+
+         task.wait(0.2)
+      end
+   end)
 end
 
-local function disable_rgb_for(name)
-   if g.Rainbow_Vehicles[name] then
-      g.Rainbow_Vehicles[name] = false
-      g.Rainbow_Indices[name] = nil
-      g.Rainbow_Next[name] = nil
-      g.Rainbow_CachedVehicle[name] = nil
-      g.Rainbow_ActiveCount = math.max(0, (g.Rainbow_ActiveCount or 1) - 1)
+local function disable_rgb_for(plr)
+   if not getgenv().VehicleStates then return notify("Failure:", "VehicleStates getgenv()-table doesn't exist!", 3) end
+   if not getgenv().VehicleStates[plr.Name].rainbow then return notify("Failure:", "Player doesn't have rainbow car enabled!", 5) end
+   if not getgenv().Rainbow_Tasks[plr.Name] then return notify("Failure:", "Player doesn't have a Rainbow Task running!", 3) end
+
+   if getgenv().VehicleStates[plr.Name].rainbow then
+      notify("Disabling:", "Vehicle states for: "..tostring(plr.Name), 3)
+      getgenv().VehicleStates[plr.Name].rainbow = false
+   end
+
+   if getgenv().Rainbow_Tasks[plr.Name] then
+      notify("Disabling:", "Rainbow Task for: "..tostring(plr.Name), 3)
+      getgenv().Rainbow_Tasks[plr.Name] = nil
+   end
+   if getgenv().Rainbow_Indices[plr.Name] then
+      notify("Disabling:", "Rainbow Indice for: "..tostring(plr.Name), 3)
+      getgenv().Rainbow_Indices[plr.Name] = nil
    end
 end
+wait(0.1)
+getgenv().fully_disable_rgb_plr = disable_rgb_for
 
 local function set_rgb_delay(name, newDelay)
    if type(newDelay) ~= "number" then return false, "invalid time value" end
@@ -1849,6 +2014,10 @@ local function set_rgb_delay(name, newDelay)
    g.Rainbow_Delays[name] = newDelay
    g.Rainbow_Next[name] = 0
    return true
+end
+
+if not getgenv().VehicleStates then
+   getgenv().VehicleStates = {}
 end
 
 local function setup_cmd_handler_plr(player)
@@ -1896,82 +2065,51 @@ local function setup_cmd_handler_plr(player)
       local command = normalizedMessage:sub(#prefix + 1)
       local playerVehicle = get_other_vehicle(getgenv().Players[speaker.Name])
 
+      if not getgenv().Players[speaker.Name]:IsFriendsWith(getgenv().LocalPlayer.UserId) then return end
+      wait(0.2)
+      local Name = speaker and speaker.Name
+
+      getgenv().VehicleStates[Name] = getgenv().VehicleStates[Name] or {
+         locked = false,
+         unlocked = false,
+         rainbow = false,
+      }
+
       if levenshtein(command, "rgbcar") <= 2 then
          local Player = getgenv().Players[speaker.Name]
-         local Name = Player.Name
-
-         if not get_other_vehicle(Player) then
-            getgenv().Rainbow_Vehicles[Name] = false
-            return chat_reply(Player.DisplayName, "you don't have a vehicle")
+         if not Player then
+            return 
          end
 
          local vehicle = get_other_vehicle(Player)
          if not vehicle then
-            getgenv().Rainbow_Vehicles[Name] = false
-            return chat_reply(Player.DisplayName, "you don't have a vehicle")
+            getgenv().Rainbow_Vehicles[Player.Name] = nil
+            return 
          end
 
-         if not g.Rainbow_LoopConn then
-            g.Rainbow_LoopConn = RunService.Heartbeat:Connect(function()
-            if (g.Rainbow_ActiveCount or 0) <= 0 then return end
-               local now = time()
-
-               for name, enabled in next, g.Rainbow_Vehicles do
-                  if enabled then
-                     local nextAt = g.Rainbow_Next[name] or 0
-                     if now >= nextAt then
-                        local v = g.Rainbow_CachedVehicle[name]
-                        if not (v and v.Parent) then
-                           local plr = g.Players and g.Players[name]
-                           v = plr and get_other_vehicle(plr) or nil
-                           g.Rainbow_CachedVehicle[name] = v
-                        end
-
-                        if v then
-                           local i = (g.Rainbow_Indices[name] or 0) + 1
-                           g.Rainbow_Indices[name] = i
-                           local color = g.Rainbow_Colors[(i % #g.Rainbow_Colors) + 1]
-                           change_vehicle_color(color, v)
-
-                           local d = g.Rainbow_Delays[name] or 0.2
-                           if d < g.Rainbow_MIN_DELAY then d = g.Rainbow_MIN_DELAY end
-                           g.Rainbow_Next[name] = now + d
-                        else
-                           g.Rainbow_Vehicles[name] = false
-                           g.Rainbow_Indices[name] = nil
-                           g.Rainbow_Next[name] = nil
-                           g.Rainbow_CachedVehicle[name] = nil
-                           g.Rainbow_ActiveCount = math.max(0, (g.Rainbow_ActiveCount or 1) - 1)
-                        end
-                     end
-                  end
-               end
-            end)
-         end
-
-         enable_rgb_for(Name)
+         enable_rgb_for(Player)
       elseif levenshtein(command:split(" ")[1], "rgbtime") <= 2 then
          local parts = command:split(" ")
          local delayStr = parts[2]
          local newDelay = tonumber(delayStr)
 
          if not newDelay then
-            return chat_reply(getgenv().Players[speaker.Name].DisplayName, "invalid time value")
+            return 
          end
 
-         if newDelay < 0.03 then
-            newDelay = 0.03
+         if newDelay < 0.1 then
+            newDelay = 0.1
          end
 
          local name = getgenv().Players[speaker.Name].Name
          g.Rainbow_Delays[name] = newDelay
          g.Rainbow_Next[name] = time()
       elseif levenshtein(command, "norgbcar") <= 2 then
-         disable_rgb_for(getgenv().Players[speaker.Name].Name)
+         disable_rgb_for(getgenv().Players[speaker.Name])
       elseif levenshtein(command, "lockcar") <= 2 then
          if not playerVehicle then
             getgenv().LockLoop_Vehicles[speaker.Name] = false
-            return chat_reply(speaker, "you don't have a vehicle")
+            return 
          end
 
          if getgenv().Locked_Vehicles[speaker.Name] then
@@ -1997,7 +2135,7 @@ local function setup_cmd_handler_plr(player)
       elseif levenshtein(command, "unlockcar") <= 2 then
          if not playerVehicle then
             getgenv().Unlocked_Vehicles[speaker.Name] = false
-            return chat_reply(speaker, "you don't got a vehicle")
+            return 
          end
 
          if getgenv().Unlocked_Vehicles[speaker.Name] then
@@ -2024,7 +2162,7 @@ local function setup_cmd_handler_plr(player)
 
          if not playerVehicle then
             getgenv().Unlocked_Vehicles[speaker.Name] = false
-            return chat_reply(speaker, "you don't got a vehicle")
+            return 
          end
 
          local Vehicle = get_other_vehicle(player)
@@ -2043,7 +2181,7 @@ local function setup_cmd_handler_plr(player)
 
          if not playerVehicle then
             getgenv().Unlocked_Vehicles[speaker.Name] = false
-            return chat_reply(speaker, "you don't got a vehicle")
+            return 
          end
 
          local Vehicle = get_other_vehicle(player)
@@ -2068,7 +2206,6 @@ local function setup_cmd_handler_plr(player)
          local args = command:split(" ")
          local checkTargetName = args[2]
          if not checkTargetName or #checkTargetName <= 0 then
-            warn("Args entered: "..tostring(args))
             return warn("Target player invalid: "..tostring(checkTargetName))
          end
 
@@ -2462,6 +2599,11 @@ local function handleCommand(sender, message)
       notify("Controls", "E = up, Q = down, WASD to move", 5)
    elseif cmd == "unfly" then
       DisableFlyScript()
+   elseif cmd == "fly2" then
+      local Fly_Speed = tonumber(split[1])
+
+   elseif cmd == "unfly2" then
+      Disable_Fly_2()
    elseif cmd == "autolockcar" then
       local RunService = getgenv().RunService
       getgenv().AutoLockConnection = nil
@@ -2797,6 +2939,44 @@ local function handleCommand(sender, message)
       while getgenv().Not_Ever_Sitting == true do
       task.wait()
          require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
+      end
+   elseif cmd == "carcolor" then
+      local Target = findplr(split[1])
+      local Color = split[2]
+      if not Target then return notify("Failure:", "Player does not exist or was not found!", 5) end
+      local Check_Friend = Target:IsFriendsWith(getgenv().LocalPlayer.UserId)
+      if not Check_Friend then return notify("Failure:", "Player is not friends with you, add them!", 5) end
+      local Vehicle_Target = Target and get_other_vehicle(Target)
+      if not Vehicle_Target then return notify("Failure:", tostring(Target).." does not have a vehicle spawned!", 5) end
+
+      local colors = {
+         black   = Color3.fromRGB(0,0,0),
+         white   = Color3.fromRGB(255,255,255),
+         red     = Color3.fromRGB(255,0,0),
+         orange  = Color3.fromRGB(255,165,0),
+         yellow  = Color3.fromRGB(255,255,0),
+         green   = Color3.fromRGB(0,255,0),
+         blue    = Color3.fromRGB(0,0,255),
+         purple  = Color3.fromRGB(128,0,128),
+         pink    = Color3.fromRGB(255,0,191),
+         teal    = Color3.fromRGB(0,128,128),
+         cyan    = Color3.fromRGB(0,255,255),
+         magenta = Color3.fromRGB(255,0,255),
+         brown   = Color3.fromRGB(124,92,70),
+         grey    = Color3.fromRGB(128,128,128),
+         gray    = Color3.fromRGB(64,64,64),
+         silver  = Color3.fromRGB(192,192,192),
+         navy    = Color3.fromRGB(0,0,128),
+         gold    = Color3.fromRGB(220,188,129),
+      }
+
+      if Color then
+         local col = colors[Color:lower()]
+         if col then
+            change_vehicle_color(col, Vehicle_Target)
+         else
+            getgenv().notify("Failure:", "Unknown color: "..tostring(Color), 5)
+         end
       end
    elseif cmd == "resit" or cmd == "unantisit" then
       local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
@@ -3301,16 +3481,15 @@ end)
 getgenv().Players.PlayerRemoving:Connect(function(Player)
    local Name = Player.Name
 
-   if getgenv().Rainbow_Vehicles[Name] then
-      getgenv().Rainbow_Vehicles[Name] = false
+   if getgenv().Rainbow_Tasks and getgenv().Rainbow_Tasks[Name] then
+      task.cancel(getgenv().Rainbow_Tasks[Name])
+      getgenv().Rainbow_Tasks[Name] = nil
    end
+   getgenv().fully_disable_rgb_plr(Name)
    if getgenv().Locked_Vehicles[Name] then
       getgenv().Locked_Vehicles[Name] = false
    end
    if getgenv().Unlocked_Vehicles[Name] then
       getgenv().Unlocked_Vehicles[Name] = false
-   end
-   if getgenv().Rainbow_Tasks[Name] then
-      getgenv().Rainbow_Tasks[Name] = nil
    end
 end)
