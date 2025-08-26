@@ -1342,11 +1342,11 @@ function create_or_get_blur()
    Blur_Effect.Size = 0
 end
 
+getgenv().VehicleStates = getgenv().VehicleStates or {}
+wait(0.2)
 create_or_get_blur()
-if not getgenv().VehicleStates[getgenv().LocalPlayer] then
+if not getgenv().VehicleStates[getgenv().LocalPlayer.Name] then
    getgenv().VehicleStates[getgenv().LocalPlayer.Name] = getgenv().LocalPlayer
-   wait(0.2)
-   getgenv().VehicleStates[getgenv().LocalPlayer.Name].rainbow = true
 end
 
 local Prefix = getgenv().AdminPrefix
