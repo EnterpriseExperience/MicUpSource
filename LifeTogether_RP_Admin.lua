@@ -386,6 +386,13 @@ getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv()
 getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
+wait(0.1)
+function getRoot(char)
+   rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+   return rootPart
+end
+wait(0.2)
+getgenv().getRoot = getRoot
 wait(0.3)
 if not getgenv().Players then
    warn("getgenv().Players was not detected, fixing...")
@@ -3349,7 +3356,7 @@ local function handleCommand(sender, message)
       repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
       local Character = getgenv().Character
-      local HRP = getgenv().getRoot(Character)
+      local HRP = getgenv().HumanoidRootPart
       local safePos = HRP.CFrame
       getgenv().AntiTeleportConnections = {}
 
@@ -3362,7 +3369,7 @@ local function handleCommand(sender, message)
 
                if LocalPlayer.Character ~= Character then
                   Character = getgenv().Character
-                  HRP = getgenv().getRoot(Character)
+                  HRP = getgenv().HumanoidRootPart
                end
 
                if HRP then
