@@ -1993,7 +1993,7 @@ end
 
 local function disable_rgb_for(plr)
    if not getgenv().VehicleStates then return getgenv().notify("Failure:", "VehicleStates getgenv()-table doesn't exist!", 3) end
-   if not getgenv().VehicleStates[plr.Name] then return getgenv().notify("Failure:", "Player doesn't have rainbow car enabled!", 5) end
+   if not getgenv().VehicleStates[plr.Name] then return end
    if not getgenv().Rainbow_Tasks[plr.Name] then return getgenv().notify("Failure:", "Player doesn't have a Rainbow Task running!", 3) end
 
    if getgenv().VehicleStates[plr.Name].rainbow == true then
@@ -3340,28 +3340,59 @@ local function handleCommand(sender, message)
 
       notify("Success:", "Enabled 'antihouseban', you will not be removed from homes.", 5)
       wait(0.2)
+      getgenv().AntiTeleport = true
+      getgenv().AntiTeleportConnection = nil
+
+      local Players = getgenv().Players
+      local LocalPlayer = getgenv().LocalPlayer
+
+      repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+      local Character = getgenv().Character
+      local HRP = getgenv().getRoot(Character)
+      local safePos = HRP.CFrame
+      getgenv().AntiTeleportConnections = {}
+
       getgenv().AntiTeleportConnection = task.spawn(function()
-         while task.wait(checkInterval) do
-            if not getgenv().AntiTeleport then
-               lastCFrame = HRP.CFrame
-               continue
-            end
+            while task.wait(0.1) do
+               if not getgenv().AntiTeleport then
+                  safePos = HRP.CFrame
+                  continue
+               end
 
-            if LocalPlayer.Character ~= Character then
-               Character = LocalPlayer.Character
-               HRP = getgenv().HumanoidRootPart
-               lastCFrame = HRP.CFrame
-            end
+               if LocalPlayer.Character ~= Character then
+                  Character = getgenv().Character
+                  HRP = getgenv().getRoot(Character)
+               end
 
-            if (HRP.Position - lastCFrame.Position).Magnitude > maxDistance then
-               pcall(function()
-                  HRP.CFrame = lastCFrame
-               end)
-            else
-               lastCFrame = HRP.CFrame
+               if HRP then
+                  safePos = HRP.CFrame
+               end
             end
-         end
       end)
+
+      local function preventTp(char)
+         local root = getgenv().HumanoidRootPart
+         if not root then return end
+
+         local cframeCon = root:GetPropertyChangedSignal("CFrame"):Connect(function()
+            if getgenv().AntiTeleport and safePos and root then
+               root.CFrame = safePos
+            end
+         end)
+
+         local posCon = root:GetPropertyChangedSignal("Position"):Connect(function()
+            if getgenv().AntiTeleport and safePos and root then
+               root.CFrame = safePos
+            end
+         end)
+
+         table.insert(getgenv().AntiTeleportConnections, cframeCon)
+         table.insert(getgenv().AntiTeleportConnections, posCon)
+      end
+
+      table.insert(getgenv().AntiTeleportConnections, LocalPlayer.CharacterAdded:Connect(preventTp))
+      preventTp(Character)
       wait(0.2)
       getgenv().never_banned_houses = true
       while getgenv().never_banned_houses == true do
@@ -3375,10 +3406,20 @@ local function handleCommand(sender, message)
       wait(0.3)
       getgenv().AntiTeleport = false
       notify("Success:", "Disabled 'antihouseban', you CAN now be kicked from homes.", 5)
+      wait(0.1)
       pcall(function()
          task.cancel(getgenv().AntiTeleportConnection)
          getgenv().AntiTeleportConnection = nil
       end)
+
+      if getgenv().AntiTeleportConnections then
+         for _, v in ipairs(getgenv().AntiTeleportConnections) do
+            pcall(function()
+               v:Disconnect()
+            end)
+         end
+         getgenv().AntiTeleportConnections = {}
+      end
    elseif cmd == "carspeed" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
