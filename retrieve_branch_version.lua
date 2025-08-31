@@ -556,13 +556,6 @@
         wait(0.1)
         getgenv().has_checked_funcs = true
     end
-    wait(0.2)
-    if getgenv().emotes_bypassed then
-        warn("Emotes are already bypassed.")
-    else
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/Emote_Bypass_Script.lua'))()
-        getgenv().emotes_bypassed = true
-    end
     wait(0.1)
     -- Correctly initialize our Folder we put into Workspace, since we can use this for later in the script as well.
     if getgenv().Workspace:FindFirstChild("PartStorage") then
@@ -622,6 +615,13 @@
         do_baseplate_check()
         wait(0.1)
         getgenv().passed_baseplate_check = true
+    end
+    wait(0.2)
+    if getgenv().emotes_bypassed then
+        warn("Emotes are already bypassed.")
+    else
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Emote_Bypass_Script.lua'))()
+        getgenv().emotes_bypassed = true
     end
     wait(0.5)
     local TextChatService = getgenv().Service_Wrap("TextChatService")
@@ -1872,78 +1872,9 @@
     Callback = function(emote_picked)
         local emoteToPlay = type(emote_picked) == "table" and emote_picked[1] or tostring(emote_picked)
 
-        if getgenv().Character:FindFirstChildWhichIsA("Humanoid") and is_r15 == true then
-            local Players = getgenv().Players
-            local AvatarEditorService = getgenv().Service_Wrap("AvatarEditorService")
-            local LocalPlayer = getgenv().LocalPlayer
-            local Character = getgenv().Character
-            local Humanoid = getgenv().Humanoid
-            local Description = Humanoid:FindFirstChildOfClass("HumanoidDescription") or Instance.new("HumanoidDescription", Humanoid)
-
-            local function PlayEmoteByCatalogName(emoteName)
-                local params = CatalogSearchParams.new()
-                params.SearchKeyword = emoteName
-                params.AssetTypes = { Enum.AvatarAssetType.EmoteAnimation }
-                params.SortType = Enum.CatalogSortType.Relevance
-                params.IncludeOffSale = true
-                params.Limit = 120
-
-                local success, result = pcall(function()
-                    return AvatarEditorService:SearchCatalog(params)
-                end)
-
-                if not success or not result then
-                    return 
-                end
-
-                local page
-                if typeof(result) == "Instance" and result:IsA("Pages") and result.IsFinished then
-                    page = result
-                elseif typeof(result) == "table" then
-                    page = result
-                else
-                    return 
-                end
-
-                local emotes = page:GetCurrentPage() or page
-
-                if not emotes or #emotes == 0 then
-                    return
-                end
-
-                local match
-                for _, emote in ipairs(emotes) do
-                    if emote.Name:lower() == emoteName:lower() then
-                        match = emote
-                        break
-                    end
-                end
-
-                match = match or emotes[1]
-
-                if not match then
-                    return
-                end
-
-                local id = match.Id
-                local name = match.Name
-
-                if LocalPlayer.Character.Humanoid.RigType == Enum.HumanoidRigType.R6 then
-                    return getgenv().notify("Failure:", "R6 Rigs cannot play Emote's, please be R15!", 5)
-                end
-
-                local success2 = pcall(function()
-                    return Humanoid:PlayEmoteAndGetAnimTrackById(id)
-                end)
-
-                if not success2 then
-                    Description:AddEmote(name, id)
-                    Humanoid:PlayEmoteAndGetAnimTrackById(id)
-                end
-            end
-
-            PlayEmoteByCatalogName(emoteToPlay)
-        elseif not getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R15 then
+        if getgenv().Humanoid and is_r15 == true then
+            getgenv().Humanoid:PlayEmote(emoteToPlay)
+        elseif not getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
             return getgenv().notify("Failure:", "You are not R15!", 5)
         end
     end,})
@@ -4245,40 +4176,55 @@
             getgenv().AntiTeleportConnection = nil
 
             local Players = getgenv().Players
-            local RunService = getgenv().RunService
             local LocalPlayer = getgenv().LocalPlayer
+
             repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
             local Character = getgenv().Character
-            local HRP = getgenv().getRoot(getgenv().Character)
-            local lastCFrame = HRP.CFrame
-
-            local maxDistance = 5
-            local checkInterval = 0.05
+            local HRP = getgenv().getRoot(Character)
+            local safePos = HRP.CFrame
+            getgenv().AntiTeleportConnections = {}
 
             getgenv().AntiTeleportConnection = task.spawn(function()
-                while task.wait(checkInterval) do
+                while task.wait(0.1) do
                     if not getgenv().AntiTeleport then
-                        lastCFrame = HRP.CFrame
+                        safePos = HRP.CFrame
                         continue
                     end
 
                     if LocalPlayer.Character ~= Character then
-                        Character = LocalPlayer.Character
+                        Character = getgenv().Character
                         HRP = getgenv().getRoot(Character)
-                        lastCFrame = HRP.CFrame
                     end
 
-                    if (HRP.Position - lastCFrame.Position).Magnitude > maxDistance then
-                        warn("[Anti-Teleport_DEBUG]: Teleport detected. Reverting.")
-                        pcall(function()
-                            HRP.CFrame = lastCFrame
-                        end)
-                    else
-                        lastCFrame = HRP.CFrame
+                    if HRP then
+                        safePos = HRP.CFrame
                     end
                 end
             end)
+
+            local function preventTp(char)
+                local root = getgenv().HumanoidRootPart
+                if not root then return end
+
+                local cframeCon = root:GetPropertyChangedSignal("CFrame"):Connect(function()
+                    if getgenv().AntiTeleport and safePos and root then
+                        root.CFrame = safePos
+                    end
+                end)
+
+                local posCon = root:GetPropertyChangedSignal("Position"):Connect(function()
+                    if getgenv().AntiTeleport and safePos and root then
+                        root.CFrame = safePos
+                    end
+                end)
+
+                table.insert(getgenv().AntiTeleportConnections, cframeCon)
+                table.insert(getgenv().AntiTeleportConnections, posCon)
+            end
+
+            table.insert(getgenv().AntiTeleportConnections, LocalPlayer.CharacterAdded:Connect(preventTp))
+            preventTp(Character)
         else
             getgenv().AntiTeleport = false
 
@@ -4286,6 +4232,15 @@
                 task.cancel(getgenv().AntiTeleportConnection)
                 getgenv().AntiTeleportConnection = nil
             end)
+
+            if getgenv().AntiTeleportConnections then
+                for _, v in ipairs(getgenv().AntiTeleportConnections) do
+                    pcall(function()
+                        v:Disconnect()
+                    end)
+                end
+                getgenv().AntiTeleportConnections = {}
+            end
         end
     end,})
 
