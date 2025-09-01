@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.9.2"
+local Raw_Version = "V2.9.3"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -243,6 +243,8 @@ function findplr(args)
       end
    end
 end
+wait(0.1)
+getgenv().findplr = findplr
 
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
@@ -1284,11 +1286,10 @@ function do_emote(input)
    local emoteList = Emotes[key]
    if emoteList then
       getgenv().Is_Currently_Emoting = true
-      pcall(function()
-         getgenv().Character:FindFirstChild("Animate").Disabled = true
-      end)
       local choice = emoteList[math.random(1, #emoteList)]
-      Humanoid:PlayEmoteAndGetAnimTrackById(choice)
+      getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(choice)
+      wait(0.2)
+      getgenv().Character:FindFirstChild("Animate").Disabled = true
    end
 end
 
@@ -1635,6 +1636,7 @@ local function CommandsMenu()
       {prefix}jobsoff - Stops spamming all jobs
       {prefix}fly SpeedNumber - Enable/disable flying
       {prefix}unfly - Disables (Fly) command
+      {prefix}annoy Player - Spam calls and request carries the target (spams, FE).
       {prefix}fly2 SpeedNumber - Enables magic carpet fly (CLIENT side rainbow!)
       {prefix}unfly2 - Disables Fly2/Magic carpet fly (with the client side rainbow)
       {prefix}noclip - Enables Noclip, letting you walk through everything
@@ -2834,6 +2836,8 @@ local function handleCommand(sender, message)
       Enable_Fly_2(Fly_Speed)
    elseif cmd == "unfly2" then
       getgenv().Stop_Flying()
+   elseif cmd == "noemote" then
+      disable_emoting()
    elseif cmd == "griddy" then
       do_emote("griddy")
    elseif cmd == "scenario" then
@@ -2856,8 +2860,22 @@ local function handleCommand(sender, message)
       do_emote("worm")
    elseif cmd == "glitching" then
       do_emote("glitch")
-   elseif cmd == "autoclick" then
-      -- do stuff here (later).
+   elseif cmd == "annoy" then
+      local Target = findplr(split[1])
+      if not Target then
+         show_notification("Error:", "Player does not exist!", "Error")
+         return notify("Failure:", "Player does not exist!", 5)
+      end
+      wait()
+      getgenv().easy_click_plr = true
+      while getgenv().easy_click_plr == true do
+      task.wait()
+         getgenv().Send("request_carry", Target)
+         task.wait()
+         getgenv().Send("request_call", Target)
+         task.wait()
+         getgenv().Send("end_call", Target)
+      end
    elseif cmd == "autolockcar" then
       local RunService = getgenv().RunService
       getgenv().AutoLockConnection = nil
