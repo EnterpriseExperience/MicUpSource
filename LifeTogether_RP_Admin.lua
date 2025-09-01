@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.9.3"
+local Raw_Version = "V2.9.4"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1313,11 +1313,6 @@ function do_emote(input)
 end
 
 function disable_emoting()
-   if not getgenv().Is_Currently_Emoting then
-      show_notification("Error:", "You are not emoting!", "Error")
-      return notify("Failure:", "You are not currently emoting!", 5)
-   end
-
    local Humanoid = getgenv().Humanoid
    if not Humanoid then return end
 
