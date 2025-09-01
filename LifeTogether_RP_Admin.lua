@@ -1,12 +1,12 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.8.7"
+local Raw_Version = "V2.8.8"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
-   return 
+   return getgenv().notify("Failure:", "Life Together RP admin is already running!", 5)
 end
 
 getgenv().Service_Wrap = function(serviceName)
@@ -2808,13 +2808,9 @@ local function handleCommand(sender, message)
    elseif cmd == "despawn" then
       local Current_Car = get_vehicle()
       if not Current_Car then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
-
-      if Current_Car.Name ~= "Chiron" then
-         spawn_any_vehicle("Chiron")
-         wait(0.2)
-         spawn_any_vehicle("Chiron")
-      elseif Current_Car.Name == "Chiron" then
-         spawn_any_vehicle("Chiron")
+      
+      if Current_Car then
+         spawn_any_vehicle(tostring(Current_Car))
       end
    elseif cmd == "trailer" then
       water_skie_trailer(true, get_vehicle())
