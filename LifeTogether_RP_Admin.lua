@@ -1255,7 +1255,6 @@ local Emotes = {
       115719203985051,
       77201116105359,
    },
-   glitching = {131961970776128}
 }
 
 local Aliases = {
@@ -1280,6 +1279,8 @@ local Aliases = {
 
 function do_emote(input)
    local Humanoid = getgenv().Humanoid
+   if not Humanoid then return end
+
    local key = input:lower():gsub("%s+", "")
    if Aliases[key] then key = Aliases[key] end
 
@@ -1287,31 +1288,58 @@ function do_emote(input)
    if emoteList then
       getgenv().Is_Currently_Emoting = true
       local choice = emoteList[math.random(1, #emoteList)]
-      getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(choice)
-      wait(0.2)
-      getgenv().Character:FindFirstChild("Animate").Disabled = true
+      local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
+
+      local animate = getgenv().Character:FindFirstChild("Animate")
+      if animate then
+         animate.Disabled = true
+      end
+
+      if ok and track then
+         task.spawn(function()
+            track.Stopped:Wait()
+            if animate and animate.Parent then
+               animate.Disabled = false
+            end
+            getgenv().Is_Currently_Emoting = false
+         end)
+      else
+         if animate and animate.Parent then
+            animate.Disabled = false
+         end
+         getgenv().Is_Currently_Emoting = false
+      end
    end
 end
 
 function disable_emoting()
-   if not getgenv().Is_Currently_Emoting or getgenv().Is_Currently_Emoting == false then
+   if not getgenv().Is_Currently_Emoting then
       show_notification("Error:", "You are not emoting!", "Error")
       return notify("Failure:", "You are not currently emoting!", 5)
    end
 
-   getgenv().Humanoid.WalkSpeed = 0
-   wait(1)
+   local Humanoid = getgenv().Humanoid
+   if not Humanoid then return end
+
+   Humanoid.WalkSpeed = 0
+   task.wait(1)
+
    pcall(function()
-      for _, v in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+      for _, v in ipairs(Humanoid:GetPlayingAnimationTracks()) do
          v:Stop()
       end
    end)
-   wait(0.2)
-   pcall(function()
-      getgenv().Character:FindFirstChild("Animate").Disabled = false
-   end)
-   wait(0.4)
-   getgenv().Humanoid.WalkSpeed = 16
+
+   task.wait(0.2)
+
+   local animate = getgenv().Character:FindFirstChild("Animate")
+   if animate then
+      animate.Disabled = false
+   end
+
+   task.wait(0.4)
+   Humanoid.WalkSpeed = 16
+   getgenv().Is_Currently_Emoting = false
 end
 
 function change_phone_color(New_Color)
