@@ -2311,6 +2311,7 @@ function glitch_outfit(toggle)
       while getgenv().Glitching_Outfit == true do
          task.wait()
          Animate_Disabled = true
+         getgenv().Character:FindFirstChild("Animate").Disabled = true
          for _, shirtId in ipairs(GlitchIDs.Shirts) do
             forceEquip("Shirt", shirtId)
             task.wait()
