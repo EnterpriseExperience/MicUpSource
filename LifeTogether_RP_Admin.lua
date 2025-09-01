@@ -1467,6 +1467,8 @@ local function CommandsMenu()
       {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone)
       {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone)
       {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone)
+      {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding)
+      {prefix}noglitchoutfit - Disables the glitching of your outfit
       {prefix}name NewName - Change RP name
       {prefix}bio NewBio - Change RP bio
       {prefix}alljobs - Repeatedly spams all jobs
@@ -2273,6 +2275,52 @@ local function removePlayerFromScriptWhitelistTable(player)
       end
    end
 end
+
+local Hum = getgenv().Humanoid
+local HD = Hum:FindFirstChild("HumanoidDescription")
+local GlitchIDs = {
+   Shirts = {6028801590, 11595159513},
+   Pants  = {6028804735, 11595172734}
+}
+
+local function isWearing(desc, slot, id)
+   return desc and tostring(desc[slot]) == tostring(id)
+end
+
+local function forceEquip(slot, id)
+   if not isWearing(HD, slot, id) then
+      getgenv().Get("code", id, slot)
+   end
+end
+
+local function forceUnequip(slot, id)
+   if isWearing(HD, slot, id) then
+      getgenv().Get("wear", id, slot)
+   end
+end
+
+function glitch_outfit(toggle)
+   if toggle == true then
+      getgenv().Glitching_Outfit = true
+      while getgenv().Glitching_Outfit == true do
+         task.wait(0)
+         for _, shirtId in ipairs(GlitchIDs.Shirts) do
+            task.wait(0)
+            forceEquip("Shirt", shirtId)
+            task.wait()
+            forceUnequip("Shirt", shirtId)
+         end
+         for _, pantsId in ipairs(GlitchIDs.Pants) do
+            task.wait(0)
+            forceEquip("Pants", pantsId)
+            task.wait()
+            forceUnequip("Pants", pantsId)
+         end
+      end
+   else
+      getgenv().Glitching_Outfit = false
+   end
+end
 wait()
 function check_friends()
    for _, v in ipairs(getgenv().Players:GetPlayers()) do
@@ -2743,6 +2791,10 @@ local function handleCommand(sender, message)
       else
          return notify("Failure:", "Your vehicle is unlocked already!", 5)
       end
+   elseif cmd == "glitchoutfit" then
+      glitch_outfit(true)
+   elseif cmd == "noglitchoutfit" then
+      glitch_outfit(false)
    elseif cmd == "despawn" then
       local Current_Car = get_vehicle()
       if not Current_Car then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
