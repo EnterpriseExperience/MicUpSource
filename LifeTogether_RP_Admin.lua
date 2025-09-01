@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.8.8"
+local Raw_Version = "V2.9.0"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1481,6 +1481,8 @@ local function CommandsMenu()
       {prefix}jobsoff - Stops spamming all jobs
       {prefix}fly SpeedNumber - Enable/disable flying
       {prefix}unfly - Disables (Fly) command
+      {prefix}fly2 SpeedNumber - Enables magic carpet fly (CLIENT side rainbow!)
+      {prefix}unfly2 - Disables Fly2/Magic carpet fly (with the client side rainbow)
       {prefix}noclip - Enables Noclip, letting you walk through everything
       {prefix}clip - Disables Noclip, so you cannot walk through everything
       {prefix}trailer - Gives you the WaterSkies trailer (on any car/vehicle)
@@ -2671,9 +2673,13 @@ local function handleCommand(sender, message)
       DisableFlyScript()
    elseif cmd == "fly2" then
       local Fly_Speed = tonumber(split[1])
-
+      if not Fly_Speed then
+         Fly_Speed = 10
+      end
+      wait()
+      Enable_Fly_2(Fly_Speed)
    elseif cmd == "unfly2" then
-      Disable_Fly_2()
+      getgenv().Stop_Flying()
    elseif cmd == "autolockcar" then
       local RunService = getgenv().RunService
       getgenv().AutoLockConnection = nil
