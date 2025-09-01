@@ -2303,17 +2303,17 @@ function glitch_outfit(toggle)
    if toggle == true then
       getgenv().Glitching_Outfit = true
       while getgenv().Glitching_Outfit == true do
-         task.wait(0)
+         task.wait()
          for _, shirtId in ipairs(GlitchIDs.Shirts) do
-            task.wait(0)
-            forceEquip("Shirt", shirtId)
             task.wait()
+            forceEquip("Shirt", shirtId)
+            task.wait(0)
             forceUnequip("Shirt", shirtId)
          end
          for _, pantsId in ipairs(GlitchIDs.Pants) do
-            task.wait(0)
-            forceEquip("Pants", pantsId)
             task.wait()
+            forceEquip("Pants", pantsId)
+            task.wait(0)
             forceUnequip("Pants", pantsId)
          end
       end
