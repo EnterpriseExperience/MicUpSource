@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.9.0"
+local Raw_Version = "V2.9.2"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -317,6 +317,26 @@ local CCTV = require(Game:FindFirstChild("CCTV"))
 local Tween = require(Core:FindFirstChild("Tween"))
 local Modules = ReplicatedStorage:FindFirstChild("Modules")
 local CCTV = require(Game:FindFirstChild("CCTV"))
+wait(0.1)
+function show_notification(Title, Text, Method, Image)
+   if Method == "Normal" and not Image then
+      Phone.show_notification(tostring(Title), tostring(Text))
+   elseif Method == "Warning" then
+      Phone.show_notification(
+         tostring(Title),
+         tostring(Text),
+         nil,
+         "rbxassetid://13828984843"
+      )
+   elseif Method == "Error" then
+      Phone.show_notification(
+         tostring(Title),
+         tostring(Text),
+         nil,
+         "rbxassetid://14930908086"
+      )
+   end
+end
 wait(0.2)
 getgenv().Modules = Modules
 getgenv().Core = Core
@@ -1171,6 +1191,125 @@ function DisableFlyScript()
    end
 end
 
+local Emotes = {
+   griddy = {
+      129149402922241,
+      116150478424136,
+      76342373659003,
+      106715239721951,
+      91878676494639,
+      98318847394332,
+   },
+   scenario = {110013053670989},
+   worm = {
+      132950274861655,
+      127882676467351,
+      113312808145333,
+      77625642316480,
+      127068135887882,
+      102075861555461,
+   },
+   zen = {84943987730610},
+   glitching = {131961970776128},
+   superman = {134861929761233},
+   aura = {
+      121547391421211,
+      78755795767408,
+      88425531063616,
+      111426928948833,
+      84052327668385,
+      103040723950430,
+   },
+   orangejustice = {
+      133160900449608,
+      109776913631531,
+      110064349530772,
+      117638432093760,
+      76494145762351,
+      84419755287539,
+      98578127060782,
+   },
+   default = {
+      80877772569772,
+      99818263438846,
+      121094705979021,
+      128801735413980,
+      83559276301867,
+      100099256371667,
+   },
+   koto = {
+      91927498467600,
+      130655908439646,
+      108129969514208,
+      121962822800440,
+   },
+   popular = {
+      71302743123422,
+      100531085354441,
+      113815442881930,
+      115719203985051,
+      77201116105359,
+   },
+   glitching = {131961970776128}
+}
+
+local Aliases = {
+   ["orange justice"] = "orangejustice",
+   ["orange_justice"] = "orangejustice",
+   ["orangej"] = "orangejustice",
+   ["default dance"] = "default",
+   ["defaultdance"] = "default",
+   ["kotonai"] = "koto",
+   ["pop"] = "popular",
+   ["glitch"] = "glitching",
+   ["buggingout"] = "glitching",
+   ["glitchingout"] = "glitching",
+   ["glitched"] = "glitching",
+   ["vibrating"] = "glitching",
+   ["shaking"] = "glitching",
+   ["aurafarming"] = "aura",
+   ["aurafloating"] = "aura",
+   ["aurafloat"] = "aura",
+   ["aurafarm"] = "aura",
+}
+
+function do_emote(input)
+   local Humanoid = getgenv().Humanoid
+   local key = input:lower():gsub("%s+", "")
+   if Aliases[key] then key = Aliases[key] end
+
+   local emoteList = Emotes[key]
+   if emoteList then
+      getgenv().Is_Currently_Emoting = true
+      pcall(function()
+         getgenv().Character:FindFirstChild("Animate").Disabled = true
+      end)
+      local choice = emoteList[math.random(1, #emoteList)]
+      Humanoid:PlayEmoteAndGetAnimTrackById(choice)
+   end
+end
+
+function disable_emoting()
+   if not getgenv().Is_Currently_Emoting or getgenv().Is_Currently_Emoting == false then
+      show_notification("Error:", "You are not emoting!", "Error")
+      return notify("Failure:", "You are not currently emoting!", 5)
+   end
+
+   getgenv().Humanoid.WalkSpeed = 0
+   wait(1)
+   pcall(function()
+      for _, v in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks()) do
+         v:Stop()
+      end
+   end)
+   wait(0.2)
+   pcall(function()
+      getgenv().Character:FindFirstChild("Animate").Disabled = false
+   end)
+   wait(0.4)
+   getgenv().Humanoid.WalkSpeed = 16
+end
+
 function change_phone_color(New_Color)
    send_remote("phone_color", New_Color)
 end
@@ -1477,6 +1616,18 @@ local function CommandsMenu()
       {prefix}noglitchoutfit - Disables the glitching of your outfit
       {prefix}name NewName - Change RP name
       {prefix}bio NewBio - Change RP bio
+      {prefix}noemote - Disables any emote you are currently doing.
+      {prefix}griddy - Makes you do the Griddy emote (FE).
+      {prefix}scenario - Makes you do the Scenario emote (FE).
+      {prefix}superman - Makes you do the Superman emote (FE).
+      {prefix}zen - Makes you do the Zen emote (FE).
+      {prefix}orangej - Makes you do the Orange Justice emote (FE).
+      {prefix}aurafarm - Makes you do an Aura Float emote (FE).
+      {prefix}worm - Makes you do The Worm emote (FE).
+      {prefix}popular - Makes you do the Popular emote (FE).
+      {prefix}defaultd - Makes you do the Default Dance emote (FE).
+      {prefix}kotonai - Makes you do the Koto Nai emote (FE).
+      {prefix}glitching - Makes you do the Glitching emote (FE).
       {prefix}alljobs - Repeatedly spams all jobs
       {prefix}jobsoff - Stops spamming all jobs
       {prefix}fly SpeedNumber - Enable/disable flying
@@ -2680,6 +2831,30 @@ local function handleCommand(sender, message)
       Enable_Fly_2(Fly_Speed)
    elseif cmd == "unfly2" then
       getgenv().Stop_Flying()
+   elseif cmd == "griddy" then
+      do_emote("griddy")
+   elseif cmd == "scenario" then
+      do_emote("scenario")
+   elseif cmd == "superman" then
+      do_emote("superman")
+   elseif cmd == "zen" then
+      do_emote("zen")
+   elseif cmd == "orangej" then
+      do_emote("orangej")
+   elseif cmd == "aura" or cmd == "aurafarm" then
+      do_emote("aura")
+   elseif cmd == "popular" then
+      do_emote("popular")
+   elseif cmd == "kotonai" then
+      do_emote("kotonai")
+   elseif cmd == "defaultd" then
+      do_emote("defaultdance")
+   elseif cmd == "worm" then
+      do_emote("worm")
+   elseif cmd == "glitching" then
+      do_emote("glitch")
+   elseif cmd == "autoclick" then
+      -- do stuff here (later).
    elseif cmd == "autolockcar" then
       local RunService = getgenv().RunService
       getgenv().AutoLockConnection = nil
@@ -3003,12 +3178,12 @@ local function handleCommand(sender, message)
       local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
       
       if not is_enabled or is_enabled == false then
-         Phone.show_notification("Failure:", "NoSit/AntiSit is already enabled!")
+         show_notification("Failure:", "NoSit/AntiSit is already enabled!", "Warning")
          return notify("Failure:", "NoSit/AntiSit is already enabled!", 5)
       end
 
       notify("Success:", "Anti-Sit/No-Sit is now enabled!", 5)
-      Phone.show_notification("Success:", "AntiSit/NoSit is now enabled!")
+      show_notification("Success:", "AntiSit/NoSit is now enabled!", "Normal")
       wait(0.2)
       getgenv().Not_Ever_Sitting = true
 
@@ -3058,7 +3233,7 @@ local function handleCommand(sender, message)
       local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
       
       if is_enabled or is_enabled == true then
-         Phone.show_notification("Failure:", "Sitting is already enabled!")
+         show_notification("Failure:", "Sitting is already enabled!", "Warning")
          return notify("Failure:", "Sitting is already enabled!", 5)
       end
 
@@ -3068,7 +3243,7 @@ local function handleCommand(sender, message)
       wait(0.1)
       -- might as well use both 🤷
       notify("Success:", "Sitting is now enabled!", 5)
-      Phone.show_notification("Success:", "Sitting is now enabled!")
+      Phone.show_notification("Success:", "Sitting is now enabled!", "Normal")
    elseif cmd == "flashname" then
       if getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == true then
          return notify("Failure:", "Your already running Flash Name!", 5)
