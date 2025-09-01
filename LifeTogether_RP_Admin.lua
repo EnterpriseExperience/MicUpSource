@@ -2487,6 +2487,9 @@ local function forceUnequip(slot, id)
    end
 end
 
+local Old_Shirt = getgenv().Humanoid:FindFirstChild("HumanoidDescription").Shirt
+local Old_Pants = getgenv().Humanoid:FindFirstChild("HumanoidDescription").Pants
+wait(0.1)
 function glitch_outfit(toggle)
    if toggle == true then
       getgenv().Glitching_Outfit = true
@@ -2510,6 +2513,13 @@ function glitch_outfit(toggle)
       getgenv().Glitching_Outfit = false
       if getgenv().Character:FindFirstChild("Animate") then
          getgenv().Character:FindFirstChild("Animate").Disabled = false
+      end
+      wait(1)
+      repeat task.wait() until getgenv().Glitching_Outfit == false
+      if getgenv().Glitching_Outfit == false then
+         getgenv().Send("code", Old_Shirt, "Shirt")
+         wait(0)
+         getgenv().Send("code", Old_Pants, "Pants")
       end
    end
 end
