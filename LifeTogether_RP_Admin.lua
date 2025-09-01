@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.8.4"
+local Raw_Version = "V2.8.7"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -736,6 +736,7 @@ local function SafeGetHRP(char)
 	end
 end
 
+local Animate_Disabled = false
 getgenv().HumanoidRootPart = SafeGetHRP(getgenv().Character)
 getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
 getgenv().Head = SafeGetHead(getgenv().Character)
@@ -746,6 +747,11 @@ local function Dynamic_Character_Updater(character)
 	getgenv().HumanoidRootPart = SafeGetHRP(character)
 	getgenv().Humanoid = SafeGetHumanoid(character)
 	getgenv().Head = SafeGetHead(character)
+   local Animate = character:WaitForChild("Animate", 0.5)
+   if Animate_Disabled or Animate_Disabled == true then
+      task.wait(0.2)
+      Animate.Disabled = true
+   end
 end
 
 Dynamic_Character_Updater(getgenv().Character)
@@ -754,7 +760,7 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	task.wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
 	repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
-	wait(0.6)
+	wait(0.5)
 	getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
 	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
 	getgenv().Head = SafeGetHead(newCharacter)
@@ -857,11 +863,11 @@ wait()
    ["VehicleSpeed"] = 300, -- The default maximum speed for Life Together RP vehicles (when you have LifePay Premium, but can be higher to what ever you want here).
    ["VehicleAcceleration"] = 200, -- Just to be clear, this is the vehicle Maximum Acceleration, not the take off time (that's "Vehicle0To60")
    -- These are my two personal setups I use, even though I am not a developer or an admin lol.
-   ["Name"] = "Server-Admin",
-   ["Bio"] = "Developer",
+   ["Name"] = "DEVELOPER",
+   ["Bio"] = "-AURA-",
 }--]]
 wait()
-local fileName = "LifeTogether_Admin_Configuration.json"
+local fileName = "LifeTogether_Admin_Configuration.json" -- Change the name to what ever you like, but the fileName must end with ".json", so you could do "LifeTG_Config.json", but not "LifeTG_Config" or anything without ".json" at the end.
 
 local function loadPrefix()
    if isfile and isfile(fileName) then
@@ -891,7 +897,6 @@ local Character = getgenv().Character
 local HumanoidRootPart = getgenv().HumanoidRootPart
 local Humanoid = getgenv().Humanoid
 local ReplicatedStorage = getgenv().ReplicatedStorage
-
 local AllCars = {
    "Magic Carpet", "EClass", "TowTruck", "Bicycle", "Fiat500", "Cayenne", "Jetski", "LuggageScooter",
    "MiniCooper", "GarbageTruck", "EScooter", "Monster Truck", "Yacht", "Stingray", "FireTruck", "VespaPizza",
@@ -901,6 +906,7 @@ local AllCars = {
    "Helicopter", "SnowPlow", "Camper Van"
 }
 local CarMap = {}
+
 for _, name in ipairs(AllCars) do
    CarMap[name:lower()] = name
 end
@@ -1193,15 +1199,15 @@ function RGB_Phone(Boolean)
       task.wait(0)
          for _, color in ipairs(colors) do
             if getgenv().RGB_Rainbow_Phone ~= true then return end
-            task.wait(.1)
+            task.wait(0)
             change_phone_color(color)
          end
       end
    elseif Boolean == false then
       Boolean = false
       getgenv().RGB_Rainbow_Phone = false
-      task.wait(0.5)
-      repeat wait() until Boolean == false
+      task.wait(0.6)
+      repeat task.wait() until getgenv().RGB_Rainbow_Phone == false
       if getgenv().RGB_Rainbow_Phone == false then
          change_phone_color(Color3.fromRGB(255, 255, 255))
       end
@@ -2304,21 +2310,24 @@ function glitch_outfit(toggle)
       getgenv().Glitching_Outfit = true
       while getgenv().Glitching_Outfit == true do
          task.wait()
+         Animate_Disabled = true
          for _, shirtId in ipairs(GlitchIDs.Shirts) do
-            task.wait()
             forceEquip("Shirt", shirtId)
-            task.wait(0)
+            task.wait()
             forceUnequip("Shirt", shirtId)
          end
          for _, pantsId in ipairs(GlitchIDs.Pants) do
-            task.wait()
             forceEquip("Pants", pantsId)
-            task.wait(0)
+            task.wait()
             forceUnequip("Pants", pantsId)
          end
       end
    else
+      Animate_Disabled = false
       getgenv().Glitching_Outfit = false
+      if getgenv().Character:FindFirstChild("Animate") then
+         getgenv().Character:FindFirstChild("Animate").Disabled = false
+      end
    end
 end
 wait()
