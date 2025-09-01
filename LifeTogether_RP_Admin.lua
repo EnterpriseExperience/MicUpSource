@@ -767,10 +767,13 @@ local function Dynamic_Character_Updater(character)
 	getgenv().HumanoidRootPart = SafeGetHRP(character)
 	getgenv().Humanoid = SafeGetHumanoid(character)
 	getgenv().Head = SafeGetHead(character)
-   local Animate = character:WaitForChild("Animate", 0.5)
+   local Animate = character:WaitForChild("Animate", 0.2)
    if Animate_Disabled or Animate_Disabled == true then
       task.wait(0.2)
       Animate.Disabled = true
+   end
+   if getgenv().Is_Currently_Emoting or getgenv().Is_Currently_Emoting == true then
+      getgenv().Is_Currently_Emoting = false
    end
 end
 
