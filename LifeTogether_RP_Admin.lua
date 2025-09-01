@@ -1637,6 +1637,7 @@ local function CommandsMenu()
       {prefix}fly SpeedNumber - Enable/disable flying
       {prefix}unfly - Disables (Fly) command
       {prefix}annoy Player - Spam calls and request carries the target (spams, FE).
+      {prefix}unannoy - Disables annoy player system.
       {prefix}fly2 SpeedNumber - Enables magic carpet fly (CLIENT side rainbow!)
       {prefix}unfly2 - Disables Fly2/Magic carpet fly (with the client side rainbow)
       {prefix}noclip - Enables Noclip, letting you walk through everything
@@ -2875,6 +2876,10 @@ local function handleCommand(sender, message)
          getgenv().Send("request_call", Target)
          task.wait()
          getgenv().Send("end_call", Target)
+      end
+   elseif cmd == "unannoy" then
+      for i = 1, 50 do
+         getgenv().easy_click_plr = false
       end
    elseif cmd == "autolockcar" then
       local RunService = getgenv().RunService
