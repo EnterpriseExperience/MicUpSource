@@ -159,7 +159,7 @@
         local function applyToCharacter(character)
             task.wait(0.5)
             if color == Color3.fromRGB(255, 255, 255) then
-                local head = character:FindFirstChild("Head")
+                local head = character:WaitForChild("Head", 3)
                 if not head then return warn("Head does not exist!") end
                 if head:FindFirstChild("FlamesHubBillboard") then return end
 
@@ -195,7 +195,8 @@
                 textLabel.Text = text -- If you change this, it won't do anything since it's in the function, and the function is called below when matching the names.
                 textLabel.Parent = background
             else
-                local head = character:FindFirstChild("Head")
+                local head = character:WaitForChild("Head", 3)
+                if not head then return warn("Head does not exist!") end
                 if head:FindFirstChild("FlamesHubBillboard") then return end
 
                 local billboardGui = Instance.new("BillboardGui")
