@@ -13,7 +13,7 @@
     -- Do you even fuckin need this? no you don't.
     --[[
         Animation Packages: Zombie, Catwalk Glam, Elder, Cartoony, Adidas,
-        Adidas, Werewolf, Vampire, Astronaut,
+        Adidas Community Package, Werewolf, Vampire, Astronaut,
         Superhero, Knight, Mage, Ninja,
         Toy, NFL, No Boundaries, Oldschool,
         Pirate, Levitation, Bubbly, Robot,
