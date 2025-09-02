@@ -21,6 +21,173 @@ local CoreGui
 local StarterGui
 local SoundService
 
+function unload_services()
+    getgenv().getLoopKick = false
+    wait()
+    getgenv().SCRIPT_EXECUTED = false
+    getgenv().SCRIPT_EXECUTED = false
+    getgenv().SCRIPT_EXECUTED = false
+    wait(0.1)
+    getgenv().Invis_Loaded = false
+    getgenv().css_digital = false
+    if getgenv().brightness_connection then
+        getgenv().brightness_connection:Disconnect()
+        getgenv().brightness_connection = nil
+    end
+    if getgenv().clocktime_connection then
+        getgenv().clocktime_connection:Disconnect()
+        getgenv().clocktime_connection = nil
+    end
+    if getgenv().clocktime_connection_main then
+        getgenv().clocktime_connection_main:Disconnect()
+        getgenv().clocktime_connection_main = nil
+    end
+    if getgenv().rainbowTweenConnection then
+        getgenv().rainbowTweenConnection:Disconnect()
+        getgenv().rainbowTweenConnection = nil
+    end
+    getgenv().Anti_Sit_Enabled = false
+    if getgenv().No_Sitting_Connection then
+        getgenv().No_Sitting_Connection:Disconnect()
+        getgenv().No_Sitting_Connection = nil
+    end
+    getgenv().disabled_sit_function = false
+    if getgenv().Disable_Flying_Script_HDAdmin then
+        getgenv().Disable_Flying_Script_HDAdmin()
+    end
+    getgenv().HD_FlyEnabled = false
+    getgenv().antiFlingEnabled = false
+    getgenv().AntiTeleport = false
+    getgenv().IceBlockCheckEnabled = false
+    getgenv().JailCellCheckEnabled = false
+    if getgenv().DisableIce_Block_Watcher then
+        getgenv().DisableIce_Block_Watcher()
+    end
+    if getgenv().DisableJell_Cell_Watcher then
+        getgenv().DisableJell_Cell_Watcher()
+    end
+    if getgenv().antiFlingThing then
+        getgenv().antiFlingThing:Disconnect()
+        getgenv().antiFlingThing = nil
+    end
+    getgenv().antiKnockbackEnabled = false
+    if getgenv().anti_knock_back_conn then
+        getgenv().anti_knock_back_conn:Disconnect()
+        getgenv().anti_knock_back_conn = nil
+    end
+    if getgenv().AntiTeleportConnection then
+        pcall(function()
+            task.cancel(getgenv().AntiTeleportConnection)
+            getgenv().AntiTeleportConnection = nil
+        end)
+    end
+    if getgenv().AntiTeleportConnections then
+        for _, v in ipairs(getgenv().AntiTeleportConnections) do
+            pcall(function()
+                v:Disconnect()
+            end)
+        end
+        getgenv().AntiTeleportConnections = {}
+    end
+    if getgenv().AntiBlurConnections then
+        for _, con in ipairs(getgenv().AntiBlurConnections) do
+            con:Disconnect()
+        end
+    end
+    getgenv().AntiBlurEnabled = false
+    if getgenv().AntiBlurConnection then
+        getgenv().AntiBlurConnection:Disconnect()
+        getgenv().AntiBlurConnection = nil
+    end
+    if getgenv().CFrame_Speed_Connection_Started then
+        getgenv().CFrame_Speed_Connection_Started:Disconnect()
+        getgenv().CFrame_Speed_Connection_Started = nil
+    end
+    if getgenv().CFrame_Jump_Connection_Started then
+        getgenv().CFrame_Jump_Connection_Started:Disconnect()
+        getgenv().CFrame_Jump_Connection_Started = nil
+    end
+    getgenv().FreezingChar = false
+    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart.Anchored then
+        getgenv().HumanoidRootPart.Anchored = false
+    end
+    getgenv().Cuss = false
+    if getgenv().bangAnimation then
+        getgenv().bangAnimation:Stop()
+        getgenv().bangAnimation:Destroy()
+        getgenv().bangAnimation = nil
+    end
+    if getgenv().noSit then getgenv().noSit:Disconnect() end
+    if getgenv().nositDied then getgenv().nositDied:Disconnect() end
+    if getgenv().bangDied then getgenv().bangDied:Disconnect() end
+    if getgenv().bangLoop then getgenv().bangLoop:Disconnect() end
+    if getgenv().Noclipping then getgenv().Noclipping:Disconnect() end
+    if getgenv().antiVoidLoop then getgenv().antiVoidLoop:Disconnect() end
+    if getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetStateEnabled(Enum.HumanoidStateType.Seated, false) then
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+    end
+    getgenv().bangActive = false
+    getgenv().Clip = true
+    getgenv().bangScriptLoaded = false
+    getgenv().unload = nil
+    getgenv().enabled = false
+    if getgenv().OwnershipConnection then
+        getgenv().OwnershipConnection:Disconnect()
+        getgenv().OwnershipConnection = nil
+    end
+    if getgenv().TeleportConnection then
+        getgenv().TeleportConnection:Disconnect()
+        getgenv().TeleportConnection = nil
+    end
+    if getgenv().JumpBoostConnection then
+        getgenv().JumpBoostConnection:Disconnect()
+        getgenv().JumpBoostConnection = nil
+    end
+    getgenv().loaded_face_bang = false
+    if getgenv().heartFaceFckConn then
+        getgenv().heartFaceFckConn:Disconnect()
+        getgenv().heartFaceFckConn = nil
+    end
+    if getgenv().Noclip_Connection then
+        getgenv().Noclip_Connection:Disconnect()
+    end
+    Clip = true
+    getgenv().Noclip_Enabled = false
+
+    if getgenv()._noclipModifiedParts then
+        for part, _ in pairs(getgenv()._noclipModifiedParts) do
+            if part and part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        getgenv()._noclipModifiedParts = nil
+    end
+    getgenv().FLYING = false
+    getgenv().QEfly = false
+
+    if getgenv().flyConnectionRender then
+        getgenv().flyConnectionRender:Disconnect()
+        getgenv().flyConnectionRender = nil
+    end
+
+    if getgenv().flyKeyDownConnection then
+        getgenv().flyKeyDownConnection:Disconnect()
+        getgenv().flyKeyDownConnection = nil
+    end
+
+    if getgenv().flyKeyUpConnection then
+        getgenv().flyKeyUpConnection:Disconnect()
+        getgenv().flyKeyUpConnection = nil
+    end
+    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly") then
+        getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Gyro-Fly"):Destroy()
+    end
+    wait(0.1)
+    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly") then
+        getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly"):Destroy()
+    end
+end
+
 if cloneref then
     Players = cloneref(game:GetService("Players"))
     Workspace = cloneref(game:GetService("Workspace"))
@@ -108,170 +275,7 @@ local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitF
 local human = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 3)
 
 function Main_Module:Patch_Update(version)
-    getgenv().getLoopKick = false
-    wait()
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    wait(0.1)
-    getgenv().Invis_Loaded = false
-    getgenv().css_digital = false
-    if getgenv().brightness_connection then
-        getgenv().brightness_connection:Disconnect()
-        getgenv().brightness_connection = nil
-    end
-    if getgenv().clocktime_connection then
-        getgenv().clocktime_connection:Disconnect()
-        getgenv().clocktime_connection = nil
-    end
-    if getgenv().clocktime_connection_main then
-        getgenv().clocktime_connection_main:Disconnect()
-        getgenv().clocktime_connection_main = nil
-    end
-    if getgenv().rainbowTweenConnection then
-        getgenv().rainbowTweenConnection:Disconnect()
-        getgenv().rainbowTweenConnection = nil
-    end
-    getgenv().Anti_Sit_Enabled = false
-    if getgenv().No_Sitting_Connection then
-        getgenv().No_Sitting_Connection:Disconnect()
-        getgenv().No_Sitting_Connection = nil
-    end
-    getgenv().disabled_sit_function = false
-    if getgenv().Disable_Flying_Script_HDAdmin then
-        getgenv().Disable_Flying_Script_HDAdmin()
-    end
-    getgenv().HD_FlyEnabled = false
-    getgenv().antiFlingEnabled = false
-    getgenv().AntiTeleport = false
-    getgenv().IceBlockCheckEnabled = false
-    getgenv().JailCellCheckEnabled = false
-    if getgenv().DisableIce_Block_Watcher then
-        getgenv().DisableIce_Block_Watcher()
-    end
-    if getgenv().DisableJell_Cell_Watcher then
-        getgenv().DisableJell_Cell_Watcher()
-    end
-    if getgenv().antiFlingThing then
-        getgenv().antiFlingThing:Disconnect()
-        getgenv().antiFlingThing = nil
-    end
-    getgenv().antiKnockbackEnabled = false
-    if getgenv().anti_knock_back_conn then
-        getgenv().anti_knock_back_conn:Disconnect()
-        getgenv().anti_knock_back_conn = nil
-    end
-    if getgenv().AntiTeleportConnection then
-        pcall(function()
-            task.cancel(getgenv().AntiTeleportConnection)
-            getgenv().AntiTeleportConnection = nil
-        end)
-    end
-    if getgenv().AntiTeleportConnections then
-        for _, v in ipairs(getgenv().AntiTeleportConnections) do
-            pcall(function()
-                v:Disconnect()
-            end)
-        end
-        getgenv().AntiTeleportConnections = {}
-    end
-    if getgenv().AntiBlurConnections then
-        for _, con in ipairs(getgenv().AntiBlurConnections) do
-            con:Disconnect()
-        end
-    end
-    getgenv().AntiBlurEnabled = false
-    if getgenv().AntiBlurConnection then
-        getgenv().AntiBlurConnection:Disconnect()
-        getgenv().AntiBlurConnection = nil
-    end
-    if getgenv().CFrame_Speed_Connection_Started then
-        getgenv().CFrame_Speed_Connection_Started:Disconnect()
-        getgenv().CFrame_Speed_Connection_Started = nil
-    end
-    if getgenv().CFrame_Jump_Connection_Started then
-        getgenv().CFrame_Jump_Connection_Started:Disconnect()
-        getgenv().CFrame_Jump_Connection_Started = nil
-    end
-    getgenv().FreezingChar = false
-    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart.Anchored then
-        getgenv().HumanoidRootPart.Anchored = false
-    end
-    getgenv().Cuss = false
-    if getgenv().bangAnimation then
-        getgenv().bangAnimation:Stop()
-        getgenv().bangAnimation:Destroy()
-        getgenv().bangAnimation = nil
-    end
-    if getgenv().noSit then getgenv().noSit:Disconnect() end
-    if getgenv().nositDied then getgenv().nositDied:Disconnect() end
-    if getgenv().bangDied then getgenv().bangDied:Disconnect() end
-    if getgenv().bangLoop then getgenv().bangLoop:Disconnect() end
-    if getgenv().Noclipping then getgenv().Noclipping:Disconnect() end
-    if getgenv().antiVoidLoop then getgenv().antiVoidLoop:Disconnect() end
-    if getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetStateEnabled(Enum.HumanoidStateType.Seated, false) then
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
-    end
-    getgenv().bangActive = false
-    getgenv().Clip = true
-    getgenv().bangScriptLoaded = false
-    getgenv().unload = nil
-    getgenv().enabled = false
-    if getgenv().OwnershipConnection then
-        getgenv().OwnershipConnection:Disconnect()
-        getgenv().OwnershipConnection = nil
-    end
-    if getgenv().TeleportConnection then
-        getgenv().TeleportConnection:Disconnect()
-        getgenv().TeleportConnection = nil
-    end
-    if getgenv().JumpBoostConnection then
-        getgenv().JumpBoostConnection:Disconnect()
-        getgenv().JumpBoostConnection = nil
-    end
-    getgenv().loaded_face_bang = false
-    if getgenv().heartFaceFckConn then
-        getgenv().heartFaceFckConn:Disconnect()
-        getgenv().heartFaceFckConn = nil
-    end
-    if getgenv().Noclip_Connection then
-        getgenv().Noclip_Connection:Disconnect()
-    end
-    Clip = true
-    getgenv().Noclip_Enabled = false
-
-    if getgenv()._noclipModifiedParts then
-        for part, _ in pairs(getgenv()._noclipModifiedParts) do
-            if part and part:IsA("BasePart") then
-                part.CanCollide = true
-            end
-        end
-        getgenv()._noclipModifiedParts = nil
-    end
-    getgenv().FLYING = false
-    getgenv().QEfly = false
-
-    if getgenv().flyConnectionRender then
-        getgenv().flyConnectionRender:Disconnect()
-        getgenv().flyConnectionRender = nil
-    end
-
-    if getgenv().flyKeyDownConnection then
-        getgenv().flyKeyDownConnection:Disconnect()
-        getgenv().flyKeyDownConnection = nil
-    end
-
-    if getgenv().flyKeyUpConnection then
-        getgenv().flyKeyUpConnection:Disconnect()
-        getgenv().flyKeyUpConnection = nil
-    end
-    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly") then
-        getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Gyro-Fly"):Destroy()
-    end
-    wait(0.1)
-    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly") then
-        getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly"):Destroy()
-    end
+    unload_services()
     wait(0.2)
     if getgenv().Rayfield then
         getgenv().Rayfield:Destroy()
@@ -281,170 +285,7 @@ function Main_Module:Patch_Update(version)
 end
 
 function Main_Module:Destroy_Script()
-    getgenv().getLoopKick = false
-    wait()
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    getgenv().SCRIPT_EXECUTED = false
-    wait(0.1)
-    getgenv().Invis_Loaded = false
-    getgenv().css_digital = false
-    if getgenv().brightness_connection then
-        getgenv().brightness_connection:Disconnect()
-        getgenv().brightness_connection = nil
-    end
-    if getgenv().clocktime_connection then
-        getgenv().clocktime_connection:Disconnect()
-        getgenv().clocktime_connection = nil
-    end
-    if getgenv().clocktime_connection_main then
-        getgenv().clocktime_connection_main:Disconnect()
-        getgenv().clocktime_connection_main = nil
-    end
-    if getgenv().rainbowTweenConnection then
-        getgenv().rainbowTweenConnection:Disconnect()
-        getgenv().rainbowTweenConnection = nil
-    end
-    getgenv().Anti_Sit_Enabled = false
-    if getgenv().No_Sitting_Connection then
-        getgenv().No_Sitting_Connection:Disconnect()
-        getgenv().No_Sitting_Connection = nil
-    end
-    getgenv().disabled_sit_function = false
-    if getgenv().Disable_Flying_Script_HDAdmin then
-        getgenv().Disable_Flying_Script_HDAdmin()
-    end
-    getgenv().HD_FlyEnabled = false
-    getgenv().antiFlingEnabled = false
-    getgenv().AntiTeleport = false
-    getgenv().IceBlockCheckEnabled = false
-    getgenv().JailCellCheckEnabled = false
-    if getgenv().DisableIce_Block_Watcher then
-        getgenv().DisableIce_Block_Watcher()
-    end
-    if getgenv().DisableJell_Cell_Watcher then
-        getgenv().DisableJell_Cell_Watcher()
-    end
-    if getgenv().antiFlingThing then
-        getgenv().antiFlingThing:Disconnect()
-        getgenv().antiFlingThing = nil
-    end
-    getgenv().antiKnockbackEnabled = false
-    if getgenv().anti_knock_back_conn then
-        getgenv().anti_knock_back_conn:Disconnect()
-        getgenv().anti_knock_back_conn = nil
-    end
-    if getgenv().AntiTeleportConnection then
-        pcall(function()
-            task.cancel(getgenv().AntiTeleportConnection)
-            getgenv().AntiTeleportConnection = nil
-        end)
-    end
-    if getgenv().AntiTeleportConnections then
-        for _, v in ipairs(getgenv().AntiTeleportConnections) do
-            pcall(function()
-                v:Disconnect()
-            end)
-        end
-        getgenv().AntiTeleportConnections = {}
-    end
-    if getgenv().AntiBlurConnections then
-        for _, con in ipairs(getgenv().AntiBlurConnections) do
-            con:Disconnect()
-        end
-    end
-    getgenv().AntiBlurEnabled = false
-    if getgenv().AntiBlurConnection then
-        getgenv().AntiBlurConnection:Disconnect()
-        getgenv().AntiBlurConnection = nil
-    end
-    if getgenv().CFrame_Speed_Connection_Started then
-        getgenv().CFrame_Speed_Connection_Started:Disconnect()
-        getgenv().CFrame_Speed_Connection_Started = nil
-    end
-    if getgenv().CFrame_Jump_Connection_Started then
-        getgenv().CFrame_Jump_Connection_Started:Disconnect()
-        getgenv().CFrame_Jump_Connection_Started = nil
-    end
-    getgenv().FreezingChar = false
-    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart.Anchored then
-        getgenv().HumanoidRootPart.Anchored = false
-    end
-    getgenv().Cuss = false
-    if getgenv().bangAnimation then
-        getgenv().bangAnimation:Stop()
-        getgenv().bangAnimation:Destroy()
-        getgenv().bangAnimation = nil
-    end
-    if getgenv().noSit then getgenv().noSit:Disconnect() end
-    if getgenv().nositDied then getgenv().nositDied:Disconnect() end
-    if getgenv().bangDied then getgenv().bangDied:Disconnect() end
-    if getgenv().bangLoop then getgenv().bangLoop:Disconnect() end
-    if getgenv().Noclipping then getgenv().Noclipping:Disconnect() end
-    if getgenv().antiVoidLoop then getgenv().antiVoidLoop:Disconnect() end
-    if getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetStateEnabled(Enum.HumanoidStateType.Seated, false) then
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
-    end
-    getgenv().bangActive = false
-    getgenv().Clip = true
-    getgenv().bangScriptLoaded = false
-    getgenv().unload = nil
-    getgenv().enabled = false
-    if getgenv().OwnershipConnection then
-        getgenv().OwnershipConnection:Disconnect()
-        getgenv().OwnershipConnection = nil
-    end
-    if getgenv().TeleportConnection then
-        getgenv().TeleportConnection:Disconnect()
-        getgenv().TeleportConnection = nil
-    end
-    if getgenv().JumpBoostConnection then
-        getgenv().JumpBoostConnection:Disconnect()
-        getgenv().JumpBoostConnection = nil
-    end
-    getgenv().loaded_face_bang = false
-    if getgenv().heartFaceFckConn then
-        getgenv().heartFaceFckConn:Disconnect()
-        getgenv().heartFaceFckConn = nil
-    end
-    if getgenv().Noclip_Connection then
-        getgenv().Noclip_Connection:Disconnect()
-    end
-    Clip = true
-    getgenv().Noclip_Enabled = false
-
-    if getgenv()._noclipModifiedParts then
-        for part, _ in pairs(getgenv()._noclipModifiedParts) do
-            if part and part:IsA("BasePart") then
-                part.CanCollide = true
-            end
-        end
-        getgenv()._noclipModifiedParts = nil
-    end
-    getgenv().FLYING = false
-    getgenv().QEfly = false
-
-    if getgenv().flyConnectionRender then
-        getgenv().flyConnectionRender:Disconnect()
-        getgenv().flyConnectionRender = nil
-    end
-
-    if getgenv().flyKeyDownConnection then
-        getgenv().flyKeyDownConnection:Disconnect()
-        getgenv().flyKeyDownConnection = nil
-    end
-
-    if getgenv().flyKeyUpConnection then
-        getgenv().flyKeyUpConnection:Disconnect()
-        getgenv().flyKeyUpConnection = nil
-    end
-    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly") then
-        getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Gyro-Fly"):Destroy()
-    end
-    wait(0.1)
-    if getgenv().HumanoidRootPart and getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly") then
-        getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly"):Destroy()
-    end
+    unload_services()
     wait(0.2)
     if getgenv().Rayfield then
         getgenv().Rayfield:Destroy()
