@@ -895,13 +895,13 @@
     wait(0.2)
     if executor_Name == "Solara" or executor_Name == "Sonar" or executor_Name == "Xeno" or executor_Name == "Macsploit" then
         Window = Rayfield:CreateWindow({
-            Name = "👽 Flames Hub 👽 | "..tostring(Script_Version).." | "..tostring(executor_Name),
+            Name = "📍 Flames Hub 📍 | "..tostring(Script_Version).." | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(getgenv().LocalPlayer),
             LoadingSubtitle = "Flames Hub | Wassup!",
             ConfigurationSaving = {
                 Enabled = false,
-                FolderName = "ConfigurationFlamesHub",
-                FileName = "FlamesHub"
+                FolderName = "",
+                FileName = ""
             },
             Discord = {
                 Enabled = false,
@@ -921,7 +921,7 @@
         })
     else
         Window = Rayfield:CreateWindow({
-            Name = "👽 Flames Hub 👽 | "..tostring(Script_Version).." | "..tostring(executor_Name),
+            Name = "📍 Flames Hub 📍 | "..tostring(Script_Version).." | "..tostring(executor_Name),
             LoadingTitle = "Enjoy, "..tostring(game.Players.LocalPlayer),
             LoadingSubtitle = "Flames Hub | Wassup!",
             ConfigurationSaving = {
