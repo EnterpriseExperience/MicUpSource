@@ -107,29 +107,6 @@ local humanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Charact
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 3)
 local human = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 3)
 
-function Main_Module:PreFetch()
-    local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-
-    if not httprequest then
-        warn("No HTTP request function found.")
-        return nil
-    end
-
-    local url = "https://ipinfo.io/json"
-    local response = httprequest({
-        Url = url,
-        Method = "GET"
-    })
-
-    if response and response.StatusCode == 200 then
-        local data = HttpService:JSONDecode(response.Body)
-        return data.country
-    else
-        warn("Failed to fetch country information.")
-        return nil
-    end
-end
-
 function Main_Module:Patch_Update(version)
     getgenv().getLoopKick = false
     getgenv().SCRIPT_EXECUTED = false
