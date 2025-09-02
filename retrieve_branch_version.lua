@@ -34,8 +34,11 @@
         local executorDetails = getExecutor()
         return string.format("%s", executorDetails.Name)
     end
+    wait()
+    local Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))()
+    local Version = Module:Get_Current_Version()
     wait(0.1)
-    local Script_Version = "V10.2.4"
+    local Script_Version = Version
     local executor_Name = detectExecutor()
     wait(0.1)
     print("2") -- And throughout the beginning of the script there might be these random print statements, don't mind them, it's just my way of debugging, like if something doesn't load, then I'll count my steps back and see where it stopped loading at or what not.
@@ -7747,22 +7750,22 @@
     print("31")
 
     getgenv().PlayEmoteWithIDNum = Tab12:CreateInput({
-    Name = "Play Emote (ID)",
+    Name = "Play Emote (ID, works with UGC emotes!)",
     PlaceholderText = "Enter ID",
     RemoveTextAfterFocusLost = true,
     Callback = function(getTheIDForEmote)
-        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+        if getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
             return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
         end
 
         local getNumberID = tonumber(getTheIDForEmote) or getTheIDForEmote
         
         local succ, err = pcall(function()
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(getNumberID)
+            getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
         end)
         
         if succ then
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(getNumberID)
+            getgenv().Humanoid:PlayEmoteAndGetAnimTrackById(getNumberID)
         else
             return getgenv().notify("Error:", tostring(err), 7)
         end
