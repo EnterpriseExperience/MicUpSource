@@ -928,7 +928,7 @@ local AllCars = {
    "VespaPolice", "F150", "Police SUV", "Chiron", "Humvee", "Wrangler", "Box Van", "Ambulance", "Urus", "Tesla",
    "Cybertruck", "RollsRoyce", "GClass", "SVJ", "MX5", "SF90", "Charger SRT", "Evoque", "IceCream Truck",
    "Vespa", "ATV", "Limo", "Tank", "Smart Car", "Beauford", "SchoolBus", "Sprinter", "GolfKart", "TrackHawk",
-   "Helicopter", "SnowPlow", "Camper Van"
+   "Helicopter", "SnowPlow", "Camper Van", "SWAT Van"
 }
 local CarMap = {}
 
