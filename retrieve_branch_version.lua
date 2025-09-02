@@ -62,7 +62,7 @@
     getgenv().SCRIPT_EXECUTED = getgenv().SCRIPT_EXECUTED or false
     getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE or false
 
-    --[[if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
+    if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
         if not getgenv().notify then
             getgenv().notify = function(title, content, duration)
                 local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
@@ -84,7 +84,7 @@
         task.wait(0.3)
 
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
-    end--]]
+    end
     wait(0.2)
     if response and response.StatusCode == 200 then
         Notification = loadstring(response.Body)()
@@ -7276,20 +7276,31 @@
         Flag = "MICUPTransparency",
         Callback = function(BasePlateMICUPTransparency)
             local Workspace = getgenv().Workspace
-            local SoccerField = Workspace:FindFirstChild("SoccerField")
-            if SoccerField then
-                local BasePlate = SoccerField:FindFirstChild("Baseplate")
+            local Map = Workspace:FindFirstChild("Map")
+            if Map then
+                local Important = Map:FindFirstChild("Important")
                 wait(0.1)
-                if BasePlate then
-                    local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-                    BasePlate.Transparency = BasePlateMICUPTransparency
-                    if Texture_Bruh then
-                        Texture_Bruh.Transparency = BasePlateMICUPTransparency
+                if Important then
+                    local Baseplate_Folder = Important:FindFirstChild("Baseplate")
+
+                    if Baseplate_Folder then
+                        local Baseplate_Part = Baseplate_Folder:FindFirstChild("Baseplate")
+
+                        if Baseplate_Part then
+                            Baseplate_Part.Transparency = BasePlateMICUPTransparency
+                        else
+                            warn("Baseplate Part not found inside of Baseplate Folder.")
+                        end
+                    else
+                        warn("Baseplate Folder not found inside of Important Folder.")
                     end
                 else
-                    warn("Baseplate not found inside SoccerField.")
+                    warn("Important Folder not found inside of Map.")
                 end
+
                 return 
+            else
+                warn("Map Folder not found inside of Workspace.")
             end
             task.wait(.1)
             local Map_Folder = Workspace:FindFirstChild("Map")
@@ -7305,30 +7316,30 @@
                     warn("Baseplate not found inside Game.")
                 end
             else
-                warn("Neither SoccerField nor Game exist in Workspace.")
+                warn("Neither Baseplate Folder nor the Game Folder exist in the Map Folder in Workspace.")
             end
         end,})
         wait(0.2)
-        if game:GetService("Workspace"):FindFirstChild("SoccerField") then
-            local BasePlate = getgenv().Workspace:FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-            local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+        if getgenv().Workspace:FindFirstChild("Map") then
+            local Map_Folder = getgenv().Workspace:FindFirstChild("Map")
+            local Important_Folder = Map_Folder:FindFirstChild("Important")
+            local Baseplate_Folder = Important_Folder:FindFirstChild("Baseplate")
+            local Baseplate_Part = Baseplate_Folder:FindFirstChild("Baseplate")
+            local BasePlate = Baseplate_Part
 
-            if BasePlate and Texture_Bruh then
+            if BasePlate then
                 BasePlate.Transparency = 1
-                Texture_Bruh.Transparency = 1
             else
                 warn("BasePlate does not exist!")
             end
-        elseif game:GetService("Workspace"):FindFirstChild("Game") then
-            if getgenv().Workspace:FindFirstChild("Baseplate") then
-                local BasePlate_0 = getgenv().Workspace:FindFirstChild("Baseplate")
-                local BasePlate_1 = getgenv().Workspace:FindFirstChild("Game"):FindFirstChild("Baseplate")
-
-                if not Baseplate_1 then
-                    warn("BasePlate_1 (Regular MIC UP Baseplate) does not exist.")
-                else
-                    BasePlate_1.Transparency = 1
-                    Baseplate_1:FindFirstChild("Texture").Transparency = 1
+        elseif getgenv().Workspace:FindFirstChild("RoomExtra") then
+            if getgenv().Workspace:FindFirstChild("RoomExtra"):FindFirstChild("Baseplate") then
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("RoomExtra"):GetDescendants()) do
+                    if v:FindFirstChild("Baseplate") then
+                        v.Transparency = 1
+                    else
+                        warn("BasePlate_1 (Regular MIC UP Baseplate) does not exist.")
+                    end
                 end
             end
         else
@@ -7402,23 +7413,148 @@
         end
     end,})
 
-    local function find_baseplate()
-        for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-            if v:IsA("BasePart") and string.find(v.Name:lower(), "baseplate") then
-                return v
+    local function find_mic_up_baseplate()
+        local Workspace = getgenv().Workspace
+        local Map = Workspace:FindFirstChild("Map")
+        if Map then
+            local Important = Map:FindFirstChild("Important")
+            wait(0.1)
+            if Important then
+                local Baseplate_Folder = Important:FindFirstChild("Baseplate")
+
+                if Baseplate_Folder then
+                    local Baseplate_Part = Baseplate_Folder:FindFirstChild("Baseplate")
+
+                    if Baseplate_Part then
+                        return Baseplate_Part
+                    else
+                        warn("Baseplate Part not found inside of Baseplate Folder.")
+                    end
+                else
+                    warn("Baseplate Folder not found inside of Important Folder.")
+                end
+            else
+                warn("Important Folder not found inside of Map.")
             end
+
+            return 
+        else
+            warn("Map Folder not found inside of Workspace.")
         end
 
         return nil
     end
 
-    getgenv().RainbowBaseplate_Universal = Tab18:CreateButton({
+    local function find_mic_up_baseplate_2()
+        local Workspace = getgenv().Workspace
+        local Room_Extra = Workspace:FindFirstChild("RoomExtra")
+
+        if Room_Extra then
+            for _, v in ipairs(Room_Extra:GetChildren()) do
+                if v:IsA("BasePart") then
+                    print(v)
+                end
+            end
+        end
+    end
+
+    local Found_Baseplate = false
+    getgenv().Has_Found_Successfully_Baseplate = Found_Baseplate
+    getgenv().Found_Baseplates = getgenv().Found_Baseplates or {}
+    getgenv().Baseplate_OriginalColors = getgenv().Baseplate_OriginalColors or {}
+
+    task.wait(0.1)
+
+    local function find_baseplate()
+        for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+            if v:IsA("BasePart") and string.find(v.Name:lower(), "baseplate") then
+                Found_Baseplate = true
+                getgenv().Has_Found_Successfully_Baseplate = true
+                table.insert(getgenv().Found_Baseplates, v)
+                if not getgenv().Baseplate_OriginalColors[v] then
+                    getgenv().Baseplate_OriginalColors[v] = v.Color
+                end
+                return v
+            end
+        end
+        return nil
+    end
+
+    function save_old_baseplate_color()
+        if getgenv().Has_Found_Successfully_Baseplate then
+            for _, baseplate in ipairs(getgenv().Found_Baseplates) do
+                if baseplate and baseplate:IsA("BasePart") then
+                    getgenv().Baseplate_OriginalColors[baseplate] = baseplate.Color
+                end
+            end
+        end
+    end
+    wait(0.2)
+    getgenv().RainbowBaseplate_Universal = Tab18:CreateToggle({
     Name = "Rainbow Baseplate (Universal)",
-    Callback = function()
-        local find_baseplate_func = find_baseplate()
-        if not find_baseplate_func then
-            getgenv().RainbowBaseplate_Universal:Set(false)
-            return getgenv().notify("Failure:", "Could not find a Baseplate in the current experience!", 5)
+    CurrentValue = false,
+    Flag = "RainbowBaseplate_UniversalWorking",
+    Callback = function(Always_Rainbow_Baseplate_Ez)
+        if Always_Rainbow_Baseplate_Ez then
+            local find_baseplate_func = find_baseplate()
+            if not find_baseplate_func then
+                getgenv().rainbow_universal_baseplate_ez = false
+                getgenv().RainbowBaseplate_Universal:Set(false)
+                return getgenv().notify("Failure:", "Could not find a Baseplate in the current experience!", 5)
+            end
+
+            local TweenService = getgenv().TweenService
+            local Workspace = getgenv().Workspace
+            local Terrain
+            getgenv().rainbow_universal_baseplate_ez = true
+
+            local colors = {
+                Color3.fromRGB(0, 255, 255),
+                Color3.fromRGB(0, 0, 0),
+                Color3.fromRGB(255, 255, 255),
+                Color3.fromRGB(128, 128, 128),
+                Color3.fromRGB(255, 0, 0),
+                Color3.fromRGB(255, 105, 180),
+                Color3.fromRGB(75, 0, 130),
+                Color3.fromRGB(50, 205, 50),
+                Color3.fromRGB(255, 20, 147),
+                Color3.fromRGB(138, 54, 15),
+                Color3.fromRGB(191, 64, 191),
+                Color3.fromRGB(255, 215, 0),
+                Color3.fromRGB(255, 140, 0)
+            }
+
+            local colorIndex = 1
+
+            local function applyTweenColor(part, newColor)
+                local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+                local tween = TweenService:Create(part, tweenInfo, { Color = newColor })
+                tween:Play()
+            end
+
+            local function updateColors()
+                while getgenv().rainbow_universal_baseplate_ez == true do
+                    local newColor = colors[colorIndex]
+                    applyTweenColor(find_baseplate_func, newColor)
+                    colorIndex = (colorIndex % #colors) + 1
+                    task.wait(1)
+                end
+            end
+
+            task.spawn(updateColors)
+        else
+            getgenv().rainbow_universal_baseplate_ez = false
+            wait(0.1)
+            getgenv().rainbow_universal_baseplate_ez = false
+            wait(0.3)
+            for i = 1, 10 do
+                getgenv().rainbow_universal_baseplate_ez = false
+            end
+            wait(0.5)
+            local Original_Color_Baseplate = save_old_baseplate_color()
+            local find_baseplate_func = find_baseplate()
+
+            find_baseplate_func.Color = Original_Color_Baseplate
         end
     end,})
 
@@ -7428,22 +7564,10 @@
         Color = Color3.fromRGB(255, 0, 0),
         Flag = "PickingColorForMap",
         Callback = function(Base_Color)
-            if getgenv().Workspace:FindFirstChild("SoccerField") then
-                local BasePlate = getgenv().Workspace:FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Color = Base_Color
-                Texture_Bruh.Color3 = Base_Color
-            elseif getgenv().Workspace:FindFirstChild("BasePlate") then
-                local BasePlate = getgenv().Workspace:FindFirstChild("BasePlate")
-
-                BasePlate.Color = Base_Color
-            elseif getgenv().Workspace:FindFirstChild("Game") then
-                local BasePlate = getgenv().Workspace:FindFirstChild("Game"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Color = Base_Color
-                Texture_Bruh.Color3 = Base_Color
+            local Mic_Up_Baseplate = find_mic_up_baseplate()
+            
+            if Mic_Up_Baseplate then
+                Mic_Up_Baseplate.Color = Base_Color
             end
         end,})
 
@@ -7455,27 +7579,10 @@
         CurrentValue = 400,
         Flag = "ChangingBasePlateSized",
         Callback = function(Size_New)
-            if game:GetService("Workspace"):FindFirstChild("BasePlate") then
-                local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
-
-                BasePlate_Alt.Size = Vector3.new(Size_New, BasePlate_Alt.Size.Y, BasePlate_Alt.Size.Z)
-            elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
-                local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
-
-                if BasePlate_Normal.Transparency == 1 then
-                    BasePlate_Normal.Transparency = 0
-                    BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
-                else
-                    BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
-                end
-            elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Size = Vector3.new(Size_New, BasePlate.Size.Y, BasePlate.Size.Z)
-                Texture_Bruh.Size = Vector3.new(Size_New, BasePlate.Size.Y, BasePlate.Size.Z)
+            local Baseplate_Local = find_mic_up_baseplate_2()
+            
+            if Baseplate_Local then
+                Baseplate_Local.Size = Vector3.new(Size_New, Baseplate_Local.Size.Y, Baseplate_Local.Size.Z)
             end
         end,})
 
@@ -7487,51 +7594,61 @@
         CurrentValue = 400,
         Flag = "ChangingBaseSize",
         Callback = function(Sized_Z)
-            if game:GetService("Workspace"):FindFirstChild("BasePlate") then
-                local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
-
-                BasePlate_Alt.Size = Vector3.new(BasePlate_Alt.Size.X, BasePlate_Alt.Size.Y, Sized_Z)
-            elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
-                local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
-
-                if BasePlate_Normal.Transparency == 1 then
-                    BasePlate_Normal.Transparency = 0
-                    BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
-                else
-                    BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
-                end
-            elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
-                Texture_Bruh.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
+            local Baseplate_Local_Z = find_mic_up_baseplate_2()
+            
+            if Baseplate_Local_Z then
+                Baseplate_Local.Size = Vector3.new(Baseplate_Local_Z.Size.X, Baseplate_Local_Z.Size.Y, Sized_Z)
             end
         end,})
-    elseif game.PlaceId == 80080558412215 then
+    elseif game.PlaceId == 136162036182779 then
+        local Shared = getgenv().ReplicatedStorage:FindFirstChild("Shared")
+        local Communication = Shared and Shared:FindFirstChild("Communication")
+        local Remote = Communication and Communication:FindFirstChild("Remote")
+        local Focus_RF = Remote and Remote:FindFirstChild("Focus")
+
+        function change_AFK(boolean)
+            if boolean == true then
+                Focus_RF:InvokeServer(true) -- Sets AFK visibility tag to false, so basically people cannot see the "AFK" tag.
+            elseif boolean == false then
+                Focus_RF:InvokeServer(false) -- Sets AFK visibility tag to true, basically letting other people see the "AFK" tag.
+            else
+                return -- Don't do anything if incorrect arguments are entered/passed (duh).
+            end
+        end
+        wait(0.2)
+        function flash_AFK_title(toggle)
+            if toggle == true then
+                getgenv().flashing_AFK_Title_Toggle = true
+                while getgenv().flashing_AFK_Title_Toggle == true do
+                task.wait()
+                    change_AFK(false)
+                    task.wait(0)
+                    change_AFK(true)
+                end
+            elseif toggle == false then
+                getgenv().flashing_AFK_Title_Toggle = false
+                getgenv().flashing_AFK_Title_Toggle = false
+            else
+                return 
+            end
+        end
+
         getgenv().BasePlate_ColorChange = Tab18:CreateColorPicker({
         Name = "German Hangout BasePlate Color",
         Color = Color3.fromRGB(255, 0, 0),
         Flag = "PickingColorForMap",
         Callback = function(Base_Color)
-            if game:GetService("Workspace"):FindFirstChild("SoccerField") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+            local Map = getgenv().Workspace:FindFirstChild("Map")
+            if Map then
+                local Lobby_Folder = Map:FindFirstChild("Lobby")
 
-                BasePlate.Color = Base_Color
-                Texture_Bruh.Color3 = Base_Color
-            elseif game:GetService("Workspace"):FindFirstChild("BasePlate") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("BasePlate")
+                if Lobby_Folder then
+                    local Baseplate_Part = Lobby_Folder:FindFirstChild("Baseplate")
 
-                BasePlate.Color = Base_Color
-            elseif game:GetService("Workspace"):FindFirstChild("Game") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Color = Base_Color
-                Texture_Bruh.Color3 = Base_Color
+                    if Baseplate_Part then
+                        Baseplate_Part.Color = Base_Color
+                    end
+                end
             end
         end,})
 
@@ -7543,27 +7660,17 @@
         CurrentValue = 400,
         Flag = "ChangingBasePlateSized",
         Callback = function(Size_New)
-            if game:GetService("Workspace"):FindFirstChild("BasePlate") then
-                local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
+            local Map = getgenv().Workspace:FindFirstChild("Map")
+            if Map then
+                local Lobby_Folder = Map:FindFirstChild("Lobby")
 
-                BasePlate_Alt.Size = Vector3.new(Size_New, BasePlate_Alt.Size.Y, BasePlate_Alt.Size.Z)
-            elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
-                local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+                if Lobby_Folder then
+                    local Baseplate_Part = Lobby_Folder:FindFirstChild("Baseplate")
 
-                if BasePlate_Normal.Transparency == 1 then
-                    BasePlate_Normal.Transparency = 0
-                    BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
-                else
-                    BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(Size_New, BasePlate_Normal.Size.Y, BasePlate_Normal.Size.Z)
+                    if Baseplate_Part then
+                        Baseplate_Part.Size = Vector3.new(Size_New, Baseplate_Part.Size.Y, Baseplate_Part.Size.Z)
+                    end
                 end
-            elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Size = Vector3.new(Size_New, BasePlate.Size.Y, BasePlate.Size.Z)
-                Texture_Bruh.Size = Vector3.new(Size_New, BasePlate.Size.Y, BasePlate.Size.Z)
             end
         end,})
 
@@ -7575,27 +7682,29 @@
         CurrentValue = 400,
         Flag = "ChangingBaseSize",
         Callback = function(Sized_Z)
-            if game:GetService("Workspace"):FindFirstChild("BasePlate") then
-                local BasePlate_Alt = game:GetService("Workspace"):FindFirstChild("BasePlate")
+            local Map = getgenv().Workspace:FindFirstChild("Map")
+            if Map then
+                local Lobby_Folder = Map:FindFirstChild("Lobby")
 
-                BasePlate_Alt.Size = Vector3.new(BasePlate_Alt.Size.X, BasePlate_Alt.Size.Y, Sized_Z)
-            elseif game:GetService("Workspace"):FindFirstChild("Baseplate") then
-                local BasePlate_Normal = game:GetService("Workspace"):FindFirstChild("Baseplate")
+                if Lobby_Folder then
+                    local Baseplate_Part = Lobby_Folder:FindFirstChild("Baseplate")
 
-                if BasePlate_Normal.Transparency == 1 then
-                    BasePlate_Normal.Transparency = 0
-                    BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
-                else
-                    BasePlate_Normal.CanCollide = true
-                    BasePlate_Normal.Size = Vector3.new(BasePlate_Normal.Size.X, BasePlate_Normal.Size.Y, Sized_Z)
+                    if Baseplate_Part then
+                        Baseplate_Part.Size = Vector3.new(Baseplate_Part.Size.X, Baseplate_Part.Size.Y, Sized_Z)
+                    end
                 end
-            elseif game:GetService("Workspace"):FindFirstChild("SoccerField") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
+            end
+        end,})
 
-                BasePlate.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
-                Texture_Bruh.Size = Vector3.new(BasePlate.Size.X, BasePlate.Size.Y, Sized_Z)
+        getgenv().Flash_AFK_Title_Toggle = Tab2:CreateToggle({
+        Name = "Flash AFK Title (FE, German Hangout)",
+        CurrentValue = false,
+        Flag = "GermanHangoutAFKFlashFE",
+        Callback = function(GermanHangout_AFK_Title_Enabled)
+            if GermanHangout_AFK_Title_Enabled then
+                flash_AFK_title(true)
+            else
+                flash_AFK_title(false)
             end
         end,})
     else
