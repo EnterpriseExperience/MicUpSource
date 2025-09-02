@@ -35,7 +35,7 @@
         return string.format("%s", executorDetails.Name)
     end
     wait(0.1)
-    local Script_Version = "V10.0.8"
+    local Script_Version = "V10.2.4"
     local executor_Name = detectExecutor()
     wait(0.1)
     print("2") -- And throughout the beginning of the script there might be these random print statements, don't mind them, it's just my way of debugging, like if something doesn't load, then I'll count my steps back and see where it stopped loading at or what not.
@@ -3515,15 +3515,15 @@
         end
         wait()
         for _, v in ipairs(getgenv().Workspace:GetChildren()) do
-            if v:FindFirstChild("HDAdminClient", true) then
+            if v:IsA("Folder") and v.Name == "HDAdminClient" then
                 HDAdmin_Directory = v
                 HDdmin_Found = true
             end
         end
         wait()
-        for _, k in ipairs(getgenv().Workspace:GetChildren()) do
-            if v:FindFirstChild("HDAdminHDClient", true) then
-                HDAdmin_Directory = v
+        for _, k in ipairs(getgenv().Workspace:GetDescendants()) do
+            if k:IsA("Folder") and k.Name == "HDAdminHDClient" then
+                HDAdmin_Directory = k
                 HDdmin_Found = true
             end
         end
@@ -12740,45 +12740,20 @@
         warn("Custom UI was not loaded properly.")
     end
 
+    local Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))()
+    local Version = Module:Get_Current_Version()
+    wait(0.3)
     getgenv().ReExecuteGUI = Tab1:CreateButton({
     Name = "Re-Execute/Reload Script/GUI",
     Callback = function()
-        getgenv().getLoopKick = false
-        wait()
-        getgenv().SCRIPT_EXECUTED = false
-        getgenv().SCRIPT_EXECUTED = false
-        getgenv().SCRIPT_EXECUTED = false
-        getgenv().SCRIPT_EXECUTED = false
-        getgenv().SCRIPT_EXECUTED = false
-        wait(0.1)
-        getgenv().Invis_Loaded = false
-        getgenv().css_digital = false
-        wait(0.2)
-        getgenv().Rayfield:Destroy()
-        wait(0.8)
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()
+        getgenv().notify("Hang On:", "Loading update: "..tostring(Version), 5)
+        Module:Patch_Update()
     end,})
     wait(0.1)
     getgenv().DestroyGUIScript = Tab1:CreateButton({
     Name = "Destroy GUI/Script",
     Callback = function()
-        getgenv().getLoopKick = false
-        wait()
-        getgenv().SCRIPT_EXECUTED = false
-        wait()
-        getgenv().SCRIPT_EXECUTED = false
-        wait(0.1)
-        getgenv().Invis_Loaded = false
-        getgenv().GetLoopRunning = false
-        getgenv().GetLoopRunning = false
-        getgenv().LmaoGetMuted = false
-        getgenv().css_digital = false
-        wait(0.2)
-        if getgenv().Rayfield then
-            getgenv().Rayfield:Destroy()
-        else
-            return 
-        end
+        Module:Destroy_Script()
     end,})
 
     getgenv().UnmuteAPlayer = Tab21:CreateInput({
