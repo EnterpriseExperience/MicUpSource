@@ -7402,13 +7402,23 @@
         end
     end,})
 
-    getgenv().RestoreToOriginalColors = Tab18:CreateButton({
-    Name = "Reset/Restore Map Color",
-    Callback = function()
-        for part, originalColor in pairs(getgenv().OriginalColors) do
-            if part and part.Parent then
-                part.Color = originalColor
+    local function find_baseplate()
+        for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+            if v:IsA("BasePart") and string.find(v.Name:lower(), "baseplate") then
+                return v
             end
+        end
+
+        return nil
+    end
+
+    getgenv().RainbowBaseplate_Universal = Tab18:CreateButton({
+    Name = "Rainbow Baseplate (Universal)",
+    Callback = function()
+        local find_baseplate_func = find_baseplate()
+        if not find_baseplate_func then
+            getgenv().RainbowBaseplate_Universal:Set(false)
+            return getgenv().notify("Failure:", "Could not find a Baseplate in the current experience!", 5)
         end
     end,})
 
@@ -7418,18 +7428,18 @@
         Color = Color3.fromRGB(255, 0, 0),
         Flag = "PickingColorForMap",
         Callback = function(Base_Color)
-            if game:GetService("Workspace"):FindFirstChild("SoccerField") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
+            if getgenv().Workspace:FindFirstChild("SoccerField") then
+                local BasePlate = getgenv().Workspace:FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
                 local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
 
                 BasePlate.Color = Base_Color
                 Texture_Bruh.Color3 = Base_Color
-            elseif game:GetService("Workspace"):FindFirstChild("BasePlate") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("BasePlate")
+            elseif getgenv().Workspace:FindFirstChild("BasePlate") then
+                local BasePlate = getgenv().Workspace:FindFirstChild("BasePlate")
 
                 BasePlate.Color = Base_Color
-            elseif game:GetService("Workspace"):FindFirstChild("Game") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
+            elseif getgenv().Workspace:FindFirstChild("Game") then
+                local BasePlate = getgenv().Workspace:FindFirstChild("Game"):FindFirstChild("Baseplate")
                 local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
 
                 BasePlate.Color = Base_Color
@@ -13194,7 +13204,7 @@
         wait()
         Animate.Disabled = false
 
-        local humanoid = getgenv().Humanoid
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
         if humanoid then
             for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                 track:Stop()
