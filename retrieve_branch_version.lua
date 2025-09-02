@@ -1265,7 +1265,7 @@
     getgenv().LocalPlayer.OnTeleport:Connect(function(State)
         if (not getgenv().TeleportCheck) and getgenv().queueteleport then
             getgenv().TeleportCheck = true
-            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/total_main.lua')))()")
+            queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua')))()")
         end
     end)
     wait(0.2)
@@ -1824,10 +1824,11 @@
     Name = "Copy Link To See Latest Updates",
     Callback = function()
         if getgenv().AllClipboards then
-            getgenv().AllClipboards("https://github.com/LmaoItsCrazyBro/new_main/releases")
+            getgenv().AllClipboards("https://github.com/EnterpriseExperience/MicUpSource/releases")
+            getgenv().notify("Success:", "Paste the link copied onto your browser to view all recent updates!", 5)
         else
-            warn("https://github.com/LmaoItsCrazyBro/new_main/releases")
-            getgenv().notify("Failure", "Posted the link in Developer Console, couldn't copy.", 6)
+            warn("https://github.com/EnterpriseExperience/MicUpSource/releases")
+            getgenv().notify("Failure:", "Posted the link in Developer Console, couldn't copy.", 6)
         end
     end,})
 
@@ -1838,9 +1839,8 @@
             return getgenv().notify("Failure:", "You do not seem to be R15.", 5)
         end
     end
-
+    getgenv().is_r15_checker = check_r15
     local is_r15 = check_r15()
-
     wait(0.4)
     getgenv().PlayAnyEmote = Tab2:CreateDropdown({
     Name = "Play Emote",
@@ -3425,6 +3425,8 @@
     CurrentValue = false,
     Flag = "noSittingDown",
     Callback = function(theSitDownAntiToggle)
+        getgenv().No_Sitting_Connection = nil
+
         if theSitDownAntiToggle then
             local function handle_seat(seat)
                 if seat:IsA("Seat") or seat:IsA("VehicleSeat") then
@@ -3437,7 +3439,7 @@
             getgenv().Anti_Sit_Enabled = true
             getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
             task.wait(0.1)
-            Anti_Sit_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
+            getgenv().No_Sitting_Connection = getgenv().Workspace.DescendantAdded:Connect(function(v)
                 if getgenv().Anti_Sit_Enabled then
                     handle_seat(v)
                 end
@@ -3446,9 +3448,9 @@
             getgenv().Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
             getgenv().Anti_Sit_Enabled = false
 
-            if Anti_Sit_Connection then
-                Anti_Sit_Connection:Disconnect()
-                Anti_Sit_Connection = nil
+            if getgenv().No_Sitting_Connection then
+                getgenv().No_Sitting_Connection:Disconnect()
+                getgenv().No_Sitting_Connection = nil
             end
             wait(0.2)
             for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
@@ -3478,7 +3480,7 @@
             FlyConnection = nil
         end
 
-        local hrp = getgenv().getRoot(getgenv().Character)
+        local hrp = getgenv().getRoot(getgenv().Character) or getgenv().HumanoidRootPart
         if hrp:FindFirstChild("ExecutorFlyGyro") then
             hrp.ExecutorFlyGyro:Destroy()
         end
@@ -3490,6 +3492,8 @@
             getgenv().Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
         end
     end
+    wait(0.1)
+    getgenv().Disable_Flying_Script_HDAdmin = DisableFlyScript
 
     local HDAdmin_Found = false
     local HDAdmin_Directory = nil
@@ -3506,6 +3510,20 @@
         for _, k in ipairs(getgenv().ReplicatedStorage:GetDescendants()) do
             if k:IsA("Folder") and k.Name == "HDAdminHDClient" then
                 HDAdmin_Directory = k
+                HDdmin_Found = true
+            end
+        end
+        wait()
+        for _, v in ipairs(getgenv().Workspace:GetChildren()) do
+            if v:FindFirstChild("HDAdminClient", true) then
+                HDAdmin_Directory = v
+                HDdmin_Found = true
+            end
+        end
+        wait()
+        for _, k in ipairs(getgenv().Workspace:GetChildren()) do
+            if v:FindFirstChild("HDAdminHDClient", true) then
+                HDAdmin_Directory = v
                 HDdmin_Found = true
             end
         end
@@ -3846,6 +3864,8 @@
             JailCellConnection = nil
         end
     end
+    wait(0.1)
+    getgenv().DisableJell_Cell_Watcher = DisableJailCellWatcher
 
     local FreezeCheckConnection
     local IceBlockConnection
@@ -3862,6 +3882,8 @@
             FreezeCheckConnection = nil
         end
     end
+    wait(0.1)
+    getgenv().DisableIce_Block_Watcher = DisableIceWatcher
 
     getgenv().AddAutoAntiIceJailCell = Tab16:CreateButton({
     Name = "Auto-Run Anti Ice/Jail (Leave manually to stop)",
@@ -3875,7 +3897,7 @@
         getgenv().LocalPlayer.OnTeleport:Connect(function(State)
             if (not getgenv().Anti_Ice_Jail_AutoRun) and getgenv().queueteleport then
                 getgenv().Anti_Ice_Jail_AutoRun = true
-                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/LmaoItsCrazyBro/new_main/refs/heads/main/anti_jail_ice_queue_teleport.lua')))()")
+                queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Anti_Ice_Jail_HDAdmin.lua')))()")
             else
                 return getgenv().notify("Failure:", "Your executor does not support 'queueteleport'!", 6)
             end
@@ -3980,8 +4002,8 @@
         end
     end,})
 
-
     local anti_knockback_connection
+    getgenv().anti_knock_back_conn = anti_knockback_connection
     local antiKnockbackEnabled = false
 
     getgenv().AntiFlingToggle = Tab16:CreateToggle({
@@ -4046,11 +4068,12 @@
                 cleanUpForces()
             end
 
-            if anti_knockback_connection then
-                anti_knockback_connection:Disconnect()
+            if getgenv().anti_knock_back_conn then
+                getgenv().anti_knock_back_conn:Disconnect()
+                getgenv().anti_knock_back_conn = nil
             end
             wait(0.2)
-            anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
+            getgenv().anti_knock_back_conn = RunService.Heartbeat:Connect(onHeartbeat)
         else
             getgenv().antiFlingEnabled = false
 
@@ -4059,9 +4082,9 @@
                 getgenv().antiFlingThing = nil
             end
             antiKnockbackEnabled = false
-            if anti_knockback_connection then
-                anti_knockback_connection:Disconnect()
-                anti_knockback_connection = nil
+            if getgenv().anti_knock_back_conn then
+                getgenv().anti_knock_back_conn:Disconnect()
+                getgenv().anti_knock_back_conn = nil
             end
         end
     end,})
@@ -8337,27 +8360,29 @@
         if getgenv().loaded_face_bang then
             getgenv().loaded_face_bang = false
             wait()
-            if heartConn then
-                heartConn:Disconnect()
-                heartConn = nil
+            if getgenv().heartFaceFckConn then
+                getgenv().heartFaceFckConn:Disconnect()
+                getgenv().heartFaceFckConn = nil
             end
             stop()
             wait(1)
             getgenv().loaded_face_bang = true
             wait(0.1)
-            if heartConn then
-                heartConn:Disconnect()
+            if getgenv().heartFaceFckConn then
+                getgenv().heartFaceFckConn:Disconnect()
+                getgenv().heartFaceFckConn = nil
             end
         end
 
         if enabled then
             getgenv().loaded_face_bang = true
             wait(0.1)
-            if heartConn then
-                heartConn:Disconnect()
+            if getgenv().heartFaceFckConn then
+                getgenv().heartFaceFckConn:Disconnect()
+                getgenv().heartFaceFckConn = nil
             end
 
-            heartConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            getgenv().heartFaceFckConn = getgenv().UserInputService.InputBegan:Connect(function(input, gameProcessed)
                 if not gameProcessed and input.KeyCode == fKey then
                     fuck()
                 end
@@ -8371,9 +8396,9 @@
         else
             getgenv().loaded_face_bang = false
             wait()
-            if heartConn then
-                heartConn:Disconnect()
-                heartConn = nil
+            if getgenv().heartFaceFckConn then
+                getgenv().heartFaceFckConn:Disconnect()
+                getgenv().heartFaceFckConn = nil
             end
             stop()
         end
@@ -8428,13 +8453,14 @@
         distSlider = max_distance
     end,})
 
-    local Noclip_Connection
     wait(0.2)
     getgenv().noclipToggle = Tab2:CreateToggle({
     Name = "Noclip",
     CurrentValue =  false,
     Flag = "toggleNoclipChar",
     Callback = function(noclip_toggle)
+        getgenv().Noclip_Connection = nil
+
         if noclip_toggle then
             Clip = false
             getgenv().Noclip_Enabled = true
@@ -8451,10 +8477,10 @@
                 end
             end
 
-            Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
+            getgenv().Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
         else
-            if Noclip_Connection then
-                Noclip_Connection:Disconnect()
+            if getgenv().Noclip_Connection then
+                getgenv().Noclip_Connection:Disconnect()
             end
             Clip = true
             getgenv().Noclip_Enabled = false
@@ -8677,11 +8703,10 @@
 
             sFLY(false)
         else
-            local player = game:GetService("Players").LocalPlayer
+            local player = getgenv().LocalPlayer
             local character = getgenv().Character
-
-            local rootPart = getgenv().Character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart")
-            local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid") or character:FindFirstChildWhichIsA("Humanoid")
+            local rootPart = getgenv().HumanoidRootPart
+            local humanoid = getgenv().Humanoid
 
             if anti_teleport_toggle_saved == true then
                 if getgenv().AntiFlingToggle then
@@ -11642,16 +11667,16 @@
         warn("Not MIC UP or MIC UP 17+ or German Hangout (VC), not loading these TicTacToe options.")
     end
 
-    getgenv().InfYield = Tab5:CreateButton({
-    Name = "Infinite Premium (Infinite Yield Upgraded).",
+    getgenv().InfYield_Premium = Tab5:CreateButton({
+    Name = "Infinite Premium (Infinite Yield Upgraded/Modified).",
     Callback = function()
-        if getgenv().inf_yield_side then
-            return getgenv().notify("Alert!", "Infinite Yield has already been loaded.", 6)
-        else
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/refs/heads/main/InfYieldOther.lua", true))()
-            getgenv().notify("Heads Up!", "We have now defaulted to a new Infinite Yield script [mine].", 5)
-            getgenv().inf_yield_side = true
-        end
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua'))()
+    end,})
+
+    getgenv().InfYield_Regular = Tab5:CreateButton({
+    Name = "Infinite Yield (Regular/Normal).",
+    Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
     end,})
 
     local Old_JumpPower_JumpHeight
@@ -11845,6 +11870,119 @@
     Callback = function()
         getgenv().ClockTimeSlider:Set(14)
         getgenv().Lighting.ClockTime = 14
+    end,})
+
+    getgenv().LockCurrentClockTime = Tab9:CreateToggle({
+    Name = "Lock Current ClockTime",
+    CurrentValue = false,
+    Flag = "LockCurrentClockTimeValue",
+    Callback = function(locked_clocktime_value)
+        if locked_clocktime_value then
+            local Lighting = getgenv().Lighting
+            local Current_ClockTime = Lighting.ClockTime
+
+            getgenv().Locking_ClockTime_Toggle_Enabled = true
+            while getgenv().Locking_ClockTime_Toggle_Enabled == true do
+            task.wait()
+                Lighting.ClockTime = Current_ClockTime
+            end
+        else
+            getgenv().Locking_ClockTime_Toggle_Enabled = false
+            getgenv().Locking_ClockTime_Toggle_Enabled = false
+        end
+    end,})
+
+    getgenv().lock_brightness = false
+    getgenv().lock_clocktime = false
+    getgenv().clocktime_value = 0
+    getgenv().brightness_value = 0
+    getgenv().clocktime_connection = nil
+    getgenv().brightness_connection = nil
+
+    function start_clocktime_lock()
+        if not getgenv().clocktime_connection then
+            getgenv().clocktime_connection = getgenv().RunService.RenderStepped:Connect(function()
+                if getgenv().lock_clocktime then
+                    getgenv().Lighting.ClockTime = getgenv().clocktime_value
+                end
+            end)
+        end
+    end
+    task.wait(0.1)
+    getgenv().Start_ClockTime_Lock_Loop = start_clocktime_lock
+
+    function stop_clocktime_lock()
+        if getgenv().clocktime_connection then
+            getgenv().clocktime_connection:Disconnect()
+            getgenv().clocktime_connection = nil
+        end
+    end
+    task.wait(0.1)
+    getgenv().Stop_ClockTime_Lock_Loop = stop_clocktime_lock
+
+    function start_brightness_lock()
+        if not getgenv().brightness_connection then
+            getgenv().brightness_connection = getgenv().RunService.RenderStepped:Connect(function()
+                if getgenv().lock_brightness then
+                    getgenv().Lighting.Brightness = getgenv().brightness_value
+                end
+            end)
+        end
+    end
+
+    function stop_brightness_lock()
+        if getgenv().brightness_connection then
+            getgenv().brightness_connection:Disconnect()
+            getgenv().brightness_connection = nil
+        end
+    end
+
+    getgenv().LockClockTime_Input = Tab9:CreateSlider({
+    Name = "Lock ClockTime",
+    Range = {0, 24},
+    Increment = 0.1,
+    Suffix = "",
+    CurrentValue = tonumber(getgenv().clocktime_value),
+    Flag = "LockingClockTimeSliderValue",
+    Callback = function(locked_clocktime_slider_value)
+        getgenv().clocktime_value = tonumber(locked_clocktime_slider_value)
+        getgenv().lock_clocktime = true
+    end,})
+
+    getgenv().ToggleClockTimeLockSliderLoop = Tab9:CreateToggle({
+    Name = "ClockTime Lock Loop (Slider)",
+    CurrentValue = false,
+    Flag = "LockedClockTimeViaSliderInput",
+    Callback = function(Slider_ClockTime_Locked_Loop)
+        if Slider_ClockTime_Locked_Loop then
+            getgenv().Start_ClockTime_Lock_Loop()
+        else
+            getgenv().Stop_ClockTime_Lock_Loop()
+        end
+    end,})
+
+    getgenv().LockBrightness_Input = Tab9:CreateSlider({
+    Name = "Lock Brightness",
+    Range = {0, 25},
+    Increment = 0.5,
+    Suffix = "",
+    CurrentValue = tonumber(getgenv().brightness_value),
+    Flag = "LockingBrightnessSliderValue",
+    Callback = function(locked_brightness_slider_value)
+        getgenv().brightness_value = tonumber(locked_brightness_slider_value)
+        getgenv().lock_brightness = true
+    end,})
+
+    getgenv().ToggleBrightnessLockSliderLoop = Tab9:CreateToggle({
+    Name = "Brightness Lock Loop (Slider)",
+    CurrentValue = false,
+    Flag = "LockedBrightnessViaSliderInput",
+    Callback = function(Slider_Brightness_Locked_Loop)
+        if Slider_Brightness_Locked_Loop then
+            start_brightness_lock()
+        else
+            stop_brightness_lock()
+        end
     end,})
 
     getgenv().BrightnessSlider = Tab9:CreateSlider({
@@ -12443,7 +12581,7 @@
     Flag = "MutingEveryone",
     Callback = function(TheMuteAll)
         if TheMuteAll then
-            local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
+            local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(getgenv().LocalPlayer.UserId)
 
             if not enabled_vc or enabled_vc == false then
                 return getgenv().notify("Failure:", "Your account does not have VoiceChat!", 5)
@@ -12470,7 +12608,7 @@
     RemoveTextAfterFocusLost = true,
     Callback = function(getAUser)
         local derUser = findplr(getAUser)
-        local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
+        local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(getgenv().LocalPlayer.UserId)
 
         if not enabled_vc or enabled_vc == false then
             return getgenv().notify("Failure:", "Your account does not have VoiceChat!", 5)
@@ -12490,7 +12628,7 @@
             if user:FindFirstChildOfClass("AudioDeviceInput") then
                 while getgenv().shouldMute == true do
                 wait()
-                    local audiodeviceinput = user:FindFirstChild("AudioDeviceInput")
+                    local audiodeviceinput = user:FindFirstChildOfClass("AudioDeviceInput")
 
                     audiodeviceinput.Muted = true
                 end
@@ -12524,10 +12662,10 @@
     getgenv().ResetButton = Tab2:CreateButton({
     Name = "Reset",
     Callback = function()
-        if getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") then
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").Health = 0
+        if getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") then
+            getgenv().Humanoid.Health = 0
         else
-            return getgenv().notify("Failed!", "Humanoid does not exist (nil).", 5)
+            return getgenv().notify("Failed!", "Humanoid doesn't exist, please wait for a respawn!", 5)
         end
     end,})
 
@@ -12639,7 +12777,7 @@
         if getgenv().Rayfield then
             getgenv().Rayfield:Destroy()
         else
-            warn("Rayfield does not exist, or is already destroyed.")
+            return 
         end
     end,})
 
