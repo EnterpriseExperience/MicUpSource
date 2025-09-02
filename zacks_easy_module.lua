@@ -274,7 +274,7 @@ local humanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Charact
 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 3)
 local human = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 3)
 
-function Main_Module:Patch_Update(version)
+function Main_Module:Patch_Update()
     unload_services()
     wait(0.2)
     if getgenv().Rayfield then
