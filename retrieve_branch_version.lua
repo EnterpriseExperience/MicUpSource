@@ -1403,32 +1403,11 @@
     end
     wait()
     local player = getgenv().LocalPlayer
-
     getgenv().whitelist = {}
-
     getgenv().ownerWhitelist = {
         "L0CKED_1N1",
         "CHEATING_B0SS"
     }
-    wait()
-    if game.PlaceId == 97399198116506 then
-        local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-        local EventHandlers = ReplicatedStorage:FindFirstChild("EventHandlers")
-        local Teleport_Function = EventHandlers:FindFirstChild("Matchmake")
-        local ChangeSetting = EventHandlers:FindFirstChild("ChangeSetting")
-        local ReadyToPlay = EventHandlers:FindFirstChild("ReadyToPlay")
-        local Matchmaking = EventHandlers:FindFirstChild("Matchmaking")
-        local MainMenu = Matchmaking:FindFirstChild("MainMenu")
-        local BuyItem = EventHandlers:FindFirstChild("BuyItem")
-
-        if game:IsLoaded() and getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") then
-            for i = 1, 25 do
-                ReadyToPlay:FireServer()
-            end
-        end
-    else
-        warn("Not on Cellmates (VC)")
-    end
     wait(0.5)
     --[[if game.PlaceId == 97399198116506 then
         if isSettingEnabled("Mute_Boomboxes_Cellmates_VC_Game_Setting") then
@@ -5852,7 +5831,7 @@
                 local module = require(ClientEvent:FindFirstChild("DialogueModule"))
 
                 if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
-                    return getgenv().notify("Failure:", "This feature isn't support on this executor.", 5)
+                    return getgenv().notify("Failure:", "This feature isn't supported on this executor.", 5)
                 end
 
                 getgenv().notify("Alert!", "If it gives you an error it means you can't do it.", 6)
@@ -5876,7 +5855,7 @@
         PlaceholderText = "User Here",
         RemoveTextAfterFocusLost = true,
         Callback = function(player_focus_bruh)
-            local Remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+            local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes")
             local RemoteEvents = Remotes and Remotes:FindFirstChild("RemoteEvents")
             local animationHandlerEvent = RemoteEvents and RemoteEvents:FindFirstChild("animationHandlerEvent")
             local RemoteFunctions = Remotes or Remotes:FindFirstChild("RemoteFunctions")
@@ -5891,7 +5870,7 @@
             local Players = getgenv().Players
             local LocalPlayer = getgenv().LocalPlayer
             local Character = getgenv().Character
-            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            local Humanoid = getgenv().Humanoid
             local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
             local Workspace = getgenv().Workspace
             getgenv().SpamWhitelistTable = getgenv().SpamWhitelistTable or {}
@@ -5930,7 +5909,7 @@
         Flag = "SpamInvitingPlrLoop",
         Callback = function(looping_the_plr)
             if looping_the_plr then
-                local Remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+                local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes")
                 local RemoteEvents = Remotes and Remotes:FindFirstChild("RemoteEvents")
                 local animationHandlerEvent = RemoteEvents and RemoteEvents:FindFirstChild("animationHandlerEvent")
                 local RemoteFunctions = Remotes or Remotes:FindFirstChild("RemoteFunctions")
@@ -5985,7 +5964,7 @@
                         return warn("Anti Ragdoll is disabled.")
                     end
         
-                    local player = game.Players.LocalPlayer
+                    local player = getgenv().LocalPlayer
                     if not player then
                         return warn("Player was not found at runtime.")
                     end
@@ -6136,7 +6115,22 @@
         removePlayerFromScriptWhitelistTable(bruhUser)
     end,})
 
-    if game.PlaceId == 97399198116506 then 
+    if game.PlaceId == 97399198116506 then
+        local ReplicatedStorage = getgenv().ReplicatedStorage
+        local EventHandlers = ReplicatedStorage:FindFirstChild("EventHandlers")
+        local Teleport_Function = EventHandlers:FindFirstChild("Matchmake")
+        local ChangeSetting = EventHandlers:FindFirstChild("ChangeSetting")
+        local ReadyToPlay = EventHandlers:FindFirstChild("ReadyToPlay")
+        local Matchmaking = EventHandlers:FindFirstChild("Matchmaking")
+        local MainMenu = Matchmaking:FindFirstChild("MainMenu")
+        local BuyItem = EventHandlers:FindFirstChild("BuyItem")
+
+        if game:IsLoaded() and getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") then
+            for i = 1, 25 do
+                ReadyToPlay:FireServer()
+            end
+        end
+        wait(0.3)
         getgenv().PauseMainMenu = Tab1:CreateButton({
         Name = "Pause (Go To Main Menu)",
         Callback = function()
@@ -6162,11 +6156,12 @@
         if getgenv().bypassed_setup_anti_cheat then
             warn("Bypass AntiCheat For: Cellmates VC has already loaded.")
         elseif getgenv().bypassed_setup_anti_cheat == false and detect_gc then
-            local player = game.Players.LocalPlayer
+            local player = getgenv().LocalPlayer
     
             local function disableConnectionsForPropertiesAndEvents(character)
                 local humanoid = character:WaitForChild("Humanoid")
                 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+                local detect_gc = getconnections or get_signal_cons
     
                 local properties = {
                     {object = game.Workspace, property = "Gravity"},
@@ -6191,9 +6186,8 @@
                         for _, connection in ipairs(connections) do
                             connection:Disable()
                         end
-                        print("Disabled connections for:", object.Name, property)
                     else
-                        print("Could not find signal for:", object.Name, property)
+                        getgenv().notify("Failure:", "Could not find signal: "..tostring(property)..", for: "..tostring(object.Name), 5)
                     end
                 end
     
@@ -6201,7 +6195,6 @@
                 for _, connection in ipairs(stateChangedConnections) do
                     connection:Disable()
                 end
-                print("Disabled StateChanged connections for Humanoid.")
             end
     
             local function disableDescendantAddedChecks(character)
@@ -6209,7 +6202,6 @@
                 for _, connection in ipairs(connections) do
                     connection:Disable()
                 end
-                print("Disabled DescendantAdded checks for:", character.Name)
             end
     
             local function disableChildAddedChecks(character)
@@ -6217,7 +6209,6 @@
                 for _, connection in ipairs(connections) do
                     connection:Disable()
                 end
-                print("Disabled ChildAdded checks for:", character.Name)
             end
     
             local function setupCharacter(character)
