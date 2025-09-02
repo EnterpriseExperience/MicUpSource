@@ -20,6 +20,7 @@ local Teams
 local CoreGui
 local StarterGui
 local SoundService
+local Version = "10.2.4"
 
 function unload_services()
     getgenv().getLoopKick = false
@@ -289,6 +290,14 @@ function Main_Module:Destroy_Script()
     wait(0.2)
     if getgenv().Rayfield then
         getgenv().Rayfield:Destroy()
+    end
+end
+
+function Main_Module:Get_Current_Version()
+    if Version then
+        return Version
+    else
+        return "10.2.4"
     end
 end
 
