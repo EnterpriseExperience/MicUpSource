@@ -1,5 +1,8 @@
-local IsStudio = false
+--keybind to open is comma
+--doesn't close
+--NOW SUPPORTS UGC EMOTES, CAN LOAD ALL! AND CAN REFRESH!
 
+local IsStudio = false
 local ContextActionService = game:GetService("ContextActionService")
 local HttpService = game:GetService("HttpService")
 local GuiService = game:GetService("GuiService")
@@ -8,6 +11,7 @@ local AvatarEditorService = game:GetService("AvatarEditorService")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
 
 local Emotes = {}
 local function AddEmote(name: string, id: IntValue, price: IntValue?)
@@ -31,16 +35,16 @@ local FavoriteOn = "rbxassetid://10651061109"
 local FavoritedEmotes = {}
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "TEMPORARY_CONTAINER"
+ScreenGui.Name = "Emotes"
 ScreenGui.DisplayOrder = 2
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Enabled = false
 
 local BackFrame = Instance.new("Frame")
-BackFrame.Size = UDim2.new(0.5, 0, 0.5, 0)
-BackFrame.AnchorPoint = Vector2.new(1, 0.5)
-BackFrame.Position = UDim2.new(0.4, 0, 0.5, 0)
+BackFrame.Size = UDim2.new(0.9, 0, 0.5, 0)
+BackFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+BackFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 BackFrame.SizeConstraint = Enum.SizeConstraint.RelativeYY
 BackFrame.BackgroundTransparency = 1
 BackFrame.BorderSizePixel = 0
@@ -88,8 +92,8 @@ end)
 Frame.Parent = BackFrame
 
 local Grid = Instance.new("UIGridLayout")
-Grid.CellSize = UDim2.new(0.199, 0, 0, 0)
-Grid.CellPadding = UDim2.new(0.00, 0, 0.006, 0)
+Grid.CellSize = UDim2.new(0.105, 0, 0, 0)
+Grid.CellPadding = UDim2.new(0.006, 0, 0.006, 0)
 Grid.SortOrder = Enum.SortOrder.LayoutOrder
 Grid.Parent = Frame
 
@@ -141,7 +145,7 @@ local function createsort(order, text, sort)
 	end)
 	return CreatedSort
 end
-
+wait(0.1)
 createsort(1, "Newest First", "newestfirst")
 createsort(2, "Oldest First", "oldestfirst")
 createsort(3, "Alphabetically First", "alphabeticfirst")
@@ -156,7 +160,7 @@ SortButton.Position = UDim2.new(0.925, -5, -0.075, 0)
 SortButton.Size = UDim2.new(0.15, 0, 0.1, 0)
 SortButton.TextScaled = true
 SortButton.TextColor3 = Color3.new(1, 1, 1)
-SortButton.BackgroundColor3 = Color3.new(1, 0, 0)
+SortButton.BackgroundColor3 = Color3.new(0, 0, 0)
 SortButton.BackgroundTransparency = 0.3
 SortButton.Text = "Sort"
 SortButton.MouseButton1Click:Connect(function()
@@ -172,7 +176,7 @@ CloseButton.Position = UDim2.new(0.075, 0, -0.075, 0)
 CloseButton.Size = UDim2.new(0.15, 0, 0.1, 0)
 CloseButton.TextScaled = true
 CloseButton.TextColor3 = Color3.new(1, 1, 1)
-CloseButton.BackgroundColor3 = Color3.new(27, 0, 0)
+CloseButton.BackgroundColor3 = Color3.new(0, 0, 0)
 CloseButton.BackgroundTransparency = 0.3
 CloseButton.Text = "Close"
 CloseButton.MouseButton1Click:Connect(function()
@@ -203,7 +207,7 @@ SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
 			if button:IsA("GuiButton") then
 				local name = button:GetAttribute("name"):lower()
 				if name:match(text) then
-					button.Visible = false
+					button.Visible = true
 				else
 					button.Visible = false
 				end
@@ -212,13 +216,128 @@ SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
 	else
 		for i,button in pairs(buttons) do
 			if button:IsA("GuiButton") then
-				button.Visible = false
+				button.Visible = true
 			end
 		end
 	end
 end)
 Corner:Clone().Parent = SearchBar
 SearchBar.Parent = BackFrame
+
+local function LoadEmotes()
+	local params = CatalogSearchParams.new()
+	params.AssetTypes = {Enum.AvatarAssetType.EmoteAnimation}
+	params.SortType = Enum.CatalogSortType.RecentlyCreated
+	params.SortAggregation = Enum.CatalogSortAggregation.AllTime
+	params.IncludeOffSale = true
+	params.Limit = 120
+	Emotes = {}
+
+	local function getCatalogPage()
+		local success, catalogPage = pcall(function()
+			return AvatarEditorService:SearchCatalog(params)
+		end)
+
+		if not success then
+			task.wait(5)
+			return getCatalogPage()
+		end
+		return catalogPage
+	end
+
+	local catalogPage = getCatalogPage()
+	local pages = {}
+	while true do
+		local currentPage = catalogPage:GetCurrentPage()
+		table.insert(pages, currentPage)
+		if catalogPage.IsFinished then
+			break
+		end
+		local function AdvanceToNextPage()
+			local success = pcall(function()
+				catalogPage:AdvanceToNextPageAsync()
+			end)
+			if not success then
+				task.wait(5)
+				return AdvanceToNextPage()
+			end
+		end
+		AdvanceToNextPage()
+	end
+
+	local totalEmotes = {}
+	for _, page in pairs(pages) do
+		for _, emote in pairs(page) do
+			table.insert(totalEmotes, emote)
+		end
+	end
+
+	for i, Emote in pairs(totalEmotes) do
+		AddEmote(Emote.Name, Emote.Id, Emote.Price)
+	end
+
+	AddEmote("Arm Wave", 5915773155)
+	AddEmote("Head Banging", 5915779725)
+	AddEmote("Face Calisthenics", 9830731012)
+
+	table.sort(Emotes, function(a, b) return a.index < b.index end)
+	for i,v in pairs(Emotes) do v.sort.newestfirst = i end
+	table.sort(Emotes, function(a, b) return a.index > b.index end)
+	for i,v in pairs(Emotes) do v.sort.oldestfirst = i end
+	table.sort(Emotes, function(a, b) return a.name:lower() < b.name:lower() end)
+	for i,v in pairs(Emotes) do v.sort.alphabeticfirst = i end
+	table.sort(Emotes, function(a, b) return a.name:lower() > b.name:lower() end)
+	for i,v in pairs(Emotes) do v.sort.alphabeticlast = i end
+	table.sort(Emotes, function(a, b) return a.price < b.price end)
+	for i,v in pairs(Emotes) do v.sort.lowestprice = i end
+	table.sort(Emotes, function(a, b) return a.price > b.price end)
+	for i,v in pairs(Emotes) do v.sort.highestprice = i end
+end
+wait(0.2)
+LoadEmotes()
+wait()
+local function openemotes(name, state, input)
+	if state == Enum.UserInputState.Begin then
+		ScreenGui.Enabled = false
+	end
+end
+
+if IsStudio then
+	ContextActionService:BindActionAtPriority(
+		"Emote Menu",
+		openemotes,
+		true,
+		2001,
+		Enum.KeyCode.Comma
+	)
+else
+	ContextActionService:BindCoreActionAtPriority(
+		"Emote Menu",
+		openemotes,
+		true,
+		2001,
+		Enum.KeyCode.Comma
+	)
+end
+
+local inputconnect
+ScreenGui:GetPropertyChangedSignal("Enabled"):Connect(function()
+	if ScreenGui.Enabled == true then
+		EmoteName.Text = "Select an Emote"
+		SearchBar.Text = ""
+		SortFrame.Visible = false
+		GuiService:SetEmotesMenuOpen(false)
+		inputconnect = UserInputService.InputBegan:Connect(function(input, processed)
+			if not processed then
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					ScreenGui.Enabled = false
+				end
+			end
+		end)
+	else
+		inputconnect:Disconnect()
+	end
+end)
 
 if not IsStudio then
 	GuiService.EmotesMenuOpenChanged:Connect(function(isopen)
@@ -237,13 +356,12 @@ if not game:IsLoaded() then
 end
 
 local LocalPlayer = Players.LocalPlayer
-
 if IsStudio then
-	ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+	ScreenGui.Parent = LocalPlayer.PlayerGui
 else
 	ScreenGui.Parent = CoreGui
 end
-wait()
+
 local function SendNotification(title, text)
 	if (not IsStudio) and syn and syn.toast_notification then
 		syn.toast_notification({
@@ -259,6 +377,8 @@ local function SendNotification(title, text)
 	end
 end
 
+task.wait(.3)
+task.wait()
 local function HumanoidPlayEmote(humanoid, name, id)
 	if IsStudio then
 		return humanoid:PlayEmote(name)
@@ -268,7 +388,7 @@ local function HumanoidPlayEmote(humanoid, name, id)
 end
 
 local function PlayEmote(name: string, id: IntValue)
-	ScreenGui.Enabled = false
+	--ScreenGui.Enabled = false
 	SearchBar.Text = ""
 	local Humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local Description = Humanoid and Humanoid:FindFirstChildOfClass("HumanoidDescription")
@@ -284,10 +404,7 @@ local function PlayEmote(name: string, id: IntValue)
 			HumanoidPlayEmote(Humanoid, name, id)
 		end
 	else
-		SendNotification(
-			"r6? lol",
-			"you gotta be r15 dude"
-		)
+		SendNotification("r6? lol", "you gotta be r15 dude")
 	end
 end
 
@@ -298,136 +415,6 @@ local function WaitForChildOfClass(parent, class)
 	end
 	return child
 end
-
-local params = CatalogSearchParams.new()
-params.AssetTypes = {Enum.AvatarAssetType.EmoteAnimation}
-params.SortType = Enum.CatalogSortType.RecentlyCreated
-params.SortAggregation = Enum.CatalogSortAggregation.AllTime
-params.IncludeOffSale = true
-params.CreatorName = "Roblox"
-params.Limit = 120
-
-local function FetchAllEmotes()
-	local params = CatalogSearchParams.new()
-	params.AssetTypes = {Enum.AvatarAssetType.EmoteAnimation}
-	params.SortType = Enum.CatalogSortType.Relevance
-	params.SortAggregation = Enum.CatalogSortAggregation.AllTime
-	params.IncludeOffSale = true
-	params.Limit = 120
-
-	local page = game:GetService("AvatarEditorService"):SearchCatalog(params)
-	local results = {}
-
-	repeat
-		for _, item in ipairs(page:GetCurrentPage()) do
-			table.insert(results, {
-				Name = item.Name,
-				Id = item.Id,
-				Price = item.PriceInRobux or 0
-			})
-		end
-		if not page.IsFinished then
-			page:AdvanceToNextPageAsync()
-		end
-	until page.IsFinished
-
-	return results
-end
-wait(0.1)
-FetchAllEmotes()
-
-local function getCatalogPage()
-	local success, catalogPage = pcall(function()
-		return AvatarEditorService:SearchCatalog(params)
-	end)
-	if not success then
-		task.wait(5)
-		return getCatalogPage()
-	end
-	return catalogPage
-end
-
-local catalogPage = getCatalogPage()
-
-local pages = {}
-
-while true do
-	local currentPage = catalogPage:GetCurrentPage()
-	table.insert(pages, currentPage)
-	if catalogPage.IsFinished then
-		break
-	end
-	local function AdvanceToNextPage()
-		local success = pcall(function()
-			catalogPage:AdvanceToNextPageAsync()
-		end)
-		if not success then
-			task.wait(5)
-			return AdvanceToNextPage()
-		end
-	end
-	AdvanceToNextPage()
-end
-
-local totalEmotes = {}
-for _, page in pairs(pages) do
-	for _, emote in pairs(page) do
-		table.insert(totalEmotes, emote)
-	end
-end
-
-for i, Emote in pairs(totalEmotes) do
-	AddEmote(Emote.Name, Emote.Id, Emote.Price)
-end
-
-AddEmote("Arm Wave", 5915773155)
-AddEmote("Head Banging", 5915779725)
-AddEmote("Face Calisthenics", 9830731012)
-
-Loading:Destroy()
-
-table.sort(Emotes, function(a, b)
-	return a.index < b.index
-end)
-for i,v in pairs(Emotes) do
-	v.sort.newestfirst = i
-end
-
-table.sort(Emotes, function(a, b)
-	return a.index > b.index
-end)
-for i,v in pairs(Emotes) do
-	v.sort.oldestfirst = i
-end
-
-table.sort(Emotes, function(a, b)
-	return a.name:lower() < b.name:lower()
-end)
-for i,v in pairs(Emotes) do
-	v.sort.alphabeticfirst = i
-end
-
-table.sort(Emotes, function(a, b)
-	return a.name:lower() > b.name:lower()
-end)
-for i,v in pairs(Emotes) do
-	v.sort.alphabeticlast = i
-end
-
-table.sort(Emotes, function(a, b)
-	return a.price < b.price
-end)
-for i,v in pairs(Emotes) do
-	v.sort.lowestprice = i
-end
-
-table.sort(Emotes, function(a, b)
-	return a.price > b.price
-end)
-for i,v in pairs(Emotes) do
-	v.sort.highestprice = i
-end
-
 
 local function IsFileFunc(...)
 	if IsStudio then
@@ -480,7 +467,7 @@ if not IsStudio then
 	end
 end
 
-local function CharacterAddedWithUI(Character)
+local function CharacterAdded(Character)
 	for i,v in pairs(Frame:GetChildren()) do
 		if not v:IsA("UIGridLayout") then
 			v:Destroy()
@@ -535,7 +522,7 @@ local function CharacterAddedWithUI(Character)
 		EmoteNumber.TextXAlignment = Enum.TextXAlignment.Center
 		EmoteNumber.TextYAlignment = Enum.TextYAlignment.Center
 		local UIStroke = Instance.new("UIStroke")
-		UIStroke.Transparency = 1
+		UIStroke.Transparency = 0.5
 		UIStroke.Parent = EmoteNumber
 		EmoteNumber.Parent = EmoteButton
 		EmoteButton.Parent = Frame
@@ -579,7 +566,7 @@ local function CharacterAddedWithUI(Character)
 		EmoteButton.BackgroundTransparency = 1
 		EmoteButton.BorderSizePixel = 0
 		Ratio:Clone().Parent = EmoteButton
-		EmoteButton.Visible = false
+		EmoteButton.Visible = true
 		EmoteButton.Parent = Frame
 		EmoteButton.MouseEnter:Connect(function()
 			EmoteName.Text = "Select an Emote"
@@ -587,31 +574,39 @@ local function CharacterAddedWithUI(Character)
 	end
 end
 
-local function RegisterAllEmotesToHumanoid(Humanoid)
-	local desc = Humanoid:FindFirstChildOfClass("HumanoidDescription")
-	if not desc then
-		desc = Instance.new("HumanoidDescription")
-		desc.Parent = Humanoid
-	end
+local RefreshButton = Instance.new("TextButton")
+RefreshButton.BorderSizePixel = 0
+RefreshButton.AnchorPoint = Vector2.new(0.5, 0.5)
+RefreshButton.Position = UDim2.new(0.899999976, 0, -0.180000007, 0)
+RefreshButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+RefreshButton.TextScaled = true
+RefreshButton.TextColor3 = Color3.new(1, 1, 1)
+RefreshButton.BackgroundColor3 = Color3.new(0, 0, 0)
+RefreshButton.BackgroundTransparency = 0.3
+RefreshButton.Text = "Refresh"
+Corner:Clone().Parent = RefreshButton
+RefreshButton.Parent = BackFrame
+RefreshButton.MouseButton1Click:Connect(function()
+	Loading = Instance.new("TextLabel", BackFrame)
+	Loading.AnchorPoint = Vector2.new(0.5, 0.5)
+	Loading.Text = "Refreshing..."
+	Loading.TextColor3 = Color3.new(1, 1, 1)
+	Loading.BackgroundColor3 = Color3.new(0, 0, 0)
+	Loading.TextScaled = true
+	Loading.BackgroundTransparency = 0.5
+	Loading.Size = UDim2.fromScale(0.2, 0.1)
+	Loading.Position = UDim2.fromScale(0.5, 0.2)
+	Corner:Clone().Parent = Loading
 
-	for _, emote in pairs(Emotes) do
-		pcall(function()
-			desc:AddEmote(emote.name, emote.id)
-		end)
+	LoadEmotes()
+	wait(0.5)
+	Loading:Destroy()
+	if LocalPlayer.Character then
+		CharacterAdded(LocalPlayer.Character)
 	end
-end
-
-local function CharacterAdded(Character)
-	local humanoid = Character and Character:WaitForChild("Humanoid")
-	RegisterAllEmotesToHumanoid(humanoid)
-end
+end)
 
 if LocalPlayer.Character then
-	CharacterAddedWithUI(LocalPlayer.Character)
 	CharacterAdded(LocalPlayer.Character)
 end
-
-LocalPlayer.CharacterAdded:Connect(function(Character)
-	CharacterAddedWithUI(Character)
-	CharacterAdded(Character)
-end)
+LocalPlayer.CharacterAdded:Connect(CharacterAdded)
