@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.9.4"
+local Raw_Version = "V2.9.6"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -345,24 +345,12 @@ getgenv().Core = Core
 getgenv().Game_Folder = Game
 getgenv().Net = Network
 wait(0.1)
-function send_function(arg1, arg2, arg3)
-   if arg1 and arg2 and arg3 then
-      Network.get(arg1, arg2, arg3)
-   elseif arg1 and arg2 then
-      Network.get(arg1, arg2)
-   elseif arg1 then
-      Network.get(arg1)
-   end
+function send_function(...)
+   Network.get(...)
 end
 
-function send_remote(arg1, arg2, arg3)
-   if arg1 ~= nil and arg2 ~= nil and arg3 ~= nil then
-      Network.send(arg1, arg2, arg3)
-   elseif arg1 ~= nil and arg2 ~= nil then
-      Network.send(arg1, arg2)
-   elseif arg1 ~= nil then
-      Network.send(arg1)
-   end
+function send_remote(...)
+   Network.send(...)
 end
 wait(0.1)
 getgenv().Get = send_function
@@ -1640,6 +1628,8 @@ local function CommandsMenu()
       {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone)
       {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone)
       {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding)
+      {prefix}startrgbtool - Enables RGB Tool (FE, Flashing Rainbow Tool)
+      {prefix}stoprgbtool - Disables RGB Tool (FE, Flashing Rainbow Tool)
       {prefix}noglitchoutfit - Disables the glitching of your outfit
       {prefix}name NewName - Change RP name
       {prefix}bio NewBio - Change RP bio
@@ -1989,6 +1979,68 @@ end
 wait(0.2)
 function Disable_Flying()
    getgenv().Stop_Flying()
+end
+
+function is_tool_colorable(tool)
+   if tool:IsA("Tool") and (tool:GetAttribute("color1") or tool:GetAttribute("Color1")) then
+      return true
+   else
+      return false
+   end
+end
+
+local function find_backpack_tool()
+   for _, v in ipairs(getgenv().Backpack:GetChildren()) do
+      if v:IsA("Tool") and (v:GetAttribute("color1") or v:GetAttribute("Color1")) then
+         return v
+      end
+   end
+
+   return nil
+end
+
+function rainbow_tool(toggled)
+   local colors = {
+      Color3.fromRGB(255, 255, 255),
+      Color3.fromRGB(128, 128, 128),
+      Color3.fromRGB(0, 0, 0),
+      Color3.fromRGB(0, 0, 255),
+      Color3.fromRGB(0, 255, 0),
+      Color3.fromRGB(0, 255, 255),
+      Color3.fromRGB(255, 165, 0),
+      Color3.fromRGB(139, 69, 19),
+      Color3.fromRGB(255, 255, 0),
+      Color3.fromRGB(50, 205, 50),
+      Color3.fromRGB(255, 0, 0),
+      Color3.fromRGB(255, 155, 172),
+      Color3.fromRGB(128, 0, 128),
+   }
+
+   if toggled then
+      local tool = find_backpack_tool()
+      if not tool then
+         getgenv().Rainbow_Tools_FE = false
+         return getgenv().notify("Failure:", "There isn't a colorable tool in your Backpack!", 5)
+      end
+
+      getgenv().Rainbow_Tools_FE = true
+      while getgenv().Rainbow_Tools_FE == true do
+         task.wait(0)
+         tool = find_backpack_tool()
+         if not tool then
+            getgenv().Rainbow_Tools_FE = false
+            return getgenv().notify("Failure:", "There isn't a colorable tool in your Backpack!", 5)
+         end
+
+         for _, color in ipairs(colors) do
+            task.wait(0)
+            if not getgenv().Rainbow_Tools_FE then break end
+            getgenv().Send("tool_color", tool, "color1", color)
+         end
+      end
+   else
+      getgenv().Rainbow_Tools_FE = false
+   end
 end
 
 function toggle_name_func(boolean)
@@ -2868,6 +2920,10 @@ local function handleCommand(sender, message)
       end
       wait()
       Enable_Fly_2(Fly_Speed)
+   elseif cmd == "startrgbtool" then
+      rainbow_tool(true)
+   elseif cmd == "stoprgbtool" then
+      rainbow_tool(false)
    elseif cmd == "unfly2" then
       getgenv().Stop_Flying()
    elseif cmd == "noemote" then
