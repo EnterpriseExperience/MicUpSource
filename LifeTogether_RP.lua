@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "1.9.3-LIFE"
+local Script_Version = "1.9.4-LIFE"
 
 local function getExecutor()
     local name
@@ -555,24 +555,12 @@ getgenv().Core = Core
 getgenv().Game_Folder = Game
 getgenv().Net = Network
 wait(0.1)
-function send_function(arg1, arg2, arg3)
-   if arg1 and arg2 and arg3 then
-      Network.get(arg1, arg2, arg3)
-   elseif arg1 and arg2 then
-      Network.get(arg1, arg2)
-   elseif arg1 then
-      Network.get(arg1)
-   end
+function send_function(...)
+   Network.get(...)
 end
 
-function send_remote(arg1, arg2, arg3)
-   if arg1 ~= nil and arg2 ~= nil and arg3 ~= nil then
-      Network.send(arg1, arg2, arg3)
-   elseif arg1 ~= nil and arg2 ~= nil then
-      Network.send(arg1, arg2)
-   elseif arg1 ~= nil then
-      Network.send(arg1)
-   end
+function send_remote(...)
+   Network.send(...)
 end
 wait(0.1)
 getgenv().Get = send_function
@@ -637,6 +625,34 @@ function set_lifesnap_snap_time(Time)
         send_remote("set_snapblox_time", -1 or 9e9)
     else
         send_remote("set_snapblox_time", tonumber(Time))
+    end
+end
+
+function set_invisible(toggle)
+    if toggle == true then
+        Invisible_Module.enabled.set(true)
+    elseif toggle == false then
+        Invisible_Module.enabled.set(false)
+    else
+        return 
+    end
+end
+
+function invisible_spam(toggle)
+    if toggle then
+        if getgenv().Spoofed_LifePay_Premium or getgenv().Spoofed_Invisibility then
+            getgenv().notify("Heads Up:", "Only you'll see yourself flashing invisibility!", 5)
+            task.wait(0.2)
+        end
+        getgenv().Invisible_Flash = true
+        while getgenv().Invisible_Flash == true do
+            task.wait(.1)
+            set_invisible(true)
+            task.wait()
+            set_invisible(false)
+        end
+    else
+        getgenv().Invisible_Flash = false
     end
 end
 
@@ -1590,6 +1606,18 @@ Callback = function(rgb_phone_set)
         RGB_Phone(true)
     else
         RGB_Phone(false)
+    end
+end,})
+
+getgenv().FlashInvisiblity_Toggle = Tab2:CreateToggle({
+Name = "Flash Invisiblity (FE)",
+CurrentValue = false,
+Flag = "ToggleFlashInvisiblity",
+Callback = function(flash_invisible)
+    if flash_invisible then
+        invisible_spam(true)
+    else
+        invisible_spam(false)
     end
 end,})
 
@@ -2903,7 +2931,6 @@ Callback = function(using_cat_glitch_outfit)
         getgenv().Send("code", 15093053680, "DynamicHead")
         getgenv().Humanoid.JumpPower = 0
         getgenv().Humanoid.JumpHeight = 0
-
     else
         notify("Success:", "Disabling Cat Glitch, restoring avatar, please WAIT...", 5)
 
