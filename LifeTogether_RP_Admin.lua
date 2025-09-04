@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.9.6"
+local Raw_Version = "V2.9.8"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -424,6 +424,11 @@ if not getgenv().Lighting then
    warn("getgenv().Lighting was not detected, fixing...")
    getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 end
+if not getgenv().LocalPlayer then
+   warn("getgenv().LocalPlayer was not detected, fixing...")
+   task.wait()
+   getgenv().LocalPlayer = getgenv().Players.LocalPlayer or getgenv().Service_Wrap("Players").LocalPlayer
+end
 
 function create_void_part()
    if getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") then return end
@@ -511,12 +516,12 @@ function vehicle_kill_player(TargetPlayer)
       wait(0.1)
       myHRP.CFrame = Old_CF
       wait(0.5)
-      spawn_any_vehicle("Chiron")
+      spawn_any_vehicle(tostring(get_vehicle().Name))
    end
    if myHRP then
       myHRP.CFrame = Old_CF
       wait(0.5)
-      spawn_any_vehicle("Chiron")
+      spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 end
 
@@ -573,12 +578,12 @@ function vehicle_void_player(TargetPlayer)
       wait(0.1)
       myHRP.CFrame = Old_CF
       wait(0.5)
-      spawn_any_vehicle("Chiron")
+      spawn_any_vehicle(tostring(get_vehicle().Name))
    end
    if myHRP then
       myHRP.CFrame = Old_CF
       wait(0.5)
-      spawn_any_vehicle("Chiron")
+      spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 end
 
@@ -650,13 +655,13 @@ function vehicle_skydive_player(TargetPlayer)
       wait(0.1)
       myHRP.CFrame = Old_CF
       wait(0.5)
-      spawn_any_vehicle("Chiron")
+      spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 
    if myHRP then
       myHRP.CFrame = Old_CF
       wait(0.5)
-      spawn_any_vehicle("Chiron")
+      spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 end
 
@@ -709,12 +714,12 @@ function vehicle_bring_player(TargetPlayer)
       wait(0.1)
       myHRP.CFrame = Old_CF
       wait(0.5)
-      spawn_any_vehicle("Chiron")
+      spawn_any_vehicle(tostring(get_vehicle().Name))
    end
    if myHRP then
       myHRP.CFrame = Old_CF
       wait(0.5)
-      spawn_any_vehicle("Chiron")
+      spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 end
 
@@ -765,6 +770,9 @@ local function Dynamic_Character_Updater(character)
    if getgenv().Is_Currently_Emoting or getgenv().Is_Currently_Emoting == true then
       getgenv().Is_Currently_Emoting = false
    end
+   task.wait(0.3)
+   getgenv().Humanoid.JumpHeight = 7
+   getgenv().Humanoid.JumpPower = 50
 end
 
 Dynamic_Character_Updater(getgenv().Character)
@@ -777,6 +785,9 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
 	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
 	getgenv().Head = SafeGetHead(newCharacter)
+   wait(0.3)
+   getgenv().Humanoid.JumpHeight = 7
+   getgenv().Humanoid.JumpPower = 50
 	wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
 end)
@@ -851,9 +862,9 @@ if success and response then
    if get_vehicle() and getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
       getgenv().Humanoid:ChangeState(3)
       wait(0.2)
-      require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", "SVJ")
+      require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", get_vehicle().Name or "SVJ")
    elseif get_vehicle() and getgenv().Humanoid.Sit == false then
-      require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", "SVJ")
+      require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", get_vehicle().Name or "SVJ")
    end
 else
    if not success then
