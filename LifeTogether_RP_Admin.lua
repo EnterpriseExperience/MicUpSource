@@ -2033,7 +2033,11 @@ function rainbow_tool(toggled)
          getgenv().Rainbow_Tools_FE = false
          return getgenv().notify("Failure:", "There isn't a colorable tool in your Backpack!", 5)
       end
-
+      task.wait(0.1)
+      if tool then
+         tool.Parent = getgenv().Character
+      end
+      task.wait(0.1)
       getgenv().Rainbow_Tools_FE = true
       while getgenv().Rainbow_Tools_FE == true do
          task.wait(0)
@@ -2041,6 +2045,11 @@ function rainbow_tool(toggled)
          if not tool then
             getgenv().Rainbow_Tools_FE = false
             return getgenv().notify("Failure:", "There isn't a colorable tool in your Backpack!", 5)
+         end
+
+         task.wait(0.1)
+         if tool then
+            tool.Parent = getgenv().Character
          end
 
          for _, color in ipairs(colors) do
