@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "1.9.4-LIFE"
+local Script_Version = "1.9.8-LIFE"
 
 local function getExecutor()
     local name
@@ -348,6 +348,9 @@ local function Dynamic_Character_Updater(character)
 	getgenv().HumanoidRootPart = SafeGetHRP(character)
 	getgenv().Humanoid = SafeGetHumanoid(character)
 	getgenv().Head = SafeGetHead(character)
+    wait(0.2)
+    getgenv().Humanoid.JumpHeight = 7
+    getgenv().Humanoid.JumpPower = 50
 end
 
 Dynamic_Character_Updater(getgenv().Character)
@@ -361,9 +364,7 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
 	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
 	getgenv().Head = SafeGetHead(newCharacter)
-	wait(0.2)
-    newCharacter:FindFirstChild("Humanoid").JumpHeight = 7
-    newCharacter:FindFirstChild("Humanoid").JumpPower = 50
+	wait(0.3)
     getgenv().Humanoid.JumpHeight = 7
     getgenv().Humanoid.JumpPower = 50
 	Dynamic_Character_Updater(newCharacter)
@@ -734,7 +735,7 @@ function RGB_Phone(Boolean)
         Boolean = false
         getgenv().RGB_Rainbow_Phone = false
         wait(0.4)
-        repeat wait() until Boolean == false
+        repeat task.wait() until getgenv().RGB_Rainbow_Phone == false
         if getgenv().RGB_Rainbow_Phone == false then
             change_phone_color(Color3.fromRGB(255, 255, 255))
         end
@@ -762,6 +763,87 @@ function flashlight(Toggle)
         getgenv().Flashlight_Enabled = false
     else
         return
+    end
+end
+
+local Lighting = cloneref and cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 0.5)
+getgenv().NightVisionEnabled = false
+
+local function ensureColorCorrection(name, props)
+    local effect = getgenv().Lighting:FindFirstChild(name)
+    if not effect then
+        effect = Instance.new("ColorCorrectionEffect")
+        effect.Name = name
+        effect.Parent = getgenv().Lighting
+    end
+    for prop, value in pairs(props) do
+        effect[prop] = value
+    end
+    return effect
+end
+
+local ccEffects = {
+    NightVisionColorCorrection = ensureColorCorrection("NightVisionColorCorrection", {
+        Enabled = false,
+        Brightness = 0,
+        Contrast = -0.1,
+        Saturation = -1,
+        TintColor = Color3.new(0.6, 1, 0.815686)
+    })
+}
+
+local vignetteGui = getgenv().PlayerGui:FindFirstChild("VignetteEffect")
+if not vignetteGui then
+    vignetteGui = Instance.new("ScreenGui")
+    vignetteGui.Name = "VignetteEffect"
+    vignetteGui.IgnoreGuiInset = true
+    vignetteGui.Enabled = false
+    vignetteGui.ResetOnSpawn = false
+    vignetteGui.Parent = getgenv().PlayerGui
+end
+
+local vignetteImage = vignetteGui:FindFirstChildOfClass("ImageLabel")
+if not vignetteImage then
+    vignetteImage = Instance.new("ImageLabel")
+    vignetteImage.Name = "ImageLabel"
+    vignetteImage.Active = false
+    vignetteImage.BackgroundColor3 = Color3.new(1, 1, 1)
+    vignetteImage.BackgroundTransparency = 1
+    vignetteImage.BorderColor3 = Color3.new(0, 0, 0)
+    vignetteImage.BorderSizePixel = 0
+    vignetteImage.Position = UDim2.new(0, 0, 0, 0)
+    vignetteImage.Size = UDim2.new(1, 0, 1, 0)
+    vignetteImage.Visible = true
+    vignetteImage.Image = "rbxassetid://123500368394738"
+    vignetteImage.ImageColor3 = Color3.new(1, 1, 1)
+    vignetteImage.ImageTransparency = 0
+    vignetteImage.ImageRectOffset = Vector2.new(0, 0)
+    vignetteImage.ImageRectSize = Vector2.new(0, 0)
+    vignetteImage.TileSize = UDim2.new(1, 0, 1, 0)
+    vignetteImage.SliceScale = 1
+    vignetteImage.SliceCenter = Rect.new(0, 0, 0, 0)
+    vignetteImage.ScaleType = Enum.ScaleType.Stretch
+    vignetteImage.Parent = vignetteGui
+end
+
+getgenv().ToggleNightVision = function(state)
+    getgenv().NightVisionEnabled = state
+    for _, effect in pairs(ccEffects) do
+        effect.Enabled = state
+    end
+    vignetteGui.Enabled = state
+end
+
+function night_vision(toggle)
+    if toggle == true then
+        getgenv().ToggleNightVision(true)
+    elseif toggle == false then
+        getgenv().ToggleNightVision(false)
+    else
+        return 
     end
 end
 
@@ -843,14 +925,16 @@ else
     getgenv().loaded_anti_report = true
 end
 
-getgenv().rainbow_highlight_mode = false
+getgenv().rainbow_highlight_mode = getgenv().rainbow_highlight_mode or false
+getgenv().vehicle_ESP_Connection = getgenv().vehicle_ESP_Connection or {}
+getgenv().vehicle_ESP_Active = getgenv().vehicle_ESP_Active or false
+local vehicle_folder = getgenv().Workspace:FindFirstChild("Vehicles") or getgenv().Workspace:WaitForChild("Vehicles", 1) or getgenv().Service_Wrap("Workspace"):WaitForChild("Vehicles", 1)
+
 local default_fill_color = Color3.fromRGB(75, 94, 60)
 local default_outline_color = Color3.fromRGB(255, 255, 255)
 
-local vehicle_ESP_Connection = {}
-
 local function apply_highlight(vehicle)
-    local highlight = vehicle:FindFirstChildOfClass("Highlight")
+    local highlight = vehicle:FindFirstChild("VehicleESP")
     if not highlight then
         highlight = Instance.new("Highlight")
         highlight.Name = "VehicleESP"
@@ -864,43 +948,58 @@ end
 
 local function clear_all_highlights()
     for _, vehicle in ipairs(vehicles_folder:GetChildren()) do
-        local hl = vehicle:FindFirstChildOfClass("Highlight")
+        local hl = vehicle:FindFirstChild("VehicleESP")
         if hl then
             hl:Destroy()
         end
     end
 end
 
+local function ensure_conn_table()
+    if type(getgenv().vehicle_ESP_Connection) ~= "table" then
+        getgenv().vehicle_ESP_Connection = {}
+    end
+    return getgenv().vehicle_ESP_Connection
+end
+
 local function start_vehicle_esp()
+    local conns = ensure_conn_table()
+
+    if getgenv().vehicle_ESP_Active then return end
+    getgenv().vehicle_ESP_Active = true
+
     for _, vehicle in ipairs(vehicles_folder:GetChildren()) do
         if vehicle:IsA("Model") then
             apply_highlight(vehicle)
         end
     end
 
-    vehicle_ESP_Connection.added = vehicles_folder.ChildAdded:Connect(function(child)
+    if conns.added and typeof(conns.added) == "RBXScriptConnection" then conns.added:Disconnect() end
+    if conns.removed and typeof(conns.removed) == "RBXScriptConnection" then conns.removed:Disconnect() end
+
+    conns.added = vehicles_folder.ChildAdded:Connect(function(child)
         if child:IsA("Model") then
             task.wait(0.1)
             apply_highlight(child)
         end
     end)
 
-    vehicle_ESP_Connection.removed = vehicles_folder.ChildRemoved:Connect(function(child)
-        local hl = child:FindFirstChildOfClass("Highlight")
+    conns.removed = vehicles_folder.ChildRemoved:Connect(function(child)
+        local hl = child:FindFirstChild("VehicleESP")
         if hl then
             hl:Destroy()
         end
     end)
 
-    vehicle_ESP_Connection.rainbow = task.spawn(function()
-        while true do
-            if not vehicle_ESP_Connection then break end
-            local t = tick()
-            local hue = (t % 5) / 5
-            local rainbow = Color3.fromHSV(hue, 1, 1)
+    conns.rainbow_active = true
+    task.spawn(function()
+        while getgenv().vehicle_ESP_Active and conns.rainbow_active do
             if getgenv().rainbow_highlight_mode then
+                local t = tick()
+                local hue = (t % 5) / 5
+                local rainbow = Color3.fromHSV(hue, 1, 1)
                 for _, vehicle in ipairs(vehicles_folder:GetChildren()) do
-                    local hl = vehicle:FindFirstChildOfClass("Highlight")
+                    local hl = vehicle:FindFirstChild("VehicleESP")
                     if hl then
                         hl.FillColor = rainbow
                     end
@@ -910,19 +1009,19 @@ local function start_vehicle_esp()
         end
     end)
 end
-wait(0.2)
+
 local function stop_vehicle_esp()
-    if not vehicle_ESP_Connection then return end
-    for _, conn in pairs(vehicle_ESP_Connection) do
-        if typeof(conn) == "RBXScriptConnection" then
-            conn:Disconnect()
-        elseif typeof(conn) == "thread" then
-            vehicle_ESP_Connection = {}
-            clear_all_highlights()
-        end
-    end
-    wait(0.1)
-    vehicle_ESP_Connection = nil
+    local conns = ensure_conn_table()
+    if not getgenv().vehicle_ESP_Active then return end
+
+    if conns.added and typeof(conns.added) == "RBXScriptConnection" then conns.added:Disconnect() end
+    if conns.removed and typeof(conns.removed) == "RBXScriptConnection" then conns.removed:Disconnect() end
+
+    conns.added = nil
+    conns.removed = nil
+    conns.rainbow_active = false
+    getgenv().vehicle_ESP_Active = false
+
     clear_all_highlights()
 end
 
@@ -931,8 +1030,6 @@ function highlight_all_cars(Toggle)
         start_vehicle_esp()
     elseif Toggle == false then
         stop_vehicle_esp()
-    else
-        return 
     end
 end
 
@@ -953,6 +1050,9 @@ function toggle_siren_sound(Boolean, Vehicle)
         end
         wait(0.2)
         if not Vehicle then return getgenv().notify("Failure:", "Please spawn a vehicle before using this!") end
+        if not Vehicle:FindFirstChild("VehicleSeat"):FindFirstChild("Siren") then
+            return getgenv().notify("Failure:", "Sirens do not exist on this vehicle!", 5)
+        end
         wait(0.1)
         Vehicle:FindFirstChild("VehicleSeat"):FindFirstChild("Siren").Volume = 1
     elseif Boolean == false then
@@ -962,9 +1062,10 @@ function toggle_siren_sound(Boolean, Vehicle)
             end
         end
         wait(0.2)
-        if not Vehicle then return getgenv().notify("Failure:", "Please spawn a vehicle before using this!") end
+        if not Vehicle then return getgenv().notify("Failure:", "Please spawn a vehicle before using this!", 5) end
+        if not Vehicle:FindFirstChild("VehicleSeat"):FindFirstChild("Siren") then return getgenv().notify("Failure:", "Sirens do not seem to exist on this vehicle!", 5) end
         wait(0.1)
-        Vehicle:FindFirstChild("VehicleSeat"):FindFirstChild("Siren").Volume = 0
+        Vehicle:FindFirstChild("VehicleSeat"):WaitForChild("Siren").Volume = 0
     else
         return 
     end
@@ -1576,7 +1677,7 @@ end
 wait(0.1)
 getgenv().spawn_vehicle = Tab4:CreateDropdown({
 Name = "Spawn Vehicle (FE)",
-Options = {"Magic Carpet", "EClass", "TowTruck", "Bicycle", "Fiat500", "Cayenne", "Jetski", "LuggageScooter", "MiniCooper", "GarbageTruck", "EScooter", "Monster Truck", "Yacht", "Stingray", "FireTruck", "VespaPizza", "VespaPolice", "F150", "Police SUV", "Chiron", "Humvee", "Wrangler", "Box Van", "Ambulance", "Urus", "Tesla", "Cybertruck", "RollsRoyce", "GClass", "SVJ", "MX5", "SF90", "Charger SRT", "Evoque", "IceCream Truck", "Vespa", "ATV", "Limo", "Tank", "Smart Car", "Beauford", "SchoolBus", "Sprinter", "GolfKart", "TrackHawk", "Helicopter", "SnowPlow", "Camper Van"},
+Options = {"SWAT Van", "Magic Carpet", "EClass", "TowTruck", "Bicycle", "Fiat500", "Cayenne", "Jetski", "LuggageScooter", "MiniCooper", "GarbageTruck", "EScooter", "Monster Truck", "Yacht", "Stingray", "FireTruck", "VespaPizza", "VespaPolice", "F150", "Police SUV", "Chiron", "Humvee", "Wrangler", "Box Van", "Ambulance", "Urus", "Tesla", "Cybertruck", "RollsRoyce", "GClass", "SVJ", "MX5", "SF90", "Charger SRT", "Evoque", "IceCream Truck", "Vespa", "ATV", "Limo", "Tank", "Smart Car", "Beauford", "SchoolBus", "Sprinter", "GolfKart", "TrackHawk", "Helicopter", "SnowPlow", "Camper Van"},
 CurrentOption = "",
 MultipleOptions = false,
 Flag = "vehicle_slot_select",
@@ -2071,7 +2172,7 @@ Callback = function(flashlight_phone)
     end
 end,})
 
-local Rain = getgenv().LocalPlayer:FindFirstChild("Rain", true) or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain")
+local Rain = require(getgenv().LocalPlayer:FindFirstChildOfClass("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain", true)) or require(getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain"))
 local rainbowConnection
 task.wait(0.2)
 getgenv().startRainbow = function()
@@ -2085,7 +2186,8 @@ getgenv().startRainbow = function()
 end
 task.wait(0.2)
 getgenv().stopRainbow = function()
-    local Rain = getgenv().LocalPlayer:FindFirstChild("Rain", true) or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain")
+    local Rain = require(getgenv().LocalPlayer:FindFirstChildOfClass("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain", true)) or require(getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain"))
+    if not Rain then return getgenv().notify("Failure:", "Rain ModuleScript doesn't exist (destroyed?)", 5) end
     if rainbowConnection then
         rainbowConnection:Disconnect()
         rainbowConnection = nil
@@ -2097,7 +2199,7 @@ getgenv().stopRainbow = function()
 end
 task.wait(0.1)
 getgenv().RainbowRain_NotFE = Tab3:CreateToggle({
-Name = "Rainbow Rain (Not FE)",
+Name = "Rainbow Rain (Not FE, Working!)",
 CurrentValue = false,
 Flag = "NotFERainbowRain",
 Callback = function(rainbow_rain_toggle)
@@ -2254,8 +2356,6 @@ Callback = function(hasFrozenChar)
     end
 end,})
 
-local anti_knockback_connection
-local antiKnockbackEnabled = false
 wait()
 getgenv().AntiFlingToggle = Tab2:CreateToggle({
 Name = "Anti Fling",
@@ -2263,6 +2363,10 @@ CurrentValue = false,
 Flag = "AntiFlingAbsolutelyInsane",
 Callback = function(EnableAntiFlingScript)
     if EnableAntiFlingScript then
+        if getgenv().antiFlingEnabled or getgenv().antiFlingEnabled == true then
+            return getgenv().notify("Failure:", "Anti Fling is already enabled!", 5)
+        end
+
         getgenv().antiFlingEnabled = true
         getgenv().antiKnockbackEnabled = true
 
@@ -2270,13 +2374,8 @@ Callback = function(EnableAntiFlingScript)
         local Players = getgenv().Players
         local lp = getgenv().LocalPlayer
 
-        local function getHRP()
-            local char = getgenv().Character
-            return char and char:FindFirstChild("HumanoidRootPart") or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-        end
-
         local function cleanUpForces()
-            local hrp = getHRP()
+            local hrp = getgenv().HumanoidRootPart
             if not hrp then return end
 
             for _, obj in ipairs(hrp:GetChildren()) do
@@ -2286,15 +2385,17 @@ Callback = function(EnableAntiFlingScript)
             end
         end
 
+        getgenv().notify("Success:", "Enabled anti-fling, you will not be able to be flung.", 5)
+
         local function onHeartbeat()
             if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
 
-            local hrp = getHRP()
+            local hrp = getgenv().HumanoidRootPart
             local humanoid = lp.Character and lp.Character:FindFirstChildWhichIsA("Humanoid")
             if not hrp or not humanoid then return end
 
-            local maxSpeed = 45
-            local maxAngularSpeed = 60
+            local maxSpeed = 60
+            local maxAngularSpeed = 70
 
             if hrp.Velocity.Magnitude > maxSpeed then
                 hrp.Velocity = hrp.Velocity.Unit * maxSpeed
@@ -2315,26 +2416,25 @@ Callback = function(EnableAntiFlingScript)
             if humanoid.PlatformStand then
                 humanoid.PlatformStand = false
             end
-
+            wait()
             cleanUpForces()
         end
 
-        if anti_knockback_connection then
-            anti_knockback_connection:Disconnect()
+        if getgenv().anti_knockback_connection then
+            getgenv().anti_knockback_connection:Disconnect()
+            getgenv().anti_knockback_connection = nil
         end
         wait(0.2)
-        anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
+        getgenv().anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
     else
         getgenv().antiFlingEnabled = false
+        getgenv().antiKnockbackEnabled = false
 
-        if getgenv().antiFlingThing then
-            getgenv().antiFlingThing:Disconnect()
-            getgenv().antiFlingThing = nil
-        end
-        antiKnockbackEnabled = false
-        if anti_knockback_connection then
-            anti_knockback_connection:Disconnect()
-            anti_knockback_connection = nil
+        getgenv().notify("Success:", "Disabled anti-fling", 5)
+
+        if getgenv().anti_knockback_connection then
+            getgenv().anti_knockback_connection:Disconnect()
+            getgenv().anti_knockback_connection = nil
         end
     end
 end,})
@@ -2634,6 +2734,18 @@ Callback = function(vehicle_tp_user)
     vehicle_tp(get_vehicle(), Target_Character)
 end,})
 
+getgenv().NightVision_ClientSide = Tab3:CreateToggle({
+Name = "NightVision (Not FE)",
+CurrentValue = false,
+Flag = "NightVisionCurrentlyEnabled",
+Callback = function(night_vision_enabled)
+    if night_vision_enabled then
+        night_vision(true)
+    else
+        night_vision(false)
+    end
+end,})
+
 getgenv().SitIn_Vehicle_FE = Tab4:CreateButton({
 Name = "Sit In Vehicle",
 Callback = function()
@@ -2648,7 +2760,7 @@ Callback = function()
 end,})
 
 getgenv().server_admin_teleport = Tab2:CreateInput({
-Name = "(VIP-SERVER): Server Admin TP Plr",
+Name = "(VIP-SERVER ONLY): Server Admin TP Plr",
 PlaceholderText = "User Here, can be shortened",
 RemoveTextAfterFocusLost = true,
 Callback = function(player_to_tp_to)
@@ -2932,7 +3044,7 @@ Callback = function(using_cat_glitch_outfit)
         getgenv().Humanoid.JumpPower = 0
         getgenv().Humanoid.JumpHeight = 0
     else
-        notify("Success:", "Disabling Cat Glitch, restoring avatar, please WAIT...", 5)
+        getgenv().notify("Success:", "Disabling Cat Glitch, restoring avatar, please WAIT...", 5)
 
         if OldSnapshot then
             restore_outfit(OldSnapshot)
@@ -2992,6 +3104,11 @@ Callback = function(house_locked)
         getgenv().my_home_locked = false
     end
 end,})
+wait(0.1)
+if getgenv().my_home_locked or getgenv().my_home_locked == true then
+    getgenv().my_home_locked = false
+    getgenv().LockHouse_FE:Set(false)
+end
 
 local ReplicatedStorage = getgenv().ReplicatedStorage
 local Workspace = getgenv().Workspace
