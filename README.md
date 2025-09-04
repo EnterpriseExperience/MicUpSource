@@ -1,4 +1,4 @@
-## [📜 Current 🔥 Flames Hub 🔥 Version: V10.0.8 📜]:
+## [📜 Current 🔥 Flames Hub 🔥 Version: 10.4.6 📜]:
 
 ```lua
 -- 🎤 MIC UP 🎤 --
