@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.9.8"
+local Raw_Version = "V2.9.9"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -16,6 +16,10 @@ getgenv().Service_Wrap = function(serviceName)
       return getgenv().Game:GetService(serviceName)
    end
 end
+
+local StarterGui = getgenv().Service_Wrap("StarterGui")
+task.wait(0.2)
+getgenv().StarterGui = StarterGui
 
 local function getExecutor()
    local name
@@ -77,6 +81,23 @@ function randomString()
       array[i] = string.char(math.random(32, 126))
    end
    return table.concat(array)
+end
+
+function notify(title, msg, duration)
+   getgenv().StarterGui:SetCore("SendNotification", {
+      Title = tostring(title);
+      Text = tostring(msg);
+      Duration = tonumber(duration);
+      Icon = "rbxassetid://0";
+   })
+end
+task.wait(0.1)
+getgenv().notify = notify
+task.wait(0.2)
+function owner_joined()
+   getgenv().notify("ALERT:", "THE OWNER OF THE SCRIPT YOUR USING JUST JOINED!", 6)
+   wait(0.1)
+   getgenv().notify("Username:", "L0CKED_1N1", 5)
 end
 
 getgenv().randomString = function()
@@ -935,14 +956,6 @@ for _, name in ipairs(AllCars) do
    CarMap[name:lower()] = name
 end
 
-function notify(title, msg, duration)
-   getgenv().StarterGui:SetCore("SendNotification", {
-      Title = tostring(title);
-      Text = tostring(msg);
-      Duration = tonumber(duration);
-      Icon = "rbxassetid://0";
-   })
-end
 wait()
 local function get_other_vehicle(Player)
    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
@@ -953,8 +966,6 @@ local function get_other_vehicle(Player)
 
    return nil
 end
-wait()
-getgenv().notify = notify
 wait()
 function RGB_Vehicle(Boolean)
    getgenv().Rainbow_Vehicle = Boolean
@@ -1107,6 +1118,30 @@ local function savePrefix(newPrefix)
       local data = { prefix = newPrefix }
       writefile(fileName, HttpService:JSONEncode(data))
    end
+end
+
+function anti_void()
+   local root = getgenv().getRoot(getgenv().Character)
+   local oldpos = root.CFrame
+
+   if getgenv().Anti_Void_Falling then
+      getgenv().Anti_Void_Falling:Disconnect()
+      getgenv().Anti_Void_Falling = nil
+   end
+
+   local OrgDestroyHeight = getgenv().Workspace.FallenPartsDestroyHeight
+   task.wait(0.2)
+   getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+   task.wait(0.1)
+   root.CFrame = CFrame.new(Vector3.new(0, OrgDestroyHeight - 25, 0))
+   task.wait(1)
+   root.CFrame = oldpos
+   task.wait(0.1)
+   getgenv().Anti_Void_Falling = getgenv().RunService.Stepped:Connect(function()
+      if root and root.Position.Y <= OrgDestroyHeight + 25 then
+         root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
+      end
+   end)
 end
 
 function anti_report_func()
@@ -2248,13 +2283,15 @@ local function enable_rgb_for(plr)
    getgenv().Rainbow_Tasks[plr.Name] = task.spawn(function()
       while state.rainbow do
          local vehicle = get_other_vehicle(plr)
-         if not vehicle then break end
+         if not vehicle then
+            getgenv().VehicleStates[plr.Name].rainbow = false
+            break
+         end
 
          local i = (state.rainbowIndex or 0) + 1
          state.rainbowIndex = i
          local color = g.Rainbow_Colors[(i % #g.Rainbow_Colors) + 1]
          change_vehicle_color(color, vehicle)
-
          task.wait(0.2)
       end
    end)
