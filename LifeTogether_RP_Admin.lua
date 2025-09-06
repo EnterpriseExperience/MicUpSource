@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V2.9.9"
+local Raw_Version = "V3.0.1"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1731,6 +1731,7 @@ local function CommandsMenu()
       {prefix}caraccel number - Modifies your "max_acc" on your car/vehicle
       {prefix}carspeed number - Modifies your "max_speed" on your car/vehicle
       {prefix}accel number - Modifies your "acc_0_60" on your car/vehicle (take off time/speed)
+      {prefix}turnangle number - Modifies your "turn_angle" on your car/vehicle (how fast you turn)
       {prefix}gotocar - Teleports you straight to your car/vehicle directly
       {prefix}tpcar player - Teleports your vehicle/car to the specified target
       {prefix}antihouseban - Prevents you from being banned/kicked/teleported out of houses
@@ -3691,7 +3692,7 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "carspeed" then
       local val = tonumber(args[1])
-      if not val then return notify("Missing Value", "Usage: carspeed [number], got: "..tostring(args[1]), 4) end
+      if not val then return notify("Missing Value", "Usage: carspeed [number], got: "..tostring(args[1]), 5) end
 
       local car = get_vehicle()
       if car and car:GetAttribute("max_speed") then
@@ -3700,9 +3701,20 @@ local function handleCommand(sender, message)
       else
          notify("Failure:", "Car not found or your car does not have a 'max_speed' attribute.", 4)
       end
+   elseif cmd == "turnangle" then
+      local turn_angle_val = tonumber(arg[1])
+      if not turn_angle_val then return notify("Failure:", "Usage: turnangle [number], got: "..tostring(args[1]), 5) end
+
+      local car = get_vehicle()
+      if car and car:GetAttribute("turn_angle") then
+         car:SetAttribute("turn_angle", turn_angle_val)
+         notify("Success:", "Set car turn_angle to: "..tostring(turn_angle_val), 5)
+      else
+         notify("Failure:", "Car not found or your car does not have a 'turn_angle' value.", 5)
+      end
    elseif cmd == "accel" then
       local val = tonumber(args[1])
-      if not val then return notify("Missing Value", "Usage: accel [number], got: "..tostring(args[1]), 4) end
+      if not val then return notify("Missing Value", "Usage: accel [number], got: "..tostring(args[1]), 5) end
 
       local car = get_vehicle()
       if car and car:GetAttribute("acc_0_60") then
