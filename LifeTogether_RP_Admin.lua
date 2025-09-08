@@ -3702,7 +3702,7 @@ local function handleCommand(sender, message)
          notify("Failure:", "Car not found or your car does not have a 'max_speed' attribute.", 4)
       end
    elseif cmd == "turnangle" then
-      local turn_angle_val = tonumber(arg[1])
+      local turn_angle_val = tonumber(args[1])
       if not turn_angle_val then return notify("Failure:", "Usage: turnangle [number], got: "..tostring(args[1]), 5) end
 
       local car = get_vehicle()
