@@ -69,7 +69,7 @@
     if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
         if not getgenv().notify then
             getgenv().StarterGui_Notify = function(title, content, duration)
-                local StarterGui = Flames_PI.Service("StarterGui")
+                local StarterGui = Flames_API.Service("StarterGui")
                 StarterGui:SetCore("SendNotification", {
                     Title = tostring(title),
                     Text = tostring(content),
@@ -79,9 +79,25 @@
             end
         end
 
-        getgenv().StarterGui_Notify("CRITICAL:", "Flames Hub seems to have failed to load last time, re-running...", 5)
-        task.wait(0.2)
-        getgenv().StarterGui_Notify("Alert:", "If Flames Hub does not fix itself, it's probably down!", 5)
+        if getgenv().StarterGui_Notify then
+            getgenv().StarterGui_Notify("CRITICAL:", "Flames Hub seems to have failed to load last time, re-running...", 5)
+            task.wait(0.2)
+            getgenv().StarterGui_Notify("Alert:", "If Flames Hub does not fix itself, it's probably down!", 5)
+        else
+            getgenv().StarterGui_Notify = function(title, content, duration)
+                local StarterGui = Flames_API.Service("StarterGui")
+                StarterGui:SetCore("SendNotification", {
+                    Title = tostring(title),
+                    Text = tostring(content),
+                    Duration = tonumber(duration),
+                    Icon = "rbxassetid://0"
+                })
+            end
+            task.wait(0.3)
+            getgenv().StarterGui_Notify("CRITICAL:", "Flames Hub seems to have failed to load last time, re-running...", 5)
+            task.wait(0.2)
+            getgenv().StarterGui_Notify("Alert:", "If Flames Hub does not fix itself, it's probably down!", 5)
+        end
         task.wait(0.1)
         Module:Destroy_Script()
         task.wait(0.3)
@@ -496,40 +512,44 @@
     local vc_inter = getgenv().VoiceChatInternal
     local vc_service = getgenv().VoiceChatService
 
-    if getgenv().voicechat_check then
-        warn("Voice Chat already initialized.")
-    else
-        local reconnecting = false
-        local retry_dur = 3
+    if vc_inter then
+        if getgenv().voicechat_check then
+            warn("Voice Chat already initialized.")
+        else
+            local reconnecting = false
+            local retry_dur = 3
 
-        local function unsuspend()
-            if reconnecting then return warn("STILL TRYING TO RECONNECT TO VC! WAITING!") end
-            reconnecting = true
+            local function unsuspend()
+                if reconnecting then return warn("STILL TRYING TO RECONNECT TO VC! WAITING!") end
+                reconnecting = true
 
-            task.wait(2)
-            pcall(function()
-                vc_inter:JoinByGroupIdToken("", false, true)
-                vc_inter:Leave()
-                task.wait(0.2)
-                vc_service:rejoinVoice()
-                vc_service:rejoinVoice()
-                task.wait(0.1)
-                vc_service:joinVoice()
+                task.wait(2)
+                pcall(function()
+                    vc_inter:JoinByGroupIdToken("", false, true)
+                    vc_inter:Leave()
+                    task.wait(0.2)
+                    vc_service:rejoinVoice()
+                    vc_service:rejoinVoice()
+                    task.wait(0.1)
+                    vc_service:joinVoice()
+                end)
+
+                reconnecting = false
+            end
+
+            vc_inter.LocalPlayerModerated:Connect(unsuspend)
+
+            vc_inter.StateChanged:Connect(function(_, newState)
+                if newState == Enum.VoiceChatState.Ended and not reconnecting then
+                    task.wait(retry_dur)
+                    unsuspend()
+                end
             end)
 
-            reconnecting = false
+            getgenv().voicechat_check = true
         end
-
-        vc_inter.LocalPlayerModerated:Connect(unsuspend)
-
-        vc_inter.StateChanged:Connect(function(_, newState)
-            if newState == Enum.VoiceChatState.Ended and not reconnecting then
-                task.wait(retry_dur)
-                unsuspend()
-            end
-        end)
-
-        getgenv().voicechat_check = true
+    else
+        warn("Could not find or access VoiceChatInternal service, must not have the correct permissions.")
     end
     wait(0.2)
     -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
@@ -564,12 +584,25 @@
             end
         end
 
-        local GC = getconnections or get_signal_cons
-        local Other_Check = Drawing
+        local GC
+        local Other_Check
+
+        if getconnections or get_signal_cons then
+            GC = getconnections or get_signal_cons
+        else
+            warn("connection functions are unsupported in this executor.")
+        end
+        if Drawing then
+            Other_Check = Drawing
+        else
+            warn("Drawing Library/API unsupported.")
+        end
 
         getgenv().checkNecessaryFunctions(cloneref)
         wait()
-        getgenv().checkNecessaryFunctions(httprequest_Init)
+        if httprequest_Init then
+            getgenv().checkNecessaryFunctions(httprequest_Init)
+        end
         wait()
         getgenv().checkNecessaryFunctions(writefile)
         wait()
@@ -577,9 +610,17 @@
         wait()
         getgenv().checkNecessaryFunctions(delfile)
         wait()
-        getgenv().checkNecessaryFunctions(GC)
+        if getconnections or get_signal_cons then
+            getgenv().checkNecessaryFunctions(GC)
+        else
+            warn("connection functions are unsupported in this executor.")
+        end
         wait()
-        getgenv().checkNecessaryFunctions(Other_Check)
+        if Drawing then
+            getgenv().checkNecessaryFunctions(Other_Check)
+        else
+            warn("Drawing Library/API unsupported.")
+        end
         wait()
         getgenv().checkNecessaryFunctions(getgenv().AllClipboards)
         wait(0.1)
@@ -932,7 +973,7 @@
             Discord = {
                 Enabled = false,
                 Invite = "",
-                RememberJoins = true
+                RememberJoins = false
             },
             KeySystem = false,
             KeySettings = {
@@ -958,7 +999,7 @@
             Discord = {
                 Enabled = false,
                 Invite = "",
-                RememberJoins = true
+                RememberJoins = false
             },
             KeySystem = false,
             KeySettings = {
@@ -6917,7 +6958,6 @@
         getgenv().singlePlayerTable = getgenv().singlePlayerTable or {}
 
         function getThatPlr()
-            
             for i, v in pairs(Players:GetChildren()) do
                 if getgenv().singlePlayerTable[v.Name] then
                     return v
@@ -12935,61 +12975,126 @@
         end
     end,})
 
+    getgenv().MutedPlayers = getgenv().MutedPlayers or {}
+    getgenv().PlayerConnections = getgenv().PlayerConnections or {}
+
+    local function apply_mute(user)
+        if not user or not user:IsDescendantOf(getgenv().Players) then return end
+        local audio = user:FindFirstChildOfClass("AudioDeviceInput")
+        if audio then
+            pcall(function() audio.Muted = true end)
+        else
+            if getgenv().VoiceChatInternal and type(getgenv().VoiceChatInternal.SubscribePause) == "function" then
+                pcall(function()
+                    getgenv().VoiceChatInternal:SubscribePause(user.UserId, true)
+                end)
+            end
+        end
+    end
+
+    local function remove_mute(user)
+        if not user then return end
+        local audio = user:FindFirstChildOfClass("AudioDeviceInput")
+        if audio then
+            pcall(function() audio.Muted = false end)
+        else
+            if getgenv().VoiceChatInternal and type(getgenv().VoiceChatInternal.SubscribePause) == "function" then
+                pcall(function()
+                    getgenv().VoiceChatInternal:SubscribePause(user.UserId, false)
+                end)
+            end
+        end
+    end
+
+    getgenv().MutePlayer = function(user)
+        if not user then
+            return getgenv().notify("Failure", "User not found", 5)
+        end
+
+        local ok, enabled = pcall(function()
+            return getgenv().vc_service and getgenv().vc_service:IsVoiceEnabledForUserIdAsync(getgenv().LocalPlayer.UserId)
+        end)
+        if not ok or not enabled then
+            --getgenv().notify("Failure", "Your account does not have VoiceChat!", 5)
+            return 
+        end
+
+        if getgenv().MutedPlayers[user.UserId] then
+            return getgenv().notify("Failure", "User is already muted", 5)
+        end
+
+        getgenv().MutedPlayers[user.UserId] = true
+
+        apply_mute(user)
+
+        local conn
+        conn = getgenv().RunService.Heartbeat:Connect(function()
+            if not getgenv().MutedPlayers[user.UserId] or not user:IsDescendantOf(getgenv().Players) then
+                if conn then conn:Disconnect() end
+                return 
+            end
+            apply_mute(user)
+        end)
+
+        getgenv().PlayerConnections[user.UserId] = conn
+        getgenv().notify("Success:", tostring(user).." has been muted successfully.", 5)
+    end
+
+    getgenv().UnmutePlayer = function(user)
+        if not user then
+            return getgenv().notify("Failure:", "Player not found or does not exist!", 5)
+        end
+
+        if not getgenv().MutedPlayers[user.UserId] then
+            return getgenv().notify("Failure:", tostring(user).." is not muted!", 5)
+        end
+
+        getgenv().MutedPlayers[user.UserId] = nil
+
+        local conn = getgenv().PlayerConnections[user.UserId]
+        if conn then
+            conn:Disconnect()
+            getgenv().PlayerConnections[user.UserId] = nil
+        end
+
+        remove_mute(user)
+        getgenv().notify("Success:", "Player has been unmuted.", 5)
+    end
+
+    getgenv().Players.PlayerRemoving:Connect(function(user)
+        if getgenv().MutedPlayers[user.UserId] then
+            getgenv().MutedPlayers[user.UserId] = nil
+        end
+        local conn = getgenv().PlayerConnections[user.UserId]
+        if conn then
+            conn:Disconnect()
+            getgenv().PlayerConnections[user.UserId] = nil
+        end
+
+        pcall(function()
+            if getgenv().VoiceChatInternal and type(getgenv().VoiceChatInternal.SubscribePause) == "function" then
+                getgenv().notify("Hang On:", "", 5)
+                getgenv().VoiceChatInternal:SubscribePause(user.UserId, false)
+            end
+        end)
+    end)
+
     getgenv().MuteAPlayerSpecific = Tab21:CreateInput({
     Name = "Mute Player",
     PlaceholderText = "User",
     RemoveTextAfterFocusLost = true,
     Callback = function(getAUser)
         local derUser = findplr(getAUser)
-        local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(getgenv().LocalPlayer.UserId)
-
-        if not enabled_vc or enabled_vc == false then
-            return getgenv().notify("Failure:", "Your account does not have VoiceChat!", 5)
+        local ok, enabled = pcall(function()
+            return getgenv().vc_service and getgenv().vc_service:IsVoiceEnabledForUserIdAsync(getgenv().LocalPlayer.UserId)
+        end)
+        if not ok or not enabled then
+            return getgenv().notify("Failure", "Your account does not have VoiceChat!", 5)
         end
-
         if not derUser then
-            return getgenv().notify("Failure!", "User was not found.", 6)
+            return getgenv().notify("Failure", "User was not found.", 5)
         end
-        wait(0.1)
-        getgenv().shouldMute = true
-        getgenv().MutedPlayers = getgenv().MutedPlayers or {}
-        getgenv().PlayerConnections = getgenv().PlayerConnections or {}
-
-        function MutePlayer(user)
-            getgenv().notify("Success!", "Player has been muted", 5)
-
-            if user:FindFirstChildOfClass("AudioDeviceInput") then
-                while getgenv().shouldMute == true do
-                wait()
-                    local audiodeviceinput = user:FindFirstChildOfClass("AudioDeviceInput")
-
-                    audiodeviceinput.Muted = true
-                end
-            else
-                while getgenv().shouldMute == true do
-                wait()
-                    getgenv().VoiceChatInternal:SubscribePause(user.UserId, true)
-                end
-            end
-        end
-
-        if getgenv().shouldMute or getgenv().shouldMute == true then
-            getgenv().notify("Success!", "Loop was enabled already, new player muted.", 5)
-            wait(0.1)
-            MutePlayer(derUser)
-        elseif not getgenv().shouldMute or getgenv().shouldMute == false then
-            if derUser:FindFirstChildOfClass("AudioDeviceInput") then
-                local audiodeviceinput = derUser:FindFirstChildOfClass("AudioDeviceInput")
-
-                audiodeviceinput.Muted = true
-                wait(0.2)
-                getgenv().notify("Success", "Player has been muted!", 5)
-            else
-                getgenv().VoiceChatInternal:SubscribePause(derUser.UserId, true)
-            end
-        else
-            return getgenv().notify("Unknown Error:", "Could not determine loop status.", 6)
-        end
+        getgenv().MutePlayer(derUser)
     end,})
 
     getgenv().ResetButton = Tab2:CreateButton({
@@ -12997,51 +13102,60 @@
     Callback = function()
         if getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") then
             getgenv().Humanoid.Health = 0
+        elseif not getgenv().Humanoid then
+            getgenv().Character:WaitForChild("Humanoid", 0.3).Health = 0
         else
-            return getgenv().notify("Failed!", "Humanoid doesn't exist, please wait for a respawn!", 5)
+            --getgenv().notify("Failed!", "Humanoid doesn't exist, please wait for a respawn!", 5)
+            return 
         end
     end,})
 
     getgenv().RejoinButton = Tab15:CreateButton({
     Name = "Rejoin",
     Callback = function()
+        -- [[ We appreciate it: Infinite Yield ]] --
+        if #getgenv().Players:GetPlayers() <= 1 then
+            getgenv().LocalPlayer:Kick("No players in current server! Teleporting you to a new one...")
+            task.wait(0.3)
+            getgenv().TeleportService:Teleport(getgenv().PlaceID, getgenv().LocalPlayer)
+        else
+            getgenv().TeleportService:TeleportToPlaceInstance(getgenv().PlaceID, getgenv().JobID, getgenv().LocalPlayer)
+        end
+
         getgenv().TeleportService:TeleportToPlaceInstance(getgenv().PlaceID, getgenv().JobID, getgenv().LocalPlayer)
     end,})
 
-    if executor_Name == "Solara" then
-        warn("Cannot load 'ServerHop' on 'Solara'.")
-    else
-        getgenv().ServerHopButton = Tab15:CreateButton({
-        Name = "ServerHop",
-        Callback = function()
-            -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
-            httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-            
-            if httprequest then
-                getgenv().servers = getgenv().servers or {}
-                local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", game.PlaceId)})
-                local body = getgenv().HttpService:JSONDecode(req.Body)
+    getgenv().ServerHopButton = Tab15:CreateButton({
+    Name = "ServerHop",
+    Callback = function()
+        -- Thanks 'Infinite Yield' I am NOT trying to make any of this right now.
+        httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+        if not httprequest then return getgenv().notify("Error:", "You cannot run this (missing: httprequest).", 5) end
 
-                if body and body.data then
-                    for i, v in next, body.data do
-                        if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
-                            table.insert(getgenv().servers, 1, v.id)
-                        end
+        if httprequest then
+            getgenv().servers = getgenv().servers or {}
+            local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", game.PlaceId)})
+            local body = getgenv().HttpService:JSONDecode(req.Body)
+
+            if body and body.data then
+                for i, v in next, body.data do
+                    if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
+                        table.insert(getgenv().servers, 1, v.id)
                     end
-                else
-                    return getgenv().notify("Failed!", "Unable to retrieve any data from game", 5)
                 end
             else
-                return getgenv().notify("ServerHop", "httprequest is unsupported. [failed].", 5)
+                return getgenv().notify("Failure:", "Unable to retrieve any data from the current experience.", 5)
             end
+        else
+            return getgenv().notify("Error:", "httprequest is unsupported. [failed].", 5)
+        end
 
-            if #getgenv().servers > 0 then
-                getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, getgenv().servers[math.random(1, #getgenv().servers)], getgenv().LocalPlayer)
-            else
-                return getgenv().notify("ServerHop", "Couldn't find a server [failed].", 5)
-            end
-        end,})
-    end
+        if #getgenv().servers > 0 then
+            getgenv().TeleportService:TeleportToPlaceInstance(game.PlaceId, getgenv().servers[math.random(1, #getgenv().servers)], getgenv().LocalPlayer)
+        else
+            return getgenv().notify("Failure:", "Couldn't find a server [failed].", 5)
+        end
+    end,})
 
     if getgenv().Rayfield then
         getgenv().ChangeUILibColor = Tab15:CreateColorPicker({
@@ -13050,6 +13164,7 @@
         Flag = "UIColoringFunc",
         Callback = function(UIColor)
             if not getgenv().Rayfield or getgenv().Rayfield == nil then
+                getgenv().notify("Alert:", "If this causes errors, it means Rayfield UI or it's global value is actually missing.", 5)
                 getgenv().notify("Error:", "You are most likely using the regular UI, don't worry.", 5)
             end
 
@@ -13061,12 +13176,11 @@
                         end
                     end
                 else
-                    warn("Rayfield ScreenGui not found!")
+                    getgenv().notify("Failure:", "Rayfield ScreenGui not found!", 5)
                 end
             end
 
             local newFrameColor = UIColor
-
             changeColors(getgenv().Rayfield, newFrameColor)
         end,})
     else
@@ -13077,7 +13191,7 @@
     local Version = Module:Get_Current_Version()
     wait(0.3)
     getgenv().ReExecuteGUI = Tab1:CreateButton({
-    Name = "Re-Execute/Reload Script/GUI",
+    Name = "Re-Execute Version: "..tostring(Version),
     Callback = function()
         getgenv().notify("Hang On:", "Loading update: "..tostring(Version), 5)
         Module:Patch_Update()
@@ -13095,39 +13209,25 @@
     RemoveTextAfterFocusLost = true,
     Callback = function(LolPUser)
         local thisUser = findplr(LolPUser)
-        local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)
+        local ok, enabled = pcall(function()
+            return getgenv().VoiceChatService:IsVoiceEnabledForUserIdAsync(getgenv().LocalPlayer.UserId)
+        end)
 
-        if not enabled_vc or enabled_vc == false then
-            return getgenv().notify("Failure:", "Your account does not have VoiceChat!", 5)
+        if not ok or not enabled then
+            --getgenv().notify("Failure:", "Your account does not have VoiceChat!", 5)
+            return 
         end
 
         if not thisUser then
-            getgenv().notify("Failure", "Player was not found.", 5)
+            return getgenv().notify("Failure:", "Player not found or does not exist.", 5)
         end
 
-        if thisUser then
-            function UnmutePlayer(user)
-                if user and user:FindFirstChildOfClass("AudioDeviceInput") then
-                    local AudioDeviceInput = user:FindFirstChildOfClass("AudioDeviceInput")
-
-                    if AudioDeviceInput.Muted or AudioDeviceInput.Muted == true then
-                        AudioDeviceInput.Muted = false
-                    end
-                else
-                    getgenv().VoiceChatInternal:SubscribePause(user.UserId, true)
-                end
-            end
-            wait()
-            getgenv().shouldMute = false
-            UnmutePlayer(thisUser)
-            wait(0.2)
-            getgenv().notify("Success", "Player has been unmuted", 5)
-        end
+        getgenv().UnmutePlayer(thisUser)
     end,})
     wait()
     getgenv().run_Shift_Speed = 50
     getgenv().walkSpeed = 16
-
+    task.wait(0.1)
     getgenv().ShifTToRunSpeed = Tab2:CreateInput({
     Name = "Shift_To_Run Speed",
     PlaceholderText = "Enter Speed",
@@ -13137,7 +13237,7 @@
         if speed then
             getgenv().run_Shift_Speed = speed
         else
-            warn("Invalid speed input. Please enter a number.")
+            return getgenv().notify("Failure:", "Invalid speed input, please enter a number.", 5)
         end
     end,})
 
@@ -13170,7 +13270,9 @@
                 humanoid.WalkSpeed = getgenv().walkSpeed
             end
 
-            game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
+            getgenv().LocalPlayer.CharacterAdded:Connect(function(character)
+                getgenv().LocalPlayer.CharacterAdded:Wait()
+                repeat wait() until character and character:FindFirstChild("Humanoid")
                 setupCharacter(character)
             end)
 
@@ -13180,7 +13282,7 @@
         else
             getgenv().runningEnabled = false
             if getgenv().Character then
-                local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+                local humanoid = getgenv().Humanoid or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
                 if humanoid then
                     humanoid.WalkSpeed = getgenv().walkSpeed
                 end
@@ -13189,9 +13291,11 @@
     end,})
     wait(0.7)
     if getgenv().runningEnabled == true then
+        local humanoid = getgenv().Humanoid or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+
         getgenv().ShiftToRun:Set(false)
         wait(0.2)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+        humanoid.WalkSpeed = 16
     end
 
     Zombie_Idle_1 = "10921344533"
@@ -14532,7 +14636,8 @@
         Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616156119"
         Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=616157476"
         wait(0.1)
-        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+        -- If you see a "3" or "Jumping" on something like this, it means it makes you jump btw.
+        getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3) -- I change my mind, some of them do jump (edited: 9/6/2025 : 9:53 AM)
         wait(0.3)
         Animate.Disabled = false
         wait(apply_anims_delay)
@@ -15684,13 +15789,11 @@
         getgenv().performance_stats = true
     end
     wait(0.1)
-    local Workspace = getgenv().Workspace
-    local TerrainFolder = Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", Workspace)
+    TerrainFolder = getgenv().Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", Workspace)
     TerrainFolder.Name = "TERRAIN_EDITOR"
+    Transparency_Selected = 1
 
-    local Transparency_Selected = 1
-
-    for _, v in ipairs(TerrainFolder:GetDescendants()) do
+    for _, transparency in ipairs(TerrainFolder:GetDescendants()) do
         if v:IsA("BasePart") then
             v.Transparency = Transparency_Selected
         end
@@ -15800,7 +15903,7 @@
         end
         
         if getgenv().seen_output_zeh == false then
-            local function random_hex()
+            function random_hex()
                 local hex = "0x"
                 for i = 1, 8 do
                     hex = hex .. string.format("%X", math.random(0, 15))
