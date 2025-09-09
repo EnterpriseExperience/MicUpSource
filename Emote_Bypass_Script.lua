@@ -302,6 +302,28 @@ local function openemotes(name, state, input)
 	end
 end
 
+if ContextActionService.BindCoreActionAtPriority then
+    if IsStudio then
+        ContextActionService:BindActionAtPriority(
+            "Emote Menu",
+            openemotes,
+            true,
+            2001,
+            Enum.KeyCode.Comma
+        )
+    else
+        ContextActionService:BindCoreActionAtPriority(
+            "Emote Menu",
+            openemotes,
+            true,
+            2001,
+            Enum.KeyCode.Comma
+        )
+    end
+else
+    cas.BindCoreActionAtPriority = function() return end
+end
+
 if IsStudio then
 	ContextActionService:BindActionAtPriority(
 		"Emote Menu",
