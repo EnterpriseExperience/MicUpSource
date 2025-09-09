@@ -667,16 +667,15 @@
         warn("Already loaded BasePlate check.")
     else
         function do_baseplate_check()
-            local Workspace = getgenv().Workspace
-            local TerrainFolder = Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", Workspace)
+            local TerrainFolder = getgenv().Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", getgenv().Workspace)
             TerrainFolder.Name = "TERRAIN_EDITOR"
-            
-            local position = Vector3.new(66, -10, 72.5)
-            local size = Vector3.new(20000, 20, 20000)
-            local maxPartSize = 2048
-            local material = Enum.Material.Asphalt
-            local color = Color3.fromRGB(50, 50, 50)
-            local transparency = 0
+            getgenv().Terrain_Folder_Baseplate_Flames_Hub = TerrainFolder or getgenv().Workspace:FindFirstChild("TERRAIN_EDITOR")
+            position = Vector3.new(66, -10, 72.5)
+            size = Vector3.new(20000, 20, 20000)
+            maxPartSize = 2048
+            material = Enum.Material.Asphalt
+            color = Color3.fromRGB(50, 50, 50)
+            transparency = 0
             
             local function createPart(pos, partSize)
                 local part = Instance.new("Part")
@@ -691,15 +690,14 @@
             end
             
             if size.X > maxPartSize or size.Z > maxPartSize then
-                local divisionsX = math.ceil(size.X / maxPartSize)
-                local divisionsZ = math.ceil(size.Z / maxPartSize)
-                
-                local partSize = Vector3.new(size.X / divisionsX, size.Y, size.Z / divisionsZ)
+                divisionsX = math.ceil(size.X / maxPartSize)
+                divisionsZ = math.ceil(size.Z / maxPartSize)
+                partSize = Vector3.new(size.X / divisionsX, size.Y, size.Z / divisionsZ)
             
                 for i = 0, divisionsX - 1 do
                     for j = 0, divisionsZ - 1 do
-                        local offsetX = (i - (divisionsX / 2)) * partSize.X + (partSize.X / 2)
-                        local offsetZ = (j - (divisionsZ / 2)) * partSize.Z + (partSize.Z / 2)
+                        offsetX = (i - (divisionsX / 2)) * partSize.X + (partSize.X / 2)
+                        offsetZ = (j - (divisionsZ / 2)) * partSize.Z + (partSize.Z / 2)
                         createPart(position + Vector3.new(offsetX, 0, offsetZ), partSize)
                     end
                 end
@@ -7280,8 +7278,6 @@
     else
         warn("Already have original materials! Materials Table: "..tostring(getgenv().OriginalMaterials))
     end
-    wait(0.2)
-    local HttpService = getgenv().HttpService
     wait(0.1)
     getgenv().OriginalMaterials = {}
 
@@ -15095,7 +15091,7 @@
                     data[keyName] = emote
                 end
             end
-            writefile("EmoteConfig.json", HttpService:JSONEncode(data))
+            writefile("EmoteConfig.json", getgenv().HttpService:JSONEncode(data))
             getgenv().notify("Success:", "Emote Configuration Saved!", 5)
         end
     end,})
@@ -15106,7 +15102,7 @@
         function Init_Emote_Configuration()
             if isfile("EmoteConfig.json") then
                 local jsonData = readfile("EmoteConfig.json")
-                local data = HttpService:JSONDecode(jsonData)
+                local data = getgenv().HttpService:JSONDecode(jsonData)
 
                 table.clear(getgenv().Emote_Keybinds_Configuration)
 
@@ -15146,7 +15142,7 @@
     getgenv().EmoteSystemEnabled = true
     getgenv().BoundConnections = {}
 
-    local speedToggle = 1
+    speedToggle = 1
 
     function input_connecting(input, other)
         if not getgenv().EmoteSystemEnabled or other then return end
@@ -15260,8 +15256,6 @@
         getgenv().Trip_Script:Set(false)
     end
     wait()
-    local HttpService = getgenv().HttpService
-    wait()
     function del_ez_Config()
         if isfolder("executor_configs/") then
             delfolder("executor_configs/")
@@ -15289,7 +15283,7 @@
             
             if isfile(filePath) then
                 local fileContent = readfile(filePath)
-                local decodedData = HttpService:JSONDecode(fileContent)
+                local decodedData = getgenv().HttpService:JSONDecode(fileContent)
 
                 configTable[key] = decodedData[key]
             else
@@ -15303,7 +15297,7 @@
 
         if isfile(filePath) then
             local fileContent = readfile(filePath)
-            local decodedData = HttpService:JSONDecode(fileContent)
+            local decodedData = getgenv().HttpService:JSONDecode(fileContent)
 
             local value = decodedData[key]
 
@@ -15318,7 +15312,7 @@
 
         if isfile(filePath) then
             local fileContent = readfile(filePath)
-            local decodedData = HttpService:JSONDecode(fileContent)
+            local decodedData = getgenv().HttpService:JSONDecode(fileContent)
 
             return decodedData[animationType]
         else
@@ -15671,19 +15665,19 @@
     end
 
     getgenv().saved_settings = getgenv().saved_settings or {}
-    local ez_folder_settings = "SettingsConfigs"
+    ez_folder_settings = "SettingsConfigs"
 
-    local settings_list = {
+    settings_list = {
         "Clock Time GUI", "Use Custom Animation Packages", "Death On Load", "Infinite Yield Premium",
         "Auto Execute System Broken", "Anti AFK", "Emote Keybinds", "Fully Loaded Message",
         "Big Baseplate", "TP Tool", "Loading Screen", "Old Materials"
     }
 
     for _, setting in ipairs(settings_list) do
-        local main_path = ez_folder_settings .. "/" .. setting .. ".txt"
+        main_path = ez_folder_settings .. "/" .. setting .. ".txt"
         
         if isfile(main_path) then
-            local writing_value = readfile(main_path)
+            writing_value = readfile(main_path)
             getgenv().saved_settings[setting] = writing_value
             getgenv().notify("Loaded: " .. setting .. " -> " .. writing_value)
         else
@@ -15833,12 +15827,17 @@
     end--]]
 
     wait(0.2)
-    local GuiService = cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
-
-    GuiService:SendNotification({
-        Title = "Welcome:",
-        Text = tostring(game.Players.LocalPlayer),
-    })
+    if cloneref then
+        cloneref(game:GetService("GuiService")):SendNotification({
+            Title = "Welcome:",
+            Text = tostring(getgenv().LocalPlayer),
+        })
+    else
+        game:GetService("GuiService"):SendNotification({
+            Title = "Welcome:",
+            Text = tostring(getgenv().LocalPlayer),
+        })
+    end
     wait(0.2)
     if getgenv().output_already_viewed then
         warn("Already viewed and injected 'Flames Hub'")
@@ -15883,7 +15882,7 @@
         else
             GuiService:SendNotification({
                 Title = "Please wait...",
-                Text = "Hooking and injecting into: "..tostring(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name),
+                Text = "Hooking and injecting into: "..tostring(getgenv().MarketplaceService:GetProductInfo(game.PlaceId).Name),
             })
             wait(0.8)
             if setfpscap then
