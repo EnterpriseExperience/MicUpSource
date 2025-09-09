@@ -15083,9 +15083,7 @@
         Emote_Speed_Configuration[Enum.KeyCode.Q] = tonumber(emoteSlowDownConfig)
         getgenv().emoting_actions(tonumber(emoteSlowDownConfig))
     end,})
-
-    ConfigFileName = "EmoteConfig.json"
-    wait()
+    task.wait(0.1)
     getgenv().SaveEmoteConfig = Tab15:CreateButton({
     Name = "Save Emote Configuration",
     Callback = function()
@@ -15097,7 +15095,7 @@
                     data[keyName] = emote
                 end
             end
-            writefile(ConfigFileName, HttpService:JSONEncode(data))
+            writefile("EmoteConfig.json", HttpService:JSONEncode(data))
             getgenv().notify("Success:", "Emote Configuration Saved!", 5)
         end
     end,})
@@ -15106,10 +15104,8 @@
     Name = "Load Emote Configuration",
     Callback = function()
         function Init_Emote_Configuration()
-            local ConfigFileName = "EmoteConfig.json"
-
-            if isfile(ConfigFileName) then
-                local jsonData = readfile(ConfigFileName)
+            if isfile("EmoteConfig.json") then
+                local jsonData = readfile("EmoteConfig.json")
                 local data = HttpService:JSONDecode(jsonData)
 
                 table.clear(getgenv().Emote_Keybinds_Configuration)
@@ -15123,7 +15119,7 @@
                         getgenv().notify("Warning:", "Invalid KeyCode: " .. keyName, 5)
                     end
                 end
-                getgenv().notify("Success:", "Loaded Emote Configuration from: " .. tostring(ConfigFileName), 5)
+                getgenv().notify("Success:", "Loaded Emote Configuration from: " .. tostring("EmoteConfig.json"), 5)
             else
                 getgenv().notify("Failed:", "Emote Configuration was not found.", 5)
             end
@@ -15135,9 +15131,9 @@
     getgenv().DeleteEmoteConfig = Tab15:CreateButton({
     Name = "Delete Emote Configuration",
     Callback = function()
-        local function erase_config()
-            if isfile(ConfigFileName) then
-                delfile(ConfigFileName)
+        function erase_config()
+            if isfile("EmoteConfig.json") then
+                delfile("EmoteConfig.json")
                 getgenv().notify("Success:", "Deleted Emote Configuration!", 5)
             else
                 getgenv().notify("Error:", "No configuration file found!", 5)
