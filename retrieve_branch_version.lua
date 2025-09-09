@@ -512,45 +512,71 @@
     local vc_inter = getgenv().VoiceChatInternal
     local vc_service = getgenv().VoiceChatService
 
-    if vc_inter then
-        if getgenv().voicechat_check then
-            warn("Voice Chat already initialized.")
-        else
-            local reconnecting = false
-            local retry_dur = 3
-
-            local function unsuspend()
-                if reconnecting then return warn("STILL TRYING TO RECONNECT TO VC! WAITING!") end
-                reconnecting = true
-
-                task.wait(2)
-                pcall(function()
-                    vc_inter:JoinByGroupIdToken("", false, true)
-                    vc_inter:Leave()
-                    task.wait(0.2)
-                    vc_service:rejoinVoice()
-                    vc_service:rejoinVoice()
-                    task.wait(0.1)
-                    vc_service:joinVoice()
-                end)
-
-                reconnecting = false
-            end
-
-            vc_inter.LocalPlayerModerated:Connect(unsuspend)
-
-            vc_inter.StateChanged:Connect(function(_, newState)
-                if newState == Enum.VoiceChatState.Ended and not reconnecting then
-                    task.wait(retry_dur)
-                    unsuspend()
-                end
-            end)
-
-            getgenv().voicechat_check = true
-        end
-    else
-        warn("Could not find or access VoiceChatInternal service, must not have the correct permissions.")
+    if not vc_inter or not vc_service then
+        warn("VoiceChatInternal is unavailable or has been removed/deprecated from Roblox.")
     end
+
+    local reconnecting = false
+    local retry_dur = 3
+
+    local function unsuspend()
+        if reconnecting then return warn("STILL TRYING TO RECONNECT TO VC! WAITING!") end
+        reconnecting = true
+        task.wait(2)
+        pcall(function()
+            if vc_inter.JoinByGroupIdToken then
+                vc_inter:JoinByGroupIdToken("", false, true)
+                vc_inter:Leave()
+                task.wait(0.2)
+            end
+            if vc_service.rejoinVoice then
+                vc_service:rejoinVoice()
+                vc_service:rejoinVoice()
+                task.wait(0.1)
+            end
+            if vc_service.joinVoice then
+                vc_service:joinVoice()
+            end
+        end)
+        reconnecting = false
+    end
+
+    local function is_signal(x)
+        if not x then return false end
+        local ok, ty = pcall(function() return typeof and typeof(x) end)
+        if ok and ty == "RBXScriptSignal" then return true end
+        local ok2, conn = pcall(function() return x.Connect end)
+        return ok2 and type(conn) == "function"
+    end
+
+    local function safe_connect(signal, fn)
+        if not is_signal(signal) then return false, "not a signal" end
+        local ok, err = pcall(function() signal:Connect(fn) end)
+        return ok, err
+    end
+
+    local lp_mod
+    pcall(function() lp_mod = vc_inter.LocalPlayerModerated end)
+    local ok, err = safe_connect(lp_mod, unsuspend)
+    if not ok then warn("can't connect LocalPlayerModerated:", err) end
+
+    local state_changed
+    pcall(function() state_changed = vc_inter.StateChanged end)
+    local ok2, err2 = safe_connect(state_changed, function(_, new_state)
+        if new_state == Enum.VoiceChatState.Ended and not reconnecting then
+            task.wait(retry_dur)
+            unsuspend()
+        end
+    end)
+
+    if not ok2 then
+        warn("can't connect StateChanged, falling back to periodic retry.")
+        if not reconnecting then
+            pcall(unsuspend)
+        end
+    end
+
+    getgenv().voicechat_check = true
     wait(0.2)
     -- [] -->> Correctly allocate Character's HumanoidRootPart | Essentially correctly loading the BasePart of the Character [Thanks: Infinite Yield] <<-- [] --
     function getRoot(char)
@@ -15058,7 +15084,7 @@
         getgenv().emoting_actions(tonumber(emoteSlowDownConfig))
     end,})
 
-    local ConfigFileName = "EmoteConfig.json"
+    ConfigFileName = "EmoteConfig.json"
     wait()
     getgenv().SaveEmoteConfig = Tab15:CreateButton({
     Name = "Save Emote Configuration",
@@ -15126,7 +15152,7 @@
 
     local speedToggle = 1
 
-    local function input_connecting(input, other)
+    function input_connecting(input, other)
         if not getgenv().EmoteSystemEnabled or other then return end
 
         if input.KeyCode == getgenv().Reverse_Keybind then
@@ -15240,7 +15266,7 @@
     wait()
     local HttpService = getgenv().HttpService
     wait()
-    local function del_ez_Config()
+    function del_ez_Config()
         if isfolder("executor_configs/") then
             delfolder("executor_configs/")
             getgenv().notify("Success.", "Configuration Folder has been deleted.", 6)
