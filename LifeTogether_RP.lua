@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "1.9.8-LIFE"
+local Script_Version = "2.0.0-LIFE"
 
 local function getExecutor()
     local name
@@ -350,7 +350,7 @@ local function Dynamic_Character_Updater(character)
 	getgenv().Head = SafeGetHead(character)
     wait(0.2)
     getgenv().Humanoid.JumpHeight = 7
-    getgenv().Humanoid.JumpPower = 50
+    character:WaitForChild("Humanoid").JumpHeight = 7
 end
 
 Dynamic_Character_Updater(getgenv().Character)
@@ -366,7 +366,7 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	getgenv().Head = SafeGetHead(newCharacter)
 	wait(0.3)
     getgenv().Humanoid.JumpHeight = 7
-    getgenv().Humanoid.JumpPower = 50
+    newCharacter:WaitForChild("Humanoid", 0.2).JumpHeight = 7
 	Dynamic_Character_Updater(newCharacter)
 end)
 wait(0.2)
@@ -1472,6 +1472,149 @@ function vehicle_skydive_player(TargetPlayer)
     end
 end
 
+local EmoteNames = {"griddy", "scenario", "worm", "zen", "glitching", "superman", "aura", "orangejustice", "default", "koto", "popular"}
+task.wait(0.1)
+local Emotes = {
+    griddy = {
+        129149402922241,
+        116150478424136,
+        76342373659003,
+        106715239721951,
+        91878676494639,
+        98318847394332,
+    },
+    scenario = {110013053670989},
+    worm = {
+        132950274861655,
+        127882676467351,
+        113312808145333,
+        77625642316480,
+        127068135887882,
+        102075861555461,
+    },
+    zen = {84943987730610},
+    glitching = {131961970776128},
+    superman = {134861929761233},
+    aura = {
+        121547391421211,
+        78755795767408,
+        88425531063616,
+        111426928948833,
+        84052327668385,
+        103040723950430,
+    },
+    orangejustice = {
+        133160900449608,
+        109776913631531,
+        110064349530772,
+        117638432093760,
+        76494145762351,
+        84419755287539,
+        98578127060782,
+    },
+    default = {
+        80877772569772,
+        99818263438846,
+        121094705979021,
+        128801735413980,
+        83559276301867,
+        100099256371667,
+    },
+    koto = {
+        91927498467600,
+        130655908439646,
+        108129969514208,
+        121962822800440,
+    },
+    popular = {
+        71302743123422,
+        100531085354441,
+        113815442881930,
+        115719203985051,
+        77201116105359,
+    },
+}
+
+local Aliases = {
+   ["orange justice"] = "orangejustice",
+   ["orange_justice"] = "orangejustice",
+   ["orangej"] = "orangejustice",
+   ["default dance"] = "default",
+   ["defaultdance"] = "default",
+   ["kotonai"] = "koto",
+   ["pop"] = "popular",
+   ["glitch"] = "glitching",
+   ["buggingout"] = "glitching",
+   ["glitchingout"] = "glitching",
+   ["glitched"] = "glitching",
+   ["vibrating"] = "glitching",
+   ["shaking"] = "glitching",
+   ["aurafarming"] = "aura",
+   ["aurafloating"] = "aura",
+   ["aurafloat"] = "aura",
+   ["aurafarm"] = "aura",
+}
+
+function do_emote(input)
+    local Humanoid = getgenv().Humanoid
+    if not Humanoid then return end
+
+    local key = input:lower():gsub("%s+", "")
+    if Aliases[key] then key = Aliases[key] end
+
+    local emoteList = Emotes[key]
+    if emoteList then
+        getgenv().Is_Currently_Emoting = true
+        local choice = emoteList[math.random(1, #emoteList)]
+        local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
+
+        local animate = getgenv().Character:FindFirstChild("Animate")
+        if animate then
+            animate.Disabled = true
+        end
+
+        if ok and track then
+            task.spawn(function()
+                track.Stopped:Wait()
+                if animate and animate.Parent then
+                animate.Disabled = false
+                end
+                getgenv().Is_Currently_Emoting = false
+            end)
+        else
+            if animate and animate.Parent then
+                animate.Disabled = false
+            end
+            getgenv().Is_Currently_Emoting = false
+        end
+    end
+end
+
+function disable_emoting()
+    local Humanoid = getgenv().Humanoid
+    if not Humanoid then return end
+
+    Humanoid.WalkSpeed = 0
+    task.wait(1)
+
+    pcall(function()
+        for _, v in ipairs(Humanoid:GetPlayingAnimationTracks()) do
+            v:Stop()
+        end
+    end)
+
+    task.wait(0.2)
+
+    local animate = getgenv().Character:FindFirstChild("Animate")
+    if animate then
+        animate.Disabled = false
+    end
+
+    task.wait(0.4)
+    Humanoid.WalkSpeed = 16
+    getgenv().Is_Currently_Emoting = false
+end
+
 function vehicle_void_player(TargetPlayer)
     if not TargetPlayer or not TargetPlayer.Character then return end
     local targetChar = TargetPlayer.Character
@@ -1956,6 +2099,7 @@ Callback = function(toggle_phone_script)
     end
 end,})
 
+local AntiSit_WasEnabled = false
 local Anti_Sit_Connection
 wait(0.1)
 getgenv().Anti_Sit_Func = Tab2:CreateToggle({
@@ -1967,6 +2111,7 @@ Callback = function(is_antisit_enabled)
         local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
 
         getgenv().Not_Ever_Sitting = true
+        AntiSit_WasEnabled = true
 
         if not is_enabled or is_enabled == false then
             Phone.show_notification("Failure:", "NoSit/AntiSit is already enabled!")
@@ -1981,6 +2126,7 @@ Callback = function(is_antisit_enabled)
             require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
         end
     else
+        AntiSit_WasEnabled = false
         local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
       
         if is_enabled or is_enabled == true then
@@ -2086,6 +2232,8 @@ if type(all_buttons_tbl) == "table" and next(all_buttons_tbl) == nil then
     collect_all_buttons()
 end
 
+local Old_WorkspaceFallen_Destroy_Height = getgenv().Workspace.FallenPartsDestroyHeight
+wait()
 local preset_modules = {
     ["Balloon Game"] = FindModule(Games, "Balloon Game"),
     ["Bouncy Bird"] = FindModule(Games, "Bouncy Bird"),
@@ -2324,6 +2472,216 @@ Callback = function(anti_ban_kick_from_homes)
             getgenv().AntiTeleport_Univ:Set(false)
         end
     end
+end,})
+
+function getRoot(char)
+    rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+    return rootPart
+end
+wait(0.2)
+getgenv().getRoot = getRoot
+
+Clip = false
+getgenv()._noclipModifiedParts = {}
+
+local function NoclipLoop()
+    if not Clip and getgenv().Character then
+        for _, part in ipairs(getgenv().Character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+                if getgenv()._noclipModifiedParts then
+                    getgenv()._noclipModifiedParts[part] = true
+                end
+            end
+        end
+    end
+end
+task.wait(0.1)
+local bambam
+local AntiVoid_Connected = false
+local loopgoto = nil
+task.wait(0.1)
+getgenv().FlingPlayer_FE = Tab3:CreateInput({
+Name = "Fling Player (auto locks to)",
+CurrentValue = "User Here",
+PlaceholderText = "User Here",
+RemoveTextAfterFocusLost = true,
+Flag = "FlingPlayerWithAutoLockAntiVoidEtc",
+Callback = function(PlayerToFling_FE)
+    local PlayerTo_FindForFling = findplr(PlayerToFling_FE)
+    if not PlayerTo_FindForFling then return getgenv().notify("Failure:", "Player does not exist.", 5) end
+
+    getgenv().CurrentlyViewing = nil
+    getgenv().ViewChangedFunction = nil
+    getgenv().Viewing_Died = nil
+
+    loopgoto = nil
+    local humanoid = getgenv().Humanoid
+    if humanoid then
+        humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+        wait()
+    end
+
+    getgenv().Anti_Sit_Func:Set(true)
+    if getgenv().Viewing_Died then
+        getgenv().Viewing_Died:Disconnect()
+        getgenv().Viewing_Died = nil
+    end
+    if getgenv().ViewChangedFunction then
+        getgenv().ViewChangedFunction:Disconnect()
+        getgenv().ViewChangedFunction = nil
+    end
+
+    getgenv().CurrentlyViewing = PlayerTo_FindForFling
+    getgenv().Workspace.CurrentCamera.CameraSubject = getgenv().CurrentlyViewing.Character or getgenv().CurrentlyViewing.CharacterAdded:Wait()
+
+    local function viewDiedFunc()
+        repeat wait() until getgenv().CurrentlyViewing.Character ~= nil and getRoot(getgenv().CurrentlyViewing.Character)
+        getgenv().Workspace.CurrentCamera.CameraSubject = getgenv().CurrentlyViewing.Character
+    end
+    getgenv().Viewing_Died = getgenv().CurrentlyViewing.CharacterAdded:Connect(viewDiedFunc)
+    local function viewChangedFunc()
+        getgenv().Workspace.CurrentCamera.CameraSubject = getgenv().CurrentlyViewing.Character
+    end
+    getgenv().ViewChangedFunction = getgenv().Workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(viewChangedFunc)
+    getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+
+    loopgoto = PlayerTo_FindForFling
+    local distance = 0
+    local lDelay = 0
+
+    task.wait(0.3)
+    flinging = false
+    for _, child in pairs(getgenv().Character:GetDescendants()) do
+        if child:IsA("BasePart") then
+            child.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5)
+        end
+    end
+    if getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == true then
+        notify("Failure:", "Noclip is already enabled!", 5)
+    else
+        getgenv().notify("Success:", "Noclip has been enabled.", 5)
+        getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
+    end
+    wait(.1)
+    bambam = Instance.new("BodyAngularVelocity")
+    getgenv().BamBamFlingPart = bambam
+    bambam.Name = randomString()
+    bambam.Parent = getgenv().HumanoidRootPart
+    bambam.AngularVelocity = Vector3.new(0,99999,0)
+    bambam.MaxTorque = Vector3.new(0,math.huge,0)
+    bambam.P = math.huge
+    local Char = getgenv().Character:GetChildren()
+    for i, v in next, Char do
+        if v:IsA("BasePart") then
+            v.CanCollide = false
+            v.Massless = true
+            v.Velocity = Vector3.new(0, 0, 0)
+        end
+    end
+    flinging = true
+    local function flingDiedF()
+        if getgenv().Noclip_Connection then
+            getgenv().Noclip_Connection:Disconnect()
+            getgenv().Noclip_Connection = nil
+        end
+
+        getgenv().Noclip_Enabled = false
+        Clip = true
+        flinging = false
+
+        if getgenv()._noclipModifiedParts then
+            for part, _ in pairs(getgenv()._noclipModifiedParts) do
+                if part and part:IsA("BasePart") then
+                    part.CanCollide = true
+                end
+            end
+            getgenv()._noclipModifiedParts = {}
+        end
+        if getgenv().flingDiedConn then
+            getgenv().flingDiedConn:Disconnect()
+            getgenv().flingDiedConn = nil
+        end
+        wait(.1)
+        local speakerChar = getgenv().Character
+
+        for i,v in pairs(getgenv().HumanoidRootPart:GetChildren()) do
+            if v.ClassName == 'BodyAngularVelocity' then
+                v:Destroy()
+            end
+        end
+        for _, child in pairs(speakerChar:GetDescendants()) do
+            if child.ClassName == "Part" or child.ClassName == "MeshPart" then
+                child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+            end
+        end
+    end
+    getgenv().flingDiedConn = getgenv().Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(flingDiedF)
+    repeat
+        bambam.AngularVelocity = Vector3.new(0,99999,0)
+        wait(.2)
+        bambam.AngularVelocity = Vector3.new(0,0,0)
+        wait(.1)
+    until flinging == false
+    task.wait(0.1)
+    repeat
+        local targetPlayer = PlayerTo_FindForFling
+        local myRoot = getgenv().HumanoidRootPart
+
+        if targetPlayer and targetPlayer.Character then
+            local targetRoot = getgenv().HumanoidRootPart
+
+            if myRoot and targetRoot and targetRoot.Position.Y > -1000 then
+                myRoot.CFrame = targetRoot.CFrame + Vector3.new(distance, 1, 0)
+            end
+        else
+            loopgoto = nil
+        end
+
+        wait(lDelay)
+    until loopgoto ~= PlayerTo_FindForFling
+    getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+end,})
+
+getgenv().DisableFlingPlayerFE = Tab3:CreateButton({
+Name = "Fully Shutdown/Disable Fling Player",
+Callback = function()
+    pcall(function()
+        if getgenv().Noclip_Connection then
+            getgenv().Noclip_Connection:Disconnect()
+            getgenv().Noclip_Connection = nil
+        end
+        getgenv().Noclip_Enabled = false
+        Clip = true
+        if getgenv().flingDiedConn then
+            getgenv().flingDiedConn:Disconnect()
+            getgenv().flingDiedConn = nil
+        end
+        flinging = false
+        loopgoto = nil
+        if getgenv()._noclipModifiedParts then
+            for part, _ in pairs(getgenv()._noclipModifiedParts) do
+                if part and part:IsA("BasePart") then
+                    part.CanCollide = true
+                end
+            end
+            getgenv()._noclipModifiedParts = {}
+        end
+        for _, v in pairs(getgenv().HumanoidRootPart:GetChildren()) do
+            if v:IsA("BodyAngularVelocity") then
+                v:Destroy()
+            end
+        end
+        if getgenv().Character then
+            for _, child in pairs(getgenv().Character:GetDescendants()) do
+                if child:IsA("Part") or child:IsA("MeshPart") then
+                    child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+                end
+            end
+        end
+        getgenv().Workspace.FallenPartsDestroyHeight = Old_WorkspaceFallen_Destroy_Height
+        getgenv().notify("Stopped:", "Fling & Noclip have been disabled.", 5)
+    end)
 end,})
 
 getgenv().FrozenChar = Tab2:CreateToggle({
@@ -3219,6 +3577,20 @@ Name = "Unview CCTV Camera",
 Callback = function()
     CCTV.stop()
     send_remote("restore_replication_focus")
+end,})
+
+getgenv().DoAnEmote = Tab2:CreateDropdown({
+Name = "Do An Emote (FE)",
+Options = EmoteNames,
+CurrentOption = "",
+MultipleOptions = false,
+Flag = "SelectAnEmoteToPlay",
+Callback = function(dance_emote)
+    local selected_str = typeof(dance_emote) == "table" and dance_emote[1] or dance_emote
+
+    if typeof(selected_str) == "string" or type(selected_str) == "string" then
+        print("It's a string!")
+    end
 end,})
 
 getgenv().Hiding_NameLoop = Tab2:CreateToggle({
