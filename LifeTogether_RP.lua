@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "2.0.0-LIFE"
+local Script_Version = "1.9.8-LIFE"
 
 local function getExecutor()
     local name
@@ -1809,14 +1809,7 @@ else
     warn("LifeSnap doesn't exist in Phone!")
 end
 wait(0.1)
-if getgenv().Humanoid.JumpHeight <= 4.50 then
-    getgenv().notify("Done:", "Hooking JumpHeight/JumpPower, one sec...", 5)
-    wait(0.2)
-    getgenv().Humanoid.JumpHeight = 7
-    getgenv().Humanoid.JumpPower = 50
-else
-    getgenv().notify("Passed:", "JumpHeight/JumpPower seems to already be normal.", 5)
-end
+getgenv().Humanoid.JumpHeight = 7
 wait(0.1)
 getgenv().spawn_vehicle = Tab4:CreateDropdown({
 Name = "Spawn Vehicle (FE)",
@@ -1826,6 +1819,7 @@ MultipleOptions = false,
 Flag = "vehicle_slot_select",
 Callback = function(vehicle_selected)
     local vehicle = typeof(vehicle_selected) == "table" and vehicle_selected[1] or vehicle_selected
+
     spawn_any_vehicle(vehicle)
 end,})
 
@@ -2474,32 +2468,235 @@ Callback = function(anti_ban_kick_from_homes)
     end
 end,})
 
-function getRoot(char)
-    rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-    return rootPart
+local RunService = getgenv().RunService
+local Players = getgenv().Players
+local Workspace = getgenv().Workspace
+local LocalPlayer = getgenv().LocalPlayer
+local IYMouse = LocalPlayer:GetMouse()
+
+local function getRoot(char)
+    if not char then return nil end
+    return char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
 end
-wait(0.2)
-getgenv().getRoot = getRoot
 
-Clip = false
-getgenv()._noclipModifiedParts = {}
+local function make_fling_parts(root)
+    if not root then return nil end
+    local bav = Instance.new("BodyAngularVelocity")
+    bav.Name = (randomString and randomString() or "bav_fling")
+    bav.AngularVelocity = Vector3.new(90000, 90000, 90000)
+    bav.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    bav.P = math.huge
+    bav.Parent = root
 
-local function NoclipLoop()
-    if not Clip and getgenv().Character then
-        for _, part in ipairs(getgenv().Character:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide then
-                part.CanCollide = false
-                if getgenv()._noclipModifiedParts then
-                    getgenv()._noclipModifiedParts[part] = true
+    local bv = Instance.new("BodyVelocity")
+    bv.Name = (randomString and randomString() or "bv_fling")
+    bv.Velocity = Vector3.new(0,0,0)
+    bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bv.Parent = root
+
+    return { root = root, bav = bav, bv = bv }
+end
+
+local function safe_disconnect(c)
+    if not c then return end
+    if type(c) == "table" or type(c) == "userdata" then
+        pcall(function() c:Disconnect() end)
+    end
+end
+
+getgenv().FlingPlayerStop = function()
+    safe_disconnect(getgenv().MainLoop); getgenv().MainLoop = nil
+    safe_disconnect(getgenv().FlyLoop); getgenv().FlyLoop = nil
+    safe_disconnect(getgenv().CamChanged); getgenv().CamChanged = nil
+    safe_disconnect(getgenv()._fling_local_char_conn); getgenv()._fling_local_char_conn = nil
+    safe_disconnect(getgenv()._fling_target_char_conn); getgenv()._fling_target_char_conn = nil
+
+    if getgenv()._fling_parts then
+        local root = getgenv()._fling_parts.root
+        if root and root:IsDescendantOf(game) then
+            for _, c in ipairs(root:GetChildren()) do
+                if c:IsA("BodyAngularVelocity") or c:IsA("BodyVelocity") then
+                    pcall(function() c:Destroy() end)
                 end
             end
         end
+        getgenv()._fling_parts = nil
     end
+
+    getgenv().Workspace.CurrentCamera.CameraSubject = getgenv().Humanoid or getgenv().Character or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+    require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
+
+    if getgenv().notify then pcall(getgenv().notify, "Stopped:", "Fling disabled.", 5) end
+    getgenv()._fling_target = nil
 end
-task.wait(0.1)
-local bambam
-local AntiVoid_Connected = false
-local loopgoto = nil
+
+getgenv().FlingPlayerLockOn = function(target, distance, lDelay)
+    local plr = target
+    if type(plr) == "string" then
+        if findplr then plr = findplr(plr) else plr = Players:FindFirstChild(plr) end
+    end
+    if not plr or not plr:IsA("Player") then
+        return getgenv().notify and getgenv().notify("Failure:", "Player does not exist.", 5)
+    end
+
+    distance = tonumber(distance) or 0
+    lDelay = tonumber(lDelay) or 0.12
+
+    getgenv().FlingPlayerStop()
+    task.wait(0.04)
+
+    getgenv()._fling_target = plr
+    getgenv().CONTROL = getgenv().CONTROL or {F=0,B=0,L=0,R=0,Q=0,E=0}
+    getgenv().FLYING = getgenv().FLYING or false
+    getgenv().FLING_PUSH_SPEED = getgenv().FLING_PUSH_SPEED or 80
+    getgenv().FLING_UPWARD = getgenv().FLING_UPWARD or 18
+    getgenv().FLING_OVERRIDE_FLY = (getgenv().FLING_OVERRIDE_FLY == nil) and true or getgenv().FLING_OVERRIDE_FLY
+    getgenv()._last_cam_fix = getgenv()._last_cam_fix or 0
+
+    local function attach()
+        safe_disconnect(getgenv().MainLoop); getgenv().MainLoop = nil
+        safe_disconnect(getgenv().CamChanged); getgenv().CamChanged = nil
+
+        local lastFollow = 0
+        local followThrottle = lDelay
+
+        getgenv().MainLoop = RunService.Stepped:Connect(function()
+            local myChar = getgenv().Character or (LocalPlayer and LocalPlayer.Character)
+            local myRoot = getgenv().HumanoidRootPart or (myChar and getRoot(myChar))
+            local myHum = getgenv().Humanoid or (myChar and myChar:FindFirstChildOfClass("Humanoid"))
+            local camera = (getgenv().Workspace and getgenv().Workspace.CurrentCamera) or Workspace.CurrentCamera
+            local pl = getgenv()._fling_target
+
+            if not pl or not pl.Character or not myChar or not myRoot or not myHum then
+                return
+            end
+
+            if not getgenv()._fling_parts or getgenv()._fling_parts.root ~= myRoot then
+                if getgenv()._fling_parts then
+                    pcall(function()
+                        if getgenv()._fling_parts.bav then getgenv()._fling_parts.bav:Destroy() end
+                        if getgenv()._fling_parts.bv then getgenv()._fling_parts.bv:Destroy() end
+                    end)
+                    getgenv()._fling_parts = nil
+                end
+                getgenv()._fling_parts = make_fling_parts(myRoot)
+            end
+
+            local targetRoot = getRoot(pl.Character)
+            if not targetRoot or targetRoot.Position.Y <= -1000 then
+                return
+            end
+
+            if (getgenv().FLING_OVERRIDE_FLY or not getgenv().FLYING) then
+                if followThrottle <= 0 or (tick() - lastFollow) >= followThrottle then
+                    local targetHum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                    local targetRoot = getRoot(pl.Character)
+
+                    if targetRoot and targetHum then
+                        local velocityThreshold = 0.1
+                        local isMoving = targetRoot.Velocity.Magnitude > velocityThreshold
+
+                        local newCFrame
+                        if isMoving then
+                            local front_offset = 5 * targetRoot.CFrame.LookVector
+                            newCFrame = CFrame.new(targetRoot.Position + front_offset, targetRoot.Position)
+                        else
+                            newCFrame = targetRoot.CFrame
+                        end
+
+                        pcall(function()
+                            myRoot.CFrame = newCFrame
+                        end)
+                    end
+
+                    lastFollow = tick()
+                end
+            end
+
+            if camera and camera.CameraSubject ~= pl.Character and (tick() - (getgenv()._last_cam_fix or 0) > 0.12) then
+                pcall(function()
+                    camera.CameraSubject = pl.Character
+                    getgenv()._last_cam_fix = tick()
+                end)
+            end
+
+            if not getgenv()._fling_bambam then
+                local myChar = getgenv().Character or LocalPlayer.Character
+                local root = getRoot(myChar)
+                for _, child in pairs(myChar:GetDescendants()) do
+                    if child:IsA("BasePart") then
+                        child.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5)
+                        child.CanCollide = false
+                        child.Massless = true
+                        child.Velocity = Vector3.new(0,0,0)
+                    end
+                end
+
+                local bambam = Instance.new("BodyAngularVelocity")
+                bambam.Name = randomString and randomString() or "bambam_fling"
+                bambam.Parent = root
+                bambam.AngularVelocity = Vector3.new(0,99999,0)
+                bambam.MaxTorque = Vector3.new(0, math.huge, 0)
+                bambam.P = math.huge
+
+                getgenv()._fling_bambam = bambam
+                getgenv()._flinging = true
+
+                local humanoid = myChar:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    getgenv()._fling_died_conn = humanoid.Died:Connect(function()
+                        getgenv()._flinging = false
+                        if getgenv()._fling_bambam then
+                            pcall(function() getgenv()._fling_bambam:Destroy() end)
+                            getgenv()._fling_bambam = nil
+                        end
+                    end)
+                end
+            end
+
+            if getgenv()._fling_bambam and getgenv()._flinging then
+                local bambam = getgenv()._fling_bambam
+                bambam.AngularVelocity = Vector3.new(0,99999,0)
+                task.delay(0.2, function()
+                    if bambam then pcall(function() bambam.AngularVelocity = Vector3.new(0,0,0) end) end
+                end)
+            end
+        end)
+
+        local _changing_camera = false
+        local camRef = getgenv().Workspace.CurrentCamera
+
+        getgenv().CamChanged = camRef:GetPropertyChangedSignal("CameraSubject"):Connect(function()
+            if _changing_camera then return end
+            local pl = getgenv()._fling_target
+            if not pl or not pl.Character then return end
+            if tick() - (getgenv()._last_cam_fix or 0) < 0.12 then return end
+
+            _changing_camera = true
+            pcall(function()
+                camRef.CameraSubject = pl.Character
+                getgenv()._last_cam_fix = tick()
+            end)
+            _changing_camera = false
+        end)
+    end
+
+    attach()
+
+    safe_disconnect(getgenv()._fling_local_char_conn)
+    getgenv()._fling_local_char_conn = LocalPlayer.CharacterAdded:Connect(function()
+        task.wait()
+        if getgenv()._fling_target then task.defer(attach) end
+    end)
+
+    safe_disconnect(getgenv()._fling_target_char_conn)
+    getgenv()._fling_target_char_conn = plr.CharacterAdded:Connect(function()
+        task.wait()
+        if getgenv()._fling_target == plr then task.defer(attach) end
+    end)
+
+    if getgenv().notify then pcall(getgenv().notify, "Success:", "Locking onto "..plr.Name.." (auto reattach enabled)", 5) end
+end
 task.wait(0.1)
 getgenv().FlingPlayer_FE = Tab3:CreateInput({
 Name = "Fling Player (auto locks to)",
@@ -2510,179 +2707,33 @@ Flag = "FlingPlayerWithAutoLockAntiVoidEtc",
 Callback = function(PlayerToFling_FE)
     local PlayerTo_FindForFling = findplr(PlayerToFling_FE)
     if not PlayerTo_FindForFling then return getgenv().notify("Failure:", "Player does not exist.", 5) end
-
-    getgenv().CurrentlyViewing = nil
-    getgenv().ViewChangedFunction = nil
-    getgenv().Viewing_Died = nil
-
-    loopgoto = nil
-    local humanoid = getgenv().Humanoid
-    if humanoid then
-        humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-        wait()
-    end
-
-    getgenv().Anti_Sit_Func:Set(true)
-    if getgenv().Viewing_Died then
-        getgenv().Viewing_Died:Disconnect()
-        getgenv().Viewing_Died = nil
-    end
-    if getgenv().ViewChangedFunction then
-        getgenv().ViewChangedFunction:Disconnect()
-        getgenv().ViewChangedFunction = nil
-    end
-
-    getgenv().CurrentlyViewing = PlayerTo_FindForFling
-    getgenv().Workspace.CurrentCamera.CameraSubject = getgenv().CurrentlyViewing.Character or getgenv().CurrentlyViewing.CharacterAdded:Wait()
-
-    local function viewDiedFunc()
-        repeat wait() until getgenv().CurrentlyViewing.Character ~= nil and getRoot(getgenv().CurrentlyViewing.Character)
-        getgenv().Workspace.CurrentCamera.CameraSubject = getgenv().CurrentlyViewing.Character
-    end
-    getgenv().Viewing_Died = getgenv().CurrentlyViewing.CharacterAdded:Connect(viewDiedFunc)
-    local function viewChangedFunc()
-        getgenv().Workspace.CurrentCamera.CameraSubject = getgenv().CurrentlyViewing.Character
-    end
-    getgenv().ViewChangedFunction = getgenv().Workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(viewChangedFunc)
-    getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
-
-    loopgoto = PlayerTo_FindForFling
-    local distance = 0
-    local lDelay = 0
-
+    
+    getgenv().CurrentlyFlinging_ThisPlr = PlayerTo_FindForFling
+    require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
+    getgenv().Workspace.FallenPartsDestroyHeight = 0
     task.wait(0.3)
-    flinging = false
-    for _, child in pairs(getgenv().Character:GetDescendants()) do
-        if child:IsA("BasePart") then
-            child.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5)
-        end
-    end
-    if getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == true then
-        notify("Failure:", "Noclip is already enabled!", 5)
-    else
-        getgenv().notify("Success:", "Noclip has been enabled.", 5)
-        getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
-    end
-    wait(.1)
-    bambam = Instance.new("BodyAngularVelocity")
-    getgenv().BamBamFlingPart = bambam
-    bambam.Name = randomString()
-    bambam.Parent = getgenv().HumanoidRootPart
-    bambam.AngularVelocity = Vector3.new(0,99999,0)
-    bambam.MaxTorque = Vector3.new(0,math.huge,0)
-    bambam.P = math.huge
-    local Char = getgenv().Character:GetChildren()
-    for i, v in next, Char do
-        if v:IsA("BasePart") then
-            v.CanCollide = false
-            v.Massless = true
-            v.Velocity = Vector3.new(0, 0, 0)
-        end
-    end
-    flinging = true
-    local function flingDiedF()
-        if getgenv().Noclip_Connection then
-            getgenv().Noclip_Connection:Disconnect()
-            getgenv().Noclip_Connection = nil
-        end
-
-        getgenv().Noclip_Enabled = false
-        Clip = true
-        flinging = false
-
-        if getgenv()._noclipModifiedParts then
-            for part, _ in pairs(getgenv()._noclipModifiedParts) do
-                if part and part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
-            end
-            getgenv()._noclipModifiedParts = {}
-        end
-        if getgenv().flingDiedConn then
-            getgenv().flingDiedConn:Disconnect()
-            getgenv().flingDiedConn = nil
-        end
-        wait(.1)
-        local speakerChar = getgenv().Character
-
-        for i,v in pairs(getgenv().HumanoidRootPart:GetChildren()) do
-            if v.ClassName == 'BodyAngularVelocity' then
-                v:Destroy()
-            end
-        end
-        for _, child in pairs(speakerChar:GetDescendants()) do
-            if child.ClassName == "Part" or child.ClassName == "MeshPart" then
-                child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
-            end
-        end
-    end
-    getgenv().flingDiedConn = getgenv().Character:FindFirstChildWhichIsA("Humanoid").Died:Connect(flingDiedF)
-    repeat
-        bambam.AngularVelocity = Vector3.new(0,99999,0)
-        wait(.2)
-        bambam.AngularVelocity = Vector3.new(0,0,0)
-        wait(.1)
-    until flinging == false
-    task.wait(0.1)
-    repeat
-        local targetPlayer = PlayerTo_FindForFling
-        local myRoot = getgenv().HumanoidRootPart
-
-        if targetPlayer and targetPlayer.Character then
-            local targetRoot = getgenv().HumanoidRootPart
-
-            if myRoot and targetRoot and targetRoot.Position.Y > -1000 then
-                myRoot.CFrame = targetRoot.CFrame + Vector3.new(distance, 1, 0)
-            end
-        else
-            loopgoto = nil
-        end
-
-        wait(lDelay)
-    until loopgoto ~= PlayerTo_FindForFling
-    getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+    getgenv().FlingPlayerLockOn(PlayerTo_FindForFling, 0, 0)
 end,})
 
 getgenv().DisableFlingPlayerFE = Tab3:CreateButton({
 Name = "Fully Shutdown/Disable Fling Player",
 Callback = function()
-    pcall(function()
-        if getgenv().Noclip_Connection then
-            getgenv().Noclip_Connection:Disconnect()
-            getgenv().Noclip_Connection = nil
-        end
-        getgenv().Noclip_Enabled = false
-        Clip = true
-        if getgenv().flingDiedConn then
-            getgenv().flingDiedConn:Disconnect()
-            getgenv().flingDiedConn = nil
-        end
-        flinging = false
-        loopgoto = nil
-        if getgenv()._noclipModifiedParts then
-            for part, _ in pairs(getgenv()._noclipModifiedParts) do
-                if part and part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
-            end
-            getgenv()._noclipModifiedParts = {}
-        end
-        for _, v in pairs(getgenv().HumanoidRootPart:GetChildren()) do
-            if v:IsA("BodyAngularVelocity") then
-                v:Destroy()
-            end
-        end
-        if getgenv().Character then
-            for _, child in pairs(getgenv().Character:GetDescendants()) do
-                if child:IsA("Part") or child:IsA("MeshPart") then
-                    child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
-                end
-            end
-        end
-        getgenv().Workspace.FallenPartsDestroyHeight = Old_WorkspaceFallen_Destroy_Height
-        getgenv().notify("Stopped:", "Fling & Noclip have been disabled.", 5)
-    end)
+    getgenv().FlingPlayerStop()
+    wait(0.1)
+    getgenv().Humanoid.Health = 0
+    getgenv().CurrentlyFlinging_ThisPlr = nil
 end,})
+
+getgenv().Players.PlayerRemoving:Connect(function(Player)
+    if getgenv().CurrentlyFlinging_ThisPlr == Player then
+        getgenv().FlingPlayerStop()
+        task.wait(0.2)
+        getgenv().Humanoid.Health = 0
+        getgenv().CurrentlyFlinging_ThisPlr = nil
+    else
+        return 
+    end
+end)
 
 getgenv().FrozenChar = Tab2:CreateToggle({
 Name = "Freeze Your Character",
@@ -3589,8 +3640,16 @@ Callback = function(dance_emote)
     local selected_str = typeof(dance_emote) == "table" and dance_emote[1] or dance_emote
 
     if typeof(selected_str) == "string" or type(selected_str) == "string" then
-        print("It's a string!")
+        do_emote(selected_str)
+    else
+        return getgenv().notify("Failure:", "This is most likely being worked on.", 5)
     end
+end,})
+
+getgenv().stopEmotingScript = Tab2:CreateButton({
+Name = "Stop Emoting",
+Callback = function()
+    disable_emoting()
 end,})
 
 getgenv().Hiding_NameLoop = Tab2:CreateToggle({
