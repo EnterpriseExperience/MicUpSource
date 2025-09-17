@@ -2300,6 +2300,9 @@ end
 
 local function disable_rgb_for(plr)
    if not plr then return warn("Player was not found when trying to disable RGB vehicle!") end
+   if not getgenv().VehicleStates[plr.Name] then return end
+   if not getgenv().Rainbow_Tasks[plr.Name] then return end
+
    if getgenv().VehicleStates[plr.Name].rainbow == true then
       notify("Disabling:", "Vehicle states for: "..tostring(plr.Name), 3)
       getgenv().VehicleStates[plr.Name].rainbow = false
