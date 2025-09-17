@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.0.1"
+local Raw_Version = "V3.0.2"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -2299,13 +2299,22 @@ local function enable_rgb_for(plr)
 end
 
 local function disable_rgb_for(plr)
-   if not getgenv().VehicleStates then return getgenv().notify("Failure:", "VehicleStates getgenv()-table doesn't exist!", 3) end
-   if not getgenv().VehicleStates[plr.Name] then return end
-   if not getgenv().Rainbow_Tasks[plr.Name] then return getgenv().notify("Failure:", "Player doesn't have a Rainbow Task running!", 3) end
-
+   if not plr then return warn("Player was not found when trying to disable RGB vehicle!") end
+   if not plr:IsA("Player") then return end
+   if not plr.Name then return end
    if getgenv().VehicleStates[plr.Name].rainbow == true then
       notify("Disabling:", "Vehicle states for: "..tostring(plr.Name), 3)
       getgenv().VehicleStates[plr.Name].rainbow = false
+   end
+
+   if getgenv().VehicleStates[plr.Name] then
+      getgenv().VehicleStates[plr.Name].rainbow = false
+   end
+
+   if getgenv().Rainbow_Tasks[plr.Name] then
+      task.cancel(getgenv().Rainbow_Tasks[plr.Name])
+   else
+      warn("Player isn't on here.")
    end
 
    if getgenv().Rainbow_Tasks[plr.Name] then
@@ -2390,13 +2399,13 @@ local function setup_cmd_handler_plr(player)
       if levenshtein(command, "rgbcar") <= 2 then
          local Player = getgenv().Players[speaker.Name]
          if not Player then
-            return 
+            return getgenv().notify("Failure:", "This player does not exist!", 5)
          end
 
          local vehicle = get_other_vehicle(Player)
          if not vehicle then
             getgenv().Rainbow_Vehicles[Player.Name] = nil
-            return 
+            return getgenv().notify("Failure:", "The player doesn't have a car spawned!", 5)
          end
 
          enable_rgb_for(Player)
@@ -2897,16 +2906,7 @@ local function handleCommand(sender, message)
          return notify("Failure:", "Player is not your friend, add them to use this!", 5)
       end
 
-      if not getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] then
-         return notify("Failure:", "Player is not currently in the RGB car table!", 5)
-      end
-
-      if getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] then
-         getgenv().Rainbow_Vehicles[PlayerToRGBCarStop.Name] = false
-      end
-      if getgenv().Rainbow_Tasks[PlayerToRGBCarStop.Name] then
-         getgenv().Rainbow_Tasks[PlayerToRGBCarStop.Name] = nil
-      end
+      disable_rgb_for(PlayerToRGBCarStop)
    elseif cmd == "alljobs" then
       getgenv().Every_Job = true
       while getgenv().Every_Job == true do
@@ -3957,10 +3957,7 @@ end)
 getgenv().Players.PlayerRemoving:Connect(function(Player)
    local Name = Player.Name
 
-   if getgenv().Rainbow_Tasks and getgenv().Rainbow_Tasks[Name] then
-      task.cancel(getgenv().Rainbow_Tasks[Name])
-      getgenv().Rainbow_Tasks[Name] = nil
-   end
+   disable_rgb_for(Name)
    getgenv().fully_disable_rgb_plr(Name)
    if getgenv().Locked_Vehicles[Name] then
       getgenv().Locked_Vehicles[Name] = false
