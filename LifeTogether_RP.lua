@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "1.9.8-LIFE"
+local Script_Version = "2.0.2-LIFE"
 
 local function getExecutor()
     local name
@@ -2371,6 +2371,152 @@ if getgenv().Rainbow_Rain or getgenv().Rainbow_Rain == true then
     getgenv().RainbowRain_NotFE:Set(false)
     getgenv().stopRainbow()
 end
+
+local Players = rawget and rawget(getgenv(), "Players")
+    or getgenv().Players
+    or getgenv().Service_Wrap("Players")
+    or (cloneref and cloneref(game:GetService("Players")))
+    or game:GetService("Players")
+
+local Char = require(Core:WaitForChild("Char"))
+
+local function is_empty(desc, slot)
+    return not desc[slot] or desc[slot] == "" or desc[slot] == "0"
+end
+
+local function unequip_slot(desc, slot)
+    if not is_empty(desc, slot) then
+        for id in string.gmatch(desc[slot], "[^,]+") do
+            getgenv().Get("wear", tonumber(id), slot)
+            task.wait(0.3)
+        end
+    end
+end
+
+local AccessorySlots = {
+    "BackAccessory","ShouldersAccessory","FrontAccessory","WaistAccessory",
+    "NeckAccessory","HairAccessory","HatAccessory","FaceAccessory",
+    "Shirt","Pants",
+}
+
+getgenv().OutfitBusy = getgenv().OutfitBusy or false
+getgenv().OutfitToken = getgenv().OutfitToken or 0
+
+local function change_outfit(notify_title, notify_msg, success_msg, items, desc)
+    local myToken = tick()
+    getgenv().OutfitToken = myToken
+
+    if getgenv().OutfitBusy then
+        return getgenv().notify("Hang On:", "Already changing outfit, please wait...", 5)
+    end
+    getgenv().OutfitBusy = true
+
+    getgenv().notify(notify_title, notify_msg, 5)
+
+    if desc then
+        for _, slot in ipairs(AccessorySlots) do
+            if myToken ~= getgenv().OutfitToken then
+                getgenv().notify("Cancelled", "Switched to new request.", 5)
+                getgenv().OutfitBusy = false
+                return
+            end
+            unequip_slot(desc, slot)
+            task.wait(0.3)
+        end
+    end
+
+    task.wait(0.2)
+    for _, v in ipairs(items) do
+        if myToken ~= getgenv().OutfitToken then
+            getgenv().notify("Cancelled", "Switched to new request.", 5)
+            getgenv().OutfitBusy = false
+            return
+        end
+
+        if v[1] == "wear" then
+            getgenv().Get("wear", v[2], v[3])
+        elseif v[1] == "remote" then
+            getgenv().Send(v[2], v[3], v[4])
+        elseif v[1] == "wearBatch" then
+            getgenv().Get("batch_wear", v[2])
+        elseif v[1] == "code" then
+            getgenv().Get("code", v[2], v[3])
+        end
+        task.wait(0.8)
+    end
+
+    getgenv().notify("Success:", success_msg, 5)
+    getgenv().OutfitBusy = false
+end
+
+getgenv().StealPlayerItemsOffAvatar = Tab3:CreateInput({
+Name = "Steal Players Avatar Items (FE)",
+CurrentValue = "User Here",
+PlaceholderText = "User Here",
+RemoveTextAfterFocusLost = true,
+Flag = "StealAllOfAPlayersItemsFE",
+Callback = function(PlayerToStealFrom)
+    local TargetAvatar = findplr(PlayerToStealFrom)
+    if not TargetAvatar then
+        return getgenv().notify("Failure:", "Player does not exist.", 5)
+    end
+
+    local userId = TargetAvatar.UserId
+    local desc = Char.get_desc_from_id(userId)
+    if not desc then
+        return getgenv().notify("Failure:", "Could not fetch description.", 5)
+    end
+
+    local items = {}
+
+    if not is_empty(desc, "Shirt") then
+        table.insert(items, {"code", tonumber(desc.Shirt), "Shirt"})
+    end
+    if not is_empty(desc, "Pants") then
+        table.insert(items, {"code", tonumber(desc.Pants), "Pants"})
+    end
+    if not is_empty(desc, "GraphicTShirt") then
+        table.insert(items, {"code", tonumber(desc.GraphicTShirt), "ShirtGraphic"})
+    end
+
+    for _, slot in ipairs({
+        "BackAccessory","ShouldersAccessory","FrontAccessory","WaistAccessory",
+        "NeckAccessory","HairAccessory","HatAccessory","FaceAccessory"
+    }) do
+        local val = desc[slot]
+        if not is_empty(desc, slot) then
+            for id in string.gmatch(val, "[^,]+") do
+                table.insert(items, {"code", tonumber(id), slot})
+            end
+        end
+    end
+
+    if not is_empty(desc, "Face") then
+        table.insert(items, {"code", tonumber(desc.Face), "Face"})
+    end
+
+    local AnimationSlots = {
+        "ClimbAnimation","FallAnimation","IdleAnimation","JumpAnimation",
+        "RunAnimation","SwimAnimation","WalkAnimation"
+    }
+    local anims = {}
+    for _, slot in ipairs(AnimationSlots) do
+        if not is_empty(desc, slot) then
+            table.insert(anims, {tonumber(desc[slot]), slot, true})
+        end
+    end
+    if #anims > 0 then
+        table.insert(items, {"wearBatch", anims})
+    end
+
+    change_outfit(
+        "Hold On:",
+        "Copying ".. TargetAvatar.Name .."'s avatar...",
+        "Successfully copied ".. TargetAvatar.Name .."'s avatar!",
+        items,
+        desc
+    )
+end,})
 
 local Anti_Teleport_Toggled_Saved = false
 wait(0.1)
