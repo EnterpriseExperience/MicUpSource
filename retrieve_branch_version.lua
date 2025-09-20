@@ -15948,7 +15948,7 @@
     task.wait(1)
     for _, part in ipairs(TerrainFolder:GetDescendants()) do
         if part:IsA("BasePart") then
-            v.Transparency = Transparency_Selected
+            part.Transparency = Transparency_Selected
         end
     end
     --[[wait(0.2)
