@@ -760,10 +760,13 @@
         warn("[CRITICAL_ERROR]: Failed to load Rayfield after multiple attempts.")
     end
     wait(0.5)
+    getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = false
     getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub or false
     -- This can be used anytime while using the script by executing the following: getgenv().notify("Welcome", "Your content here.", 6)
     function notify(title, content, duration)
-        if not getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub or getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub == false then
+        if getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub then
+            print("The user has chosen to ignore notifications (has turned them off).")
+        else
             Rayfield:Notify({
                 Title = tostring(title),
                 Content = tostring(content),
@@ -778,8 +781,6 @@
                     },
                 },
             })
-        else
-            print("The user has chosen to ignore notifications (has turned them off).")
         end
     end
     task.wait(0.2)
@@ -2320,15 +2321,17 @@
                 while getgenv().keepMyPlateOn do
                     local char = getMyCharacter()
                     local root = char and getgenv().getRoot(getgenv().Character)
+
                     if root and plate then
                         if getgenv().letItFollow then
+                            local howFar = getgenv().plateBelowMeOffset or -6
+
                             if upPressed then
-                                getgenv().plateBelowMeOffset = getgenv().plateBelowMeOffset + floatSpeed
+                                howFar = howFar + 3
                             elseif downPressed then
-                                getgenv().plateBelowMeOffset = getgenv().plateBelowMeOffset - floatSpeed
+                                howFar = howFar - 3
                             end
 
-                            local howFar = getgenv().plateBelowMeOffset
                             plate.Position = Vector3.new(
                                 root.Position.X,
                                 root.Position.Y + howFar,
@@ -2358,14 +2361,10 @@
     if getgenv().Workspace:FindFirstChild("ANTI_VOID_BASEPLATE") then
         if getgenv().AntiVoidPlayer then
             getgenv().AntiVoidPlayer:Set(false)
-        else
-            warn("getgenv().AntiVoidPlayer doesn't exist in Rayfield UI Library!")
         end
         getgenv().keepMyPlateOn = false
         if getgenv().Character:FindFirstChild("ANTI_VOID_BASEPLATE") then
             getgenv().Character:FindFirstChild("ANTI_VOID_BASEPLATE"):Destroy()
-        else
-            warn("ANTI_VOID_BASEPLATE was not found inside Character!")
         end
         if getgenv().myPlateThingy then
             getgenv().myPlateThingy = nil
@@ -4160,24 +4159,26 @@
     getgenv().DisableNotificationsScript = Tab1:CreateButton({
     Name = "Disable Notifications",
     Callback = function()
+        print("Disabled notifications successfully.")
         getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = true
     end,})
 
     getgenv().EnableNotificationsScript = Tab1:CreateButton({
     Name = "Enable Notifications",
     Callback = function()
+        print("Enabled notifications successfully.")
         getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = false
     end,})
 
     getgenv().IgnoreNotifications_Disable = Tab1:CreateToggle({
-    Name = "Toggle notification visibility (disable/enable notifs)",
-    CurrentValue = false,
+    Name = "Toggle notification visibility (enable/disable notifs)",
+    CurrentValue = getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub,
     Flag = "IgnoreNotificationsInstead",
     Callback = function(notificatios_enabled)
         if notifications_enabled then
-            getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = true
-        else
             getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = false
+        else
+            getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = true
         end
     end,})
 
@@ -4333,17 +4334,24 @@
                 local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
                 getgenv().Gudock_Part_Touching = true
 
+                if not firetouchinterest then
+                    getgenv().Gudock_Part_Touching = false
+                    getgenv().FastTogglePart:Set(false)
+                    return getgenv().notify("Failure:", "Your executor does not support 'firetouchinterest'!", 5)
+                end
+
                 if not Workspace:FindFirstChild("Gudock") then
+                    getgenv().Gudock_Part_Touching = false
                     getgenv().FastTogglePart:Set(false)
                     return getgenv().notify("Failure:", "Gudock button for the obby doesn't seem to exist.", 5)
                 end
-            
-                local Gudock_Part = Workspace:FindFirstChild("Gudock")
+                
+                local Gudock_Part = Workspace:FindFirstChild("Gudock", true)
 
                 if Gudock_Part then
                     while getgenv().Gudock_Part_Touching == true do
                         for _, v in ipairs(Gudock_Part:GetDescendants()) do
-                            if v:IsA("TouchTransmitter") and firetouchinterest then
+                            if v:IsA("TouchTransmitter") then
                                 firetouchinterest(v.Parent, HumanoidRootPart, 0)
                                 task.wait()
                                 firetouchinterest(v.Parent, HumanoidRootPart, 1)
@@ -4462,7 +4470,19 @@
 
             local function RemoveBlurIfPresent(obj)
                 if obj:IsA("BlurEffect") then
-                    obj:Destroy()
+                    if obj.Enabled then
+                        obj.Enabled = false
+                    end
+
+                    local succ, err = pcall(function()
+                        obj.Parent = nil
+                    end)
+
+                    if succ then
+                        obj:Destroy()
+                    else
+                        getgenv().notify("Failure:", "Failed to remove BlurEffect because: "..tostring(err), 5)
+                    end
                 end
             end
 
