@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.0.2"
+local Raw_Version = "V3.0.3"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1234,8 +1234,6 @@ local Emotes = {
    griddy = {
       129149402922241,
       116150478424136,
-      76342373659003,
-      106715239721951,
       91878676494639,
       98318847394332,
    },
@@ -1243,7 +1241,6 @@ local Emotes = {
    worm = {
       132950274861655,
       127882676467351,
-      113312808145333,
       77625642316480,
       127068135887882,
       102075861555461,
@@ -1261,7 +1258,6 @@ local Emotes = {
    },
    orangejustice = {
       133160900449608,
-      109776913631531,
       110064349530772,
       117638432093760,
       76494145762351,
