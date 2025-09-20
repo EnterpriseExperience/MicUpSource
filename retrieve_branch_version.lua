@@ -37,6 +37,7 @@
     wait()
     local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
     local Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))()
+    local Notifications_Module_Flames_Hub = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Internal_Notification_System.lua'))()
     local Version = Module:Get_Current_Version()
     wait(0.1)
     local Script_Version = Version
@@ -15955,10 +15956,11 @@
 
     wait(0.2)
     if cloneref then
-        cloneref(game:GetService("GuiService")):SendNotification({
+        --[[cloneref(game:GetService("GuiService")):SendNotification({
             Title = "Welcome:",
             Text = tostring(getgenv().LocalPlayer),
-        })
+        })--]]
+        Notifications_Module_Flames_Hub:SendNotification_Internal("Welcome, "..tostring(getgenv().LocalPlayer), 5)
     else
         game:GetService("GuiService"):SendNotification({
             Title = "Welcome:",
@@ -15985,8 +15987,8 @@
                     wait(0.2)
                     getgenv().emoting_actions()
                     wait(0.5)
-                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").Health = 0
-                    wait(0.1)
+                    getgenv().Humanoid.Health = 0
+                    task.wait(0.1)
                     getgenv().Has_Died_Func = true
                     wait(0.3)
                     getgenv().Is_ZEH_Attached = true
@@ -15995,7 +15997,7 @@
                     wait()
                     getgenv().output_already_viewed = true
                 else
-                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").Health = 0
+                    getgenv().Humanoid.Health = 0
                     wait()
                     getgenv().Has_Died_Func = true
                     wait(0.3)
@@ -16007,10 +16009,8 @@
                 warn("Setup death function already.")
             end
         else
-            GuiService:SendNotification({
-                Title = "Please wait...",
-                Text = "Hooking and injecting into: "..tostring(getgenv().MarketplaceService:GetProductInfo(game.PlaceId).Name),
-            })
+            Notifications_Module_Flames_Hub:SendNotification_Internal("Please wait...", 5)
+            Notifications_Module_Flames_Hub:SendNotification_Internal("Hooking and injecting into: "..tostring(getgenv().MarketplaceService:GetProductInfo(game.PlaceId).Name), 5)
             wait(0.8)
             if setfpscap then
                 print("Injecting Flames Hub...")
