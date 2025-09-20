@@ -759,23 +759,30 @@
         warn("[CRITICAL_ERROR]: Failed to load Rayfield after multiple attempts.")
     end
     wait(0.5)
+    getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub or false
     -- This can be used anytime while using the script by executing the following: getgenv().notify("Welcome", "Your content here.", 6)
-    getgenv().notify = function(title, content, duration)
-        Rayfield:Notify({
-            Title = tostring(title),
-            Content = tostring(content),
-            Duration = tonumber(duration),
-            Image = 93594537601787,
-            Actions = {
-                Ignore = {
-                    Name = "Okay.",
-                    Callback = function() 
-                        print("...") 
-                    end
+    function notify(title, content, duration)
+        if not getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub or getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub == false then
+            Rayfield:Notify({
+                Title = tostring(title),
+                Content = tostring(content),
+                Duration = tonumber(duration),
+                Image = 93594537601787,
+                Actions = {
+                    Ignore = {
+                        Name = "Alright.",
+                        Callback = function() 
+                            print("...") 
+                        end
+                    },
                 },
-            },
-        })
+            })
+        else
+            print("The user has chosen to ignore notifications (has turned them off).")
+        end
     end
+    task.wait(0.2)
+    getgenv().notify = notify
     wait(0.1)
     -- I made sure to include these since Material saving isn't exactly easy, so it saves right here.
     if getgenv().OriginalMaterials then
@@ -787,7 +794,7 @@
                 end
             end
 
-            getgenv().OriginalMaterials = nil -- Don't notice a wait() in between? lol
+            getgenv().OriginalMaterials = nil -- Don't notice a task.wait() in between? lol
         end
 
         restoreOriginalMaterials()
@@ -2089,7 +2096,7 @@
             end
             wait(1.2)
             if getgenv().PlayerGui:FindFirstChild("Booth") then
-                for _, v in pairs(game.Players.LocalPlayer:FindFirstChild("PlayerGui"):GetChildren()) do
+                for _, v in pairs(getgenv().PlayerGui:GetChildren()) do
                     if v:IsA("ScreenGui") and v.Name == "Booth" then
                         print("Found GUI: "..tostring(v.Name)..", Removing...")
                         wait(0.1)
@@ -2164,6 +2171,9 @@
             end
             
             local function Claim_A_Booth()
+                if not getgenv().ReplicatedStorage:FindFirstChild("UpdateBoothText") then
+                    return getgenv().notify("Failure:", "UpdateBoothText RemoteEvent was not found! (Patched?)", 5)
+                end
                 local OldCF = getgenv().Character:FindFirstChildWhichIsA("Humanoid").CFrame
             
                 local plr_booth = getStall()
@@ -2183,10 +2193,15 @@
                         return getgenv().notify("Error:", "Player's Booth was not found", 6)
                     end
                     task.wait(0.3)
-            
+                    if not stall:FindFirstChild("Activate") then
+                        getgenv().notify("Error:", "Continue, but with caution, Activate Part not found.", 5)
+                    end
+                    task.wait(0.1)
                     local ProximityPrompt = stall:FindFirstChild("Activate") and stall.Activate:FindFirstChildOfClass("ProximityPrompt")
                     if ProximityPrompt then
                         fireproximityprompt(ProximityPrompt)
+                    else
+                        getgenv().notify("???:", "ProximityPrompt not found somehow (probably patched!)", 5)
                     end
             
                     task.wait(0.2)
@@ -4138,6 +4153,30 @@
             EnableIceWatcher()
         else
             DisableIceWatcher()
+        end
+    end,})
+
+    getgenv().DisableNotificationsScript = Tab1:CreateButton({
+    Name = "Disable Notifications",
+    Callback = function()
+        getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = true
+    end,})
+
+    getgenv().EnableNotificationsScript = Tab1:CreateButton({
+    Name = "Enable Notifications",
+    Callback = function()
+        getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = false
+    end,})
+
+    getgenv().IgnoreNotifications_Disable = Tab1:CreateToggle({
+    Name = "Toggle notification visibility (disable/enable notifs)",
+    CurrentValue = false,
+    Flag = "IgnoreNotificationsInstead",
+    Callback = function(notificatios_enabled)
+        if notifications_enabled then
+            getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = true
+        else
+            getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = false
         end
     end,})
 
@@ -7372,32 +7411,108 @@
 
     local function existing_character(part)
         local model = part:FindFirstAncestorOfClass("Model")
-        return model and game.Players:GetPlayerFromCharacter(model) ~= nil or getgenv().Players:GetPlayerFromCharacter(model) ~= nil
+        return model and (game.Players:GetPlayerFromCharacter(model) ~= nil or getgenv().Players:GetPlayerFromCharacter(model) ~= nil)
     end
-    
-    local function set_new_transparency(newTransparency)
-        if type(newTransparency) ~= "number" or newTransparency < 0 or newTransparency > 1 then
+
+    local function has_transparency_property(obj)
+        local ok, val = pcall(function() return obj.Transparency end)
+        return ok
+    end
+
+    local baseplate_translations = {
+        "baseplate",
+        "placa base",
+        "plaque de base",
+        "grundplatte",
+        "piatto base",
+        "placa de base",
+        "основа",
+        "基板",
+        "기판",
+        "基盤",
+        "底板",
+        "底板",
+        "لوحة أساسية",
+        "प्लेट आधार",
+        "প্লেট ভিত্তি",
+        "ฐานเพลต",
+        "plak dasar",
+        "plaka bază",
+        "podstawa",
+        "plataforma base",
+        "baza plăcii",
+        "plataformă de bază",
+        "bazplato",
+        "grunnplate",
+        "grundplade",
+        "peruslevy",
+        "grunnplata",
+        "bazowa płyta",
+        "bazisplaat",
+        "basisplatte",
+        "osnova plăcii",
+        "tábua base",
+        "placa de bază",
+        "baza plăcii",
+        "osnovna plošča",
+        "bazna ploča",
+        "bazna plošča",
+        "osnovna ploča",
+        "базова плита",
+        "базна плоча",
+        "osnovna ploča",
+        "fundamentplatte",
+        "plaque de fond",
+        "piattaforma base",
+        "placă de bază",
+        "основа плита",
+        "اصلی تختہ",
+        "بنیادی پلیٹ",
+        "আধার প্লেট"
+    }
+
+    getgenv().Baseplate_In_Current_Game_Flag = getgenv().Baseplate_In_Current_Game_Flag or false
+    task.wait(0.2)
+    local function find_translated_baseplates()
+        local found = {}
+        for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
+            if v:IsA("BasePart") then
+                local lowerName = v.Name:lower()
+                for _, word in ipairs(baseplate_translations) do
+                    if lowerName:find(word:lower()) then
+                        getgenv().Baseplate_In_Current_Game_Flag = true
+                        table.insert(found, v)
+                        break
+                    end
+                end
+            end
+        end
+        return found
+    end
+
+    local function set_new_transparency(new_transparency)
+        if type(new_transparency) ~= "number" or new_transparency < 0 or new_transparency > 1 then
             return getgenv().notify("Failure", "Invalid transparency value. Must be between 0 and 1.", 5)
         end
-    
-        for _, part in ipairs(getgenv().Workspace:GetDescendants()) do
-            if (part:IsA("BasePart") or part:IsA("MeshPart") or part:IsA("UnionOperation")) and not existing_character(part) then
-                if getgenv().OriginalTransparency[part] == nil then
-                    getgenv().OriginalTransparency[part] = part.Transparency
+
+        for _, obj in ipairs(getgenv().Workspace:GetDescendants()) do
+            if has_transparency_property(obj) and not existing_character(obj) then
+                if getgenv().OriginalTransparency[obj] == nil then
+                    getgenv().OriginalTransparency[obj] = obj.Transparency
                 end
-                part.Transparency = newTransparency
+                obj.Transparency = new_transparency
             end
         end
     end
-    
+
     local function default_transparency()
-        for part, originalTransparency in pairs(getgenv().OriginalTransparency) do
-            if part and part:IsA("BasePart") then
-                part.Transparency = originalTransparency
+        for obj, original in pairs(getgenv().OriginalTransparency) do
+            if obj and has_transparency_property(obj) then
+                obj.Transparency = original
             end
         end
     end
-    
+
     getgenv().MapTransparencySliding = Tab18:CreateSlider({
     Name = "Map Transparency",
     Range = {0, 1},
@@ -7405,8 +7520,8 @@
     Suffix = "",
     CurrentValue = 0,
     Flag = "MapTransparencyLevel",
-    Callback = function(ezNewTransparency)
-        set_new_transparency(ezNewTransparency)
+    Callback = function(val)
+        set_new_transparency(val)
     end,})
 
     getgenv().ResetMapTransparencyToDefault = Tab18:CreateButton({
@@ -10784,7 +10899,7 @@
         end
 
         local hl = Instance.new("Highlight")
-        hl.Name = "ESP_Highlight" -- Not a secure name at all for ESP, since game's can search the "game" DataModel for the string: "ESP" or "esp", and kick you if found.
+        hl.Name = "Highlight" -- Not a secure name at all for ESP, since game's can search the "game" DataModel for the string: "ESP" or "esp", and kick you if found.
         hl.Adornee = char
         hl.FillColor = highlight_color
         hl.OutlineColor = Color3.fromRGB(255, 255, 255) -- Default to white to preserve user personalization's and preferences.
@@ -10903,8 +11018,6 @@
             esplib.remove_distance()
         end
     end,})
-
-
 
     wait(0.2)
     getgenv().HighlightESP_Drawing = Tab19:CreateToggle({
@@ -11158,7 +11271,7 @@
                 if not LocalStall then
                     return getgenv().notify("Error:", "You do not have a booth! Claim One", 5)
                 else
-                    print(tostring(LocalStall))
+                    getgenv().notify("Success:", "Got your Booth: "..tostring(LocalStall).."!", 5)
                 end
                 wait()
                 local args = {
@@ -14712,7 +14825,7 @@
     getgenv().Emote_Keybinds_Configuration = getgenv().Emote_Keybinds_Configuration or {}
     getgenv().Emote_Speed_Configuration = getgenv().Emote_Speed_Configuration or {}
     
-    local Emote_Keybinds_Configuration = {  
+    getgenv().Flames_Hub_Current_Emote_Keybinds_Configuration = {  
         [Enum.KeyCode.One] = "Rise Above - The Chainsmokers",
         [Enum.KeyCode.Two] = "BLACKPINK Shut Down - Part 2",
         [Enum.KeyCode.Three] = "Fashion Roadkill",
@@ -14724,13 +14837,13 @@
         [Enum.KeyCode.Nine] = "Point2",
     }
     
-    local Emote_Speed_Configuration = {
+    getgenv().Flames_Hub_GETGENV_Emote_Speed_Configuration = {
         [Enum.KeyCode.Q] = 0.1,
         [Enum.KeyCode.E] = 4,
         [Enum.KeyCode.X] = 1
     }
 
-    local Slots_Table = { 
+    getgenv().Current_Keybind_Slots_Table = { 
         ["Number/Key: 1"] = Enum.KeyCode.One,
         ["Number/Key: 2"] = Enum.KeyCode.Two,
         ["Number/Key: 3"] = Enum.KeyCode.Three,
@@ -14842,19 +14955,19 @@
         ["Controller: Right Stick"] = Enum.KeyCode.Thumbstick2,
     }
     
-    Emote_Speed_Configuration[getgenv().Freeze_Keybind] = 0
-    Emote_Speed_Configuration[getgenv().Reverse_Keybind] = -1
+    getgenv().Flames_Hub_GETGENV_Emote_Speed_Configuration[getgenv().Freeze_Keybind] = 0
+    getgenv().Flames_Hub_GETGENV_Emote_Speed_Configuration[getgenv().Reverse_Keybind] = -1
 
-    local Slots_Options = {}
-    for name, _ in pairs(Slots_Table) do
-        table.insert(Slots_Options, name)
+    getgenv().AllKeybindSlots_Options = {}
+    for current, _ in pairs(getgenv().Current_Keybind_Slots_Table) do
+        table.insert(getgenv().AllKeybindSlots_Options, name)
     end
     wait()
-    local selectedSlot = nil
+    getgenv().CurrentSelectedKeybindSlot = nil
 
     getgenv().PickASlot = Tab15:CreateDropdown({
     Name = "Choose a Keybind (To assign the Emote to)",
-    Options = Slots_Options,
+    Options = getgenv().AllKeybindSlots_Options,
     CurrentOption = "",
     MultipleOptions = false,
     Flag = "select_slot",
@@ -14868,12 +14981,11 @@
         end
 
         selectedSlot = Slots_Table[slotName]
-        -- And another lazy fix, unnecessary, so go to hell (x2)
         --getgenv().notify("Success:", "Selected Slot: " .. slotName .. " (Keybind: " .. tostring(selectedSlot) .. ")", 6)
     end,})
 
     -- I remember when I tried to put a text next to the emote like: "[NEW]: " but that doesn't work because we use "getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(emote_name)" <-- but using this you need the actual name of the emote and the fucking emote isn't named "[NEW]: NBA Master Dunk", like wtf?
-    local Emotes = {
+    getgenv().AllAvailableEmotes = {
         "NBA Monster Dunk",
         "Stray Kids Walkin On Water",
         "TWICE Strategy",
@@ -15054,7 +15166,7 @@
 
     getgenv().SelectAnEmote = Tab15:CreateDropdown({
     Name = "Choose an Emote",
-    Options = Emotes,
+    Options = getgenv().AllAvailableEmotes,
     CurrentOption = "",
     MultipleOptions = false,
     Flag = "select_emote",
@@ -15083,7 +15195,7 @@
     CurrentValue = 1,
     Flag = "changingTheConfigEmoteSpeed",
     Callback = function(emoteSpeedConfigSlider)
-        Emote_Speed_Configuration[Enum.KeyCode.E] = tonumber(emoteSpeedConfigSlider)
+        getgenv().Flames_Hub_GETGENV_Emote_Speed_Configuration[Enum.KeyCode.E] = tonumber(emoteSpeedConfigSlider)
         getgenv().emoting_actions(tonumber(emoteSpeedConfigSlider))
     end,})
 
@@ -15095,7 +15207,7 @@
     CurrentValue = 0.9,
     Flag = "changingSlowDownConfig",
     Callback = function(emoteSlowDownConfig)
-        Emote_Speed_Configuration[Enum.KeyCode.Q] = tonumber(emoteSlowDownConfig)
+        getgenv().Flames_Hub_GETGENV_Emote_Speed_Configuration[Enum.KeyCode.Q] = tonumber(emoteSlowDownConfig)
         getgenv().emoting_actions(tonumber(emoteSlowDownConfig))
     end,})
     task.wait(0.1)
@@ -15168,7 +15280,7 @@
 
         if input.KeyCode == getgenv().Reverse_Keybind then
             speedToggle = (speedToggle == 1) and -1 or 1
-            Emote_Speed_Configuration[getgenv().Reverse_Keybind] = speedToggle
+            getgenv().Flames_Hub_GETGENV_Emote_Speed_Configuration[getgenv().Reverse_Keybind] = speedToggle
             getgenv().emoting_actions(speedToggle)
         elseif input.KeyCode == getgenv().Freeze_Keybind then
             getgenv().emoting_actions(0)
