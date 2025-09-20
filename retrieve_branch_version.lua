@@ -714,8 +714,13 @@
     if getgenv().emotes_bypassed then
         warn("Emotes are already bypassed.")
     else
+        print("Bypassing emotes...")
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Emote_Bypass_Script.lua'))()
         getgenv().emotes_bypassed = true
+        task.wait(1)
+        if getgenv().emotes_bypassed then
+            print("Emotes have been bypassed and are ready for use.")
+        end
     end
     wait(0.5)
     local TextChatService = getgenv().Service_Wrap("TextChatService")
@@ -4223,18 +4228,32 @@
         end
     end,})
 
-    local original_parents = {}
+    original_parents = {}
+    keywords = {
+        "KILLPART",
+        "KILL",
+        "TRAP",
+        "TRAMPA",
+        "SPIN",
+        "SPINNER",
+        "KILLBRICK",
+        "DAMAGE"
+    }
 
     local function perform_scan()
         local results = {}
-
         for _, obj in ipairs(getgenv().Workspace:GetDescendants()) do
-            if obj:IsA("BasePart") and (string.match(obj.Name:upper(), "KILLPART") or string.match(obj.Name:upper(), "KILL")) then
-                original_parents[obj] = obj.Parent
-                table.insert(results, obj)
+            if obj:IsA("BasePart") then
+                local name = obj.Name:upper()
+                for _, word in ipairs(keywords) do
+                    if string.find(name, word) then
+                        original_parents[obj] = obj.Parent
+                        table.insert(results, obj)
+                        break
+                    end
+                end
             end
         end
-
         return results
     end
 
@@ -15660,10 +15679,6 @@
     wait(0.3)
     getgenv().EmoteSystemEnabled = false
     wait()
-    if not (readfile and writefile) then
-        warn("Your executor does not support file functions.")
-    end
-
     getgenv().saved_settings = getgenv().saved_settings or {}
     ez_folder_settings = "SettingsConfigs"
 
