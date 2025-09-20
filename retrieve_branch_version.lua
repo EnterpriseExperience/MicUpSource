@@ -7475,21 +7475,24 @@
     getgenv().Baseplate_In_Current_Game_Flag = getgenv().Baseplate_In_Current_Game_Flag or false
     task.wait(0.2)
     local function find_translated_baseplates()
-        local found = {}
+        getgenv().found_the_modifiable_baseplate = getgenv().found_the_modifiable_baseplate or {}
         for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
             if v:IsA("BasePart") then
                 local lowerName = v.Name:lower()
                 for _, word in ipairs(baseplate_translations) do
                     if lowerName:find(word:lower()) then
                         getgenv().Baseplate_In_Current_Game_Flag = true
-                        table.insert(found, v)
+                        table.insert(getgenv().found_the_modifiable_baseplate, v)
                         break
                     end
                 end
             end
         end
-        return found
+        
+        return getgenv().found_the_modifiable_baseplate
     end
+    task.wait(0.2)
+    getgenv().findbaseplate_function_universal = find_translated_baseplates
 
     local function set_new_transparency(new_transparency)
         if type(new_transparency) ~= "number" or new_transparency < 0 or new_transparency > 1 then
@@ -7529,7 +7532,7 @@
     Name = "Reset Map Transparency",
     Callback = function()
         default_transparency()
-    end,})    
+    end,})
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().BasePlate_ColorChange = Tab18:CreateSlider({
@@ -7619,28 +7622,14 @@
         CurrentValue = 0,
         Flag = "MICUPTransparency",
         Callback = function(BasePlateMICUPTransparency)
-            if game:GetService("Workspace"):FindFirstChild("SoccerField") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("SoccerField"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Transparency = BasePlateMICUPTransparency
-                Texture_Bruh.Transparency = BasePlateMICUPTransparency
-            elseif game:GetService("Workspace"):FindFirstChild("BasePlate") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("BasePlate")
-
-                BasePlate.Transparency = BasePlateMICUPTransparency
-            elseif game:GetService("Workspace"):FindFirstChild("Game") then
-                local BasePlate = game:GetService("Workspace"):FindFirstChild("Game"):FindFirstChild("Baseplate")
-                local Texture_Bruh = BasePlate:FindFirstChildOfClass("Texture")
-
-                BasePlate.Transparency = BasePlateMICUPTransparency
-                Texture_Bruh.Transparency = BasePlateMICUPTransparency
-            elseif getgenv().Workspace:FindFirstChild("Baseplate") then
-                local Base_plate = getgenv().Workspace:FindFirstChild("Baseplate")
-
-                Base_plate.Transparency = BasePlateMICUPTransparency
+            if getgenv().Baseplate_In_Current_Game_Flag or getgenv().Baseplate_In_Current_Game_Flag == true then
+                for _, v in ipairs(getgenv().found_the_modifiable_baseplate) do
+                    if v.Transparency then
+                        v.Transparency = BasePlateMICUPTransparency
+                    end
+                end
             else
-                warn("BasePlate here was not found.")
+                return 
             end
         end,})
     else
