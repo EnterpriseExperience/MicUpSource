@@ -15925,9 +15925,9 @@
     TerrainFolder = getgenv().Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", Workspace)
     TerrainFolder.Name = "TERRAIN_EDITOR"
     Transparency_Selected = 1
-
-    for _, transparency in ipairs(TerrainFolder:GetDescendants()) do
-        if v:IsA("BasePart") then
+    task.wait(1)
+    for _, part in ipairs(TerrainFolder:GetDescendants()) do
+        if part:IsA("BasePart") then
             v.Transparency = Transparency_Selected
         end
     end
