@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.0.8"
+local Raw_Version = "V3.0.9"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1279,6 +1279,37 @@ local function stop_rainbow_skin()
    end
 end
 
+getgenv().CompletelyHideFlamesComingIn = function(completely_stop_flames)
+   if completely_stop_flames == true then
+      if getgenv().DestroyParticlesConnection then
+         getgenv().DestroyParticlesConnection:Disconnect()
+         getgenv().DestroyParticlesConnection = nil
+      end
+
+      local function hideFireParticles(emitter)
+         if emitter:IsA("ParticleEmitter") and emitter.Name == "FireParticles" then
+            local parent = emitter.Parent
+            if parent and parent:IsA("BasePart") and parent:FindFirstChildWhichIsA("Sound") then
+               pcall(function() parent:Destroy() task.wait() emitter:Destroy() end)
+            end
+         end
+      end
+
+      for _, d in ipairs(getgenv().Workspace:GetDescendants()) do
+         hideFireParticles(d)
+      end
+
+      getgenv().DestroyParticlesConnection = getgenv().Workspace.DescendantAdded:Connect(hideFireParticles)
+   elseif completely_stop_flames == false then
+      if getgenv().DestroyParticlesConnection then
+         getgenv().DestroyParticlesConnection:Disconnect()
+         getgenv().DestroyParticlesConnection = nil
+      end
+   else
+      return 
+   end
+end
+
 getgenv().NoMoreFireAndFlames = function(stopping_flames_enabled)
    if stopping_flames_enabled == true then
       if getgenv().HideFireParticlesConnection then
@@ -1824,6 +1855,8 @@ local function CommandsMenu()
       {prefix}noglitchoutfit - Disables the glitching of your outfit
       {prefix}flames - Spams fire all over you.
       {prefix}noflames - Disables the spamming of fire.
+      {prefix}autonoflames - Deletes flames from your game automatically and completely, reducing lag.
+      {prefix}unautohideflames - Disables the auto-hide flames lag reducer.
       {prefix}name NewName - Change RP name
       {prefix}bio NewBio - Change RP bio
       {prefix}freeemotes - Gives you the Free Emotes GUI.
@@ -3250,6 +3283,12 @@ local function handleCommand(sender, message)
       notify("Success:", "Noclip has been enabled.", 5)
 
       getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
+   elseif cmd == "autonoflames" or cmd == "autohideflames" then
+      getgenv().notify("Success:", "Now reducing the lag from fire spam!", 5)
+      getgenv().CompletelyHideFlamesComingIn(true)
+   elseif cmd == "unautonoflames" or cmd == "unautohideflames" then
+      getgenv().notify("Success:", "No longer protected against fire spam.", 5)
+      getgenv().CompletelyHideFlamesComingIn(false)
    elseif cmd == "clip" then
       if not getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == false then
          return notify("Failure:", "Noclip is not enabled!", 5)
