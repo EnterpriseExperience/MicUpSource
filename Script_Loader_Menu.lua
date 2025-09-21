@@ -1,25 +1,52 @@
+local scripts = {
+	["Tower Of Misery"] = {
+		id = 4954752502,
+		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua"
+	},
+	["Ultimate Driving"] = {
+		id = 54865335,
+		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"
+	},
+	["LifeTogether RP"] = {
+		id = 13967668166,
+		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
+	},
+	["Hide And Seek Extreme"] = {
+		id = 205224386,
+		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
+	},
+    ["Player or AI"] = {
+        id = 95217169945642,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
+    },
+    ["Main Street RP"] = {
+        id = 18753889337,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua"
+    },
+    ["Southwest Florida Beta"] = {
+        id = 5104202731,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Southwest_Florida.lua"
+    },
+    ["Driving Empire"] = {
+        id = 3351674303,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"
+    },
+    ["LifeTogether Admin Commands (FE)"] = {
+		id = 13967668166,
+		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
+	},
+}
+
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-wait(0.2)
-local library = loadstring(getgenv().Game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-wait()
+
 getgenv().Service_Wrap = function(serviceName)
     if cloneref then
         return cloneref(getgenv().Game:GetService(serviceName))
     else
         return getgenv().Game:GetService(serviceName)
     end
-end
-
-getgenv().notify = function(Title, Content, Duration)
-   local StarterGui = getgenv().Service_Wrap("StarterGui")
-   task.wait()
-   StarterGui:SetCore("SendNotification", {
-      Title = tostring(Title);
-      Text = tostring(Content);
-      Duration = tonumber(Duration);
-   })
 end
 
 local function getExecutor()
@@ -93,137 +120,6 @@ getgenv().randomString = function()
     return table.concat(array)
 end
 
-local cmdp = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local cmdlp = cmdp.LocalPlayer
-
-function findplr(args)
-    local tbl = cmdp:GetPlayers()
-
-    if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
-        return getgenv().notify("Failure!", "You cannot target yourself!", 6)
-    end
-
-    if args == "random" then
-        local validPlayers = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp then
-                table.insert(validPlayers, v)
-            end
-        end
-        return #validPlayers > 0 and validPlayers[math.random(1, #validPlayers)] or nil
-    end
-
-    if args == "new" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.AccountAge < 30 and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "old" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.AccountAge > 30 and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "bacon" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "friend" then
-        local friendList = {}
-        for _, v in pairs(tbl) do
-            if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                table.insert(friendList, v)
-            end
-        end
-        return #friendList > 0 and friendList[math.random(1, #friendList)] or nil
-    end
-
-    if args == "notfriend" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "ally" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.Team == cmdlp.Team and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "enemy" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.Team ~= cmdlp.Team and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "near" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and v.Character and cmdlp.Character then
-                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                if vRootPart and cmdlpRootPart then
-                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                    if distance < 30 then
-                        table.insert(vAges, v)
-                    end
-                end
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "far" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and v.Character and cmdlp.Character then
-                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                if vRootPart and cmdlpRootPart then
-                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                    if distance > 30 then
-                        table.insert(vAges, v)
-                    end
-                end
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    for _, v in pairs(tbl) do
-        if (v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower())) and v ~= cmdlp then
-            return v
-        end
-    end
-end
-
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
@@ -263,85 +159,43 @@ local function init_services()
     for _, serviceName in pairs(services) do
         getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
     end
+    wait(0.2)
+    getgenv().Services_Fully_Initialized = true
 end
-task.wait(0.1)
-init_services()
 wait()
-local function check_service(serviceName: string)
-    local normalized = serviceName:lower()
-    local serviceMap = {
-        runservice = "RunService",
-        players = "Players",
-        replicatedstorage = "ReplicatedStorage",
-        startergui = "StarterGui",
-        starterpack = "StarterPack",
-        lighting = "Lighting",
-        soundservice = "SoundService",
-        userinputservice = "UserInputService",
-        contextactionservice = "ContextActionService",
-        tweenservice = "TweenService",
-        teleportservice = "TeleportService",
-        teams = "Teams",
-        physicsservice = "PhysicsService",
-        httpservice = "HttpService",
-    }
-
-    local realName = serviceMap[normalized] or serviceName
-
-    local fromEnv
-    if rawget then
-        fromEnv = rawget(getgenv(), serviceName) or rawget(getgenv(), realName)
-    else
-        fromEnv = getgenv()[serviceName] or getgenv()[realName]
-    end
-
-    if fromEnv then
-        return fromEnv
-    end
-
-    local ok, svc = pcall(function()
-        return game:GetService(realName)
-    end)
-
-    if ok and svc then
-        return cloneref and cloneref(svc) or svc
-    end
-
-    return nil
+if not getgenv().Services_Fully_Initialized or getgenv().Services_Fully_Initialized == false then
+    init_services()
 end
-wait(0.1)
-local TweenService = check_service("TweenService")
-local TeleportService = check_service("TeleportService")
-local UserInputService = check_service("UserInputService")
-local HttpService = check_service("HttpService")
-local Players = check_service("Players")
-local RunService = check_service("RunService")
+wait()
+local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
-local ReplicatedStorage = check_service("ReplicatedStorage")
-local Workspace = check_service("Workspace")
-local TextChatService = check_service("TextChatService")
-local Lighting = check_service("Lighting")
+local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+
 wait(0.3)
-if not Players then
+if not getgenv().Players then
     warn("getgenv().Players was not detected, fixing...")
     getgenv().Players = getgenv().Service_Wrap("Players")
 end
-if not ReplicatedStorage then
+if not getgenv().ReplicatedStorage then
     warn("getgenv().ReplicatedStorage was not detected, fixing...")
     getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
 end
-if not TextChatService then
+if not getgenv().TextChatService then
     warn("getgenv().TextChatService was not detected, fixing...")
     getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
 end
-if not Workspace then
+if not getgenv().Workspace then
     warn("getgenv().Workspace was not detected, fixing...")
     getgenv().Workspace = getgenv().Service_Wrap("Workspace")
 end
-if not Lighting then
+if not getgenv().Lighting then
     warn("getgenv().Lighting was not detected, fixing...")
     getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 end
+
 task.wait(0.2)
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
 getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
@@ -389,10 +243,14 @@ local function Dynamic_Character_Updater(character)
 	getgenv().HumanoidRootPart = SafeGetHRP(character)
 	getgenv().Humanoid = SafeGetHumanoid(character)
 	getgenv().Head = SafeGetHead(character)
+    wait(0.2)
+    getgenv().Humanoid.JumpHeight = 7
+    character:WaitForChild("Humanoid").JumpHeight = 7
 end
-wait(0.1)
+
 Dynamic_Character_Updater(getgenv().Character)
-task.wait(0.1)
+task.wait(0.2)
+
 getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	task.wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
@@ -401,84 +259,190 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
 	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
 	getgenv().Head = SafeGetHead(newCharacter)
-	wait(0.2)
+	wait(0.3)
+    getgenv().Humanoid.JumpHeight = 7
+    newCharacter:WaitForChild("Humanoid", 0.2).JumpHeight = 7
 	Dynamic_Character_Updater(newCharacter)
 end)
+wait(0.3)
+local Workspace = getgenv().Workspace
+local Players = getgenv().Players
+local LocalPlayer = getgenv().LocalPlayer or getgenv().Players.LocalPlayer
+local Character = getgenv().Character
+local HumanoidRootPart = getgenv().HumanoidRootPart
+local Humanoid = getgenv().Humanoid
+local ReplicatedStorage = getgenv().ReplicatedStorage
+-- future reference of course goes in the middle of no where.
+local ws = getgenv().Workspace
 
-local ts = TeleportService
-local lp = getgenv().LocalPlayer
-local char = getgenv().Character
-local hum = getgenv().Humanoid
-local StarterPlayer = getgenv().StarterPlayer or cloneref and cloneref(game:GetService("StarterPlayer")) or game:GetService("StarterPlayer")
-local usesJumpHeight = StarterPlayer.CharacterUseJumpPower
-local mainTab = library:CreateWindow("Main")
-local gameTPsTab = library:CreateWindow("Game TPs")
-wait()
-local m = mainTab:CreateFolder("Scripts")
+local function LocalPlayer_loaded()
+   -- just to be safe that the LocalPlayer loaded correctly before initializing the script hub for perfect performance.
+   local player = Players.LocalPlayer
+   if not player then
+      repeat task.wait() until Players.LocalPlayer
+      player = Players.LocalPlayer
+   end
 
-local scripts = {
-	["Tower Of Misery"] = {
-		id = 4954752502,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua"
-	},
-	["Ultimate Driving"] = {
-		id = 54865335,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"
-	},
-	["LifeTogether RP"] = {
-		id = 13967668166,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
-	},
-	["Hide And Seek Extreme"] = {
-		id = 205224386,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
-	},
-    ["Player or AI"] = {
-        id = 95217169945642,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
-    },
-    ["Main Street RP"] = {
-        id = 18753889337,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua"
-    },
-    ["SWFL Beta"] = {
-        id = 5104202731,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Southwest_Florida.lua"
-    },
-    ["Driving Empire"] = {
-        id = 3351674303,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"
-    },
-    ["LifeTogether Cmds"] = {
-		id = 13967668166,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
-	},
-}
-
-for name, data in pairs(scripts) do
-	m:Button(name, function()
-		if getgenv().PlaceID == data.id then
-			loadstring(getgenv().Game:HttpGet(data.link))()
-            wait(0.5)
-            p:DestroyGui()
-		else
-			getgenv().notify("Failure:", "You're not in the correct game: " .. name .. ".", 5)
-		end
-	end)
+   if not player.Character or not player.Character:FindFirstChild("Humanoid") then
+      player.CharacterAdded:Wait()
+      -- surprisingly enough, didn't know Humanoid was the main focus of the Character.
+      repeat task.wait() until player.Character:FindFirstChild("Humanoid")
+   end
 end
 
-local g = gameTPsTab:CreateFolder("Teleport")
-
-for name, data in pairs(scripts) do
-	g:Button("Goto " .. name, function()
-		ts:Teleport(data.id, lp)
-	end)
+local function render_safe()
+   -- blame Noclip RunService loops existing, not me.
+   RunService.RenderStepped:Wait()
+   task.wait(0.2)
+   -- yes also leave the task.wait(0.2) here, if you don't you'll start to run into performance issues, I've already tried without it.
 end
 
-m:Button("Flames Hub (Univ)", function()
+local function load_rayfield()
+    local attempts = 0
+    local maxAttempts = 10
+    local success = false
+    local result
+
+    repeat
+        attempts += 1
+        success, result = pcall(function()
+            -- no fully internal function anymore, some exploits didn't like using internal functionality to load UI, would trip up errors about blocked URL's.
+            local raw = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary")
+            local func = loadstring(raw)
+            return func()
+        end)
+
+        if not success or not result then
+            warn("[Rayfield] Load failed (attempt " .. attempts .. "):", result)
+            task.wait(1)
+        end
+    until (success and result) or attempts >= maxAttempts
+
+    return result
+end
+
+local Window
+-- and they are called down here.
+LocalPlayer_loaded()
+render_safe()
+
+Rayfield = load_rayfield()
+
+if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
+    Window = Rayfield:CreateWindow({
+        Name = "🏠 Script Hub Loader 🏠 | "..tostring(executor_Name),
+        LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
+        LoadingSubtitle = "Scripts | Hub.",
+        ConfigurationSaving = {
+            Enabled = false,
+            FolderName = "ScriptHub-Config",
+            FileName = "ScriptHubLoader_Hub"
+        },
+        Discord = {
+            Enabled = false,
+            Invite = "",
+            RememberJoins = true
+        },
+        KeySystem = false,
+        KeySettings = {
+            Title = "None",
+            Subtitle = "No key system is provided.",
+            Note = "This is open source, why enable this?",
+            FileName = "Key",
+            SaveKey = false,
+            GrabKeyFromSite = false,
+            Key = {""}
+        }
+    })
+else
+    warn("[CRITICAL_ERROR]: Rayfield failed to load or is not valid. Returned:", Rayfield)
+end
+wait(0.2)
+getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub or false
+wait(0.1)
+function notify(title, content, duration)
+    if getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub then
+        print("The user has chosen to ignore notifications (has turned them off).")
+    else
+        Rayfield:Notify({
+            Title = tostring(title),
+            Content = tostring(content),
+            Duration = tonumber(duration),
+            Image = 93594537601787,
+            Actions = {
+                Ignore = {
+                    Name = "Alright.",
+                    Callback = function() 
+                        print("...") 
+                    end
+                },
+            },
+        })
+    end
+end
+wait(0.1)
+getgenv().notify = notify
+getgenv().Buttons = getgenv().Buttons or {}
+
+local Tab1 = Window:CreateTab("🏡 Scripts 🏡", 0)
+local Section1 = Tab1:CreateSection("| 🏡 Scripts Section 🏡 |")
+local Tab2 = Window:CreateTab("🎮 Game TPs 🎮", 0)
+local Section2 = Tab2:CreateSection("| 🎮 Scripts Section 🎮 |")
+wait(0.2)
+local function sanitize(name)
+    return name:gsub("%W", "_")
+end
+
+getgenv().FlamesHubUniversal = Tab1:CreateButton({
+Name = "Flames Hub (Universal)",
+Callback = function()
     loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
-end)
+end,})
 
-m:Button("Destroy GUI", function()
-    m:DestroyGui()
-end)
+for name, data in pairs(scripts) do
+    local key = sanitize(name)
+    local d = data
+
+    getgenv().Buttons[key] = Tab1:CreateButton({
+    Name = name,
+    Callback = function()
+        getgenv().GameName = name
+
+        if not d.id or not d.link then
+            getgenv().notify("Failure:", "Script data for '" .. name .. "' is invalid.", 5)
+            return
+        end
+
+        if getgenv().PlaceID == d.id then
+            local ok, res = pcall(function()
+                local src = getgenv().Game:HttpGet(d.link)
+                local f = loadstring(src)
+                if not f then error("loadstring returned nil") end
+                return f()
+            end)
+            if not ok then
+                getgenv().notify("Execution error:", tostring(res), 7)
+            else
+                if p and p.DestroyGui then
+                    p:DestroyGui()
+                end
+            end
+        else
+            getgenv().notify("Failure:", "You're not in the correct game: " .. name .. ".", 5)
+        end
+    end,})
+end
+
+for name, data in pairs(scripts) do
+    if name ~= "LifeTogether Admin Commands (FE)" then
+        getgenv()[tostring(name)] = Tab2:CreateButton({
+        Name = "Teleport To: " .. name,
+        Callback = function()
+            if data.id then
+                getgenv().TeleportService:Teleport(data.id, lp)
+            else
+                getgenv().notify("Failure:", "No place ID for " .. name, 5)
+            end
+        end,})
+    end
+end
