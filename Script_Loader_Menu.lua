@@ -264,36 +264,81 @@ local function init_services()
         getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
     end
 end
-wait()
+task.wait(0.1)
 init_services()
 wait()
-local TweenService = cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
-local TeleportService = cloneref and cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
-local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
-local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local function check_service(serviceName: string)
+    local normalized = serviceName:lower()
+    local serviceMap = {
+        runservice = "RunService",
+        players = "Players",
+        replicatedstorage = "ReplicatedStorage",
+        startergui = "StarterGui",
+        starterpack = "StarterPack",
+        lighting = "Lighting",
+        soundservice = "SoundService",
+        userinputservice = "UserInputService",
+        contextactionservice = "ContextActionService",
+        tweenservice = "TweenService",
+        teleportservice = "TeleportService",
+        teams = "Teams",
+        physicsservice = "PhysicsService",
+        httpservice = "HttpService",
+    }
+
+    local realName = serviceMap[normalized] or serviceName
+
+    local fromEnv
+    if rawget then
+        fromEnv = rawget(getgenv(), serviceName) or rawget(getgenv(), realName)
+    else
+        fromEnv = getgenv()[serviceName] or getgenv()[realName]
+    end
+
+    if fromEnv then
+        return fromEnv
+    end
+
+    local ok, svc = pcall(function()
+        return game:GetService(realName)
+    end)
+
+    if ok and svc then
+        return cloneref and cloneref(svc) or svc
+    end
+
+    return nil
+end
+wait(0.1)
+local TweenService = check_service("TweenService")
+local TeleportService = check_service("TeleportService")
+local UserInputService = check_service("UserInputService")
+local HttpService = check_service("HttpService")
+local Players = check_service("Players")
+local RunService = check_service("RunService")
 local LocalPlayer = Players.LocalPlayer
-local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local ReplicatedStorage = check_service("ReplicatedStorage")
+local Workspace = check_service("Workspace")
+local TextChatService = check_service("TextChatService")
+local Lighting = check_service("Lighting")
 wait(0.3)
-if not getgenv().Players then
+if not Players then
     warn("getgenv().Players was not detected, fixing...")
     getgenv().Players = getgenv().Service_Wrap("Players")
 end
-if not getgenv().ReplicatedStorage then
+if not ReplicatedStorage then
     warn("getgenv().ReplicatedStorage was not detected, fixing...")
     getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
 end
-if not getgenv().TextChatService then
+if not TextChatService then
     warn("getgenv().TextChatService was not detected, fixing...")
     getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
 end
-if not getgenv().Workspace then
+if not Workspace then
     warn("getgenv().Workspace was not detected, fixing...")
     getgenv().Workspace = getgenv().Service_Wrap("Workspace")
 end
-if not getgenv().Lighting then
+if not Lighting then
     warn("getgenv().Lighting was not detected, fixing...")
     getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 end
@@ -366,94 +411,8 @@ local char = getgenv().Character
 local hum = getgenv().Humanoid
 local StarterPlayer = getgenv().StarterPlayer or cloneref and cloneref(game:GetService("StarterPlayer")) or game:GetService("StarterPlayer")
 local usesJumpHeight = StarterPlayer.CharacterUseJumpPower
-
-local playerTab = library:CreateWindow("Player")
 local mainTab = library:CreateWindow("Main")
 local gameTPsTab = library:CreateWindow("Game TPs")
-local p = playerTab:CreateFolder("Player")
-
-p:Slider("WalkSpeed", {
-   min = tonumber(StarterPlayer.CharacterWalkSpeed);
-   max = 500;
-   precise = true;
-},
-function(walk_speed)
-   if hum then
-      hum.WalkSpeed = walk_speed
-   end
-end)
-
-if usesJumpHeight then
-	p:Slider("JumpHeight", {
-      min = tonumber(StarterPlayer.CharacterJumpHeight);
-      max = 500;
-      precise = true;
-   },
-   function(jump_height)
-      if hum then
-         hum.JumpHeight = jump_height
-      end
-	end)
-else
-	p:Slider("JumpPower", {
-		min = tonumber(StarterPlayer.CharacterJumpPower);
-		max = 500;
-		precise = true;
-	},
-   function(jump_power)
-		if hum then
-         hum.JumpPower = jump_power
-      end
-	end)
-end
-
-p:Slider("Gravity", {
-   min = tonumber(getgenv().Workspace.Gravity);
-   max = 400;
-   precise = true;
-},
-function(gravity_val)
-   getgenv().Workspace.Gravity = gravity_val
-end)
-
-local Noclip_Connection
-local Clip = false
-wait(0.1)
-p:Toggle("Noclip",function(Noclip)
-    if Noclip then
-        Clip = false
-        getgenv().Noclip_Enabled = true
-        getgenv()._noclipModifiedParts = {}
-
-        local function NoclipLoop()
-            if not Clip and getgenv().Character then
-                for _, part in ipairs(getgenv().Character:GetDescendants()) do
-                    if part:IsA("BasePart") and part.CanCollide then
-                        part.CanCollide = false
-                        getgenv()._noclipModifiedParts[part] = true
-                    end
-                end
-            end
-        end
-
-        Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
-    else
-        if Noclip_Connection then
-            Noclip_Connection:Disconnect()
-        end
-        Clip = true
-        getgenv().Noclip_Enabled = false
-
-        if getgenv()._noclipModifiedParts then
-            for part, _ in pairs(getgenv()._noclipModifiedParts) do
-                if part and part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
-            end
-            getgenv()._noclipModifiedParts = nil
-        end
-    end
-end)
 wait()
 local m = mainTab:CreateFolder("Scripts")
 
@@ -490,6 +449,10 @@ local scripts = {
         id = 3351674303,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"
     },
+    ["LifeTogether Cmds"] = {
+		id = 13967668166,
+		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
+	},
 }
 
 for name, data in pairs(scripts) do
@@ -516,10 +479,6 @@ m:Button("Flames Hub (Univ)", function()
     loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
 end)
 
-m:Button("LifeTogether Cmds", function()
-    loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"))()
-end)
-
 m:Button("Destroy GUI", function()
-    p:DestroyGui()
+    m:DestroyGui()
 end)
