@@ -1,16 +1,17 @@
-    -- THIS PROJECT ISN'T MANAGED ANYMORE, I QUIT SINCE THEN! This project was to much to handle and I don't want to have my life interrupted by thousands of users looking for support all day everyday, interrupts my real life ultimately.
-    -- There wasn't any updates before I quit, and someone tried to "expose me", which didn't go well for them lmao, why would it? also, they wouldn't have they're script hub (which just IP logs, and hardware logs, and they work with RATTERS), sooo..
-    -- People claim this was wrote with ChatGPT, if you believe it was wrote with ChatGPT go test it, but it's 13K lines of code, why would any of this junk be wrote with ChatGPT?
-    -- This code is VERY unorganized and garbage, I don't know what the FUCK I was doing with this code, but I must have been high when writing it, but I am NOT re-writing any of this code, fuck that shit.
-    -- Enjoy it anyway, I never actually cared for the script, but I did write it so, and it's sort of stable, barely has any issues, and supports every executor, so I guess it worked out somewhat.
-    -- I might fix the code up, but I haven't worked on this shit in a while so, I'm not sure.
-    -- Also, any other script hub with Booth features, just skidded mine, this script came out before ANY of the other scripts, this script actually REALISTICALLY released all the way back in March of 2024.
-    -- Because I see a lot of scripts and script hubs that have these Booth features, and sure enough, they are obfuscated, and seem to work JUST how mine work, that's fucking suspicious, don't you think?
+    -- This project was to much to handle and I don't want to have my life interrupted by thousands of users looking for support all day everyday, interrupts my real life ultimately.
+    -- This project/script hub was originally supposed to only be for MIC UP, as you could probably tell by old comments in this script, but I had plans to branch out more to universal games, when ultimately, I got tired of everything and everyone, and dropped it entirely, to go outside btw (you should try it twin).
+    -- If you think for 5 seconds that this script is an IP grabber of some sort, there is literally 0 protection in this script hub, everything is open sourced, put it in ChatGPT, he'll tell you the same damn thing, I don't give a shit about logging, I only still have this up as a learning tool, I don't even fucking use it anymore.
+    -- People claim this was wrote with ChatGPT, if you believe it was wrote with ChatGPT go test it, but it's 16K lines of code, why would any of this junk be wrote with ChatGPT? this mother-fucker can't even handle 800 lines of code.
+    -- This code is VERY unorganized and garbage unfortunately, I don't know what the FUCK I was doing with this code, but I must have been high when writing it, but I am NOT re-writing any of this code, fuck that shit, I'll just slowly patch up everything that looks or acts broken.
+    -- Enjoy it anyway, I never actually cared for this script hub, but I did write it so, and it's sort of stable, barely has any issues, and supports every executor, so I still keep up as like a learning tool for people who don't know how to code, they can check out this script hub and go over it and see what they can do.
+    -- I might fix the code up more as time goes on, but I haven't worked on this shit in a quite some time, check the updates, we'll see what actually starts working again.
+    -- Also, any other script hub with my features, are just skids, this script came out before ANY of the other MIC UP scripts, this script actually REALISTICALLY released way, like all the fuck back in like March of 2024.
+    -- Because I see a lot of scripts and script hubs that have my features, and sure enough, they are obfuscated, and seem to work JUST how mine work, that's fucking suspicious, don't you think?
     -- I wrote this script myself, and I don't plan on utilizing ChatGPT, why would I? scripting in Roblox is fairly easy, and doesn't take much skill, unlike languages like C# that might take a bit more time to learn or JavaScript, or even Java.
-    -- I plan to release an API sort of script soon, which will allow you to have anticheat bypasses and stuff and secure services and shit but with 1 singular Loadstring, and ESP and what not to.
-    -- Stay tuned, even though I quit doing all of this bullshit.
+    -- API has been successfully released and is no longer in BETA (I believe).
+    -- Stay tuned, even though I generally quit and don't really (actively) maintain this script hub, also because it has everything and I cannot think of anything more to add to it, I've literally got everything.
     
-    -- Do you even fuckin need this? no you don't.
+    -- Do you even fuckin need this? no you don't, this isn't updated bro.
     --[[
         Animation Packages: Zombie, Catwalk Glam, Elder, Cartoony, Adidas,
         Adidas Community Package, Werewolf, Vampire, Astronaut,
@@ -20,7 +21,7 @@
         Wicked Popular, Bold, Stylish,
         Rthro [default Roblox Animation package]
     --]]
-    wait(1) -- Believe it or not, this actually helps when loading the script, stops people from spamming it, so it can load correctly and smoothly.
+    wait(1) -- Believe it or not, this actually helps when loading the script, stops people from spamming it, so it can load correctly and smoothly (you're the dumbass, not me).
     print("1")
     local function getExecutor()
         local name
@@ -30,15 +31,15 @@
         return { Name = name or "Unknown Executor"} -- Alternates to "Unknown Executor" if the name isn't found, the only reason I kept this was because people on executors like JJSploit, or Zorara, we're having some issues in the beginning, and it would produce string errors, but this fixed it, and I kept it ever since, long time ago.
     end
 
-    local function detectExecutor() -- Really cool function, does the hard work for us, erases the version part of the executors name so we can ACTUALLY match the name and make support for all different types of things.
+    local function detectExecutor() -- Really cool function, does the hard work for us, erases the version part of the executors name so we can ACTUALLY match the name correctly, and not any extra details that the executor's function includes.
         local executorDetails = getExecutor()
         return string.format("%s", executorDetails.Name)
     end
     wait()
     local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
-    local Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))()
+    local Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))() -- old module, still use it though to patch updates, destroy the GUI, etc, basic stuff.
     local Notifications_Module_Flames_Hub = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Internal_Notification_System.lua'))()
-    local Version = Module:Get_Current_Version()
+    local Version = Module:Get_Current_Version() -- Keeps track of our version, dipshit.
     wait(0.1)
     local Script_Version = Version
     local executor_Name = detectExecutor()
@@ -47,26 +48,27 @@
     wait(0.2)
     -- Because I mean, sometimes the errors don't exactly show where the issue is, so print statements everywhere helps identify where the issue is located at or around what area.
     local CoreGui = Flames_API.Service("CoreGui")
-    local vc_service = Flames_API.Service("VoiceChatService") -- This wasn't exactly necessary, but I decided to leave it in to keep safety a priority.
+    local vc_service = Flames_API.Service("VoiceChatService") -- This wasn't exactly necessary, but I decided to leave it in to keep our undetection via 'cloneref'.
     local Players = Flames_API.Service("Players")
     local LocalPlayer = Players.LocalPlayer
     local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(LocalPlayer.UserId) -- This was to make sure users know if they have VoiceChat, because apparently some of them miss that part of Roblox.
     local Notification
     wait(0.3)
-    -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful functions.
+    -- This is a decent Notification Library, as it includes features such as: 'Warnings', 'Errors', and other useful functions, I plan to maybe modify it soon.
     httprequest_loader = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
     local response = httprequest_loader({
         Url = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Library.lua",
         Method = "GET"
     })
-    -- Before you ask, yes, this works for every executor, and it is really good for when you don't want to use Loadstring ;) plus it's fully internal, and I guarantee it bypasses most anticheats to ;)
+    -- Before you ask, yes, this works for every executor, and it is really good for when you don't want to use Loadstring, plus it's fully internal, and I guarantee it bypasses most anticheats to, no way that it doesn't.
     -- Definitely doesn't bypass Football Fusion or popular anticheats or anything, that'd be wrong of me to publicly release a bypass for loading UI libraries and scripts fully internally and bypassed.
     -- You get what I'm saying, now go fuck off and skid it.
 
     getgenv().SCRIPT_EXECUTED = getgenv().SCRIPT_EXECUTED or false
     getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE or false
-
+    -- Where we store our loaded data value(s), I say that in vein as this is re-branded from Infinite Yield, though made to work better, as it is recursive and can re-execute if it finds something wrong with the script (like if the script you ran errored, and didn't load fully) --
+    -- So that if you re-ran this script hub, it'll automatically try again to see where and what went wrong and re-execute it's self until it works. --
     if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
         if not getgenv().notify then
             getgenv().StarterGui_Notify = function(title, content, duration)
@@ -79,14 +81,14 @@
                 })
             end
         end
-
+        -- This is what you call working efficiently, making checks everywhere is important, not all executors treat functionality the same you know. --
         if getgenv().StarterGui_Notify then
             getgenv().StarterGui_Notify("CRITICAL:", "Flames Hub seems to have failed to load last time, re-running...", 5)
             task.wait(0.2)
             getgenv().StarterGui_Notify("Alert:", "If Flames Hub does not fix itself, it's probably down!", 5)
         else
             getgenv().StarterGui_Notify = function(title, content, duration)
-                local StarterGui = Flames_API.Service("StarterGui")
+                local StarterGui = Flames_API.Service("StarterGui") -- Is a bit slower, but still gets the job done in what we're trying to do.
                 StarterGui:SetCore("SendNotification", {
                     Title = tostring(title),
                     Text = tostring(content),
@@ -100,8 +102,9 @@
             getgenv().StarterGui_Notify("Alert:", "If Flames Hub does not fix itself, it's probably down!", 5)
         end
         task.wait(0.1)
-        Module:Destroy_Script()
+        Module:Destroy_Script() -- Destroy the current running script, as it most likely failed to run
         task.wait(0.3)
+        -- Then obviously just re-runs down here if the script failed a load last time. --
         loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
     end
     wait(0.2)
@@ -109,16 +112,17 @@
         Notification = loadstring(response.Body)()
         -- This is actually believe it or not a very neat system, I'll tell you why, when utilizing Loadstring, some people execute HTTP loggers/HTTP spies, and when utilizing this, you can put in an anti HTTP Loadstring loader, and this'll still work like normal, go test it.
     else
-        print("Failed to fetch script:", response.StatusCode)
+        print("Failed to fetch script:", response.StatusCode) -- return a different status if we didn't find the correct link for our Notification Library, or something went wrong otherwise.
     end
     -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
     if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then  
         return Notification:Notify("Heads Up!", "Flames Hub is already running!", 5)
     end
-    pcall(function() getgenv().SCRIPT_EXECUTED = true end)
+    pcall(function() getgenv().SCRIPT_EXECUTED = true end) -- correctly store our loaded state, to ensure we track execution.
 
+    -- just to check if the current experience is MIC UP, if it isn't, then just don't do anything else, simple. --
     local function is_mic_up()
-        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then -- included both 17+ MIC UP and regular MIC UP experiences.
             return true
         else
             return false
@@ -135,7 +139,7 @@
     elseif (enabled_vc == false and (not game.PlaceId == 6884319169)) or (not game.PlaceId == 15546218972) then
         Notification:Notify("Success!", "Connected.", 5)
     elseif enabled_vc == false and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        Notification:Notify("ALERT:", "You do not have VC, you may be kicked!", 5)
+        Notification:Notify("ALERT:", "You do not have VC, you may be kicked!", 5) -- Alerting that since the user does not have Voice Chat, MIC UP may remove them from the game (since it's literally a VC game lmao).
     else
         Notification:Notify("Passed.", "Unknown error occurred: ???.", 5) -- I actually have no idea when or why I added this, but I guess I kept it, so it might be necessary, I don't know man.
     end
