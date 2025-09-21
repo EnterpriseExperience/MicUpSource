@@ -4280,3 +4280,98 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
       getgenv().Unlocked_Vehicles[Name] = false
    end
 end)
+task.wait(0.2)
+function Notify(message, duration)
+   local function safe_wrapper(S)
+      if cloneref then
+         return cloneref(game:GetService(S))
+      else
+         return game:GetService(S)
+      end
+   end
+
+   local Players = safe_wrapper("Players")
+   local TweenService = safe_wrapper("TweenService")
+   local CoreGui = get_hidden_gui and get_hidden_gui() or gethui and gethui() or safe_wrapper("CoreGui")
+
+   local NotificationGui = Instance.new("ScreenGui")
+   NotificationGui.Name = "CustomErrorGui"
+   NotificationGui.ResetOnSpawn = false
+   NotificationGui.Parent = CoreGui
+   duration = duration or 5
+
+   local Frame = Instance.new("Frame")
+   Frame.Name = "ErrorMessage"
+   Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+   Frame.BackgroundTransparency = 0.3
+   Frame.BorderSizePixel = 0
+   Frame.Size = UDim2.new(0, 400, 0, 60)
+   Frame.Position = UDim2.new(0, 20, 0, 100)
+   Frame.Parent = NotificationGui
+
+   local UICorner = Instance.new("UICorner")
+   UICorner.CornerRadius = UDim.new(0, 6)
+   UICorner.Parent = Frame
+
+   local Icon = Instance.new("ImageLabel")
+   Icon.Name = "ErrorIcon"
+   Icon.AnchorPoint = Vector2.new(0, 0.5)
+   Icon.BackgroundTransparency = 1
+   Icon.Position = UDim2.new(0, 10, 0.5, -20)
+   Icon.Size = UDim2.new(0, 40, 0, 40)
+   Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
+   Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+   Icon.Parent = Frame
+
+   local Label = Instance.new("TextLabel")
+   Label.Name = "ErrorText"
+   Label.BackgroundTransparency = 1
+   Label.Position = UDim2.new(0, 60, 0, 0)
+   Label.Size = UDim2.new(1, -70, 1, 0)
+   Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
+   Label.Text = message
+   Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+   Label.TextSize = 20
+   Label.TextWrapped = true
+   Label.TextXAlignment = Enum.TextXAlignment.Left
+   Label.TextYAlignment = Enum.TextYAlignment.Center
+   Label.Parent = Frame
+
+   Frame.BackgroundTransparency = 1
+   Icon.ImageTransparency = 1
+   Label.TextTransparency = 1
+   TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
+   TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
+   TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+
+   task.delay(duration, function()
+      if Frame and Frame.Parent then
+         TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+         TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+         TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+         task.wait(0.35)
+         Frame:Destroy()
+         NotificationGui:Destroy()
+      end
+   end)
+end
+
+task.spawn(function()
+   getgenv().ConstantUpdate_Checker_Live = true
+   while getgenv().ConstantUpdate_Checker_Live == true do
+      task.wait(1)
+
+      local success, latestVersionInfo = pcall(function()
+         local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON")
+         return HttpService:JSONDecode(versionJson)
+      end)
+
+      if success and latestVersionInfo then
+         if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
+            getgenv().ConstantUpdate_Checker_Live = false
+            Notify("JUST UPDATED: Rejoin and re-execute the Loadstring to update!", 20)
+            break
+         end
+      end
+   end
+end)
