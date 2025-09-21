@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "2.0.2-LIFE"
+local Script_Version = "2.0.5-LIFE"
 
 local function getExecutor()
     local name
@@ -496,22 +496,30 @@ else
     warn("[CRITICAL_ERROR]: Rayfield failed to load or is not valid. Returned:", Rayfield)
 end
 wait(1)
-getgenv().notify = function(title, content, duration)
-    Rayfield:Notify({
-        Title = tostring(title),
-        Content = tostring(content),
-        Duration = tonumber(duration),
-        Image = 93594537601787,
-        Actions = {
-            Ignore = {
-                Name = "Okay.",
-                Callback = function()
-                    print("...")
-                end
+getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub or false
+wait(0.1)
+function notify(title, content, duration)
+    if getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub then
+        print("The user has chosen to ignore notifications (has turned them off).")
+    else
+        Rayfield:Notify({
+            Title = tostring(title),
+            Content = tostring(content),
+            Duration = tonumber(duration),
+            Image = 93594537601787,
+            Actions = {
+                Ignore = {
+                    Name = "Alright.",
+                    Callback = function() 
+                        print("...") 
+                    end
+                },
             },
-        },
-    })
+        })
+    end
 end
+wait(0.1)
+getgenv().notify = notify
 wait(1)
 if executor_Name == "Xeno" or executor_Name == "Solara" then
     return getgenv().notify("FAILURE:", "Xeno/Solara cannot run this script!", 10)
@@ -1677,6 +1685,10 @@ function vehicle_void_player(TargetPlayer)
     end
 end
 
+function free_emotes()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
+end
+
 getgenv().void_loop_enabled = false
 wait()
 function start_void_loop(TargetPlayer)
@@ -2075,6 +2087,12 @@ Callback = function(car_fling_plr)
     end
 end,})
 
+getgenv().FreeEmotesGUI = Tab2:CreateButton({
+Name = "Free Emotes GUI (UGC Emotes Supported!)",
+Callback = function()
+    free_emotes()
+end,})
+
 getgenv().StopCar_FlingScript = Tab3:CreateButton({
 Name = "Stop/Shutdown Car Fling",
 Callback = function()
@@ -2311,6 +2329,32 @@ Callback = function(flashlight_phone)
         flashlight(true)
     else
         flashlight(false)
+    end
+end,})
+
+getgenv().DisableNotificationsScript = Tab1:CreateButton({
+Name = "Disable Notifications",
+Callback = function()
+    print("Disabled notifications successfully.")
+    getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = true
+end,})
+
+getgenv().EnableNotificationsScript = Tab1:CreateButton({
+Name = "Enable Notifications",
+Callback = function()
+    print("Enabled notifications successfully.")
+    getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = false
+end,})
+
+getgenv().IgnoreNotifications_Disable = Tab1:CreateToggle({
+Name = "Toggle notification visibility (enable/disable notifs)",
+CurrentValue = getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub,
+Flag = "IgnoreNotificationsInstead",
+Callback = function(notificatios_enabled)
+    if notifications_enabled then
+        getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = false
+    else
+        getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = true
     end
 end,})
 
