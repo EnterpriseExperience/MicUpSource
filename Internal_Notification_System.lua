@@ -86,3 +86,5 @@ function Notification_API:SendNotification_External(Title, Content)
         Text = tostring(Content),
     })
 end
+
+return Notification_API
