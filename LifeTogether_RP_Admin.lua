@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.0.6"
+local Raw_Version = "V3.0.8"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1279,6 +1279,66 @@ local function stop_rainbow_skin()
    end
 end
 
+getgenv().NoMoreFireAndFlames = function(stopping_flames_enabled)
+   if stopping_flames_enabled == true then
+      if getgenv().HideFireParticlesConnection then
+         getgenv().HideFireParticlesConnection:Disconnect()
+         getgenv().HideFireParticlesConnection = nil
+      end
+
+      local function hideFireParticles(emitter)
+         if emitter:IsA("ParticleEmitter") and emitter.Name == "FireParticles" then
+            local parent = emitter.Parent
+            if parent and parent:IsA("BasePart") and parent:FindFirstChildWhichIsA("Sound") then
+               emitter.Enabled = false
+               emitter.Transparency = NumberSequence.new(1)
+               emitter.Size = NumberSequence.new(0)
+               emitter.LightEmission = 0
+               emitter.LightInfluence = 0
+            end
+         end
+      end
+
+      for _, d in ipairs(getgenv().Workspace:GetDescendants()) do
+         hideFireParticles(d)
+      end
+
+      getgenv().HideFireParticlesConnection = getgenv().Workspace.DescendantAdded:Connect(hideFireParticles)
+   elseif stopping_flames_enabled == false then
+      if getgenv().HideFireParticlesConnection then
+         getgenv().HideFireParticlesConnection:Disconnect()
+         getgenv().HideFireParticlesConnection = nil
+      end
+      getgenv().SpamFire = false
+   else
+      return 
+   end
+end
+
+getgenv().spamming_flames = function(toggled)
+   if toggled == true then
+      if getgenv().SpamFire then
+         return getgenv().notify("Failure:", "Flame spam is already enabled!", 5)
+      end
+      wait(0.2)
+      getgenv().NoMoreFireAndFlames(true)
+      task.wait(0.3)
+      getgenv().SpamFire = true
+      while getgenv().SpamFire == true do
+      task.wait()
+         getgenv().Send("request_fire")
+      end
+   elseif toggle == false then
+      if not getgenv().SpamFire or getgenv().SpamFire == false then
+         return getgenv().notify("Failure:", "Flame spam is not enabled!", 5)
+      end
+      wait(0.2)
+      getgenv().NoMoreFireAndFlames(false)
+   else
+      return 
+   end
+end
+
 getgenv().HD_FlyEnabled = false
 local FlyConnection
 local speed = 75
@@ -1752,6 +1812,8 @@ local function CommandsMenu()
       {prefix}startrgbtool - Enables RGB Tool (FE, Flashing Rainbow Tool)
       {prefix}stoprgbtool - Disables RGB Tool (FE, Flashing Rainbow Tool)
       {prefix}noglitchoutfit - Disables the glitching of your outfit
+      {prefix}flames - Spams fire all over you.
+      {prefix}noflames - Disables the spamming of fire.
       {prefix}name NewName - Change RP name
       {prefix}bio NewBio - Change RP bio
       {prefix}freeemotes - Gives you the Free Emotes GUI.
@@ -2935,6 +2997,10 @@ local function handleCommand(sender, message)
       stop_rainbow_car()
    elseif cmd == "startrgbskin" then
       rainbow_skin(true)
+   elseif cmd == "flames" or cmd == "flameson" or cmd == "startflames" then
+      getgenv().spamming_flames(true)
+   elseif cmd == "noflames" or cmd == "flamesoff" or cmd == "stopflames" then
+      getgenv().spamming_flames(false)
    elseif cmd == "rainbowcar" then
       local PlayerToRGBCar = findplr(split[1])
       if not PlayerToRGBCar then return notify("Failure:", "Player does not exist!", 5) end
