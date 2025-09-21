@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.0.3"
+local Raw_Version = "V3.0.6"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -956,6 +956,85 @@ for _, name in ipairs(AllCars) do
    CarMap[name:lower()] = name
 end
 
+function car_listing_gui()
+   local ScreenGui = Instance.new("ScreenGui")
+   ScreenGui.Name = "CarListUI"
+   ScreenGui.Parent = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+
+   local MainFrame = Instance.new("Frame")
+   MainFrame.Size = UDim2.new(0, 350, 0, 450)
+   MainFrame.Position = UDim2.new(0.5, -175, 0.5, -225)
+   MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+   MainFrame.BorderSizePixel = 0
+   MainFrame.Parent = ScreenGui
+
+   local UICorner = Instance.new("UICorner")
+   UICorner.CornerRadius = UDim.new(0, 15)
+   UICorner.Parent = MainFrame
+
+   local Title = Instance.new("TextLabel")
+   Title.Size = UDim2.new(1, -40, 0, 40)
+   Title.Position = UDim2.new(0, 10, 0, 0)
+   Title.BackgroundTransparency = 1
+   Title.Text = "Made by: computerbinaries"
+   Title.Font = Enum.Font.GothamBold
+   Title.TextSize = 18
+   Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+   Title.TextXAlignment = Enum.TextXAlignment.Left
+   Title.Parent = MainFrame
+
+   local CloseButton = Instance.new("TextButton")
+   CloseButton.Size = UDim2.new(0, 30, 0, 30)
+   CloseButton.Position = UDim2.new(1, -35, 0, 5)
+   CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+   CloseButton.Text = "X"
+   CloseButton.Font = Enum.Font.GothamBold
+   CloseButton.TextSize = 16
+   CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+   CloseButton.Parent = MainFrame
+
+   local CloseCorner = Instance.new("UICorner")
+   CloseCorner.CornerRadius = UDim.new(0, 8)
+   CloseCorner.Parent = CloseButton
+
+   CloseButton.MouseButton1Click:Connect(function()
+      ScreenGui:Destroy()
+   end)
+
+   local ScrollingFrame = Instance.new("ScrollingFrame")
+   ScrollingFrame.Size = UDim2.new(1, -20, 1, -60)
+   ScrollingFrame.Position = UDim2.new(0, 10, 0, 50)
+   ScrollingFrame.BackgroundTransparency = 1
+   ScrollingFrame.BorderSizePixel = 0
+   ScrollingFrame.ScrollBarThickness = 6
+   ScrollingFrame.Parent = MainFrame
+
+   local UIListLayout = Instance.new("UIListLayout")
+   UIListLayout.Parent = ScrollingFrame
+   UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+   UIListLayout.Padding = UDim.new(0, 5)
+
+   local UIPadding = Instance.new("UIPadding")
+   UIPadding.Parent = ScrollingFrame
+   UIPadding.PaddingLeft = UDim.new(0, 5)
+   UIPadding.PaddingTop = UDim.new(0, 5)
+
+   for _, name in ipairs(AllCars) do
+      local CarLabel = Instance.new("TextLabel")
+      CarLabel.Size = UDim2.new(1, -10, 0, 30)
+      CarLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+      CarLabel.Text = name
+      CarLabel.Font = Enum.Font.Gotham
+      CarLabel.TextSize = 16
+      CarLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+      CarLabel.Parent = ScrollingFrame
+      
+      local CarCorner = Instance.new("UICorner")
+      CarCorner.CornerRadius = UDim.new(0, 10)
+      CarCorner.Parent = CarLabel
+   end
+end
+
 wait()
 local function get_other_vehicle(Player)
    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
@@ -1675,6 +1754,8 @@ local function CommandsMenu()
       {prefix}noglitchoutfit - Disables the glitching of your outfit
       {prefix}name NewName - Change RP name
       {prefix}bio NewBio - Change RP bio
+      {prefix}freeemotes - Gives you the Free Emotes GUI.
+      {prefix}allcars - Gives you the GUI list that shows all the car names.
       {prefix}noemote - Disables any emote you are currently doing.
       {prefix}griddy - Makes you do the Griddy emote (FE).
       {prefix}scenario - Makes you do the Scenario emote (FE).
@@ -3021,6 +3102,10 @@ local function handleCommand(sender, message)
          task.wait()
          getgenv().Send("end_call", Target)
       end
+   elseif cmd == "freeemotes" or cmd == "freeemotesgui" or cmd == "allemotes" then
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
+   elseif cmd == "allcars" or cmd == "allvehicles" or cmd == "listvehicles" then
+      car_listing_gui()
    elseif cmd == "unannoy" then
       for i = 1, 50 do
          getgenv().easy_click_plr = false
