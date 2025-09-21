@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "2.0.5-LIFE"
+local Script_Version = "2.0.7-LIFE"
 
 local function getExecutor()
     local name
@@ -1543,6 +1543,70 @@ local Emotes = {
     },
 }
 
+getgenv().NoMoreFireAndFlames = function(stopping_flames_enabled)
+    if stopping_flames_enabled == true then
+        if getgenv().HideFireParticlesConnection then
+            getgenv().HideFireParticlesConnection:Disconnect()
+            getgenv().HideFireParticlesConnection = nil
+        end
+
+        local function hideFireParticles(emitter)
+            if emitter:IsA("ParticleEmitter") and emitter.Name == "FireParticles" then
+                local parent = emitter.Parent
+                if parent and parent:IsA("BasePart") and parent:FindFirstChildWhichIsA("Sound") then
+                    emitter.Enabled = false
+                    emitter.Transparency = NumberSequence.new(1)
+                    emitter.Size = NumberSequence.new(0)
+                    emitter.LightEmission = 0
+                    emitter.LightInfluence = 0
+                end
+            end
+        end
+
+        for _, d in ipairs(getgenv().Workspace:GetDescendants()) do
+            hideFireParticles(d)
+        end
+
+        getgenv().HideFireParticlesConnection = getgenv().Workspace.DescendantAdded:Connect(hideFireParticles)
+    elseif stopping_flames_enabled == false then
+        if getgenv().HideFireParticlesConnection then
+            getgenv().HideFireParticlesConnection:Disconnect()
+            getgenv().HideFireParticlesConnection = nil
+        end
+        getgenv().SpamFire = false
+    else
+        return 
+    end
+end
+
+getgenv().spamming_flames = function(toggled)
+    if toggled == true then
+        if getgenv().SpamFire then
+            return getgenv().notify("Failure:", "Flame spam is already enabled!", 5)
+        end
+        task.wait(0.2)
+        getgenv().NoMoreFireAndFlames(true)
+        task.wait(0.3)
+        getgenv().SpamFire = true
+
+        task.spawn(function()
+            while getgenv().SpamFire == true do
+                task.wait(0.7)
+                getgenv().Send("request_fire")
+            end
+        end)
+    elseif toggled == false then
+        if not getgenv().SpamFire or getgenv().SpamFire == false then
+            return getgenv().notify("Failure:", "Flame spam is not enabled!", 5)
+        end
+        task.wait(0.2)
+        getgenv().NoMoreFireAndFlames(false)
+        getgenv().SpamFire = false
+    else
+        return 
+    end
+end
+
 local Aliases = {
    ["orange justice"] = "orangejustice",
    ["orange_justice"] = "orangejustice",
@@ -1576,6 +1640,12 @@ function do_emote(input)
         local choice = emoteList[math.random(1, #emoteList)]
         local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
 
+        if choice == "aura" and (getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS") then
+            getgenv().spamming_flames(true)
+        else
+            warn("what, how'd you get this.")
+        end
+
         local animate = getgenv().Character:FindFirstChild("Animate")
         if animate then
             animate.Disabled = true
@@ -1585,7 +1655,7 @@ function do_emote(input)
             task.spawn(function()
                 track.Stopped:Wait()
                 if animate and animate.Parent then
-                animate.Disabled = false
+                    animate.Disabled = false
                 end
                 getgenv().Is_Currently_Emoting = false
             end)
@@ -2924,6 +2994,18 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
         return 
     end
 end)
+
+getgenv().FlamSpamAbsoluteChaos = Tab2:CreateToggle({
+Name = "Flame Spam (FE)",
+CurrentValue = false,
+Flag = "AbsoluteFlamesSpamFE",
+Callback = function(spamming_fire)
+    if spamming_fire then
+        getgenv().spamming_flames(true)
+    else
+        getgenv().spamming_flames(false)
+    end
+end,})
 
 getgenv().FrozenChar = Tab2:CreateToggle({
 Name = "Freeze Your Character",
