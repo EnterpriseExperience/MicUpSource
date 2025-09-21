@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "2.0.7-LIFE"
+local Script_Version = "2.0.9-LIFE"
 
 local function getExecutor()
     local name
@@ -1543,6 +1543,37 @@ local Emotes = {
     },
 }
 
+getgenv().CompletelyHideFlamesComingIn = function(completely_stop_flames)
+    if completely_stop_flames == true then
+        if getgenv().DestroyParticlesConnection then
+            getgenv().DestroyParticlesConnection:Disconnect()
+            getgenv().DestroyParticlesConnection = nil
+        end
+
+        local function hideFireParticles(emitter)
+            if emitter:IsA("ParticleEmitter") and emitter.Name == "FireParticles" then
+                local parent = emitter.Parent
+                if parent and parent:IsA("BasePart") and parent:FindFirstChildWhichIsA("Sound") then
+                    pcall(function() parent:Destroy() task.wait() emitter:Destroy() end)
+                end
+            end
+        end
+
+        for _, d in ipairs(getgenv().Workspace:GetDescendants()) do
+            hideFireParticles(d)
+        end
+
+        getgenv().DestroyParticlesConnection = getgenv().Workspace.DescendantAdded:Connect(hideFireParticles)
+    elseif completely_stop_flames == false then
+        if getgenv().DestroyParticlesConnection then
+            getgenv().DestroyParticlesConnection:Disconnect()
+            getgenv().DestroyParticlesConnection = nil
+        end
+    else
+        return 
+    end
+end
+
 getgenv().NoMoreFireAndFlames = function(stopping_flames_enabled)
     if stopping_flames_enabled == true then
         if getgenv().HideFireParticlesConnection then
@@ -2994,6 +3025,24 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
         return 
     end
 end)
+
+getgenv().DestroyFlameParticlesNoLag = Tab2:CreateToggle({
+Name = "Destroy Flames",
+CurrentValue = false,
+Flag = "CompletelyDestroyFlamesConn",
+Callback = function(destroying_flames)
+    if destroying_flames then
+        if getgenv().DestroyParticlesConnection then
+            getgenv().DestroyFlameParticlesNoLag:Set(false)
+            getgenv().CompletelyHideFlamesComingIn(false)
+            return getgenv().notify("Failure:", "Something happened (toggled to fast? toggled twice?)", 5)
+        end
+
+        getgenv().CompletelyHideFlamesComingIn(true)
+    else
+        getgenv().CompletelyHideFlamesComingIn(false)
+    end
+end,})
 
 getgenv().FlamSpamAbsoluteChaos = Tab2:CreateToggle({
 Name = "Flame Spam (FE)",
