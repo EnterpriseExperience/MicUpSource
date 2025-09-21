@@ -10,7 +10,7 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 
-local Script_Version = "2.0.9-LIFE"
+local Script_Version = "2.1.0-LIFE"
 
 local function getExecutor()
     local name
@@ -1545,25 +1545,26 @@ local Emotes = {
 
 getgenv().CompletelyHideFlamesComingIn = function(completely_stop_flames)
     if completely_stop_flames == true then
-        if getgenv().DestroyParticlesConnection then
-            getgenv().DestroyParticlesConnection:Disconnect()
-            getgenv().DestroyParticlesConnection = nil
-        end
-
-        local function hideFireParticles(emitter)
-            if emitter:IsA("ParticleEmitter") and emitter.Name == "FireParticles" then
-                local parent = emitter.Parent
-                if parent and parent:IsA("BasePart") and parent:FindFirstChildWhichIsA("Sound") then
-                    pcall(function() parent:Destroy() task.wait() emitter:Destroy() end)
+        local function destroyFireModel(model)
+            if model:IsA("Model") and model.Name == "Fire" then
+                local firePart = model:FindFirstChild("Fire")
+                if firePart and firePart:IsA("BasePart") then
+                    local emitter = firePart:FindFirstChild("FireParticles")
+                    local sound = firePart:FindFirstChildWhichIsA("Sound")
+                    if emitter and sound then
+                        pcall(function()
+                            model:Destroy()
+                        end)
+                    end
                 end
             end
         end
 
-        for _, d in ipairs(getgenv().Workspace:GetDescendants()) do
-            hideFireParticles(d)
+        for _, child in ipairs(getgenv().Workspace:GetChildren()) do
+            destroyFireModel(child)
         end
 
-        getgenv().DestroyParticlesConnection = getgenv().Workspace.DescendantAdded:Connect(hideFireParticles)
+        getgenv().DestroyParticlesConnection = getgenv().Workspace.ChildAdded:Connect(destroyFireModel)
     elseif completely_stop_flames == false then
         if getgenv().DestroyParticlesConnection then
             getgenv().DestroyParticlesConnection:Disconnect()
@@ -1581,24 +1582,27 @@ getgenv().NoMoreFireAndFlames = function(stopping_flames_enabled)
             getgenv().HideFireParticlesConnection = nil
         end
 
-        local function hideFireParticles(emitter)
-            if emitter:IsA("ParticleEmitter") and emitter.Name == "FireParticles" then
-                local parent = emitter.Parent
-                if parent and parent:IsA("BasePart") and parent:FindFirstChildWhichIsA("Sound") then
-                    emitter.Enabled = false
-                    emitter.Transparency = NumberSequence.new(1)
-                    emitter.Size = NumberSequence.new(0)
-                    emitter.LightEmission = 0
-                    emitter.LightInfluence = 0
+        local function hideFireParticles(model)
+            if model:IsA("Model") and model.Name == "Fire" then
+                local firePart = model:FindFirstChild("Fire")
+                if firePart and firePart:IsA("BasePart") then
+                    local emitter = firePart:FindFirstChild("FireParticles") or firePart:FindFirstChildOfClass("ParticleEmitter")
+                    if emitter then
+                        emitter.Enabled = false
+                        emitter.Transparency = NumberSequence.new(1)
+                        emitter.Size = NumberSequence.new(0)
+                        emitter.LightEmission = 0
+                        emitter.LightInfluence = 0
+                    end
                 end
             end
         end
 
-        for _, d in ipairs(getgenv().Workspace:GetDescendants()) do
-            hideFireParticles(d)
+        for _, child in ipairs(getgenv().Workspace:GetChildren()) do
+            hideFireParticles(child)
         end
 
-        getgenv().HideFireParticlesConnection = getgenv().Workspace.DescendantAdded:Connect(hideFireParticles)
+        getgenv().DestroyParticlesConnection = getgenv().Workspace.ChildAdded:Connect(hideFireParticles)
     elseif stopping_flames_enabled == false then
         if getgenv().HideFireParticlesConnection then
             getgenv().HideFireParticlesConnection:Disconnect()
