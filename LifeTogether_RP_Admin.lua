@@ -1320,20 +1320,24 @@ getgenv().spamming_flames = function(toggled)
       if getgenv().SpamFire then
          return getgenv().notify("Failure:", "Flame spam is already enabled!", 5)
       end
-      wait(0.2)
+      task.wait(0.2)
       getgenv().NoMoreFireAndFlames(true)
       task.wait(0.3)
       getgenv().SpamFire = true
-      while getgenv().SpamFire == true do
-      task.wait()
-         getgenv().Send("request_fire")
-      end
-   elseif toggle == false then
+
+      task.spawn(function()
+         while getgenv().SpamFire == true do
+            task.wait(0.7)
+            getgenv().Send("request_fire")
+         end
+      end)
+   elseif toggled == false then
       if not getgenv().SpamFire or getgenv().SpamFire == false then
          return getgenv().notify("Failure:", "Flame spam is not enabled!", 5)
       end
-      wait(0.2)
+      task.wait(0.2)
       getgenv().NoMoreFireAndFlames(false)
+      getgenv().SpamFire = false
    else
       return 
    end
@@ -1458,6 +1462,12 @@ function do_emote(input)
       getgenv().Is_Currently_Emoting = true
       local choice = emoteList[math.random(1, #emoteList)]
       local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
+
+      if choice == "aura" and (getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS") then
+         getgenv().spamming_flames(true)
+      else
+         warn("what, how'd you get this.")
+      end
 
       local animate = getgenv().Character:FindFirstChild("Animate")
       if animate then
