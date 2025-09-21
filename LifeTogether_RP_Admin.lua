@@ -1327,7 +1327,7 @@ getgenv().spamming_flames = function(toggled)
 
       task.spawn(function()
          while getgenv().SpamFire == true do
-            task.wait(0.7)
+            task.wait(.3)
             getgenv().Send("request_fire")
          end
       end)
