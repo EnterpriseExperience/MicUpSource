@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.1.0"
+local Raw_Version = "V3.1.2"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -16,7 +16,120 @@ getgenv().Service_Wrap = function(serviceName)
       return getgenv().Game:GetService(serviceName)
    end
 end
+wait(0.2)
+local Players = rawget and rawget(getgenv(), "Players") or getgenv().Players or getgenv().Service_Wrap("Players") or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+task.wait(0.2)
+local watchedNames = {
+   ["L0CKED_1N1"] = true,
+   ["CHEATING_B0SS"] = true,
+}
 
+local function make_title(player, text, color, transparency)
+   local function applyToCharacter(character)
+      task.wait(0.5)
+      if color == Color3.fromRGB(255, 255, 255) then
+         local head = character:WaitForChild("Head", 3)
+         if not head then return warn("Head does not exist!") end
+         if head:FindFirstChild("FlamesHubBillboard") then return end
+
+         local billboardGui = Instance.new("BillboardGui")
+         billboardGui.Name = "FlamesHubBillboard"
+         billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+         billboardGui.MaxDistance = math.huge
+         billboardGui.LightInfluence = 0
+         billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+         billboardGui.AlwaysOnTop = true
+         billboardGui.Parent = head
+
+         local background = Instance.new("Frame")
+         background.Size = UDim2.new(1, 0, 1, 0)
+         background.BackgroundTransparency = transparency
+         background.BackgroundColor3 = color
+         background.BorderSizePixel = 0
+         background.Parent = billboardGui
+
+         local uiCorner = Instance.new("UICorner")
+         uiCorner.CornerRadius = UDim.new(0.3, 0)
+         uiCorner.Parent = background
+
+         local textLabel = Instance.new("TextLabel")
+         textLabel.Size = UDim2.new(1, -10, 1, -10)
+         textLabel.Position = UDim2.new(0, 5, 0, 5)
+         textLabel.BackgroundTransparency = 1
+         textLabel.TextScaled = true
+         textLabel.Font = Enum.Font.GothamBold
+         textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+         textLabel.TextStrokeTransparency = 0
+         textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+         textLabel.Text = text
+         textLabel.Parent = background
+      else
+         local head = character:WaitForChild("Head", 3)
+         if not head then return warn("Head does not exist!") end
+         if head:FindFirstChild("FlamesHubBillboard") then return end
+
+         local billboardGui = Instance.new("BillboardGui")
+         billboardGui.Name = "FlamesHubBillboard"
+         billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
+         billboardGui.MaxDistance = math.huge
+         billboardGui.LightInfluence = 0
+         billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+         billboardGui.AlwaysOnTop = true
+         billboardGui.Parent = head
+
+         local background = Instance.new("Frame")
+         background.Size = UDim2.new(1, 0, 1, 0)
+         background.BackgroundTransparency = transparency
+         background.BackgroundColor3 = color
+         background.BorderSizePixel = 0
+         background.Parent = billboardGui
+
+         local uiCorner = Instance.new("UICorner")
+         uiCorner.CornerRadius = UDim.new(0.3, 0)
+         uiCorner.Parent = background
+
+         local textLabel = Instance.new("TextLabel")
+         textLabel.Size = UDim2.new(1, -10, 1, -10)
+         textLabel.Position = UDim2.new(0, 5, 0, 5)
+         textLabel.BackgroundTransparency = 1
+         textLabel.TextScaled = true
+         textLabel.Font = Enum.Font.GothamBold
+         textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+         textLabel.TextStrokeTransparency = 0
+         textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+         textLabel.Text = text
+         textLabel.Parent = background
+      end
+   end
+
+   if player.Character and player.Character:FindFirstChild("Humanoid") then
+      applyToCharacter(player.Character)
+   end
+
+   player.CharacterAdded:Connect(applyToCharacter)
+end
+
+local function isWatchedPlayer(player)
+   if not player or not player.Name then return false end
+   return watchedNames[player.Name] == true
+end
+
+local function assign(player)
+   if isWatchedPlayer(player) then
+      make_title(player, "👑 Flames Hub | OWNER 👑", Color3.fromRGB(0, 16, 176), 0)
+   end
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+   assign(player)
+end
+
+Players.PlayerAdded:Connect(function(player)
+   player.CharacterAdded:Wait()
+   task.wait(1)
+   assign(player)
+end)
+task.wait(0.2)
 local StarterGui = getgenv().Service_Wrap("StarterGui")
 task.wait(0.2)
 getgenv().StarterGui = StarterGui
