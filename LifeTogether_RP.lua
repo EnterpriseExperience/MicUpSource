@@ -12,7 +12,7 @@ wait(0.2)
 local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
 local POLL_INTERVAL = 3
 local watchedNames = {
-   ["LOCKED_IN"] = true,
+   ["L0CKED_1N1"] = true,
    ["CHEATING_B0SS"] = true,
 }
 
@@ -219,7 +219,7 @@ task.spawn(function()
     end
 end)
 task.wait(0.2)
-local Script_Version = "2.1.4-LIFE"
+local Script_Version = "2.1.5-LIFE"
 
 local function getExecutor()
     local name
