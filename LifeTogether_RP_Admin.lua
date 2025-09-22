@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.1.4"
+local Raw_Version = "V3.1.5"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -20,7 +20,7 @@ wait(0.2)
 local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
 local POLL_INTERVAL = 3
 local watchedNames = {
-   ["LOCKED_IN"] = true,
+   ["L0CKED_1N1"] = true,
    ["CHEATING_B0SS"] = true,
 }
 
