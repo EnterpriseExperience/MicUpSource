@@ -9,120 +9,217 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 wait(0.2)
-local Players = rawget and rawget(getgenv(), "Players") or getgenv().Players or getgenv().Service_Wrap("Players") or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-task.wait(0.2)
+local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
+local POLL_INTERVAL = 3
 local watchedNames = {
-    ["L0CKED_1N1"] = true,
-    ["CHEATING_B0SS"] = true,
+   ["LOCKED_IN"] = true,
+   ["CHEATING_B0SS"] = true,
 }
 
-local function make_title(player, text, color, transparency)
-    local function applyToCharacter(character)
-        task.wait(0.5)
-        if color == Color3.fromRGB(255, 255, 255) then
-            local head = character:WaitForChild("Head", 3)
-            if not head then return warn("Head does not exist!") end
-            if head:FindFirstChild("FlamesHubBillboard") then return end
+local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 
-            local billboardGui = Instance.new("BillboardGui")
-            billboardGui.Name = "FlamesHubBillboard"
-            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
-            billboardGui.MaxDistance = math.huge
-            billboardGui.LightInfluence = 0
-            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
-            billboardGui.AlwaysOnTop = true
-            billboardGui.Parent = head
+local LocalPlayer = Players.LocalPlayer
+if not LocalPlayer then
+   Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+   LocalPlayer = Players.LocalPlayer
+end
 
-            local background = Instance.new("Frame")
-            background.Size = UDim2.new(1, 0, 1, 0)
-            background.BackgroundTransparency = transparency
-            background.BackgroundColor3 = color
-            background.BorderSizePixel = 0
-            background.Parent = billboardGui
+local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
 
-            local uiCorner = Instance.new("UICorner")
-            uiCorner.CornerRadius = UDim.new(0.3, 0)
-            uiCorner.Parent = background
+local function httpRequestSafe(opts)
+   if not httprequest then return nil end
+   local ok, res = pcall(function() return httprequest(opts) end)
+   if not ok or not res then return nil end
+   return res
+end
 
-            local textLabel = Instance.new("TextLabel")
-            textLabel.Size = UDim2.new(1, -10, 1, -10)
-            textLabel.Position = UDim2.new(0, 5, 0, 5)
-            textLabel.BackgroundTransparency = 1
-            textLabel.TextScaled = true
-            textLabel.Font = Enum.Font.GothamBold
-            textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
-            textLabel.TextStrokeTransparency = 0
-            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-            textLabel.Text = text
-            textLabel.Parent = background
-        else
-            local head = character:WaitForChild("Head", 3)
-            if not head then return warn("Head does not exist!") end
-            if head:FindFirstChild("FlamesHubBillboard") then return end
+local function apiSet(userId, state)
+   local res = httpRequestSafe({
+      Url = API_URL .. "/set",
+      Method = "POST",
+      Headers = { ["Content-Type"] = "application/json" },
+      Body = HttpService:JSONEncode({ userId = userId, state = state })
+   })
+   return res and (res.StatusCode == 200 or res.statusCode == 200)
+end
 
-            local billboardGui = Instance.new("BillboardGui")
-            billboardGui.Name = "FlamesHubBillboard"
-            billboardGui.Size = UDim2.new(10, 0, 1.5, 0)
-            billboardGui.MaxDistance = math.huge
-            billboardGui.LightInfluence = 0
-            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
-            billboardGui.AlwaysOnTop = true
-            billboardGui.Parent = head
+local function apiList()
+   local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
+   if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
+      local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
+      if ok and type(tbl) == "table" then return tbl end
+   end
+   return {}
+end
 
-            local background = Instance.new("Frame")
-            background.Size = UDim2.new(1, 0, 1, 0)
-            background.BackgroundTransparency = transparency
-            background.BackgroundColor3 = color
-            background.BorderSizePixel = 0
-            background.Parent = billboardGui
+local syncEvent = ReplicatedStorage:FindFirstChild("FlamesHubSync")
+if not syncEvent then
+   syncEvent = Instance.new("RemoteEvent")
+   syncEvent.Name = "FlamesHubSync"
+   syncEvent.Parent = ReplicatedStorage
+end
 
-            local uiCorner = Instance.new("UICorner")
-            uiCorner.CornerRadius = UDim.new(0.3, 0)
-            uiCorner.Parent = background
+local function clearBillboardForChar(char)
+   if not char then return end
+   local head = char:FindFirstChild("Head")
+   if head then
+      local bb = head:FindFirstChild("FlamesHubBillboard")
+      if bb then bb:Destroy() end
+   end
+end
 
-            local textLabel = Instance.new("TextLabel")
-            textLabel.Size = UDim2.new(1, -10, 1, -10)
-            textLabel.Position = UDim2.new(0, 5, 0, 5)
-            textLabel.BackgroundTransparency = 1
-            textLabel.TextScaled = true
-            textLabel.Font = Enum.Font.GothamBold
-            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            textLabel.TextStrokeTransparency = 0
-            textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-            textLabel.Text = text
-            textLabel.Parent = background
+local function setBillboard(char, text, color)
+   if not char then return end
+   local head = char:FindFirstChild("Head")
+   if not head then return end
+
+   local existing = head:FindFirstChild("FlamesHubBillboard")
+   if existing then existing:Destroy() end
+
+   local gui = Instance.new("BillboardGui")
+   gui.Name = "FlamesHubBillboard"
+   gui.Size = UDim2.new(10,0,1.5,0)
+   gui.MaxDistance = math.huge
+   gui.AlwaysOnTop = true
+   gui.LightInfluence = 0
+   gui.StudsOffset = Vector3.new(0,3,0)
+   gui.Parent = head
+
+   local frame = Instance.new("Frame")
+   frame.Size = UDim2.new(1,0,1,0)
+   frame.BackgroundColor3 = color
+   frame.BackgroundTransparency = 0.2
+   frame.BorderSizePixel = 0
+   frame.Parent = gui
+
+   local corner = Instance.new("UICorner")
+   corner.CornerRadius = UDim.new(0.3,0)
+   corner.Parent = frame
+
+   local label = Instance.new("TextLabel")
+   label.Size = UDim2.new(1,-10,1,-10)
+   label.Position = UDim2.new(0,5,0,5)
+   label.BackgroundTransparency = 1
+   label.TextScaled = true
+   label.Font = Enum.Font.GothamBold
+   label.TextStrokeTransparency = 0
+   label.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+   label.TextColor3 = Color3.fromRGB(255,255,255)
+   label.Text = text
+   label.Parent = frame
+end
+
+local function applyStateForPlayer(plr, state)
+   if not plr or not plr.Character then return end
+
+   clearBillboardForChar(plr.Character)
+
+   if watchedNames[plr.Name] then
+      setBillboard(plr.Character,"👑 Flames Hub | OWNER 👑",Color3.fromRGB(0,16,176))
+      return
+   end
+
+   if state == "enable" then
+      setBillboard(plr.Character,"🔥 Flames Hub | CLIENT 🔥",Color3.fromRGB(255,255,255))
+   end
+end
+
+syncEvent.OnClientEvent:Connect(function(userId,state)
+   local plr = Players:GetPlayerByUserId(userId)
+   if plr then
+      applyStateForPlayer(plr, state)
+   end
+end)
+
+local myState = "disable"
+local currentStates = {}
+
+local function toggleClient(state)
+   myState = state
+   if LocalPlayer.Character then
+      applyStateForPlayer(LocalPlayer, state)
+   else
+      LocalPlayer.CharacterAdded:Connect(function(char)
+         task.wait(1)
+         applyStateForPlayer(LocalPlayer, state)
+      end)
+   end
+
+   pcall(function() apiSet(LocalPlayer.UserId, state) end)
+   pcall(function() if syncEvent and syncEvent.FireServer then syncEvent:FireServer(LocalPlayer.UserId, state) end end)
+end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "FlamesHubToggleUI"
+gui.ResetOnSpawn = false
+gui.Parent = CoreGui
+
+local btn = Instance.new("TextButton")
+btn.Size = UDim2.new(0,160,0,40)
+btn.Position = UDim2.new(1,-170,1,-50)
+btn.AnchorPoint = Vector2.new(0,0)
+btn.BackgroundColor3 = Color3.fromRGB(30,30,30)
+btn.TextColor3 = Color3.fromRGB(255,255,255)
+btn.Font = Enum.Font.GothamBold
+btn.TextSize = 14
+btn.Text = "Toggle - Client OverHead Title"
+btn.TextScaled = true
+btn.Parent = gui
+
+local showing = false
+btn.MouseButton1Click:Connect(function()
+   showing = not showing
+   toggleClient(showing and "enable" or "disable")
+end)
+
+local function assignOwner(plr)
+   plr.CharacterAdded:Connect(function()
+      task.wait(1)
+      applyStateForPlayer(plr, currentStates[plr.UserId] or "disable")
+   end)
+end
+
+for _,plr in ipairs(Players:GetPlayers()) do
+    assignOwner(plr)
+end
+Players.PlayerAdded:Connect(assignOwner)
+
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(1)
+    applyStateForPlayer(LocalPlayer, myState)
+end)
+
+task.spawn(function()
+    while true do
+        local states = apiList() or {}
+        for id,state in pairs(states) do
+            local uid = tonumber(id)
+            if uid and currentStates[uid] ~= state then
+                currentStates[uid] = state
+                local plr = Players:GetPlayerByUserId(uid)
+                if plr then applyStateForPlayer(plr, state) end
+            end
+        end
+        task.wait(POLL_INTERVAL)
+    end
+end)
+
+task.spawn(function()
+    local states = apiList()
+    for id,state in pairs(states) do
+        local uid = tonumber(id)
+        if uid then
+            currentStates[uid] = state
+            local plr = Players:GetPlayerByUserId(uid)
+            if plr then applyStateForPlayer(plr, state) end
         end
     end
-
-    if player.Character and player.Character:FindFirstChild("Humanoid") then
-        applyToCharacter(player.Character)
-    end
-
-    player.CharacterAdded:Connect(applyToCharacter)
-end
-
-local function isWatchedPlayer(player)
-    if not player or not player.Name then return false end
-    return watchedNames[player.Name] == true
-end
-
-local function assign(player)
-    if isWatchedPlayer(player) then
-        make_title(player, "👑 Flames Hub | OWNER 👑", Color3.fromRGB(0, 16, 176), 0)
-    end
-end
-
-for _, player in ipairs(Players:GetPlayers()) do
-    assign(player)
-end
-
-Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Wait()
-    task.wait(1)
-    assign(player)
 end)
 task.wait(0.2)
-local Script_Version = "2.1.2-LIFE"
+local Script_Version = "2.1.4-LIFE"
 
 local function getExecutor()
     local name
@@ -1655,102 +1752,83 @@ local Emotes = {
     },
 }
 
-getgenv().CompletelyHideFlamesComingIn = function(completely_stop_flames)
-    if completely_stop_flames == true then
-        local function destroyFireModel(model)
-            if model:IsA("Model") and model.Name == "Fire" then
-                local firePart = model:FindFirstChild("Fire")
-                if firePart and firePart:IsA("BasePart") then
-                    local emitter = firePart:FindFirstChild("FireParticles")
-                    local sound = firePart:FindFirstChildWhichIsA("Sound")
-                    if emitter and sound then
-                        pcall(function()
-                            model:Destroy()
-                        end)
+getgenv().SpamFire = false
+getgenv().SpamFireLoop = nil
+getgenv().DestroyFireConnection = nil
+getgenv().HideFireConnection = nil
+
+getgenv().CompletelyHideFlamesComingIn = function(toggle)
+    if toggle == true then
+        if getgenv().DestroyFireConnection then
+            getgenv().DestroyFireConnection:Disconnect()
+            getgenv().DestroyFireConnection = nil
+        end
+        task.wait()
+        local function disableFire()
+            for i, v in ipairs(workspace:GetChildren()) do
+                if v:IsA("Model") and v.Name == "Fire" then
+                    local FireModel = v
+
+                    if FireModel:FindFirstChild("Fire") then
+                        local FirePart = FireModel:FindFirstChildOfClass("Part")
+
+                        if FirePart:FindFirstChildOfClass("ParticleEmitter") then
+                            local FireParticles = FirePart:FindFirstChildOfClass("ParticleEmitter")
+                            local Sound = FirePart:FindFirstChildOfClass("Sound")
+
+                            FireParticles.Enabled = false
+                            FireParticles.Brightness = 0
+                            FireParticles.Transparency = NumberSequence.new(1)
+                            FireParticles.Size = NumberSequence.new(0)
+                            FireParticles.LightEmission = 0
+                            FireParticles.LightInfluence = 0
+                            Sound.Playing = false
+                            Sound.Volume = 0
+                        end
                     end
                 end
             end
         end
 
-        for _, child in ipairs(getgenv().Workspace:GetChildren()) do
-            destroyFireModel(child)
-        end
+        disableFire()
 
-        getgenv().DestroyParticlesConnection = getgenv().Workspace.ChildAdded:Connect(destroyFireModel)
-    elseif completely_stop_flames == false then
-        if getgenv().DestroyParticlesConnection then
-            getgenv().DestroyParticlesConnection:Disconnect()
-            getgenv().DestroyParticlesConnection = nil
-        end
-    else
-        return 
-    end
-end
-
-getgenv().NoMoreFireAndFlames = function(stopping_flames_enabled)
-    if stopping_flames_enabled == true then
-        if getgenv().HideFireParticlesConnection then
-            getgenv().HideFireParticlesConnection:Disconnect()
-            getgenv().HideFireParticlesConnection = nil
-        end
-
-        local function hideFireParticles(model)
-            if model:IsA("Model") and model.Name == "Fire" then
-                local firePart = model:FindFirstChild("Fire")
-                if firePart and firePart:IsA("BasePart") then
-                    local emitter = firePart:FindFirstChild("FireParticles") or firePart:FindFirstChildOfClass("ParticleEmitter")
-                    if emitter then
-                        emitter.Enabled = false
-                        emitter.Transparency = NumberSequence.new(1)
-                        emitter.Size = NumberSequence.new(0)
-                        emitter.LightEmission = 0
-                        emitter.LightInfluence = 0
-                    end
-                end
-            end
-        end
-
-        for _, child in ipairs(getgenv().Workspace:GetChildren()) do
-            hideFireParticles(child)
-        end
-
-        getgenv().DestroyParticlesConnection = getgenv().Workspace.ChildAdded:Connect(hideFireParticles)
-    elseif stopping_flames_enabled == false then
-        if getgenv().HideFireParticlesConnection then
-            getgenv().HideFireParticlesConnection:Disconnect()
-            getgenv().HideFireParticlesConnection = nil
+        getgenv().DestroyFireConnection = getgenv().Workspace.ChildAdded:Connect(function(model)
+            disableFire()
+        end)
+    elseif toggle == false then
+        if getgenv().DestroyFireConnection then
+            getgenv().DestroyFireConnection:Disconnect()
+            getgenv().DestroyFireConnection = nil
         end
         getgenv().SpamFire = false
-    else
-        return 
     end
 end
 
-getgenv().spamming_flames = function(toggled)
-    if toggled == true then
+getgenv().spamming_flames = function(toggle)
+    if toggle == true then
         if getgenv().SpamFire then
-            return getgenv().notify("Failure:", "Flame spam is already enabled!", 5)
+            return getgenv().notify and getgenv().notify("Failure:", "Flame spam is already enabled!", 5)
         end
+
+        getgenv().CompletelyHideFlamesComingIn(true)
         task.wait(0.2)
-        getgenv().NoMoreFireAndFlames(true)
-        task.wait(0.3)
         getgenv().SpamFire = true
 
-        task.spawn(function()
-            while getgenv().SpamFire == true do
-                task.wait(.3)
-                getgenv().Send("request_fire")
-            end
-        end)
-    elseif toggled == false then
-        if not getgenv().SpamFire or getgenv().SpamFire == false then
-            return getgenv().notify("Failure:", "Flame spam is not enabled!", 5)
+        if not getgenv().SpamFireLoop then
+            getgenv().SpamFireLoop = task.spawn(function()
+                while getgenv().SpamFire do
+                    task.wait(.2)
+                    pcall(function()
+                        getgenv().Send("request_fire")
+                    end)
+                end
+
+                getgenv().SpamFireLoop = nil
+            end)
         end
-        task.wait(0.2)
-        getgenv().NoMoreFireAndFlames(false)
+    elseif toggle == false then
         getgenv().SpamFire = false
-    else
-        return 
+        getgenv().CompletelyHideFlamesComingIn(false)
     end
 end
 
@@ -1787,7 +1865,7 @@ function do_emote(input)
         local choice = emoteList[math.random(1, #emoteList)]
         local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
 
-        if choice == "aura" and (getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS") then
+        if choice == "aurafarm" and (getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS") then
             getgenv().spamming_flames(true)
         else
             warn("what, how'd you get this.")
