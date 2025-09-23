@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.2.4"
+local Raw_Version = "V3.2.5"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -3682,7 +3682,7 @@ local function handleCommand(sender, message)
          return getgenv().notify("Failure:", "Original destroy height doesn't exist!", 5)
       end
 
-      getgenv().Workspace.FallPartsDestroyHeight = getgenv().originalFPDH or -500
+      getgenv().Workspace.FallenPartsDestroyHeight = getgenv().originalFPDH or -500
       getgenv().notify("Success:", "Disabled anti-void.", 5)
    elseif cmd == "clip" then
       if not getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == false then
