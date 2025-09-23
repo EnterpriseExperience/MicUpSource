@@ -2213,7 +2213,6 @@ local function CommandsMenu()
       {prefix}michaelmyers - Makes you do the Michael Myers emote (FE).
       {prefix}antivoid - Enables anti-void.
       {prefix}unantivoid - Disables anti-void.
-      {prefix}
       {prefix}alljobs - Repeatedly spams all jobs
       {prefix}jobsoff - Stops spamming all jobs
       {prefix}fly SpeedNumber - Enable/disable flying
@@ -3640,8 +3639,10 @@ local function handleCommand(sender, message)
       if not getgenv().originalFPDH then
          getgenv().originalFPDH = getgenv().Workspace.FallenPartsDestroyHeight
       end
+
       task.wait(0.1)
       getgenv().Workspace.FallenPartsDestroyHeight = -9e9
+      getgenv().notify("Success:", "Enabled antivoid.", 5)
    elseif cmd == "unantivoid" or cmd == "unnovoid" then
       if not getgenv().originalFPDH then
          getgenv().originalFPDH = -500
@@ -3649,6 +3650,7 @@ local function handleCommand(sender, message)
       end
 
       getgenv().Workspace.FallPartsDestroyHeight = getgenv().originalFPDH or -500
+      getgenv().notify("Success:", "Disabled anti-void.", 5)
    elseif cmd == "clip" then
       if not getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == false then
          return notify("Failure:", "Noclip is not enabled!", 5)
