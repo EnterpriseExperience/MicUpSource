@@ -8,6 +8,86 @@ getgenv().Service_Wrap = function(serviceName)
         return getgenv().Game:GetService(serviceName)
     end
 end
+wait()
+local Emotes = {
+    griddy = {
+        129149402922241,
+        116150478424136,
+        91878676494639,
+        98318847394332,
+    },
+    scenario = {110013053670989},
+    worm = {
+        132950274861655,
+        127882676467351,
+        77625642316480,
+        127068135887882,
+        102075861555461,
+    },
+    zen = {84943987730610},
+    glitching = {131961970776128},
+    superman = {
+        134861929761233,
+        93202303625509
+    },
+    aura = {
+        121547391421211,
+        78755795767408,
+        88425531063616,
+        111426928948833,
+        84052327668385,
+        116826272832592,
+        103040723950430,
+        85452015445985
+    },
+    orangejustice = {
+        133160900449608,
+        110064349530772,
+        117638432093760,
+        76494145762351,
+        84419755287539,
+        98578127060782,
+    },
+    default = {
+        80877772569772,
+        99818263438846,
+        121094705979021,
+        128801735413980,
+        83559276301867,
+        100099256371667,
+    },
+    koto = {
+        91927498467600,
+        130655908439646,
+        108129969514208,
+        121962822800440,
+    },
+    popular = {
+        71302743123422,
+        100531085354441,
+        113815442881930,
+        115719203985051,
+        77201116105359,
+    },
+    billybounce = {
+        126516908191316,
+        93450937830334,
+        131013364061967,
+    },
+    billyjean = {
+        98915045016286
+    },
+    michaelmyers = {
+        103115491327846,
+        99068367180942,
+        135204931182370,
+        84555531182471,
+        123102740029981,
+        126102210823846,
+        78250036534439
+    }
+}
+local EmoteNames = {"griddy", "scenario", "worm", "zen", "glitching", "superman", "aura", "orangejustice", "default", "koto", "popular", "michaelmyers", "billyjean", "billybounce"}
 wait(0.2)
 local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
 local POLL_INTERVAL = 3
@@ -17,209 +97,269 @@ local watchedNames = {
 }
 
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
-   Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
-   LocalPlayer = Players.LocalPlayer
+    Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+    LocalPlayer = Players.LocalPlayer
 end
 
 local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
 
 local function httpRequestSafe(opts)
-   if not httprequest then return nil end
-   local ok, res = pcall(function() return httprequest(opts) end)
-   if not ok or not res then return nil end
-   return res
+    if not httprequest then return nil end
+    local ok, res = pcall(function() return httprequest(opts) end)
+    if not ok or not res then return nil end
+    return res
 end
 
-local function apiSet(userId, state)
-   local res = httpRequestSafe({
-      Url = API_URL .. "/set",
-      Method = "POST",
-      Headers = { ["Content-Type"] = "application/json" },
-      Body = HttpService:JSONEncode({ userId = userId, state = state })
-   })
-   return res and (res.StatusCode == 200 or res.statusCode == 200)
+local function apiSet(payload)
+    local res = httpRequestSafe({
+        Url = API_URL .. "/set",
+        Method = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = HttpService:JSONEncode(payload)
+    })
+    return res and (res.StatusCode == 200 or res.statusCode == 200)
 end
 
 local function apiList()
-   local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
-   if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
-      local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
-      if ok and type(tbl) == "table" then return tbl end
-   end
-   return {}
-end
-
-local syncEvent = ReplicatedStorage:FindFirstChild("FlamesHubSync")
-if not syncEvent then
-   syncEvent = Instance.new("RemoteEvent")
-   syncEvent.Name = "FlamesHubSync"
-   syncEvent.Parent = ReplicatedStorage
+    local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
+    if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
+        local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
+        if ok and type(tbl) == "table" then return tbl end
+    end
+    return {}
 end
 
 local function clearBillboardForChar(char)
-   if not char then return end
-   local head = char:FindFirstChild("Head")
-   if head then
-      local bb = head:FindFirstChild("FlamesHubBillboard")
-      if bb then bb:Destroy() end
-   end
+    if not char then return end
+    local head = char:FindFirstChild("Head")
+    if head then
+        local bb = head:FindFirstChild("FlamesHubBillboard")
+        if bb then bb:Destroy() end
+    end
 end
 
 local function setBillboard(char, text, color)
-   if not char then return end
-   local head = char:FindFirstChild("Head")
-   if not head then return end
+    if not char then return end
+    local head = char:FindFirstChild("Head")
+    if not head then return end
 
-   local existing = head:FindFirstChild("FlamesHubBillboard")
-   if existing then existing:Destroy() end
+    local existing = head:FindFirstChild("FlamesHubBillboard")
+    if existing then existing:Destroy() end
 
-   local gui = Instance.new("BillboardGui")
-   gui.Name = "FlamesHubBillboard"
-   gui.Size = UDim2.new(10,0,1.5,0)
-   gui.MaxDistance = math.huge
-   gui.AlwaysOnTop = true
-   gui.LightInfluence = 0
-   gui.StudsOffset = Vector3.new(0,3,0)
-   gui.Parent = head
+    local gui = Instance.new("BillboardGui")
+    gui.Name = "FlamesHubBillboard"
+    gui.Size = UDim2.new(10,0,1.5,0)
+    gui.MaxDistance = math.huge
+    gui.AlwaysOnTop = true
+    gui.LightInfluence = 0
+    gui.StudsOffset = Vector3.new(0,3,0)
+    gui.Parent = head
 
-   local frame = Instance.new("Frame")
-   frame.Size = UDim2.new(1,0,1,0)
-   frame.BackgroundColor3 = color
-   frame.BackgroundTransparency = 0.2
-   frame.BorderSizePixel = 0
-   frame.Parent = gui
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1,0,1,0)
+    frame.BackgroundColor3 = color
+    frame.BackgroundTransparency = 0.2
+    frame.BorderSizePixel = 0
+    frame.Parent = gui
 
-   local corner = Instance.new("UICorner")
-   corner.CornerRadius = UDim.new(0.3,0)
-   corner.Parent = frame
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0.3,0)
+    corner.Parent = frame
 
-   local label = Instance.new("TextLabel")
-   label.Size = UDim2.new(1,-10,1,-10)
-   label.Position = UDim2.new(0,5,0,5)
-   label.BackgroundTransparency = 1
-   label.TextScaled = true
-   label.Font = Enum.Font.GothamBold
-   label.TextStrokeTransparency = 0
-   label.TextStrokeColor3 = Color3.fromRGB(0,0,0)
-   label.TextColor3 = Color3.fromRGB(255,255,255)
-   label.Text = text
-   label.Parent = frame
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1,-10,1,-10)
+    label.Position = UDim2.new(0,5,0,5)
+    label.BackgroundTransparency = 1
+    label.TextScaled = true
+    label.Font = Enum.Font.GothamBold
+    label.TextStrokeTransparency = 0
+    label.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+    label.TextColor3 = Color3.fromRGB(255,255,255)
+    label.Text = text
+    label.Parent = frame
 end
 
-local function applyStateForPlayer(plr, state)
-   if not plr or not plr.Character then return end
+local function applyForPlayer(plr, payload)
+    if not plr or not plr.Character then return end
+    clearBillboardForChar(plr.Character)
 
-   clearBillboardForChar(plr.Character)
+    if watchedNames[plr.Name] then
+        setBillboard(plr.Character,"👑 Flames Hub | OWNER 👑",Color3.fromRGB(0,16,176))
+        return
+    end
 
-   if watchedNames[plr.Name] then
-      setBillboard(plr.Character,"👑 Flames Hub | OWNER 👑",Color3.fromRGB(0,16,176))
-      return
-   end
+    if type(payload) ~= "table" then return end
+    if payload.state == "disable" then return end
 
-   if state == "enable" then
-      setBillboard(plr.Character,"🔥 Flames Hub | CLIENT 🔥",Color3.fromRGB(255,255,255))
-   end
+    local title = payload.title or "🔥 Flames Hub | CLIENT 🔥"
+    local c = payload.color or {255,255,255}
+    local color3 = Color3.fromRGB(c[1], c[2], c[3])
+    setBillboard(plr.Character, title, color3)
 end
 
-syncEvent.OnClientEvent:Connect(function(userId,state)
-   local plr = Players:GetPlayerByUserId(userId)
-   if plr then
-      applyStateForPlayer(plr, state)
-   end
-end)
-
-local myState = "disable"
 local currentStates = {}
 
-local function toggleClient(state)
-   myState = state
-   if LocalPlayer.Character then
-      applyStateForPlayer(LocalPlayer, state)
-   else
-      LocalPlayer.CharacterAdded:Connect(function(char)
-         task.wait(1)
-         applyStateForPlayer(LocalPlayer, state)
-      end)
-   end
-
-   pcall(function() apiSet(LocalPlayer.UserId, state) end)
-   pcall(function() if syncEvent and syncEvent.FireServer then syncEvent:FireServer(LocalPlayer.UserId, state) end end)
-end
-
 local gui = Instance.new("ScreenGui")
-gui.Name = "FlamesHubToggleUI"
+gui.Name = "FlamesHubUI"
 gui.ResetOnSpawn = false
 gui.Parent = CoreGui
 
-local btn = Instance.new("TextButton")
-btn.Size = UDim2.new(0,160,0,40)
-btn.Position = UDim2.new(1,-170,1,-50)
-btn.AnchorPoint = Vector2.new(0,0)
-btn.BackgroundColor3 = Color3.fromRGB(30,30,30)
-btn.TextColor3 = Color3.fromRGB(255,255,255)
-btn.Font = Enum.Font.GothamBold
-btn.TextSize = 14
-btn.Text = "Toggle - Client OverHead Title"
-btn.TextScaled = true
-btn.Parent = gui
+local panel = Instance.new("Frame")
+panel.Size = UDim2.new(0,320,0,220)
+panel.Position = UDim2.new(1,-330,1,-230)
+panel.BackgroundColor3 = Color3.fromRGB(30,30,30)
+panel.BorderSizePixel = 0
+panel.Parent = gui
 
-local showing = false
-btn.MouseButton1Click:Connect(function()
-   showing = not showing
-   toggleClient(showing and "enable" or "disable")
+local panelCorner = Instance.new("UICorner", panel)
+panelCorner.CornerRadius = UDim.new(0,10)
+
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "Shadow"
+shadow.AnchorPoint = Vector2.new(0.5,0.5)
+shadow.Position = UDim2.new(0.5,0,0.5,0)
+shadow.Size = UDim2.new(1,30,1,30)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageColor3 = Color3.fromRGB(0,0,0)
+shadow.ImageTransparency = 0.5
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10,10,118,118)
+shadow.Parent = panel
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0,24,0,24)
+closeBtn.Position = UDim2.new(1,-28,0,4)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 16
+closeBtn.Parent = panel
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1,0)
+
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
 end)
 
-local function assignOwner(plr)
-   plr.CharacterAdded:Connect(function()
-      task.wait(1)
-      applyStateForPlayer(plr, currentStates[plr.UserId] or "disable")
-   end)
+local nameBox = Instance.new("TextBox")
+nameBox.Size = UDim2.new(1,-20,0,30)
+nameBox.Position = UDim2.new(0,10,0,40)
+nameBox.PlaceholderText = "Target username or userId"
+nameBox.BackgroundColor3 = Color3.fromRGB(45,45,45)
+nameBox.TextColor3 = Color3.fromRGB(255,255,255)
+nameBox.Font = Enum.Font.Gotham
+nameBox.TextSize = 14
+nameBox.Parent = panel
+Instance.new("UICorner", nameBox).CornerRadius = UDim.new(0,6)
+
+local titleBox = nameBox:Clone()
+titleBox.Position = UDim2.new(0,10,0,80)
+titleBox.PlaceholderText = "Title to show"
+titleBox.Parent = panel
+
+local selColor = {255,255,255}
+
+local function makeColorBtn(x,text,rgb)
+   local b = Instance.new("TextButton")
+   b.Size = UDim2.new(0,70,0,26)
+   b.Position = UDim2.new(0,x,0,120)
+   b.Text = text
+   b.Font = Enum.Font.GothamBold
+   b.TextSize = 13
+   b.BackgroundColor3 = Color3.fromRGB(rgb[1],rgb[2],rgb[3])
+   b.TextColor3 = Color3.fromRGB(255,255,255)
+   b.Parent = panel
+   Instance.new("UICorner", b).CornerRadius = UDim.new(0,6)
+   b.MouseButton1Click:Connect(function() selColor = rgb end)
 end
 
-for _,plr in ipairs(Players:GetPlayers()) do
-    assignOwner(plr)
-end
-Players.PlayerAdded:Connect(assignOwner)
+makeColorBtn(10,"White",{255,255,255})
+makeColorBtn(85,"Blue",{0,16,176})
+makeColorBtn(160,"Red",{200,30,30})
+makeColorBtn(235,"Green",{40,170,40})
 
-LocalPlayer.CharacterAdded:Connect(function()
-    task.wait(1)
-    applyStateForPlayer(LocalPlayer, myState)
+local applyBtn = Instance.new("TextButton")
+applyBtn.Size = UDim2.new(0,140,0,30)
+applyBtn.Position = UDim2.new(0,10,0,160)
+applyBtn.Text = "Apply Title"
+applyBtn.Font = Enum.Font.GothamBold
+applyBtn.TextSize = 14
+applyBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+applyBtn.TextColor3 = Color3.fromRGB(255,255,255)
+applyBtn.Parent = panel
+Instance.new("UICorner", applyBtn).CornerRadius = UDim.new(0,6)
+
+local clearBtn = applyBtn:Clone()
+clearBtn.Text = "Clear Title"
+clearBtn.Position = UDim2.new(0,170,0,160)
+clearBtn.Parent = panel
+
+local function resolveTarget(input)
+    if not input or input == "" then return nil end
+    local n = tonumber(input)
+    if n then return Players:GetPlayerByUserId(n) end
+    for _,p in ipairs(Players:GetPlayers()) do
+        if p.Name:lower() == input:lower() then return p end
+    end
+    return nil
+end
+
+applyBtn.MouseButton1Click:Connect(function()
+    local plr = resolveTarget(nameBox.Text)
+    if not plr then return end
+    local payload = {
+        userId = plr.UserId,
+        state = "enable",
+        title = titleBox.Text ~= "" and titleBox.Text or nil,
+        color = selColor
+    }
+    currentStates[plr.UserId] = payload
+    applyForPlayer(plr, payload)
+    pcall(function() apiSet(payload) end)
+end)
+
+clearBtn.MouseButton1Click:Connect(function()
+    local plr = resolveTarget(nameBox.Text)
+    if not plr then return end
+    local payload = { userId = plr.UserId, state = "disable" }
+    currentStates[plr.UserId] = payload
+    clearBillboardForChar(plr.Character)
+    pcall(function() apiSet(payload) end)
+end)
+
+Players.PlayerAdded:Connect(function(plr)
+    plr.CharacterAdded:Connect(function()
+        task.wait(1)
+        local payload = currentStates[plr.UserId]
+        if payload then applyForPlayer(plr, payload) end
+    end)
 end)
 
 task.spawn(function()
     while true do
         local states = apiList() or {}
-        for id,state in pairs(states) do
+        for id,payload in pairs(states) do
             local uid = tonumber(id)
-            if uid and currentStates[uid] ~= state then
-                currentStates[uid] = state
+            if uid then
+                if type(payload) ~= "table" then
+                payload = { userId = uid, state = payload }
+                end
+                currentStates[uid] = payload
                 local plr = Players:GetPlayerByUserId(uid)
-                if plr then applyStateForPlayer(plr, state) end
+                if plr then applyForPlayer(plr, payload) end
             end
         end
         task.wait(POLL_INTERVAL)
     end
 end)
-
-task.spawn(function()
-    local states = apiList()
-    for id,state in pairs(states) do
-        local uid = tonumber(id)
-        if uid then
-            currentStates[uid] = state
-            local plr = Players:GetPlayerByUserId(uid)
-            if plr then applyStateForPlayer(plr, state) end
-        end
-    end
-end)
 task.wait(0.2)
-local Script_Version = "2.1.5-LIFE"
+local Script_Version = "2.2.1-LIFE"
 
 local function getExecutor()
     local name
@@ -1689,68 +1829,7 @@ function vehicle_skydive_player(TargetPlayer)
     end
 end
 
-local EmoteNames = {"griddy", "scenario", "worm", "zen", "glitching", "superman", "aura", "orangejustice", "default", "koto", "popular"}
 task.wait(0.1)
-local Emotes = {
-    griddy = {
-        129149402922241,
-        116150478424136,
-        76342373659003,
-        106715239721951,
-        91878676494639,
-        98318847394332,
-    },
-    scenario = {110013053670989},
-    worm = {
-        132950274861655,
-        127882676467351,
-        113312808145333,
-        77625642316480,
-        127068135887882,
-        102075861555461,
-    },
-    zen = {84943987730610},
-    glitching = {131961970776128},
-    superman = {134861929761233},
-    aura = {
-        121547391421211,
-        78755795767408,
-        88425531063616,
-        111426928948833,
-        84052327668385,
-        103040723950430,
-    },
-    orangejustice = {
-        133160900449608,
-        109776913631531,
-        110064349530772,
-        117638432093760,
-        76494145762351,
-        84419755287539,
-        98578127060782,
-    },
-    default = {
-        80877772569772,
-        99818263438846,
-        121094705979021,
-        128801735413980,
-        83559276301867,
-        100099256371667,
-    },
-    koto = {
-        91927498467600,
-        130655908439646,
-        108129969514208,
-        121962822800440,
-    },
-    popular = {
-        71302743123422,
-        100531085354441,
-        113815442881930,
-        115719203985051,
-        77201116105359,
-    },
-}
 
 getgenv().SpamFire = false
 getgenv().SpamFireLoop = nil
@@ -1850,47 +1929,46 @@ local Aliases = {
    ["aurafloating"] = "aura",
    ["aurafloat"] = "aura",
    ["aurafarm"] = "aura",
+   ["billyb"] = "billybounce",
+   ["billybouncing"] = "billybounce",
+   ["bbounce"] = "billybounce",
+   ["michaelmyer"] = "michaelmyers",
+   ["michaelbounce"] = "michaelmyers"
 }
 
 function do_emote(input)
-    local Humanoid = getgenv().Humanoid
-    if not Humanoid then return end
+   local Humanoid = getgenv().Humanoid
+   if not Humanoid then return end
 
-    local key = input:lower():gsub("%s+", "")
-    if Aliases[key] then key = Aliases[key] end
+   local key = input:lower():gsub("%s+", "")
+   if Aliases[key] then key = Aliases[key] end
 
-    local emoteList = Emotes[key]
-    if emoteList then
-        getgenv().Is_Currently_Emoting = true
-        local choice = emoteList[math.random(1, #emoteList)]
-        local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
+   local emoteList = Emotes[key]
+   if emoteList then
+      getgenv().Is_Currently_Emoting = true
+      local choice = emoteList[math.random(1, #emoteList)]
+      local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
 
-        if choice == "aurafarm" and (getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS") then
-            getgenv().spamming_flames(true)
-        else
-            warn("what, how'd you get this.")
-        end
+      local animate = getgenv().Character:FindFirstChild("Animate")
+      if animate then
+         animate.Disabled = true
+      end
 
-        local animate = getgenv().Character:FindFirstChild("Animate")
-        if animate then
-            animate.Disabled = true
-        end
-
-        if ok and track then
-            task.spawn(function()
-                track.Stopped:Wait()
-                if animate and animate.Parent then
-                    animate.Disabled = false
-                end
-                getgenv().Is_Currently_Emoting = false
-            end)
-        else
+      if ok and track then
+         task.spawn(function()
+            track.Stopped:Wait()
             if animate and animate.Parent then
-                animate.Disabled = false
+               animate.Disabled = false
             end
             getgenv().Is_Currently_Emoting = false
-        end
-    end
+         end)
+      else
+         if animate and animate.Parent then
+            animate.Disabled = false
+         end
+         getgenv().Is_Currently_Emoting = false
+      end
+   end
 end
 
 function disable_emoting()
@@ -5283,16 +5361,16 @@ end
 
 task.spawn(function()
     getgenv().ConstantUpdate_Checker_Live = true
-    while getgenv().ConstantUpdate_Checker_Live == true do
+    while getgenv().ConstantUpdate_Checker_Live do
         task.wait(1)
 
         local success, latestVersionInfo = pcall(function()
-            local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON")
+            local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
             return HttpService:JSONDecode(versionJson)
         end)
 
         if success and latestVersionInfo then
-            if Script_Version ~= latestVersionInfo.LifeTogether_Hub_Version then
+            if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
                 getgenv().ConstantUpdate_Checker_Live = false
                 Notify("JUST UPDATED: Rejoin and re-execute the Loadstring to update!", 20)
                 break
