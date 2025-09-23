@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.1.5"
+local Raw_Version = "V3.2.0"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -25,205 +25,265 @@ local watchedNames = {
 }
 
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
-   Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
-   LocalPlayer = Players.LocalPlayer
+    Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+    LocalPlayer = Players.LocalPlayer
 end
 
 local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
 
 local function httpRequestSafe(opts)
-   if not httprequest then return nil end
-   local ok, res = pcall(function() return httprequest(opts) end)
-   if not ok or not res then return nil end
-   return res
+    if not httprequest then return nil end
+    local ok, res = pcall(function() return httprequest(opts) end)
+    if not ok or not res then return nil end
+    return res
 end
 
-local function apiSet(userId, state)
-   local res = httpRequestSafe({
-      Url = API_URL .. "/set",
-      Method = "POST",
-      Headers = { ["Content-Type"] = "application/json" },
-      Body = HttpService:JSONEncode({ userId = userId, state = state })
-   })
-   return res and (res.StatusCode == 200 or res.statusCode == 200)
+local function apiSet(payload)
+    local res = httpRequestSafe({
+        Url = API_URL .. "/set",
+        Method = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = HttpService:JSONEncode(payload)
+    })
+    return res and (res.StatusCode == 200 or res.statusCode == 200)
 end
 
 local function apiList()
-   local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
-   if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
-      local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
-      if ok and type(tbl) == "table" then return tbl end
-   end
-   return {}
-end
-
-local syncEvent = ReplicatedStorage:FindFirstChild("FlamesHubSync")
-if not syncEvent then
-   syncEvent = Instance.new("RemoteEvent")
-   syncEvent.Name = "FlamesHubSync"
-   syncEvent.Parent = ReplicatedStorage
+    local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
+    if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
+        local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
+        if ok and type(tbl) == "table" then return tbl end
+    end
+    return {}
 end
 
 local function clearBillboardForChar(char)
-   if not char then return end
-   local head = char:FindFirstChild("Head")
-   if head then
-      local bb = head:FindFirstChild("FlamesHubBillboard")
-      if bb then bb:Destroy() end
-   end
+    if not char then return end
+    local head = char:FindFirstChild("Head")
+    if head then
+        local bb = head:FindFirstChild("FlamesHubBillboard")
+        if bb then bb:Destroy() end
+    end
 end
 
 local function setBillboard(char, text, color)
-   if not char then return end
-   local head = char:FindFirstChild("Head")
-   if not head then return end
+    if not char then return end
+    local head = char:FindFirstChild("Head")
+    if not head then return end
 
-   local existing = head:FindFirstChild("FlamesHubBillboard")
-   if existing then existing:Destroy() end
+    local existing = head:FindFirstChild("FlamesHubBillboard")
+    if existing then existing:Destroy() end
 
-   local gui = Instance.new("BillboardGui")
-   gui.Name = "FlamesHubBillboard"
-   gui.Size = UDim2.new(10,0,1.5,0)
-   gui.MaxDistance = math.huge
-   gui.AlwaysOnTop = true
-   gui.LightInfluence = 0
-   gui.StudsOffset = Vector3.new(0,3,0)
-   gui.Parent = head
+    local gui = Instance.new("BillboardGui")
+    gui.Name = "FlamesHubBillboard"
+    gui.Size = UDim2.new(10,0,1.5,0)
+    gui.MaxDistance = math.huge
+    gui.AlwaysOnTop = true
+    gui.LightInfluence = 0
+    gui.StudsOffset = Vector3.new(0,3,0)
+    gui.Parent = head
 
-   local frame = Instance.new("Frame")
-   frame.Size = UDim2.new(1,0,1,0)
-   frame.BackgroundColor3 = color
-   frame.BackgroundTransparency = 0.2
-   frame.BorderSizePixel = 0
-   frame.Parent = gui
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1,0,1,0)
+    frame.BackgroundColor3 = color
+    frame.BackgroundTransparency = 0.2
+    frame.BorderSizePixel = 0
+    frame.Parent = gui
 
-   local corner = Instance.new("UICorner")
-   corner.CornerRadius = UDim.new(0.3,0)
-   corner.Parent = frame
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0.3,0)
+    corner.Parent = frame
 
-   local label = Instance.new("TextLabel")
-   label.Size = UDim2.new(1,-10,1,-10)
-   label.Position = UDim2.new(0,5,0,5)
-   label.BackgroundTransparency = 1
-   label.TextScaled = true
-   label.Font = Enum.Font.GothamBold
-   label.TextStrokeTransparency = 0
-   label.TextStrokeColor3 = Color3.fromRGB(0,0,0)
-   label.TextColor3 = Color3.fromRGB(255,255,255)
-   label.Text = text
-   label.Parent = frame
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1,-10,1,-10)
+    label.Position = UDim2.new(0,5,0,5)
+    label.BackgroundTransparency = 1
+    label.TextScaled = true
+    label.Font = Enum.Font.GothamBold
+    label.TextStrokeTransparency = 0
+    label.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+    label.TextColor3 = Color3.fromRGB(255,255,255)
+    label.Text = text
+    label.Parent = frame
 end
 
-local function applyStateForPlayer(plr, state)
-   if not plr or not plr.Character then return end
+local function applyForPlayer(plr, payload)
+    if not plr or not plr.Character then return end
+    clearBillboardForChar(plr.Character)
 
-   clearBillboardForChar(plr.Character)
+    if watchedNames[plr.Name] then
+        setBillboard(plr.Character,"👑 Flames Hub | OWNER 👑",Color3.fromRGB(0,16,176))
+        return
+    end
 
-   if watchedNames[plr.Name] then
-      setBillboard(plr.Character,"👑 Flames Hub | OWNER 👑",Color3.fromRGB(0,16,176))
-      return
-   end
+    if type(payload) ~= "table" then return end
+    if payload.state == "disable" then return end
 
-   if state == "enable" then
-      setBillboard(plr.Character,"🔥 Flames Hub | CLIENT 🔥",Color3.fromRGB(255,255,255))
-   end
+    local title = payload.title or "🔥 Flames Hub | CLIENT 🔥"
+    local c = payload.color or {255,255,255}
+    local color3 = Color3.fromRGB(c[1], c[2], c[3])
+    setBillboard(plr.Character, title, color3)
 end
 
-syncEvent.OnClientEvent:Connect(function(userId,state)
-   local plr = Players:GetPlayerByUserId(userId)
-   if plr then
-      applyStateForPlayer(plr, state)
-   end
-end)
-
-local myState = "disable"
 local currentStates = {}
 
-local function toggleClient(state)
-   myState = state
-   if LocalPlayer.Character then
-      applyStateForPlayer(LocalPlayer, state)
-   else
-      LocalPlayer.CharacterAdded:Connect(function(char)
-         task.wait(1)
-         applyStateForPlayer(LocalPlayer, state)
-      end)
-   end
-
-   pcall(function() apiSet(LocalPlayer.UserId, state) end)
-   pcall(function() if syncEvent and syncEvent.FireServer then syncEvent:FireServer(LocalPlayer.UserId, state) end end)
-end
-
 local gui = Instance.new("ScreenGui")
-gui.Name = "FlamesHubToggleUI"
+gui.Name = "FlamesHubUI"
 gui.ResetOnSpawn = false
 gui.Parent = CoreGui
 
-local btn = Instance.new("TextButton")
-btn.Size = UDim2.new(0,160,0,40)
-btn.Position = UDim2.new(1,-170,1,-50)
-btn.AnchorPoint = Vector2.new(0,0)
-btn.BackgroundColor3 = Color3.fromRGB(30,30,30)
-btn.TextColor3 = Color3.fromRGB(255,255,255)
-btn.Font = Enum.Font.GothamBold
-btn.TextSize = 14
-btn.Text = "Toggle - Client OverHead Title"
-btn.TextScaled = true
-btn.Parent = gui
+local panel = Instance.new("Frame")
+panel.Size = UDim2.new(0,320,0,220)
+panel.Position = UDim2.new(1,-330,1,-230)
+panel.BackgroundColor3 = Color3.fromRGB(30,30,30)
+panel.BorderSizePixel = 0
+panel.Parent = gui
 
-local showing = false
-btn.MouseButton1Click:Connect(function()
-   showing = not showing
-   toggleClient(showing and "enable" or "disable")
+local panelCorner = Instance.new("UICorner", panel)
+panelCorner.CornerRadius = UDim.new(0,10)
+
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "Shadow"
+shadow.AnchorPoint = Vector2.new(0.5,0.5)
+shadow.Position = UDim2.new(0.5,0,0.5,0)
+shadow.Size = UDim2.new(1,30,1,30)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageColor3 = Color3.fromRGB(0,0,0)
+shadow.ImageTransparency = 0.5
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10,10,118,118)
+shadow.Parent = panel
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0,24,0,24)
+closeBtn.Position = UDim2.new(1,-28,0,4)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 16
+closeBtn.Parent = panel
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1,0)
+
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
 end)
 
-local function assignOwner(plr)
-   plr.CharacterAdded:Connect(function()
-      task.wait(1)
-      applyStateForPlayer(plr, currentStates[plr.UserId] or "disable")
-   end)
+local nameBox = Instance.new("TextBox")
+nameBox.Size = UDim2.new(1,-20,0,30)
+nameBox.Position = UDim2.new(0,10,0,40)
+nameBox.PlaceholderText = "Target username or userId"
+nameBox.BackgroundColor3 = Color3.fromRGB(45,45,45)
+nameBox.TextColor3 = Color3.fromRGB(255,255,255)
+nameBox.Font = Enum.Font.Gotham
+nameBox.TextSize = 14
+nameBox.Parent = panel
+Instance.new("UICorner", nameBox).CornerRadius = UDim.new(0,6)
+
+local titleBox = nameBox:Clone()
+titleBox.Position = UDim2.new(0,10,0,80)
+titleBox.PlaceholderText = "Title to show"
+titleBox.Parent = panel
+
+local selColor = {255,255,255}
+
+local function makeColorBtn(x,text,rgb)
+   local b = Instance.new("TextButton")
+   b.Size = UDim2.new(0,70,0,26)
+   b.Position = UDim2.new(0,x,0,120)
+   b.Text = text
+   b.Font = Enum.Font.GothamBold
+   b.TextSize = 13
+   b.BackgroundColor3 = Color3.fromRGB(rgb[1],rgb[2],rgb[3])
+   b.TextColor3 = Color3.fromRGB(255,255,255)
+   b.Parent = panel
+   Instance.new("UICorner", b).CornerRadius = UDim.new(0,6)
+   b.MouseButton1Click:Connect(function() selColor = rgb end)
 end
 
-for _,plr in ipairs(Players:GetPlayers()) do
-    assignOwner(plr)
-end
-Players.PlayerAdded:Connect(assignOwner)
+makeColorBtn(10,"White",{255,255,255})
+makeColorBtn(85,"Blue",{0,16,176})
+makeColorBtn(160,"Red",{200,30,30})
+makeColorBtn(235,"Green",{40,170,40})
 
-LocalPlayer.CharacterAdded:Connect(function()
-    task.wait(1)
-    applyStateForPlayer(LocalPlayer, myState)
+local applyBtn = Instance.new("TextButton")
+applyBtn.Size = UDim2.new(0,140,0,30)
+applyBtn.Position = UDim2.new(0,10,0,160)
+applyBtn.Text = "Apply Title"
+applyBtn.Font = Enum.Font.GothamBold
+applyBtn.TextSize = 14
+applyBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+applyBtn.TextColor3 = Color3.fromRGB(255,255,255)
+applyBtn.Parent = panel
+Instance.new("UICorner", applyBtn).CornerRadius = UDim.new(0,6)
+
+local clearBtn = applyBtn:Clone()
+clearBtn.Text = "Clear Title"
+clearBtn.Position = UDim2.new(0,170,0,160)
+clearBtn.Parent = panel
+
+local function resolveTarget(input)
+    if not input or input == "" then return nil end
+    local n = tonumber(input)
+    if n then return Players:GetPlayerByUserId(n) end
+    for _,p in ipairs(Players:GetPlayers()) do
+        if p.Name:lower() == input:lower() then return p end
+    end
+    return nil
+end
+
+applyBtn.MouseButton1Click:Connect(function()
+    local plr = resolveTarget(nameBox.Text)
+    if not plr then return end
+    local payload = {
+        userId = plr.UserId,
+        state = "enable",
+        title = titleBox.Text ~= "" and titleBox.Text or nil,
+        color = selColor
+    }
+    currentStates[plr.UserId] = payload
+    applyForPlayer(plr, payload)
+    pcall(function() apiSet(payload) end)
+end)
+
+clearBtn.MouseButton1Click:Connect(function()
+    local plr = resolveTarget(nameBox.Text)
+    if not plr then return end
+    local payload = { userId = plr.UserId, state = "disable" }
+    currentStates[plr.UserId] = payload
+    clearBillboardForChar(plr.Character)
+    pcall(function() apiSet(payload) end)
+end)
+
+Players.PlayerAdded:Connect(function(plr)
+    plr.CharacterAdded:Connect(function()
+        task.wait(1)
+        local payload = currentStates[plr.UserId]
+        if payload then applyForPlayer(plr, payload) end
+    end)
 end)
 
 task.spawn(function()
     while true do
         local states = apiList() or {}
-        for id,state in pairs(states) do
+        for id,payload in pairs(states) do
             local uid = tonumber(id)
-            if uid and currentStates[uid] ~= state then
-                currentStates[uid] = state
+            if uid then
+                if type(payload) ~= "table" then
+                payload = { userId = uid, state = payload }
+                end
+                currentStates[uid] = payload
                 local plr = Players:GetPlayerByUserId(uid)
-                if plr then applyStateForPlayer(plr, state) end
+                if plr then applyForPlayer(plr, payload) end
             end
         end
         task.wait(POLL_INTERVAL)
-    end
-end)
-
-task.spawn(function()
-    local states = apiList()
-    for id,state in pairs(states) do
-        local uid = tonumber(id)
-        if uid then
-            currentStates[uid] = state
-            local plr = Players:GetPlayerByUserId(uid)
-            if plr then applyStateForPlayer(plr, state) end
-        end
     end
 end)
 task.wait(0.2)
@@ -1675,14 +1735,19 @@ local Emotes = {
    },
    zen = {84943987730610},
    glitching = {131961970776128},
-   superman = {134861929761233},
+   superman = {
+      134861929761233,
+      93202303625509
+   },
    aura = {
       121547391421211,
       78755795767408,
       88425531063616,
       111426928948833,
       84052327668385,
+      116826272832592,
       103040723950430,
+      85452015445985
    },
    orangejustice = {
       133160900449608,
@@ -1713,6 +1778,23 @@ local Emotes = {
       115719203985051,
       77201116105359,
    },
+   billybounce = {
+      126516908191316,
+      93450937830334,
+      131013364061967,
+   },
+   billyjean = {
+      98915045016286
+   },
+   michaelmyers = {
+      103115491327846,
+      99068367180942,
+      135204931182370,
+      84555531182471,
+      123102740029981,
+      126102210823846,
+      78250036534439
+   }
 }
 
 local Aliases = {
@@ -1733,6 +1815,11 @@ local Aliases = {
    ["aurafloating"] = "aura",
    ["aurafloat"] = "aura",
    ["aurafarm"] = "aura",
+   ["billyb"] = "billybounce",
+   ["billybouncing"] = "billybounce",
+   ["bbounce"] = "billybounce",
+   ["michaelmyer"] = "michaelmyers",
+   ["michaelbounce"] = "michaelmyers"
 }
 
 function do_emote(input)
@@ -1747,12 +1834,6 @@ function do_emote(input)
       getgenv().Is_Currently_Emoting = true
       local choice = emoteList[math.random(1, #emoteList)]
       local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
-
-      if choice == "aura" and (getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS") then
-         getgenv().spamming_flames(true)
-      else
-         warn("what, how'd you get this.")
-      end
 
       local animate = getgenv().Character:FindFirstChild("Animate")
       if animate then
@@ -2127,6 +2208,12 @@ local function CommandsMenu()
       {prefix}defaultd - Makes you do the Default Dance emote (FE).
       {prefix}kotonai - Makes you do the Koto Nai emote (FE).
       {prefix}glitching - Makes you do the Glitching emote (FE).
+      {prefix}billyjean - Makes you do the Billie Jean emote (FE).
+      {prefix}billybounce - Makes you do the Billy Bounce emote (FE).
+      {prefix}michaelmyers - Makes you do the Michael Myers emote (FE).
+      {prefix}antivoid - Enables anti-void.
+      {prefix}unantivoid - Disables anti-void.
+      {prefix}
       {prefix}alljobs - Repeatedly spams all jobs
       {prefix}jobsoff - Stops spamming all jobs
       {prefix}fly SpeedNumber - Enable/disable flying
@@ -3449,6 +3536,12 @@ local function handleCommand(sender, message)
       do_emote("worm")
    elseif cmd == "glitching" then
       do_emote("glitch")
+   elseif cmd == "billyb" or cmd == "billybounce" then
+      do_emote("billybounce")
+   elseif cmd == "billyjean" then
+      do_emote("billyjean")
+   elseif cmd == "michaelbounce" or cmd == "michaelmyers" then
+      do_emote("michaelmyers")
    elseif cmd == "annoy" then
       local Target = findplr(split[1])
       if not Target then
@@ -3543,6 +3636,19 @@ local function handleCommand(sender, message)
    elseif cmd == "unautonoflames" or cmd == "unautohideflames" then
       getgenv().notify("Success:", "No longer protected against fire spam.", 5)
       getgenv().CompletelyHideFlamesComingIn(false)
+   elseif cmd == "antivoid" or cmd == "novoid" then
+      if not getgenv().originalFPDH then
+         getgenv().originalFPDH = getgenv().Workspace.FallenPartsDestroyHeight
+      end
+      task.wait(0.1)
+      getgenv().Workspace.FallenPartsDestroyHeight = -9e9
+   elseif cmd == "unantivoid" or cmd == "unnovoid" then
+      if not getgenv().originalFPDH then
+         getgenv().originalFPDH = -500
+         return getgenv().notify("Failure:", "Original destroy height doesn't exist!", 5)
+      end
+
+      getgenv().Workspace.FallPartsDestroyHeight = getgenv().originalFPDH or -500
    elseif cmd == "clip" then
       if not getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == false then
          return notify("Failure:", "Noclip is not enabled!", 5)
@@ -3565,7 +3671,7 @@ local function handleCommand(sender, message)
          getgenv()._noclipModifiedParts = nil
       end
       wait()
-      notify("Success:", "Disabled Noclip sucessfully.", 5)
+      getgenv().notify("Success:", "Disabled Noclip sucessfully.", 5)
    elseif cmd == "view" then
       local View_Target = findplr(split[1])
       if not View_Target then return notify("Failure:", "Target was not found or does not exist!", 5) end
@@ -3910,6 +4016,7 @@ local function handleCommand(sender, message)
    elseif cmd == "kill" and split[1] then
       local target = findplr(split[1])
       if not target then return notify("Kill:", "Target not found.", 5) end
+      if getgenv().Not_Ever_Sitting then return getgenv().notify("Failure:", "Anti-Sit is enabled, turn it off first!", 5) end
 
       local function wait_for_bus(timeout)
          local t = 0
@@ -3940,7 +4047,8 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "void" and split[1] then
       local target = findplr(split[1])
-      if not target then return notify("Void:", "Target not found.", 5) end
+      if not target then return getgenv().notify("Void:", "Target Player not found.", 5) end
+      if getgenv().Not_Ever_Sitting then return getgenv().notify("Failure:", "Anti-Sit is enabled, turn it off first!", 5) end
 
       local function wait_for_bus(timeout)
          local t = 0
@@ -3978,10 +4086,13 @@ local function handleCommand(sender, message)
          getgenv().TeleportService:TeleportToPlaceInstance(getgenv().PlaceID, getgenv().JobID, getgenv().LocalPlayer)
       end
    elseif cmd == "antifling" then
-      if getgenv().antiFlingEnabled or getgenv().antiFlingEnabled == true then
-         return notify("Failure:", "Anti Fling is already enabled!", 5)
+      if getgenv().antiFlingEnabled then
+         return getgenv().notify("Failure:", "Anti Fling is already enabled!", 5)
       end
-
+      if getgenv().antiKnockbackEnabled then
+         return getgenv().notify("Failure:", "Anti Fling is already enabled!", 5)
+      end
+      task.wait(0.1)
       getgenv().antiFlingEnabled = true
       getgenv().antiKnockbackEnabled = true
 
@@ -4000,7 +4111,7 @@ local function handleCommand(sender, message)
          end
       end
 
-      notify("Success:", "Enabled anti-fling, you will not be able to be flung.", 5)
+      getgenv().notify("Success:", "Enabled AntiFling, you will not be flung.", 5)
 
       local function onHeartbeat()
          if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
@@ -4045,7 +4156,7 @@ local function handleCommand(sender, message)
       getgenv().antiFlingEnabled = false
       getgenv().antiKnockbackEnabled = false
 
-      notify("Success:", "Disabled anti-fling", 5)
+      getgenv().notify("Success:", "Disabled AntiFling.", 5)
 
       if getgenv().anti_knockback_connection then
          getgenv().anti_knockback_connection:Disconnect()
@@ -4053,7 +4164,8 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "bring" and split[1] then
       local target = findplr(split[1])
-      if not target then return notify("Bring:", "Target not found.", 3) end
+      if not target then return getgenv().notify("Bring:", "Target not found.", 5) end
+      if getgenv().Not_Ever_Sitting then return getgenv().notify("Failure:", "Anti-Sit is enabled, turn it off first!", 5) end
 
       local function wait_for_bus(timeout)
          local t = 0
@@ -4085,6 +4197,7 @@ local function handleCommand(sender, message)
    elseif cmd == "skydive" then
       local target = findplr(split[1])
       if not target then return notify("Bring:", "Target not found.", 3) end
+      if getgenv().Not_Ever_Sitting then return getgenv().notify("Failure:", "Anti-Sit is enabled, turn it off first!", 5) end
 
       local function wait_for_bus(timeout)
          local t = 0
@@ -4205,33 +4318,22 @@ local function handleCommand(sender, message)
       end
       notify("Invalid Car:", "Name not matched.", 5)
    elseif cmd == "antihouseban" then
-      if getgenv().AntiTeleport or getgenv().AntiTeleport == true then
-         return notify("Failure:", "AntiHouseBan is already enabled!", 5)
+      if getgenv().AntiTeleport then
+      return getgenv().notify("Failure:", "AntiHouseBan is already enabled!", 5)
       end
-      wait(0.2)
+      if getgenv().never_banned_houses then
+         return getgenv().notify("Failure:", "AntiHouseBan is already enabled!", 5)
+      end
+
+      task.wait(0.2)
       update_plot_areas()
-      wait(0.2)
+      task.wait(0.2)
+
       getgenv().AntiTeleport = true
-      getgenv().AntiTeleportConnection = nil
+      getgenv().AntiTeleportConnections = {}
 
       local Players = getgenv().Players
       local RunService = getgenv().RunService
-      local LocalPlayer = getgenv().LocalPlayer
-      repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-
-      local Character = getgenv().Character
-      local HRP = getgenv().HumanoidRootPart
-      local lastCFrame = HRP.CFrame
-
-      local maxDistance = 5
-      local checkInterval = 0.05
-
-      notify("Success:", "Enabled 'antihouseban', you will not be removed from homes.", 5)
-      wait(0.2)
-      getgenv().AntiTeleport = true
-      getgenv().AntiTeleportConnection = nil
-
-      local Players = getgenv().Players
       local LocalPlayer = getgenv().LocalPlayer
 
       repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -4239,61 +4341,41 @@ local function handleCommand(sender, message)
       local Character = getgenv().Character
       local HRP = getgenv().HumanoidRootPart
       local safePos = HRP.CFrame
-      getgenv().AntiTeleportConnections = {}
 
-      getgenv().AntiTeleportConnection = task.spawn(function()
-            while task.wait(0.1) do
-               if not getgenv().AntiTeleport then
-                  safePos = HRP.CFrame
-                  continue
-               end
+      getgenv().notify("Success:", "Enabled, you cannot be banned from houses (AntiTP).", 5)
 
-               if LocalPlayer.Character ~= Character then
-                  Character = getgenv().Character
-                  HRP = getgenv().HumanoidRootPart
-               end
+      table.insert(getgenv().AntiTeleportConnections, RunService.Heartbeat:Connect(function()
+         if not getgenv().AntiTeleport then return end
 
-               if HRP then
-                  safePos = HRP.CFrame
-               end
-            end
-      end)
-
-      local function preventTp(char)
-         local root = getgenv().HumanoidRootPart
-         if not root then return end
-
-         local cframeCon = root:GetPropertyChangedSignal("CFrame"):Connect(function()
-            if getgenv().AntiTeleport and safePos and root then
-               root.CFrame = safePos
-            end
-         end)
-
-         local posCon = root:GetPropertyChangedSignal("Position"):Connect(function()
-            if getgenv().AntiTeleport and safePos and root then
-               root.CFrame = safePos
-            end
-         end)
-
-         table.insert(getgenv().AntiTeleportConnections, cframeCon)
-         table.insert(getgenv().AntiTeleportConnections, posCon)
-      end
-
-      table.insert(getgenv().AntiTeleportConnections, LocalPlayer.CharacterAdded:Connect(preventTp))
-      preventTp(Character)
-      wait(0.2)
-      getgenv().never_banned_houses = true
-      while getgenv().never_banned_houses == true do
-      wait()
-         for _, v in ipairs(PlotAreas) do
-            v.CanCollide = false
+         if LocalPlayer.Character ~= Character then
+            Character = getgenv().Character
+            HRP = getgenv().HumanoidRootPart
          end
-      end
+
+         if HRP then
+            local dist = (HRP.Position - safePos.Position).Magnitude
+            if dist > 5 then
+               HRP.CFrame = safePos
+            else
+               safePos = HRP.CFrame
+            end
+         end
+      end))
+
+      getgenv().never_banned_houses = true
+      task.spawn(function()
+         while getgenv().never_banned_houses == true do
+            task.wait()
+            for _, v in ipairs(PlotAreas) do
+               v.CanCollide = false
+            end
+         end
+      end)
    elseif cmd == "unantiban" then
       getgenv().never_banned_houses = false
       wait(0.3)
       getgenv().AntiTeleport = false
-      notify("Success:", "Disabled 'antihouseban', you CAN now be kicked from homes.", 5)
+      getgenv().notify("Success:", "Disabled, you CAN be banned from houses.", 5)
       wait(0.1)
       pcall(function()
          task.cancel(getgenv().AntiTeleportConnection)
@@ -4502,11 +4584,11 @@ end
 
 task.spawn(function()
    getgenv().ConstantUpdate_Checker_Live = true
-   while getgenv().ConstantUpdate_Checker_Live == true do
+   while getgenv().ConstantUpdate_Checker_Live do
       task.wait(1)
 
       local success, latestVersionInfo = pcall(function()
-         local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON")
+         local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
          return HttpService:JSONDecode(versionJson)
       end)
 
