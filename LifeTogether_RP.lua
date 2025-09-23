@@ -91,14 +91,14 @@ local EmoteNames = {"griddy", "scenario", "worm", "zen", "glitching", "superman"
 wait(0.2)
 local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
 local POLL_INTERVAL = 3
-local watchedNames = {
-   ["L0CKED_1N1"] = true,
-   ["CHEATING_B0SS"] = true,
+
+local watchedUserIds = {
+    [7712000520] = true,
+    [7740121604] = true,
 }
 
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
@@ -107,7 +107,6 @@ if not LocalPlayer then
 end
 
 local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
-
 local function httpRequestSafe(opts)
     if not httprequest then return nil end
     local ok, res = pcall(function() return httprequest(opts) end)
@@ -116,13 +115,15 @@ local function httpRequestSafe(opts)
 end
 
 local function apiSet(payload)
-    local res = httpRequestSafe({
-        Url = API_URL .. "/set",
-        Method = "POST",
-        Headers = { ["Content-Type"] = "application/json" },
-        Body = HttpService:JSONEncode(payload)
-    })
-    return res and (res.StatusCode == 200 or res.statusCode == 200)
+    local ok, res = pcall(function()
+        return httpRequestSafe({
+            Url = API_URL .. "/set",
+            Method = "POST",
+            Headers = { ["Content-Type"] = "application/json" },
+            Body = HttpService:JSONEncode(payload)
+        })
+    end)
+    return ok and res and (res.StatusCode == 200 or res.statusCode == 200)
 end
 
 local function apiList()
@@ -133,6 +134,8 @@ local function apiList()
     end
     return {}
 end
+
+local currentStates = {}
 
 local function clearBillboardForChar(char)
     if not char then return end
@@ -148,8 +151,7 @@ local function setBillboard(char, text, color)
     local head = char:FindFirstChild("Head")
     if not head then return end
 
-    local existing = head:FindFirstChild("FlamesHubBillboard")
-    if existing then existing:Destroy() end
+    clearBillboardForChar(char)
 
     local gui = Instance.new("BillboardGui")
     gui.Name = "FlamesHubBillboard"
@@ -180,34 +182,35 @@ local function setBillboard(char, text, color)
     label.TextStrokeTransparency = 0
     label.TextStrokeColor3 = Color3.fromRGB(0,0,0)
     label.TextColor3 = Color3.fromRGB(255,255,255)
-    label.Text = text
+    label.Text = text or ""
     label.Parent = frame
 end
 
 local function applyForPlayer(plr, payload)
     if not plr or not plr.Character then return end
-    clearBillboardForChar(plr.Character)
 
-    if watchedNames[plr.Name] then
-        setBillboard(plr.Character,"👑 Flames Hub | OWNER 👑",Color3.fromRGB(0,16,176))
+    if watchedUserIds[plr.UserId] then
+        setBillboard(plr.Character, "👑 Flames Hub | OWNER 👑", Color3.fromRGB(0,16,176))
         return
     end
 
     if type(payload) ~= "table" then return end
-    if payload.state == "disable" then return end
+    if payload.state == "disable" then
+        clearBillboardForChar(plr.Character)
+        return
+    end
 
     local title = payload.title or "🔥 Flames Hub | CLIENT 🔥"
     local c = payload.color or {255,255,255}
-    local color3 = Color3.fromRGB(c[1], c[2], c[3])
+    local color3 = Color3.fromRGB(c[1] or 255, c[2] or 255, c[3] or 255)
     setBillboard(plr.Character, title, color3)
 end
 
-local currentStates = {}
-
+local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local gui = Instance.new("ScreenGui")
 gui.Name = "FlamesHubUI"
 gui.ResetOnSpawn = false
-gui.Parent = CoreGui
+gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local panel = Instance.new("Frame")
 panel.Size = UDim2.new(0,320,0,220)
@@ -215,22 +218,7 @@ panel.Position = UDim2.new(1,-330,1,-230)
 panel.BackgroundColor3 = Color3.fromRGB(30,30,30)
 panel.BorderSizePixel = 0
 panel.Parent = gui
-
-local panelCorner = Instance.new("UICorner", panel)
-panelCorner.CornerRadius = UDim.new(0,10)
-
-local shadow = Instance.new("ImageLabel")
-shadow.Name = "Shadow"
-shadow.AnchorPoint = Vector2.new(0.5,0.5)
-shadow.Position = UDim2.new(0.5,0,0.5,0)
-shadow.Size = UDim2.new(1,30,1,30)
-shadow.BackgroundTransparency = 1
-shadow.Image = "rbxassetid://1316045217"
-shadow.ImageColor3 = Color3.fromRGB(0,0,0)
-shadow.ImageTransparency = 0.5
-shadow.ScaleType = Enum.ScaleType.Slice
-shadow.SliceCenter = Rect.new(10,10,118,118)
-shadow.Parent = panel
+Instance.new("UICorner", panel).CornerRadius = UDim.new(0,10)
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0,24,0,24)
@@ -242,10 +230,7 @@ closeBtn.Font = Enum.Font.GothamBold
 closeBtn.TextSize = 16
 closeBtn.Parent = panel
 Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1,0)
-
-closeBtn.MouseButton1Click:Connect(function()
-    gui:Destroy()
-end)
+closeBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
 
 local nameBox = Instance.new("TextBox")
 nameBox.Size = UDim2.new(1,-20,0,30)
@@ -264,7 +249,6 @@ titleBox.PlaceholderText = "Title to show"
 titleBox.Parent = panel
 
 local selColor = {255,255,255}
-
 local function makeColorBtn(x,text,rgb)
    local b = Instance.new("TextButton")
    b.Size = UDim2.new(0,70,0,26)
@@ -321,7 +305,15 @@ applyBtn.MouseButton1Click:Connect(function()
     }
     currentStates[plr.UserId] = payload
     applyForPlayer(plr, payload)
-    pcall(function() apiSet(payload) end)
+
+    task.spawn(function()
+        pcall(function() apiSet(payload) end)
+        local newStates = apiList() or {}
+        for id,p in pairs(newStates) do
+            local uid = tonumber(id)
+            if uid then currentStates[uid] = p end
+        end
+    end)
 end)
 
 clearBtn.MouseButton1Click:Connect(function()
@@ -330,7 +322,7 @@ clearBtn.MouseButton1Click:Connect(function()
     local payload = { userId = plr.UserId, state = "disable" }
     currentStates[plr.UserId] = payload
     clearBillboardForChar(plr.Character)
-    pcall(function() apiSet(payload) end)
+    task.spawn(function() pcall(function() apiSet(payload) end) end)
 end)
 
 Players.PlayerAdded:Connect(function(plr)
@@ -341,6 +333,20 @@ Players.PlayerAdded:Connect(function(plr)
     end)
 end)
 
+for _,plr in ipairs(Players:GetPlayers()) do
+    plr.CharacterAdded:Connect(function()
+        task.wait(1)
+        local payload = currentStates[plr.UserId]
+        if payload then applyForPlayer(plr, payload) end
+    end)
+
+    if plr.Character then
+        task.wait(0.5)
+        local payload = currentStates[plr.UserId]
+        if payload then applyForPlayer(plr, payload) end
+    end
+end
+
 task.spawn(function()
     while true do
         local states = apiList() or {}
@@ -348,18 +354,20 @@ task.spawn(function()
             local uid = tonumber(id)
             if uid then
                 if type(payload) ~= "table" then
-                payload = { userId = uid, state = payload }
+                    payload = { userId = uid, state = payload }
                 end
                 currentStates[uid] = payload
                 local plr = Players:GetPlayerByUserId(uid)
-                if plr then applyForPlayer(plr, payload) end
+                if plr and plr.Character then
+                    applyForPlayer(plr, payload)
+                end
             end
         end
         task.wait(POLL_INTERVAL)
     end
 end)
 task.wait(0.2)
-local Script_Version = "2.2.1-LIFE"
+local Script_Version = "2.2.7-LIFE"
 
 local function getExecutor()
     local name
@@ -870,14 +878,16 @@ end
 wait(0.1)
 getgenv().notify = notify
 wait(1)
+-- these executors don't work on this script for obvious reasons. --
 if executor_Name == "Xeno" or executor_Name == "Solara" then
+    print("[BLOCKED LOAD]:", tostring(getgenv().LocalPlayer.Name).." is trying to use this script on: "..tostring(executor_Name)..", this executor isn't able to run this script.")
     return getgenv().notify("FAILURE:", "Xeno/Solara cannot run this script!", 10)
 end
 if string.find(executor_Name, "JJSploit") then
+    print("[BLOCKED LOAD]:", tostring(getgenv().LocalPlayer.Name).." is trying to use this script on: "..tostring(executor_Name)..", this executor isn't able to run this script.")
     return getgenv().notify("FAILURE:", "JJSploit cannot run this script!", 10)
 end
 task.wait(1)
--- tab and section content section.
 local Tab1 = Window:CreateTab("🏡 Main 🏡", 0)
 local Section1 = Tab1:CreateSection("| 🏡 Main 🏡 |")
 local Tab2 = Window:CreateTab("🧍 Player 🧍", 0)
@@ -890,8 +900,8 @@ local Tab5 = Window:CreateTab("📱 Phone 📱", 0)
 local Section4 = Tab5:CreateSection("| 📱 Phone Section 📱 |")
 wait()
 local Modules = ReplicatedStorage:FindFirstChild("Modules")
-local Core = Modules:FindFirstChild("Core")
-local Game = Modules:FindFirstChild("Game")
+local Core = Modules:WaitForChild("Core")
+local Game = Modules:WaitForChild("Game")
 local Invisible_Module = require(Game:FindFirstChild("InvisibleMode"))
 local Billboard_GUI = require(Game:FindFirstChild("CharacterBillboardGui"))
 local PlotMarker = require(Game:FindFirstChild("PlotMarker"))
@@ -935,6 +945,20 @@ function sit_in_vehicle(Vehicle)
         return getgenv().notify("Failure:", "Unable to sit in Vehicle, missing VehicleSeat!", 5)
     end
 end
+
+local FireReparented_Folder
+task.wait(0.3)
+function create_script_fire_folder()
+    if not getgenv().ReplicatedFirst:FindFirstChild("FireTemporaryReparentFolder") then
+        FireReparented_Folder = Instance.new("Folder")
+        FireReparented_Folder.Name = "FireTemporaryReparentFolder"
+        FireReparented_Folder.Parent = getgenv().ReplicatedFirst
+    else
+        FireReparented_Folder = getgenv().ReplicatedFirst:FindFirstChild("FireTemporaryReparentFolder")
+    end
+end
+task.wait(0.2)
+create_script_fire_folder()
 
 function spawn_any_vehicle(Vehicle)
     send_function("spawn_vehicle", Vehicle)
@@ -1829,13 +1853,20 @@ function vehicle_skydive_player(TargetPlayer)
     end
 end
 
-task.wait(0.1)
-
+if getgenv().FireParticlesAdded then
+   getgenv().notify("Skipping:", "Connection has already been loaded here.", 5)
+else
+   local folder = getgenv().ReplicatedFirst:WaitForChild("FireTemporaryReparentFolder")
+   getgenv().FireParticlesAdded = folder.ChildAdded:Connect(function(particle)
+      particle:Destroy()
+   end)
+end
+wait(0.2)
 getgenv().SpamFire = false
 getgenv().SpamFireLoop = nil
 getgenv().DestroyFireConnection = nil
 getgenv().HideFireConnection = nil
-
+task.wait(0.1)
 getgenv().CompletelyHideFlamesComingIn = function(toggle)
     if toggle == true then
         if getgenv().DestroyFireConnection then
@@ -1855,14 +1886,8 @@ getgenv().CompletelyHideFlamesComingIn = function(toggle)
                             local FireParticles = FirePart:FindFirstChildOfClass("ParticleEmitter")
                             local Sound = FirePart:FindFirstChildOfClass("Sound")
 
-                            FireParticles.Enabled = false
-                            FireParticles.Brightness = 0
-                            FireParticles.Transparency = NumberSequence.new(1)
-                            FireParticles.Size = NumberSequence.new(0)
-                            FireParticles.LightEmission = 0
-                            FireParticles.LightInfluence = 0
-                            Sound.Playing = false
-                            Sound.Volume = 0
+                            FireParticles.Parent = getgenv().ReplicatedFirst:FindFirstChild("FireTemporaryReparentFolder")
+                            Sound.Parent = getgenv().ReplicatedFirst:FindFirstChild("FireTemporaryReparentFolder")
                         end
                     end
                 end
@@ -1871,7 +1896,7 @@ getgenv().CompletelyHideFlamesComingIn = function(toggle)
 
         disableFire()
 
-        getgenv().DestroyFireConnection = getgenv().Workspace.ChildAdded:Connect(function(model)
+        getgenv().DestroyFireConnection = getgenv().Workspace.ChildAdded:Connect(function()
             disableFire()
         end)
     elseif toggle == false then
@@ -3326,6 +3351,43 @@ Callback = function(spamming_fire)
     else
         getgenv().spamming_flames(false)
     end
+end,})
+
+local FireSpawn_Amount_Variable = 1
+wait(0.3)
+getgenv().FireSpawnInAmountSlider = Tab2:CreateSlider({
+Name = "Fire Spawn Amount Setter",
+Range = {1, 500},
+Increment = 1,
+Suffix = "",
+CurrentValue = 50,
+Flag = "FireSpawnInAmountEzSetter",
+Callback = function(FireSpawner_Limit_Amount)
+    FireSpawn_Amount_Variable = tonumber(FireSpawner_Limit_Amount)
+end,})
+
+wait(0.2)
+local canSpawn = true
+wait(0.1)
+getgenv().SpawnInFire = Tab2:CreateButton({
+Name = "Spawn Fire (FE)",
+Callback = function()
+    if not canSpawn then
+        return getgenv().notify("Wait!:", "You must wait 3s before spawning again.", 3)
+    end
+    
+    canSpawn = false
+
+    task.spawn(function()
+        for i = 1, FireSpawn_Amount_Variable do
+            task.wait(0)
+            getgenv().Send("request_fire")
+        end
+    end)
+
+    task.delay(3, function()
+        canSpawn = true
+    end)
 end,})
 
 getgenv().FrozenChar = Tab2:CreateToggle({
