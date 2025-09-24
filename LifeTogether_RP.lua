@@ -370,7 +370,7 @@ task.spawn(function()
     end
 end)
 task.wait(0.2)
-local Script_Version = "2.2.7-LIFE"
+local Script_Version = "2.3.2-LIFE"
 
 local function getExecutor()
     local name
@@ -1033,8 +1033,9 @@ function invisible_spam(toggle)
         while getgenv().Invisible_Flash == true do
             task.wait(.1)
             set_invisible(true)
-            task.wait()
+            task.wait(.2)
             set_invisible(false)
+            task.wait(0)
         end
     else
         getgenv().Invisible_Flash = false
@@ -1417,39 +1418,52 @@ function highlight_all_cars(Toggle)
     end
 end
 
-function toggle_siren_sound(Boolean, Vehicle)
-    for _, v in pairs(getgenv().Workspace.Vehicles:GetChildren()) do
-        if v:IsA("Model") and v:FindFirstChild("owner").Value == game.Players.LocalPlayer then
-            Vehicle = v
-        end
+function toggle_siren_sound(Boolean)
+    local Vehicle = get_vehicle()
+    if not Vehicle then
+        return getgenv().notify("Failure:", "Please spawn a vehicle before using this!", 5)
     end
-    wait(0.2)
-    if not Vehicle then return getgenv().notify("Failure:", "Please spawn a vehicle before using this!") end
 
+    local seat = Vehicle:FindFirstChild("VehicleSeat")
+    if not seat then
+        return getgenv().notify("Failure:", "Vehicle has no VehicleSeat!", 5)
+    end
+
+    local siren = seat:FindFirstChild("Siren")
+    if not siren or not siren:IsA("Sound") then
+        return getgenv().notify("Failure:", "Sirens do not exist on this vehicle!", 5)
+    end
+
+    local Old_Siren_Playing = siren.Playing
+    wait(0.1)
     if Boolean == true then
-        for _, v in pairs(getgenv().Workspace.Vehicles:GetChildren()) do
-            if v:IsA("Model") and v:FindFirstChild("owner").Value == game.Players.LocalPlayer then
-                Vehicle = v
-            end
-        end
-        wait(0.2)
-        if not Vehicle then return getgenv().notify("Failure:", "Please spawn a vehicle before using this!") end
-        if not Vehicle:FindFirstChild("VehicleSeat"):FindFirstChild("Siren") then
-            return getgenv().notify("Failure:", "Sirens do not exist on this vehicle!", 5)
-        end
-        wait(0.1)
-        Vehicle:FindFirstChild("VehicleSeat"):FindFirstChild("Siren").Volume = 1
+        siren.Playing = false
+        siren.Volume = 0
     elseif Boolean == false then
-        for _, v in pairs(getgenv().Workspace.Vehicles:GetChildren()) do
-            if v:IsA("Model") and v:FindFirstChild("owner").Value == game.Players.LocalPlayer then
-                Vehicle = v
+        siren.Volume = 0.5
+        siren.Playing = Old_Siren_Playing or false
+    end
+end
+
+function toggle_all_car_sirens(Boolean)
+    if Boolean == true then
+        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
+            if v:IsA("Model") and v:FindFirstChild("VehicleSeat") then
+                if v:IsA("Sound") and v.Name == "Siren" then
+                    v.Playing = false
+                    v.Volume = 0
+                end
             end
         end
-        wait(0.2)
-        if not Vehicle then return getgenv().notify("Failure:", "Please spawn a vehicle before using this!", 5) end
-        if not Vehicle:FindFirstChild("VehicleSeat"):FindFirstChild("Siren") then return getgenv().notify("Failure:", "Sirens do not seem to exist on this vehicle!", 5) end
-        wait(0.1)
-        Vehicle:FindFirstChild("VehicleSeat"):WaitForChild("Siren").Volume = 0
+    elseif Boolean == false then
+        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
+            if v:IsA("Model") and v:FindFirstChild("VehicleSeat") then
+                if v:IsA("Sound") and v.Name == "Siren" then
+                    v.Playing = false
+                    v.Volume = 0.5
+                end
+            end
+        end
     else
         return 
     end
@@ -1965,38 +1979,38 @@ local Aliases = {
 }
 
 function do_emote(input)
-   local Humanoid = getgenv().Humanoid
-   if not Humanoid then return end
+    local Humanoid = getgenv().Humanoid
+    if not Humanoid then return end
 
-   local key = input:lower():gsub("%s+", "")
-   if Aliases[key] then key = Aliases[key] end
+    local key = input:lower():gsub("%s+", "")
+    if Aliases[key] then key = Aliases[key] end
 
-   local emoteList = Emotes[key]
-   if emoteList then
-      getgenv().Is_Currently_Emoting = true
-      local choice = emoteList[math.random(1, #emoteList)]
-      local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
+    local emoteList = Emotes[key]
+    if emoteList then
+        getgenv().Is_Currently_Emoting = true
+        local choice = emoteList[math.random(1, #emoteList)]
+        local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
 
-      local animate = getgenv().Character:FindFirstChild("Animate")
-      if animate then
-         animate.Disabled = true
-      end
+        local animate = getgenv().Character:FindFirstChild("Animate")
+        if animate then
+            animate.Disabled = true
+        end
 
-      if ok and track then
-         task.spawn(function()
-            track.Stopped:Wait()
+        if ok and track then
+            task.spawn(function()
+                track.Stopped:Wait()
+                if animate and animate.Parent then
+                animate.Disabled = false
+                end
+                getgenv().Is_Currently_Emoting = false
+            end)
+        else
             if animate and animate.Parent then
-               animate.Disabled = false
+                animate.Disabled = false
             end
             getgenv().Is_Currently_Emoting = false
-         end)
-      else
-         if animate and animate.Parent then
-            animate.Disabled = false
-         end
-         getgenv().Is_Currently_Emoting = false
-      end
-   end
+        end
+    end
 end
 
 function disable_emoting()
@@ -2245,6 +2259,95 @@ Callback = function(is_car_rainbow)
         RGB_Vehicle(true)
     else
         RGB_Vehicle(false)
+    end
+end,})
+
+local Feedback_Types = {
+    "Idea 💡",
+    "Bug 🐞",
+    "Lag ⌛",
+    "Complaint 😡"
+}
+local Feedback_Msg = "Fix your game bro."
+local Predefined_Feedback_Messages = {
+    "This game needs more content!",
+    "Please fix the lag issues.",
+    "Found a bug, characters clip through walls.",
+    "Add more vehicles, it would be fun.",
+    "Game is good but needs better balancing.",
+    "Why is the map so empty?",
+    "Your anti-cheat is broken, please fix it.",
+    "This update ruined the game.",
+    "Add trading features please.",
+    "Leaderboard is not updating properly.",
+    "Animations are glitchy sometimes.",
+    "More customization options would be nice.",
+    "Daily rewards are not working correctly.",
+    "Gamepasses feel too overpriced.",
+    "Teleport system sometimes fails.",
+    "Some tools do not work as intended.",
+    "Camera controls are too clunky.",
+    "Please add more music choices.",
+    "Map takes too long to load.",
+    "Server crashes too often.",
+    "Hitboxes are very inconsistent.",
+    "Add a tutorial for new players.",
+    "Fix the mobile controls.",
+    "Leaderboard UI overlaps with chat.",
+    "Certain areas cause FPS drops.",
+    "Shop prices need rebalancing.",
+    "Lighting makes it too dark at night.",
+    "Add achievements to make it fun.",
+}
+wait(0.1)
+getgenv().FeedbackCustomMessage = Tab3:CreateInput({
+Name = "Set Custom Feedback Message",
+CurrentValue = "Message Here",
+PlaceholderText = "Message Here",
+RemoveTextAfterFocusLost = true,
+Flag = "CustomFeedbackMessageSetter",
+Callback = function(feedback_message_to_spam)
+    Feedback_Msg = feedback_message_to_spam or "Fix your game bro."
+end,})
+
+getgenv().FeedbackSpam_Message_FE = Tab3:CreateToggle({
+Name = "Spam Send Feedback (FE, Custom Msg)",
+CurrentValue = false,
+Flag = "FeedbackSpamCustom",
+Callback = function(spam_send_feedback)
+    if spam_send_feedback then
+        getgenv().Feedback_Spam_Custom = true
+        while getgenv().Feedback_Spam_Custom == true do
+            task.wait(0)
+            for _, feedback_type in pairs(Feedback_Types) do
+                task.wait(.1)
+                getgenv().Send("feedback", tostring(Feedback_Msg), feedback_type, "pc")
+            end
+        end
+    else
+        getgenv().Feedback_Spam_Custom = false
+    end
+end,})
+
+getgenv().FeedbackSpam_Predefined_FE = Tab3:CreateToggle({
+Name = "Spam Send Feedback (FE, Pre-Set Msgs)",
+CurrentValue = false,
+Flag = "FeedbackSpamPredefined",
+Callback = function(spam_send_predefined)
+    if spam_send_predefined then
+        getgenv().Feedback_Spam_Predefined = true
+        while getgenv().Feedback_Spam_Predefined == true do
+            task.wait(.1)
+            for _, msg in ipairs(Predefined_Feedback_Messages) do
+                task.wait(0.2)
+                for _, feedback_type in ipairs(Feedback_Types) do
+                    task.wait(0.2)
+                    getgenv().Send("feedback", msg, feedback_type, "pc")
+                end
+            end
+        end
+    else
+        getgenv().Feedback_Spam_Predefined = false
     end
 end,})
 
@@ -2705,7 +2808,7 @@ Callback = function(phone_notifs_off)
         end
         wait(0.1)
         while getgenv().Notifications_Off == true do
-        wait(0.3)
+        wait(0.2)
             for _, app in pairs(All_Apps) do
                 getgenv().Send("clear_notification_log", tostring(app.Name))
                 getgenv().Send("notification_settings", "Messages", false)
@@ -2713,11 +2816,49 @@ Callback = function(phone_notifs_off)
                 getgenv().Send("notification_settings", "PhoneApp", false)
                 getgenv().Send("notification_settings", "Home", false)
                 getgenv().Send("notification_settings", "Matcher", false)
+                for _, button in ipairs(all_buttons_tbl) do
+                    if isEnabled(button) then
+                        FireButtonEvent(button)
+                    end
+                end
             end
         end
     else
         getgenv().Notifications_Off = false
         getgenv().Notifications_Off = false
+    end
+end,})
+
+getgenv().KeepTrafficLights_Red_ToggleSwitch = Tab3:CreateToggle({
+Name = "Keep Traffic Lights Red (FE)",
+CurrentValue = false,
+Flag = "LoopTrafficLightsRedToggle",
+Callback = function(traffic_light_spam)
+    if traffic_light_spam then
+        local Map = getgenv().Workspace:FindFirstChild("Map")
+        if not Map then
+            getgenv().KeepTrafficLights_Red_ToggleSwitch:Set(false)
+            getgenv().KeepTrafficLights_Red = false
+            return getgenv().notify("Failure:", "Map doesn't exist in Workspace! (???)", 5)
+        end
+        local TrafficSigns = Map:FindFirstChild("TrafficSignals")
+        if not TrafficSigns then
+            getgenv().KeepTrafficLights_Red_ToggleSwitch:Set(false)
+            getgenv().KeepTrafficLights_Red = false
+            return getgenv().notify("Failure:", "TrafficSignals doesn't exist in Map Folder! (patched?)", 5)
+        end
+
+        getgenv().KeepTrafficLights_Red = true
+        while getgenv().KeepTrafficLights_Red == true do
+        wait(0.5)
+            for _, v in ipairs(TrafficSigns:GetDescendants()) do
+                if v:IsA("ClickDetector") and v.Parent.Name == "CrosswalkSwitch" then
+                    getgenv().Send("cd", v)
+                end
+            end
+        end
+    else
+        getgenv().KeepTrafficLights_Red = false
     end
 end,})
 
@@ -2759,6 +2900,168 @@ Callback = function(notificatios_enabled)
     end
 end,})
 
+local Humanoid_Vehicles = {
+    "Skateboard",
+    "Wheelchair"
+}
+local NormalSpeed_For_Humanoid_Vehicle = tonumber(getgenv().Humanoid.WalkSpeed)
+
+local function in_humanoid_vehicle(PlayerOrName)
+    local HumanoidVehicles = getgenv().Workspace:FindFirstChild("HumanoidVehicles")
+    if not HumanoidVehicles then 
+        getgenv().notify("Failure:", "HumanoidVehicles Folder doesn't exist in Workspace! (patched?)", 5)
+        return nil
+    end
+
+    local Player
+    if typeof(PlayerOrName) == "string" then
+        Player = getgenv().Players:FindFirstChild(PlayerOrName)
+        if not Player then return nil end
+    else
+        Player = PlayerOrName
+    end
+
+    local Target_Character, humanoid
+
+    if Player == getgenv().LocalPlayer then
+        Target_Character = getgenv().Character
+        humanoid = getgenv().Humanoid
+    else
+        Target_Character = Player.Character or Player.CharacterAdded:Wait()
+        if not Target_Character then return end
+
+        humanoid = Target_Character:FindFirstChildOfClass("Humanoid") or Target_Character:WaitForChild("Humanoid", 2)
+    end
+
+    if not humanoid then return end
+
+    local vehicleAttr = humanoid:GetAttribute("InHumanoidVehicle")
+    if not vehicleAttr then return end
+
+    if table.find(Humanoid_Vehicles, vehicleAttr) then
+        return vehicleAttr
+    end
+
+    return nil
+end
+
+getgenv().HumanoidVehicleSpeed = Tab4:CreateSlider({
+Name = "Humanoid Vehicle Speed",
+Range = {5, 750},
+Increment = 3,
+Suffix = "",
+CurrentValue = tonumber(NormalSpeed_For_Humanoid_Vehicle),
+Flag = "CurrentHumanoidVehicleSpeed",
+Callback = function(humanoid_vehicle_speed_set)
+    if not in_humanoid_vehicle(getgenv().LocalPlayer) then
+        NormalSpeed_For_Humanoid_Vehicle = humanoid_vehicle_speed_set
+        return 
+    end
+    
+    NormalSpeed_For_Humanoid_Vehicle = humanoid_vehicle_speed_set
+    wait(0.2)
+    getgenv().Humanoid.WalkSpeed = NormalSpeed_For_Humanoid_Vehicle
+end,})
+
+getgenv().ModHumanoidVehicle = Tab4:CreateButton({
+Name = "Mod Humanoid Vehicle Speed (Skateboard, WheelChair, etc)",
+Callback = function()
+    local HumanoidVehicles = getgenv().Workspace:FindFirstChild("HumanoidVehicles")
+    if not HumanoidVehicles then
+        return getgenv().notify("Failure:", "HumanoidVehicles Folder doesn't exist in Workspace! (patched?)", 5)
+    end
+    if not in_humanoid_vehicle(getgenv().LocalPlayer) then
+        return getgenv().notify("Failure:", "You're not in a Wheelchair or Skateboard!", 5)
+    end
+
+    getgenv().Humanoid.WalkSpeed = NormalSpeed_For_Humanoid_Vehicle
+end,})
+
+getgenv().OpenAllDoors_OnMap_Toggle = Tab3:CreateToggle({
+Name = "Open ALL DoubleDoors (FE, can lag)",
+CurrentValue = false,
+Flag = "OpeningAllDoubleDoorsOnTheMapToggle",
+Callback = function(opening_all_double_doors_FE)
+    if opening_all_double_doors_FE then
+        local Map = getgenv().Workspace:FindFirstChild("Map")
+
+        getgenv().OpenAll_DoubleDoors_Map = true
+        while getgenv().OpenAll_DoubleDoors_Map == true do
+        wait(0.5)
+            for _, v in ipairs(Map:GetDescendants()) do
+                if v:IsA("Model") and v.Name == "DoubleDoor" or string.find(v.Name:lower(), "doubledoor") then
+                    getgenv().Send("attempt_open_double", v)
+                end
+            end
+        end
+    else
+        getgenv().OpenAll_DoubleDoors_Map = false
+    end
+end,})
+
+getgenv().OpenAllSlidingDoors_Toggle_FE = Tab3:CreateToggle({
+Name = "Open All Sliding Doors (FE, may not work)",
+CurrentValue = false,
+Flag = "OpeningAllSlidingDoorsOnMap",
+Callback = function(opening_all_sliding_doors)
+    if opening_all_sliding_doors then
+        getgenv().OpenAll_Sliding_Doors_Map = true
+        while getgenv().OpenAll_Sliding_Doors_Map == true do
+        wait(0.5)
+            for _, v in ipairs(Map:GetDescendants()) do
+                if v:IsA("Model") and v.Name == "SlidingDoor" then
+                    getgenv().Send("attempt_open_slide", v)
+                end
+            end
+        end
+    else
+        getgenv().OpenAll_Sliding_Doors_Map = false
+        wait()
+        getgenv().OpenAll_Sliding_Doors_Map = false
+    end
+end,})
+
+getgenv().ToolSounds_Volume_Table = getgenv().ToolSounds_Volume_Table or {}
+wait(0.2)
+getgenv().MuteAll_Tools_NotFE = Tab3:CreateToggle({
+Name = "Mute All Tools (Not FE)",
+CurrentValue = false,
+Flag = "MutingAllAnnoyingToolsNotFE",
+Callback = function(muting_all_annoying_tools)
+    local Placed_Tools = getgenv().Workspace:FindFirstChild("PlacedModels")
+    if not Placed_Tools then
+        getgenv().muting_all_tools_currently = false
+        getgenv().MuteAll_Tools_NotFE:Set(false)
+        return getgenv().notify("Failure:", "PlacedModels Folder doesn't exist in Workspace! (patched?)", 5)
+    end
+
+    if muting_all_annoying_tools then
+        getgenv().muting_all_tools_currently = true
+        while getgenv().muting_all_tools_currently do
+            task.wait(0.2)
+            for _, v in ipairs(Placed_Tools:GetDescendants()) do
+                if v:IsA("Sound") and v.Playing then
+                    if getgenv().ToolSounds_Volume_Table[v] == nil then
+                        getgenv().ToolSounds_Volume_Table[v] = v.Volume
+                    end
+                    v.Volume = 0
+                end
+            end
+        end
+    else
+        getgenv().muting_all_tools_currently = false
+        task.wait(0.2)
+        for sound, oldVol in pairs(getgenv().ToolSounds_Volume_Table) do
+            if sound and sound:IsA("Sound") then
+                sound.Volume = oldVol or 1
+            end
+        end
+        if next(getgenv().ToolSounds_Volume_Table) then
+            table.clear(getgenv().ToolSounds_Volume_Table)
+        end
+    end
+end,})
+
 local Rain = require(getgenv().LocalPlayer:FindFirstChildOfClass("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain", true)) or require(getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts"):FindFirstChild("RainScript"):FindFirstChild("Rain"))
 local rainbowConnection
 task.wait(0.2)
@@ -2779,10 +3082,12 @@ getgenv().stopRainbow = function()
         rainbowConnection:Disconnect()
         rainbowConnection = nil
     end
+    getgenv().ChangeToNight_Time = false
     Rain:Disable()
     Rain:SetColor(Color3.fromRGB(255, 255, 255))
     Rain:SetVolume(0.2)
     Rain:SetTransparency(0)
+    getgenv().ChangeToNight_Time = false
 end
 task.wait(0.1)
 getgenv().RainbowRain_NotFE = Tab3:CreateToggle({
@@ -2806,6 +3111,11 @@ Callback = function(rainbow_rain_toggle)
         Rain:SetDirection(Vector3.new(0, -1, 0))
         Rain:SetTransparency(0)
         getgenv().startRainbow()
+        getgenv().ChangeToNight_Time = true
+        while getgenv().ChangeToNight_Time == true do
+        task.wait()
+            getgenv().Lighting.ClockTime = 0
+        end
     else
         getgenv().stopRainbow()
     end
@@ -3001,7 +3311,6 @@ Callback = function(anti_teleport_toggle)
                 end
 
                 if (HRP.Position - lastCFrame.Position).Magnitude > maxDistance then
-                    warn("[Anti-Teleport_DEBUG]: Teleport detected. Reverting.")
                     pcall(function()
                         HRP.CFrame = lastCFrame
                     end)
@@ -3327,7 +3636,7 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
 end)
 
 getgenv().DestroyFlameParticlesNoLag = Tab2:CreateToggle({
-Name = "Destroy Flames",
+Name = "Auto Destroy Flames",
 CurrentValue = false,
 Flag = "CompletelyDestroyFlamesConn",
 Callback = function(destroying_flames)
@@ -4297,6 +4606,10 @@ Flag = "SelectAnEmoteToPlay",
 Callback = function(dance_emote)
     local selected_str = typeof(dance_emote) == "table" and dance_emote[1] or dance_emote
 
+    if getgenv().Is_Currently_Emoting then
+        disable_emoting()
+    end
+    wait(0.2)
     if typeof(selected_str) == "string" or type(selected_str) == "string" then
         do_emote(selected_str)
     else
@@ -5035,20 +5348,32 @@ Callback = function(rgb_skintone)
     end
 end,})
 
-getgenv().MuteSiren_Sounds = Tab1:CreateToggle({
-Name = "Mute Sirens On Car",
+getgenv().MuteSiren_Sounds = Tab4:CreateToggle({
+Name = "Mute Sirens On Vehicle (Not FE)",
 CurrentValue = false,
 Flag = "MutedSirensScript",
 Callback = function(muting_sirens)
     if muting_sirens then
-        toggle_siren_sound(true, get_vehicle())
+        toggle_siren_sound(true)
     else
-        toggle_siren_sound(false, get_vehicle())
+        toggle_siren_sound(false)
+    end
+end,})
+
+getgenv().MuteAllCar_Sirens = Tab4:CreateToggle({
+Name = "Mute All Vehicle Sirens (Not FE)",
+CurrentValue = false,
+Flag = "MuteAllAnnoyingCarSirensScript",
+Callback = function(muting_all_car_sirens)
+    if muting_all_car_sirens then
+        toggle_all_car_sirens(true)
+    else
+        toggle_all_car_sirens(false)
     end
 end,})
 
 getgenv().FECar_Bouncer_GUI = Tab1:CreateButton({
-Name = "Car Bouncer GUI (FE)",
+Name = "Vehicle Bouncer GUI (FE)",
 Callback = function()
     if getgenv().CarBouncer_GUI_Loaded then
         return getgenv().notify("Heads Up:", "Already loaded Car Bouncer GUI!", 5)
@@ -5435,7 +5760,7 @@ task.spawn(function()
         end)
 
         if success and latestVersionInfo then
-            if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
+            if Script_Version ~= latestVersionInfo.LifeTogether_Hub_Version then
                 getgenv().ConstantUpdate_Checker_Live = false
                 Notify("JUST UPDATED: Rejoin and re-execute the Loadstring to update!", 20)
                 break
