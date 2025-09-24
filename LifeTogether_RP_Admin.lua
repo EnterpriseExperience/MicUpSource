@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.2.5"
+local Raw_Version = "V3.3.0"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -389,7 +389,7 @@ local Players = getgenv().Service_Wrap("Players")
 local LocalPlayer = Players.LocalPlayer
 local GroupId = getgenv().Game.CreatorId
 local staffRoles = {
-   "Admin", "Technical Assistance", "Developer A", "Technical Lead", "Finance", "Owner", "QA Lead"
+   "Admin", "Technical Assistance", "Developer A", "Technical Lead", "Finance", "Owner", "QA Lead", "Creator"
 }
 
 local function isStaffRole(role)
@@ -1226,7 +1226,7 @@ local Admins = {
 wait()
 getgenv().AdminPrefix = loadPrefix() or ";"
 wait(0.2)
-print("[Prefix]: Loaded prefix ->", tostring(getgenv().AdminPrefix))
+print("[Prefix]: Loaded Saved Prefix --> ", tostring(getgenv().AdminPrefix))
 wait(0.5)
 local Workspace = getgenv().Workspace
 local Players = getgenv().Players
@@ -1852,6 +1852,33 @@ local Aliases = {
    ["newyorksturdy"] = "sturdy"
 }
 
+function disable_emoting()
+   local Humanoid = getgenv().Humanoid
+   if not Humanoid then return end
+
+   Humanoid.WalkSpeed = 0
+   task.wait(1)
+
+   pcall(function()
+      for _, v in ipairs(Humanoid:GetPlayingAnimationTracks()) do
+         v:Stop()
+      end
+   end)
+
+   task.wait(0.2)
+
+   local animate = getgenv().Character:FindFirstChild("Animate")
+   if animate then
+      animate.Disabled = false
+   end
+
+   task.wait(0.5)
+   Humanoid.WalkSpeed = 16
+   getgenv().Is_Currently_Emoting = false
+end
+wait(0.1)
+getgenv().disable_emoting_script = disable_emoting
+wait()
 function do_emote(input)
    local Humanoid = getgenv().Humanoid
    if not Humanoid then return end
@@ -1859,6 +1886,10 @@ function do_emote(input)
    local key = input:lower():gsub("%s+", "")
    if Aliases[key] then key = Aliases[key] end
 
+   if getgenv().Is_Currently_Emoting then
+      disable_emoting()
+   end
+   wait(0.1)
    local emoteList = Emotes[key]
    if emoteList then
       getgenv().Is_Currently_Emoting = true
@@ -1885,31 +1916,6 @@ function do_emote(input)
          getgenv().Is_Currently_Emoting = false
       end
    end
-end
-
-function disable_emoting()
-   local Humanoid = getgenv().Humanoid
-   if not Humanoid then return end
-
-   Humanoid.WalkSpeed = 0
-   task.wait(1)
-
-   pcall(function()
-      for _, v in ipairs(Humanoid:GetPlayingAnimationTracks()) do
-         v:Stop()
-      end
-   end)
-
-   task.wait(0.2)
-
-   local animate = getgenv().Character:FindFirstChild("Animate")
-   if animate then
-      animate.Disabled = false
-   end
-
-   task.wait(0.4)
-   Humanoid.WalkSpeed = 16
-   getgenv().Is_Currently_Emoting = false
 end
 
 function change_phone_color(New_Color)
@@ -2661,15 +2667,17 @@ function toggle_name_func(boolean)
       return notify("Failure:", "Invalid arguments provided.", 5)
    end
 end
+
 wait(0.2)
 function flashy_name(Toggle)
    if Toggle == true then
       getgenv().Flashing_Name_Title = true
       while getgenv().Flashing_Name_Title == true do
-      task.wait(0)
+      wait()
          toggle_name_func(true)
-         task.wait(0)
+         wait(0.1)
          toggle_name_func(false)
+         wait(.1)
       end
    elseif Toggle == false then
       getgenv().Flashing_Name_Title = false
@@ -2685,7 +2693,7 @@ function lock_vehicle(Vehicle)
 end
 wait(0.1)
 if getgenv().HasSeen_Loading_Screen then
-   warn("Already seen loading screen.")
+   print("Already seen loading screen.")
 else
    local Blur_Module = require(getgenv().Core:FindFirstChild("Blur"))
 
@@ -2712,7 +2720,7 @@ else
    textLabel.Size = UDim2.new(0.45, 0.5, 0.45, 0.10)
    textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
    textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-   textLabel.Text = "Welcome to:\n\nFlames Life Together Admin "..tostring(Raw_Version).."!\n\nEnjoy."
+   textLabel.Text = "Welcome to:\n\nFlames Hub | Life Together Admin "..tostring(Raw_Version).."!\n\nEnjoy."
    if getgenv().Lighting.ClockTime <= 5 then
       textLabel.TextColor3 = Color3.fromRGB(3, 3, 3)
    elseif getgenv().Lighting.ClockTime >= 9 then
@@ -2857,7 +2865,7 @@ local function disable_rgb_for(plr)
    if not getgenv().Rainbow_Tasks[plr.Name] then return end
 
    if getgenv().VehicleStates[plr.Name].rainbow == true then
-      notify("Disabling:", "Vehicle states for: "..tostring(plr.Name), 3)
+      getgenv().notify("Disabling:", "Vehicle states for: "..tostring(plr.Name), 3)
       getgenv().VehicleStates[plr.Name].rainbow = false
    end
 
@@ -2867,8 +2875,6 @@ local function disable_rgb_for(plr)
 
    if getgenv().Rainbow_Tasks[plr.Name] then
       task.cancel(getgenv().Rainbow_Tasks[plr.Name])
-   else
-      warn("Player isn't on here.")
    end
 
    if getgenv().Rainbow_Tasks[plr.Name] then
@@ -3168,13 +3174,12 @@ function glitch_outfit(toggle)
       getgenv().Glitching_Outfit = true
       while getgenv().Glitching_Outfit == true do
          task.wait()
-         Animate_Disabled = true
-         getgenv().Character:FindFirstChild("Animate").Disabled = true
          for _, shirtId in ipairs(GlitchIDs.Shirts) do
             forceEquip("Shirt", shirtId)
             task.wait()
             forceUnequip("Shirt", shirtId)
          end
+         wait(0.1)
          for _, pantsId in ipairs(GlitchIDs.Pants) do
             forceEquip("Pants", pantsId)
             task.wait()
@@ -3182,11 +3187,7 @@ function glitch_outfit(toggle)
          end
       end
    else
-      Animate_Disabled = false
       getgenv().Glitching_Outfit = false
-      if getgenv().Character:FindFirstChild("Animate") then
-         getgenv().Character:FindFirstChild("Animate").Disabled = false
-      end
       wait(1)
       repeat task.wait() until getgenv().Glitching_Outfit == false
       if getgenv().Glitching_Outfit == false then
@@ -3227,7 +3228,11 @@ getgenv().Viewing_Plr_Tbl = getgenv().Viewing_Plr_Tbl or {}
 wait(0.1)
 getgenv().viewTarget = function(Player)
    if getgenv().Viewing_A_Player then
-      return notify("Failure:", "You're already viewing: " .. tostring(getgenv().Viewing_Plr_Tbl[Player.Name]), 5)
+      if getgenv().Viewing_Plr_Tbl[Player.Name] then
+         return getgenv().notify("Failure:", "You're already viewing: " .. tostring(getgenv().Viewing_Plr_Tbl[Player.Name]), 5)
+      else
+         return getgenv().notify("Failure:", "You're already viewing a Player.", 5)
+      end
    end
 
    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
@@ -3250,7 +3255,7 @@ end
 wait(0.1)
 getgenv().unview_player = function()
    if not getgenv().Viewing_A_Player then
-      return notify("Failure:", "You're not viewing anyone!", 5)
+      return getgenv().notify("Failure:", "You're not viewing anyone!", 5)
    end
 
    if getgenv().Humanoid or getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
@@ -3267,10 +3272,10 @@ getgenv().unview_player = function()
 
    getgenv().Viewing_A_Player = false
    getgenv().Viewing_Plr_Tbl = {}
-   notify("Success:", "Stopped viewing: " .. tostring(viewedName), 5)
+   getgenv().notify("Success:", "Stopped viewing: " .. tostring(viewedName), 5)
 end
 wait(0.1)
-warn("Setup viewing/spectating functions.")
+getgenv().notify("[CAMERA-HOOK]:", "Initialized spectating functionality successfully.", 5)
 
 local function check_friend(Player)
    if Player ~= getgenv().LocalPlayer and Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
@@ -4450,7 +4455,6 @@ local function handleCommand(sender, message)
       end
 
       local accelInput = string.trim(split[2] or "")
-      print("caraccel input:", accelInput)
       local accel_max = tonumber(accelInput)
       if not accel_max then
          return notify("Invalid Accel:", "Must be a valid number (e.g., 50 or 0.5).", 5)
@@ -4485,9 +4489,9 @@ local function handleCommand(sender, message)
    end
 end
 wait(0.5)
-notify("Success:", "We have hooked the Camera successfully.", 5)
+getgenv().notify("[HOOKED]:", "We have hooked the Camera successfully.", 5)
 wait(0.2)
-print("[Life Together-RP : Admin_Commands]: Setting up command receiver...")
+getgenv().notify("[INITIALIZING]:", "Setting up command receiver...", 5)
 getgenv().TextChatService.MessageReceived:Connect(function(msg)
    if not msg.TextSource then return end
    local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
@@ -4499,8 +4503,8 @@ wait(0.1)
 setup_cmd_handler_plr(v)
 wait(0.2)
 getgenv().LifeTogetherRP_Admin = true
-notify("Success:", "Life Together RP-Admin has been loaded!", 5)
-print("[Life Together-RP : Admin_Commands]: Loaded!")
+getgenv().notify("[INITIALIZED]:", "Life Together RP-Admin has been loaded!", 5)
+getgenv().notify("[LOADED]:", "[Life Together-RP : Admin_Commands]: Loaded!", 5)
 wait(0.3)
 function auto_add_friends()
    for _, v in ipairs(getgenv().Players:GetPlayers()) do
