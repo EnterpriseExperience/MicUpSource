@@ -1,7 +1,10 @@
 getgenv().Game = game
+if not game:IsLoaded() then
+   game.Loaded:Wait()
+end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.3.2"
+local Raw_Version = "V3.3.5"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -714,6 +717,14 @@ function getRoot(char)
 end
 wait(0.2)
 getgenv().getRoot = getRoot
+wait(0.1)
+getgenv().LocalPlayer.OnTeleport:Connect(function(State)
+   if (not getgenv().TeleportCheck_Admin) and getgenv().queueteleport then
+      getgenv().TeleportCheck_Admin = true
+      queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua')))()")
+   end
+end)
+
 wait(0.3)
 if not getgenv().Players then
    warn("getgenv().Players was not detected, fixing...")
@@ -1545,6 +1556,22 @@ local function savePrefix(newPrefix)
    end
 end
 
+function spawn_fire_FE(amount)
+   if not amount then
+      amount = tonumber(5)
+   elseif not tonumber(amount) then
+      return getgenv().notify("[Failure]:", "Please provide a number/integer!", 5)
+   else
+      amount = tonumber(amount)
+   end
+
+   if not getgenv().Send then return getgenv().notify("[Failure]:", "Internal getgenv().Send function missing!", 5) end
+
+   for i = 1, amount do
+      getgenv().Send("request_fire")
+   end
+end
+
 function anti_void()
    local root = getgenv().getRoot(getgenv().Character)
    local oldpos = root.CFrame
@@ -2214,6 +2241,7 @@ local function CommandsMenu()
       {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle)
       {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
       {prefix}infyield - Executes Infinite Premium (my Infinite Yield)
+      {prefix}spawnfire NUMBER - Spawns fire with a specified number argument.
       {prefix}rainbowcar player - Makes a players car RGB (FE)
       {prefix}norainbowcar player - Disables the RGB for a player's car (FE)
       {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed
@@ -3548,6 +3576,10 @@ local function handleCommand(sender, message)
       end
       wait()
       Enable_Fly_2(Fly_Speed)
+   elseif cmd == "spawnfire" or cmd == "fireamount" or cmd == "spawnflames" or cmd == "spawnflame" or cmd == "firespawn" then
+      local Amount = split[1] or tonumber(split[1]) or 5
+
+      spawn_fire_FE(Amount)
    elseif cmd == "startrgbtool" then
       rainbow_tool(true)
    elseif cmd == "stoprgbtool" then
