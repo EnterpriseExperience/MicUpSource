@@ -1,4 +1,7 @@
 getgenv().Game = game
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
 getgenv().Service_Wrap = function(serviceName)
@@ -372,7 +375,7 @@ task.spawn(function()
     end
 end)
 task.wait(0.2)
-local Script_Version = "2.3.3-LIFE"
+local Script_Version = "2.3.5-LIFE"
 
 local function getExecutor()
     local name
@@ -671,6 +674,13 @@ getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv()
 getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
+
+getgenv().LocalPlayer.OnTeleport:Connect(function(State)
+   if (not getgenv().TeleportCheck_ScriptHub) and getgenv().queueteleport then
+      getgenv().TeleportCheck_ScriptHub = true
+      queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua')))()")
+   end
+end)
 
 local function SafeGetHumanoid(char)
 	local hum = char:FindFirstChildWhichIsA("Humanoid")
