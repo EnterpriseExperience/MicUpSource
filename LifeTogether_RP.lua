@@ -371,7 +371,7 @@ task.spawn(function()
     end
 end)
 task.wait(0.2)
-local Script_Version = "2.3.2-LIFE"
+local Script_Version = "2.3.3-LIFE"
 
 local function getExecutor()
     local name
@@ -2763,6 +2763,13 @@ for _, v in ipairs(App_Modules:GetChildren()) do
     table.insert(All_Apps, v)
 end
 wait(0.3)
+getgenv().InfiniteYieldPremiumScript = Tab1:CreateButton({
+Name = "Infinite Premium (Infinite Yield BUT Better)",
+Callback = function()
+    getgenv().notify("Loading:", "This is basically Infinite Yield BUT better (has your settings to)", 5)
+    infinite_premium()
+end,})
+
 getgenv().NoNotifications_Phone = Tab5:CreateToggle({
 Name = "No Phone Notifications",
 CurrentValue = false,
