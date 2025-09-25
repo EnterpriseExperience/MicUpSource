@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.3.9"
+local Raw_Version = "V3.4.0"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1755,6 +1755,9 @@ local Emotes = {
    },
    sturdy = {
       122687759897103
+   },
+   louisiana_jigg = {
+      75625820126017,
    }
 }
 
@@ -1782,7 +1785,8 @@ local Aliases = {
    ["michaelmyer"] = "michaelmyers",
    ["michaelbounce"] = "michaelmyers",
    ["nysturdy"] = "sturdy",
-   ["newyorksturdy"] = "sturdy"
+   ["newyorksturdy"] = "sturdy",
+   ["jiggy"] = "louisiana_jigg"
 }
 
 function disable_emoting()
@@ -3524,6 +3528,8 @@ local function handleCommand(sender, message)
       do_emote("michaelmyers")
    elseif cmd == "sturdy" or cmd == "nysturdy" then
       do_emote("sturdy")
+   elseif cmd == "jiggy" or cmd == "louisiniajigg" or cmd == "getjiggy" then
+      do_emote("jiggy")
    elseif cmd == "infyield" or cmd == "infpremium" or cmd == "infiniteyield" or cmd == "infinitepremium" or cmd == "iy" or cmd == "loadiy" then
       infinite_premium()
    elseif cmd == "annoy" then
