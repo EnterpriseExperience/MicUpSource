@@ -117,44 +117,66 @@ local watchedUserIds = {
 }
 
 local function httpRequestSafe(opts)
-   if not httprequest then return nil end
-   local ok, res = pcall(function() return httprequest(opts) end)
+   if not httprequest then return end
+
+   local normalized = {
+      url    = opts.url or opts.Url,
+      method = opts.method or opts.Method,
+      headers = opts.headers or opts.Headers,
+      body   = opts.body or opts.Body,
+   }
+
+   local ok, res = pcall(function() return httprequest(normalized) end)
    if not ok or not res then return nil end
    return res
 end
 
+local function safeJsonDecode(body)
+   if not body then return {} end
+   if body:sub(1,1) ~= '{' and body:sub(1,1) ~= '[' then return {} end
+   local ok, tbl = pcall(HttpService.JSONDecode, HttpService, body)
+   return ok and type(tbl) == "table" and tbl or {}
+end
+
 local function apiList()
-   local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
-   if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
-      local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
-      if ok and type(tbl) == "table" then
-         return tbl
-      end
-   end
-   return {}
+   local res = httpRequestSafe({ url = API_URL .. "/list", method = "GET" })
+   return safeJsonDecode(res and res.Body)
 end
 
 local function apiSet(payload)
    local ok, res = pcall(function()
       return httpRequestSafe({
-         Url = API_URL .. "/set",
-         Method = "POST",
-         Headers = { ["Content-Type"] = "application/json" },
-         Body = HttpService:JSONEncode(payload)
+         url = API_URL .. "/set",
+         method = "POST",
+         headers = { ["content-type"] = "application/json" },
+         body = HttpService:JSONEncode(payload)
       })
    end)
-   return ok and res and (res.StatusCode == 200 or res.statusCode == 200)
+   return ok and res and (res.StatusCode == 200 or res.status_code == 200)
+end
+
+local function apiDelete(userId)
+   local ok, res = pcall(function()
+      return httpRequestSafe({
+         url = API_URL .. "/delete",
+         method = "POST",
+         headers = { ["content-type"] = "application/json" },
+         body = HttpService:JSONEncode({ userId = userId })
+      })
+   end)
+   return ok and res and (res.StatusCode == 200 or res.status_code == 200)
 end
 
 local function isUserInAPI(userId)
    local list = apiList()
    return list[tostring(userId)] ~= nil
 end
+
 wait(0.1)
 getgenv().CheckIfUserIs_InAPI_Executed = isUserInAPI
 
+-- Billboard logic (unchanged) --
 local localBillboardEnabled = true
-
 local function createBillboard(player, payload)
    local char = player.Character or player.CharacterAdded:Wait()
    local head = char:FindFirstChild("Head")
@@ -194,7 +216,6 @@ local function createBillboard(player, payload)
    end
 
    textLabel.Parent = billboard
-
    if player == LocalPlayer then
       billboard.Enabled = localBillboardEnabled
    end
@@ -227,6 +248,16 @@ apiSet({
    userId = LocalPlayer.UserId,
    state = "enable",
 })
+
+game:BindToClose(function()
+   apiDelete(LocalPlayer.UserId)
+end)
+
+Players.PlayerRemoving:Connect(function(plr)
+   if plr == LocalPlayer then
+      apiDelete(LocalPlayer.UserId)
+   end
+end)
 
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local toggleGui = Instance.new("ScreenGui")
