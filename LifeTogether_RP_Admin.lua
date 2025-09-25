@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.3.8"
+local Raw_Version = "V3.3.9"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -99,6 +99,10 @@ local function createBillboard(player, payload)
    textLabel.TextScaled = true
    textLabel.TextStrokeTransparency = 0
 
+   local corner = Instance.new("UICorner")
+   corner.CornerRadius = UDim.new(0, 8)
+   corner.Parent = textLabel
+
    if watchedUserIds[player.UserId] then
       textLabel.Text = "🔥 FLAMES HUB | OWNER 🔥"
       textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -122,7 +126,7 @@ task.spawn(function()
       for userId, payload in pairs(data) do
          local plr = Players:GetPlayerByUserId(tonumber(userId))
          if plr then
-               createBillboard(plr, payload)
+            createBillboard(plr, payload)
          end
       end
    end
