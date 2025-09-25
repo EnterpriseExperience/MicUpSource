@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.4.1"
+local Raw_Version = "V3.4.2"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -169,8 +169,10 @@ apiSet({
    state = "enable",
 })
 
-game:BindToClose(function()
-   apiDelete(LocalPlayer.UserId)
+Players.PlayerRemoving:Connect(function(plr)
+   if plr == LocalPlayer then
+      apiDelete(LocalPlayer.UserId)
+   end
 end)
 
 Players.PlayerRemoving:Connect(function(plr)
