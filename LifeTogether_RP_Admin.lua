@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.3.5"
+local Raw_Version = "V3.3.8"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -20,27 +20,38 @@ getgenv().Service_Wrap = function(serviceName)
    end
 end
 wait(0.2)
-local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
-local POLL_INTERVAL = 3
-local watchedUserIds = {
-   [7712000520] = true,
-   [7740121604] = true,
-}
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
    Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
    LocalPlayer = Players.LocalPlayer
 end
 
+local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
 local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
+
+local watchedUserIds = {
+   [7712000520] = true,
+   [7740121604] = true,
+}
+
 local function httpRequestSafe(opts)
    if not httprequest then return nil end
    local ok, res = pcall(function() return httprequest(opts) end)
    if not ok or not res then return nil end
    return res
+end
+
+local function apiList()
+   local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
+   if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
+      local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
+      if ok and type(tbl) == "table" then
+         return tbl
+      end
+   end
+   return {}
 end
 
 local function apiSet(payload)
@@ -55,244 +66,133 @@ local function apiSet(payload)
    return ok and res and (res.StatusCode == 200 or res.statusCode == 200)
 end
 
-local function apiList()
-   local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
-   if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
-      local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
-      if ok and type(tbl) == "table" then return tbl end
-   end
-   return {}
+local function isUserInAPI(userId)
+   local list = apiList()
+   return list[tostring(userId)] ~= nil
 end
+wait(0.1)
+getgenv().CheckIfUserIs_InAPI_Executed = isUserInAPI
 
-local currentStates = {}
+local localBillboardEnabled = true
 
-local function clearBillboardForChar(char)
-   if not char then return end
-   local head = char:FindFirstChild("Head")
-   if head then
-      local bb = head:FindFirstChild("FlamesHubBillboard")
-      if bb then bb:Destroy() end
-   end
-end
-
-local function setBillboard(char, text, color)
-   if not char then return end
+local function createBillboard(player, payload)
+   local char = player.Character or player.CharacterAdded:Wait()
    local head = char:FindFirstChild("Head")
    if not head then return end
 
-   clearBillboardForChar(char)
+   local existing = head:FindFirstChild("FlamesHubBillboard")
+   if existing then existing:Destroy() end
 
-   local gui = Instance.new("BillboardGui")
-   gui.Name = "FlamesHubBillboard"
-   gui.Size = UDim2.new(10,0,1.5,0)
-   gui.MaxDistance = math.huge
-   gui.AlwaysOnTop = true
-   gui.LightInfluence = 0
-   gui.StudsOffset = Vector3.new(0,3,0)
-   gui.Parent = head
+   local billboard = Instance.new("BillboardGui")
+   billboard.Name = "FlamesHubBillboard"
+   billboard.Adornee = head
+   billboard.Size = UDim2.new(0, 200, 0, 50)
+   billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+   billboard.AlwaysOnTop = true
+   billboard.Enabled = true
+   billboard.Parent = head
 
-   local frame = Instance.new("Frame")
-   frame.Size = UDim2.new(1,0,1,0)
-   frame.BackgroundColor3 = color
-   frame.BackgroundTransparency = 0.2
-   frame.BorderSizePixel = 0
-   frame.Parent = gui
+   local textLabel = Instance.new("TextLabel")
+   textLabel.BackgroundTransparency = 0.2
+   textLabel.Size = UDim2.new(1, 0, 1, 0)
+   textLabel.Font = Enum.Font.GothamBold
+   textLabel.TextScaled = true
+   textLabel.TextStrokeTransparency = 0
 
-   local corner = Instance.new("UICorner")
-   corner.CornerRadius = UDim.new(0.3,0)
-   corner.Parent = frame
-
-   local label = Instance.new("TextLabel")
-   label.Size = UDim2.new(1,-10,1,-10)
-   label.Position = UDim2.new(0,5,0,5)
-   label.BackgroundTransparency = 1
-   label.TextScaled = true
-   label.Font = Enum.Font.GothamBold
-   label.TextStrokeTransparency = 0
-   label.TextStrokeColor3 = Color3.fromRGB(0,0,0)
-   label.TextColor3 = Color3.fromRGB(255,255,255)
-   label.Text = text or ""
-   label.Parent = frame
-end
-
-local function applyForPlayer(plr, payload)
-   if not plr or not plr.Character then return end
-
-   if watchedUserIds[plr.UserId] then
-      setBillboard(plr.Character, "👑 Flames Hub | OWNER 👑", Color3.fromRGB(0,16,176))
-      return
+   if watchedUserIds[player.UserId] then
+      textLabel.Text = "🔥 FLAMES HUB | OWNER 🔥"
+      textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+      textLabel.BackgroundColor3 = Color3.fromRGB(0, 16, 176)
+   else
+      textLabel.Text = "🔥 FLAMES HUB | CLIENT 🔥"
+      textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+      textLabel.BackgroundColor3 = Color3.fromRGB(245, 245, 245)
    end
 
-   if type(payload) ~= "table" then return end
-   if payload.state == "disable" then
-      clearBillboardForChar(plr.Character)
-      return
+   textLabel.Parent = billboard
+
+   if player == LocalPlayer then
+      billboard.Enabled = localBillboardEnabled
    end
-
-   local title = payload.title or "🔥 Flames Hub | CLIENT 🔥"
-   local c = payload.color or {255,255,255}
-   local color3 = Color3.fromRGB(c[1] or 255, c[2] or 255, c[3] or 255)
-   setBillboard(plr.Character, title, color3)
 end
 
-local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-local gui = Instance.new("ScreenGui")
-gui.Name = "FlamesHubUI"
-gui.ResetOnSpawn = false
-gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-
-local panel = Instance.new("Frame")
-panel.Size = UDim2.new(0,320,0,220)
-panel.Position = UDim2.new(1,-330,1,-230)
-panel.BackgroundColor3 = Color3.fromRGB(30,30,30)
-panel.BorderSizePixel = 0
-panel.Parent = gui
-Instance.new("UICorner", panel).CornerRadius = UDim.new(0,10)
-
-local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0,24,0,24)
-closeBtn.Position = UDim2.new(1,-28,0,4)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
-closeBtn.Text = "X"
-closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.TextSize = 16
-closeBtn.Parent = panel
-Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1,0)
-closeBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
-
-local nameBox = Instance.new("TextBox")
-nameBox.Size = UDim2.new(1,-20,0,30)
-nameBox.Position = UDim2.new(0,10,0,40)
-nameBox.PlaceholderText = "Target username or userId"
-nameBox.BackgroundColor3 = Color3.fromRGB(45,45,45)
-nameBox.TextColor3 = Color3.fromRGB(255,255,255)
-nameBox.Font = Enum.Font.Gotham
-nameBox.TextSize = 14
-nameBox.Parent = panel
-Instance.new("UICorner", nameBox).CornerRadius = UDim.new(0,6)
-
-local titleBox = nameBox:Clone()
-titleBox.Position = UDim2.new(0,10,0,80)
-titleBox.PlaceholderText = "Title to show"
-titleBox.Parent = panel
-
-local selColor = {255,255,255}
-local function makeColorBtn(x,text,rgb)
-   local b = Instance.new("TextButton")
-   b.Size = UDim2.new(0,70,0,26)
-   b.Position = UDim2.new(0,x,0,120)
-   b.Text = text
-   b.Font = Enum.Font.GothamBold
-   b.TextSize = 13
-   b.BackgroundColor3 = Color3.fromRGB(rgb[1],rgb[2],rgb[3])
-   b.TextColor3 = Color3.fromRGB(255,255,255)
-   b.Parent = panel
-   Instance.new("UICorner", b).CornerRadius = UDim.new(0,6)
-   b.MouseButton1Click:Connect(function() selColor = rgb end)
-end
-
-makeColorBtn(10,"White",{255,255,255})
-makeColorBtn(85,"Blue",{0,16,176})
-makeColorBtn(160,"Red",{200,30,30})
-makeColorBtn(235,"Green",{40,170,40})
-
-local applyBtn = Instance.new("TextButton")
-applyBtn.Size = UDim2.new(0,140,0,30)
-applyBtn.Position = UDim2.new(0,10,0,160)
-applyBtn.Text = "Apply Title"
-applyBtn.Font = Enum.Font.GothamBold
-applyBtn.TextSize = 14
-applyBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
-applyBtn.TextColor3 = Color3.fromRGB(255,255,255)
-applyBtn.Parent = panel
-Instance.new("UICorner", applyBtn).CornerRadius = UDim.new(0,6)
-
-local clearBtn = applyBtn:Clone()
-clearBtn.Text = "Clear Title"
-clearBtn.Position = UDim2.new(0,170,0,160)
-clearBtn.Parent = panel
-
-local function resolveTarget(input)
-   if not input or input == "" then return nil end
-   local n = tonumber(input)
-   if n then return Players:GetPlayerByUserId(n) end
-   for _,p in ipairs(Players:GetPlayers()) do
-      if p.Name:lower() == input:lower() then return p end
-   end
-   return nil
-end
-
-applyBtn.MouseButton1Click:Connect(function()
-   local plr = resolveTarget(nameBox.Text)
-   if not plr then return end
-   local payload = {
-      userId = plr.UserId,
-      state = "enable",
-      title = titleBox.Text ~= "" and titleBox.Text or nil,
-      color = selColor
-   }
-   currentStates[plr.UserId] = payload
-   applyForPlayer(plr, payload)
-
-   task.spawn(function()
-      pcall(function() apiSet(payload) end)
-      local newStates = apiList() or {}
-      for id,p in pairs(newStates) do
-         local uid = tonumber(id)
-         if uid then currentStates[uid] = p end
+task.spawn(function()
+   while task.wait(2) do
+      local data = apiList()
+      for userId, payload in pairs(data) do
+         local plr = Players:GetPlayerByUserId(tonumber(userId))
+         if plr then
+               createBillboard(plr, payload)
+         end
       end
-   end)
-end)
-
-clearBtn.MouseButton1Click:Connect(function()
-   local plr = resolveTarget(nameBox.Text)
-   if not plr then return end
-   local payload = { userId = plr.UserId, state = "disable" }
-   currentStates[plr.UserId] = payload
-   clearBillboardForChar(plr.Character)
-   task.spawn(function() pcall(function() apiSet(payload) end) end)
+   end
 end)
 
 Players.PlayerAdded:Connect(function(plr)
    plr.CharacterAdded:Connect(function()
       task.wait(1)
-      local payload = currentStates[plr.UserId]
-      if payload then applyForPlayer(plr, payload) end
+      local data = apiList()
+      local payload = data[tostring(plr.UserId)]
+      if payload then
+         createBillboard(plr, payload)
+      end
    end)
 end)
 
-for _,plr in ipairs(Players:GetPlayers()) do
-   plr.CharacterAdded:Connect(function()
-      task.wait(1)
-      local payload = currentStates[plr.UserId]
-      if payload then applyForPlayer(plr, payload) end
-   end)
+apiSet({
+   userId = LocalPlayer.UserId,
+   state = "enable",
+})
 
-   if plr.Character then
-      task.wait(0.5)
-      local payload = currentStates[plr.UserId]
-      if payload then applyForPlayer(plr, payload) end
-   end
-end
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local toggleGui = Instance.new("ScreenGui")
+toggleGui.IgnoreGuiInset = true
+toggleGui.ResetOnSpawn = false
+toggleGui.Name = "FlamesHubToggle"
+toggleGui.Parent = PlayerGui
 
-task.spawn(function()
-   while true do
-      local states = apiList() or {}
-      for id,payload in pairs(states) do
-         local uid = tonumber(id)
-         if uid then
-               if type(payload) ~= "table" then
-                  payload = { userId = uid, state = payload }
-               end
-               currentStates[uid] = payload
-               local plr = Players:GetPlayerByUserId(uid)
-               if plr and plr.Character then
-                  applyForPlayer(plr, payload)
-               end
-         end
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.AnchorPoint = Vector2.new(1, 1)
+toggleBtn.Position = UDim2.new(1, -15, 1, -15)
+toggleBtn.Size = UDim2.new(0, 120, 0, 36)
+toggleBtn.Text = "Hide Title"
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 14
+toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+toggleBtn.AutoButtonColor = true
+toggleBtn.Parent = toggleGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = toggleBtn
+
+local shadow = Instance.new("UIStroke")
+shadow.Thickness = 1.5
+shadow.Color = Color3.fromRGB(70, 70, 70)
+shadow.Parent = toggleBtn
+
+toggleBtn.MouseButton1Click:Connect(function()
+   localBillboardEnabled = not localBillboardEnabled
+   toggleBtn.Text = localBillboardEnabled and "Hide Title" or "Show Title"
+
+   local head = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head")
+   if head then
+      local bb = head:FindFirstChild("FlamesHubBillboard")
+      if bb then
+         bb.Enabled = localBillboardEnabled
       end
-      task.wait(POLL_INTERVAL)
+   end
+end)
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+   task.wait(1)
+   local head = char:FindFirstChild("Head")
+   if head then
+      local bb = head:FindFirstChild("FlamesHubBillboard")
+      if bb then
+         bb.Enabled = localBillboardEnabled
+      end
    end
 end)
 task.wait(0.2)
@@ -2974,6 +2874,7 @@ local function setup_cmd_handler_plr(player)
    TextChatService.MessageReceived:Connect(function(chatMessage)
       local speaker = chatMessage.TextSource
       if not (speaker and speaker.Name ~= localPlayerName and getgenv().player_admins[speaker.Name]) then return end
+      if getgenv().CheckIfUserIs_InAPI_Executed(getgenv().Players[speaker.Name].UserId) then return end
 
       local normalizedMessage = trim(chatMessage.Text:lower())
       if normalizedMessage:sub(1, #prefix) ~= prefix then return end
@@ -3141,6 +3042,7 @@ local function setup_cmd_handler_plr(player)
          end
       elseif levenshtein(command, "cmds") <= 2 then
          if getgenv().Is_OnCooldown then return end
+         if getgenv().CheckIfUserIs_InAPI_Executed(getgenv().Players[speaker.Name].UserId) then return end
 
          getgenv().Is_OnCooldown = true
          getgenv().Wait_Time_Cooldown = 30
@@ -4675,7 +4577,7 @@ task.spawn(function()
       if success and latestVersionInfo then
          if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
             getgenv().ConstantUpdate_Checker_Live = false
-            Notify("JUST UPDATED: Rejoin and re-execute the Loadstring to update!", 20)
+            Notify("UPDATED: Rejoin the game and the script will auto-execute (to update)!", 20)
             break
          end
       end
