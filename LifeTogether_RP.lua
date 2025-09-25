@@ -120,19 +120,27 @@ local function httpRequestSafe(opts)
    if not httprequest then return end
 
    local normalized = {
-      url    = opts.url or opts.Url,
-      method = opts.method or opts.Method,
+      url     = opts.url or opts.Url,
+      method  = opts.method or opts.Method,
       headers = opts.headers or opts.Headers,
-      body   = opts.body or opts.Body,
+      body    = opts.body or opts.Body,
    }
 
    local ok, res = pcall(function() return httprequest(normalized) end)
    if not ok or not res then return nil end
+
+   if res.body and not res.Body then res.Body = res.body end
+   if res.status_code and not res.StatusCode then res.StatusCode = res.status_code end
+
    return res
 end
 
 local function safeJsonDecode(body)
    if not body then return {} end
+   if type(body) ~= "string" then
+      if type(body) == "table" then return body end
+      return {}
+   end
    if body:sub(1,1) ~= '{' and body:sub(1,1) ~= '[' then return {} end
    local ok, tbl = pcall(HttpService.JSONDecode, HttpService, body)
    return ok and type(tbl) == "table" and tbl or {}
@@ -140,7 +148,8 @@ end
 
 local function apiList()
    local res = httpRequestSafe({ url = API_URL .. "/list", method = "GET" })
-   return safeJsonDecode(res and res.Body)
+   local body = res and (res.Body or res.body)
+   return safeJsonDecode(body)
 end
 
 local function apiSet(payload)
@@ -169,7 +178,7 @@ end
 
 local function isUserInAPI(userId)
    local list = apiList()
-   return list[tostring(userId)] ~= nil
+   return list and list[tostring(userId)] ~= nil
 end
 
 wait(0.1)
@@ -222,11 +231,15 @@ end
 
 task.spawn(function()
    while task.wait(2) do
-      local data = apiList()
+      local data = apiList() or {}
       for userId, payload in pairs(data) do
-         local plr = Players:GetPlayerByUserId(tonumber(userId))
-         if plr then
-            createBillboard(plr, payload)
+         local uid = tonumber(userId)
+         if not uid and type(userId) == "number" then uid = userId end
+         if uid then
+            local plr = Players:GetPlayerByUserId(uid)
+            if plr then
+               pcall(createBillboard, plr, payload)
+            end
          end
       end
    end
@@ -236,9 +249,9 @@ Players.PlayerAdded:Connect(function(plr)
    plr.CharacterAdded:Connect(function()
       task.wait(1)
       local data = apiList()
-      local payload = data[tostring(plr.UserId)]
+      local payload = data and data[tostring(plr.UserId)]
       if payload then
-         createBillboard(plr, payload)
+         pcall(createBillboard, plr, payload)
       end
    end)
 end)
@@ -248,15 +261,23 @@ apiSet({
    state = "enable",
 })
 
-Players.PlayerRemoving:Connect(function(plr)
-   if plr == LocalPlayer then
-      apiDelete(LocalPlayer.UserId)
+task.spawn(function()
+   while task.wait(30) do
+      pcall(apiSet, { userId = LocalPlayer.UserId, state = "enable" })
    end
 end)
 
 Players.PlayerRemoving:Connect(function(plr)
+   pcall(function()
+      local head = plr.Character and plr.Character:FindFirstChild("Head")
+      if head then
+         local bb = head:FindFirstChild("FlamesHubBillboard")
+         if bb then bb:Destroy() end
+      end
+   end)
+
    if plr == LocalPlayer then
-      apiDelete(LocalPlayer.UserId)
+      pcall(apiDelete, LocalPlayer.UserId)
    end
 end)
 
@@ -312,7 +333,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.4.1-LIFE"
+local Script_Version = "2.4.3-LIFE"
 
 local function getExecutor()
     local name
