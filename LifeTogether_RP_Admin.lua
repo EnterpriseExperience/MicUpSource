@@ -1,7 +1,7 @@
 getgenv().Game = game
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.3.0"
+local Raw_Version = "V3.3.2"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -2212,6 +2212,7 @@ local function CommandsMenu()
    local cmdsString = [[
       {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle)
       {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
+      {prefix}infyield - Executes Infinite Premium (my Infinite Yield)
       {prefix}rainbowcar player - Makes a players car RGB (FE)
       {prefix}norainbowcar player - Disables the RGB for a player's car (FE)
       {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed
@@ -2687,6 +2688,10 @@ function flashy_name(Toggle)
    else
       return notify("Failure:", "Invalid argument(s) provided.", 5)
    end
+end
+
+function infinite_premium()
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/refs/heads/main/InfYieldOther.lua'))()
 end
 
 function lock_vehicle(Vehicle)
@@ -3580,6 +3585,8 @@ local function handleCommand(sender, message)
       do_emote("michaelmyers")
    elseif cmd == "sturdy" or cmd == "nysturdy" then
       do_emote("sturdy")
+   elseif cmd == "infyield" or cmd == "infpremium" or cmd == "infiniteyield" or cmd == "infinitepremium" or cmd == "iy" or cmd == "loadiy" then
+      infinite_premium()
    elseif cmd == "annoy" then
       local Target = findplr(split[1])
       if not Target then
