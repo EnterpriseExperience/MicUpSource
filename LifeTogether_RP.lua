@@ -104,50 +104,51 @@ local HttpService = cloneref and cloneref(game:GetService("HttpService")) or gam
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
-    Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
-    LocalPlayer = Players.LocalPlayer
+   Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+   LocalPlayer = Players.LocalPlayer
 end
 
 local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
 local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
+
 local watchedUserIds = {
-    [7712000520] = true,
-    [7740121604] = true,
+   [7712000520] = true,
+   [7740121604] = true,
 }
 
 local function httpRequestSafe(opts)
-    if not httprequest then return nil end
-    local ok, res = pcall(function() return httprequest(opts) end)
-    if not ok or not res then return nil end
-    return res
+   if not httprequest then return nil end
+   local ok, res = pcall(function() return httprequest(opts) end)
+   if not ok or not res then return nil end
+   return res
 end
 
 local function apiList()
-    local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
-    if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
-        local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
-        if ok and type(tbl) == "table" then
-            return tbl
-        end
-    end
-    return {}
+   local res = httpRequestSafe({ Url = API_URL .. "/list", Method = "GET" })
+   if res and (res.StatusCode == 200 or res.statusCode == 200) and res.Body then
+      local ok, tbl = pcall(function() return HttpService:JSONDecode(res.Body) end)
+      if ok and type(tbl) == "table" then
+         return tbl
+      end
+   end
+   return {}
 end
 
 local function apiSet(payload)
-    local ok, res = pcall(function()
-        return httpRequestSafe({
-            Url = API_URL .. "/set",
-            Method = "POST",
-            Headers = { ["Content-Type"] = "application/json" },
-            Body = HttpService:JSONEncode(payload)
-        })
-    end)
-    return ok and res and (res.StatusCode == 200 or res.statusCode == 200)
+   local ok, res = pcall(function()
+      return httpRequestSafe({
+         Url = API_URL .. "/set",
+         Method = "POST",
+         Headers = { ["Content-Type"] = "application/json" },
+         Body = HttpService:JSONEncode(payload)
+      })
+   end)
+   return ok and res and (res.StatusCode == 200 or res.statusCode == 200)
 end
 
 local function isUserInAPI(userId)
-    local list = apiList()
-    return list[tostring(userId)] ~= nil
+   local list = apiList()
+   return list[tostring(userId)] ~= nil
 end
 wait(0.1)
 getgenv().CheckIfUserIs_InAPI_Executed = isUserInAPI
@@ -155,72 +156,76 @@ getgenv().CheckIfUserIs_InAPI_Executed = isUserInAPI
 local localBillboardEnabled = true
 
 local function createBillboard(player, payload)
-    local char = player.Character or player.CharacterAdded:Wait()
-    local head = char:FindFirstChild("Head")
-    if not head then return end
+   local char = player.Character or player.CharacterAdded:Wait()
+   local head = char:FindFirstChild("Head")
+   if not head then return end
 
-    local existing = head:FindFirstChild("FlamesHubBillboard")
-    if existing then existing:Destroy() end
+   local existing = head:FindFirstChild("FlamesHubBillboard")
+   if existing then existing:Destroy() end
 
-    local billboard = Instance.new("BillboardGui")
-    billboard.Name = "FlamesHubBillboard"
-    billboard.Adornee = head
-    billboard.Size = UDim2.new(0, 200, 0, 50)
-    billboard.StudsOffset = Vector3.new(0, 2.5, 0)
-    billboard.AlwaysOnTop = true
-    billboard.Enabled = true
-    billboard.Parent = head
+   local billboard = Instance.new("BillboardGui")
+   billboard.Name = "FlamesHubBillboard"
+   billboard.Adornee = head
+   billboard.Size = UDim2.new(0, 200, 0, 50)
+   billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+   billboard.AlwaysOnTop = true
+   billboard.Enabled = true
+   billboard.Parent = head
 
-    local textLabel = Instance.new("TextLabel")
-    textLabel.BackgroundTransparency = 0.2
-    textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.Font = Enum.Font.GothamBold
-    textLabel.TextScaled = true
-    textLabel.TextStrokeTransparency = 0
+   local textLabel = Instance.new("TextLabel")
+   textLabel.BackgroundTransparency = 0.2
+   textLabel.Size = UDim2.new(1, 0, 1, 0)
+   textLabel.Font = Enum.Font.GothamBold
+   textLabel.TextScaled = true
+   textLabel.TextStrokeTransparency = 0
 
-    if watchedUserIds[player.UserId] then
-        textLabel.Text = "🔥 FLAMES HUB | OWNER 🔥"
-        textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        textLabel.BackgroundColor3 = Color3.fromRGB(0, 16, 176)
-    else
-        textLabel.Text = "🔥 FLAMES HUB | CLIENT 🔥"
-        textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
-        textLabel.BackgroundColor3 = Color3.fromRGB(245, 245, 245)
-    end
+   local corner = Instance.new("UICorner")
+   corner.CornerRadius = UDim.new(0, 8)
+   corner.Parent = textLabel
 
-    textLabel.Parent = billboard
+   if watchedUserIds[player.UserId] then
+      textLabel.Text = "🔥 FLAMES HUB | OWNER 🔥"
+      textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+      textLabel.BackgroundColor3 = Color3.fromRGB(0, 16, 176)
+   else
+      textLabel.Text = "🔥 FLAMES HUB | CLIENT 🔥"
+      textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+      textLabel.BackgroundColor3 = Color3.fromRGB(245, 245, 245)
+   end
 
-    if player == LocalPlayer then
-        billboard.Enabled = localBillboardEnabled
-    end
+   textLabel.Parent = billboard
+
+   if player == LocalPlayer then
+      billboard.Enabled = localBillboardEnabled
+   end
 end
 
 task.spawn(function()
-    while task.wait(2) do
-        local data = apiList()
-        for userId, payload in pairs(data) do
-            local plr = Players:GetPlayerByUserId(tonumber(userId))
-            if plr then
-                createBillboard(plr, payload)
-            end
-        end
-    end
+   while task.wait(2) do
+      local data = apiList()
+      for userId, payload in pairs(data) do
+         local plr = Players:GetPlayerByUserId(tonumber(userId))
+         if plr then
+            createBillboard(plr, payload)
+         end
+      end
+   end
 end)
 
 Players.PlayerAdded:Connect(function(plr)
-    plr.CharacterAdded:Connect(function()
-        task.wait(1)
-        local data = apiList()
-        local payload = data[tostring(plr.UserId)]
-        if payload then
-            createBillboard(plr, payload)
-        end
-    end)
+   plr.CharacterAdded:Connect(function()
+      task.wait(1)
+      local data = apiList()
+      local payload = data[tostring(plr.UserId)]
+      if payload then
+         createBillboard(plr, payload)
+      end
+   end)
 end)
 
 apiSet({
-    userId = LocalPlayer.UserId,
-    state = "enable",
+   userId = LocalPlayer.UserId,
+   state = "enable",
 })
 
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -252,30 +257,30 @@ shadow.Color = Color3.fromRGB(70, 70, 70)
 shadow.Parent = toggleBtn
 
 toggleBtn.MouseButton1Click:Connect(function()
-    localBillboardEnabled = not localBillboardEnabled
-    toggleBtn.Text = localBillboardEnabled and "Hide Title" or "Show Title"
+   localBillboardEnabled = not localBillboardEnabled
+   toggleBtn.Text = localBillboardEnabled and "Hide Title" or "Show Title"
 
-    local head = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head")
-    if head then
-        local bb = head:FindFirstChild("FlamesHubBillboard")
-        if bb then
-            bb.Enabled = localBillboardEnabled
-        end
-    end
+   local head = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head")
+   if head then
+      local bb = head:FindFirstChild("FlamesHubBillboard")
+      if bb then
+         bb.Enabled = localBillboardEnabled
+      end
+   end
 end)
 
 LocalPlayer.CharacterAdded:Connect(function(char)
-    task.wait(1)
-    local head = char:FindFirstChild("Head")
-    if head then
-        local bb = head:FindFirstChild("FlamesHubBillboard")
-        if bb then
-            bb.Enabled = localBillboardEnabled
-        end
-    end
+   task.wait(1)
+   local head = char:FindFirstChild("Head")
+   if head then
+      local bb = head:FindFirstChild("FlamesHubBillboard")
+      if bb then
+         bb.Enabled = localBillboardEnabled
+      end
+   end
 end)
 task.wait(0.2)
-local Script_Version = "2.3.8-LIFE"
+local Script_Version = "2.3.9-LIFE"
 
 local function getExecutor()
     local name
