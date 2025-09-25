@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.4.2"
+local Raw_Version = "V3.4.4"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -40,19 +40,27 @@ local function httpRequestSafe(opts)
    if not httprequest then return end
 
    local normalized = {
-      url    = opts.url or opts.Url,
-      method = opts.method or opts.Method,
+      url     = opts.url or opts.Url,
+      method  = opts.method or opts.Method,
       headers = opts.headers or opts.Headers,
-      body   = opts.body or opts.Body,
+      body    = opts.body or opts.Body,
    }
 
    local ok, res = pcall(function() return httprequest(normalized) end)
    if not ok or not res then return nil end
+
+   if res.body and not res.Body then res.Body = res.body end
+   if res.status_code and not res.StatusCode then res.StatusCode = res.status_code end
+
    return res
 end
 
 local function safeJsonDecode(body)
    if not body then return {} end
+   if type(body) ~= "string" then
+      if type(body) == "table" then return body end
+      return {}
+   end
    if body:sub(1,1) ~= '{' and body:sub(1,1) ~= '[' then return {} end
    local ok, tbl = pcall(HttpService.JSONDecode, HttpService, body)
    return ok and type(tbl) == "table" and tbl or {}
@@ -60,7 +68,8 @@ end
 
 local function apiList()
    local res = httpRequestSafe({ url = API_URL .. "/list", method = "GET" })
-   return safeJsonDecode(res and res.Body)
+   local body = res and (res.Body or res.body)
+   return safeJsonDecode(body)
 end
 
 local function apiSet(payload)
@@ -89,13 +98,12 @@ end
 
 local function isUserInAPI(userId)
    local list = apiList()
-   return list[tostring(userId)] ~= nil
+   return list and list[tostring(userId)] ~= nil
 end
 
 wait(0.1)
 getgenv().CheckIfUserIs_InAPI_Executed = isUserInAPI
 
--- Billboard logic (unchanged) --
 local localBillboardEnabled = true
 local function createBillboard(player, payload)
    local char = player.Character or player.CharacterAdded:Wait()
@@ -143,11 +151,15 @@ end
 
 task.spawn(function()
    while task.wait(2) do
-      local data = apiList()
+      local data = apiList() or {}
       for userId, payload in pairs(data) do
-         local plr = Players:GetPlayerByUserId(tonumber(userId))
-         if plr then
-            createBillboard(plr, payload)
+         local uid = tonumber(userId)
+         if not uid and type(userId) == "number" then uid = userId end
+         if uid then
+            local plr = Players:GetPlayerByUserId(uid)
+            if plr then
+               pcall(createBillboard, plr, payload)
+            end
          end
       end
    end
@@ -157,9 +169,9 @@ Players.PlayerAdded:Connect(function(plr)
    plr.CharacterAdded:Connect(function()
       task.wait(1)
       local data = apiList()
-      local payload = data[tostring(plr.UserId)]
+      local payload = data and data[tostring(plr.UserId)]
       if payload then
-         createBillboard(plr, payload)
+         pcall(createBillboard, plr, payload)
       end
    end)
 end)
@@ -169,15 +181,23 @@ apiSet({
    state = "enable",
 })
 
-Players.PlayerRemoving:Connect(function(plr)
-   if plr == LocalPlayer then
-      apiDelete(LocalPlayer.UserId)
+task.spawn(function()
+   while task.wait(30) do
+      pcall(apiSet, { userId = LocalPlayer.UserId, state = "enable" })
    end
 end)
 
 Players.PlayerRemoving:Connect(function(plr)
+   pcall(function()
+      local head = plr.Character and plr.Character:FindFirstChild("Head")
+      if head then
+         local bb = head:FindFirstChild("FlamesHubBillboard")
+         if bb then bb:Destroy() end
+      end
+   end)
+
    if plr == LocalPlayer then
-      apiDelete(LocalPlayer.UserId)
+      pcall(apiDelete, LocalPlayer.UserId)
    end
 end)
 
@@ -310,10 +330,10 @@ end
 task.wait(0.1)
 getgenv().notify = notify
 task.wait(0.2)
-function owner_joined()
-   getgenv().notify("ALERT:", "THE OWNER OF THE SCRIPT YOUR USING JUST JOINED!", 6)
+function owner_joined(Name)
+   getgenv().notify("ALERT:", "The owner of this Admin Commands Script has joined!", 6)
    wait(0.1)
-   getgenv().notify("Username:", "L0CKED_1N1", 5)
+   getgenv().notify("Username:", tostring(Name), 5)
 end
 
 getgenv().randomString = function()
@@ -4509,8 +4529,12 @@ function auto_remove_friends()
 end
 wait(0.1)
 getgenv().Players.PlayerAdded:Connect(function(Player)
-   local Name = Player.Name
+   local Name = Player and Player.Name
    getgenv().Blacklisted_Friends = getgenv().Blacklisted_Friends or {}
+
+   if Name == "L0CKED_1N1" or Name == "CHEATING_B0SS" then
+      owner_joined(Name)
+   end
 
    if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
       if not getgenv().Blacklisted_Friends[Name] then
@@ -4521,6 +4545,10 @@ end)
 
 getgenv().Players.PlayerRemoving:Connect(function(Player)
    local Name = Player.Name
+
+   if Name == "L0CKED_1N1" or Name == "CHEATING_B0SS" then
+      getgenv().notify("Heads Up:", "The owner of this script has left the server.", 5)
+   end
 
    disable_rgb_for(Name)
    getgenv().fully_disable_rgb_plr(Name)
