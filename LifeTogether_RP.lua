@@ -175,7 +175,6 @@ end
 wait(0.1)
 getgenv().CheckIfUserIs_InAPI_Executed = isUserInAPI
 
--- Billboard logic (unchanged) --
 local localBillboardEnabled = true
 local function createBillboard(player, payload)
    local char = player.Character or player.CharacterAdded:Wait()
@@ -249,8 +248,10 @@ apiSet({
    state = "enable",
 })
 
-game:BindToClose(function()
-   apiDelete(LocalPlayer.UserId)
+Players.PlayerRemoving:Connect(function(plr)
+   if plr == LocalPlayer then
+      apiDelete(LocalPlayer.UserId)
+   end
 end)
 
 Players.PlayerRemoving:Connect(function(plr)
@@ -311,7 +312,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.3.9-LIFE"
+local Script_Version = "2.4.1-LIFE"
 
 local function getExecutor()
     local name
