@@ -1,20 +1,24 @@
 local scripts = {
-	["Tower Of Misery"] = {
-		id = 4954752502,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua"
-	},
-	["Ultimate Driving"] = {
-		id = 54865335,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"
-	},
-	["LifeTogether RP"] = {
-		id = 13967668166,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
-	},
-	["Hide And Seek Extreme"] = {
-		id = 205224386,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
-	},
+    ["Tower Of Misery"] = {
+        id = 4954752502,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua"
+    },
+    ["Ultimate Driving"] = {
+        id = 54865335,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"
+    },
+    ["LifeTogether RP"] = {
+        id = 13967668166,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
+    },
+    ["LifeTogether Admin Commands (FE)"] = {
+        id = 13967668166,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
+    },
+    ["Hide And Seek Extreme"] = {
+        id = 205224386,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
+    },
     ["Player or AI"] = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
@@ -31,21 +35,86 @@ local scripts = {
         id = 3351674303,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"
     },
-    ["LifeTogether Admin Commands (FE)"] = {
-		id = 13967668166,
-		link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
-	},
 }
 
 getgenv().Game = game
-getgenv().JobID = getgenv().Game.JobId
-getgenv().PlaceID = getgenv().Game.PlaceId
+getgenv().JobID = game.JobId
+getgenv().PlaceID = game.PlaceId
 
 getgenv().Service_Wrap = function(serviceName)
     if cloneref then
-        return cloneref(getgenv().Game:GetService(serviceName))
+        return cloneref(game:GetService(serviceName))
     else
-        return getgenv().Game:GetService(serviceName)
+        return game:GetService(serviceName)
+    end
+end
+
+local function loadScript(url)
+    local success, err = pcall(function()
+        loadstring(game:HttpGet(url))()
+    end)
+    if not success then
+        warn("Failed to load script:", err)
+    end
+end
+
+for name, data in pairs(scripts) do
+    if data.id == getgenv().PlaceID then
+        if data.id == scripts["LifeTogether RP"].id then
+            local Players = getgenv().Service_Wrap("Players")
+            local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+            local ScreenGui = Instance.new("ScreenGui")
+            ScreenGui.ResetOnSpawn = false
+            ScreenGui.Parent = PlayerGui
+
+            local Frame = Instance.new("Frame")
+            Frame.Size = UDim2.new(0, 300, 0, 150)
+            Frame.Position = UDim2.new(0.5, -150, 0.5, -75)
+            Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            Frame.BorderSizePixel = 0
+            Frame.Parent = ScreenGui
+
+            local Title = Instance.new("TextLabel")
+            Title.Size = UDim2.new(1, 0, 0, 40)
+            Title.BackgroundTransparency = 1
+            Title.Text = "Which script would you like to execute?"
+            Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Title.TextScaled = true
+            Title.Parent = Frame
+
+            local CmdsButton = Instance.new("TextButton")
+            CmdsButton.Size = UDim2.new(0.5, -5, 0, 50)
+            CmdsButton.Position = UDim2.new(0, 0, 1, -55)
+            CmdsButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            CmdsButton.Text = "Life Together Admin Commands"
+            CmdsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            CmdsButton.Parent = Frame
+
+            local HubButton = Instance.new("TextButton")
+            HubButton.Size = UDim2.new(0.5, -5, 0, 50)
+            HubButton.Position = UDim2.new(0.5, 5, 1, -55)
+            HubButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            HubButton.Text = "Life Together Script Hub"
+            HubButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            HubButton.Parent = Frame
+
+            CmdsButton.MouseButton1Click:Connect(function()
+                ScreenGui:Destroy()
+                loadScript(scripts["LifeTogether Admin Commands (FE)"].link)
+                return 
+            end)
+
+            HubButton.MouseButton1Click:Connect(function()
+                ScreenGui:Destroy()
+                loadScript(scripts["LifeTogether RP"].link)
+                return 
+            end)
+        else
+            loadScript(data.link)
+            return 
+        end
+        return 
     end
 end
 
