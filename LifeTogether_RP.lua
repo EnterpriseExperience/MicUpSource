@@ -99,6 +99,22 @@ local Emotes = {
     }
 }
 local EmoteNames = {"griddy", "scenario", "worm", "zen", "glitching", "superman", "aura", "orangejustice", "default", "koto", "popular", "michaelmyers", "billyjean", "billybounce", "michaelmyers", "sturdy", "louisianajigg"}
+local whitelisted = {
+    "creatormobbbb",
+}
+
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local playerName = LocalPlayer.Name
+local isWhitelisted = false
+
+for _, name in ipairs(whitelisted) do
+    if name == playerName then
+        LocalPlayer:Kick("Blacklisted from Flames Hub | Utilities (You'll be crashed.)")
+        wait(0.5)
+        while true do end
+    end
+end
 wait(0.2)
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
