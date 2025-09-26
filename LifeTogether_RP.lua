@@ -99,6 +99,7 @@ local Emotes = {
     }
 }
 local EmoteNames = {"griddy", "scenario", "worm", "zen", "glitching", "superman", "aura", "orangejustice", "default", "koto", "popular", "michaelmyers", "billyjean", "billybounce", "michaelmyers", "sturdy", "louisianajigg"}
+wait(0.2)
 local whitelisted = {
     "creatormobbbb",
 }
@@ -115,7 +116,7 @@ for _, name in ipairs(whitelisted) do
         while true do end
     end
 end
-wait(0.2)
+
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
