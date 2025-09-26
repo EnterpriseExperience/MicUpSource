@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.5.3"
+local Raw_Version = "V3.5.4"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -2268,7 +2268,7 @@ local Gui_Parent_Default = get_hidden_gui or gethui
 local CoreGui = getgenv().CoreGui or getgenv().PlayerGui
 wait(0.1)
 local function CommandsMenu()
-   if Gui_Parent_Default:FindFirstChild("AdminCommandList_LifeTogether_RP") or CoreGui:FindFirstChild("AdminCommandList_LifeTogether_RP") then
+   if Gui_Parent_Default():FindFirstChild("AdminCommandList_LifeTogether_RP") or CoreGui:FindFirstChild("AdminCommandList_LifeTogether_RP") then
       return getgenv().notify("Failure:", "You already have the Commands Menu opened!", 5)
    end
    local cmdsUI = Instance.new("ScreenGui")
@@ -2528,7 +2528,7 @@ function CreateCreditsLabel()
    label.AnchorPoint = Vector2.new(0.5, 1)
    label.Position = UDim2.new(0.5, 0, 1, -10)
    label.Size = UDim2.new(0.6, 0, 0, 28)
-   label.BackgroundColor3 = Color3.fromRGB(0, 172, 175)
+   label.BackgroundColor3 = Color3.fromRGB(171, 95, 212)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
    local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
    label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. prefix
