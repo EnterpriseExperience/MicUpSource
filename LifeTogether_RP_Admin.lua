@@ -4,13 +4,15 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.4.6"
+local Raw_Version = "V3.4.7"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
 if getgenv().LifeTogetherRP_Admin then
    return getgenv().notify("Failure:", "Life Together RP admin is already running!", 5)
 end
+wait(0.3)
+getgenv().LifeTogetherRP_Admin = true
 
 getgenv().Service_Wrap = function(serviceName)
    if cloneref then
