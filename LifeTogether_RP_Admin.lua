@@ -2479,7 +2479,7 @@ local function CommandsMenu()
       label.BackgroundTransparency = 1
       label.Font = Enum.Font.GothamSemibold
       label.TextSize = 16
-      label.TextColor3 = Color3.new(1, 0.4, 0.4)
+      label.TextColor3 = Color3.new(0.8, 0.6, 0.15)
       label.TextXAlignment = Enum.TextXAlignment.Left
       label.Text = cmdText .. "\n" .. desc
       label.TextWrapped = true
