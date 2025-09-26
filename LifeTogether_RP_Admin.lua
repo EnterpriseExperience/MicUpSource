@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.5.4"
+local Raw_Version = "V3.5.9"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -647,12 +647,12 @@ wait()
 local FireReparented_Folder
 task.wait(0.3)
 function create_script_fire_folder()
-   if not getgenv().ReplicatedFirst:FindFirstChild("FireTemporaryReparentFolder") then
+   if not getgenv().StarterGui:FindFirstChild("FireTemporaryReparentFolder") then
       FireReparented_Folder = Instance.new("Folder")
       FireReparented_Folder.Name = "FireTemporaryReparentFolder"
-      FireReparented_Folder.Parent = getgenv().ReplicatedFirst
+      FireReparented_Folder.Parent = getgenv().StarterGui
    else
-      FireReparented_Folder = getgenv().ReplicatedFirst:FindFirstChild("FireTemporaryReparentFolder")
+      FireReparented_Folder = getgenv().StarterGui:FindFirstChild("FireTemporaryReparentFolder")
    end
 end
 task.wait(0.2)
@@ -665,7 +665,7 @@ wait(0.2)
 function sit_in_vehicle(Vehicle)
    if not Vehicle then return notify("Failure:", "You do not have a Vehicle! spawn one.", 5) end
 
-   send_function("sit", Vehicle)
+   getgenv().Get("sit", Vehicle)
    wait(0.1)
    if Vehicle:FindFirstChild("VehicleSeat") then
       Vehicle:FindFirstChild("VehicleSeat"):Sit(getgenv().Humanoid)
@@ -675,7 +675,7 @@ function sit_in_vehicle(Vehicle)
 end
 
 function spawn_any_vehicle(Vehicle)
-   send_function("spawn_vehicle", Vehicle)
+   getgenv().Get("spawn_vehicle", Vehicle)
 end
 
 local function get_vehicle()
@@ -1776,7 +1776,7 @@ end
 if getgenv().FireParticlesAdded then
    getgenv().notify("Skipping:", "Connection has already been loaded here.", 5)
 else
-   local folder = getgenv().ReplicatedFirst:WaitForChild("FireTemporaryReparentFolder")
+   local folder = getgenv().StarterGui:WaitForChild("FireTemporaryReparentFolder")
    getgenv().FireParticlesAdded = folder.ChildAdded:Connect(function(particle)
       particle:Destroy()
    end)
@@ -1806,8 +1806,8 @@ getgenv().CompletelyHideFlamesComingIn = function(toggle)
                      local FireParticles = FirePart:FindFirstChildOfClass("ParticleEmitter")
                      local Sound = FirePart:FindFirstChildOfClass("Sound")
 
-                     FireParticles.Parent = getgenv().ReplicatedFirst:FindFirstChild("FireTemporaryReparentFolder")
-                     Sound.Parent = getgenv().ReplicatedFirst:FindFirstChild("FireTemporaryReparentFolder")
+                     FireParticles.Parent = getgenv().StarterGui:FindFirstChild("FireTemporaryReparentFolder")
+                     Sound.Parent = getgenv().StarterGui:FindFirstChild("FireTemporaryReparentFolder")
                   end
                end
             end
@@ -2021,7 +2021,7 @@ function disable_emoting()
 
    task.wait(0.2)
 
-   local animate = getgenv().Character:FindFirstChild("Animate")
+   local animate = getgenv().Character:FindFirstChild("Animate") or getgenv().Character:WaitForChild("Animate", 1)
    if animate then
       animate.Disabled = false
    end
@@ -2033,9 +2033,19 @@ end
 wait(0.1)
 getgenv().disable_emoting_script = disable_emoting
 wait()
+local lastEmoteTime = 0
+
 function do_emote(input)
+   if tick() - lastEmoteTime < 2 then
+      return getgenv().notify("Hang On!", "Emoting is on cooldown, wait a second (literally).", 5)
+   end
+   lastEmoteTime = tick()
+
    local Humanoid = getgenv().Humanoid
-   if not Humanoid then return end
+   if not Humanoid then
+      disable_emoting()
+      return getgenv().notify("Failure:", "Humanoid doesn't exist? (Try resetting)", 5)
+   end
 
    local key = input:lower():gsub("%s+", "")
    if Aliases[key] then key = Aliases[key] end
@@ -2069,6 +2079,66 @@ function do_emote(input)
          end
          getgenv().Is_Currently_Emoting = false
       end
+   end
+end
+
+function spam_sign_text(toggle)
+   local Workspace = getgenv().Workspace
+   local Character = getgenv().Character
+   local PlacedModels = Workspace:WaitForChild("PlacedModels")
+   local LocalPlayer = getgenv().LocalPlayer
+
+   local random_words = {
+      "yo","wsg bro","aye","lit","fire","cool","sick","yup",
+      "nah","nah bro","bro?","wyd","naw bru","crazy","tuff","wow"
+   }
+
+   local function find_tool_partial(toolName)
+      if not toolName then return nil end
+      local query = toolName:lower()
+
+      for _, v in ipairs(PlacedModels:GetChildren()) do
+         if v:IsA("Model") and v.Name:lower() == query then
+            local ownerAttr = v:GetAttribute("owner_id")
+            if ownerAttr and tostring(ownerAttr) == tostring(LocalPlayer.UserId) then
+               return v
+            end
+         end
+      end
+
+      for _, v in ipairs(Character:GetChildren()) do
+         if v.Name:lower() == query then
+            return v
+         end
+      end
+
+      return nil
+   end
+
+   if toggle == true then
+      if getgenv().ToolChanger_FE then return end
+      getgenv().ToolChanger_FE = true
+
+      task.spawn(function()
+         while getgenv().ToolChanger_FE do
+            local tool = find_tool_partial("sign")
+            if not tool then
+               getgenv().Send("get_tool", "Sign")
+               task.wait(0)
+            else
+               for _, word in ipairs(random_words) do
+                  if not getgenv().ToolChanger_FE then break end
+                  getgenv().Send("change_sign", tool, tostring(word))
+                  task.wait(0)
+               end
+            end
+            task.wait(0)
+         end
+      end)
+   elseif toggle == false then
+      getgenv().ToolChanger_FE = false
+   else
+      return 
    end
 end
 
@@ -2126,16 +2196,16 @@ function water_skie_trailer(Bool, Vehicle)
       if HasTrailer then
          return notify("Error:", "You already have the WaterSkies trailer!", 5)
       else
-         send_function("add_trailer", Vehicle, "WaterSkies")
+         getgenv().Get("add_trailer", Vehicle, "WaterSkies")
       end
    elseif Bool == false then
       if HasTrailer then
-         send_function("add_trailer", Vehicle, "WaterSkies")
+         getgenv().Get("add_trailer", Vehicle, "WaterSkies")
       else
-         return notify("Failure:", "You do not have the WaterSkies trailer to take it off!", 5)
+         return getgenv().notify("Failure:", "You do not have the WaterSkies trailer to take it off!", 5)
       end
    else
-      return notify("Failure:", "Invalid toggle value (expected true/false)", 5)
+      return getgenv().notify("Failure:", "Invalid toggle value (expected true/false)", 5)
    end
 end
 
@@ -2373,6 +2443,8 @@ local function CommandsMenu()
       {prefix}infyield - Executes Infinite Premium (my Infinite Yield)
       {prefix}spawnfire NUMBER - Spawns fire with a specified number argument.
       {prefix}rainbowcar player - Makes a players car RGB (FE)
+      {prefix}startsignspam - Spams the text on a sign (FE).
+      {prefix}stopsignspam - Stops spamming the text on your tool Sign.
       {prefix}norainbowcar player - Disables the RGB for a player's car (FE)
       {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed
       {prefix}unadmin player - Removes the player's FE commands (if they're your friend).
@@ -2764,6 +2836,16 @@ local function find_backpack_tool()
    return nil
 end
 
+local function find_character_tool()
+   for _, v in ipairs(getgenv().Character:GetChildren()) do
+      if v:IsA("Tool") and (v:GetAttribute("color1") or v:GetAttribute("Color1")) then
+         return v
+      end
+   end
+
+   return nil
+end
+
 function rainbow_tool(toggled)
    local colors = {
       Color3.fromRGB(255, 255, 255),
@@ -2785,7 +2867,7 @@ function rainbow_tool(toggled)
       local tool = find_backpack_tool()
       if not tool then
          getgenv().Rainbow_Tools_FE = false
-         return getgenv().notify("Failure:", "There isn't a colorable tool in your Backpack!", 5)
+         return getgenv().notify("Failure:", "No Tool or Tool isn't colorable!", 5)
       end
       task.wait(0.1)
       if tool then
@@ -2794,11 +2876,11 @@ function rainbow_tool(toggled)
       task.wait(0.1)
       getgenv().Rainbow_Tools_FE = true
       while getgenv().Rainbow_Tools_FE == true do
-         task.wait(0)
-         tool = find_backpack_tool()
+         task.wait(.1)
+         tool = find_character_tool()
          if not tool then
             getgenv().Rainbow_Tools_FE = false
-            return getgenv().notify("Failure:", "There isn't a colorable tool in your Backpack!", 5)
+            return getgenv().notify("Failure:", "No Tool or Tool isn't colorable!", 5)
          end
 
          task.wait(0.1)
@@ -2807,7 +2889,7 @@ function rainbow_tool(toggled)
          end
 
          for _, color in ipairs(colors) do
-            task.wait(0)
+            task.wait(.3)
             if not getgenv().Rainbow_Tools_FE then break end
             getgenv().Send("tool_color", tool, "color1", color)
          end
@@ -2852,7 +2934,7 @@ function infinite_premium()
 end
 
 function lock_vehicle(Vehicle)
-   send_function("lock_vehicle", Vehicle)
+   getgenv().Get("lock_vehicle", Vehicle)
 end
 wait(0.1)
 if getgenv().HasSeen_Loading_Screen then
@@ -2883,7 +2965,7 @@ else
    textLabel.Size = UDim2.new(0.45, 0.5, 0.45, 0.10)
    textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
    textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-   textLabel.Text = "Welcome to:\n\nFlames Hub | Life Together Admin "..tostring(Raw_Version).."!\n\nEnjoy."
+   textLabel.Text = "Welcome to:\n\nFlames Hub | Life Together Admin "..tostring(Raw_Version).."!\n\nEnjoy!!!\nENJOY BEING UNSTOPPABLE!"
    if getgenv().Lighting.ClockTime <= 5 then
       textLabel.TextColor3 = Color3.fromRGB(3, 3, 3)
    elseif getgenv().Lighting.ClockTime >= 9 then
@@ -3553,6 +3635,123 @@ wait()
 update_plot_areas()
 local AutoLockOn = false
 local AutoLockConnection = nil
+local Workspace = getgenv().Workspace
+local TweenService = getgenv().TweenService
+local CoreGui = getgenv().CoreGui
+local RunService = getgenv().RunService
+local UserInputService = getgenv().UserInputService
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TemporaryBanner_GUI"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.Parent = CoreGui
+
+local frame = Instance.new("Frame")
+frame.Name = "BannerFrame"
+frame.AnchorPoint = Vector2.new(0.5, 0)
+frame.Position = UDim2.new(0.5, 0, 0, 20)
+frame.Size = UDim2.new(0.6, 0, 0, 48)
+frame.BackgroundTransparency = 0
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+local corner = Instance.new("UICorner", frame)
+corner.CornerRadius = UDim.new(0, 12)
+
+local stroke = Instance.new("UIStroke", frame)
+stroke.Thickness = 1.5
+stroke.Transparency = 0.25
+
+local label = Instance.new("TextLabel")
+label.Name = "BannerText"
+label.AnchorPoint = Vector2.new(0.5, 0.5)
+label.Position = UDim2.new(0.5, 0, 0.5, 0)
+label.Size = UDim2.new(0.95, 0, 0.9, 0)
+label.BackgroundTransparency = 1
+label.Text = "I finally fixed the RGB Tool command!"
+label.Font = Enum.Font.GothamBold
+label.TextScaled = true
+label.RichText = false
+label.TextWrapped = true
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.Parent = frame
+
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "Shadow"
+shadow.AnchorPoint = Vector2.new(0.5, 0)
+shadow.Position = UDim2.new(0.5, 0, 0, 24)
+shadow.Size = UDim2.new(0.62, 0, 0, 56)
+shadow.Image = "rbxassetid://5059716102"
+shadow.BackgroundTransparency = 1
+shadow.ImageTransparency = 0.8
+shadow.ZIndex = frame.ZIndex - 1
+shadow.Parent = screenGui
+shadow.Visible = false
+
+local function clamp(n, lo, hi)
+   if n < lo then return lo end
+   if n > hi then return hi end
+   return n
+end
+
+local function updatePosition()
+   local cam = Workspace.CurrentCamera
+   if not cam then return end
+   local vw, vh = cam.ViewportSize.X, cam.ViewportSize.Y
+   local widthScale = clamp(0.6, 0.4, 0.8)
+
+   local heightPx = clamp(math.floor(vh * 0.07), 36, 72)
+
+   frame.Size = UDim2.new(widthScale, 0, 0, heightPx)
+
+   local topOffset = math.max(12, math.floor(vh * 0.03))
+   frame.Position = UDim2.new(0.5, 0, 0, topOffset)
+   shadow.Position = UDim2.new(0.5, 0, 0, topOffset + math.floor(heightPx/2))
+   shadow.Size = UDim2.new(widthScale + 0.02, 0, 0, heightPx + 12)
+end
+
+updatePosition()
+
+local renderConn
+local camConn
+
+if RunService and RunService.RenderStepped then
+   renderConn = RunService.RenderStepped:Connect(function() end)
+end
+
+local cam = Workspace.CurrentCamera
+if cam then
+   camConn = cam:GetPropertyChangedSignal("ViewportSize"):Connect(updatePosition)
+end
+
+frame.BackgroundTransparency = 1
+label.TextTransparency = 1
+shadow.ImageTransparency = 1
+
+local appearInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+TweenService:Create(frame, appearInfo, {BackgroundTransparency = 0}):Play()
+TweenService:Create(label, appearInfo, {TextTransparency = 0}):Play()
+shadow.Visible = false
+TweenService:Create(shadow, appearInfo, {ImageTransparency = 0.8}):Play()
+
+local displayTime = 5
+delay(displayTime, function()
+   local fadeInfo = TweenInfo.new(0.45, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+   local t1 = TweenService:Create(frame, fadeInfo, {BackgroundTransparency = 1})
+   local t2 = TweenService:Create(label, fadeInfo, {TextTransparency = 1})
+   local t3 = TweenService:Create(shadow, fadeInfo, {ImageTransparency = 1})
+
+   t1:Play(); t2:Play(); t3:Play()
+   t1.Completed:Wait()
+
+   pcall(function()
+      if renderConn and renderConn.Disconnect then renderConn:Disconnect() end
+      if camConn and camConn.Disconnect then camConn:Disconnect() end
+      screenGui:Destroy()
+   end)
+end)
 
 local function handleCommand(sender, message)
    if not Admins[sender.Name] then return end
@@ -3686,6 +3885,10 @@ local function handleCommand(sender, message)
       RGB_Phone(false)
    elseif cmd == "inject" or cmd == "attach" then
       attach_with_script()
+   elseif cmd == "flashsigntext" or cmd == "fastsigntext" or cmd == "startsignspam" then
+      spam_sign_text(true)
+   elseif cmd == "noflashsigntext" or cmd == "unfastsigntext" or cmd == "stopsignspam" then
+      spam_sign_text(false)
    elseif cmd == "name" then
       local new_name = table.concat(split, " ")
 
@@ -3715,8 +3918,17 @@ local function handleCommand(sender, message)
       Enable_Fly_2(Fly_Speed)
    elseif cmd == "spawnfire" or cmd == "fireamount" or cmd == "spawnflames" or cmd == "spawnflame" or cmd == "firespawn" then
       local Amount = split[1]
+      getgenv().HasSeen_Fire_AlertFlamesHub = false
 
-      set_fire_amount_FE(Amount)
+      if getgenv().HasSeen_Fire_AlertFlamesHub then
+         set_fire_amount_FE(Amount)
+      else
+         set_fire_amount_FE(Amount)
+         getgenv().notify("Heads Up:", "Not showing? Probably not working for your exploit.", 5)
+         getgenv().notify(".", "I'll probably fix it soon, I'm not sure", 5)
+         wait(0.1)
+         getgenv().HasSeen_Fire_AlertFlamesHub = true
+      end
       wait(0.2)
       for i = 1, Amount_Input do
          getgenv().Send("request_fire")
