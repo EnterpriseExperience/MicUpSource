@@ -244,6 +244,23 @@ toggleBtn.MouseButton1Click:Connect(function()
    end
 end)
 
+local whitelisted = {
+    "creatormobbbb",
+}
+
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local playerName = LocalPlayer.Name
+local isWhitelisted = false
+
+for _, name in ipairs(whitelisted) do
+    if name == playerName then
+        LocalPlayer:Kick("Blacklisted from Flames Hub | Utilities (You'll be crashed.)")
+        wait(0.5)
+        while true do end
+    end
+end
+
 LocalPlayer.CharacterAdded:Connect(function(char)
    task.wait(1)
    local head = char:FindFirstChild("Head")
