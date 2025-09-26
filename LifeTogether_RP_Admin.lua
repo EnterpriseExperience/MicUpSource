@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.4.4"
+local Raw_Version = "V3.4.6"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -1513,20 +1513,17 @@ local function savePrefix(newPrefix)
    end
 end
 
-function spawn_fire_FE(amount)
+local Amount_Input = 5
+
+function set_fire_amount_FE(amount)
+   amount = tonumber(amount)
+
    if not amount then
-      amount = tonumber(5)
-   elseif not tonumber(amount) then
-      return getgenv().notify("[Failure]:", "Please provide a number/integer!", 5)
-   else
-      amount = tonumber(amount)
+      Amount_Input = 5
+      return
    end
 
-   if not getgenv().Send then return getgenv().notify("[Failure]:", "Internal getgenv().Send function missing!", 5) end
-
-   for i = 1, amount do
-      getgenv().Send("request_fire")
-   end
+   Amount_Input = amount
 end
 
 function anti_void()
@@ -3524,7 +3521,7 @@ local function handleCommand(sender, message)
       local flySpeed = tonumber(split[1])
 
       if getgenv().HD_FlyEnabled then
-         return notify("Failure:", "HD Admin Fly is already enabled!", 5)
+         return getgenv().notify("Failure:", "HD-Admin Fly is already enabled!", 5)
       end
       wait(0.2)
       EnableFly(flySpeed)
@@ -3540,9 +3537,13 @@ local function handleCommand(sender, message)
       wait()
       Enable_Fly_2(Fly_Speed)
    elseif cmd == "spawnfire" or cmd == "fireamount" or cmd == "spawnflames" or cmd == "spawnflame" or cmd == "firespawn" then
-      local Amount = split[1] or tonumber(split[1]) or 5
+      local Amount = split[1]
 
-      spawn_fire_FE(Amount)
+      set_fire_amount_FE(Amount)
+      wait(0.2)
+      for i = 1, Amount_Input do
+         getgenv().Send("request_fire")
+      end
    elseif cmd == "startrgbtool" then
       rainbow_tool(true)
    elseif cmd == "stoprgbtool" then
@@ -3577,7 +3578,7 @@ local function handleCommand(sender, message)
       do_emote("billybounce")
    elseif cmd == "billyjean" then
       do_emote("billyjean")
-   elseif cmd == "michaelbounce" or cmd == "michaelmyers" then
+   elseif cmd == "michaelbounce" or cmd == "michaelmyers" or cmd == "jiggybounce" or cmd == "michmyers" or cmd == "myersbounce" or cmd == "michaeldance" then
       do_emote("michaelmyers")
    elseif cmd == "sturdy" or cmd == "nysturdy" then
       do_emote("sturdy")
