@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.5.2"
+local Raw_Version = "V3.5.3"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 
@@ -2264,15 +2264,18 @@ if not getgenv().VehicleStates[getgenv().LocalPlayer.Name] then
 end
 
 local Prefix = getgenv().AdminPrefix
-local Gui_Parent_Default = get_hidden_gui or gethui or getgenv().CoreGui or getgenv().PlayerGui
+local Gui_Parent_Default = get_hidden_gui or gethui
+local CoreGui = getgenv().CoreGui or getgenv().PlayerGui
 wait(0.1)
 local function CommandsMenu()
-   if Gui_Parent_Default:FindFirstChild("AdminCommandList_LifeTogether_RP") then return getgenv().notify("Failure:", "You already have the Commands Menu opened!", 5) end
+   if Gui_Parent_Default:FindFirstChild("AdminCommandList_LifeTogether_RP") or CoreGui:FindFirstChild("AdminCommandList_LifeTogether_RP") then
+      return getgenv().notify("Failure:", "You already have the Commands Menu opened!", 5)
+   end
    local cmdsUI = Instance.new("ScreenGui")
    cmdsUI.Name = "AdminCommandList_LifeTogether_RP"
    cmdsUI.ResetOnSpawn = false
    cmdsUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-   cmdsUI.Parent = Gui_Parent_Default
+   cmdsUI.Parent = Gui_Parent_Default() or CoreGui
 
    local mainFrame = Instance.new("Frame")
    mainFrame.Size = UDim2.new(0, 600, 0, 500)
@@ -2518,7 +2521,7 @@ function CreateCreditsLabel()
    creditsGui.Name = "PrefixCreditsGui_LifeTogether"
    creditsGui.ResetOnSpawn = false
    creditsGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-   creditsGui.Parent = Gui_Parent_Default
+   creditsGui.Parent = Gui_Parent_Default() or CoreGui
 
    local label = Instance.new("TextLabel")
    label.Name = "CreditsLabel"
