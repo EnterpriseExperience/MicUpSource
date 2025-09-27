@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.2"
+local Raw_Version = "V3.6.3"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
@@ -22,6 +22,17 @@ getgenv().Service_Wrap = function(serviceName)
       return getgenv().Game:GetService(serviceName)
    end
 end
+wait(0.1)
+function notify(title, msg, duration)
+   getgenv().Service_Wrap("StarterGui"):SetCore("SendNotification", {
+      Title = tostring(title);
+      Text = tostring(msg);
+      Duration = tonumber(duration);
+      Icon = "rbxassetid://0";
+   })
+end
+task.wait(0.1)
+getgenv().notify = notify
 wait(0.2)
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -358,17 +369,6 @@ function randomString()
    end
    return table.concat(array)
 end
-
-function notify(title, msg, duration)
-   getgenv().StarterGui:SetCore("SendNotification", {
-      Title = tostring(title);
-      Text = tostring(msg);
-      Duration = tonumber(duration);
-      Icon = "rbxassetid://0";
-   })
-end
-task.wait(0.1)
-getgenv().notify = notify
 task.wait(0.2)
 function owner_joined(Name)
    getgenv().notify("ALERT:", "The owner of this Admin Commands Script has joined!", 6)
