@@ -2878,35 +2878,39 @@ function rainbow_tool(toggled)
 
    if toggled then
       local tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
+
       if not tool then
          getgenv().Rainbow_Tools_FE = false
          getgenv().Send("get_tool", "Gift")
          getgenv().notify("Hang On:", "We're giving you a colorable Tool...", 5)
          return getgenv().notify("Alert:", "Retry the command with this Tool.", 5)
       end
-      task.wait(0.1)
-      if tool then
+
+      if tool.Parent == getgenv().Backpack then
+         task.wait(0.1)
          tool.Parent = getgenv().Character
       end
-      task.wait(0.1)
+
       getgenv().Rainbow_Tools_FE = true
+
       while getgenv().Rainbow_Tools_FE == true do
          task.wait(0)
+
          tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
          if not tool then
             getgenv().Rainbow_Tools_FE = false
             return getgenv().notify("Failure:", "Tool must have disappeared (was not found).", 5)
          end
 
-         task.wait(0)
-         if tool and tool.Parent == getgenv().Backpack then
+         if tool.Parent == getgenv().Backpack then
+            task.wait(0.1)
             tool.Parent = getgenv().Character
          end
 
          for _, color in ipairs(colors) do
-            task.wait(.1)
             if not getgenv().Rainbow_Tools_FE then break end
             getgenv().Send("tool_color", tool, "color1", color)
+            task.wait(0)
          end
       end
    else
