@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.0"
+local Raw_Version = "V3.6.1"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
@@ -2847,6 +2847,18 @@ local function find_character_tool()
    return nil
 end
 
+local function find_placed_models_tool()
+   for _, v in ipairs(getgenv().Workspace:FindFirstChild("PlacedModels"):GetChildren()) do
+      if v:IsA("Tool") and (v:GetAttribute("color1") or v:GetAttribute("Color1")) then
+         if v:GetAttribute("owner_id") == getgenv().LocalPlayer.UserId then
+            return v
+         end
+      end
+   end
+
+   return nil
+end
+
 function rainbow_tool(toggled)
    local colors = {
       Color3.fromRGB(255, 255, 255),
@@ -2865,10 +2877,12 @@ function rainbow_tool(toggled)
    }
 
    if toggled then
-      local tool = find_backpack_tool()
+      local tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
       if not tool then
          getgenv().Rainbow_Tools_FE = false
-         return getgenv().notify("Failure:", "No Tool or Tool isn't colorable!", 5)
+         getgenv().Send("get_tool", "Gift")
+         getgenv().notify("Hang On:", "We're giving you a colorable Tool...", 5)
+         return getgenv().notify("Alert:", "Retry the command with this Tool.", 5)
       end
       task.wait(0.1)
       if tool then
@@ -2877,20 +2891,20 @@ function rainbow_tool(toggled)
       task.wait(0.1)
       getgenv().Rainbow_Tools_FE = true
       while getgenv().Rainbow_Tools_FE == true do
-         task.wait(.1)
-         tool = find_character_tool()
+         task.wait(0)
+         tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
          if not tool then
             getgenv().Rainbow_Tools_FE = false
-            return getgenv().notify("Failure:", "No Tool or Tool isn't colorable!", 5)
+            return getgenv().notify("Failure:", "Tool must have disappeared (was not found).", 5)
          end
 
-         task.wait(0.1)
-         if tool then
+         task.wait(0)
+         if tool and tool.Parent == getgenv().Backpack then
             tool.Parent = getgenv().Character
          end
 
          for _, color in ipairs(colors) do
-            task.wait(.3)
+            task.wait(.1)
             if not getgenv().Rainbow_Tools_FE then break end
             getgenv().Send("tool_color", tool, "color1", color)
          end
