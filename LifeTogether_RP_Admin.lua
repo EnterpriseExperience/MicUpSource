@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.3"
+local Raw_Version = "V3.6.4"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
@@ -2888,26 +2888,13 @@ function rainbow_tool(toggled)
       local tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
 
       if not tool then
-         getgenv().Rainbow_Tools_FE = false
          getgenv().Send("get_tool", "Gift")
          getgenv().notify("Hang On:", "We're giving you a colorable Tool...", 5)
-         return getgenv().notify("Alert:", "Retry the command with this Tool.", 5)
-      end
-
-      if tool.Parent == getgenv().Backpack then
-         task.wait(0.1)
-         tool.Parent = getgenv().Character
-      end
-
-      getgenv().Rainbow_Tools_FE = true
-
-      while getgenv().Rainbow_Tools_FE == true do
-         task.wait(0)
-
+         task.wait(0.2)
          tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
+
          if not tool then
-            getgenv().Rainbow_Tools_FE = false
-            return getgenv().notify("Failure:", "Tool must have disappeared (was not found).", 5)
+            return getgenv().notify("Failure:", "Tool still not found after giving.", 5)
          end
 
          if tool.Parent == getgenv().Backpack then
@@ -2916,9 +2903,32 @@ function rainbow_tool(toggled)
          end
 
          for _, color in ipairs(colors) do
+            getgenv().Send("tool_color", tool, "color1", color)
+            task.wait()
+         end
+         return
+      end
+
+      if tool.Parent == getgenv().Backpack then
+         task.wait(0.1)
+         tool.Parent = getgenv().Character
+      end
+
+      getgenv().Rainbow_Tools_FE = true
+      while getgenv().Rainbow_Tools_FE do
+         tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
+         if not tool then
+            getgenv().Rainbow_Tools_FE = false
+            return getgenv().notify("Failure:", "Tool unexpectedly disappeared or was destroyed.", 5)
+         end
+         if tool.Parent == getgenv().Backpack then
+            task.wait(0.1)
+            tool.Parent = getgenv().Character
+         end
+         for _, color in ipairs(colors) do
             if not getgenv().Rainbow_Tools_FE then break end
             getgenv().Send("tool_color", tool, "color1", color)
-            task.wait(0)
+            task.wait()
          end
       end
    else
@@ -3947,12 +3957,16 @@ local function handleCommand(sender, message)
       local Amount = split[1]
       getgenv().HasSeen_Fire_AlertFlamesHub = false
 
+      if getgenv().LocalPlayer:GetAttribute("is_verified") == false then
+         getgenv().notify("[ALERT]:", "May not work!, you do not have premium!", 5)
+      elseif getgenv().LocalPlayer:GetAttribute("is_verified") == false and getgenv().Has_Free_LifePremium then
+         getgenv().notify("[ALERT]:", "If you can see fire, it's probably visual (idk).", 5)
+      end
+
       if getgenv().HasSeen_Fire_AlertFlamesHub then
          set_fire_amount_FE(Amount)
       else
          set_fire_amount_FE(Amount)
-         getgenv().notify("Heads Up:", "Not showing? Probably not working for your exploit.", 5)
-         getgenv().notify(".", "I'll probably fix it soon, I'm not sure", 5)
          wait(0.1)
          getgenv().HasSeen_Fire_AlertFlamesHub = true
       end
@@ -4455,7 +4469,7 @@ local function handleCommand(sender, message)
       local Invisible_Module = require(getgenv().Game_Folder:FindFirstChild("InvisibleMode"))
 
       if not is_verified and not invis_bought then
-         return notify("Failure:", "You do not have LifePay or the Invisible GamePass!", 5)
+         return getgenv().notify("Failure:", "You do not have LifePay or the Invisible GamePass!", 5)
       end
 
       task.wait(0.2)
