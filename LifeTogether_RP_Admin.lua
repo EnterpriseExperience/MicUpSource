@@ -2133,12 +2133,12 @@ function spam_sign_text(toggle)
             local tool = find_tool_partial("sign")
             if not tool then
                getgenv().Send("get_tool", "Sign")
-               task.wait(0)
+               task.wait(0.1)
             else
                for _, word in ipairs(random_words) do
                   if not getgenv().ToolChanger_FE then break end
                   getgenv().Send("change_sign", tool, tostring(word))
-                  task.wait(0)
+                  task.wait(.2)
                end
             end
             task.wait(0)
