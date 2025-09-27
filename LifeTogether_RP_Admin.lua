@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.1"
+local Raw_Version = "V3.6.2"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
@@ -266,10 +266,18 @@ for _, name in ipairs(whitelisted) do
    end
 end
 
+for _, name in ipairs(whitelisted) do
+   if Players:FindFirstChild(name) then
+      getgenv().notify("[ALERT]:", "A user who is blacklisted on Flames Hub is in here!", 5)
+      wait()
+      getgenv().notify("[USER]:", tostring(name), 5)
+   end
+end
+
 Players.PlayerAdded:Connect(function(Player)
    for _, name in ipairs(whitelisted) do
       if Player.Name == name then
-         getgenv().notify("[ALERT]:", "A user who has been blacklisted on Flames Hub has joined.", 5)
+         getgenv().notify("[ALERT]:", "A user who is blacklisted on Flames Hub joined.", 5)
       end
    end
 end)
