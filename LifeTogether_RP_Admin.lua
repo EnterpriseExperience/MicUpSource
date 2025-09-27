@@ -4,7 +4,8 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.4"
+local Raw_Version = "V3.6.5"
+local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
@@ -2451,7 +2452,8 @@ local function CommandsMenu()
       {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
       {prefix}infyield - Executes Infinite Premium (my Infinite Yield)
       {prefix}spawnfire NUMBER - Spawns fire with a specified number argument.
-      {prefix}rainbowcar player - Makes a players car RGB (FE)
+      {prefix}rainbowcar player - Makes a players car RGB (FE).
+      {prefix}annoyergui - Enables the GUI that lets you annoy players (FE).
       {prefix}startsignspam - Spams the text on a sign (FE).
       {prefix}stopsignspam - Stops spamming the text on your tool Sign.
       {prefix}norainbowcar player - Disables the RGB for a player's car (FE)
@@ -2460,6 +2462,7 @@ local function CommandsMenu()
       {prefix}admin player - Adds the player to the FE commands whitelist (if they're your friend).
       {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone)
       {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone)
+      {prefix}checkpremium player - Checks if a player has premium or not.
       {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone)
       {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone)
       {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding)
@@ -2825,6 +2828,16 @@ end
 wait(0.2)
 function Disable_Flying()
    getgenv().Stop_Flying()
+end
+
+function check_premium_player(plr)
+   if plr then
+      if plr:GetAttribute("is_verified") == true then
+         return true
+      else
+         return false
+      end
+   end
 end
 
 function is_tool_colorable(tool)
@@ -3429,6 +3442,256 @@ local function removePlayerFromScriptWhitelistTable(player)
    end
 end
 
+function annoyance_GUI()
+   local Players = getgenv().Players
+   local LocalPlayer = getgenv().LocalPlayer
+   local CoreGui = getgenv().CoreGui
+   local UserInputService = getgenv().UserInputService
+
+   if CoreGui:FindFirstChild("AnnoyGUI") then
+      CoreGui.AnnoyGUI:Destroy()
+   end
+
+   getgenv().AnnoyList = {}
+   getgenv().group_chatting_users = {}
+   getgenv().Creating_Groups = false
+
+   local ScreenGui = Instance.new("ScreenGui")
+   ScreenGui.Name = "AnnoyGUI"
+   ScreenGui.Parent = CoreGui
+   ScreenGui.ResetOnSpawn = false
+
+   local Frame = Instance.new("Frame")
+   Frame.Size = UDim2.new(0, 300, 0, 400)
+   Frame.Position = UDim2.new(0.05, 0, 0.2, 0)
+   Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+   Frame.BorderSizePixel = 0
+   Frame.Parent = ScreenGui
+   Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)
+
+   local TitleBar = Instance.new("Frame")
+   TitleBar.Size = UDim2.new(1, 0, 0, 35)
+   TitleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+   TitleBar.BorderSizePixel = 0
+   TitleBar.Parent = Frame
+   Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 12)
+
+   local Title = Instance.new("TextLabel")
+   Title.Size = UDim2.new(1, -35, 1, 0)
+   Title.Position = UDim2.new(0, 10, 0, 0)
+   Title.Text = "Annoy / Group Spam Menu | Made By: computerbinaries on Discord."
+   Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+   Title.BackgroundTransparency = 1
+   Title.TextXAlignment = Enum.TextXAlignment.Left
+   Title.Font = Enum.Font.GothamBold
+   Title.TextScaled = true
+   Title.TextSize = 14
+   Title.Parent = TitleBar
+
+   local CloseBtn = Instance.new("TextButton")
+   CloseBtn.Size = UDim2.new(0, 25, 0, 25)
+   CloseBtn.Position = UDim2.new(1, -30, 0.5, -12)
+   CloseBtn.Text = "X"
+   CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+   CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+   CloseBtn.Font = Enum.Font.GothamBold
+   CloseBtn.TextScaled = true
+   CloseBtn.TextSize = 14
+   CloseBtn.Parent = TitleBar
+   Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(1, 0)
+
+   CloseBtn.MouseButton1Click:Connect(function()
+      ScreenGui:Destroy()
+      getgenv().easy_click_plr = false
+      getgenv().Creating_Groups = false
+   end)
+
+   local dragging, dragStart, startPos
+   TitleBar.InputBegan:Connect(function(input)
+      if input.UserInputType == Enum.UserInputType.MouseButton1 then
+         dragging = true
+         dragStart = input.Position
+         startPos = Frame.Position
+      end
+   end)
+   TitleBar.InputEnded:Connect(function(input)
+      if input.UserInputType == Enum.UserInputType.MouseButton1 then
+         dragging = false
+      end
+   end)
+   UserInputService.InputChanged:Connect(function(input)
+      if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+         local delta = input.Position - dragStart
+         Frame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+         )
+      end
+   end)
+
+   local PlayerList = Instance.new("ScrollingFrame")
+   PlayerList.Size = UDim2.new(1, -10, 1, -45)
+   PlayerList.Position = UDim2.new(0, 5, 0, 40)
+   PlayerList.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+   PlayerList.BorderSizePixel = 0
+   PlayerList.ScrollBarThickness = 6
+   PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
+   PlayerList.Parent = Frame
+   Instance.new("UICorner", PlayerList).CornerRadius = UDim.new(0, 10)
+
+   local UIListLayout = Instance.new("UIListLayout")
+   UIListLayout.Parent = PlayerList
+   UIListLayout.Padding = UDim.new(0, 5)
+
+   local function ToggleAnnoy(plr, btn)
+      if getgenv().easy_click_plr and getgenv().easy_click_target == plr.Name then
+         getgenv().easy_click_plr = false
+         btn.Text = "Annoy Off"
+         btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+      else
+         getgenv().easy_click_target = plr.Name
+         getgenv().easy_click_plr = true
+         btn.Text = "Annoy On"
+         btn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
+         task.spawn(function()
+            while getgenv().easy_click_plr and getgenv().easy_click_target == plr.Name do
+               task.wait()
+               getgenv().Send("request_carry", plr.Name)
+               task.wait()
+               getgenv().Send("request_call", plr.Name)
+               task.wait()
+               getgenv().Send("end_call", plr.Name)
+            end
+         end)
+      end
+   end
+
+   local function ToggleGroupSpam(plr, btn)
+      if table.find(getgenv().group_chatting_users, plr.Name) then
+         table.remove(getgenv().group_chatting_users, table.find(getgenv().group_chatting_users, plr.Name))
+         btn.Text = "Group Spam Off"
+         btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+         if #getgenv().group_chatting_users == 0 then
+            getgenv().Creating_Groups = false
+         end
+      else
+         table.insert(getgenv().group_chatting_users, plr.Name)
+         btn.Text = "Group Spam On"
+         btn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
+         getgenv().Creating_Groups = true
+         task.spawn(function()
+            while getgenv().Creating_Groups do
+               task.wait()
+               for _, name in ipairs(getgenv().group_chatting_users) do
+                  local success, userId = pcall(function()
+                     return Players:GetUserIdFromNameAsync(name)
+                  end)
+                  if success and userId then
+                     getgenv().Get("new_group", userId)
+                  end
+               end
+            end
+         end)
+      end
+   end
+
+   local function createPlayerEntry(plr)
+      if plr == LocalPlayer then return end
+
+      local Container = Instance.new("Frame")
+      Container.Size = UDim2.new(1, -5, 0, 110)
+      Container.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+      Container.BorderSizePixel = 0
+      Container.Parent = PlayerList
+      Instance.new("UICorner", Container).CornerRadius = UDim.new(0, 8)
+
+      local NameLabel = Instance.new("TextLabel")
+      NameLabel.Size = UDim2.new(1, -10, 0, 20)
+      NameLabel.Position = UDim2.new(0, 5, 0, 5)
+      NameLabel.Text = "DisplayName: " .. plr.DisplayName
+      NameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+      NameLabel.BackgroundTransparency = 1
+      NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+      NameLabel.Font = Enum.Font.Gotham
+      NameLabel.TextSize = 13
+      NameLabel.Parent = Container
+
+      local UserLabel = Instance.new("TextLabel")
+      UserLabel.Size = UDim2.new(1, -10, 0, 20)
+      UserLabel.Position = UDim2.new(0, 5, 0, 25)
+      UserLabel.Text = "Username: " .. plr.Name
+      UserLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+      UserLabel.BackgroundTransparency = 1
+      UserLabel.TextXAlignment = Enum.TextXAlignment.Left
+      UserLabel.Font = Enum.Font.Gotham
+      UserLabel.TextSize = 12
+      UserLabel.Parent = Container
+
+      local IdLabel = Instance.new("TextLabel")
+      IdLabel.Size = UDim2.new(1, -10, 0, 20)
+      IdLabel.Position = UDim2.new(0, 5, 0, 45)
+      IdLabel.Text = "UserId: " .. tostring(plr.UserId)
+      IdLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+      IdLabel.BackgroundTransparency = 1
+      IdLabel.TextXAlignment = Enum.TextXAlignment.Left
+      IdLabel.Font = Enum.Font.Gotham
+      IdLabel.TextSize = 12
+      IdLabel.Parent = Container
+
+      local AnnoyButton = Instance.new("TextButton")
+      AnnoyButton.Size = UDim2.new(0, 110, 0, 20)
+      AnnoyButton.Position = UDim2.new(0, 10, 0, 70)
+      AnnoyButton.Text = "Annoy Off"
+      AnnoyButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+      AnnoyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+      AnnoyButton.Font = Enum.Font.GothamBold
+      AnnoyButton.TextScaled = true
+      AnnoyButton.TextSize = 13
+      AnnoyButton.Parent = Container
+      Instance.new("UICorner", AnnoyButton).CornerRadius = UDim.new(0, 6)
+
+      AnnoyButton.MouseButton1Click:Connect(function()
+         ToggleAnnoy(plr, AnnoyButton)
+      end)
+
+      local GroupButton = Instance.new("TextButton")
+      GroupButton.Size = UDim2.new(0, 110, 0, 20)
+      GroupButton.Position = UDim2.new(0, 140, 0, 70)
+      GroupButton.Text = "Group Spam Off"
+      GroupButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+      GroupButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+      GroupButton.Font = Enum.Font.GothamBold
+      GroupButton.TextScaled = true
+      GroupButton.TextSize = 13
+      GroupButton.Parent = Container
+      Instance.new("UICorner", GroupButton).CornerRadius = UDim.new(0, 6)
+
+      GroupButton.MouseButton1Click:Connect(function()
+         ToggleGroupSpam(plr, GroupButton)
+      end)
+
+      PlayerList.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+   end
+
+   local function refreshPlayerList()
+      for _, child in ipairs(PlayerList:GetChildren()) do
+         if child:IsA("Frame") then
+            child:Destroy()
+         end
+      end
+      for _, plr in ipairs(Players:GetPlayers()) do
+         createPlayerEntry(plr)
+      end
+   end
+
+   Players.PlayerAdded:Connect(refreshPlayerList)
+   Players.PlayerRemoving:Connect(refreshPlayerList)
+
+   refreshPlayerList()
+end
+
 local Hum = getgenv().Humanoid
 local HD = Hum:FindFirstChild("HumanoidDescription")
 local GlitchIDs = {
@@ -3571,7 +3834,32 @@ local function check_friend(Player)
    end
 
    return 
-end                                          
+end
+
+function spam_create_groups(toggle)
+   if toggle == true then
+      local Players = getgenv().Players
+      getgenv().group_chatting_users = getgenv().group_chatting_users or {}
+      getgenv().Creating_Groups = true
+
+      while getgenv().Creating_Groups do
+         task.wait()
+         for _, name in ipairs(getgenv().group_chatting_users) do
+            local success, userId = pcall(function()
+               return Players:GetUserIdFromNameAsync(name)
+            end)
+            
+            if success and userId then
+               getgenv().Get("new_group", userId)
+            end
+         end
+      end
+   elseif toggle == false then
+      getgenv().Creating_Groups = false
+   else
+      return 
+   end
+end
 
 function attach_with_script()
    local Methods = {
@@ -3828,6 +4116,19 @@ local function handleCommand(sender, message)
       getgenv().spamming_flames(true)
    elseif cmd == "noflames" or cmd == "flamesoff" or cmd == "stopflames" then
       getgenv().spamming_flames(false)
+   elseif cmd == "checkpremium" or cmd == "haspremium" or cmd == "premiumcheck" or cmd == "haslifepay" then
+      local Player = findplr(split[1])
+      if not Player then return getgenv().notify("[Failure]:", "Player doesn't exist or left the game.", 5) end
+
+      local Result = check_premium_player(Player)
+
+      if Result == true then
+         return getgenv().notify("[Result]:", tostring(Player.Name).." does have premium!", 5)
+      elseif Result == false then
+         return getgenv().notify("[Result]:", tostring(Player.Name).." does not have premium.", 5)
+      else
+         return getgenv().notify("[Error]:", "Something unexpectedly happened while checking Player.", 5)
+      end
    elseif cmd == "rainbowcar" then
       local PlayerToRGBCar = findplr(split[1])
       if not PlayerToRGBCar then return notify("Failure:", "Player does not exist!", 5) end
@@ -4037,9 +4338,7 @@ local function handleCommand(sender, message)
    elseif cmd == "allcars" or cmd == "allvehicles" or cmd == "listvehicles" then
       car_listing_gui()
    elseif cmd == "unannoy" then
-      for i = 1, 50 do
-         getgenv().easy_click_plr = false
-      end
+      getgenv().easy_click_plr = false
    elseif cmd == "autolockcar" then
       local RunService = getgenv().RunService
       getgenv().AutoLockConnection = nil
@@ -4221,6 +4520,8 @@ local function handleCommand(sender, message)
 
       task.wait(0.2)
       notify("Success:", "Set rainbow delay for " .. Name .. " to " .. new_delay)
+   elseif cmd == "annoyergui" or cmd == "annoyancegui" or cmd == "annoyancemenu" or cmd == "annoyplrgui" or cmd == "groupspampgui" or cmd == "gcspamgui" then
+      annoyance_GUI()
    elseif cmd == "blacklist" then
       local Player = findplr(split[1])
       if not Player then return end
