@@ -4,9 +4,10 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.5.9"
+local Raw_Version = "V3.6.0"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
+getgenv().Script_Version_GlobalGenv = Script_Version
 
 if getgenv().LifeTogetherRP_Admin then
    return getgenv().notify("Failure:", "Life Together RP admin is already running!", 5)
@@ -3146,7 +3147,7 @@ if not getgenv().VehicleStates then
    getgenv().VehicleStates = {}
 end
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/Actors.lua'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/other_actors.lua'))()
 wait(0.1)
 local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
