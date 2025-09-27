@@ -350,7 +350,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.4.3-LIFE"
+local Script_Version = "2.4.5-LIFE"
 
 local function getExecutor()
     local name
@@ -927,7 +927,7 @@ wait(0.2)
 function sit_in_vehicle(Vehicle)
     if not Vehicle then return getgenv().notify("Failure:", "You do not have a Vehicle! spawn one.", 5) end
 
-    send_function("sit", Vehicle)
+    getgenv().Get("sit", Vehicle)
     wait(0.1)
     if Vehicle:FindFirstChild("VehicleSeat") then
         Vehicle:FindFirstChild("VehicleSeat"):Sit(getgenv().Humanoid)
@@ -951,7 +951,7 @@ task.wait(0.2)
 create_script_fire_folder()
 
 function spawn_any_vehicle(Vehicle)
-    send_function("spawn_vehicle", Vehicle)
+    getgenv().Get("spawn_vehicle", Vehicle)
 end
 
 local function get_vehicle()
@@ -965,19 +965,19 @@ local function get_vehicle()
 end
 
 function lock_vehicle(Vehicle)
-   send_function("lock_vehicle", Vehicle)
+   getgenv().Get("lock_vehicle", Vehicle)
 end
 
 function change_vehicle_color(Color, Vehicle)
-   send_remote("vehicle_color", Color, Vehicle)
+   getgenv().Send("vehicle_color", Color, Vehicle)
 end
 
 function change_RP_Name(New_Name)
-   send_remote("roleplay_name", tostring(New_Name))
+   getgenv().Send("roleplay_name", tostring(New_Name))
 end
 
 function change_bio(New_Bio)
-    send_remote("bio", tostring(New_Bio))
+    getgenv().Send("bio", tostring(New_Bio))
 end
 
 function vehicle_tp(Vehicle, Character)
@@ -989,14 +989,14 @@ function vehicle_tp(Vehicle, Character)
 end
 
 function set_lifesnap_snap_text(New_Text)
-    send_function("filter_snapblox_textbox", tostring(New_Text))
+    getgenv().Get("filter_snapblox_textbox", tostring(New_Text))
 end
 
 function set_lifesnap_snap_time(Time)
     if Time == "inf" then
-        send_remote("set_snapblox_time", -1 or 9e9)
+        getgenv().Send("set_snapblox_time", -1 or 9e9)
     else
-        send_remote("set_snapblox_time", tonumber(Time))
+        getgenv().Send("set_snapblox_time", tonumber(Time))
     end
 end
 
@@ -1030,7 +1030,7 @@ function invisible_spam(toggle)
 end
 
 function change_phone_wallpaper(Wallpaper_Number)
-    send_function("set_wallpaper", tonumber(Wallpaper_Number))
+    getgenv().Get("set_wallpaper", tonumber(Wallpaper_Number))
 end
 
 function loop_change_wallpaper_phone(Boolean)
@@ -1064,15 +1064,15 @@ function loop_change_wallpaper_phone(Boolean)
 end
 
 function change_phone_color(New_Color)
-    send_remote("phone_color", New_Color)
+    getgenv().Send("phone_color", New_Color)
 end
 
 function get_tool(Tool_Name)
-    send_remote("get_tool", tostring(Tool_Name))
+    getgenv().Send("get_tool", tostring(Tool_Name))
 end
 
 function remove_tools()
-    send_remote("delete_tool")
+    getgenv().Send("delete_tool")
 end
 
 function RGB_Phone(Boolean)
@@ -1116,9 +1116,9 @@ end
 
 function set_call_notifications(Boolean)
     if Boolean == true then
-        send_remote("notification_setting", "PhoneApp", true)
+        getgenv().Send("notification_setting", "PhoneApp", true)
     elseif Boolean == false then
-        send_remote("notification_setting", "PhoneApp", false)
+        getgenv().Send("notification_setting", "PhoneApp", false)
     else
         return 
     end
@@ -1128,10 +1128,10 @@ function flashlight(Toggle)
     getgenv().Flashlight_Enabled = Toggle
 
     if Toggle == true then
-        send_remote("flashlight", true)
+        getgenv().Send("flashlight", true)
         getgenv().Flashlight_Enabled = true
     elseif Toggle == false then
-        send_remote("flashlight", false)
+        getgenv().Send("flashlight", false)
         getgenv().Flashlight_Enabled = false
     else
         return
@@ -1230,7 +1230,7 @@ function Toggle_Phone(Boolean)
 end
 
 function server_admin_tp(Player)
-    send_remote("server_admin_teleport_to_player", Player)
+    getgenv().Send("server_admin_teleport_to_player", Player)
 end
 
 function show_notification(Title, Text, Method, Image)
@@ -1460,13 +1460,13 @@ function toggle_walk(Boolean)
     getgenv().walking_control = Boolean
 
     if Boolean == true then
-        send_remote("walk_option_enabled", true)
-        send_remote("toggle_walk")
+        getgenv().Send("walk_option_enabled", true)
+        getgenv().Send("toggle_walk")
         getgenv().walking_control = true
     elseif Boolean == false then
-        send_remote("walk_option_enabled", false)
-        send_remote("remove_sprint_multiplier")
-        send_remote("toggle_walk")
+        getgenv().Send("walk_option_enabled", false)
+        getgenv().Send("remove_sprint_multiplier")
+        getgenv().Send("toggle_walk")
         getgenv().walking_control = false
     else
         return 
@@ -4459,7 +4459,7 @@ Callback = function(house_locked)
                         local isLocked = plot.states.locked.get()
 
                         if isLocked == false and lastLockedState == true then
-                            send_remote("lock_home", plot.instance)
+                            getgenv().Send("lock_home", plot.instance)
                             lastLockedState = false
                         elseif isLocked == true then
                             lastLockedState = true
@@ -4568,7 +4568,7 @@ Callback = function(selected_option)
     local red_dot, camera_folder = GetCCTVFromHouseModel(house_model)
     if not red_dot or not camera_folder then return end
 
-    send_remote("replication_focus", red_dot)
+    getgenv().Send("replication_focus", red_dot)
     wait(0.1)
     CCTV.start(camera_folder)
 end,})
@@ -4588,7 +4588,7 @@ getgenv().UnviewCCTVCamera = Tab1:CreateButton({
 Name = "Unview CCTV Camera",
 Callback = function()
     CCTV.stop()
-    send_remote("restore_replication_focus")
+    getgenv().Send("restore_replication_focus")
 end,})
 
 getgenv().DoAnEmote = Tab2:CreateDropdown({
@@ -5281,35 +5281,35 @@ Callback = function(rgb_skintone)
         getgenv().RainbowSkin_FE = true
         while getgenv().RainbowSkin_FE == true do
         task.wait(0)
-            send_remote("skin_tone", Color3.fromRGB(0, 0, 0))
+            getgenv().Send("skin_tone", Color3.fromRGB(0, 0, 0))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(217, 101, 30))
+            getgenv().Send("skin_tone", Color3.fromRGB(217, 101, 30))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(93, 171, 195))
+            getgenv().Send("skin_tone", Color3.fromRGB(93, 171, 195))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(49, 34, 21))
+            getgenv().Send("skin_tone", Color3.fromRGB(49, 34, 21))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(8, 62, 11))
+            getgenv().Send("skin_tone", Color3.fromRGB(8, 62, 11))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(30, 146, 19))
+            getgenv().Send("skin_tone", Color3.fromRGB(30, 146, 19))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(97, 97, 97))
+            getgenv().Send("skin_tone", Color3.fromRGB(97, 97, 97))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(206, 158, 196))
+            getgenv().Send("skin_tone", Color3.fromRGB(206, 158, 196))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(14, 25, 43))
+            getgenv().Send("skin_tone", Color3.fromRGB(14, 25, 43))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(63, 17, 126))
+            getgenv().Send("skin_tone", Color3.fromRGB(63, 17, 126))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(0, 0, 175))
+            getgenv().Send("skin_tone", Color3.fromRGB(0, 0, 175))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(183, 25, 25))
+            getgenv().Send("skin_tone", Color3.fromRGB(183, 25, 25))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(213, 208, 29))
+            getgenv().Send("skin_tone", Color3.fromRGB(213, 208, 29))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(175, 146, 50))
+            getgenv().Send("skin_tone", Color3.fromRGB(175, 146, 50))
             task.wait(.1)
-            send_remote("skin_tone", Color3.fromRGB(202, 28, 120))
+            getgenv().Send("skin_tone", Color3.fromRGB(202, 28, 120))
         end
     else
         getgenv().RainbowSkin_FE = false
