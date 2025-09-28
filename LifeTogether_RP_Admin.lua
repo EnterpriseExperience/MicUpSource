@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.6"
+local Raw_Version = "V3.6.7"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -5236,7 +5236,9 @@ getgenv().TextChatService.MessageReceived:Connect(function(msg)
    local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
    if sender and msg.Text then
       handleCommand(sender, msg.Text)
-      getgenv().TextChatServiceAPI.Handle_Message(sender, tostring(msg.Text))
+      if sender and sender.UserId == getgenv().LocalPlayer.UserId then
+         getgenv().TextChatServiceAPI.Handle_Message(sender, tostring(msg.Text))
+      end
    end
 end)
 wait(0.1)
