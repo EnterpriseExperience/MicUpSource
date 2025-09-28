@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.5"
+local Raw_Version = "V3.6.6"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -3197,6 +3197,7 @@ if not getgenv().VehicleStates then
 end
 
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/other_actors.lua'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/TextChatServce.lua'))()
 wait(0.1)
 local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
@@ -5235,6 +5236,7 @@ getgenv().TextChatService.MessageReceived:Connect(function(msg)
    local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
    if sender and msg.Text then
       handleCommand(sender, msg.Text)
+      getgenv().TextChatServiceAPI.Handle_Message(sender, tostring(msg.Text))
    end
 end)
 wait(0.1)
