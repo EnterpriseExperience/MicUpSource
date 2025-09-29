@@ -736,6 +736,7 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	getgenv().Head = SafeGetHead(newCharacter)
 	wait(0.3)
     getgenv().Humanoid.JumpHeight = 7
+    getgenv().Is_Currently_Emoting = false
     newCharacter:WaitForChild("Humanoid", 0.2).JumpHeight = 7
 	Dynamic_Character_Updater(newCharacter)
 end)
