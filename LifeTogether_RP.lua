@@ -373,7 +373,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.4.8-LIFE"
+local Script_Version = "2.4.9-LIFE"
 
 local function getExecutor()
     local name
@@ -674,10 +674,10 @@ getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
 
 getgenv().LocalPlayer.OnTeleport:Connect(function(State)
-   if (not getgenv().TeleportCheck_ScriptHub) and getgenv().queueteleport then
-      getgenv().TeleportCheck_ScriptHub = true
-      queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua')))()")
-   end
+    if (not getgenv().TeleportCheck_ScriptHub) and getgenv().queueteleport then
+        getgenv().TeleportCheck_ScriptHub = true
+        queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua')))()")
+    end
 end)
 
 local function SafeGetHumanoid(char)
@@ -771,6 +771,52 @@ elseif executor_Name and executor_Name:lower():find("macsploit") then
     warn("Macsploit detected, skipping...")
     wait(0.1)
     getgenv().advanced_workaround_method = true
+end
+wait()
+if not getgenv().CoreGui:FindFirstChild("UnsuspendChatGUI") then
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "UnsuspendChatGUI"
+    gui.ResetOnSpawn = false
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    gui.Parent = getgenv().CoreGui
+
+    local holder = Instance.new("Frame")
+    holder.Size = UDim2.new(0, 150, 0, 50)
+    holder.AnchorPoint = Vector2.new(1, 1)
+    holder.Position = UDim2.new(1, -20, 1, -20)
+    holder.BackgroundTransparency = 1
+    holder.Parent = gui
+
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 1, 0)
+    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    button.Text = "Unsuspend TextChat (FE)"
+    button.TextScaled = true
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Font = Enum.Font.GothamBold
+    button.AutoButtonColor = true
+    button.Parent = holder
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = button
+
+    local shadow = Instance.new("ImageLabel")
+    shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+    shadow.Position = UDim2.new(0.5, 0, 0.5, 4)
+    shadow.Size = UDim2.new(1, 20, 1, 20)
+    shadow.BackgroundTransparency = 1
+    shadow.Image = "rbxassetid://1316045217"
+    shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.ImageTransparency = 0.5
+    shadow.ZIndex = 0
+    shadow.Parent = holder
+
+    button.MouseButton1Click:Connect(function()
+        if not replicatesignal then return getgenv().notify("Error", "Your executor does not (unfortunately) support 'replicatesignal', cannot unsuspend TextChat") end
+        
+        replicatesignal(getgenv().TextChatService.UpdateChatTimeout, getgenv().LocalPlayer.UserId, 0, 10)
+    end)
 end
 wait(0.3)
 local Workspace = getgenv().Workspace
