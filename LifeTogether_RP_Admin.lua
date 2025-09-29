@@ -5,14 +5,14 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.9"
+local Raw_Version = "V3.7.4"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
 
 if getgenv().LifeTogetherRP_Admin then
-   return getgenv().notify("Failure:", "Life Together RP admin is already running!", 5)
+   return getgenv().notify("Error", "Life Together RP admin is already running!", 5)
 end
 wait(0.3)
 getgenv().LifeTogetherRP_Admin = true
@@ -25,8 +25,8 @@ getgenv().Service_Wrap = function(serviceName)
    end
 end
 wait(0.1)
-function notify(title, msg, duration)
-   NotifyLib:StarterGui_Notify(tostring(title), tostring(msg), tonumber(duration))
+function notify(notif_type, msg, duration)
+   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
 end
 wait(0.1)
 getgenv().notify = notify
@@ -276,16 +276,14 @@ end
 
 for _, name in ipairs(whitelisted) do
    if Players:FindFirstChild(name) then
-      getgenv().notify("[ALERT]:", "A user who is blacklisted on Flames Hub is in here!", 5)
-      wait()
-      getgenv().notify("[USER]:", tostring(name), 5)
+      getgenv().notify("Warning", "A user who is blacklisted on Flames Hub is in this server! Username: "..tostring(name), 5)
    end
 end
 
 Players.PlayerAdded:Connect(function(Player)
    for _, name in ipairs(whitelisted) do
       if Player.Name == name then
-         getgenv().notify("[ALERT]:", "A user who is blacklisted on Flames Hub joined.", 5)
+         getgenv().notify("Warning", "A user who is blacklisted on Flames Hub has joined this server, username: "..tostring(name), 5)
       end
    end
 end)
@@ -368,9 +366,7 @@ function randomString()
 end
 task.wait(0.2)
 function owner_joined(Name)
-   getgenv().notify("ALERT:", "The owner of this Admin Commands Script has joined!", 6)
-   wait(0.1)
-   getgenv().notify("Username:", tostring(Name), 5)
+   getgenv().notify("Warning", "The owner of the Life Together Admin Commands and Script Hub scripts has joined the server! Username: "..tostring(name), 6)
 end
 
 getgenv().randomString = function()
@@ -669,14 +665,14 @@ function change_vehicle_color(Color, Vehicle)
 end
 wait(0.2)
 function sit_in_vehicle(Vehicle)
-   if not Vehicle then return notify("Failure:", "You do not have a Vehicle! spawn one.", 5) end
+   if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle! spawn one.", 5) end
 
    getgenv().Get("sit", Vehicle)
    wait(0.1)
    if Vehicle:FindFirstChild("VehicleSeat") then
       Vehicle:FindFirstChild("VehicleSeat"):Sit(getgenv().Humanoid)
    else
-      return notify("Failure:", "Unable to sit in Vehicle, missing VehicleSeat!", 5)
+      return getgenv().notify("Error", "Unable to sit in Vehicle, missing VehicleSeat!", 5)
    end
 end
 
@@ -761,6 +757,50 @@ function create_void_part()
    Kill_Part.CFrame = CFrame.new(9e9, 9e9, 9e9)
    Kill_Part.Parent = Kill_Model_Script
 end
+
+local function SetupPlayer(Player)
+   if not Player or Player == getgenv().LocalPlayer then return end
+   
+   local Character = Player.Character or Player.CharacterAdded:Wait()
+   local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid") or Character:WaitForChild("Humanoid", 5)
+   local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart", 5)
+
+   getgenv()[Player.Name.."_Character"] = Character
+   getgenv()[Player.Name.."_Humanoid"] = Humanoid
+   getgenv()[Player.Name.."_HumanoidRootPart"] = HumanoidRootPart
+end
+
+wait(0.1)
+getgenv().Players.PlayerAdded:Connect(function(Player)
+   local Name = Player and Player.Name
+
+   if Player ~= getgenv().LocalPlayer then
+      SetupPlayer(Player)
+      wait()
+      Player.CharacterAdded:Connect(function()
+         Player.CharacterAdded:Wait()
+         SetupPlayer(Player)
+      end)
+   end
+end)
+
+for _, Player in ipairs(getgenv().Players:GetPlayers()) do
+   if Player ~= getgenv().LocalPlayer then
+      SetupPlayer(Player)
+      Player.CharacterAdded:Connect(function()
+         Player.CharacterAdded:Wait()
+         SetupPlayer(Player)
+      end)
+   end
+end
+
+getgenv().Players.PlayerRemoving:Connect(function(Player)
+   local Name = Player.Name
+
+   getgenv()[Name.."_Character"] = nil
+   getgenv()[Name.."_Humanoid"] = nil
+   getgenv()[Name.."_HumanoidRootPart"] = nil
+end)
 
 wait()
 function create_kill_part()
@@ -1323,8 +1363,8 @@ if success and response then
    end
 else
    if not success then
-      notify("Failure:", "This script does not work on this executor!", 8)
-      return notify("Error:", "You cannot run this script, we're sorry!", 10)
+      getgenv().notify("Error", "This script does not work on this executor!", 8)
+      return getgenv().notify("Error", "You cannot run this script, we're sorry!", 10)
    end
 end
 wait()
@@ -1675,9 +1715,9 @@ function rainbow_skin(boolean)
       wait(1)
       repeat task.wait() until getgenv().RainbowSkin_FE == false
       if getgenv().RainbowSkin_FE == false then
-         getgenv().notify("Success:", "Disabling Rainbow Skin...", 5)
+         getgenv().notify("Success", "Disabling Rainbow/RGB Skin...", 5)
          task.wait(0.5)
-         send_remote("skin_tone", Old_Skintone)
+         getgenv().Send("skin_tone", Old_Skintone)
       end
    end
 end
@@ -1752,14 +1792,14 @@ function anti_report_func()
          setfflag("UploadImproperShutdownTelemetry", "False")
       end)
       wait()
-      getgenv().notify("[Success]:", "Anti Chat And Bug Report has been successfully loaded.", 5)
+      getgenv().notify("Success", "Anti Chat And Bug Report has been successfully loaded.", 5)
    else
-      getgenv().notify("[Error]:", "Your executor does not support 'setfflag' to run this!", 5)
+      getgenv().notify("Error", "Your executor does not support 'setfflag' to run this!", 5)
    end
 end
 
 if getgenv().loaded_anti_report then
-   getgenv().notify("Skipping:", "Already loaded anti-report utility!", 5)
+   getgenv().notify("Warning", "Already loaded anti-report utility!", 5)
 else
    anti_report_func()
    task.wait(0.2)
@@ -1769,21 +1809,21 @@ end
 local function stop_rainbow_skin()
    getgenv().RainbowSkin_FE = false
    task.wait(0.3)
-   notify("Heads Up:", "Waiting until loop is fully disabled and resetting skintone...", 5)
+   notify("Warning", "Waiting until loop is fully disabled and resetting SkinTone...", 5)
    task.wait(3)
    if getgenv().RainbowSkin_FE == false then
-      notify("Hang On:", "Loop is disabled, resetting skintone...", 5)
+      notify("Warning", "Hold On! Loop is disabled, resetting SkinTone...", 5)
       task.wait(0.2)
-      send_remote("skin_tone", Old_Skintone)
+      getgenv().Send("skin_tone", Old_Skintone)
       task.wait(0.2)
-      send_remote("skin_tone", Old_Skintone)
+      getgenv().Send("skin_tone", Old_Skintone)
       task.wait(0.2)
-      send_remote("skin_tone", Old_Skintone)
+      getgenv().Send("skin_tone", Old_Skintone)
    end
 end
 
 if getgenv().FireParticlesAdded then
-   getgenv().notify("Skipping:", "Connection has already been loaded here.", 5)
+   getgenv().notify("Warning", "Connection has already been loaded here.", 5)
 else
    local folder = getgenv().StarterGui:WaitForChild("FireTemporaryReparentFolder")
    getgenv().FireParticlesAdded = folder.ChildAdded:Connect(function(particle)
@@ -1840,7 +1880,7 @@ end
 getgenv().spamming_flames = function(toggle)
    if toggle == true then
       if getgenv().SpamFire then
-         return getgenv().notify and getgenv().notify("Failure:", "Flame spam is already enabled!", 5)
+         return getgenv().notify and getgenv().notify("Error", "Flame spamming is already enabled! Disable it before trying it again.", 5)
       end
 
       getgenv().CompletelyHideFlamesComingIn(true)
@@ -1861,7 +1901,7 @@ getgenv().spamming_flames = function(toggle)
       end
    elseif toggle == false then
       --[[if not getgenv().SpamFire then
-         return getgenv().notify and getgenv().notify("Failure:", "Flame spam is not enabled!", 5)
+         return getgenv().notify and getgenv().notify("Error", "Flame spam is not enabled!", 5)
       end--]]
 
       getgenv().SpamFire = false
@@ -1926,10 +1966,20 @@ local Emotes = {
       78755795767408,
       88425531063616,
       111426928948833,
+      111499780397123,
+      88553023837929,
+      120398163328092,
+      132887675877488,
+      95483853291380,
+      124656572577172,
+      83771892938118,
       84052327668385,
+      77605999050017,
       116826272832592, -- like flippin sexy
       103040723950430,
       85452015445985,
+      106383862917130,
+      119895570354822,
       89740608652762,
       110077386833639,
    },
@@ -1984,6 +2034,21 @@ local Emotes = {
    },
    louisiana_jigg = {
       75625820126017,
+   },
+   takethel = {
+      112884830175040,
+      73593666217037,
+      120292213172333,
+      133545170540942,
+      107451871815376,
+      82405492529515,
+      71490439912804,
+      113855231967763
+   },
+   electroshuffle = {
+      102699471013529,
+      96426537876059,
+      140499299581464,
    }
 }
 
@@ -2012,7 +2077,12 @@ local Aliases = {
    ["michaelbounce"] = "michaelmyers",
    ["nysturdy"] = "sturdy",
    ["newyorksturdy"] = "sturdy",
-   ["jiggy"] = "louisiana_jigg"
+   ["jiggy"] = "louisiana_jigg",
+   ["takel"] = "takethel",
+   ["takeanl"] = "takethel",
+   ["ldance"] = "takethel",
+   ["elecshuffle"] = "electroshuffle",
+   ["eshuffle"] = "electroshuffle"
 }
 
 function disable_emoting()
@@ -2046,14 +2116,14 @@ local lastEmoteTime = 0
 
 function do_emote(input)
    if tick() - lastEmoteTime < 2 then
-      return getgenv().notify("Hang On!", "Emoting is on cooldown, wait a second (literally).", 5)
+      return getgenv().notify("Warning", "Hold On! Emoting is on cooldown, wait a second (literally).", 5)
    end
    lastEmoteTime = tick()
 
    local Humanoid = getgenv().Humanoid
    if not Humanoid then
       disable_emoting()
-      return getgenv().notify("Failure:", "Humanoid doesn't exist? (Try resetting)", 5)
+      return getgenv().notify("Error", "Humanoid doesn't exist? (Try resetting)", 5)
    end
 
    local key = input:lower():gsub("%s+", "")
@@ -2196,14 +2266,14 @@ end
 
 function water_skie_trailer(Bool, Vehicle)
    if not Vehicle then
-      return notify("Failure:", "You do not have a Vehicle spawned!", 5)
+      return notify("Warning", "You do not have a Vehicle spawned!", 5)
    end
 
    local HasTrailer = Vehicle:FindFirstChild("WaterSkies")
 
    if Bool == true then
       if HasTrailer then
-         return notify("Error:", "You already have the WaterSkies trailer!", 5)
+         return notify("Error", "You already have the WaterSkies trailer.", 5)
       else
          getgenv().Get("add_trailer", Vehicle, "WaterSkies")
       end
@@ -2211,10 +2281,10 @@ function water_skie_trailer(Bool, Vehicle)
       if HasTrailer then
          getgenv().Get("add_trailer", Vehicle, "WaterSkies")
       else
-         return getgenv().notify("Failure:", "You do not have the WaterSkies trailer to take it off!", 5)
+         return getgenv().notify("Warning", "You do not have the WaterSkies trailer to take it off!", 5)
       end
    else
-      return getgenv().notify("Failure:", "Invalid toggle value (expected true/false)", 5)
+      return getgenv().notify("Error", "Invalid toggle value (expected: true/false).", 5)
    end
 end
 
@@ -2348,7 +2418,7 @@ local CoreGui = getgenv().CoreGui or getgenv().PlayerGui
 wait(0.1)
 local function CommandsMenu()
    if Gui_Parent_Default():FindFirstChild("AdminCommandList_LifeTogether_RP") or CoreGui:FindFirstChild("AdminCommandList_LifeTogether_RP") then
-      return getgenv().notify("Failure:", "You already have the Commands Menu opened!", 5)
+      return getgenv().notify("Warning", "You already have the Commands Menu opened!", 5)
    end
    local cmdsUI = Instance.new("ScreenGui")
    cmdsUI.Name = "AdminCommandList_LifeTogether_RP"
@@ -2492,6 +2562,8 @@ local function CommandsMenu()
       {prefix}billybounce - Makes you do the Billy Bounce emote (FE).
       {prefix}michaelmyers - Makes you do the Michael Myers emote (FE).
       {prefix}sturdy - Makes you do the New York Sturdy emote (FE).
+      {prefix}eshuffle - Makes you do the Electro Shuffle emote (FE).
+      {prefix}takethel - Makes you do the Take The L emote (FE).
       {prefix}antivoid - Enables anti-void.
       {prefix}unantivoid - Disables anti-void.
       {prefix}alljobs - Repeatedly spams all jobs
@@ -2901,12 +2973,12 @@ function rainbow_tool(toggled)
 
       if not tool then
          getgenv().Send("get_tool", "Gift")
-         getgenv().notify("Hang On:", "We're giving you a colorable Tool...", 5)
+         getgenv().notify("Warning", "Wait!: We're giving you a colorable Tool...", 5)
          task.wait(0.2)
          tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
 
          if not tool then
-            return getgenv().notify("Failure:", "Tool still not found after giving.", 5)
+            return getgenv().notify("Error", "Tool still not found after giving you the Gift Tool.", 5)
          end
 
          if tool.Parent == getgenv().Backpack then
@@ -2931,7 +3003,7 @@ function rainbow_tool(toggled)
          tool = find_character_tool() or find_backpack_tool() or find_placed_models_tool()
          if not tool then
             getgenv().Rainbow_Tools_FE = false
-            return getgenv().notify("Failure:", "Tool unexpectedly disappeared or was destroyed.", 5)
+            return getgenv().notify("Error", "Tool unexpectedly disappeared or was destroyed.", 5)
          end
          if tool.Parent == getgenv().Backpack then
             task.wait(0.1)
@@ -2954,7 +3026,7 @@ function toggle_name_func(boolean)
    elseif boolean == false then
       getgenv().Send("hide_name", false)
    else
-      return notify("Failure:", "Invalid arguments provided.", 5)
+      return notify("Error", "Invalid arguments provided.", 5)
    end
 end
 
@@ -2974,7 +3046,7 @@ function flashy_name(Toggle)
       wait(1.5)
       toggle_name_func(false)
    else
-      return notify("Failure:", "Invalid argument(s) provided.", 5)
+      return notify("Error", "Invalid argument(s) provided.", 5)
    end
 end
 
@@ -3159,7 +3231,7 @@ local function disable_rgb_for(plr)
    if not getgenv().Rainbow_Tasks[plr.Name] then return end
 
    if getgenv().VehicleStates[plr.Name].rainbow == true then
-      getgenv().notify("Disabling:", "Vehicle states for: "..tostring(plr.Name), 3)
+      getgenv().notify("Success", "Disabling Vehicle states for: "..tostring(plr.Name), 3)
       getgenv().VehicleStates[plr.Name].rainbow = false
    end
 
@@ -3172,11 +3244,11 @@ local function disable_rgb_for(plr)
    end
 
    if getgenv().Rainbow_Tasks[plr.Name] then
-      notify("Disabling:", "Rainbow Task for: "..tostring(plr.Name), 3)
+      getgenv().notify("Success", "Disabling Rainbow Task for: "..tostring(plr.Name), 3)
       getgenv().Rainbow_Tasks[plr.Name] = nil
    end
    if getgenv().Rainbow_Indices[plr.Name] then
-      notify("Disabling:", "Rainbow Indice for: "..tostring(plr.Name), 3)
+      getgenv().notify("Success", "Disabling Rainbow Indice for: "..tostring(plr.Name), 3)
       getgenv().Rainbow_Indices[plr.Name] = nil
    end
 end
@@ -3257,13 +3329,13 @@ local function setup_cmd_handler_plr(player)
       if levenshtein(command, "rgbcar") <= 2 then
          local Player = getgenv().Players[speaker.Name]
          if not Player then
-            return getgenv().notify("Failure:", "This player does not exist!", 5)
+            return getgenv().notify("Error", "This player does not exist!", 5)
          end
 
          local vehicle = get_other_vehicle(Player)
          if not vehicle then
             getgenv().Rainbow_Vehicles[Player.Name] = nil
-            return getgenv().notify("Failure:", "The player doesn't have a car spawned!", 5)
+            return getgenv().notify("Error", "The player doesn't have a car spawned!", 5)
          end
 
          enable_rgb_for(Player)
@@ -3425,7 +3497,7 @@ local function addPlayerToScriptWhitelistTable(player)
       getgenv().player_admins[player.Name] = player
       wait(0.3)
       if getgenv().player_admins[player.Name] then
-         notify("Success!", tostring(player.Name)..", was added to Admins Whitelist!", 5)
+         getgenv().notify("Success", tostring(player.Name)..", was added to Admins Whitelist.", 5)
       end
    end
 end
@@ -3435,9 +3507,9 @@ local function removePlayerFromScriptWhitelistTable(player)
       getgenv().player_admins[player.Name] = nil
       wait(0.2)
       if getgenv().player_admins[player.Name] == nil then
-         getgenv().notify("Success!", tostring(player.Name)..", was removed from the Admins Whitelist!", 5)
+         getgenv().notify("Success", tostring(player.Name).." was removed from the Admins Whitelist!", 5)
       else
-         return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
+         return getgenv().notify("Error", tostring(player)..", does not exist.", 5)
       end
    end
 end
@@ -3778,9 +3850,9 @@ wait(0.1)
 getgenv().viewTarget = function(Player)
    if getgenv().Viewing_A_Player then
       if getgenv().Viewing_Plr_Tbl[Player.Name] then
-         return getgenv().notify("Failure:", "You're already viewing: " .. tostring(getgenv().Viewing_Plr_Tbl[Player.Name]), 5)
+         return getgenv().notify("Error", "You're already viewing: " .. tostring(getgenv().Viewing_Plr_Tbl[Player.Name]), 5)
       else
-         return getgenv().notify("Failure:", "You're already viewing a Player.", 5)
+         return getgenv().notify("Error", "You're already viewing a Player.", 5)
       end
    end
 
@@ -3804,7 +3876,7 @@ end
 wait(0.1)
 getgenv().unview_player = function()
    if not getgenv().Viewing_A_Player then
-      return getgenv().notify("Failure:", "You're not viewing anyone!", 5)
+      return getgenv().notify("Error", "You're not viewing anyone.", 5)
    end
 
    if getgenv().Humanoid or getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
@@ -3821,10 +3893,10 @@ getgenv().unview_player = function()
 
    getgenv().Viewing_A_Player = false
    getgenv().Viewing_Plr_Tbl = {}
-   getgenv().notify("Success:", "Stopped viewing: " .. tostring(viewedName), 5)
+   getgenv().notify("Success", "Stopped viewing: " .. tostring(viewedName), 5)
 end
 wait(0.1)
-getgenv().notify("[CAMERA-HOOK]:", "Initialized spectating functionality successfully.", 5)
+getgenv().notify("Success", "[CAMERA-HOOK]: Initialized spectating functionality successfully.", 5)
 
 local function check_friend(Player)
    if Player ~= getgenv().LocalPlayer and Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
@@ -4102,7 +4174,7 @@ local function handleCommand(sender, message)
       getgenv().AdminPrefix = split[1]
       savePrefix(getgenv().AdminPrefix)
       wait(0.1)
-      notify("Prefix", "Prefix changed to '" .. split[1] .. "'", 5)
+      getgenv().notify("Success", "Prefix has been changed to '" .. split[1] .. "'", 5)
       return 
    end
 
@@ -4118,29 +4190,29 @@ local function handleCommand(sender, message)
       getgenv().spamming_flames(false)
    elseif cmd == "checkpremium" or cmd == "haspremium" or cmd == "premiumcheck" or cmd == "haslifepay" then
       local Player = findplr(split[1])
-      if not Player then return getgenv().notify("[Failure]:", "Player doesn't exist or left the game.", 5) end
+      if not Player then return getgenv().notify("Error", "Player doesn't exist or left the game.", 5) end
 
       local Result = check_premium_player(Player)
 
       if Result == true then
-         return getgenv().notify("[Result]:", tostring(Player.Name).." does have premium!", 5)
+         return getgenv().notify("Success", "[Result]: "..tostring(Player.Name).." does have premium!", 5)
       elseif Result == false then
-         return getgenv().notify("[Result]:", tostring(Player.Name).." does not have premium.", 5)
+         return getgenv().notify("Success", "[Result]: "..tostring(Player.Name).." does not have premium.", 5)
       else
-         return getgenv().notify("[Error]:", "Something unexpectedly happened while checking Player.", 5)
+         return getgenv().notify("Error", "Something unexpectedly happened while checking Player.", 5)
       end
    elseif cmd == "rainbowcar" then
       local PlayerToRGBCar = findplr(split[1])
-      if not PlayerToRGBCar then return notify("Failure:", "Player does not exist!", 5) end
-      if not get_other_vehicle(PlayerToRGBCar) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
+      if not PlayerToRGBCar then return getgenv().notify("Error", "Player does not exist!", 5) end
+      if not get_other_vehicle(PlayerToRGBCar) then return getgenv().notify("Error", "Player does not have a Vehicle spawned!", 5) end
       local Checker = check_friend(PlayerToRGBCar)
 
       if not Checker or Checker ~= true then
-         return notify("Failure:", "Player is not your friend, add them to use this!", 5)
+         return getgenv().notify("Error", "Player is not your friend, add them to use this!", 5)
       end
 
       if getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] then
-         return notify("Failure:", "Player already has they're car rainbow!", 5)
+         return getgenv().notify("Error", "Player already has they're car rainbow!", 5)
       end
       wait(0.1)
       getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] = true
@@ -4170,12 +4242,12 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "norainbowcar" then
       local PlayerToRGBCarStop = findplr(split[1])
-      if not PlayerToRGBCarStop then return notify("Failure:", "Player does not exist!", 5) end
-      if not get_other_vehicle(PlayerToRGBCarStop) then return notify("Failure:", "Player does not have a Vehicle spawned!", 5) end
+      if not PlayerToRGBCarStop then return getgenv().notify("Error", "Player does not exist!", 5) end
+      if not get_other_vehicle(PlayerToRGBCarStop) then return getgenv().notify("Error", "Player does not have a Vehicle spawned!", 5) end
       local Checker = check_friend(PlayerToRGBCarStop)
 
       if not Checker or Checker ~= true then
-         return notify("Failure:", "Player is not your friend, add them to use this!", 5)
+         return getgenv().notify("Error", "Player is not your friend, add them to use this!", 5)
       end
 
       disable_rgb_for(PlayerToRGBCarStop)
@@ -4239,12 +4311,12 @@ local function handleCommand(sender, message)
       local flySpeed = tonumber(split[1])
 
       if getgenv().HD_FlyEnabled then
-         return getgenv().notify("Failure:", "HD-Admin Fly is already enabled!", 5)
+         return getgenv().notify("Error", "HD-Admin Fly is already enabled!", 5)
       end
       wait(0.2)
       EnableFly(flySpeed)
-      notify("Fly", "Fly enabled at speed: " .. flySpeed, 5)
-      notify("Controls", "E = up, Q = down, WASD to move", 5)
+      getgenv().notify("Success", "Fly enabled at speed: " .. flySpeed, 5)
+      getgnev().notify("Warning", "E = up, Q = down, WASD to move", 5)
    elseif cmd == "unfly" then
       DisableFlyScript()
    elseif cmd == "fly2" then
@@ -4259,9 +4331,9 @@ local function handleCommand(sender, message)
       getgenv().HasSeen_Fire_AlertFlamesHub = false
 
       if getgenv().LocalPlayer:GetAttribute("is_verified") == false then
-         getgenv().notify("[ALERT]:", "May not work!, you do not have premium!", 5)
+         getgenv().notify("Warning", "[ALERT]: May not work!, you do not have premium!", 5)
       elseif getgenv().LocalPlayer:GetAttribute("is_verified") == false and getgenv().Has_Free_LifePremium then
-         getgenv().notify("[ALERT]:", "If you can see fire, it's probably visual (idk).", 5)
+         getgenv().notify("Warning", "[ALERT]: If you can see fire, it's probably visual (idk).", 5)
       end
 
       if getgenv().HasSeen_Fire_AlertFlamesHub then
@@ -4313,15 +4385,19 @@ local function handleCommand(sender, message)
       do_emote("michaelmyers")
    elseif cmd == "sturdy" or cmd == "nysturdy" then
       do_emote("sturdy")
-   elseif cmd == "jiggy" or cmd == "louisiniajigg" or cmd == "getjiggy" then
+   elseif cmd == "jiggy" or cmd == "louisiniajigg" or cmd == "getjiggy" or cmd == "jig" or cmd == "jigg" then
       do_emote("jiggy")
+   elseif cmd == "eshuffle" or cmd == "electroshuffle" or cmd == "electricshuffle" then
+      do_emote("electroshuffle")
+   elseif cmd == "takethel" or cmd == "takel" or cmd == "takeanl" then
+      do_emote("takethel")
    elseif cmd == "infyield" or cmd == "infpremium" or cmd == "infiniteyield" or cmd == "infinitepremium" or cmd == "iy" or cmd == "loadiy" then
       infinite_premium()
    elseif cmd == "annoy" then
       local Target = findplr(split[1])
       if not Target then
          show_notification("Error:", "Player does not exist!", "Error")
-         return notify("Failure:", "Player does not exist!", 5)
+         return getgenv().notify("Error", "Player does not exist!", 5)
       end
       wait()
       getgenv().easy_click_plr = true
@@ -4356,16 +4432,16 @@ local function handleCommand(sender, message)
 
             if car and car:GetAttribute("locked") == true then
                lock_vehicle(car)
-               notify("AutoLock", "Vehicle unlocked and AutoLock disabled", 5)
+               getgenv().notify("Success", "Vehicle unlocked and AutoLock disabled", 5)
             else
-               notify("AutoLock", "Vehicle not found, cannot unlock, disabled loop.", 5)
+               getgenv().notify("Warning", "Vehicle not found, cannot unlock, disabled loop.", 5)
             end
             return 
          else
             getgenv().AutoLockOn = true
          end
 
-         notify("AutoLock", "AutoLock enabled. Waiting for vehicle...", 5)
+         getgenv().notify("Success", "AutoLock enabled. Waiting for vehicle...", 5)
 
          getgenv().AutoLockConnection = getgenv().RunService.Heartbeat:Connect(function()
             local car = get_vehicle()
@@ -4379,8 +4455,8 @@ local function handleCommand(sender, message)
    elseif cmd == "unautolockcar" then
       getgenv().ToggleAutoLock(false)
    elseif cmd == "noclip" then
-      if getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == true then
-         return notify("Failure:", "Noclip is already enabled!", 5)
+      if getgenv().Noclip_Enabled then
+         return getgenv().notify("Error", "Noclip is already enabled!", 5)
       end
 
       Clip = false
@@ -4391,23 +4467,23 @@ local function handleCommand(sender, message)
          if not Clip and getgenv().Character then
             for _, part in ipairs(getgenv().Character:GetDescendants()) do
                if part:IsA("BasePart") and part.CanCollide then
-                  part.CanCollide = false
-                  if getgenv()._noclipModifiedParts then
-                     getgenv()._noclipModifiedParts[part] = true
+                  if getgenv()._noclipModifiedParts[part] == nil then
+                     getgenv()._noclipModifiedParts[part] = part.CanCollide
                   end
+                  part.CanCollide = false
                end
             end
          end
       end
 
-      notify("Success:", "Noclip has been enabled.", 5)
+      getgenv().notify("Success", "Noclip has been enabled.", 5)
 
       getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
    elseif cmd == "autonoflames" or cmd == "autohideflames" then
-      getgenv().notify("Success:", "Now reducing the lag from fire spam!", 5)
+      getgenv().notify("Success", "Now reducing the lag from fire spam!", 5)
       getgenv().CompletelyHideFlamesComingIn(true)
    elseif cmd == "unautonoflames" or cmd == "unautohideflames" then
-      getgenv().notify("Success:", "No longer protected against fire spam.", 5)
+      getgenv().notify("Success", "No longer protected against fire spam.", 5)
       getgenv().CompletelyHideFlamesComingIn(false)
    elseif cmd == "antivoid" or cmd == "novoid" then
       if not getgenv().originalFPDH then
@@ -4416,18 +4492,18 @@ local function handleCommand(sender, message)
 
       task.wait(0.1)
       getgenv().Workspace.FallenPartsDestroyHeight = -9e9
-      getgenv().notify("Success:", "Enabled antivoid.", 5)
+      getgenv().notify("Success", "Enabled antivoid.", 5)
    elseif cmd == "unantivoid" or cmd == "unnovoid" then
       if not getgenv().originalFPDH then
          getgenv().originalFPDH = -500
-         return getgenv().notify("Failure:", "Original destroy height doesn't exist!", 5)
+         return getgenv().notify("Error", "Original destroy height doesn't exist!", 5)
       end
 
       getgenv().Workspace.FallenPartsDestroyHeight = getgenv().originalFPDH or -500
-      getgenv().notify("Success:", "Disabled anti-void.", 5)
+      getgenv().notify("Success", "Disabled anti-void.", 5)
    elseif cmd == "clip" then
-      if not getgenv().Noclip_Enabled or getgenv().Noclip_Enabled == false then
-         return notify("Failure:", "Noclip is not enabled!", 5)
+      if not getgenv().Noclip_Enabled then
+         return getgenv().notify("Error", "Noclip is not enabled, enable it first.", 5)
       end
 
       if getgenv().Noclip_Connection then
@@ -4439,20 +4515,20 @@ local function handleCommand(sender, message)
       Clip = true
 
       if getgenv()._noclipModifiedParts then
-         for part, _ in pairs(getgenv()._noclipModifiedParts) do
+         for part, original in pairs(getgenv()._noclipModifiedParts) do
             if part and part:IsA("BasePart") then
-               part.CanCollide = true
+               part.CanCollide = original
             end
          end
          getgenv()._noclipModifiedParts = nil
       end
-      wait()
-      getgenv().notify("Success:", "Disabled Noclip sucessfully.", 5)
+
+      getgenv().notify("Success", "Disabled Noclip successfully.", 5)
    elseif cmd == "view" then
       local View_Target = findplr(split[1])
-      if not View_Target then return notify("Failure:", "Target was not found or does not exist!", 5) end
+      if not View_Target then return getgenv().notify("Error", "Target was not found or does not exist!", 5) end
       wait(0.1)
-      if getgenv().Viewing_A_Player then return notify("Failure:", "Your already viewing someone, do {prefix}unview to stop.", 5) end
+      if getgenv().Viewing_A_Player then return getgenv().notify("Error", "Your already viewing someone, do {prefix}unview to stop.", 5) end
 
       if View_Target and View_Target.Character and View_Target.Character:FindFirstChild("Humanoid") then
          local Target_Char = View_Target.Character or View_Target.CharacterAdded:Wait()
@@ -4462,7 +4538,7 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "unview" then
       if not getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == false then
-         return notify("Failure:", "Your not viewing anybody!", 5)
+         return getgenv().notify("Error", "Your not viewing anybody!", 5)
       end
 
       if getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == true then
@@ -4470,23 +4546,23 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "lockcar" then
       local Current_Car = get_vehicle()
-      if not Current_Car then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
+      if not Current_Car then return getgenv().notify("Error", "You do not have a vehicle spawned!", 5) end
 
       if Current_Car:GetAttribute("locked") == true then
-         return notify("Failure:", "Your vehicle is already locked.", 5)
+         return notify("Error", "Your vehicle is already locked.", 5)
       else
          lock_vehicle(get_vehicle())
-         notify("Success:", "Locked vehicle: "..tostring(Current_Car), 5)
+         notify("Success", "Locked vehicle: "..tostring(Current_Car), 5)
       end
    elseif cmd == "unlockcar" then
       local Current_Car = get_vehicle()
-      if not Current_Car then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
+      if not Current_Car then return notify("Error", "You do not have a vehicle spawned!", 5) end
       
       if Current_Car:GetAttribute("locked") == true then
          lock_vehicle(get_vehicle())
-         notify("Success:", "Unlocked vehicle: "..tostring(Current_Car), 5)
+         notify("Success", "Unlocked vehicle: "..tostring(Current_Car), 5)
       else
-         return notify("Failure:", "Your vehicle is unlocked already!", 5)
+         return notify("Error", "Your vehicle is unlocked already!", 5)
       end
    elseif cmd == "glitchoutfit" then
       glitch_outfit(true)
@@ -4494,7 +4570,7 @@ local function handleCommand(sender, message)
       glitch_outfit(false)
    elseif cmd == "despawn" then
       local Current_Car = get_vehicle()
-      if not Current_Car then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
+      if not Current_Car then return notify("Error", "You do not have a vehicle spawned!", 5) end
       
       if Current_Car then
          spawn_any_vehicle(tostring(Current_Car))
@@ -4506,10 +4582,10 @@ local function handleCommand(sender, message)
    elseif cmd == "rainbowtime" then
       local Player = findplr(split[1])
       if not Player then
-         return notify("Error:", "Player doesn't exist or has left!")
+         return notify("Error", "Player doesn't exist or has left!")
       end
       if not Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
-         return notify("Failure:", "Player is not friends with you, add them!")
+         return notify("Error", "Player is not friends with you, add them!")
       end
 
       local Name = Player.Name
@@ -4519,7 +4595,7 @@ local function handleCommand(sender, message)
       getgenv().Rainbow_Delays[Name] = new_delay
 
       task.wait(0.2)
-      notify("Success:", "Set rainbow delay for " .. Name .. " to " .. new_delay)
+      notify("Success", "Set rainbow delay for " .. Name .. " to " .. new_delay)
    elseif cmd == "annoyergui" or cmd == "annoyancegui" or cmd == "annoyancemenu" or cmd == "annoyplrgui" or cmd == "groupspampgui" or cmd == "gcspamgui" then
       annoyance_GUI()
    elseif cmd == "blacklist" then
@@ -4560,32 +4636,32 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "admin" then
       local Player = findplr(split[1])
-      if not Player then return notify("Failure:", "Player does not exist!", 5) end
+      if not Player then return notify("Error", "Player does not exist!", 5) end
 
       if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
          if not getgenv().player_admins[Player.Name] then
             alreadyCheckedUser(Player)
             wait(0.5)
-            notify("Success:", "Added "..tostring(Player.Name).." to the admin's table!", 5)
+            notify("Success", "Added "..tostring(Player.Name).." to the admin's table!", 5)
          else
-            return notify("Failure:", "Player is already an admin!", 5)
+            return notify("Error", "Player is already an admin!", 5)
          end
       else
-         return notify("Failure:", "This player isn't friends with you! add them!", 5)
+         return notify("Error", "This player isn't friends with you! add them!", 5)
       end
    elseif cmd == "unadmin" then
       local Player = findplr(split[1])
-      if not Player then return notify("Failure:", "Player does not exist!", 5) end
+      if not Player then return notify("Error", "Player does not exist!", 5) end
 
       if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
-         notify("Hang On:", "Removing admin for: "..tostring(Player.Name), 5)
+         notify("Warning", "Removing admin for: "..tostring(Player.Name), 5)
          task.wait()
          local Name = Player.Name
 
          if getgenv().player_admins[Name] then
             getgenv().player_admins[Name] = nil
             wait(0.2)
-            notify("Success:", "Player removed from getgenv().player_admins table!", 5)
+            notify("Success", "Player removed from getgenv().player_admins table!", 5)
          end
          if getgenv().Rainbow_Vehicles[Name] then
             getgenv().Rainbow_Vehicles[Name] = false
@@ -4601,16 +4677,16 @@ local function handleCommand(sender, message)
          end
          wait(0.5)
          if not getgenv().player_admins[Name] then
-            notify("Success:", "Player's admin has been removed successfully.", 5)
+            notify("Success", "Player's admin has been removed successfully.", 5)
          else
-            notify("Failure:", "Player's admin abilities we're not removed.", 5)
+            notify("Error", "Player's admin abilities we're not removed.", 5)
          end
       else
-         return notify("Failure:", "This player isn't friends with you! add them!", 5)
+         return notify("Error", "This player isn't friends with you! add them!", 5)
       end
    elseif cmd == "bringcar" then
       local Vehicle = get_vehicle()
-      if not Vehicle then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
+      if not Vehicle then return notify("Error", "You do not have a vehicle spawned!", 5) end
       local Old_CF_BringCar = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
       local myVehicle = nil
@@ -4624,7 +4700,7 @@ local function handleCommand(sender, message)
          end
       end
 
-      if not myVehicle then return notify("Failure:", "No owned SchoolBus found", 5) end
+      if not myVehicle then return notify("Error", "No owned SchoolBus found", 5) end
       local seat = myVehicle:FindFirstChild("VehicleSeat")
       if seat and getgenv().Humanoid then
          getgenv().Character:PivotTo(seat.CFrame)
@@ -4634,17 +4710,17 @@ local function handleCommand(sender, message)
       wait(0.1)
       myVehicle:PivotTo(Old_CF_BringCar * CFrame.new(0, 10, 0))
       wait(0.1)
-      notify("Success:", "Brung car to player: "..tostring(getgenv().LocalPlayer), 5)
+      notify("Success", "Brung car to player: "..tostring(getgenv().LocalPlayer), 5)
    elseif cmd == "gotocar" then
       local Vehicle = get_vehicle()
-      if not Vehicle then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
+      if not Vehicle then return notify("Error", "You do not have a vehicle spawned!", 5) end
 
       if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") then
          getgenv().Character:PivotTo(get_vehicle():GetPivot() * CFrame.new(0, 5, 0))
       end
    elseif cmd == "tpcar" then
       local Vehicle = get_vehicle()
-      if not Vehicle then return notify("Failure:", "You do not have a vehicle spawned!", 5) end
+      if not Vehicle then return notify("Error", "You do not have a vehicle spawned!", 5) end
       local Goto_Player = findplr(split[1])
       local Old_CFrame_TP_Car = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -4662,7 +4738,7 @@ local function handleCommand(sender, message)
             end
          end
 
-         if not myVehicle then return notify("Failure:", "No owned SchoolBus found", 5) end
+         if not myVehicle then return notify("Error", "No owned SchoolBus found", 5) end
          local seat = myVehicle:FindFirstChild("VehicleSeat")
          if seat and getgenv().Humanoid then
             getgenv().Character:PivotTo(seat.CFrame)
@@ -4680,17 +4756,17 @@ local function handleCommand(sender, message)
             getgenv().HumanoidRootPart.CFrame = Old_CFrame_TP_Car
          end
          wait(0.1)
-         notify("Success:", "Teleported vehicle to player: "..tostring(Goto_Player), 5)
+         notify("Success", "Teleported vehicle to player: "..tostring(Goto_Player), 5)
       end
    elseif cmd == "nosit" or cmd == "antisit" then
       local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
       
       if not is_enabled or is_enabled == false then
          show_notification("Failure:", "NoSit/AntiSit is already enabled!", "Warning")
-         return notify("Failure:", "NoSit/AntiSit is already enabled!", 5)
+         return notify("Error", "NoSit/AntiSit is already enabled!", 5)
       end
 
-      notify("Success:", "Anti-Sit/No-Sit is now enabled!", 5)
+      notify("Success", "Anti-Sit/No-Sit is now enabled!", 5)
       show_notification("Success:", "AntiSit/NoSit is now enabled!", "Normal")
       wait(0.2)
       getgenv().Not_Ever_Sitting = true
@@ -4702,11 +4778,11 @@ local function handleCommand(sender, message)
    elseif cmd == "carcolor" then
       local Target = findplr(split[1])
       local Color = split[2]
-      if not Target then return notify("Failure:", "Player does not exist or was not found!", 5) end
+      if not Target then return notify("Error", "Player does not exist or was not found!", 5) end
       local Check_Friend = Target:IsFriendsWith(getgenv().LocalPlayer.UserId)
-      if not Check_Friend then return notify("Failure:", "Player is not friends with you, add them!", 5) end
+      if not Check_Friend then return notify("Error", "Player is not friends with you, add them!", 5) end
       local Vehicle_Target = Target and get_other_vehicle(Target)
-      if not Vehicle_Target then return notify("Failure:", tostring(Target).." does not have a vehicle spawned!", 5) end
+      if not Vehicle_Target then return notify("Error", tostring(Target).." does not have a vehicle spawned!", 5) end
 
       local colors = {
          black   = Color3.fromRGB(0,0,0),
@@ -4734,7 +4810,7 @@ local function handleCommand(sender, message)
          if col then
             change_vehicle_color(col, Vehicle_Target)
          else
-            getgenv().notify("Failure:", "Unknown color: "..tostring(Color), 5)
+            getgenv().notify("Error", "Unknown color: "..tostring(Color), 5)
          end
       end
    elseif cmd == "resit" or cmd == "unantisit" then
@@ -4742,7 +4818,7 @@ local function handleCommand(sender, message)
       
       if is_enabled or is_enabled == true then
          show_notification("Failure:", "Sitting is already enabled!", "Warning")
-         return notify("Failure:", "Sitting is already enabled!", 5)
+         return notify("Error", "Sitting is already enabled!", 5)
       end
 
       getgenv().Not_Ever_Sitting = false
@@ -4750,17 +4826,17 @@ local function handleCommand(sender, message)
       require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
       wait(0.1)
       -- might as well use both 🤷
-      notify("Success:", "Sitting is now enabled!", 5)
+      notify("Success", "Sitting is now enabled!", 5)
       Phone.show_notification("Success:", "Sitting is now enabled!", "Normal")
    elseif cmd == "flashname" then
       if getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == true then
-         return notify("Failure:", "Your already running Flash Name!", 5)
+         return notify("Error", "Your already running Flash Name!", 5)
       end
 
       flashy_name(true)
    elseif cmd == "noflashname" then
       if not getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == false then
-         return notify("Failure:", "Your not currently running Flash Name!", 5)
+         return notify("Error", "Your not currently running Flash Name!", 5)
       end
       
       flashy_name(false)
@@ -4770,7 +4846,7 @@ local function handleCommand(sender, message)
       local Invisible_Module = require(getgenv().Game_Folder:FindFirstChild("InvisibleMode"))
 
       if not is_verified and not invis_bought then
-         return getgenv().notify("Failure:", "You do not have LifePay or the Invisible GamePass!", 5)
+         return getgenv().notify("Error", "You do not have LifePay or the Invisible GamePass!", 5)
       end
 
       task.wait(0.2)
@@ -4778,7 +4854,7 @@ local function handleCommand(sender, message)
       getgenv().Invisible_Flash = true
 
       if Is_Invis then
-         notify("Hold On:", "You we're already invisible, turning off invisibility...", 5)
+         notify("Warning", "You we're already invisible, turning off invisibility...", 5)
          Invisible_Module.enabled.set(false)
       end
 
@@ -4793,8 +4869,8 @@ local function handleCommand(sender, message)
       getgenv().Invisible_Flash = false
    elseif cmd == "kill" and split[1] then
       local target = findplr(split[1])
-      if not target then return notify("Kill:", "Target not found.", 5) end
-      if getgenv().Not_Ever_Sitting then return getgenv().notify("Failure:", "Anti-Sit is enabled, turn it off first!", 5) end
+      if not target then return notify("Error", "Target not found.", 5) end
+      if getgenv().Not_Ever_Sitting then return getgenv().notify("Error", "Anti-Sit is enabled, turn it off first!", 5) end
 
       local function wait_for_bus(timeout)
          local t = 0
@@ -4819,14 +4895,14 @@ local function handleCommand(sender, message)
 
       if Vehicle and Vehicle.Name == "SchoolBus" then
          vehicle_kill_player(target)
-         notify("Kill", "Killing player: "..target.Name, 3)
+         notify("Success", "Killing player: "..target.Name, 3)
       else
-         notify("Kill", "Failed to spawn/find SchoolBus.", 3)
+         notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "void" and split[1] then
       local target = findplr(split[1])
-      if not target then return getgenv().notify("Void:", "Target Player not found.", 5) end
-      if getgenv().Not_Ever_Sitting then return getgenv().notify("Failure:", "Anti-Sit is enabled, turn it off first!", 5) end
+      if not target then return getgenv().notify("Error", "Target Player not found.", 5) end
+      if getgenv().Not_Ever_Sitting then return getgenv().notify("Error", "Anti-Sit is enabled, turn it off first!", 5) end
 
       local function wait_for_bus(timeout)
          local t = 0
@@ -4851,9 +4927,9 @@ local function handleCommand(sender, message)
 
       if Vehicle and Vehicle.Name == "SchoolBus" then
          vehicle_void_player(target)
-         notify("Void", "Sending player to the void | player: "..target.Name, 3)
+         notify("Success", "Sending player to the Void | player: "..target.Name, 3)
       else
-         notify("Void", "Failed to spawn/find SchoolBus.", 3)
+         notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "rejoin" or cmd == "rj" then
       if #getgenv().Players:GetPlayers() <= 1 then
@@ -4865,10 +4941,10 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "antifling" then
       if getgenv().antiFlingEnabled then
-         return getgenv().notify("Failure:", "Anti Fling is already enabled!", 5)
+         return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
       end
       if getgenv().antiKnockbackEnabled then
-         return getgenv().notify("Failure:", "Anti Fling is already enabled!", 5)
+         return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
       end
       task.wait(0.1)
       getgenv().antiFlingEnabled = true
@@ -4889,7 +4965,7 @@ local function handleCommand(sender, message)
          end
       end
 
-      getgenv().notify("Success:", "Enabled AntiFling, you will not be flung.", 5)
+      getgenv().notify("Success", "Enabled AntiFling, you will not be flung.", 5)
 
       local function onHeartbeat()
          if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
@@ -4934,7 +5010,7 @@ local function handleCommand(sender, message)
       getgenv().antiFlingEnabled = false
       getgenv().antiKnockbackEnabled = false
 
-      getgenv().notify("Success:", "Disabled AntiFling.", 5)
+      getgenv().notify("Success", "Disabled AntiFling.", 5)
 
       if getgenv().anti_knockback_connection then
          getgenv().anti_knockback_connection:Disconnect()
@@ -4942,8 +5018,8 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "bring" and split[1] then
       local target = findplr(split[1])
-      if not target then return getgenv().notify("Bring:", "Target not found.", 5) end
-      if getgenv().Not_Ever_Sitting then return getgenv().notify("Failure:", "Anti-Sit is enabled, turn it off first!", 5) end
+      if not target then return getgenv().notify("Error", "Target not found.", 5) end
+      if getgenv().Not_Ever_Sitting then return getgenv().notify("Error", "Anti-Sit is enabled, turn it off first!", 5) end
 
       local function wait_for_bus(timeout)
          local t = 0
@@ -4968,14 +5044,14 @@ local function handleCommand(sender, message)
 
       if Vehicle and Vehicle.Name == "SchoolBus" then
          vehicle_bring_player(target)
-         notify("Bring", "Bringing player: "..target.Name, 3)
+         notify("Success", "Bringing player: "..target.Name, 3)
       else
-         notify("Bring", "Failed to spawn/find SchoolBus.", 3)
+         notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "skydive" then
       local target = findplr(split[1])
-      if not target then return notify("Bring:", "Target not found.", 3) end
-      if getgenv().Not_Ever_Sitting then return getgenv().notify("Failure:", "Anti-Sit is enabled, turn it off first!", 5) end
+      if not target then return notify("Error", "Target not found.", 3) end
+      if getgenv().Not_Ever_Sitting then return getgenv().notify("Error", "Anti-Sit is enabled, turn it off first!", 5) end
 
       local function wait_for_bus(timeout)
          local t = 0
@@ -5000,19 +5076,19 @@ local function handleCommand(sender, message)
 
       if Vehicle and Vehicle.Name == "SchoolBus" then
          vehicle_skydive_player(target)
-         notify("Skydive:", "Skydiving player: "..target.Name, 3)
+         notify("Success", "Skydiving player: "..target.Name, 3)
       else
-         notify("Skydive:", "Failed to spawn/find SchoolBus.", 3)
+         notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "goto" then
       local target = findplr(split[1])
       if not target then return notify("Error:", "Target player does not exist!", 5) end
       wait(0.1)
-      local Target_Char = target.Character or target.CharacterAdded:Wait()
+      local Target_Char = getgenv()[target.Name.."_Character"]
       local Char_Pos = Target_Char:GetPivot() * CFrame.new(0, 5, 0)
 
       if Target_Char and getgenv().Character and Target_Char:FindFirstChild("HumanoidRootPart") then
-         notify("Success:", "Teleporting to player: "..tostring(target), 5)
+         notify("Success", "Teleporting to player: "..tostring(target), 5)
          if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
             getgenv().Humanoid:ChangeState(3)
             wait(0.2)
@@ -5023,14 +5099,14 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "caraccel" then
       local val = tonumber(args[1])
-      if not val then return notify("Missing Value", "Usage: caraccel [number], got: "..tostring(args[1]), 4) end
+      if not val then return getgenv().notify("Error", "Usage: caraccel [number], got: "..tostring(args[1]), 4) end
 
       local car = get_vehicle()
       if car and car:GetAttribute("max_acc") then
          car:SetAttribute("max_acc", val)
-         notify("Success:", "Set car max_acc to: " .. val, 4)
+         notify("Success", "Set car max_acc to: " .. val, 4)
       else
-         notify("Failure:", "Car not found or your car does not have a 'max_acc' attribute.", 4)
+         notify("Error", "Car not found or your car does not have a 'max_acc' attribute.", 4)
       end
    elseif cmd == "carspeed" then
       local val = tonumber(args[1])
@@ -5039,20 +5115,20 @@ local function handleCommand(sender, message)
       local car = get_vehicle()
       if car and car:GetAttribute("max_speed") then
          car:SetAttribute("max_speed", val)
-         notify("Success:", "Set car max_speed to: " .. val, 4)
+         notify("Success", "Set car max_speed to: " .. val, 4)
       else
-         notify("Failure:", "Car not found or your car does not have a 'max_speed' attribute.", 4)
+         notify("Error", "Car not found or your car does not have a 'max_speed' attribute.", 4)
       end
    elseif cmd == "turnangle" then
       local turn_angle_val = tonumber(args[1])
-      if not turn_angle_val then return notify("Failure:", "Usage: turnangle [number], got: "..tostring(args[1]), 5) end
+      if not turn_angle_val then return notify("Error", "Usage: turnangle [number], got: "..tostring(args[1]), 5) end
 
       local car = get_vehicle()
       if car and car:GetAttribute("turn_angle") then
          car:SetAttribute("turn_angle", turn_angle_val)
-         notify("Success:", "Set car turn_angle to: "..tostring(turn_angle_val), 5)
+         notify("Success", "Set car turn_angle to: "..tostring(turn_angle_val), 5)
       else
-         notify("Failure:", "Car not found or your car does not have a 'turn_angle' value.", 5)
+         notify("Error", "Car not found or your car does not have a 'turn_angle' value.", 5)
       end
    elseif cmd == "accel" then
       local val = tonumber(args[1])
@@ -5061,9 +5137,9 @@ local function handleCommand(sender, message)
       local car = get_vehicle()
       if car and car:GetAttribute("acc_0_60") then
          car:SetAttribute("acc_0_60", val)
-         notify("Success:", "Set car acc_0_60 to: " .. val, 4)
+         notify("Success", "Set car acc_0_60 to: " .. val, 4)
       else
-         notify("Failure:", "Car not found or your car does not have a 'acc_0_60' attribute.", 4)
+         notify("Error", "Car not found or your car does not have a 'acc_0_60' attribute.", 4)
       end
    elseif cmd == "freepay" then
       for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
@@ -5083,7 +5159,7 @@ local function handleCommand(sender, message)
          wait(0.1)
          getgenv().Has_Free_LifePremium = true
       else
-         return getgenv().notify("Failure:", "You have already executed FreePay!", 5)
+         return getgenv().notify("Error", "You have already executed FreePay!", 5)
       end
    elseif cmd == "spawn" and split[1] then
       local name = split[1]:lower()
@@ -5097,10 +5173,10 @@ local function handleCommand(sender, message)
       notify("Invalid Car:", "Name not matched.", 5)
    elseif cmd == "antihouseban" then
       if getgenv().AntiTeleport then
-      return getgenv().notify("Failure:", "AntiHouseBan is already enabled!", 5)
+         return getgenv().notify("Error", "AntiHouseBan is already enabled!", 5)
       end
       if getgenv().never_banned_houses then
-         return getgenv().notify("Failure:", "AntiHouseBan is already enabled!", 5)
+         return getgenv().notify("Error", "AntiHouseBan is already enabled!", 5)
       end
 
       task.wait(0.2)
@@ -5120,7 +5196,7 @@ local function handleCommand(sender, message)
       local HRP = getgenv().HumanoidRootPart
       local safePos = HRP.CFrame
 
-      getgenv().notify("Success:", "Enabled, you cannot be banned from houses (AntiTP).", 5)
+      getgenv().notify("Success", "Enabled, you cannot be banned from houses (AntiTP).", 5)
 
       table.insert(getgenv().AntiTeleportConnections, RunService.Heartbeat:Connect(function()
          if not getgenv().AntiTeleport then return end
@@ -5150,10 +5226,19 @@ local function handleCommand(sender, message)
          end
       end)
    elseif cmd == "unantiban" then
+      if not getgenv().never_banned_houses then
+         getgenv().AntiTeleport = false
+         return getgenv().notify("Warning", "AntiHouseBan is not enabled!", 5)
+      end
+      if not getgenv().AntiTeleport then
+         getgenv().never_banned_houses = false
+         return getgenv().notify("Warning", "AntiTeleport is not enabled!", 5)
+      end
+
       getgenv().never_banned_houses = false
       wait(0.3)
       getgenv().AntiTeleport = false
-      getgenv().notify("Success:", "Disabled, you CAN be banned from houses.", 5)
+      getgenv().notify("Success", "You can be banned from homes now.", 5)
       wait(0.1)
       pcall(function()
          task.cancel(getgenv().AntiTeleportConnection)
@@ -5171,65 +5256,65 @@ local function handleCommand(sender, message)
    elseif cmd == "carspeed" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
-         return notify("Failure:", "You do not have a car spawned!", 5) 
+         return getgenv().notify("Error", "You do not have a car spawned!", 5) 
       end
 
       local speedInput = string.trim(split[2])
       local speed = tonumber(speedInput)
       if not speed then
-         return notify("Invalid Speed:", "Must be a valid number (e.g., 100 or 0.3).", 5)
+         return getgenv().notify("Error", "Must be a valid number (e.g., 100 or 0.3).", 5)
       end
 
       if Vehicle:GetAttribute("max_speed") ~= nil then
          Vehicle:SetAttribute("max_speed", speed)
-         notify("Success:", "Set max speed to: "..tostring(speed), 5)
+         getgenv().notify("Success", "Set max speed to: "..tostring(speed), 5)
       else
-         notify("Failure:", "Your vehicle does not have 'max_speed' attribute.", 5)
+         getgenv().notify("Error", "Your vehicle does not have 'max_speed' attribute.", 5)
       end
    elseif cmd == "caraccel" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
-         return notify("Failure:", "You do not have a car spawned!", 5) 
+         return notify("Error", "You do not have a car spawned!", 5) 
       end
 
       local accelInput = string.trim(split[2] or "")
       local accel_max = tonumber(accelInput)
       if not accel_max then
-         return notify("Invalid Accel:", "Must be a valid number (e.g., 50 or 0.5).", 5)
+         return getgenv().notify("Invalid Accel:", "Must be a valid number (e.g., 50 or 0.5).", 5)
       end
 
       if Vehicle:GetAttribute("max_acc") ~= nil then
          Vehicle:SetAttribute("max_acc", accel_max)
-         notify("Success:", "Set max accel to: "..tostring(accel_max), 5)
+         getgenv().notify("Success", "Set max accel to: "..tostring(accel_max), 5)
       else
-         notify("Failure:", "Your vehicle does not have 'max_acc' attribute.", 5)
+         getgenv().notify("Error", "Your vehicle does not have 'max_acc' attribute.", 5)
       end
    elseif cmd == "accel" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
-         return notify("Failure:", "You do not have a car spawned!", 5) 
+         return notify("Error", "You do not have a car spawned!", 5) 
       end
 
       local accelInput = string.trim(split[2] or "")
       local acc_zero_to_sixty = tonumber(accelInput)
       if not acc_zero_to_sixty then
-         return notify("Invalid acc_0_60:", "Must be a valid number (e.g., 5 or 0.2).", 5)
+         return notify("Error", "Must be a valid number (e.g., 5 or 0.2).", 5)
       end
 
       if Vehicle:GetAttribute("acc_0_60") ~= nil then
          Vehicle:SetAttribute("acc_0_60", acc_zero_to_sixty)
-         notify("Success:", "Set acc_0_60 to: "..tostring(acc_zero_to_sixty), 5)
+         notify("Success", "Set acc_0_60 to: "..tostring(acc_zero_to_sixty), 5)
       else
-         notify("Failure:", "Your vehicle does not have 'acc_0_60' attribute.", 5)
+         notify("Error", "Your vehicle does not have 'acc_0_60' attribute.", 5)
       end
    elseif cmd == "cmds" then
       CommandsMenu()
    end
 end
 wait(0.5)
-getgenv().notify("[HOOKED]:", "We have hooked the Camera successfully.", 5)
+getgenv().notify("Success", "[HOOKED]: We have hooked the Camera successfully.", 5)
 wait(0.2)
-getgenv().notify("[INITIALIZING]:", "Setting up command receiver...", 5)
+getgenv().notify("Warning", "[INITIALIZING]: Setting up command receiver...", 5)
 getgenv().TextChatService.MessageReceived:Connect(function(msg)
    if not msg.TextSource then return end
    local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
@@ -5244,8 +5329,8 @@ wait(0.1)
 setup_cmd_handler_plr(v)
 wait(0.2)
 getgenv().LifeTogetherRP_Admin = true
-getgenv().notify("[INITIALIZED]:", "Life Together RP-Admin has been loaded!", 5)
-getgenv().notify("[LOADED]:", "[Life Together-RP : Admin_Commands]: Loaded!", 5)
+getgenv().notify("Success", "[INITIALIZED]: Life Together RP-Admin has been loaded!", 5)
+getgenv().notify("Success", "[LOADED]: | [Life Together-RP : Admin_Commands]: Loaded!", 5)
 wait(0.3)
 function auto_add_friends()
    for _, v in ipairs(getgenv().Players:GetPlayers()) do
@@ -5262,6 +5347,7 @@ function auto_remove_friends()
       end
    end
 end
+
 wait(0.1)
 getgenv().Players.PlayerAdded:Connect(function(Player)
    local Name = Player and Player.Name
@@ -5269,6 +5355,15 @@ getgenv().Players.PlayerAdded:Connect(function(Player)
 
    if Name == "L0CKED_1N1" or Name == "CHEATING_B0SS" then
       owner_joined(Name)
+      if getgenv().friend_checked[Name] then
+         getgenv().player_admins[Name] = nil
+      end
+      if getgenv().friend_checked[Name] then
+         getgenv().friend_checked[Name] = nil
+      end
+      if getgenv().cmds_loaded_plr[Name] then
+         getgenv().cmds_loaded_plr[Name] = nil
+      end
    end
 
    if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
@@ -5282,7 +5377,7 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
    local Name = Player.Name
 
    if Name == "L0CKED_1N1" or Name == "CHEATING_B0SS" then
-      getgenv().notify("Heads Up:", "The owner of this script has left the server.", 5)
+      getgenv().notify("Warning", "The owner of this script has left the server.", 5)
    end
 
    disable_rgb_for(Name)
