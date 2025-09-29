@@ -5,7 +5,7 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.7.5"
+local Raw_Version = "V3.7.6"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -757,50 +757,6 @@ function create_void_part()
    Kill_Part.CFrame = CFrame.new(9e9, 9e9, 9e9)
    Kill_Part.Parent = Kill_Model_Script
 end
-
-local function SetupPlayer(Player)
-   if not Player or Player == getgenv().LocalPlayer then return end
-   
-   local Character = Player.Character or Player.CharacterAdded:Wait()
-   local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:FindFirstChildOfClass("Humanoid") or Character:WaitForChild("Humanoid", 5)
-   local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart", 5)
-
-   getgenv()[Player.Name.."_Character"] = Character
-   getgenv()[Player.Name.."_Humanoid"] = Humanoid
-   getgenv()[Player.Name.."_HumanoidRootPart"] = HumanoidRootPart
-end
-
-wait(0.1)
-getgenv().Players.PlayerAdded:Connect(function(Player)
-   local Name = Player and Player.Name
-
-   if Player ~= getgenv().LocalPlayer then
-      SetupPlayer(Player)
-      wait()
-      Player.CharacterAdded:Connect(function()
-         Player.CharacterAdded:Wait()
-         SetupPlayer(Player)
-      end)
-   end
-end)
-
-for _, Player in ipairs(getgenv().Players:GetPlayers()) do
-   if Player ~= getgenv().LocalPlayer then
-      SetupPlayer(Player)
-      Player.CharacterAdded:Connect(function()
-         Player.CharacterAdded:Wait()
-         SetupPlayer(Player)
-      end)
-   end
-end
-
-getgenv().Players.PlayerRemoving:Connect(function(Player)
-   local Name = Player.Name
-
-   getgenv()[Name.."_Character"] = nil
-   getgenv()[Name.."_Humanoid"] = nil
-   getgenv()[Name.."_HumanoidRootPart"] = nil
-end)
 
 wait()
 function create_kill_part()
