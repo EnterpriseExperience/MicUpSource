@@ -1,15 +1,79 @@
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
-local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid")
+local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
+local Players = Flames_API.Service("Players")
+local TextChatService = Flames_API.Service("TextChatService")
+local Workspace = Flames_API.Service("Workspace")
+local LocalPlayer = Flames_API.LocalPlayer
+local Character = Flames_API.Character
+local Humanoid = Flames_API.Humanoid
+local HumanoidRootPart = Flames_API.HumanoidRootPart
 
 getgenv().Commands_Loaded = getgenv().Commands_Loaded or false
 if getgenv().Commands_Loaded then
 	return warn("[LocalPlayer_Commands DEBUG]: Already loaded.")
 end
 getgenv().Commands_Loaded = true
+
+local Prefixes_Folder = "CommandUserPrefixs"
+
+local function safe_isfolder(path)
+	return typeof(isfolder) == "function" and isfolder(path) or false
+end
+
+local function safe_makefolder(path)
+	if typeof(makefolder) == "function" then
+		pcall(makefolder, path)
+	end
+end
+
+local function safe_isfile(path)
+	return typeof(isfile) == "function" and isfile(path) or false
+end
+
+local function safe_writefile(path, content)
+	if typeof(writefile) == "function" then
+		pcall(writefile, path, content)
+	end
+end
+
+local function safe_readfile(path)
+	if typeof(readfile) == "function" then
+		local ok, data = pcall(readfile, path)
+		if ok then return data end
+	end
+	return nil
+end
+
+if typeof(isfolder) == "function" then
+	if not safe_isfolder(Prefixes_Folder) then
+		safe_makefolder(Prefixes_Folder)
+	end
+else
+	warn("[LocalPlayer-Commands]:", "User prefix's will not save, file system unsupported.")
+end
+
+local function user_prefix_folder(user)
+	if not user then return end
+	local path = Prefixes_Folder.."/"..tostring(user.Name)
+	if not safe_isfolder(path) then
+		safe_makefolder(path)
+	end
+	return safe_isfolder(path)
+end
+
+local function save_user_prefix(user, prefix)
+	if not user then return end
+	local path = Prefixes_Folder.."/"..user.Name.."/prefix.txt"
+	safe_writefile(path, prefix)
+end
+
+local function load_user_prefix(user)
+	if not user then return end
+	local path = Prefixes_Folder.."/"..user.Name.."/prefix.txt"
+	if safe_isfile(path) then
+		return safe_readfile(path)
+	end
+	return nil
+end
 
 local Default_Prefix = ";"
 local UserPrefixes = {}
@@ -52,10 +116,12 @@ local function HandleMessage(sender, message)
 
 	if cmd == "prefix" and args[2] and #args[2] == 1 then
 		UserPrefixes[sender.UserId] = args[2]
-		return warn(sender.Name .. " set their prefix to: " .. args[2])
+		save_user_prefix(sender, args[2])
+		return print(sender.Name .. " set their prefix to: " .. args[2])
 	end
 
 	if not (cmd and target and value and Command_LocalPlayer(target)) then return end
+	if not Humanoid then return end
 
 	if cmd == "speed" or cmd == "ws" then
 		Humanoid.WalkSpeed = value
@@ -70,7 +136,7 @@ local function HandleMessage(sender, message)
 	elseif cmd == "sit" then
 		Humanoid.Sit = (value ~= 0)
 	elseif cmd == "damage" then
-		Humanoid.Health = value
+		Humanoid:TakeDamage(value)
 	elseif cmd == "gr" or cmd == "gravity" then
 		Workspace.Gravity = value
 	end
@@ -80,27 +146,36 @@ end
 
 print("[LocalPlayer_Commands]: Initializing command listener...")
 
-TextChatService.OnIncomingMessage = function(msg)
-	local textSource = msg.TextSource
-	if not textSource then return end
-
-	local userId = textSource.UserId
-	local player = Players:GetPlayerByUserId(userId)
-	if player then
-		HandleMessage(player, msg.Text)
+if TextChatService and TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+	TextChatService.OnIncomingMessage = function(msg)
+		local textSource = msg.TextSource
+		if not textSource then return end
+		local userId = textSource.UserId
+		local player = Players:GetPlayerByUserId(userId)
+		if player then
+			HandleMessage(player, msg.Text)
+		end
 	end
 end
 
-for _, plr in ipairs(Players:GetPlayers()) do
-	plr.Chatted:Connect(function(msg)
-		HandleMessage(plr, msg)
-	end)
-end
-
 Players.PlayerAdded:Connect(function(plr)
+	local saved = load_user_prefix(plr)
+	if saved then
+		UserPrefixes[plr.UserId] = saved
+	end
 	plr.Chatted:Connect(function(msg)
 		HandleMessage(plr, msg)
 	end)
 end)
+
+for _, plr in ipairs(Players:GetPlayers()) do
+	local saved = load_user_prefix(plr)
+	if saved then
+		UserPrefixes[plr.UserId] = saved
+	end
+	plr.Chatted:Connect(function(msg)
+		HandleMessage(plr, msg)
+	end)
+end
 
 print("[LocalPlayer_Commands]: Ready. Waiting for chat commands...")
