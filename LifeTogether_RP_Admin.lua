@@ -1239,6 +1239,7 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
    wait(0.3)
    getgenv().Humanoid.JumpHeight = 7
    getgenv().Humanoid.JumpPower = 50
+   getgenv().Is_Currently_Emoting = false
 	wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
 end)
