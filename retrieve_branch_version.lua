@@ -40,6 +40,8 @@
     local Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))() -- old module, still use it though to patch updates, destroy the GUI, etc, basic stuff.
     local Notifications_Module_Flames_Hub = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Internal_Notification_System.lua'))()
     local Version = Module:Get_Current_Version() -- Keeps track of our version, dipshit.
+    getgenv().Game = game
+    
     wait(0.1)
     local Script_Version = Version
     local executor_Name = detectExecutor()
@@ -771,20 +773,9 @@
         if getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub then
             print("The user has chosen to ignore notifications (has turned them off).")
         else
-            Rayfield:Notify({
-                Title = tostring(title),
-                Content = tostring(content),
-                Duration = tonumber(duration),
-                Image = 93594537601787,
-                Actions = {
-                    Ignore = {
-                        Name = "Alright.",
-                        Callback = function() 
-                            print("...") 
-                        end
-                    },
-                },
-            })
+            local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+
+            NotifyLib:Rayfield_Notify(tostring(title), tostring(content), tonumber(duration))
         end
     end
     task.wait(0.2)
