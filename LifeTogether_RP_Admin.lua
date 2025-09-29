@@ -5,7 +5,7 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.7.4"
+local Raw_Version = "V3.7.5"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -1805,6 +1805,55 @@ else
    task.wait(0.2)
    getgenv().loaded_anti_report = true
 end
+
+local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local LocalPlayer = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "UnsuspendChatGUI"
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+gui.Parent = CoreGui
+
+local holder = Instance.new("Frame")
+holder.Size = UDim2.new(0, 150, 0, 50)
+holder.AnchorPoint = Vector2.new(1, 1)
+holder.Position = UDim2.new(1, -20, 1, -20)
+holder.BackgroundTransparency = 1
+holder.Parent = gui
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, 0, 1, 0)
+button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+button.Text = "Unsuspend TextChat (FE)"
+button.TextScaled = true
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Font = Enum.Font.GothamBold
+button.AutoButtonColor = true
+button.Parent = holder
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = button
+
+local shadow = Instance.new("ImageLabel")
+shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+shadow.Position = UDim2.new(0.5, 0, 0.5, 4)
+shadow.Size = UDim2.new(1, 20, 1, 20)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+shadow.ImageTransparency = 0.5
+shadow.ZIndex = 0
+shadow.Parent = holder
+
+button.MouseButton1Click:Connect(function()
+   if not replicatesignal then return getgenv().notify("Error", "Your executor does not (unfortunately) support 'replicatesignal', cannot unsuspend TextChat") end
+   
+   replicatesignal(TextChatService.UpdateChatTimeout, LocalPlayer.UserId, 0, 10)
+end)
 
 local function stop_rainbow_skin()
    getgenv().RainbowSkin_FE = false
