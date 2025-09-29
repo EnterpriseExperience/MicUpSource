@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 end
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.7"
+local Raw_Version = "V3.6.8"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -958,6 +958,9 @@ Button.TextScaled = true
 Button.Text = "Hide Owner Title"
 Button.Parent = ScreenGui
 Button.AutoButtonColor = true
+if Button.Visible then
+   Button.Visible = false
+end
 
 local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(0, 10)
