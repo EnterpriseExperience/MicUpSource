@@ -2,9 +2,10 @@ getgenv().Game = game
 if not game:IsLoaded() then
    game.Loaded:Wait()
 end
+local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.6.8"
+local Raw_Version = "V3.6.9"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -25,16 +26,11 @@ getgenv().Service_Wrap = function(serviceName)
 end
 wait(0.1)
 function notify(title, msg, duration)
-   getgenv().Service_Wrap("StarterGui"):SetCore("SendNotification", {
-      Title = tostring(title);
-      Text = tostring(msg);
-      Duration = tonumber(duration);
-      Icon = "rbxassetid://0";
-   })
+   NotifyLib:StarterGui_Notify(tostring(title), tostring(msg), tonumber(duration))
 end
-task.wait(0.1)
+wait(0.1)
 getgenv().notify = notify
-wait(0.2)
+wait(0.1)
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
