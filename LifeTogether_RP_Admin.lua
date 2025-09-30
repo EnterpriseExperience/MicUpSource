@@ -5,7 +5,7 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.8.1"
+local Raw_Version = "V3.8.3"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -3539,6 +3539,62 @@ local function setup_cmd_handler_plr(player)
          end)
       end
    end)
+end
+
+getgenv().Noclip_Enabled = getgenv().Noclip_Enabled or false
+getgenv()._noclipModifiedParts = getgenv()._noclipModifiedParts or {}
+getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
+
+function ToggleNoclip(toggle)
+   if toggle == true then
+      getgenv()._noclipModifiedParts = {}
+
+      local function NoclipLoop()
+         if getgenv().Character then
+            for _, part in ipairs(getgenv().Character:GetDescendants()) do
+               if part:IsA("BasePart") then
+                  local ok, canCollide = pcall(function() return part.CanCollide end)
+
+                  if ok and canCollide then
+                     if getgenv()._noclipModifiedParts[part] == nil then
+                        getgenv()._noclipModifiedParts[part] = canCollide
+                     end
+                     pcall(function() part.CanCollide = false end)
+                  elseif not ok then
+                     getgenv().notify("Error", "Something unexpected happened when running Noclip, and we had to shutdown NoClip. Error: "..tostring(ok), 5)
+                  end
+               end
+            end
+         end
+      end
+
+      getgenv().Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
+      getgenv().Noclip_Enabled = true
+
+      getgenv().notify("Success", "Noclip enabled successfully.", 5)
+   elseif toggle == false then
+      if getgenv().Noclip_Enabled then
+         if getgenv().Noclip_Connection then
+            getgenv().Noclip_Connection:Disconnect()
+            getgenv().Noclip_Connection = nil
+         end
+
+         for part, original in pairs(getgenv()._noclipModifiedParts) do
+            if typeof(part) == "Instance" and part:IsA("BasePart") then
+               pcall(function() part.CanCollide = original end)
+            end
+         end
+
+         table.clear(getgenv()._noclipModifiedParts)
+         getgenv().Noclip_Enabled = false
+
+         getgenv().notify("Success", "Noclip disabled successfully.", 5)
+      else
+         return getgenv().notify("Error", "NoClip has not been enabled, you cannot turn it off.", 5)
+      end
+   else
+      return getgenv().notify("Error", "Invalid arguments specified, expected: True/False.", 5)
+   end
 end
 
 local function addPlayerToScriptWhitelistTable(player)
