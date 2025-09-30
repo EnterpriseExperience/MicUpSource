@@ -5,7 +5,7 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.7.9"
+local Raw_Version = "V3.8.1"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -711,6 +711,44 @@ function getRoot(char)
 end
 wait(0.2)
 getgenv().getRoot = getRoot
+wait()
+for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
+   if v:IsA("Frame") and v.Name == "SidebarButtonHolder" and string.find(v.Parent.Name, "OpenPhone") then
+      v.Position = UDim2.new(0.925, 0, 0.35, 0)
+   end
+end
+wait()
+for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
+   if v:IsA("Frame") and v.Name == "VehicleSpeedFrame" then
+      if v:FindFirstChild("Slider"):FindFirstChild("Title") then
+         local Title = v:FindFirstChild("Slider"):FindFirstChild("Title")
+
+         Title.TextScaled = false
+         Title.TextSize = 21
+         Title.TextColor3 = Color3.fromRGB(0, 255, 0)
+         Title.Text = "SPEED (Hello from: Flames Hub)!"
+      end
+   end
+end
+wait()
+getgenv().notify("Success", "SPOOFING NOTIFICATION COUNTERS...", 5)
+wait()
+for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
+   if v:IsA("TextLabel") and v.Name == "SumNotificationCountLabel" then
+      v.Text = "999+"
+   end
+end
+wait()
+for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
+   if v:IsA("TextLabel") and v.Name == "AppNotificationCountLabel" then
+      v.Visible = true
+      v.Parent.Visible = true
+      v.TextScaled = true
+      v.Text = "999+"
+   end
+end
+wait(0.1)
+getgenv().notify("Success", "Spoofed notification counter numbers.", 5)
 wait(0.1)
 getgenv().LocalPlayer.OnTeleport:Connect(function(State)
    if (not getgenv().TeleportCheck_Admin) and getgenv().queueteleport then
