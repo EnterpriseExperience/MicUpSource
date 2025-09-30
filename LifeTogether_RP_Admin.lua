@@ -5,7 +5,7 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.7.6"
+local Raw_Version = "V3.7.7"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -4939,13 +4939,29 @@ local function handleCommand(sender, message)
          notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "rejoin" or cmd == "rj" then
-      if #getgenv().Players:GetPlayers() <= 1 then
-         getgenv().LocalPlayer:Kick("\nRejoining...")
-         wait()
-         getgenv().TeleportService:Teleport(getgenv().PlaceID, getgenv().LocalPlayer)
-      else
-         getgenv().TeleportService:TeleportToPlaceInstance(getgenv().PlaceID, getgenv().JobID, getgenv().LocalPlayer)
+      local Players = getgenv().Players
+      local TeleportService = getgenv().TeleportService
+      local LocalPlayer = getgenv().LocalPlayer
+      local PlaceID = getgenv().PlaceID
+      local JobID = getgenv().JobID
+
+      local function safe_teleport()
+         local success, err = pcall(function()
+            if #Players:GetPlayers() <= 1 then
+               getgenv().TeleportService:Teleport(PlaceID, LocalPlayer)
+            else
+               TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
+            end
+         end)
+
+         if not success then
+            getgenv().notify("Error", "Teleporting failed: "..tostring(err).." | going to re-try, if it doesn't work, something is wrong with the server, or you an unstable connection.", 5)
+            task.wait(3)
+            safe_teleport()
+         end
       end
+
+      safe_teleport()
    elseif cmd == "antifling" then
       if getgenv().antiFlingEnabled then
          return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
