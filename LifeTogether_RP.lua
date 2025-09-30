@@ -784,7 +784,7 @@ if not getgenv().CoreGui:FindFirstChild("UnsuspendChatGUI") then
     local holder = Instance.new("Frame")
     holder.Size = UDim2.new(0, 150, 0, 50)
     holder.AnchorPoint = Vector2.new(1, 1)
-    holder.Position = UDim2.new(1, -20, 1, -100)
+    holder.Position = UDim2.new(1, -20, 1, -200)
     holder.BackgroundTransparency = 1
     holder.Parent = gui
 
