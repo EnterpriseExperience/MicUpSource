@@ -5,14 +5,20 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.7.7"
+local Raw_Version = "V3.7.8"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
+getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
 
-if getgenv().LifeTogetherRP_Admin then
-   return getgenv().notify("Error", "Life Together RP admin is already running!", 5)
+if getgenv().LifeTogetherRP_Admin and getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub == false then
+   getgenv().LifeTogetherRP_Admin = false
+   return getgenv().notify("Error", "Life Together RP Admin appears to not have loaded correctly, try re-running the script and trying again.", 6)
+elseif getgenv().LifeTogetherRP_Admin and getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub then
+   return getgenv().notify("Warning", "Life Together RP Admin is already running!", 5)
+else
+   return getgenv().notify("Error", "Something must have unexpectedly occurred when loading the script, unable to verify loaded status.", 5)
 end
 wait(0.3)
 getgenv().LifeTogetherRP_Admin = true
@@ -5370,6 +5376,8 @@ function auto_remove_friends()
       end
    end
 end
+
+getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = true
 
 wait(0.1)
 getgenv().Players.PlayerAdded:Connect(function(Player)
