@@ -1320,8 +1320,9 @@ if success and response then
    end
 else
    if not success then
-      getgenv().notify("Error", "This script does not work on this executor!", 8)
-      return getgenv().notify("Error", "You cannot run this script, we're sorry!", 10)
+      getgenv().LifeTogetherRP_Admin = false
+      --getgenv().notify("Error", "This script does not work on this executor!", 8)
+      return getgenv().notify("Error", "You cannot run this script on this executor, we're sorry! (if you believe this was in error, re-run the script).", 10)
    end
 end
 wait()
