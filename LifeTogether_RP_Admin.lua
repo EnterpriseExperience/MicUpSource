@@ -789,7 +789,7 @@ local function setup_label(label, targetText)
       label.Parent.Visible = true
 
       if label.Parent.Name == "SumNotificationCount" then
-         label.Parent.Size = UDim2.new(0.8, 0, 0.8, 0)
+         label.Parent.Size = UDim2.new(0.4, 0, 0.4, 0)
       end
    end
 
