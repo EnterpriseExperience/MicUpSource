@@ -5,20 +5,24 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.7.8"
+local Raw_Version = "V3.7.9"
 local Script_Creator = "computerbinaries"
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
 
+function notify(notif_type, msg, duration)
+   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
+end
+wait(0.1)
+getgenv().notify = notify
+wait()
 if getgenv().LifeTogetherRP_Admin and getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub == false then
    getgenv().LifeTogetherRP_Admin = false
    return getgenv().notify("Error", "Life Together RP Admin appears to not have loaded correctly, try re-running the script and trying again.", 6)
 elseif getgenv().LifeTogetherRP_Admin and getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub then
    return getgenv().notify("Warning", "Life Together RP Admin is already running!", 5)
-else
-   return getgenv().notify("Error", "Something must have unexpectedly occurred when loading the script, unable to verify loaded status.", 5)
 end
 wait(0.3)
 getgenv().LifeTogetherRP_Admin = true
@@ -30,12 +34,6 @@ getgenv().Service_Wrap = function(serviceName)
       return getgenv().Game:GetService(serviceName)
    end
 end
-wait(0.1)
-function notify(notif_type, msg, duration)
-   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
-end
-wait(0.1)
-getgenv().notify = notify
 wait(0.1)
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
