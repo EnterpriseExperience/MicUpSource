@@ -373,7 +373,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.4.9-LIFE"
+local Script_Version = "2.5.0-LIFE"
 
 local function getExecutor()
     local name
