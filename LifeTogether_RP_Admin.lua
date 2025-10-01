@@ -10,7 +10,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V3.9.0"
+local Raw_Version = "V3.9.1"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "If you ever run into errors, just know I can fix them immediately now, with our new error log system, enjoy a flawless, error-less system!"
 task.wait(0.1)
@@ -5654,6 +5654,39 @@ end)
 wait()
 local Players = getgenv().Players or cloneref(game:GetService("Players"))
 local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
+local Handle_Error = getgenv().Error_API and getgenv().Error_API.Handle_Error
+getgenv().Currently_Handling_Errors = true
+
+local function ReportError(msg, trace)
+   if not Handle_Error then return end
+   local fullMessage = tostring(msg) .. "\n" .. tostring(trace or debug.traceback())
+   Handle_Error(LocalPlayer, fullMessage)
+end
+
+local function SafeWrap(fn)
+   return function(...)
+      return xpcall(fn, function(err)
+         ReportError(err, debug.traceback())
+         return nil
+      end, ...)
+   end
+end
+
+getgenv().ScriptContext.Error:Connect(function(message, stackTrace, scriptInstance)
+   ReportError(message, stackTrace)
+end)
+
+task.spawn(function()
+   while getgenv().Currently_Handling_Errors == true do
+      task.wait(1)
+      local ok, err = pcall(function()
+         
+      end)
+      if not ok and err then
+         ReportError(err, debug.traceback())
+      end
+   end
+end)
 task.wait(0.2)
 function Notify(message, duration)
    local function safe_wrapper(S)
