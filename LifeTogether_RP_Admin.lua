@@ -263,6 +263,7 @@ end)
 
 local whitelisted = {
    "creatormobbbb",
+   "ilovezootedfl"
 }
 
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
