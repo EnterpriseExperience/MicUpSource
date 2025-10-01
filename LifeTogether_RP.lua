@@ -127,6 +127,7 @@ EmoteNames = {"griddy", "scenario", "worm", "zen", "glitching", "superman", "aur
 wait(0.2)
 local whitelisted = {
     "creatormobbbb",
+    "ilovezootedfl"
 }
 
 Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
