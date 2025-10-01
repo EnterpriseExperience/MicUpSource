@@ -5,7 +5,8 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.8.8"
+wait()
+local Raw_Version = "V3.8.9"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed FPS loss issue, was because of NoClip not being initialized properly, enjoy!."
 task.wait(0.1)
@@ -18,6 +19,11 @@ function notify(notif_type, msg, duration)
 end
 wait(0.1)
 getgenv().notify = notify
+wait()
+if getgenv().LifeTogether_RP_ScriptHub_Loaded then
+   return NotifyLib:External_Notification("Warning", "You already have Life Together RP (Script Hub) loaded, you cannot load both the Admin and Script Hub due to unexpected issues.", 9)
+end
+
 wait()
 if getgenv().LifeTogetherRP_Admin and getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub == false then
    getgenv().LifeTogetherRP_Admin = false
@@ -698,6 +704,22 @@ local function get_vehicle()
 end
 wait(0.2)
 getgenv().get_vehicle = get_vehicle
+
+local function Get_Char(Player)
+   if not Player or not Player.Character then
+      local Char = nil
+      local conn
+      conn = Player.CharacterAdded:Connect(function(c)
+         Char = c
+      end)
+
+      repeat task.wait() until Char or not Player.Parent
+      if conn then conn:Disconnect() end
+      return Char
+   end
+   return Player.Character
+end
+
 wait()
 task.wait(0.2)
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
@@ -5309,13 +5331,13 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "goto" then
       local target = findplr(split[1])
-      if not target then return notify("Error:", "Target player does not exist!", 5) end
+      if not target then return getgenv().notify("Error", "Target player does not exist!", 5) end
       wait(0.1)
-      local Target_Char = getgenv()[target.Name.."_Character"]
+      local Target_Char = Get_Char(target)
       local Char_Pos = Target_Char:GetPivot() * CFrame.new(0, 5, 0)
 
       if Target_Char and getgenv().Character and Target_Char:FindFirstChild("HumanoidRootPart") then
-         notify("Success", "Teleporting to player: "..tostring(target), 5)
+         getgenv().notify("Success", "Teleporting to player: "..tostring(target), 5)
          if getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
             getgenv().Humanoid:ChangeState(3)
             wait(0.2)
