@@ -5,7 +5,7 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.8.7"
+local Raw_Version = "V3.8.8"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed FPS loss issue, was because of NoClip not being initialized properly, enjoy!."
 task.wait(0.1)
@@ -575,7 +575,8 @@ local function init_services()
       "TextChatService",
       "ContextActionService",
       "GuiService",
-      "PhysicsService"
+      "PhysicsService",
+      "ScriptContext"
    }
 
    for _, serviceName in pairs(services) do
@@ -3434,6 +3435,7 @@ end
 
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/other_actors.lua'))()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/TextChatServce.lua'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/error_handler.lua'))()
 wait(0.1)
 local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
@@ -5598,6 +5600,43 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
    end
    if getgenv().Unlocked_Vehicles[Name] then
       getgenv().Unlocked_Vehicles[Name] = false
+   end
+end)
+wait()
+local Players = getgenv().Players or cloneref(game:GetService("Players"))
+local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
+local Handle_Error = getgenv().Error_API and getgenv().Error_API.Handle_Error
+wait()
+getgenv().Reporting_Errors = true
+
+local function ReportError(msg, trace)
+   if not Handle_Error then return end
+   local fullMessage = tostring(msg) .. "\n" .. tostring(trace or debug.traceback())
+   Handle_Error(LocalPlayer, fullMessage)
+end
+
+local function SafeWrap(fn)
+   return function(...)
+      return xpcall(fn, function(err)
+         ReportError(err, debug.traceback())
+         return nil
+      end, ...)
+   end
+end
+
+getgenv().ScriptContext.Error:Connect(function(message, stackTrace, scriptInstance)
+   ReportError(message, stackTrace)
+end)
+
+task.spawn(function()
+   while getgenv().Reporting_Errors == true do
+      task.wait(1)
+      local ok, err = pcall(function()
+         
+      end)
+      if not ok and err then
+         ReportError(err, debug.traceback())
+      end
    end
 end)
 task.wait(0.2)
