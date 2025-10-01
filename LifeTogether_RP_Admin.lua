@@ -6,9 +6,9 @@ local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubuserconte
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
 wait()
-local Raw_Version = "V3.8.9"
+local Raw_Version = "V3.9.0"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed FPS loss issue, was because of NoClip not being initialized properly, enjoy!."
+local Announcement_Message = "If you ever run into errors, just know I can fix them immediately now, with our new error log system, enjoy a flawless, error-less system!"
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -418,11 +418,18 @@ wait(0.2)
 local cmdp = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local cmdlp = cmdp.LocalPlayer
 
+function getRoot(char)
+   rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+   return rootPart
+end
+wait(0.1)
+getgenv().getRoot = getRoot
+wait()
 function findplr(args)
    local tbl = cmdp:GetPlayers()
 
-   if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
-      return warn("Failure!", "You cannot target yourself!")
+   if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName or args == cmdlp then
+      return 
    end
 
    if args == "random" then
@@ -458,7 +465,7 @@ function findplr(args)
    if args == "bacon" then
       local vAges = {}
       for _, v in pairs(tbl) do
-         if v ~= cmdlp and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
+         if v ~= cmdlp and v.Character and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
             table.insert(vAges, v)
          end
       end
@@ -509,8 +516,8 @@ function findplr(args)
       local vAges = {}
       for _, v in pairs(tbl) do
          if v ~= cmdlp and v.Character and cmdlp.Character then
-            local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-            local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+            local vRootPart = getgenv().getRoot(v.Character)
+            local cmdlpRootPart = getgenv().getRoot(cmdlp.Character)
             if vRootPart and cmdlpRootPart then
                local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
                if distance < 30 then
@@ -526,8 +533,8 @@ function findplr(args)
       local vAges = {}
       for _, v in pairs(tbl) do
          if v ~= cmdlp and v.Character and cmdlp.Character then
-            local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-            local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+            local vRootPart = getgenv().getRoot(v.Character)
+            local cmdlpRootPart = getgenv().getRoot(cmdlp.Character)
             if vRootPart and cmdlpRootPart then
                local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
                if distance > 30 then
@@ -539,9 +546,16 @@ function findplr(args)
       return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
    end
 
+   if typeof(args) ~= "string" or args == "" then
+      return nil
+   end
+
    for _, v in pairs(tbl) do
-      if (v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower())) and v ~= cmdlp then
-         return v
+      if v ~= cmdlp then
+         local name, display = v.Name:lower(), v.DisplayName:lower()
+         if name:find(args:lower()) or display:find(args:lower()) then
+            return v
+         end
       end
    end
 end
@@ -730,13 +744,6 @@ getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv
 getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
 getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
 wait(0.1)
-function getRoot(char)
-   rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-   return rootPart
-end
-wait(0.2)
-getgenv().getRoot = getRoot
-wait()
 for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
    if v:IsA("Frame") and v.Name == "SidebarButtonHolder" and string.find(v.Parent.Name, "OpenPhone") then
       v.Position = UDim2.new(0.925, 0, 0.35, 0)
@@ -4398,7 +4405,7 @@ TweenService:Create(label, appearInfo, {TextTransparency = 0}):Play()
 shadow.Visible = false
 TweenService:Create(shadow, appearInfo, {ImageTransparency = 0.8}):Play()
 
-local displayTime = 5
+local displayTime = 10
 delay(displayTime, function()
    local fadeInfo = TweenInfo.new(0.45, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
    local t1 = TweenService:Create(frame, fadeInfo, {BackgroundTransparency = 1})
