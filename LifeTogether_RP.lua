@@ -3,6 +3,9 @@ if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 wait()
+getgenv().JobID = getgenv().Game.JobId
+getgenv().PlaceID = getgenv().Game.PlaceId
+wait()
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 
 if getgenv().LifeTogether_RP_ScriptHub_Loaded then
@@ -17,8 +20,10 @@ if getgenv().LifeTogetherRP_Admin then
     return NotifyLib:External_Notification("Warning", "You already have Life Together Admin loaded, you cannot load both due to unexpected issues.", 6)
 end
 
-getgenv().JobID = getgenv().Game.JobId
-getgenv().PlaceID = getgenv().Game.PlaceId
+if getgenv().PlaceID ~= 13967668166 then
+   return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
+end
+
 getgenv().Service_Wrap = function(serviceName)
     if cloneref then
         return cloneref(getgenv().Game:GetService(serviceName))
