@@ -6,6 +6,10 @@ local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubuserconte
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
 wait()
+if getgenv().PlaceID ~= 13967668166 then
+   return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
+end
+wait()
 local Raw_Version = "V3.9.0"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "If you ever run into errors, just know I can fix them immediately now, with our new error log system, enjoy a flawless, error-less system!"
