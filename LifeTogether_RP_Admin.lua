@@ -5339,7 +5339,7 @@ local function handleCommand(sender, message)
    elseif cmd == "goto" then
       local target = findplr(split[1])
       if not target then return getgenv().notify("Error", "Target player does not exist!", 5) end
-      wait(0.1)
+      wait()
       local Target_Char = Get_Char(target)
       local Char_Pos = Target_Char:GetPivot() * CFrame.new(0, 5, 0)
 
