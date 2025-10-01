@@ -2,6 +2,21 @@ getgenv().Game = game
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
+wait()
+local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+
+if getgenv().LifeTogether_RP_ScriptHub_Loaded then
+    return NotifyLib:External_Notification("Warning", "You already have Life Together RP (Script Hub) loaded.", 6)
+end
+
+if getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub then
+    return NotifyLib:External_Notification("Warning", "You already have Life Together Admin loaded, you cannot load both due to unexpected issues.", 6)
+end
+
+if getgenv().LifeTogetherRP_Admin then
+    return NotifyLib:External_Notification("Warning", "You already have Life Together Admin loaded, you cannot load both due to unexpected issues.", 6)
+end
+
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
 getgenv().Service_Wrap = function(serviceName)
@@ -447,7 +462,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.5.1-LIFE"
+local Script_Version = "2.5.3-LIFE"
 
 local function getExecutor()
     local name
@@ -5941,6 +5956,8 @@ Callback = function()
 	})
 end,})
 wait(0.2)
+getgenv().LifeTogether_RP_ScriptHub_Loaded = true
+wait()
 function Notify(message, duration)
     local function safe_wrapper(S)
         if cloneref then
