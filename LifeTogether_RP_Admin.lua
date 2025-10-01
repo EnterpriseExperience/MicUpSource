@@ -972,11 +972,15 @@ function vehicle_kill_player(TargetPlayer)
       wait(0.1)
       myHRP.CFrame = Old_CF
       wait(0.5)
+      if not get_vehicle() then return end
+
       spawn_any_vehicle(tostring(get_vehicle().Name))
    end
    if myHRP then
       myHRP.CFrame = Old_CF
       wait(0.5)
+      if not get_vehicle() then return end
+
       spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 end
@@ -1173,11 +1177,15 @@ function vehicle_void_player(TargetPlayer)
       wait(0.1)
       myHRP.CFrame = Old_CF
       wait(0.5)
+      if not get_vehicle() then return end
+
       spawn_any_vehicle(tostring(get_vehicle().Name))
    end
    if myHRP then
       myHRP.CFrame = Old_CF
       wait(0.5)
+      if not get_vehicle() then return end
+
       spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 end
@@ -1250,12 +1258,16 @@ function vehicle_skydive_player(TargetPlayer)
       wait(0.1)
       myHRP.CFrame = Old_CF
       wait(0.5)
+      if not get_vehicle() then return end
+
       spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 
    if myHRP then
       myHRP.CFrame = Old_CF
       wait(0.5)
+      if not get_vehicle() then return end
+      
       spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 end
@@ -1309,11 +1321,15 @@ function vehicle_bring_player(TargetPlayer)
       wait(0.1)
       myHRP.CFrame = Old_CF
       wait(0.5)
+      if not get_vehicle() then return end
+
       spawn_any_vehicle(tostring(get_vehicle().Name))
    end
    if myHRP then
       myHRP.CFrame = Old_CF
       wait(0.5)
+      if not get_vehicle() then return end
+
       spawn_any_vehicle(tostring(get_vehicle().Name))
    end
 end
