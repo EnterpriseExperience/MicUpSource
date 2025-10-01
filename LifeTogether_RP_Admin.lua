@@ -4535,14 +4535,14 @@ local function handleCommand(sender, message)
 
       change_bio(new_bio)
    elseif cmd == "fly" then
-      local flySpeed = tonumber(split[1])
+      local flySpeed = tonumber(split[1]) or 125
 
       if getgenv().HD_FlyEnabled then
          return getgenv().notify("Error", "HD-Admin Fly is already enabled!", 5)
       end
       wait(0.2)
       EnableFly(flySpeed)
-      getgenv().notify("Success", "Fly enabled at speed: " .. flySpeed, 5)
+      getgenv().notify("Success", "Fly enabled at speed: "..tostring(flySpeed), 5)
       getgenv().notify("Warning", "E = up, Q = down, WASD to move", 5)
    elseif cmd == "unfly" then
       DisableFlyScript()
