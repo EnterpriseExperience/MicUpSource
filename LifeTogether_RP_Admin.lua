@@ -4520,7 +4520,7 @@ local function handleCommand(sender, message)
       wait(0.2)
       EnableFly(flySpeed)
       getgenv().notify("Success", "Fly enabled at speed: " .. flySpeed, 5)
-      getgnev().notify("Warning", "E = up, Q = down, WASD to move", 5)
+      getgenv().notify("Warning", "E = up, Q = down, WASD to move", 5)
    elseif cmd == "unfly" then
       DisableFlyScript()
    elseif cmd == "fly2" then
