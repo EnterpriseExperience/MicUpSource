@@ -5,8 +5,9 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
-local Raw_Version = "V3.8.5"
+local Raw_Version = "V3.8.7"
 local Script_Creator = "computerbinaries"
+local Announcement_Message = "Fixed FPS loss issue, was because of NoClip not being initialized properly, enjoy!."
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -2198,6 +2199,14 @@ local Emotes = {
       102699471013529,
       96426537876059,
       140499299581464,
+   },
+   laughitup = {
+      139879794862714,
+      90599528248903,
+   },
+   reanimated = {
+      88624941199927,
+      112989413190899,
    }
 }
 
@@ -2231,7 +2240,12 @@ local Aliases = {
    ["takeanl"] = "takethel",
    ["ldance"] = "takethel",
    ["elecshuffle"] = "electroshuffle",
-   ["eshuffle"] = "electroshuffle"
+   ["eshuffle"] = "electroshuffle",
+   ["reanimate"] = "reanimated",
+   ["donkeylaugh"] = "laughitup",
+   ["laughing"] = "laughitup",
+   ["fnlaugh"] = "laughitup",
+   ["fortnitelaugh"] = "laughitup",
 }
 
 function disable_emoting()
@@ -2713,6 +2727,8 @@ local function CommandsMenu()
       {prefix}sturdy - Makes you do the New York Sturdy emote (FE).
       {prefix}eshuffle - Makes you do the Electro Shuffle emote (FE).
       {prefix}takethel - Makes you do the Take The L emote (FE).
+      {prefix}laughitup - Makes you do the Donkey Laugh emote (FE).
+      {prefix}reanimated - Makes you do the Reanimated emote (FE).
       {prefix}antivoid - Enables anti-void.
       {prefix}unantivoid - Disables anti-void.
       {prefix}alljobs - Repeatedly spams all jobs
@@ -3644,10 +3660,12 @@ end
 getgenv().Noclip_Enabled = getgenv().Noclip_Enabled or false
 getgenv()._noclipModifiedParts = getgenv()._noclipModifiedParts or {}
 getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
+Clip = true
 
 function ToggleNoclip(toggle)
    if toggle == true then
       getgenv()._noclipModifiedParts = {}
+      Clip = false
 
       local function NoclipLoop()
          if getgenv().Character then
@@ -3662,15 +3680,15 @@ function ToggleNoclip(toggle)
                      pcall(function() part.CanCollide = false end)
                   elseif not ok then
                      getgenv().notify("Error", "Something unexpected happened when running Noclip, and we had to shutdown NoClip. Error: "..tostring(ok), 5)
+                     ToggleNoclip(false)
                   end
                end
             end
          end
       end
 
-      getgenv().Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
+      getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
       getgenv().Noclip_Enabled = true
-
       getgenv().notify("Success", "Noclip enabled successfully.", 5)
    elseif toggle == false then
       if getgenv().Noclip_Enabled then
@@ -3678,6 +3696,8 @@ function ToggleNoclip(toggle)
             getgenv().Noclip_Connection:Disconnect()
             getgenv().Noclip_Connection = nil
          end
+
+         Clip = true
 
          for part, original in pairs(getgenv()._noclipModifiedParts) do
             if typeof(part) == "Instance" and part:IsA("BasePart") then
@@ -4272,7 +4292,7 @@ label.AnchorPoint = Vector2.new(0.5, 0.5)
 label.Position = UDim2.new(0.5, 0, 0.5, 0)
 label.Size = UDim2.new(0.95, 0, 0.9, 0)
 label.BackgroundTransparency = 1
-label.Text = "Fixed major ping spike issues, and re-worked error handling, this shouldn't be an issue anymore (yes, that's why you couldn't execute the script)."
+label.Text = tostring(Announcement_Message)
 label.Font = Enum.Font.GothamBold
 label.TextScaled = true
 label.RichText = false
@@ -4570,7 +4590,7 @@ local function handleCommand(sender, message)
       do_emote("zen")
    elseif cmd == "orangej" then
       do_emote("orangej")
-   elseif cmd == "aura" or cmd == "aurafarm" then
+   elseif cmd == "aura" or cmd == "aurafarm" or cmd == "aurafarming" then
       do_emote("aura")
    elseif cmd == "popular" then
       do_emote("popular")
@@ -4596,6 +4616,10 @@ local function handleCommand(sender, message)
       do_emote("electroshuffle")
    elseif cmd == "takethel" or cmd == "takel" or cmd == "takeanl" then
       do_emote("takethel")
+   elseif cmd == "donkeylaugh" or cmd == "fortnitelaugh" or cmd == "laughitup" or cmd == "fnlaugh" then
+      do_emote("laughitup")
+   elseif cmd == "reanimated" or cmd == "reanimate" then
+      do_emote("reanimated")
    elseif cmd == "infyield" or cmd == "infpremium" or cmd == "infiniteyield" or cmd == "infinitepremium" or cmd == "iy" or cmd == "loadiy" then
       infinite_premium()
    elseif cmd == "annoy" then
@@ -4664,26 +4688,7 @@ local function handleCommand(sender, message)
          return getgenv().notify("Error", "Noclip is already enabled!", 5)
       end
 
-      Clip = false
-      getgenv().Noclip_Enabled = true
-      getgenv()._noclipModifiedParts = {}
-
-      local function NoclipLoop()
-         if not Clip and getgenv().Character then
-            for _, part in ipairs(getgenv().Character:GetDescendants()) do
-               if part:IsA("BasePart") and part.CanCollide then
-                  if getgenv()._noclipModifiedParts[part] == nil then
-                     getgenv()._noclipModifiedParts[part] = part.CanCollide
-                  end
-                  part.CanCollide = false
-               end
-            end
-         end
-      end
-
-      getgenv().notify("Success", "Noclip has been enabled.", 5)
-
-      getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
+      ToggleNoclip(true)
    elseif cmd == "autonoflames" or cmd == "autohideflames" then
       getgenv().notify("Success", "Now reducing the lag from fire spam!", 5)
       getgenv().CompletelyHideFlamesComingIn(true)
@@ -4711,24 +4716,7 @@ local function handleCommand(sender, message)
          return getgenv().notify("Error", "Noclip is not enabled, enable it first.", 5)
       end
 
-      if getgenv().Noclip_Connection then
-         getgenv().Noclip_Connection:Disconnect()
-         getgenv().Noclip_Connection = nil
-      end
-
-      getgenv().Noclip_Enabled = false
-      Clip = true
-
-      if getgenv()._noclipModifiedParts then
-         for part, original in pairs(getgenv()._noclipModifiedParts) do
-            if part and part:IsA("BasePart") then
-               part.CanCollide = original
-            end
-         end
-         getgenv()._noclipModifiedParts = nil
-      end
-
-      getgenv().notify("Success", "Disabled Noclip successfully.", 5)
+      ToggleNoclip(false)
    elseif cmd == "view" then
       local View_Target = findplr(split[1])
       if not View_Target then return getgenv().notify("Error", "Target was not found or does not exist!", 5) end
