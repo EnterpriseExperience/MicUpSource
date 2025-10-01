@@ -12,6 +12,79 @@ getgenv().Service_Wrap = function(serviceName)
     end
 end
 wait()
+local function safe_wrapper(S)
+    if cloneref then
+        return cloneref(game:GetService(S))
+    else
+        return game:GetService(S)
+    end
+end
+
+Players = safe_wrapper("Players")
+TweenService = safe_wrapper("TweenService")
+CoreGui = get_hidden_gui and get_hidden_gui() or gethui and gethui() or safe_wrapper("CoreGui")
+StarterGui = safe_wrapper("StarterGui")
+GuiService = safe_wrapper("GuiService")
+Workspace = safe_wrapper("Workspace")
+UserInputService = safe_wrapper("UserInputService")
+Sound_ID_Windows = "rbxassetid://8183296024"
+Sound_ID_iPhone = "rbxassetid://73722479618078"
+Sound_ID_Android = "rbxassetid://17582299860"
+Sound_ID_Universal = "rbxassetid://18595195017"
+wait()
+local function Device_Detector()
+    local platform = UserInputService:GetPlatform()
+    local platformMap = {
+        [Enum.Platform.Windows] = "Windows",
+        [Enum.Platform.OSX] = "OSX",
+        [Enum.Platform.IOS] = "iOS",
+        [Enum.Platform.Android] = "Android",
+        [Enum.Platform.XBoxOne] = "Xbox One (Console)",
+        [Enum.Platform.PS4] = "PS4 (Console)",
+        [Enum.Platform.XBox360] = "Xbox 360 (Console)",
+        [Enum.Platform.WiiU] = "Wii-U (Console)",
+        [Enum.Platform.NX] = "Cisco Nexus",
+        [Enum.Platform.Ouya] = "Ouya (Android-Based)",
+        [Enum.Platform.AndroidTV] = "Android TV",
+        [Enum.Platform.Chromecast] = "Chromecast",
+        [Enum.Platform.Linux] = "Linux (Desktop)",
+        [Enum.Platform.SteamOS] = "Steam Client",
+        [Enum.Platform.WebOS] = "Web-OS",
+        [Enum.Platform.DOS] = "DOS",
+        [Enum.Platform.BeOS] = "BeOS",
+        [Enum.Platform.UWP] = "UWP (Go Back To Web Bro..)",
+        [Enum.Platform.PS5] = "PS5 (Console)",
+        [Enum.Platform.MetaOS] = "MetaOS",
+        [Enum.Platform.None] = "Unknown Device"
+    }
+    return platformMap[platform] or "Unknown Device"
+end
+
+devicePlatform = Device_Detector()
+
+function Play_Notification_Sound()
+    local Notification_Sound
+
+    Notification_Sound = Instance.new("Sound")
+    Notification_Sound.Parent = Workspace
+    Notification_Sound.Volume = 1
+    if devicePlatform == "Windows" then
+        Notification_Sound.SoundId = Sound_ID_Windows
+    elseif devicePlatform == "iOS" then
+        Notification_Sound.SoundId = Sound_ID_iPhone
+    elseif devicePlatform == "Android" then
+        Notification_Sound.SoundId = Sound_ID_Android
+    else
+        Notification_Sound.SoundId = Sound_ID_Universal
+    end
+    task.wait()
+    Notification_Sound:Play()
+
+    Notification_Sound.Ended:Connect(function()
+        Notification_Sound:Destroy()
+    end)
+end
+wait()
 local Emotes = {
    griddy = {
       129149402922241,
@@ -374,7 +447,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.5.0-LIFE"
+local Script_Version = "2.5.1-LIFE"
 
 local function getExecutor()
     local name
@@ -922,7 +995,7 @@ function notify(title, content, duration)
     else
         local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 
-        NotifyLib:Rayfield_Notify(tostring(title), tostring(content), tonumber(duration))
+        NotifyLib:StarterGui_Notify(tostring(title), tostring(content), tonumber(duration))
     end
 end
 wait(0.1)
