@@ -12,7 +12,7 @@ end
 wait()
 local Raw_Version = "V3.9.1"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "If you ever run into errors, just know I can fix them immediately now, with our new error log system, enjoy a flawless, error-less system!"
+local Announcement_Message = "Setting 'fflag(s)' are now bannable, I have removed our anti-Roblox tracking log system, will be updated soon, do not worry, you are NOT going to be banned."
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -1915,46 +1915,6 @@ function anti_void()
          root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
       end
    end)
-end
-
-function anti_report_func()
-   if setfflag then
-      pcall(function()
-         setfflag("AbuseReportScreenshot", "False")
-         setfflag("AbuseReportScreenshotPercentage", "0")
-         setfflag("DFFlagAbuseReportScreenshot", "False")
-         setfflag("AbuseReportScreenshotType", "0")
-         setfflag("AbuseReportDialogScreenshot", "False")
-         setfflag("ScreenshotReportEnabled", "False")
-         setfflag("DFLogScreenshotSender", "False")
-         setfflag("ScreenshotSubmitPercentage", "0")
-         setfflag("EnableBugReporting", "False")
-         setfflag("EnableInternalBugReporting", "False")
-         setfflag("EnableSilentModeForAbuseReport", "True")
-         setfflag("CrashUploadToBacktraceToBacktracePercentage", "0")
-         setfflag("CrashUploadToBacktracePercentage", "0")
-         setfflag("CrashUploadToBacktraceWindows", "False")
-         setfflag("UserReportedCrashUpload", "False")
-         setfflag("EnableTraceLogging", "False")
-         setfflag("DFLogEnableTraceLogging", "False")
-         setfflag("TaskSchedulerEnableLuaGCLog", "False")
-         setfflag("DFLogUploadHttpPerformance", "False")
-         setfflag("UploadMemoryStats", "False")
-         setfflag("UploadImproperShutdownTelemetry", "False")
-      end)
-      wait()
-      getgenv().notify("Success", "Anti Chat And Bug Report has been successfully loaded.", 5)
-   else
-      getgenv().notify("Error", "Your executor does not support 'setfflag' to run this!", 5)
-   end
-end
-
-if getgenv().loaded_anti_report then
-   getgenv().notify("Warning", "Already loaded anti-report utility!", 5)
-else
-   anti_report_func()
-   task.wait(0.2)
-   getgenv().loaded_anti_report = true
 end
 
 local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
