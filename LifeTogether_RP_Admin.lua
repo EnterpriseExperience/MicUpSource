@@ -10,9 +10,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V3.9.1"
+local Raw_Version = "V3.9.4"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Setting 'fflag(s)' are now bannable, I have removed our anti-Roblox tracking log system, will be updated soon, do not worry, you are NOT going to be banned."
+local Announcement_Message = "Fixed a couple vulnerabilities and I've fixed Life Together's Game Analytics logging system (you're welcome they don't watch you anymore), they recently updated it but I've bypassed it for you."
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -227,13 +227,21 @@ Players.PlayerRemoving:Connect(function(plr)
    end
 end)
 
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
+
 local toggleGui = Instance.new("ScreenGui")
 toggleGui.IgnoreGuiInset = true
 toggleGui.ResetOnSpawn = false
 toggleGui.Enabled = false
 toggleGui.Name = "FlamesHubToggle"
-toggleGui.Parent = PlayerGui
+if HiddenUI then
+   toggleGui.Parent = HiddenUI
+elseif CoreGui then
+   toggleGui.Parent = CoreGui
+else
+   toggleGui.Parent = LocalPlayer:WaitForChild("PlayerGui", 1)
+end
 
 local toggleBtn = Instance.new("TextButton")
 toggleBtn.AnchorPoint = Vector2.new(1, 1)
@@ -1552,6 +1560,25 @@ local function loadPrefix()
    return ";"
 end
 
+local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
+
+if HiddenUI then
+   for _, v in ipairs(HiddenUI:GetDescendants()) do
+      if v:IsA("Frame") and v.Name == "ResizeControls" and v.Parent.Name == "Main" then
+         if v.Parent.Parent:IsA("ScreenGui") then
+            getgenv().notify("Warning", "Are you using Dex Explorer with our script? I surely hope not, seems like you are... the script is literally open source.", 15)
+         end
+      end
+   end
+else
+   for _, v in ipairs(CoreGui:GetDescendants()) do
+      if v:IsA("Frame") and v.Name == "ResizeControls" and v.Parent.Name == "Main" then
+         getgenv().notify("Warning", "Are you using Dex Explorer with our script? I surely hope not, seems like you are... the script is literally open source.", 15)
+      end
+   end
+end
+
 local UserInputService = getgenv().UserInputService
 local TweenService = getgenv().TweenService
 wait(0.3)
@@ -1612,7 +1639,7 @@ function car_listing_gui()
    Title.Size = UDim2.new(1, -40, 0, 40)
    Title.Position = UDim2.new(0, 10, 0, 0)
    Title.BackgroundTransparency = 1
-   Title.Text = "Made by: computerbinaries"
+   Title.Text = "Made by: "..tostring(Script_Creator)
    Title.Font = Enum.Font.GothamBold
    Title.TextSize = 18
    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -2861,7 +2888,7 @@ function CreateCreditsLabel()
    label.BackgroundColor3 = Color3.fromRGB(171, 95, 212)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
    local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-   label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. prefix
+   label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." on Discord. | Current Prefix: " .. prefix
    label.Font = Enum.Font.GothamBold
    label.TextScaled = true
    label.RichText = false
@@ -2885,7 +2912,7 @@ function CreateCreditsLabel()
       getgenv()._PrefixUpdateConnection = getgenv().AdminPrefix.Changed:Connect(function()
          lastPrefix = tostring(getgenv().AdminPrefix)
          local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-         label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. prefix
+         label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." on Discord. | Current Prefix: " .. prefix
       end)
    else
       task.spawn(function()
@@ -2895,7 +2922,7 @@ function CreateCreditsLabel()
             if tostring(getgenv().AdminPrefix) ~= lastPrefix then
                lastPrefix = tostring(getgenv().AdminPrefix)
                local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-               label.Text = tostring(Script_Version).." | Made By: computerbinaries on Discord. | Current Prefix: " .. prefix
+               label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." on Discord. | Current Prefix: " .. prefix
             end
          end
       end)
@@ -3445,6 +3472,7 @@ end
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/other_actors.lua'))()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/TextChatServce.lua'))()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/error_handler.lua'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/feedback_handler.lua'))()
 wait(0.1)
 local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
@@ -3787,7 +3815,7 @@ function annoyance_GUI()
    local Title = Instance.new("TextLabel")
    Title.Size = UDim2.new(1, -35, 1, 0)
    Title.Position = UDim2.new(0, 10, 0, 0)
-   Title.Text = "Annoy / Group Spam Menu | Made By: computerbinaries on Discord."
+   Title.Text = "Annoy / Group Spam Menu | Made By: "..tostring(Script_Creator).." on Discord."
    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
    Title.BackgroundTransparency = 1
    Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -4021,6 +4049,146 @@ local function forceUnequip(slot, id)
    if isWearing(HD, slot, id) then
       getgenv().Get("wear", id, slot)
    end
+end
+
+function feedback_GUI()
+   if getgenv().FeedbackCooldown then
+      return getgenv().notify("Warning", "You must wait before sending a Feedback request again! (" .. (getgenv().FeedbackTimeLeft or 0) .. "s left)", 5)
+   end
+
+   if getgenv().CoreGui:FindFirstChild("FeedbackUI") then
+      return getgenv().notify("Error", "Feedback GUI is already loaded, close it first!", 5)
+   end
+
+   local ScreenGui = Instance.new("ScreenGui")
+   ScreenGui.Name = "FeedbackUI"
+   ScreenGui.ResetOnSpawn = false
+   ScreenGui.Parent = getgenv().CoreGui
+
+   local Frame = Instance.new("Frame")
+   Frame.Size = UDim2.new(0, 350, 0, 200)
+   Frame.Position = UDim2.new(0.5, -175, 0.5, -100)
+   Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+   Frame.BorderSizePixel = 0
+   Frame.Active = true
+   Frame.Draggable = true
+   Frame.Parent = ScreenGui
+
+   local UICorner = Instance.new("UICorner")
+   UICorner.CornerRadius = UDim.new(0, 12)
+   UICorner.Parent = Frame
+
+   local UIStroke = Instance.new("UIStroke")
+   UIStroke.Thickness = 2
+   UIStroke.Color = Color3.fromRGB(90, 90, 90)
+   UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+   UIStroke.Parent = Frame
+
+   local Title = Instance.new("TextLabel")
+   Title.Size = UDim2.new(1, -40, 0, 40)
+   Title.Position = UDim2.new(0, 10, 0, 0)
+   Title.BackgroundTransparency = 1
+   Title.Text = "Submit Feedback"
+   Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+   Title.Font = Enum.Font.GothamBold
+   Title.TextSize = 20
+   Title.TextXAlignment = Enum.TextXAlignment.Left
+   Title.Parent = Frame
+
+   local CloseBtn = Instance.new("TextButton")
+   CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+   CloseBtn.Position = UDim2.new(1, -35, 0, 5)
+   CloseBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+   CloseBtn.Text = "X"
+   CloseBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+   CloseBtn.Font = Enum.Font.GothamBold
+   CloseBtn.TextSize = 18
+   CloseBtn.Parent = Frame
+
+   local CloseCorner = Instance.new("UICorner")
+   CloseCorner.CornerRadius = UDim.new(0, 6)
+   CloseCorner.Parent = CloseBtn
+
+   CloseBtn.MouseButton1Click:Connect(function()
+      ScreenGui:Destroy()
+   end)
+
+   local TextBox = Instance.new("TextBox")
+   TextBox.Size = UDim2.new(1, -20, 0, 100)
+   TextBox.Position = UDim2.new(0, 10, 0, 50)
+   TextBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+   TextBox.Text = ""
+   TextBox.PlaceholderText = "Type your feedback here..."
+   TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+   TextBox.Font = Enum.Font.Gotham
+   TextBox.TextSize = 16
+   TextBox.ClearTextOnFocus = false
+   TextBox.TextWrapped = true
+   TextBox.MultiLine = true
+   TextBox.Parent = Frame
+
+   local TBcorner = Instance.new("UICorner")
+   TBcorner.CornerRadius = UDim.new(0, 8)
+   TBcorner.Parent = TextBox
+
+   local SendBtn = Instance.new("TextButton")
+   SendBtn.Size = UDim2.new(0.5, -15, 0, 40)
+   SendBtn.Position = UDim2.new(0.5, -((0.5 * 350)/2), 1, -45)
+   SendBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 250)
+   SendBtn.Text = "Send Feedback"
+   SendBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+   SendBtn.Font = Enum.Font.GothamBold
+   SendBtn.TextSize = 18
+   SendBtn.TextScaled = true
+   SendBtn.Parent = Frame
+
+   local CooldownLabel = Instance.new("TextLabel")
+   CooldownLabel.Size = UDim2.new(1, 0, 0, 20)
+   CooldownLabel.Position = UDim2.new(0, 0, 1, -20)
+   CooldownLabel.BackgroundTransparency = 1
+   CooldownLabel.Text = ""
+   CooldownLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+   CooldownLabel.Font = Enum.Font.Gotham
+   CooldownLabel.TextSize = 14
+   CooldownLabel.TextScaled = true
+   CooldownLabel.Parent = Frame
+
+   local SendCorner = Instance.new("UICorner")
+   SendCorner.CornerRadius = UDim.new(0, 8)
+   SendCorner.Parent = SendBtn
+
+   SendBtn.MouseButton1Click:Connect(function()
+      local msg = TextBox.Text
+      if msg == "" or msg:match("^%s*$") then
+         SendBtn.Text = "Enter feedback text!"
+         task.wait(1)
+         SendBtn.Text = "Send Feedback"
+         return 
+      end
+
+      pcall(function()
+         getgenv().Feedback_API.Feedback_Handler(getgenv().LocalPlayer, msg)
+      end)
+
+      getgenv().FeedbackCooldown = true
+      getgenv().FeedbackTimeLeft = 60
+
+      task.spawn(function()
+         while getgenv().FeedbackTimeLeft > 0 do
+            CooldownLabel.Text = "Cooldown: " .. tostring(getgenv().FeedbackTimeLeft) .. "s"
+            task.wait(1)
+            getgenv().FeedbackTimeLeft -= 1
+         end
+
+         CooldownLabel.Text = ""
+      end)
+
+      task.delay(60, function()
+         getgenv().FeedbackCooldown = false
+      end)
+
+      ScreenGui:Destroy()
+   end)
 end
 
 local Old_Shirt = getgenv().Humanoid:FindFirstChild("HumanoidDescription").Shirt
@@ -4888,6 +5056,8 @@ local function handleCommand(sender, message)
       else
          return notify("Error", "This player isn't friends with you! add them!", 5)
       end
+   elseif cmd == "feedback" or cmd == "feedbackgui" or cmd == "feedbackui" or cmd == "sendfeedback" or cmd == "sendfeedbackgui" or cmd == "sendfeedbackui" then
+      feedback_GUI()
    elseif cmd == "bringcar" then
       local Vehicle = get_vehicle()
       if not Vehicle then return notify("Error", "You do not have a vehicle spawned!", 5) end
