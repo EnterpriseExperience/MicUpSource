@@ -1409,46 +1409,6 @@ local Workspace = cloneref(game:GetService("Workspace"))
 local vehicles_folder = Workspace:WaitForChild("Vehicles")
 local run_service = cloneref(game:GetService("RunService"))
 
-function anti_report_func()
-    if setfflag then
-        pcall(function()
-            setfflag("AbuseReportScreenshot", "False")
-            setfflag("AbuseReportScreenshotPercentage", "0")
-            setfflag("DFFlagAbuseReportScreenshot", "False")
-            setfflag("AbuseReportScreenshotType", "0")
-            setfflag("AbuseReportDialogScreenshot", "False")
-            setfflag("ScreenshotReportEnabled", "False")
-            setfflag("DFLogScreenshotSender", "False")
-            setfflag("ScreenshotSubmitPercentage", "0")
-            setfflag("EnableBugReporting", "False")
-            setfflag("EnableInternalBugReporting", "False")
-            setfflag("EnableSilentModeForAbuseReport", "True")
-            setfflag("CrashUploadToBacktraceToBacktracePercentage", "0")
-            setfflag("CrashUploadToBacktracePercentage", "0")
-            setfflag("CrashUploadToBacktraceWindows", "False")
-            setfflag("UserReportedCrashUpload", "False")
-            setfflag("EnableTraceLogging", "False")
-            setfflag("DFLogEnableTraceLogging", "False")
-            setfflag("TaskSchedulerEnableLuaGCLog", "False")
-            setfflag("DFLogUploadHttpPerformance", "False")
-            setfflag("UploadMemoryStats", "False")
-            setfflag("UploadImproperShutdownTelemetry", "False")
-        end)
-        wait()
-        print("[Success]:", "Anti Report (__SETUP) has been successfully loaded.")
-    else
-        warn("[Error]:", "Your executor does not support 'setfflag' to run this!")
-    end
-end
-
-if getgenv().loaded_anti_report then
-    warn("Already loaded anti-report utility!")
-else
-    anti_report_func()
-    wait(0.1)
-    getgenv().loaded_anti_report = true
-end
-
 getgenv().rainbow_highlight_mode = getgenv().rainbow_highlight_mode or false
 getgenv().vehicle_ESP_Connection = getgenv().vehicle_ESP_Connection or {}
 getgenv().vehicle_ESP_Active = getgenv().vehicle_ESP_Active or false
