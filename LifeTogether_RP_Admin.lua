@@ -10,7 +10,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.0.6"
+local Raw_Version = "V4.0.7"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Re-added WalkFling, and fixed RunService error loops."
 task.wait(0.1)
@@ -2492,8 +2492,7 @@ function RGB_Phone(Boolean)
 end
 
 getgenv().Noclip_Enabled = false
-getgenv()._noclipModifiedParts = {}
-getgenv().Noclip_Connection = nil
+getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
 local RunService = getgenv().RunService or game:GetService("RunService")
 
 local function ToggleNoclip(toggle)
@@ -2501,20 +2500,17 @@ local function ToggleNoclip(toggle)
       if getgenv().Noclip_Enabled then
          return getgenv().notify("Error", "Noclip already enabled!", 5)
       end
-      getgenv()._noclipModifiedParts = {}
+
       local function NoclipLoop()
-         local char = getgenv().Character
-         if char then
-            for _, part in ipairs(char:GetDescendants()) do
+         if getgenv().Character then
+            for _, part in ipairs(getgenv().Character:GetDescendants()) do
                if part:IsA("BasePart") and part.CanCollide then
-                  if getgenv()._noclipModifiedParts[part] == nil then
-                     getgenv()._noclipModifiedParts[part] = true
-                  end
                   part.CanCollide = false
                end
             end
          end
       end
+
       getgenv().Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
       getgenv().Noclip_Enabled = true
       getgenv().notify("Success", "Noclip has been enabled.", 5)
@@ -2527,12 +2523,11 @@ local function ToggleNoclip(toggle)
          getgenv().Noclip_Connection = nil
       end
 
-      for part, _ in pairs(getgenv()._noclipModifiedParts) do
-         if part and typeof(part) == "Instance" and part:IsA("BasePart") and part.Parent then
+      for _, part in pairs(getgenv().Character:GetDescendants()) do
+         if part and part:IsA("BasePart") then
             part.CanCollide = true
          end
       end
-      table.clear(getgenv()._noclipModifiedParts)
       getgenv().Noclip_Enabled = false
       getgenv().notify("Success", "Noclip has been disabled.", 5)
    else
