@@ -10,9 +10,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.0.5"
+local Raw_Version = "V4.0.6"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Removed WalkFling for fixing, and fixed Noclip not turning off (actually this time)"
+local Announcement_Message = "Re-added WalkFling, and fixed RunService error loops."
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -2542,38 +2542,9 @@ end
 
 getgenv().Toggleable_Noclip = ToggleNoclip
 
-function water_skie_trailer(Bool, Vehicle)
-   if not Vehicle then
-      return notify("Warning", "You do not have a Vehicle spawned!", 5)
-   end
-
-   local HasTrailer = Vehicle:FindFirstChild("WaterSkies")
-
-   if Bool == true then
-      if HasTrailer then
-         return notify("Error", "You already have the WaterSkies trailer.", 5)
-      else
-         getgenv().Get("add_trailer", Vehicle, "WaterSkies")
-      end
-   elseif Bool == false then
-      if HasTrailer then
-         getgenv().Get("add_trailer", Vehicle, "WaterSkies")
-      else
-         return getgenv().notify("Warning", "You do not have the WaterSkies trailer to take it off!", 5)
-      end
-   else
-      return getgenv().notify("Error", "Invalid toggle value (expected: true/false).", 5)
-   end
-end
-wait()
-
---[[getgenv().walkflinging = getgenv().walkflinging or false
+getgenv().walkflinging = getgenv().walkflinging or false
 wait()
 local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-local Toggleable_Noclip = getgenv().Toggleable_Noclip
-local SAFE_ANGULAR = 900
-local DAMPING = 0.15
-local HORIZONTAL_CLAMP = 40
 
 local function clamp(x,a,b)
    return math.max(a, math.min(b, x))
@@ -2623,7 +2594,32 @@ local function startWalkFling()
 end
 
 getgenv().StartWalkFling = startWalkFling
-getgenv().StopWalkFling = stopWalkFlingInternal--]]
+getgenv().StopWalkFling = stopWalkFlingInternal
+
+function water_skie_trailer(Bool, Vehicle)
+   if not Vehicle then
+      return notify("Warning", "You do not have a Vehicle spawned!", 5)
+   end
+
+   local HasTrailer = Vehicle:FindFirstChild("WaterSkies")
+
+   if Bool == true then
+      if HasTrailer then
+         return notify("Error", "You already have the WaterSkies trailer.", 5)
+      else
+         getgenv().Get("add_trailer", Vehicle, "WaterSkies")
+      end
+   elseif Bool == false then
+      if HasTrailer then
+         getgenv().Get("add_trailer", Vehicle, "WaterSkies")
+      else
+         return getgenv().notify("Warning", "You do not have the WaterSkies trailer to take it off!", 5)
+      end
+   else
+      return getgenv().notify("Error", "Invalid toggle value (expected: true/false).", 5)
+   end
+end
+wait()
 
 function EnableFly(speed)
    local player = getgenv().LocalPlayer
@@ -2903,8 +2899,6 @@ local function CommandsMenu()
       {prefix}takethel - Makes you do the Take The L emote (FE).
       {prefix}laughitup - Makes you do the Donkey Laugh emote (FE).
       {prefix}reanimated - Makes you do the Reanimated emote (FE).
-      {prefix}walkfling - Enables walkfling script.
-      {prefix}unwalkfling - Disables walkfling script.
       {prefix}antivoid - Enables anti-void.
       {prefix}unantivoid - Disables anti-void.
       {prefix}alljobs - Repeatedly spams all jobs
@@ -4816,10 +4810,6 @@ local function handleCommand(sender, message)
       getgenv().notify("Warning", "E = up, Q = down, WASD to move", 5)
    elseif cmd == "unfly" then
       DisableFlyScript()
-   elseif cmd == "walkfling" or cmd == "enablewalkfling" or cmd == "walkf" or cmd == "startwalkfling" then
-      startWalkFling()
-   elseif cmd == "unwalkfling" or cmd == "nowalkfling" or cmd == "unwalkf" or cmd == "stopwalkfling" then
-      stopWalkFling()
    elseif cmd == "fly2" then
       local Fly_Speed = tonumber(split[1])
       if not Fly_Speed then
@@ -4944,6 +4934,10 @@ local function handleCommand(sender, message)
       wait()
       getgenv().Currently_Annoying_Player = nil
       getgenv().easy_click_plr = false
+   elseif cmd == "walkfling" or cmd == "walkf" or cmd == "startwalkfling" then
+      getgenv().StartWalkFling()
+   elseif cmd == "unwalkfling" or cmd == "unwalkf" or cmd == "stopwalkfling" then
+      getgenv().stopWalkFling()
    elseif cmd == "autolockcar" then
       if getgenv().AutoLockOn then
          return getgenv().notify("Error", "You already have 'AutoLockCar' enabled, disable it first!", 5)
@@ -5970,36 +5964,6 @@ else
          end
       end
    end
-end
-
-if getrawmetatable and (setreadonly or make_writeable) then
-   local mt = getrawmetatable(game)
-   local oldNamecall = mt.__namecall
-   local setreadonly = setreadonly or make_writeable
-   setreadonly(mt, false)
-
-   mt.__namecall = newcclosure(function(self, ...)
-      local method = getnamecallmethod()
-
-      if method == "FireServer" then
-         local okClass, className = pcall(function() return self.ClassName end)
-         if okClass and className == "RemoteEvent" then
-            local okName, name = pcall(function() return self.Name end)
-            if okName and type(name) == "string" then
-               name = name:lower()
-               if name:find("gameanalyticsremotetime") then
-                  return nil
-               end
-            end
-         end
-      end
-
-      local ok, ret = pcall(oldNamecall, self, ...)
-      if ok then return ret end
-      return nil
-   end)
-
-   setreadonly(mt, true)
 end
 
 task.wait(0.2)
