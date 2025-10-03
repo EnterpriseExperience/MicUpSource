@@ -1590,6 +1590,11 @@ local Admins = {
 }
 wait()
 getgenv().AdminPrefix = loadPrefix() or ";"
+if getgenv().IY_LOADED and getgenv().AdminPrefix == ";" then
+   getgenv().notify("Warning", "Hey! You have Infinite Yield loaded and your prefix is ; | you might want to change it! or it'll make you execute IY's commands!", 15)
+elseif getgenv().GET_LOADED_IY and getgenv().AdminPrefix == ";" then
+   getgenv().notify("Warning", "Hey! You have Infinite Premium loaded and your prefix is ; | you might want to change it! or it'll make you execute IY's commands!", 15)
+end
 wait(0.2)
 print("[Prefix]: Loaded Saved Prefix --> ", tostring(getgenv().AdminPrefix))
 wait(0.5)
