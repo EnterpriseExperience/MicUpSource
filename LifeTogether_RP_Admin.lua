@@ -10,9 +10,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V3.9.7"
+local Raw_Version = "V4.0.1"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed a couple vulnerabilities and I've fixed Life Together's Game Analytics logging system (you're welcome they don't watch you anymore), they recently updated it but I've bypassed it for you."
+local Announcement_Message = "If you want to input feedback for me (suggestions) do the command: 'feedback' and you can send feedback/suggestions for me! ADDED WALKFLING! (WORKING!)"
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -2467,6 +2467,72 @@ function RGB_Phone(Boolean)
    end
 end
 
+getgenv().Noclip_Enabled = getgenv().Noclip_Enabled or false
+getgenv()._noclipModifiedParts = getgenv()._noclipModifiedParts or {}
+getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
+Clip = true
+
+function ToggleNoclip(toggle)
+   if toggle == true then
+      if getgenv().Noclip_Enabled then
+         return getgenv().notify("Error", "NoClip is already enabled!", 5)
+      end
+
+      getgenv()._noclipModifiedParts = {}
+      Clip = false
+
+      local function NoclipLoop()
+         if getgenv().Character then
+            for _, part in ipairs(getgenv().Character:GetDescendants()) do
+               if part:IsA("BasePart") then
+                  local ok, canCollide = pcall(function() return part.CanCollide end)
+
+                  if ok and canCollide then
+                     if getgenv()._noclipModifiedParts[part] == nil then
+                        getgenv()._noclipModifiedParts[part] = canCollide
+                     end
+                     pcall(function() part.CanCollide = false end)
+                  elseif not ok then
+                     getgenv().notify("Error", "Something unexpected happened when running Noclip, and we had to shutdown NoClip. Error: "..tostring(ok), 5)
+                     ToggleNoclip(false)
+                  end
+               end
+            end
+         end
+      end
+
+      getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
+      getgenv().Noclip_Enabled = true
+      getgenv().notify("Success", "Noclip enabled successfully.", 5)
+   elseif toggle == false then
+      if getgenv().Noclip_Enabled then
+         if getgenv().Noclip_Connection then
+            getgenv().Noclip_Connection:Disconnect()
+            getgenv().Noclip_Connection = nil
+         end
+
+         Clip = true
+
+         for part, original in pairs(getgenv()._noclipModifiedParts) do
+            if typeof(part) == "Instance" and part:IsA("BasePart") then
+               pcall(function() part.CanCollide = original end)
+            end
+         end
+
+         table.clear(getgenv()._noclipModifiedParts)
+         getgenv().Noclip_Enabled = false
+
+         getgenv().notify("Success", "Noclip disabled successfully.", 5)
+      else
+         return getgenv().notify("Error", "NoClip has not been enabled, you cannot turn it off.", 5)
+      end
+   else
+      return getgenv().notify("Error", "Invalid arguments specified, expected: True/False.", 5)
+   end
+end
+wait(0.1)
+getgenv().Toggleable_Noclip = ToggleNoclip
+
 function water_skie_trailer(Bool, Vehicle)
    if not Vehicle then
       return notify("Warning", "You do not have a Vehicle spawned!", 5)
@@ -2488,6 +2554,49 @@ function water_skie_trailer(Bool, Vehicle)
       end
    else
       return getgenv().notify("Error", "Invalid toggle value (expected: true/false).", 5)
+   end
+end
+wait()
+
+getgenv().walkflinging = getgenv().walkflinging or false
+wait()
+local function startWalkFling()
+   if getgenv().walkflinging then return getgenv().notify("Warning", "WalkFling is already enabled! disable it first.", 5) end
+
+   getgenv().walkflinging = true
+
+   local humanoid = getgenv().Humanoid
+
+   humanoid.Died:Connect(function()
+      getgenv().walkflinging = false
+      if getgenv().WalkFlinging_Connection then
+         getgenv().WalkFlinging_Connection:Disconnect()
+         getgenv().WalkFlinging_Connection = nil
+      end
+   end)
+
+   if getgenv().Toggleable_Noclip then
+      getgenv().Toggleable_Noclip(true)
+   end
+
+   getgenv().WalkFlinging_Connection = getgenv().RunService.Heartbeat:Connect(function()
+      if not getgenv().walkflinging then return getgenv().notify("Error", "'walkfling' unexpectedly shut down!", 5) end
+
+      local char = getgenv().Character
+      local root = getgenv().HumanoidRootPart
+      if not (char and root and root.Parent) then return end
+
+      local baseVel = root.AssemblyLinearVelocity
+
+      root.AssemblyLinearVelocity = baseVel + Vector3.new(0, 10000, 0) + (baseVel * 5000)
+   end)
+end
+
+local function stopWalkFling()
+   getgenv().walkflinging = false
+   if getgenv().WalkFlinging_Connection then
+      getgenv().WalkFlinging_Connection:Disconnect()
+      getgenv().WalkFlinging_Connection = nil
    end
 end
 
@@ -2769,6 +2878,8 @@ local function CommandsMenu()
       {prefix}takethel - Makes you do the Take The L emote (FE).
       {prefix}laughitup - Makes you do the Donkey Laugh emote (FE).
       {prefix}reanimated - Makes you do the Reanimated emote (FE).
+      {prefix}walkfling - Enables walkfling script.
+      {prefix}unwalkfling - Disables walkfling script.
       {prefix}antivoid - Enables anti-void.
       {prefix}unantivoid - Disables anti-void.
       {prefix}alljobs - Repeatedly spams all jobs
@@ -3256,6 +3367,10 @@ function flashy_name(Toggle)
 end
 
 function infinite_premium()
+   if getgenv().GET_LOADED_IY then
+      return getgenv().notify("Error", "Infinite Premium has already been loaded.", 5)
+   end
+
    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/refs/heads/main/InfYieldOther.lua'))()
 end
 
@@ -3431,7 +3546,7 @@ local function enable_rgb_for(plr)
 end
 
 local function disable_rgb_for(plr)
-   if not plr then return warn("Player was not found when trying to disable RGB vehicle!") end
+   if not plr then return getgenv().notify("Error", "Player was not found when trying to disable RGB vehicle!", 5) end
    if not getgenv().VehicleStates[plr.Name] then return end
    if not getgenv().Rainbow_Tasks[plr.Name] then return end
 
@@ -3472,10 +3587,16 @@ if not getgenv().VehicleStates then
    getgenv().VehicleStates = {}
 end
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/other_actors.lua'))()
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/TextChatServce.lua'))()
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/error_handler.lua'))()
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/feedback_handler.lua'))()
+if not getgenv().PreRequisites_Loaded then
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/other_actors.lua'))()
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/TextChatServce.lua'))()
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/error_handler.lua'))()
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/feedback_handler.lua'))()
+   wait(0.2)
+   getgenv().PreRequisites_Loaded = true
+else
+   getgenv().notify("Warning", "Pre-Requisites and requirements already loaded.", 5)
+end
 wait(0.1)
 local function setup_cmd_handler_plr(player)
    local TextChatService = getgenv().TextChatService
@@ -3697,66 +3818,6 @@ local function setup_cmd_handler_plr(player)
          end)
       end
    end)
-end
-
-getgenv().Noclip_Enabled = getgenv().Noclip_Enabled or false
-getgenv()._noclipModifiedParts = getgenv()._noclipModifiedParts or {}
-getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
-Clip = true
-
-function ToggleNoclip(toggle)
-   if toggle == true then
-      getgenv()._noclipModifiedParts = {}
-      Clip = false
-
-      local function NoclipLoop()
-         if getgenv().Character then
-            for _, part in ipairs(getgenv().Character:GetDescendants()) do
-               if part:IsA("BasePart") then
-                  local ok, canCollide = pcall(function() return part.CanCollide end)
-
-                  if ok and canCollide then
-                     if getgenv()._noclipModifiedParts[part] == nil then
-                        getgenv()._noclipModifiedParts[part] = canCollide
-                     end
-                     pcall(function() part.CanCollide = false end)
-                  elseif not ok then
-                     getgenv().notify("Error", "Something unexpected happened when running Noclip, and we had to shutdown NoClip. Error: "..tostring(ok), 5)
-                     ToggleNoclip(false)
-                  end
-               end
-            end
-         end
-      end
-
-      getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
-      getgenv().Noclip_Enabled = true
-      getgenv().notify("Success", "Noclip enabled successfully.", 5)
-   elseif toggle == false then
-      if getgenv().Noclip_Enabled then
-         if getgenv().Noclip_Connection then
-            getgenv().Noclip_Connection:Disconnect()
-            getgenv().Noclip_Connection = nil
-         end
-
-         Clip = true
-
-         for part, original in pairs(getgenv()._noclipModifiedParts) do
-            if typeof(part) == "Instance" and part:IsA("BasePart") then
-               pcall(function() part.CanCollide = original end)
-            end
-         end
-
-         table.clear(getgenv()._noclipModifiedParts)
-         getgenv().Noclip_Enabled = false
-
-         getgenv().notify("Success", "Noclip disabled successfully.", 5)
-      else
-         return getgenv().notify("Error", "NoClip has not been enabled, you cannot turn it off.", 5)
-      end
-   else
-      return getgenv().notify("Error", "Invalid arguments specified, expected: True/False.", 5)
-   end
 end
 
 local function addPlayerToScriptWhitelistTable(player)
@@ -4572,6 +4633,10 @@ local function handleCommand(sender, message)
    end
    local cmd = table.remove(split, 1):lower()
    local args = split
+   for i, v in ipairs(args) do
+      -- Pre-predict capitilization in arguments, like: "?spawn CHARGER" or "?spawn charger", should all work the same now (10/3/2025 - 5:38 PM).
+      args[i] = v:lower()
+   end
    getgenv().Anti_Sit_Connection = nil
    getgenv().anti_knockback_connection = nil
    getgenv().Noclip_Connection = nil
@@ -4726,6 +4791,10 @@ local function handleCommand(sender, message)
       getgenv().notify("Warning", "E = up, Q = down, WASD to move", 5)
    elseif cmd == "unfly" then
       DisableFlyScript()
+   elseif cmd == "walkfling" or cmd == "enablewalkfling" or cmd == "walkf" or cmd == "startwalkfling" then
+      startWalkFling()
+   elseif cmd == "unwalkfling" or cmd == "nowalkfling" or cmd == "unwalkf" or cmd == "stopwalkfling" then
+      stopWalkFling()
    elseif cmd == "fly2" then
       local Fly_Speed = tonumber(split[1])
       if not Fly_Speed then
@@ -4900,7 +4969,7 @@ local function handleCommand(sender, message)
       getgenv().ToggleAutoLock(false)
    elseif cmd == "noclip" then
       if getgenv().Noclip_Enabled then
-         return getgenv().notify("Error", "Noclip is already enabled!", 5)
+         return getgenv().notify("Error", "NoClip is already enabled!", 5)
       end
 
       ToggleNoclip(true)
