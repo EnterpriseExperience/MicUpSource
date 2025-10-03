@@ -10,9 +10,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.0.4"
+local Raw_Version = "V4.0.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed walkfling issues, and Noclip not turning off (actually this time)"
+local Announcement_Message = "Removed WalkFling for fixing, and fixed Noclip not turning off (actually this time)"
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -2567,7 +2567,7 @@ function water_skie_trailer(Bool, Vehicle)
 end
 wait()
 
-getgenv().walkflinging = getgenv().walkflinging or false
+--[[getgenv().walkflinging = getgenv().walkflinging or false
 wait()
 local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 local Toggleable_Noclip = getgenv().Toggleable_Noclip
@@ -2623,7 +2623,7 @@ local function startWalkFling()
 end
 
 getgenv().StartWalkFling = startWalkFling
-getgenv().StopWalkFling = stopWalkFlingInternal
+getgenv().StopWalkFling = stopWalkFlingInternal--]]
 
 function EnableFly(speed)
    local player = getgenv().LocalPlayer
