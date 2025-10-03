@@ -10,9 +10,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.0.2"
+local Raw_Version = "V4.0.4"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "If you want to input feedback for me (suggestions) do the command: 'feedback' and you can send feedback/suggestions for me! ADDED WALKFLING! (WORKING!)"
+local Announcement_Message = "Fixed walkfling issues, and Noclip not turning off (actually this time)"
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -2491,70 +2491,55 @@ function RGB_Phone(Boolean)
    end
 end
 
-getgenv().Noclip_Enabled = getgenv().Noclip_Enabled or false
-getgenv()._noclipModifiedParts = getgenv()._noclipModifiedParts or {}
-getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
-Clip = true
+getgenv().Noclip_Enabled = false
+getgenv()._noclipModifiedParts = {}
+getgenv().Noclip_Connection = nil
+local RunService = getgenv().RunService or game:GetService("RunService")
 
-function ToggleNoclip(toggle)
+local function ToggleNoclip(toggle)
    if toggle == true then
       if getgenv().Noclip_Enabled then
-         return getgenv().notify("Error", "NoClip is already enabled!", 5)
+         return getgenv().notify("Error", "Noclip already enabled!", 5)
       end
-
       getgenv()._noclipModifiedParts = {}
-      Clip = false
-
       local function NoclipLoop()
-         if getgenv().Character then
-            for _, part in ipairs(getgenv().Character:GetDescendants()) do
-               if part:IsA("BasePart") then
-                  local ok, canCollide = pcall(function() return part.CanCollide end)
-
-                  if ok and canCollide then
-                     if getgenv()._noclipModifiedParts[part] == nil then
-                        getgenv()._noclipModifiedParts[part] = canCollide
-                     end
-                     pcall(function() part.CanCollide = false end)
-                  elseif not ok then
-                     getgenv().notify("Error", "Something unexpected happened when running Noclip, and we had to shutdown NoClip. Error: "..tostring(ok), 5)
-                     ToggleNoclip(false)
+         local char = getgenv().Character
+         if char then
+            for _, part in ipairs(char:GetDescendants()) do
+               if part:IsA("BasePart") and part.CanCollide then
+                  if getgenv()._noclipModifiedParts[part] == nil then
+                     getgenv()._noclipModifiedParts[part] = true
                   end
+                  part.CanCollide = false
                end
             end
          end
       end
-
-      getgenv().Noclip_Connection = getgenv().RunService.Stepped:Connect(NoclipLoop)
+      getgenv().Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
       getgenv().Noclip_Enabled = true
-      getgenv().notify("Success", "Noclip enabled successfully.", 5)
+      getgenv().notify("Success", "Noclip has been enabled.", 5)
    elseif toggle == false then
-      if getgenv().Noclip_Enabled then
-         if getgenv().Noclip_Connection then
-            getgenv().Noclip_Connection:Disconnect()
-            getgenv().Noclip_Connection = nil
-         end
-
-         Clip = true
-
-         for part, original in pairs(getgenv()._noclipModifiedParts) do
-            if typeof(part) == "Instance" and part:IsA("BasePart") then
-               pcall(function() part.CanCollide = original end)
-            end
-         end
-
-         table.clear(getgenv()._noclipModifiedParts)
-         getgenv().Noclip_Enabled = false
-
-         getgenv().notify("Success", "Noclip disabled successfully.", 5)
-      else
-         return getgenv().notify("Error", "NoClip has not been enabled, you cannot turn it off.", 5)
+      if not getgenv().Noclip_Enabled then
+         return getgenv().notify("Error", "Noclip not enabled!", 5)
       end
+      if getgenv().Noclip_Connection then
+         getgenv().Noclip_Connection:Disconnect()
+         getgenv().Noclip_Connection = nil
+      end
+
+      for part, _ in pairs(getgenv()._noclipModifiedParts) do
+         if part and typeof(part) == "Instance" and part:IsA("BasePart") and part.Parent then
+            part.CanCollide = true
+         end
+      end
+      table.clear(getgenv()._noclipModifiedParts)
+      getgenv().Noclip_Enabled = false
+      getgenv().notify("Success", "Noclip has been disabled.", 5)
    else
-      return getgenv().notify("Error", "Invalid arguments specified, expected: True/False.", 5)
+      return getgenv().notify("Error", "Invalid arg, expected true/false", 5)
    end
 end
-wait(0.1)
+
 getgenv().Toggleable_Noclip = ToggleNoclip
 
 function water_skie_trailer(Bool, Vehicle)
@@ -2584,45 +2569,61 @@ wait()
 
 getgenv().walkflinging = getgenv().walkflinging or false
 wait()
-local function startWalkFling()
-   if getgenv().walkflinging then return getgenv().notify("Warning", "WalkFling is already enabled! disable it first.", 5) end
+local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local Toggleable_Noclip = getgenv().Toggleable_Noclip
+local SAFE_ANGULAR = 900
+local DAMPING = 0.15
+local HORIZONTAL_CLAMP = 40
 
-   getgenv().walkflinging = true
-
-   local humanoid = getgenv().Humanoid
-
-   humanoid.Died:Connect(function()
-      getgenv().walkflinging = false
-      if getgenv().WalkFlinging_Connection then
-         getgenv().WalkFlinging_Connection:Disconnect()
-         getgenv().WalkFlinging_Connection = nil
-      end
-   end)
-
-   if getgenv().Toggleable_Noclip then
-      getgenv().Toggleable_Noclip(true)
-   end
-
-   getgenv().WalkFlinging_Connection = getgenv().RunService.Heartbeat:Connect(function()
-      if not getgenv().walkflinging then return getgenv().notify("Error", "'walkfling' unexpectedly shut down!", 5) end
-
-      local char = getgenv().Character
-      local root = getgenv().HumanoidRootPart
-      if not (char and root and root.Parent) then return end
-
-      local baseVel = root.AssemblyLinearVelocity
-
-      root.AssemblyLinearVelocity = baseVel + Vector3.new(0, 10000, 0) + (baseVel * 5000)
-   end)
+local function clamp(x,a,b)
+   return math.max(a, math.min(b, x))
 end
 
-local function stopWalkFling()
+local function stopWalkFlingInternal()
    getgenv().walkflinging = false
    if getgenv().WalkFlinging_Connection then
       getgenv().WalkFlinging_Connection:Disconnect()
       getgenv().WalkFlinging_Connection = nil
    end
+   getgenv().Toggleable_Noclip(false)
+   getgenv().notify("Success", "WalkFling has been stopped.", 5)
 end
+
+local function startWalkFling()
+   if getgenv().walkflinging then
+      return getgenv().notify("Warning", "You already have WalkFling enabled!", 5)
+   end
+
+   getgenv().walkflinging = true
+   getgenv().Toggleable_Noclip(true)
+   wait()
+   getgenv().notify("Success", "Walkfling has been enabled.", 5)
+
+   getgenv().WalkFlinging_Connection = getgenv().RunService.Heartbeat:Connect(function()
+      if not getgenv().walkflinging then return getgenv().notify("Warning", "WalkFling has been disabled unexpectedly.", 5) end
+
+      local lp = getgenv().LocalPlayer
+      local character = getgenv().Character
+      local hrp = getgenv().HumanoidRootPart
+      if character and hrp then
+         local originalVelocity = hrp.Velocity
+         hrp.Velocity = originalVelocity * 10000 + Vector3.new(0, 10000, 0)
+
+         RunService.RenderStepped:Wait()
+         if character and hrp then
+            hrp.Velocity = originalVelocity
+         end
+
+         RunService.Stepped:Wait()
+         if character and hrp then
+            hrp.Velocity = originalVelocity + Vector3.new(0, 0.1, 0)
+         end
+      end
+   end)
+end
+
+getgenv().StartWalkFling = startWalkFling
+getgenv().StopWalkFling = stopWalkFlingInternal
 
 function EnableFly(speed)
    local player = getgenv().LocalPlayer
