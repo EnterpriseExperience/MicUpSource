@@ -10,7 +10,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V3.9.6"
+local Raw_Version = "V3.9.7"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed a couple vulnerabilities and I've fixed Life Together's Game Analytics logging system (you're welcome they don't watch you anymore), they recently updated it but I've bypassed it for you."
 task.wait(0.1)
@@ -1440,6 +1440,9 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
    wait(0.3)
    getgenv().Humanoid.JumpHeight = 7
    getgenv().Humanoid.JumpPower = 50
+   if getgenv().Not_Ever_Sitting then
+      getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+   end
    getgenv().Is_Currently_Emoting = false
 	wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
