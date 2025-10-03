@@ -4937,7 +4937,7 @@ local function handleCommand(sender, message)
    elseif cmd == "walkfling" or cmd == "walkf" or cmd == "startwalkfling" then
       getgenv().StartWalkFling()
    elseif cmd == "unwalkfling" or cmd == "unwalkf" or cmd == "stopwalkfling" then
-      getgenv().stopWalkFling()
+      getgenv().StopWalkFling()
    elseif cmd == "autolockcar" then
       if getgenv().AutoLockOn then
          return getgenv().notify("Error", "You already have 'AutoLockCar' enabled, disable it first!", 5)
