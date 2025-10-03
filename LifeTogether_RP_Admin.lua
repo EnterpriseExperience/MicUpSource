@@ -10,7 +10,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V3.9.4"
+local Raw_Version = "V3.9.6"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed a couple vulnerabilities and I've fixed Life Together's Game Analytics logging system (you're welcome they don't watch you anymore), they recently updated it but I've bypassed it for you."
 task.wait(0.1)
@@ -4731,24 +4731,28 @@ local function handleCommand(sender, message)
       wait()
       Enable_Fly_2(Fly_Speed)
    elseif cmd == "spawnfire" or cmd == "fireamount" or cmd == "spawnflames" or cmd == "spawnflame" or cmd == "firespawn" then
-      local Amount = split[1]
-      getgenv().HasSeen_Fire_AlertFlamesHub = false
+      local Amount = tonumber(split[1])
+      getgenv().HasSeen_Fire_AlertFlamesHub = getgenv().HasSeen_Fire_AlertFlamesHub or false
 
-      if getgenv().LocalPlayer:GetAttribute("is_verified") == false then
-         getgenv().notify("Warning", "[ALERT]: May not work!, you do not have premium!", 5)
-      elseif getgenv().LocalPlayer:GetAttribute("is_verified") == false and getgenv().Has_Free_LifePremium then
-         getgenv().notify("Warning", "[ALERT]: If you can see fire, it's probably visual (idk).", 5)
+      local isVerified = getgenv().LocalPlayer:GetAttribute("is_verified")
+      local hasFree = getgenv().Has_Free_LifePremium
+
+      if not isVerified and not hasFree then
+         return getgenv().notify("Error", "[ALERT]: Will not work! You do not have premium!", 5)
+      elseif not isVerified and hasFree then
+         getgenv().notify("Warning", "[ALERT]: If you can see fire, it's probably visual (others won't see it).", 5)
       end
 
       if getgenv().HasSeen_Fire_AlertFlamesHub then
          set_fire_amount_FE(Amount)
       else
          set_fire_amount_FE(Amount)
-         wait(0.1)
+         task.wait(0.1)
          getgenv().HasSeen_Fire_AlertFlamesHub = true
       end
-      wait(0.2)
-      for i = 1, Amount_Input do
+
+      task.wait(0.2)
+      for i = 1, Amount do
          getgenv().Send("request_fire")
       end
    elseif cmd == "startrgbtool" then
@@ -4807,6 +4811,16 @@ local function handleCommand(sender, message)
          show_notification("Error:", "Player does not exist!", "Error")
          return getgenv().notify("Error", "Player does not exist!", 5)
       end
+      
+      if getgenv().easy_click_plr then
+         if getgenv().Currently_Annoying_Player then
+            return getgenv().notify("Error", "You are already annoying: "..tostring(getgenv().Currently_Annoying_Player).."!", 5)
+         else
+            return getgenv().notify("Error", "You are already annoying a Player!", 5)
+         end
+      end
+      wait()
+      getgenv().Currently_Annoying_Player = Target.Name
       wait()
       getgenv().easy_click_plr = true
       while getgenv().easy_click_plr == true do
@@ -4818,12 +4832,26 @@ local function handleCommand(sender, message)
          getgenv().Send("end_call", Target)
       end
    elseif cmd == "freeemotes" or cmd == "freeemotesgui" or cmd == "allemotes" then
+      if getgenv().FreeEmotes_Enabled then
+         return getgenv().notify("Warning", "You already have Free Emotes loaded!", 5)
+      end
+      wait()
+      getgenv().FreeEmotes_Enabled = true
       loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
    elseif cmd == "allcars" or cmd == "allvehicles" or cmd == "listvehicles" then
       car_listing_gui()
    elseif cmd == "unannoy" then
+      if not getgenv().easy_click_plr then
+         return getgenv().notify("Error", "You do not have 'annoy PlayerName' enabled! usage: "..tostring(getgenv().AdminPrefix).."annoy PlayerName", 10)
+      end
+      wait()
+      getgenv().Currently_Annoying_Player = nil
       getgenv().easy_click_plr = false
    elseif cmd == "autolockcar" then
+      if getgenv().AutoLockOn then
+         return getgenv().notify("Error", "You already have 'AutoLockCar' enabled, disable it first!", 5)
+      end
+      wait()
       local RunService = getgenv().RunService
       getgenv().AutoLockConnection = nil
 
@@ -4861,6 +4889,11 @@ local function handleCommand(sender, message)
       wait(0.1)
       getgenv().ToggleAutoLock(true)
    elseif cmd == "unautolockcar" then
+      if not getgenv().ToggleAutoLock then return getgenv().notify("Error", "You have not enabled the 'AutoLockCar' command, function not found.", 5) end
+      if not getgenv().AutoLockOn then
+         return getgenv().notify("Error", "You do not have 'AutoLockCar' enabled!", 5)
+      end
+
       getgenv().ToggleAutoLock(false)
    elseif cmd == "noclip" then
       if getgenv().Noclip_Enabled then
