@@ -5939,7 +5939,7 @@ task.spawn(function()
       if success and latestVersionInfo then
          if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
             getgenv().ConstantUpdate_Checker_Live = false
-            Notify("UPDATED: Rejoin the game and the script will auto-execute (to update)!", 20)
+            Notify("[LIFE TOGETHER ADMIN]: There is an update pending, rejoin the game to update!", 20)
             break
          end
       end
