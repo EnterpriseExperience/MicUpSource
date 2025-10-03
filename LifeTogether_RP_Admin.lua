@@ -10,7 +10,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.0.1"
+local Raw_Version = "V4.0.2"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "If you want to input feedback for me (suggestions) do the command: 'feedback' and you can send feedback/suggestions for me! ADDED WALKFLING! (WORKING!)"
 task.wait(0.1)
@@ -1848,6 +1848,30 @@ if getgenv().ReplicatedStorage:FindFirstChild("GameAnalytics") then
 
    if GameAnalytics:FindFirstChild("GameAnalyticsClient") then
       GA_Client = GameAnalytics:FindFirstChild("GameAnalyticsClient")
+
+      if GA_Client then
+         GA_Client:Destroy()
+      end
+   end
+else
+   for service in pairs(GA_Directories) do
+      local service = getgenv().Game:GetService(service)
+
+      if service then
+         for _, descendant in ipairs(service:GetDescendants()) do
+            if descendant:IsA("ModuleScript") and descendant.Name:lower():find("GameAnalyticsClient") then
+               descendant:Destroy()
+            end
+         end
+      end
+   end
+end
+wait()
+if getgenv().ReplicatedStorage:FindFirstChild("GameAnalyticsRemoteTime") then
+   GameAnalytics = getgenv().ReplicatedStorage:FindFirstChild("GameAnalyticsRemoteTime")
+
+   if GameAnalytics:FindFirstChild("GameAnalyticsRemoteTime") then
+      GA_Client = GameAnalytics:FindFirstChild("GameAnalyticsRemoteTime")
 
       if GA_Client then
          GA_Client:Destroy()
@@ -5922,24 +5946,67 @@ task.spawn(function()
       end
    end
 end)
-task.wait(0.2)
-function Notify(message, duration)
-   local function safe_wrapper(S)
-      if cloneref then
-         return cloneref(game:GetService(S))
-      else
-         return game:GetService(S)
+wait()
+HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
+
+if HiddenUI then
+   for _, v in ipairs(HiddenUI:GetDescendants()) do
+      if v:IsA("Frame") and v.Name == "ResizeControls" and v.Parent.Name == "Main" then
+         if v.Parent.Parent:IsA("ScreenGui") then
+            getgenv().notify("Warning", "We know you're using Dex Explorer, this script is open source man!", 5)
+         else
+            getgenv().notify("Warning", "We can see you're using Dex Explorer, this script is open source man!", 5)
+         end
       end
    end
+else
+   for _, v in ipairs(getgenv().CoreGui:GetDescendants()) do
+      if v:IsA("Frame") and v.Name == "ResizeControls" and v.Parent.Name == "Main" then
+         if v.Parent.Parent:IsA("ScreenGui") then
+            getgenv().notify("Warning", "We know you're using Dex Explorer, this script is open source man!", 5)
+         else
+            getgenv().notify("Warning", "We can see you're using Dex Explorer, this script is open source man!", 5)
+         end
+      end
+   end
+end
 
-   local Players = safe_wrapper("Players")
-   local TweenService = safe_wrapper("TweenService")
-   local CoreGui = get_hidden_gui and get_hidden_gui() or gethui and gethui() or safe_wrapper("CoreGui")
+if getrawmetatable and (setreadonly or make_writeable) then
+   local mt = getrawmetatable(game)
+   local oldNamecall = mt.__namecall
+   local setreadonly = setreadonly or make_writeable
+   setreadonly(mt, false)
 
+   mt.__namecall = newcclosure(function(self, ...)
+      local method = getnamecallmethod()
+
+      if method == "FireServer" then
+         local okClass, className = pcall(function() return self.ClassName end)
+         if okClass and className == "RemoteEvent" then
+            local okName, name = pcall(function() return self.Name end)
+            if okName and type(name) == "string" then
+               name = name:lower()
+               if name:find("gameanalyticsremotetime") then
+                  return nil
+               end
+            end
+         end
+      end
+
+      local ok, ret = pcall(oldNamecall, self, ...)
+      if ok then return ret end
+      return nil
+   end)
+
+   setreadonly(mt, true)
+end
+
+task.wait(0.2)
+function Notify(message, duration)
    local NotificationGui = Instance.new("ScreenGui")
    NotificationGui.Name = "CustomErrorGui"
    NotificationGui.ResetOnSpawn = false
-   NotificationGui.Parent = CoreGui
+   NotificationGui.Parent = getgenv().CoreGui
    duration = duration or 5
 
    local Frame = Instance.new("Frame")
@@ -5982,15 +6049,15 @@ function Notify(message, duration)
    Frame.BackgroundTransparency = 1
    Icon.ImageTransparency = 1
    Label.TextTransparency = 1
-   TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
-   TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
-   TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+   getgenv().TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
+   getgenv().TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
+   getgenv().TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 
    task.delay(duration, function()
       if Frame and Frame.Parent then
-         TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-         TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
-         TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+         getgenv().TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+         getgenv().TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+         getgenv().TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
          task.wait(0.35)
          Frame:Destroy()
          NotificationGui:Destroy()
