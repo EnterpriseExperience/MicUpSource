@@ -467,7 +467,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.5.3-LIFE"
+local Script_Version = "2.5.4-LIFE"
 
 local function getExecutor()
     local name
@@ -831,6 +831,9 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	wait(0.3)
     getgenv().Humanoid.JumpHeight = 7
     getgenv().Is_Currently_Emoting = false
+    if getgenv().Not_Ever_Sitting then
+        getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+    end
     newCharacter:WaitForChild("Humanoid", 0.2).JumpHeight = 7
 	Dynamic_Character_Updater(newCharacter)
 end)
@@ -2879,6 +2882,7 @@ Callback = function(is_antisit_enabled)
 
         getgenv().notify("Success:", "Anti-Sit/No-Sit is now enabled!", 5)
         Phone.show_notification("Success:", "AntiSit/NoSit is now enabled!")
+        getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
         wait(0.2)
         while getgenv().Not_Ever_Sitting == true do
         task.wait()
@@ -2896,6 +2900,7 @@ Callback = function(is_antisit_enabled)
         getgenv().Not_Ever_Sitting = false
         wait(1)
         require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
+        getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
         wait(0.1)
         notify("Success:", "Sitting is now enabled!", 5)
         Phone.show_notification("Success:", "Sitting is now enabled!")
