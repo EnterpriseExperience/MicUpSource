@@ -10,7 +10,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.1.2"
+local Raw_Version = "V4.1.3"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "V4 IS HERE! Fixed 'Noclip' not turning off (default method, not my method anymore), added 'copyavatar' which is an FE avatar stealer (even if they have their setting off)."
 local displayTimeMax = 20
@@ -3870,6 +3870,8 @@ local function removePlayerFromScriptWhitelistTable(player)
    end
 end
 
+local Original_Age = getgenv().LocalPlayer:GetAttribute("age")
+wait(0.1)
 function copy_plr_avatar(Player)
    local Players = getgenv().Players
    getgenv().is_copying_avatar_already_flames = false
@@ -4027,6 +4029,13 @@ function copy_plr_avatar(Player)
          getgenv().notify("Warning", "Target has no assets or skin tone could not be read.", 4)
          getgenv().is_copying_avatar_already_flames = false
          return
+      end
+
+      local Age = target:GetAttribute("age")
+      if Age then
+         getgenv().Get("age", tostring(Age))
+      else
+         getgenv().Get("age", "adult")
       end
 
       getgenv().notify("Success", "Copying: " .. #accessories .. " assets from " .. target.Name, 5)
