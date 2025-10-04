@@ -218,6 +218,7 @@ end
 
 flames_api.Unfly = function()
 	if not getgenv().FlyEnabled then return end
+	
 	getgenv().FlyEnabled = false
 
 	for _, conn in pairs(FlyConnections) do
@@ -235,7 +236,7 @@ flames_api.Unfly = function()
 	end
 end
 
-flames_api.FindPlayer = function(arg)
+flames_api.FindPlayer = function(args)
 	local tbl = Players:GetPlayers()
 	local cmdlp = Players.LocalPlayer
 
@@ -375,9 +376,21 @@ flames_api.GoTo = function(playerArg)
 			flames_api.Character:PivotTo(TargetChar:GetPivot())
 		end
 	end)
+
 	if not success then
 		warn("[GoTo_Error]: " .. tostring(err))
 	end
+end
+
+flames_api.BypassAdonis = function()
+	if getgenv().AdonisBypass_Already_Loaded then
+		return 
+	end
+	wait()
+
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Adonis_Bypass_BACKUP.lua'))()
+	wait(0.2)
+	getgenv().AdonisBypass_Already_Loaded = true
 end
 
 flames_api.WalkSpeed = function(Speed)
