@@ -10,9 +10,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.0.8"
+local Raw_Version = "V4.1.2"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Re-added WalkFling, and fixed RunService error loops."
+local Announcement_Message = "V4 IS HERE! Fixed 'Noclip' not turning off (default method, not my method anymore), added 'copyavatar' which is an FE avatar stealer (even if they have their setting off)."
+local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -2770,7 +2771,7 @@ local function CommandsMenu()
    local mainFrame = Instance.new("Frame")
    mainFrame.Size = UDim2.new(0, 600, 0, 500)
    mainFrame.Position = UDim2.new(0.5, -300, 0.5, -250)
-   mainFrame.BackgroundColor3 = Color3.fromRGB(171, 95, 212)
+   mainFrame.BackgroundColor3 = Color3.fromRGB(75, 151, 75)
    mainFrame.BorderSizePixel = 0
    mainFrame.Active = true
    mainFrame.Draggable = true
@@ -2977,7 +2978,7 @@ local function CommandsMenu()
       label.BackgroundTransparency = 1
       label.Font = Enum.Font.GothamSemibold
       label.TextSize = 16
-      label.TextColor3 = Color3.new(0.8, 0.6, 0.15)
+      label.TextColor3 = Color3.new(0, 0, 0)
       label.TextXAlignment = Enum.TextXAlignment.Left
       label.Text = cmdText .. "\n" .. desc
       label.TextWrapped = true
@@ -3026,7 +3027,7 @@ function CreateCreditsLabel()
    label.AnchorPoint = Vector2.new(0.5, 1)
    label.Position = UDim2.new(0.5, 0, 1, -10)
    label.Size = UDim2.new(0.6, 0, 0, 28)
-   label.BackgroundColor3 = Color3.fromRGB(171, 95, 212)
+   label.BackgroundColor3 = Color3.fromRGB(75, 151, 75)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
    local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
    label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." on Discord. | Current Prefix: " .. prefix
@@ -3869,6 +3870,191 @@ local function removePlayerFromScriptWhitelistTable(player)
    end
 end
 
+function copy_plr_avatar(Player)
+   local Players = getgenv().Players
+   getgenv().is_copying_avatar_already_flames = false
+
+   local function getLocalAvatarAssets()
+      if not getgenv().Character then return {} end
+      local humanoid = getgenv().Humanoid or getgenv().Character:FindFirstChildOfClass("Humanoid")
+      if not humanoid then return {} end
+
+      local desc = humanoid:GetAppliedDescription()
+      local assets = {}
+
+      for _, acc in ipairs(desc:GetAccessories(true)) do
+         if acc.AssetId and acc.AssetId > 0 then
+            table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
+         end
+      end
+
+      if desc.Shirt > 0 then table.insert(assets, {id = desc.Shirt, type = "Shirt"}) end
+      if desc.Pants > 0 then table.insert(assets, {id = desc.Pants, type = "Pants"}) end
+      if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
+      if desc.Face > 0 then table.insert(assets, {id = desc.Face, type = "Face"}) end
+
+      for _, part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg"}) do
+         local assetId = desc[part]
+         if assetId and assetId > 0 then
+            table.insert(assets, {id = assetId, type = part})
+         end
+      end
+
+      for _, anim in ipairs({
+         "ClimbAnimation",
+         "FallAnimation",
+         "IdleAnimation",
+         "JumpAnimation",
+         "RunAnimation",
+         "SwimAnimation",
+         "WalkAnimation"
+      }) do
+         local animId = desc[anim]
+         if animId and animId > 0 then
+            table.insert(assets, {id = animId, type = anim})
+         end
+      end
+
+      return assets
+   end
+
+   local function clearAvatar()
+      local currentAssets = getLocalAvatarAssets()
+      if #currentAssets == 0 then
+         getgenv().notify("Warning", "LocalPlayer has no assets to clear.", 3)
+         return
+      end
+
+      for _, data in ipairs(currentAssets) do
+         local id, t = data.id, data.type
+         task.spawn(function()
+            local ok = pcall(function()
+               getgenv().Get("wear", id, t)
+            end)
+            if not ok then
+               getgenv().notify("Error", "Failed to clear asset "..tostring(id), 3)
+            end
+         end)
+         task.wait(0.4)
+      end
+
+      getgenv().notify("Success", "Cleared LocalPlayer avatar.", 3)
+   end
+
+   local function getAvatarAssets(player)
+      if not player.Character then return {}, nil, nil, nil end
+      local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+      if not humanoid then return {}, nil, nil, nil end
+
+      local desc = humanoid:GetAppliedDescription()
+      local assets = {}
+
+      for _, acc in ipairs(desc:GetAccessories(true)) do
+         if acc.AssetId and acc.AssetId > 0 then
+            table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
+         end
+      end
+
+      if desc.Shirt > 0 then table.insert(assets, {id = desc.Shirt, type = "Shirt"}) end
+      if desc.Pants > 0 then table.insert(assets, {id = desc.Pants, type = "Pants"}) end
+      if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
+      if desc.Face > 0 then table.insert(assets, {id = desc.Face, type = "Face"}) end
+
+      for _, part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg"}) do
+         local assetId = desc[part]
+         if assetId and assetId > 0 then
+            table.insert(assets, {id = assetId, type = part})
+         end
+      end
+
+      for _, anim in ipairs({
+         "ClimbAnimation",
+         "FallAnimation",
+         "IdleAnimation",
+         "JumpAnimation",
+         "RunAnimation",
+         "SwimAnimation",
+         "WalkAnimation"
+      }) do
+         local animId = desc[anim]
+         if animId and animId > 0 then
+            table.insert(assets, {id = animId, type = anim})
+         end
+      end
+
+      local skinTone = desc.HeadColor or Color3.new(1,1,1)
+      local height = desc.HeightScale or 1
+      local width = desc.WidthScale or 1
+
+      return assets, skinTone, height, width
+   end
+
+   local function wearAssets(tbl)
+      for _, data in ipairs(tbl) do
+         local id, t = data.id, data.type
+         task.spawn(function()
+            local ok = pcall(function()
+               getgenv().Get("wear", id, t)
+            end)
+            if not ok then
+               getgenv().notify("Error", "[Outfit Copier]: failed for: " .. tostring(id), 4)
+            end
+         end)
+         task.wait(0.2)
+      end
+   end
+
+   local function copyAvatar(targetName)
+      if getgenv().is_copying_avatar_already_flames then
+         return getgenv().notify("Warning", "Please wait, process still running.", 4)
+      end
+
+      getgenv().is_copying_avatar_already_flames = true
+
+      local target = targetName
+      if not target then
+         getgenv().notify("Warning", "Could not find target player: " .. tostring(targetName), 4)
+         getgenv().is_copying_avatar_already_flames = false
+         return
+      end
+
+      clearAvatar()
+
+      task.wait(0.4)
+
+      local accessories, skinTone, height, width = getAvatarAssets(target)
+      if #accessories == 0 and not skinTone then
+         getgenv().notify("Warning", "Target has no assets or skin tone could not be read.", 4)
+         getgenv().is_copying_avatar_already_flames = false
+         return
+      end
+
+      getgenv().notify("Success", "Copying: " .. #accessories .. " assets from " .. target.Name, 5)
+      wearAssets(accessories)
+
+      if skinTone then
+         getgenv().Send("skin_tone", skinTone)
+         getgenv().notify("Success", "Applied skin tone", 3)
+      end
+
+      if height then
+         getgenv().Send("body_scale", "HeightScale", height * 100)
+         getgenv().notify("Success", "Applied height scale", 3)
+      end
+
+      if width then
+         getgenv().Send("body_scale", "WidthScale", width * 100)
+         getgenv().notify("Success", "Applied width scale", 3)
+      end
+
+      task.wait(0.6)
+      getgenv().is_copying_avatar_already_flames = false
+      getgenv().notify("Success", "Avatar copy process finished.", 4)
+   end
+
+   copyAvatar(Player)
+end
+
 function annoyance_GUI()
    local Players = getgenv().Players
    local LocalPlayer = getgenv().LocalPlayer
@@ -4628,7 +4814,7 @@ TweenService:Create(label, appearInfo, {TextTransparency = 0}):Play()
 shadow.Visible = false
 TweenService:Create(shadow, appearInfo, {ImageTransparency = 0.8}):Play()
 
-local displayTime = 10
+local displayTime = displayTimeMax
 delay(displayTime, function()
    local fadeInfo = TweenInfo.new(0.45, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
    local t1 = TweenService:Create(frame, fadeInfo, {BackgroundTransparency = 1})
@@ -5026,6 +5212,15 @@ local function handleCommand(sender, message)
       end
 
       getgenv().ToggleAutoLock(false)
+   elseif cmd == "copyavatar" or cmd == "copy" or cmd == "copyav" or cmd == "copyava" then
+      local Target = findplr(split[1])
+      if not Target then return getgenv().notify("Error", "That player doesn't exist in this game!", 5) end
+      
+      if getgenv().is_copying_avatar_already_flames then
+         return getgenv().notify("Warning", "Copy avatar is already running!, wait a moment, until it's done.", 5)
+      end
+
+      copy_plr_avatar(Target)
    elseif cmd == "noclip" then
       if getgenv().Noclip_Enabled then
          return getgenv().notify("Error", "NoClip is already enabled!", 5)
