@@ -5111,7 +5111,7 @@ local function handleCommand(sender, message)
       do_emote("billybounce")
    elseif cmd == "billyjean" then
       do_emote("billyjean")
-   elseif cmd == "michaelbounce" or cmd == "michaelmyers" or cmd == "jiggybounce" or cmd == "michmyers" or cmd == "myersbounce" or cmd == "michaeldance" then
+   elseif cmd == "michaelbounce" or cmd == "michaelmyers" or cmd == "jiggybounce" or cmd == "michmyers" or cmd == "myersbounce" or cmd == "michaeldance" or cmd == "michealmyers" or cmd == "michealbounce" then
       do_emote("michaelmyers")
    elseif cmd == "sturdy" or cmd == "nysturdy" then
       do_emote("sturdy")
