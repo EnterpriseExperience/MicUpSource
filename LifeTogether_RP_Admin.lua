@@ -10,7 +10,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.0.7"
+local Raw_Version = "V4.0.8"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Re-added WalkFling, and fixed RunService error loops."
 task.wait(0.1)
@@ -2119,9 +2119,9 @@ getgenv().spamming_flames = function(toggle)
          end)
       end
    elseif toggle == false then
-      --[[if not getgenv().SpamFire then
-         return getgenv().notify and getgenv().notify("Error", "Flame spam is not enabled!", 5)
-      end--]]
+      if not getgenv().SpamFire then
+         return getgenv().notify("Error", "Flame spammer is not enabled!", 5)
+      end
 
       getgenv().SpamFire = false
       getgenv().CompletelyHideFlamesComingIn(false)
@@ -2135,6 +2135,10 @@ local speed = 75
 local FlyKeysDown = {}
 
 function DisableFlyScript()
+   if not getgenv().HD_FlyEnabled then
+      return getgenv().notify("Warning", "Fly is not enabled!", 5)
+   end
+
    getgenv().HD_FlyEnabled = false
 
    if FlyConnection then
@@ -2629,6 +2633,10 @@ function EnableFly(speed)
    local RunService = getgenv().RunService
    local UIS = getgenv().UserInputService
    speed = tonumber(speed) or 125
+
+   if getgenv().HD_FlyEnabled then
+      return getgenv().notify("Warning", "Fly is already enabled!", 5)
+   end
 
    if not (HRP and Humanoid and Camera) then return end
 
@@ -4670,8 +4678,16 @@ local function handleCommand(sender, message)
    end
 
    if cmd == "startrgbcar" then
+      if getgenv().Rainbow_Vehicle then
+         return getgenv().notify("Warning", "RGB vehicle is already enabled!", 5)
+      end
+
       rainbow_car()
    elseif cmd == "stoprgbcar" then
+      if not getgenv().Rainbow_Vehicle then
+         return getgenv().notify("Warning", "RGB vehicle is not enabled!", 5)
+      end
+
       stop_rainbow_car()
    elseif cmd == "startrgbskin" then
       rainbow_skin(true)
@@ -4743,6 +4759,10 @@ local function handleCommand(sender, message)
 
       disable_rgb_for(PlayerToRGBCarStop)
    elseif cmd == "alljobs" then
+      if getgenv().Every_Job then
+         return getgenv().notify("Warning", "Job spammer is already enabled! disable it first.", 5)
+      end
+
       getgenv().Every_Job = true
       while getgenv().Every_Job == true do
       task.wait(0)
@@ -4777,18 +4797,38 @@ local function handleCommand(sender, message)
          getgenv().Send("job")
       end
    elseif cmd == "jobsoff" then
+      if not getgenv().Every_Job then
+         return getgenv().notify("Warning", "Job spammer is not enabled! enable it first.", 5)
+      end
+
       getgenv().Every_Job = false
    elseif cmd == "stoprgbskin" then
       rainbow_skin(false)
    elseif cmd == "startrgbphone" then
+      if getgenv().RGB_Rainbow_Phone then
+         return getgenv().notify("Warning", "RGB Phone is already enabled!", 5)
+      end
+
       RGB_Phone(true)
    elseif cmd == "stoprgbphone" then
+      if not getgenv().RGB_Rainbow_Phone then
+         return getgenv().notify("Warning", "RGB Phone is not enabled!", 5)
+      end
+
       RGB_Phone(false)
    elseif cmd == "inject" or cmd == "attach" then
       attach_with_script()
    elseif cmd == "flashsigntext" or cmd == "fastsigntext" or cmd == "startsignspam" then
+      if getgenv().ToolChanger_FE then
+         return getgenv().notify("Warning", "Sign spammer is already enabled! disable it first.", 5)
+      end
+
       spam_sign_text(true)
    elseif cmd == "noflashsigntext" or cmd == "unfastsigntext" or cmd == "stopsignspam" then
+      if not getgenv().ToolChanger_FE then
+         return getgenv().notify("Warning", "Sign spammer is not enabled! enable it first.", 5)
+      end
+
       spam_sign_text(false)
    elseif cmd == "name" then
       local new_name = table.concat(split, " ")
