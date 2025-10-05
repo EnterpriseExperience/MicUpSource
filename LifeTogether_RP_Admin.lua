@@ -1,3 +1,4 @@
+-- [[ This file is quite huge, so if you get a PARSER LOCAL LIMIT, don't be so surprised. ]] --
 getgenv().Game = game
 if not game:IsLoaded() then
    game.Loaded:Wait()
@@ -10,9 +11,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.1.3"
+local Raw_Version = "V4.1.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "V4 IS HERE! Fixed 'Noclip' not turning off (default method, not my method anymore), added 'copyavatar' which is an FE avatar stealer (even if they have their setting off)."
+local Announcement_Message = "Improved 'copyavatar' command, so now it also makes you the age the Target Player is, and the height/width, and if you have some of the items already, it'll just add onto it instead of wiping your avatar clean each time."
 local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -4020,26 +4021,42 @@ function copy_plr_avatar(Player)
          return
       end
 
-      clearAvatar()
+      local localAssets = getLocalAvatarAssets()
+      local targetAssets, skinTone, height, width = getAvatarAssets(target)
 
-      task.wait(0.4)
-
-      local accessories, skinTone, height, width = getAvatarAssets(target)
-      if #accessories == 0 and not skinTone then
+      if #targetAssets == 0 and not skinTone then
          getgenv().notify("Warning", "Target has no assets or skin tone could not be read.", 4)
          getgenv().is_copying_avatar_already_flames = false
          return
       end
 
-      local Age = target:GetAttribute("age")
-      if Age then
-         getgenv().Get("age", tostring(Age))
-      else
-         getgenv().Get("age", "adult")
+      local localAssetIds = {}
+      for _, a in ipairs(localAssets) do
+         localAssetIds[a.id] = true
       end
 
-      getgenv().notify("Success", "Copying: " .. #accessories .. " assets from " .. target.Name, 5)
-      wearAssets(accessories)
+      local missingAssets = {}
+      for _, b in ipairs(targetAssets) do
+         if not localAssetIds[b.id] then
+            table.insert(missingAssets, b)
+         end
+      end
+
+      if #missingAssets == #targetAssets then
+         clearAvatar()
+         task.wait(0.4)
+      else
+         if #missingAssets == 0 then
+            getgenv().notify("Info", "Already wearing all target assets.", 3)
+            getgenv().is_copying_avatar_already_flames = false
+            return
+         else
+            getgenv().notify("Info", "Detected "..tostring(#missingAssets).." missing assets, applying only those.", 4)
+         end
+      end
+
+      getgenv().notify("Success", "Copying: " .. #missingAssets .. " assets from " .. target.Name, 5)
+      wearAssets(missingAssets)
 
       if skinTone then
          getgenv().Send("skin_tone", skinTone)
@@ -4055,6 +4072,14 @@ function copy_plr_avatar(Player)
          getgenv().Send("body_scale", "WidthScale", width * 100)
          getgenv().notify("Success", "Applied width scale", 3)
       end
+
+      local Age = target:GetAttribute("age")
+      if Age then
+         getgenv().Get("age", tostring(Age))
+      else
+         getgenv().Get("age", "adult")
+      end
+      getgenv().notify("Success", "Applied age attribute", 3)
 
       task.wait(0.6)
       getgenv().is_copying_avatar_already_flames = false
@@ -4913,6 +4938,10 @@ local function handleCommand(sender, message)
          return getgenv().notify("Error", "Player is not your friend, add them to use this!", 5)
       end
 
+      if not PlayerToRGBCar then
+         return getgenv().notify("Error", "Player has magically disappeared.", 5)
+      end
+
       if getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] then
          return getgenv().notify("Error", "Player already has they're car rainbow!", 5)
       end
@@ -4937,9 +4966,14 @@ local function handleCommand(sender, message)
 
       while getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] do
          task.wait(.2)
-         for _, color in ipairs(colors) do
-            task.wait(.2)
-            change_vehicle_color(color, get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]))
+         if PlayerToRGBCar then
+            for _, color in ipairs(colors) do
+               task.wait(.2)
+               change_vehicle_color(color, get_other_vehicle(getgenv().Players[PlayerToRGBCar.Name]))
+            end
+         else
+            getgenv().Rainbow_Vehicles[PlayerToRGBCar.Name] = nil
+            return getgenv().notify("Error", "Player must have left the game.", 5)
          end
       end
    elseif cmd == "norainbowcar" then
