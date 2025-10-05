@@ -1,6 +1,8 @@
-if game.PlaceId ~= 54865335 then return warn("Not the right game lil bro.") end
-
 getgenv().Game = game
+local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+wait()
+if getgenv().Game.PlaceId ~= 54865335 then return NotifyLib:External_Notification("Error", "This script doesn't run outside of Ultimate Driving!", 7) end
+
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
 
@@ -733,7 +735,7 @@ local function write_error_log_file(filepath, new_error)
 end
 
 if isfile("UltimateDriving_ErrorLog.txt") then
-    warn("Skipping writefile error log part...")
+    getgenv().notify("Success", "Skipping writefile error log part (already created).", 5)
 else
     write_error_log_file("UltimateDriving_ErrorLog.txt", "[]")
 end
@@ -800,19 +802,6 @@ end
 
 local randomly_selected_vehicle = get_random_vehicle()
 
-local Vehicle = retrieve_vehicle()
-local Vehicle_Name
-if not Vehicle then
-    spawn_vehicle(randomly_selected_vehicle)
-    Vehicle = retrieve_vehicle()
-    task.wait(0.5)
-    Vehicle_Name = Vehicle.Name
-else
-    math.randomseed(tick())
-    Vehicle = Vehicle
-    Vehicle_Name = Vehicle.Name
-end
-
 local function LocalPlayer_loaded()
     local player = Players.LocalPlayer
     if not player then
@@ -863,7 +852,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Ultimate Driving ✅ | 1.2.6 | "..tostring(executor_Name),
+        Name = "✅ Ultimate Driving ✅ | 1.3.0 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "Ultimate Driving | Hub.",
         ConfigurationSaving = {
@@ -892,21 +881,14 @@ else
 end
 wait(1)
 getgenv().notify = function(title, content, duration)
-    Rayfield:Notify({
-        Title = tostring(title),
-        Content = tostring(content),
-        Duration = tonumber(duration),
-        Image = 93594537601787,
-        Actions = {
-            Ignore = {
-                Name = "Okay.",
-                Callback = function() 
-                    print("...") 
-                end
-            },
-        },
-    })
+    if title ~= "Error" or title ~= "Success" or title ~= "Warning" then
+        title = "Warning"
+    end
+    wait()
+    NotifyLib:External_Notification(title, tostring(content), tonumber(duration))
 end
+wait(0.1)
+getgenv().notify("Success", "We are very much back, we apologize for before! WELCOME BACK!", 5)
 task.wait(1)
 local Tab1 = Window:CreateTab("🏡 Main 🏡", 0)
 local Section1 = Tab1:CreateSection("| 🏡 Main 🏡 |")
@@ -1666,13 +1648,17 @@ Callback = function(is_pvp_on)
 end,})
 wait(0.3)
 if Old_PVP_Enabled == true then
-    warn("PVP was enabled before, re-enabling...")
+    getgenv().notify("Warning", "PVP was enabled before, re-enabling...", 5)
     getgenv().PvPSetting:Set(true)
     getgenv().Character:SetAttribute("PVPDamageEnabled", true)
+    wait()
+    getgenv().notify("Success", "Enabled PVP state.", 5)
 else
-    warn("PVP was disabled before, disabling...")
+    getgenv().notify("Warning", "PVP was disabled before, disabling...", 5)
     getgenv().PvPSetting:Set(false)
     getgenv().Character:SetAttribute("PVPDamageEnabled", false)
+    wait()
+    getgenv().notify("Success", "Disabled PVP state.", 5)
 end
 
 getgenv().LoopKill_Plr = Tab5:CreateInput({
@@ -1998,16 +1984,6 @@ end,})
 
 if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
     if not string.find(executor_Name, "JJSploit") then
-        local current_vehicle = retrieve_vehicle()
-        if not current_vehicle then
-            spawn_vehicle(randomly_selected_vehicle)
-        end
-        local Chassis_Core = current_vehicle:FindFirstChild("Chassis: Core")
-        local Tuning_Components_Folder = Chassis_Core:FindFirstChild("Tuning Components")
-        local Engine_Module_Script = require(Tuning_Components_Folder:FindFirstChild("Engine"))
-
-        Engine_Module_Script.Enabled = true
-        task.wait(0.3)
         getgenv().Mod_Engine_HorsePower = Tab1:CreateSlider({
         Name = "HorsePower",
         Range = {5, 750},
@@ -2017,6 +1993,9 @@ if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
         Flag = "EngineHorsepowerModifier",
         Callback = function(Desired_Horsepower)
             local current_vehicle = retrieve_vehicle()
+            local Chassis_Core = retrieve_vehicle():FindFirstChild("Chassis: Core")
+            local Tuning_Components_Folder = Chassis_Core:FindFirstChild("Tuning Components")
+            local Engine_Module_Script = require(Tuning_Components_Folder:FindFirstChild("Engine"))
 
             if current_vehicle then
                 Engine_Module_Script.Horsepower = Desired_Horsepower
@@ -2032,6 +2011,9 @@ if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
         Flag = "EnginePeakRPMModifier",
         Callback = function(Desired_PeakRPM)
             local current_vehicle = retrieve_vehicle()
+            local Chassis_Core = retrieve_vehicle():FindFirstChild("Chassis: Core")
+            local Tuning_Components_Folder = Chassis_Core:FindFirstChild("Tuning Components")
+            local Engine_Module_Script = require(Tuning_Components_Folder:FindFirstChild("Engine"))
 
             if current_vehicle then
                 Engine_Module_Script.PeakRPM = Desired_PeakRPM
@@ -2047,6 +2029,10 @@ if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
         Flag = "EngineBrakingModifier",
         Callback = function(Desired_BrakePower)
             local current_vehicle = retrieve_vehicle()
+            local current_vehicle = retrieve_vehicle()
+            local Chassis_Core = retrieve_vehicle():FindFirstChild("Chassis: Core")
+            local Tuning_Components_Folder = Chassis_Core:FindFirstChild("Tuning Components")
+            local Engine_Module_Script = require(Tuning_Components_Folder:FindFirstChild("Engine"))
 
             if current_vehicle then
                 Engine_Module_Script.Braking = Desired_BrakePower
@@ -2062,6 +2048,10 @@ if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
         Flag = "EngineRevAccelModifier",
         Callback = function(Desired_RevAccel)
             local current_vehicle = retrieve_vehicle()
+            local current_vehicle = retrieve_vehicle()
+            local Chassis_Core = retrieve_vehicle():FindFirstChild("Chassis: Core")
+            local Tuning_Components_Folder = Chassis_Core:FindFirstChild("Tuning Components")
+            local Engine_Module_Script = require(Tuning_Components_Folder:FindFirstChild("Engine"))
 
             if current_vehicle then
                 Engine_Module_Script.RevAccel = Desired_RevAccel
@@ -2077,6 +2067,10 @@ if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
         Flag = "EngineThrottleAccelModifier",
         Callback = function(Desired_ThrotAccel)
             local current_vehicle = retrieve_vehicle()
+            local current_vehicle = retrieve_vehicle()
+            local Chassis_Core = retrieve_vehicle():FindFirstChild("Chassis: Core")
+            local Tuning_Components_Folder = Chassis_Core:FindFirstChild("Tuning Components")
+            local Engine_Module_Script = require(Tuning_Components_Folder:FindFirstChild("Engine"))
 
             if current_vehicle then
                 Engine_Module_Script.ThrotAccel = Desired_ThrotAccel
@@ -2092,6 +2086,10 @@ if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
         Flag = "EngineCurveMultiplierModifier",
         Callback = function(Desired_CurveMult)
             local current_vehicle = retrieve_vehicle()
+            local current_vehicle = retrieve_vehicle()
+            local Chassis_Core = retrieve_vehicle():FindFirstChild("Chassis: Core")
+            local Tuning_Components_Folder = Chassis_Core:FindFirstChild("Tuning Components")
+            local Engine_Module_Script = require(Tuning_Components_Folder:FindFirstChild("Engine"))
 
             if current_vehicle then
                 Engine_Module_Script.CurveMult = Desired_CurveMult
