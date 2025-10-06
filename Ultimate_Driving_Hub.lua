@@ -3,6 +3,14 @@ local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubuserconte
 wait()
 if getgenv().Game.PlaceId ~= 54865335 then return NotifyLib:External_Notification("Error", "This script doesn't run outside of Ultimate Driving!", 7) end
 
+getgenv().notify = function(title, content, duration)
+    if title ~= "Error" or title ~= "Success" or title ~= "Warning" then
+        title = "Warning"
+    end
+    wait()
+    NotifyLib:External_Notification(title, tostring(content), tonumber(duration))
+end
+
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
 
@@ -878,14 +886,6 @@ if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     })
 else
     warn("[CRITICAL_ERROR]: Rayfield failed to load or is not valid. Returned:", Rayfield)
-end
-wait(1)
-getgenv().notify = function(title, content, duration)
-    if title ~= "Error" or title ~= "Success" or title ~= "Warning" then
-        title = "Warning"
-    end
-    wait()
-    NotifyLib:External_Notification(title, tostring(content), tonumber(duration))
 end
 wait(0.1)
 getgenv().notify("Success", "We are very much back, we apologize for before! WELCOME BACK!", 5)
