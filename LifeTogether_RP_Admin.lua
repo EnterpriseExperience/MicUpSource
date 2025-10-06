@@ -2862,6 +2862,7 @@ local function CommandsMenu()
    local cmdsString = [[
       {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle)
       {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
+      {prefix}feedback - Gives you a menu to be able to send me feedback for the script.
       {prefix}infyield - Executes Infinite Premium (my Infinite Yield)
       {prefix}spawnfire NUMBER - Spawns fire with a specified number argument.
       {prefix}rainbowcar player - Makes a players car RGB (FE).
