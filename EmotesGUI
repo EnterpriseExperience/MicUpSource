@@ -49,6 +49,8 @@ BackFrame.SizeConstraint = Enum.SizeConstraint.RelativeYY
 BackFrame.BackgroundTransparency = 1
 BackFrame.BorderSizePixel = 0
 BackFrame.Parent = ScreenGui
+wait()
+getgenv().FreeEmotes_GUI = ScreenGui
 
 local EmoteName = Instance.new("TextLabel")
 EmoteName.Name = "EmoteName"
