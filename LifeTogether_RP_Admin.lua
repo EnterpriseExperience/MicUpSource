@@ -11,9 +11,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.1.6"
+local Raw_Version = "V4.1.9"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Improved 'copyavatar' command, so now it also makes you the age the Target Player is, and the height/width, and if you have some of the items already, it'll just add onto it instead of wiping your avatar clean each time."
+local Announcement_Message = "Special thanks to someone for reporting an error that must have been here for a while, allowing you to put white spaces in your prefix, it's fixed."
 local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -4875,6 +4875,34 @@ delay(displayTime, function()
    end)
 end)
 
+pcall(function()
+   getgenv().LocalPlayer:SetSuperSafeChat(false)
+   getgenv().LocalPlayer.CameraMaxZoomDistance = 100000
+   getgenv().LocalPlayer.CameraMinZoomDistance = 0.5
+   wait()
+   if getgenv().LocalPlayer.CameraMinZoomDistance > 90000 then
+      getgenv().notify("Success", "Set CameraMaxZoomDistance to: "..tostring(getgenv().LocalPlayer.CameraMaxZoomDistance), 7)
+   else
+      getgenv().notify("Warning", "We we're not able to correctly set CameraMaxZoomDistance!", 5)
+   end
+   if getgenv().LocalPlayer.CameraMinZoomDistance < 5 then
+      getgenv().notify("Success", "Set CameraMinZoomDistance to: "..tostring(getgenv().LocalPlayer.CameraMinZoomDistance), 7)
+   else
+      getgenv().notify("Warning", "We we're not able to correctly set CameraMinZoomDistance!", 5)
+   end
+   wait(0.1)
+   if getgenv().StarterPlayer.CharacterUseJumpPower then
+      getgenv().Humanoid.JumpPower = 50
+      getgenv().notify("Success", "Spoofed JumpPower to: "..tostring(getgenv().Humanoid.JumpPower))
+   else
+      getgenv().Humanoid.JumpHeight = 7
+      getgenv().notify("Success", "Spoofed JumpHeight to: "..tostring(getgenv().Humanoid.JumpHeight))
+   end
+   getgenv().StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
+   getgenv().StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+   getgenv().notify("Success", "Enabled Leaderboard and Backpack.", 5)
+end)
+
 local function handleCommand(sender, message)
    if not Admins[sender.Name] then return end
 
@@ -4899,11 +4927,17 @@ local function handleCommand(sender, message)
    getgenv().Noclip_Connection = nil
    local Clip = false
 
-   if cmd == "prefix" and split[1] then
-      getgenv().AdminPrefix = split[1]
-      savePrefix(getgenv().AdminPrefix)
+   if cmd == "prefix" then
+      local new_prefix = tostring(split[1] or ""):gsub("%s+", "") -- strip white spaces correctly, ensuring the user doesn't try and put random spaces for some reason.
+
+      -- Yes, I know, finally add a check for the Prefix command, to ensure you're not able to set a blank prefix, or one with any white spaces at all.
+      if new_prefix == "" then
+         return getgenv().notify("Error", "Invalid prefix! It cannot be empty.", 5) -- return notify the user, since they probably won't get it otherwise.
+      end
+      getgenv().AdminPrefix = new_prefix
+      savePrefix(getgenv().AdminPrefix) -- then if it is ACTUALLY correct, THEN we can set it, finally (save it as well, of course).
       wait(0.1)
-      getgenv().notify("Success", "Prefix has been changed to '" .. split[1] .. "'", 5)
+      getgenv().notify("Success", "Prefix has been changed to '" .. new_prefix .. "'", 5)
       return 
    end
 
