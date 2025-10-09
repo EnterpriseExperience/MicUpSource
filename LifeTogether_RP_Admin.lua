@@ -17,7 +17,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.2.9"
+local Raw_Version = "V4.3.0"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Added an auto-fixer for the commands menu (incase it doesn't show up), and finally fixed ToolTip (hover over a command to see what it does), if your Prefix is actually broken, it'll auto-fix it for you."
 local displayTimeMax = 20
@@ -3010,115 +3010,117 @@ local function CommandsMenu()
    cmdsString = string.gsub(cmdsString, "{prefix}", currentPrefix)
 
    for line in string.gmatch(cmdsString, "[^\r\n]+") do
-      local cmdText, desc = string.match(line, "^(.-)%s*%-+%s*(.+)$")
-      cmdText = cmdText or line
-      desc = desc or ""
+      line = line:match("^%s*(.-)%s*$")
+      if line ~= "" then
+         local parts = string.split(line, " - ")
+         local cmdText = parts[1] or line
+         local desc = parts[2] or ""
 
-      local frame = Instance.new("Frame")
-      frame.Size = UDim2.new(1, -10, 0, 60)
-      frame.BackgroundTransparency = 1
-      frame.Parent = scrollFrame
+         local frame = Instance.new("Frame")
+         frame.Size = UDim2.new(1, -10, 0, 60)
+         frame.BackgroundTransparency = 1
+         frame.Parent = scrollFrame
 
-      local label = Instance.new("TextLabel")
-      label.AutomaticSize = Enum.AutomaticSize.Y
-      label.Size = UDim2.new(1, -110, 0, 20)
-      label.Position = UDim2.new(0, 0, 0, 0)
-      label.BackgroundTransparency = 1
-      label.Font = Enum.Font.GothamSemibold
-      label.TextSize = 15
-      label.TextColor3 = Color3.fromRGB(0, 0, 0)
-      label.TextXAlignment = Enum.TextXAlignment.Left
-      label.TextYAlignment = Enum.TextYAlignment.Top
-      label.TextWrapped = true
-      label.TextScaled = false
-      label.RichText = true
-      label.Text = tostring(cmdText)
-      label.Parent = frame
+         local label = Instance.new("TextLabel")
+         label.AutomaticSize = Enum.AutomaticSize.Y
+         label.Size = UDim2.new(1, -110, 0, 20)
+         label.Position = UDim2.new(0, 0, 0, 0)
+         label.BackgroundTransparency = 1
+         label.Font = Enum.Font.GothamSemibold
+         label.TextSize = 15
+         label.TextColor3 = Color3.fromRGB(0, 0, 0)
+         label.TextXAlignment = Enum.TextXAlignment.Left
+         label.TextYAlignment = Enum.TextYAlignment.Top
+         label.TextWrapped = true
+         label.TextScaled = false
+         label.RichText = true
+         label.Text = cmdText
+         label.Parent = frame
 
-      local button = Instance.new("TextButton")
-      button.Size = UDim2.new(0, 100, 0, 30)
-      button.Position = UDim2.new(1, -100, 0, 15)
-      button.Text = "Run"
-      button.Font = Enum.Font.GothamBold
-      button.TextSize = 14
-      button.TextColor3 = Color3.new(1, 1, 1)
-      button.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
-      button.Parent = frame
+         local button = Instance.new("TextButton")
+         button.Size = UDim2.new(0, 100, 0, 30)
+         button.Position = UDim2.new(1, -100, 0, 15)
+         button.Text = "Run"
+         button.Font = Enum.Font.GothamBold
+         button.TextSize = 14
+         button.TextColor3 = Color3.new(1, 1, 1)
+         button.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+         button.Parent = frame
+         Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
 
-      Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+         local commandToSend = cmdText
+         local TweenService = getgenv().TweenService
+         local UserInputService = getgenv().UserInputService
 
-      local commandToSend = cmdText
-      local TweenService = getgenv().TweenService
-      local UserInputService = getgenv().UserInputService
+         local tooltipGui = Instance.new("ScreenGui")
+         tooltipGui.Name = "AdminTooltipUI"
+         tooltipGui.ResetOnSpawn = false
+         tooltipGui.IgnoreGuiInset = true
+         tooltipGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+         tooltipGui.DisplayOrder = 9999
+         tooltipGui.Parent = CoreGui
+         wait()
+         local tooltip = Instance.new("TextLabel")
+         tooltip.Name = "CommandTooltip"
+         tooltip.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+         tooltip.TextColor3 = Color3.new(1, 1, 1)
+         tooltip.Font = Enum.Font.GothamSemibold
+         tooltip.TextSize = 14
+         tooltip.TextWrapped = true
+         tooltip.AutomaticSize = Enum.AutomaticSize.XY
+         tooltip.BackgroundTransparency = 0.2
+         tooltip.Visible = false
+         tooltip.ZIndex = 10000
+         tooltip.AnchorPoint = Vector2.new(0, 1)
+         tooltip.Position = UDim2.new(0, 0, 0, 0)
+         tooltip.Parent = tooltipGui
 
-      local tooltipGui = Instance.new("ScreenGui")
-      tooltipGui.Name = "AdminTooltipUI"
-      tooltipGui.ResetOnSpawn = false
-      tooltipGui.IgnoreGuiInset = true
-      tooltipGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-      tooltipGui.DisplayOrder = 9999
-      tooltipGui.Parent = CoreGui
-      wait()
-      local tooltip = Instance.new("TextLabel")
-      tooltip.Name = "CommandTooltip"
-      tooltip.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-      tooltip.TextColor3 = Color3.new(1, 1, 1)
-      tooltip.Font = Enum.Font.GothamSemibold
-      tooltip.TextSize = 14
-      tooltip.TextWrapped = true
-      tooltip.AutomaticSize = Enum.AutomaticSize.XY
-      tooltip.BackgroundTransparency = 0.2
-      tooltip.Visible = false
-      tooltip.ZIndex = 10000
-      tooltip.AnchorPoint = Vector2.new(0, 1)
-      tooltip.Position = UDim2.new(0, 0, 0, 0)
-      tooltip.Parent = tooltipGui
+         local corner = Instance.new("UICorner", tooltip)
+         corner.CornerRadius = UDim.new(0, 6)
+         local padding = Instance.new("UIPadding", tooltip)
+         padding.PaddingLeft = UDim.new(0, 6)
+         tooltip.TextYAlignment = Enum.TextYAlignment.Top
 
-      local corner = Instance.new("UICorner", tooltip)
-      corner.CornerRadius = UDim.new(0, 6)
-      local padding = Instance.new("UIPadding", tooltip)
-      padding.PaddingLeft = UDim.new(0, 6)
-      tooltip.TextYAlignment = Enum.TextYAlignment.Top
+         local mousePos = Vector2.new()
+         getgenv().UserInputService.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+               mousePos = Vector2.new(input.Position.X, input.Position.Y)
+            end
+         end)
 
-      local mousePos = Vector2.new()
-      getgenv().UserInputService.InputChanged:Connect(function(input)
-         if input.UserInputType == Enum.UserInputType.MouseMovement then
-            mousePos = Vector2.new(input.Position.X, input.Position.Y)
+         local runService = getgenv().RunService
+         runService.RenderStepped:Connect(function()
+            if tooltip.Visible then
+               tooltip.Position = UDim2.fromOffset(mousePos.X + 15, mousePos.Y - 10)
+            end
+         end)
+
+         local function showTooltip()
+            tooltip.Text = desc
+            tooltip.Visible = true
+            TweenService:Create(tooltip, TweenInfo.new(0.15), {BackgroundTransparency = 0.15, TextTransparency = 0}):Play()
          end
-      end)
 
-      local runService = getgenv().RunService
-      runService.RenderStepped:Connect(function()
-         if tooltip.Visible then
-            tooltip.Position = UDim2.fromOffset(mousePos.X + 15, mousePos.Y - 10)
+         local function hideTooltip()
+            TweenService:Create(tooltip, TweenInfo.new(0.15), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+            task.delay(0.15, function()
+               if tooltip.BackgroundTransparency >= 0.99 then
+                  tooltip.Visible = false
+               end
+            end)
          end
-      end)
 
-      local function showTooltip()
-         tooltip.Text = desc
-         tooltip.Visible = true
-         TweenService:Create(tooltip, TweenInfo.new(0.15), {BackgroundTransparency = 0.15, TextTransparency = 0}):Play()
-      end
+         label.MouseEnter:Connect(showTooltip)
+         label.MouseLeave:Connect(hideTooltip)
+         button.MouseEnter:Connect(showTooltip)
+         button.MouseLeave:Connect(hideTooltip)
 
-      local function hideTooltip()
-         TweenService:Create(tooltip, TweenInfo.new(0.15), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
-         task.delay(0.15, function()
-            if tooltip.BackgroundTransparency >= 0.99 then
-               tooltip.Visible = false
+         button.MouseButton1Click:Connect(function()
+            if channel then
+               channel:SendAsync(commandToSend)
             end
          end)
       end
-
-      label.MouseEnter:Connect(showTooltip)
-      label.MouseLeave:Connect(hideTooltip)
-      button.MouseEnter:Connect(showTooltip)
-      button.MouseLeave:Connect(hideTooltip)
-
-      button.MouseButton1Click:Connect(function()
-         if channel then
-            channel:SendAsync(commandToSend)
-         end
-      end)
    end
 
    closeButton.MouseButton1Click:Connect(function()
@@ -3147,7 +3149,7 @@ local function CommandsMenu()
                   label.RichText = true
                   label.TextColor3 = Color3.fromRGB(0, 0, 0)
                   if parent and parent:IsA("Frame") then
-                        parent.AutomaticSize = Enum.AutomaticSize.Y
+                     parent.AutomaticSize = Enum.AutomaticSize.Y
                   end
                end
                if label.TextTransparency >= 0.9 then
