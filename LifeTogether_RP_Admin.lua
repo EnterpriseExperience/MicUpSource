@@ -11,7 +11,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.2.2"
+local Raw_Version = "V4.2.3"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Special thanks to someone for reporting an error that must have been here for a while, allowing you to put white spaces in your prefix, it's fixed."
 local displayTimeMax = 20
@@ -5740,9 +5740,9 @@ local function handleCommand(sender, message)
 
       if Vehicle and Vehicle.Name == "SchoolBus" then
          vehicle_kill_player(target)
-         notify("Success", "Killing player: "..target.Name, 3)
+         getgenv().notify("Success", "Killing player: "..target.Name, 3)
       else
-         notify("Error", "Failed to spawn/find SchoolBus.", 3)
+         getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "void" and split[1] then
       local target = findplr(split[1])
@@ -5772,9 +5772,9 @@ local function handleCommand(sender, message)
 
       if Vehicle and Vehicle.Name == "SchoolBus" then
          vehicle_void_player(target)
-         notify("Success", "Sending player to the Void | player: "..target.Name, 3)
+         getgenv().notify("Success", "Sending player to the Void | player: "..target.Name, 3)
       else
-         notify("Error", "Failed to spawn/find SchoolBus.", 3)
+         getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "rejoin" or cmd == "rj" then
       local Players = getgenv().Players
@@ -5786,6 +5786,7 @@ local function handleCommand(sender, message)
       local function safe_teleport()
          local success, err = pcall(function()
             if #Players:GetPlayers() <= 1 then
+               getgenv().notify("Success", "You are now going to rejoin.", 5)
                getgenv().TeleportService:Teleport(PlaceID, LocalPlayer)
             else
                TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
@@ -5793,7 +5794,7 @@ local function handleCommand(sender, message)
          end)
 
          if not success then
-            getgenv().notify("Error", "Teleporting failed: "..tostring(err).." | going to re-try, if it doesn't work, something is wrong with the server, or you an unstable connection.", 5)
+            getgenv().notify("Error", "Teleporting failed: "..tostring(err).." | going to re-try, if it doesn't work, something is wrong with the server, or you have an unstable connection.", 5)
             task.wait(3)
             safe_teleport()
          end
@@ -5905,9 +5906,9 @@ local function handleCommand(sender, message)
 
       if Vehicle and Vehicle.Name == "SchoolBus" then
          vehicle_bring_player(target)
-         notify("Success", "Bringing player: "..target.Name, 3)
+         getgenv().notify("Success", "Bringing player: "..target.Name, 3)
       else
-         notify("Error", "Failed to spawn/find SchoolBus.", 3)
+         getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "skydive" then
       local target = findplr(split[1])
@@ -5937,9 +5938,9 @@ local function handleCommand(sender, message)
 
       if Vehicle and Vehicle.Name == "SchoolBus" then
          vehicle_skydive_player(target)
-         notify("Success", "Skydiving player: "..target.Name, 3)
+         getgenv().notify("Success", "Skydiving player: "..target.Name, 3)
       else
-         notify("Error", "Failed to spawn/find SchoolBus.", 3)
+         getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
    elseif cmd == "goto" then
       local target = findplr(split[1])
@@ -5960,18 +5961,18 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "caraccel" then
       local val = tonumber(args[1])
-      if not val then return getgenv().notify("Error", "Usage: caraccel [number], got: "..tostring(args[1]), 4) end
+      if not val then return getgenv().notify("Warning", "Usage: caraccel [number], got: "..tostring(args[1]), 4) end
 
       local car = get_vehicle()
       if car and car:GetAttribute("max_acc") then
          car:SetAttribute("max_acc", val)
-         notify("Success", "Set car max_acc to: " .. val, 4)
+         getgenv().notify("Success", "Set car max_acc to: " .. val, 4)
       else
-         notify("Error", "Car not found or your car does not have a 'max_acc' attribute.", 4)
+         return getgenv().notify("Error", "Car not found, or your vehicle does not have a 'max_acc' attribute.", 4)
       end
    elseif cmd == "carspeed" then
       local val = tonumber(args[1])
-      if not val then return notify("Missing Value", "Usage: carspeed [number], got: "..tostring(args[1]), 5) end
+      if not val then return getgenv().notify("Warning", "Usage: carspeed [number], got: "..tostring(args[1]), 5) end
 
       local car = get_vehicle()
       if car and car:GetAttribute("max_speed") then
@@ -5982,25 +5983,25 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "turnangle" then
       local turn_angle_val = tonumber(args[1])
-      if not turn_angle_val then return notify("Error", "Usage: turnangle [number], got: "..tostring(args[1]), 5) end
+      if not turn_angle_val then return getgenv().notify("Warning", "Usage: turnangle [number], got: "..tostring(args[1]), 5) end
 
       local car = get_vehicle()
       if car and car:GetAttribute("turn_angle") then
          car:SetAttribute("turn_angle", turn_angle_val)
-         notify("Success", "Set car turn_angle to: "..tostring(turn_angle_val), 5)
+         getgenv().notify("Success", "Set car turn_angle to: "..tostring(turn_angle_val), 5)
       else
-         notify("Error", "Car not found or your car does not have a 'turn_angle' value.", 5)
+         getgenv().notify("Error", "Car not found or your car does not have a 'turn_angle' value.", 5)
       end
    elseif cmd == "accel" then
       local val = tonumber(args[1])
-      if not val then return notify("Missing Value", "Usage: accel [number], got: "..tostring(args[1]), 5) end
+      if not val then return getgenv().notify("Warning", "Usage: accel [number], got: "..tostring(args[1]), 5) end
 
       local car = get_vehicle()
       if car and car:GetAttribute("acc_0_60") then
          car:SetAttribute("acc_0_60", val)
-         notify("Success", "Set car acc_0_60 to: " .. val, 4)
+         getgenv().notify("Success", "Set car acc_0_60 to: " .. val, 4)
       else
-         notify("Error", "Car not found or your car does not have a 'acc_0_60' attribute.", 4)
+         getgenv().notify("Error", "Car not found or your car does not have a 'acc_0_60' attribute.", 4)
       end
    elseif cmd == "freepay" then
       for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
@@ -6015,8 +6016,8 @@ local function handleCommand(sender, message)
          local update = debug.getupvalue(Data.initiate, 2)
          update("is_verified", true)
          wait(0.2)
-         getgenv().notify("Heads Up:", "You cannot spawn premium houses with this!", 5)
-         getgenv().notify("Note:", "(Unless you actually have premium)", 5)
+         getgenv().notify("Warning", "You cannot spawn premium houses with this!", 5)
+         getgenv().notify("Warning", "(Unless you actually have premium).", 5)
          wait(0.1)
          getgenv().Has_Free_LifePremium = true
       else
@@ -6027,17 +6028,18 @@ local function handleCommand(sender, message)
       for carKey, fullName in pairs(CarMap) do
          if carKey:find(name) then
             spawn_any_vehicle(fullName)
-            notify("Spawning:", tostring(fullName), 3)
+            getgenv().notify("Success", "Spawning requested vehicle: "..tostring(fullName), 3)
             return
          end
       end
-      notify("Invalid Car:", "Name not matched.", 5)
+
+      getgenv().notify("Error", "Name not matched.", 5)
    elseif cmd == "antihouseban" then
-      if getgenv().AntiTeleport then
-         return getgenv().notify("Error", "AntiHouseBan is already enabled!", 5)
-      end
       if getgenv().never_banned_houses then
          return getgenv().notify("Error", "AntiHouseBan is already enabled!", 5)
+      end
+      if getgenv().AntiTeleport then
+         return getgenv().notify("Error", "AntiTeleport is already enabled!", 5)
       end
 
       task.wait(0.2)
@@ -6057,7 +6059,7 @@ local function handleCommand(sender, message)
       local HRP = getgenv().HumanoidRootPart
       local safePos = HRP.CFrame
 
-      getgenv().notify("Success", "Enabled, you cannot be banned from houses (AntiTP).", 5)
+      getgenv().notify("Success", "Enabled, you cannot be banned from houses (AntiTP).", 7)
 
       table.insert(getgenv().AntiTeleportConnections, RunService.Heartbeat:Connect(function()
          if not getgenv().AntiTeleport then return end
@@ -6135,13 +6137,13 @@ local function handleCommand(sender, message)
    elseif cmd == "caraccel" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
-         return notify("Error", "You do not have a car spawned!", 5) 
+         return getgenv().notify("Error", "You do not have a vehicle spawned!", 5) 
       end
 
       local accelInput = string.trim(split[2] or "")
       local accel_max = tonumber(accelInput)
       if not accel_max then
-         return getgenv().notify("Invalid Accel:", "Must be a valid number (e.g., 50 or 0.5).", 5)
+         return getgenv().notify("Error", "You must enter a valid number (e.g., 50 or 0.5).", 7)
       end
 
       if Vehicle:GetAttribute("max_acc") ~= nil then
@@ -6153,20 +6155,20 @@ local function handleCommand(sender, message)
    elseif cmd == "accel" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
-         return notify("Error", "You do not have a car spawned!", 5) 
+         return getgenv().notify("Error", "You do not have a car spawned!", 5) 
       end
 
       local accelInput = string.trim(split[2] or "")
       local acc_zero_to_sixty = tonumber(accelInput)
       if not acc_zero_to_sixty then
-         return notify("Error", "Must be a valid number (e.g., 5 or 0.2).", 5)
+         return getgenv().notify("Error", "Must be a valid number (e.g., 5 or 0.2).", 5)
       end
 
       if Vehicle:GetAttribute("acc_0_60") ~= nil then
          Vehicle:SetAttribute("acc_0_60", acc_zero_to_sixty)
-         notify("Success", "Set acc_0_60 to: "..tostring(acc_zero_to_sixty), 5)
+         getgenv().notify("Success", "Set acc_0_60 to: "..tostring(acc_zero_to_sixty), 5)
       else
-         notify("Error", "Your vehicle does not have 'acc_0_60' attribute.", 5)
+         getgenv().notify("Error", "Your vehicle does not have 'acc_0_60' attribute.", 5)
       end
    elseif cmd == "cmds" then
       CommandsMenu()
@@ -6190,8 +6192,8 @@ wait(0.1)
 setup_cmd_handler_plr(v)
 wait(0.2)
 getgenv().LifeTogetherRP_Admin = true
-getgenv().notify("Success", "[INITIALIZED]: Life Together RP-Admin has been loaded!", 5)
-getgenv().notify("Success", "[LOADED]: | [Life Together-RP : Admin_Commands]: Loaded!", 5)
+getgenv().notify("Success", "[INITIALIZED]: Life Together RP-Admin has been loaded!", 7)
+getgenv().notify("Success", "[LOADED]: | [Life Together-RP : Admin_Commands]: Loaded!", 7)
 wait(0.3)
 function auto_add_friends()
    for _, v in ipairs(getgenv().Players:GetPlayers()) do
@@ -6253,6 +6255,7 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
    end
 end)
 wait()
+getgenv().notify("Success", "Initializing error reporter...", 6)
 local Players = getgenv().Players or cloneref(game:GetService("Players"))
 local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
 local Handle_Error = getgenv().Error_API and getgenv().Error_API.Handle_Error
@@ -6288,6 +6291,8 @@ task.spawn(function()
       end
    end
 end)
+wait(0.1)
+getgenv().notify("Success", "Error reporter should now be fully loaded and working.", 7)
 wait()
 HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
 
