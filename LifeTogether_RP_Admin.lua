@@ -11,10 +11,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.2.4"
+local Raw_Version = "V4.2.9"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Thanks to: 5ST4RTAHJ for reporting something I accidentally left in (inventory enabler) I meant to only load for myself (lol), make sure to give me feedback with the 'feedback' command!"
-local displayTimeMax = 20
+local Announcement_Message = "Added an auto-fixer for the commands menu (incase it doesn't show up), and finally fixed ToolTip (hover over a command to see what it does), if your Prefix is actually broken, it'll auto-fix it for you."
+local displayTimeMax = 22
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -1528,7 +1528,7 @@ else
    if not success then
       getgenv().LifeTogetherRP_Admin = false
       --getgenv().notify("Error", "This script does not work on this executor!", 8)
-      return getgenv().notify("Error", "You cannot run this script on this executor, we're sorry! (if you believe this was in error, re-run the script).", 10)
+      return getgenv().notify("Error", "You cannot run this script on this executor, we're sorry! (if you believe this was in error, re-run the script).", 12)
    end
 end
 wait()
@@ -1543,28 +1543,57 @@ wait()
    ["AntiFling"] = false,
    ["FreePay"] = false,
    ["Vehicle0To60"] = 0.2,
-   ["VehicleSpeed"] = 300, -- The default maximum speed for Life Together RP vehicles (when you have LifePay Premium, but can be higher to what ever you want here).
+   ["VehicleSpeed"] = 300, -- The default maximum speed for Life Together RP vehicles (when you have LifePay Premium, but can be higher to what ever you want with the script).
    ["VehicleAcceleration"] = 200, -- Just to be clear, this is the vehicle Maximum Acceleration, not the take off time (that's "Vehicle0To60")
    -- These are my two personal setups I use, even though I am not a developer or an admin lol.
    ["Name"] = "DEVELOPER",
    ["Bio"] = "-AURA-",
 }--]]
 wait()
-local fileName = "LifeTogether_Admin_Configuration.json" -- Change the name to what ever you like, but the fileName must end with ".json", so you could do "LifeTG_Config.json", but not "LifeTG_Config" or anything without ".json" at the end.
+local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+local fileName = "LifeTogether_Admin_Configuration.json"
+local Allowed_Prefixes = {
+   "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "_", "+", ",",
+   ".", "/", ">", "<", "?", "~", "`", "}", "{", "[", "]", ":"
+}
 
-local function loadPrefix()
-   if isfile and isfile(fileName) then
-      local raw = readfile(fileName)
-      local success, decoded = pcall(function()
-         return HttpService:JSONDecode(raw)
-      end)
-      if success and decoded and decoded.prefix then
-         return tostring(decoded.prefix)
+local function isAllowedPrefix(prefix)
+   for _, p in ipairs(Allowed_Prefixes) do
+      if prefix == p then
+         return true
       end
    end
-   return ";"
+   return false
 end
 
+local function loadPrefix()
+   local defaultPrefix = "-"
+   local data = { prefix = defaultPrefix }
+
+   if isfile and isfile(fileName) then
+      local success, decoded = pcall(function()
+         return HttpService:JSONDecode(readfile(fileName))
+      end)
+
+      if success and type(decoded) == "table" and decoded.prefix then
+         local prefix = tostring(decoded.prefix)
+         if prefix == "symbol" or not isAllowedPrefix(prefix) then
+            getgenv().notify("Warning", "We've automatically modified your Prefix, it was broken or not an allowed Prefix.", 5)
+            decoded.prefix = defaultPrefix
+            writefile(fileName, HttpService:JSONEncode(decoded))
+            return defaultPrefix
+         else
+            return prefix
+         end
+      end
+   end
+
+   writefile(fileName, HttpService:JSONEncode(data))
+   return defaultPrefix
+end
+
+wait(0.1)
+local Loaded_Prefix = loadPrefix()
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
 
@@ -2782,7 +2811,7 @@ local function CommandsMenu()
    local mainFrame = Instance.new("Frame")
    mainFrame.Size = UDim2.new(0, 600, 0, 500)
    mainFrame.Position = UDim2.new(0.5, -300, 0.5, -250)
-   mainFrame.BackgroundColor3 = Color3.fromRGB(75, 151, 75)
+   mainFrame.BackgroundColor3 = Color3.fromRGB(249, 214, 46)
    mainFrame.BorderSizePixel = 0
    mainFrame.Active = true
    mainFrame.Draggable = true
@@ -2985,16 +3014,19 @@ local function CommandsMenu()
       frame.Parent = scrollFrame
 
       local label = Instance.new("TextLabel")
-      label.Size = UDim2.new(1, -110, 0.5, 0)
+      label.AutomaticSize = Enum.AutomaticSize.Y
+      label.Size = UDim2.new(1, -110, 0, 20)
       label.Position = UDim2.new(0, 0, 0, 0)
       label.BackgroundTransparency = 1
       label.Font = Enum.Font.GothamSemibold
-      label.TextSize = 16
-      label.TextColor3 = Color3.new(0, 0, 0)
+      label.TextSize = 15
+      label.TextColor3 = Color3.fromRGB(0, 0, 0)
       label.TextXAlignment = Enum.TextXAlignment.Left
-      label.Text = cmdText .. "\n" .. desc
-      label.TextWrapped = true
       label.TextYAlignment = Enum.TextYAlignment.Top
+      label.TextWrapped = true
+      label.TextScaled = false
+      label.RichText = true
+      label.Text = tostring(cmdText)
       label.Parent = frame
 
       local button = Instance.new("TextButton")
@@ -3010,6 +3042,71 @@ local function CommandsMenu()
       Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
 
       local commandToSend = cmdText
+      local TweenService = getgenv().TweenService
+      local UserInputService = getgenv().UserInputService
+
+      local tooltipGui = Instance.new("ScreenGui")
+      tooltipGui.Name = "AdminTooltipUI"
+      tooltipGui.ResetOnSpawn = false
+      tooltipGui.IgnoreGuiInset = true
+      tooltipGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+      tooltipGui.DisplayOrder = 9999
+      tooltipGui.Parent = CoreGui
+      wait()
+      local tooltip = Instance.new("TextLabel")
+      tooltip.Name = "CommandTooltip"
+      tooltip.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+      tooltip.TextColor3 = Color3.new(1, 1, 1)
+      tooltip.Font = Enum.Font.GothamSemibold
+      tooltip.TextSize = 14
+      tooltip.TextWrapped = true
+      tooltip.AutomaticSize = Enum.AutomaticSize.XY
+      tooltip.BackgroundTransparency = 0.2
+      tooltip.Visible = false
+      tooltip.ZIndex = 10000
+      tooltip.AnchorPoint = Vector2.new(0, 1)
+      tooltip.Position = UDim2.new(0, 0, 0, 0)
+      tooltip.Parent = tooltipGui
+
+      local corner = Instance.new("UICorner", tooltip)
+      corner.CornerRadius = UDim.new(0, 6)
+      local padding = Instance.new("UIPadding", tooltip)
+      padding.PaddingLeft = UDim.new(0, 6)
+      tooltip.TextYAlignment = Enum.TextYAlignment.Top
+
+      local mousePos = Vector2.new()
+      getgenv().UserInputService.InputChanged:Connect(function(input)
+         if input.UserInputType == Enum.UserInputType.MouseMovement then
+            mousePos = Vector2.new(input.Position.X, input.Position.Y)
+         end
+      end)
+
+      local runService = getgenv().RunService
+      runService.RenderStepped:Connect(function()
+         if tooltip.Visible then
+            tooltip.Position = UDim2.fromOffset(mousePos.X + 15, mousePos.Y - 10)
+         end
+      end)
+
+      local function showTooltip()
+         tooltip.Text = desc
+         tooltip.Visible = true
+         TweenService:Create(tooltip, TweenInfo.new(0.15), {BackgroundTransparency = 0.15, TextTransparency = 0}):Play()
+      end
+
+      local function hideTooltip()
+         TweenService:Create(tooltip, TweenInfo.new(0.15), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+         task.delay(0.15, function()
+            if tooltip.BackgroundTransparency >= 0.99 then
+               tooltip.Visible = false
+            end
+         end)
+      end
+
+      label.MouseEnter:Connect(showTooltip)
+      label.MouseLeave:Connect(hideTooltip)
+      button.MouseEnter:Connect(showTooltip)
+      button.MouseLeave:Connect(hideTooltip)
 
       button.MouseButton1Click:Connect(function()
          if channel then
@@ -3020,6 +3117,39 @@ local function CommandsMenu()
 
    closeButton.MouseButton1Click:Connect(function()
       cmdsUI:Destroy()
+   end)
+
+   task.spawn(function()
+      local fixDelay = 1
+      local runService = getgenv().RunService or game:GetService("RunService")
+      local playerGui = getgenv().PlayerGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+      while task.wait(fixDelay) do
+         local gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui()) or playerGui
+         local menu = gui:FindFirstChild("AdminCommandList_LifeTogether_RP", true)
+         if not menu then continue end
+
+         for _, label in ipairs(menu:GetDescendants()) do
+            if label:IsA("TextLabel") and label.Text and label.Text ~= "" then
+               local parent = label.Parent
+               if label.TextScaled or label.Size.Y.Scale > 0 or label.Size.Y.Offset <= 5 then
+                  label.TextScaled = false
+                  label.TextSize = 15
+                  label.AutomaticSize = Enum.AutomaticSize.Y
+                  label.Size = UDim2.new(1, -110, 0, 20)
+                  label.TextWrapped = true
+                  label.RichText = true
+                  label.TextColor3 = Color3.fromRGB(0, 0, 0)
+                  if parent and parent:IsA("Frame") then
+                        parent.AutomaticSize = Enum.AutomaticSize.Y
+                  end
+               end
+               if label.TextTransparency >= 0.9 then
+                  label.TextTransparency = 0
+               end
+            end
+         end
+      end
    end)
 end
 wait(0.1)
@@ -3039,7 +3169,7 @@ function CreateCreditsLabel()
    label.AnchorPoint = Vector2.new(0.5, 1)
    label.Position = UDim2.new(0.5, 0, 1, -10)
    label.Size = UDim2.new(0.6, 0, 0, 28)
-   label.BackgroundColor3 = Color3.fromRGB(75, 151, 75)
+   label.BackgroundColor3 = Color3.fromRGB(249, 214, 46)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
    local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
    label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." on Discord. | Current Prefix: " .. prefix
@@ -4945,18 +5075,26 @@ local function handleCommand(sender, message)
    end
    local cmd = table.remove(split, 1):lower()
    local args = split
-   for i, v in ipairs(args) do
-      -- Pre-predict capitilization in arguments, like: "?spawn CHARGER" or "?spawn charger", should all work the same now (10/3/2025 - 5:38 PM).
-      args[i] = v:lower()
-   end
    getgenv().Anti_Sit_Connection = nil
    getgenv().anti_knockback_connection = nil
    getgenv().Noclip_Connection = nil
    local Clip = false
 
    if cmd == "prefix" then
-      local new_prefix = tostring(split[1] or ""):gsub("%s+", "") -- strip white spaces correctly, ensuring the user doesn't try and put random spaces for some reason.
+      local new_prefix = tostring(split[1] or ""):gsub("%s+", "")
 
+      local valid = false
+      for _, allowedprefix in ipairs(Allowed_Prefixes) do
+         if new_prefix == allowedprefix then
+            valid = true
+            break
+         end
+      end
+
+      if not valid then
+         return getgenv().notify("Warning", "This is not an allowed Prefix, sorry! Please use a regular symbol prefix.", 5)
+      end
+      wait(0.1)
       -- Yes, I know, finally add a check for the Prefix command, to ensure you're not able to set a blank prefix, or one with any white spaces at all.
       if new_prefix == "" then
          return getgenv().notify("Error", "Invalid prefix! It cannot be empty.", 5) -- return notify the user, since they probably won't get it otherwise.
