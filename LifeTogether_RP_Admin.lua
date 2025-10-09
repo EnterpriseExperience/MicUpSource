@@ -6,6 +6,12 @@ end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
+local set_fps = setfpscap or setfps
+getgenv().SetFPSCap = set_fps
+
+if setfpscap or setfps then
+   set_fps(250)
+end
 wait()
 if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
@@ -14,7 +20,7 @@ wait()
 local Raw_Version = "V4.2.9"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Added an auto-fixer for the commands menu (incase it doesn't show up), and finally fixed ToolTip (hover over a command to see what it does), if your Prefix is actually broken, it'll auto-fix it for you."
-local displayTimeMax = 22
+local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
