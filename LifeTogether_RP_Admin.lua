@@ -11,9 +11,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.2.3"
+local Raw_Version = "V4.2.4"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Special thanks to someone for reporting an error that must have been here for a while, allowing you to put white spaces in your prefix, it's fixed."
+local Announcement_Message = "Thanks to: 5ST4RTAHJ for reporting something I accidentally left in (inventory enabler) I meant to only load for myself (lol), make sure to give me feedback with the 'feedback' command!"
 local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -4905,7 +4905,7 @@ pcall(function()
    getgenv().LocalPlayer.CameraMaxZoomDistance = 100000
    getgenv().LocalPlayer.CameraMinZoomDistance = 0.5
    wait()
-   if getgenv().LocalPlayer.CameraMinZoomDistance > 90000 then
+   if getgenv().LocalPlayer.CameraMaxZoomDistance > 90000 then
       getgenv().notify("Success", "Set CameraMaxZoomDistance to: "..tostring(getgenv().LocalPlayer.CameraMaxZoomDistance), 7)
    else
       getgenv().notify("Warning", "We we're not able to correctly set CameraMaxZoomDistance!", 5)
@@ -4924,7 +4924,9 @@ pcall(function()
       getgenv().notify("Success", "Spoofed JumpHeight to: "..tostring(getgenv().Humanoid.JumpHeight))
    end
    getgenv().StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
-   getgenv().StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+   if getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS" then
+      getgenv().StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+   end
    getgenv().notify("Success", "Enabled Leaderboard and Backpack.", 5)
 end)
 
