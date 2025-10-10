@@ -17,9 +17,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.3.9"
+local Raw_Version = "V4.4.3"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Added 'orbit' command! changed the Run button color (forgot), improved Character system, added more notifications in commands, and more."
+local Announcement_Message = "Hopefully fixed the Group Chat Spammer (AnnoyerGUI), fixed 'orbit' command to actually check the speed you entered, added new emotes, and more."
 local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -2255,7 +2255,10 @@ local Emotes = {
    glitching = {131961970776128},
    superman = {
       134861929761233,
-      93202303625509
+      93202303625509,
+      75684443936987,
+      71498318840551,
+
    },
    aura = {
       121547391421211,
@@ -2265,19 +2268,33 @@ local Emotes = {
       111499780397123,
       88553023837929,
       120398163328092,
+      95412133796590,
       132887675877488,
       95483853291380,
+      70921452128720,
       124656572577172,
+      107282826166809,
+      107357050902519,
       83771892938118,
       84052327668385,
+      124573843932871,
+      83502723504906,
       77605999050017,
       116826272832592, -- like flippin sexy
+      116520353469867,
       103040723950430,
+      111474274315212,
       85452015445985,
       106383862917130,
       119895570354822,
       89740608652762,
+      138488768673643,
       110077386833639,
+      85092320680319,
+      89841968488285,
+      110559530726888,
+      133016747050476,
+      108635834286627,
    },
    orangejustice = {
       133160900449608,
@@ -2300,6 +2317,7 @@ local Emotes = {
       130655908439646,
       108129969514208,
       121962822800440,
+      105003458897417,
    },
    popular = {
       71302743123422,
@@ -2327,7 +2345,8 @@ local Emotes = {
    },
    sturdy = {
       122687759897103,
-      133826541787717
+      133826541787717,
+      85608190427964,
    },
    louisiana_jigg = {
       75625820126017,
@@ -2354,7 +2373,18 @@ local Emotes = {
    reanimated = {
       88624941199927,
       112989413190899,
-   }
+   },
+   jabba = {
+      103538719480738,
+      81074563419184,
+      116936259925650,
+      91111622942605,
+      97502008524120,
+      78000690242935,
+      97263887198327,
+      126450121068943,
+   },
+
 }
 
 local Aliases = {
@@ -2728,7 +2758,7 @@ function stop_orbit()
    getgenv().notify("Success", "Stopped orbiting Player.", 4)
 end
 
-function start_orbit_plr(target, distance)
+function start_orbit_plr(target, speed, distance)
    if getgenv().Is_Orbiting then
       return getgenv().notify("Warning", "Already orbiting someone!", 4)
    end
@@ -2746,9 +2776,12 @@ function start_orbit_plr(target, distance)
       return getgenv().notify("Error", "Missing root or humanoid, cannot orbit.", 5)
    end
 
-   getgenv().Is_Orbiting = true
-   local rotation = 0
+   speed = tonumber(speed) or getgenv().OrbitSpeed or 1
    distance = tonumber(distance) or 3
+   getgenv().OrbitSpeed = speed
+   getgenv().Is_Orbiting = true
+
+   local rotation = 0
 
    getgenv().OrbitConnections.Heartbeat = RunService.Heartbeat:Connect(function()
       pcall(function()
@@ -2773,7 +2806,7 @@ function start_orbit_plr(target, distance)
       if isSeated then stop_orbit() end
    end)
 
-   getgenv().notify("Success", "Started orbiting: " .. tostring(target), 5)
+   getgenv().notify("Success", ("Started orbiting %s (Speed: %s, Distance: %s)"):format(tostring(target), tostring(speed), tostring(distance)), 5)
 end
 
 function water_skie_trailer(Bool, Vehicle)
@@ -4508,11 +4541,11 @@ function annoyance_GUI()
          btn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
          task.spawn(function()
             while getgenv().easy_click_plr and getgenv().easy_click_target == plr.Name do
-               task.wait()
+               task.wait(0)
                getgenv().Send("request_carry", plr.Name)
-               task.wait()
+               task.wait(0)
                getgenv().Send("request_call", plr.Name)
-               task.wait()
+               task.wait(0)
                getgenv().Send("end_call", plr.Name)
             end
          end)
@@ -4532,16 +4565,41 @@ function annoyance_GUI()
          btn.Text = "Group Spam On"
          btn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
          getgenv().Creating_Groups = true
+
          task.spawn(function()
-            while getgenv().Creating_Groups do
-               task.wait()
+            while getgenv().Creating_Groups == true do
+               task.wait(.4)
+               local userIds = {}
+
                for _, name in ipairs(getgenv().group_chatting_users) do
                   local success, userId = pcall(function()
                      return Players:GetUserIdFromNameAsync(name)
                   end)
                   if success and userId then
-                     getgenv().Get("new_group", userId)
+                     table.insert(userIds, userId)
                   end
+               end
+
+               if #userIds == 1 then
+                  local others = {}
+                  for _, other in ipairs(Players:GetPlayers()) do
+                     if other.Name ~= getgenv().group_chatting_users[1] and other ~= LocalPlayer then
+                        table.insert(others, other)
+                     end
+                  end
+
+                  for i = #others, 2, -1 do
+                     local j = math.random(i)
+                     others[i], others[j] = others[j], others[i]
+                  end
+
+                  for i = 1, math.min(3, #others) do
+                     table.insert(userIds, others[i].UserId)
+                  end
+               end
+
+               if #userIds > 0 then
+                  getgenv().Get("new_group", userIds)
                end
             end
          end)
@@ -4670,7 +4728,6 @@ function feedback_GUI()
    if getgenv().FeedbackCooldown then
       return getgenv().notify("Warning", "You must wait before sending a Feedback request again! (" .. (getgenv().FeedbackTimeLeft or 0) .. "s left)", 5)
    end
-
    if getgenv().CoreGui:FindFirstChild("FeedbackUI") then
       return getgenv().notify("Error", "Feedback GUI is already loaded, close it first!", 5)
    end
