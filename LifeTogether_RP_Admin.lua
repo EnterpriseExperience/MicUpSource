@@ -6050,7 +6050,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
-   elseif cmd == "rejoin" or cmd == "rj" then
+   elseif cmd == "rejoin" or cmd == "rj" or cmd == "rej" then
       local Players = getgenv().Players
       local TeleportService = getgenv().TeleportService
       local LocalPlayer = getgenv().LocalPlayer
@@ -6063,6 +6063,7 @@ local function handleCommand(sender, message)
                getgenv().notify("Success", "You are now going to rejoin.", 5)
                getgenv().TeleportService:Teleport(PlaceID, LocalPlayer)
             else
+               getgenv().notify("Success", "You are now going to be rejoined.", 5)
                TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
             end
          end)
