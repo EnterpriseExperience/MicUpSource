@@ -2384,7 +2384,6 @@ local Emotes = {
       97263887198327,
       126450121068943,
    },
-
 }
 
 local Aliases = {
@@ -3107,6 +3106,7 @@ local function CommandsMenu()
       {prefix}orangej - Makes you do the Orange Justice emote (FE).
       {prefix}aurafarm - Makes you do an Aura Float emote (FE).
       {prefix}worm - Makes you do The Worm emote (FE).
+      {prefix}jabba - Makes you do the Jabba emote (FE).
       {prefix}popular - Makes you do the Popular emote (FE).
       {prefix}defaultd - Makes you do the Default Dance emote (FE).
       {prefix}kotonai - Makes you do the Koto Nai emote (FE).
@@ -5588,6 +5588,8 @@ local function handleCommand(sender, message)
       do_emote("laughitup")
    elseif cmd == "reanimated" or cmd == "reanimate" then
       do_emote("reanimated")
+   elseif cmd == "jabba" or cmd == "jabbadance" then
+      do_emote("jabba")
    elseif cmd == "infyield" or cmd == "infpremium" or cmd == "infiniteyield" or cmd == "infinitepremium" or cmd == "iy" or cmd == "loadiy" then
       infinite_premium()
    elseif cmd == "annoy" then
