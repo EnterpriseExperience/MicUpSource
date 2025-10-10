@@ -17,10 +17,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.4.3"
+local Raw_Version = "V4.4.4"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Hopefully fixed the Group Chat Spammer (AnnoyerGUI), fixed 'orbit' command to actually check the speed you entered, added new emotes, and more."
-local displayTimeMax = 20
+local Announcement_Message = "Fixed 'copyavatar' command not copying correctly, the flag was being set wrong, and would bug out."
+local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -4185,71 +4185,48 @@ local function removePlayerFromScriptWhitelistTable(player)
 end
 
 local Original_Age = getgenv().LocalPlayer:GetAttribute("age")
-wait(0.1)
+task.wait(0.1)
+
 function copy_plr_avatar(Player)
    local Players = getgenv().Players
-   getgenv().is_copying_avatar_already_flames = false
+   if getgenv().is_copying_avatar_already_flames then
+      return getgenv().notify("Warning", "Avatar copy already in progress.", 4)
+   end
+   getgenv().is_copying_avatar_already_flames = true
 
    local function getLocalAvatarAssets()
       if not getgenv().Character then return {} end
       local humanoid = getgenv().Humanoid or getgenv().Character:FindFirstChildOfClass("Humanoid")
       if not humanoid then return {} end
-
       local desc = humanoid:GetAppliedDescription()
       local assets = {}
-
       for _, acc in ipairs(desc:GetAccessories(true)) do
          if acc.AssetId and acc.AssetId > 0 then
             table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
          end
       end
-
       if desc.Shirt > 0 then table.insert(assets, {id = desc.Shirt, type = "Shirt"}) end
       if desc.Pants > 0 then table.insert(assets, {id = desc.Pants, type = "Pants"}) end
       if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
       if desc.Face > 0 then table.insert(assets, {id = desc.Face, type = "Face"}) end
-
-      for _, part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg"}) do
-         local assetId = desc[part]
-         if assetId and assetId > 0 then
-            table.insert(assets, {id = assetId, type = part})
-         end
-      end
-
-      for _, anim in ipairs({
-         "ClimbAnimation",
-         "FallAnimation",
-         "IdleAnimation",
-         "JumpAnimation",
-         "RunAnimation",
-         "SwimAnimation",
-         "WalkAnimation"
-      }) do
-         local animId = desc[anim]
-         if animId and animId > 0 then
-            table.insert(assets, {id = animId, type = anim})
-         end
-      end
-
       return assets
    end
 
    local function clearAvatar()
       local Humanoid = getgenv().Humanoid or (getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid"))
       if not Humanoid then
-         return getgenv().notify("Error", "Humanoid not found, cannot clear.", 3)
+         getgenv().notify("Error", "Humanoid not found, cannot clear.", 3)
+         return false
       end
-
       local desc = Humanoid:GetAppliedDescription()
       if not desc then
-         return getgenv().notify("Error", "Could not get applied description.", 3)
+         getgenv().notify("Error", "Could not get applied description.", 3)
+         return false
       end
-
       local assets = {}
-
       for _, acc in ipairs(desc:GetAccessories(true)) do
          if acc.AssetId and acc.AssetId > 0 then
-               table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
+            table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
          end
       end
       if desc.Shirt > 0 then table.insert(assets, {id = desc.Shirt, type = "Shirt"}) end
@@ -4257,154 +4234,89 @@ function copy_plr_avatar(Player)
       if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
       if desc.Face > 0 then table.insert(assets, {id = desc.Face, type = "Face"}) end
 
-      for _, part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg"}) do
-         local id = desc[part]
-         if id and id > 0 then
-            table.insert(assets, {id = id, type = part})
-         end
-      end
-
-      for _, anim in ipairs({
-         "ClimbAnimation","FallAnimation","IdleAnimation","JumpAnimation",
-         "RunAnimation","SwimAnimation","WalkAnimation"
-      }) do
-         local animId = desc[anim]
-         if animId and animId > 0 then
-            table.insert(assets, {id = animId, type = anim})
-         end
-      end
-
       if #assets == 0 then
-         return getgenv().notify("Info", "No avatar assets found to clear.", 3)
+         getgenv().notify("Info", "No avatar assets found to clear.", 3)
+         return true
       end
 
-      getgenv().notify("Info", "Clearing avatar ("..#assets.." assets)...", 3)
-
+      getgenv().notify("Info", "Clearing avatar (" .. #assets .. " assets)...", 3)
       for _, data in ipairs(assets) do
-         task.spawn(function()
-            pcall(function()
-               getgenv().Get("wear", data.id, data.type)
-            end)
+         pcall(function()
+            getgenv().Get("wear", data.id, data.type)
          end)
-         task.wait(0.4)
+         task.wait(0.3)
       end
 
       local retries = 0
       while retries < 3 do
-         task.wait(0.6)
+         task.wait(0.5)
          local check = Humanoid:GetAppliedDescription():GetAccessories(true)
          if #check == 0 then break end
          for _, acc in ipairs(check) do
-            task.wait(0.1)
             pcall(function()
                getgenv().Get("wear", acc.AssetId, acc.AccessoryType.Name .. "Accessory")
             end)
+            task.wait(0.1)
          end
          retries += 1
       end
-      wait()
+
       getgenv().notify("Success", "Avatar fully cleared.", 3)
+      return true
    end
 
    local function getAvatarAssets(player)
       if not player.Character then return {}, nil, nil, nil end
       local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
       if not humanoid then return {}, nil, nil, nil end
-
       local desc = humanoid:GetAppliedDescription()
       local assets = {}
-
       for _, acc in ipairs(desc:GetAccessories(true)) do
          if acc.AssetId and acc.AssetId > 0 then
             table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
          end
       end
-
       if desc.Shirt > 0 then table.insert(assets, {id = desc.Shirt, type = "Shirt"}) end
       if desc.Pants > 0 then table.insert(assets, {id = desc.Pants, type = "Pants"}) end
       if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
       if desc.Face > 0 then table.insert(assets, {id = desc.Face, type = "Face"}) end
-
-      for _, part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg"}) do
-         local assetId = desc[part]
-         if assetId and assetId > 0 then
-            table.insert(assets, {id = assetId, type = part})
-         end
-      end
-
-      for _, anim in ipairs({
-         "ClimbAnimation",
-         "FallAnimation",
-         "IdleAnimation",
-         "JumpAnimation",
-         "RunAnimation",
-         "SwimAnimation",
-         "WalkAnimation"
-      }) do
-         local animId = desc[anim]
-         if animId and animId > 0 then
-            table.insert(assets, {id = animId, type = anim})
-         end
-      end
-
       local skinTone = desc.HeadColor or Color3.new(1,1,1)
       local height = desc.HeightScale or 1
       local width = desc.WidthScale or 1
-
       return assets, skinTone, height, width
    end
 
    local function wearAssets(tbl)
       for _, data in ipairs(tbl) do
-         local id, t = data.id, data.type
-         task.spawn(function()
-            local ok = pcall(function()
-               getgenv().Get("wear", id, t)
-            end)
-            if not ok then
-               getgenv().notify("Error", "[Outfit Copier]: failed for: " .. tostring(id), 4)
-            end
+         pcall(function()
+            getgenv().Get("wear", data.id, data.type)
          end)
-         task.wait(0.2)
+         task.wait(0.25)
       end
    end
 
    local function copyAvatar(target)
-      if getgenv().is_copying_avatar_already_flames then
-         return getgenv().notify("Warning", "Please wait, process still running.", 4)
-      end
-      getgenv().is_copying_avatar_already_flames = true
-
-      local localAssets = {}
-      local targetAssets = {}
-      local missingAssets = {}
-
       if not target or not target.Character then
-         getgenv().notify("Warning", "Could not find target player or character.", 4)
+         getgenv().notify("Warning", "Target not found or has no character.", 4)
+         return
+      end
+
+      if not clearAvatar() then
          getgenv().is_copying_avatar_already_flames = false
          return
       end
 
-      task.wait(0.3)
-      clearAvatar()
       task.wait(0.5)
-      localAssets = getLocalAvatarAssets()
-      targetAssets, skinTone, height, width = getAvatarAssets(target)
 
+      local targetAssets, skinTone, height, width = getAvatarAssets(target)
       if not targetAssets or #targetAssets == 0 then
          getgenv().notify("Warning", "Target has no wearable assets.", 4)
          getgenv().is_copying_avatar_already_flames = false
          return
       end
 
-      for _, b in ipairs(targetAssets) do
-         task.spawn(function()
-            pcall(function()
-               getgenv().Get("wear", b.id, b.type)
-            end)
-         end)
-         task.wait(0.2)
-      end
+      getgenv().notify("Info", "Applying " .. #targetAssets .. " assets from " .. target.Name .. "...", 3)
+      wearAssets(targetAssets)
 
       if skinTone then
          pcall(function() getgenv().Send("skin_tone", skinTone) end)
@@ -4420,10 +4332,10 @@ function copy_plr_avatar(Player)
       pcall(function() getgenv().Get("age", Age and tostring(Age) or "adult") end)
 
       getgenv().notify("Success", "Copied avatar from " .. target.Name, 4)
-      getgenv().is_copying_avatar_already_flames = false
    end
-   task.wait()
-   copyAvatar(Player)
+
+   pcall(copyAvatar, Player)
+   getgenv().is_copying_avatar_already_flames = false
 end
 
 function annoyance_GUI()
