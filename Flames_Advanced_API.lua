@@ -4,12 +4,14 @@
 -- Variables.queueteleport -- For more advanced users, but includes queue-teleport functionality, allowing you to make scripts like auto-execute on rejoin scripts, if done correctly of course.
 
 local flames_api = {}
-local BUILD = "V2.1.8-DEVELOPER"
+local BUILD = "V2.1.9-DEVELOPER"
 local function reverse_string(str) return string.reverse(str) end
 local Base_URL = "aul.biL_noitacifitoN/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
 local Base_URL_2 = "aul.PUKCAB_ssapyB_sinodA/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
 local Base_URL_Decoded = reverse_string(tostring(Base_URL))
 local Base_URL_2_Decoded = reverse_string(tostring(Base_URL_2))
+
+warn(BUILD)
 
 local function get_safe_env()
 	local ok, env = pcall(function() return (getgenv and getgenv()) or nil end)
@@ -295,7 +297,7 @@ local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
    Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
    LocalPlayer = Players.LocalPlayer
-	Variables.LocalPlayer = LocalPlayer or SafeGet("Players").LocalPlayer
+	Variables.LocalPlayer = LocalPlayer
 end
 new_wait(0.1, false)
 flames_api.Players = Players
