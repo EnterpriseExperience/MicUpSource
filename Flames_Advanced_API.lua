@@ -759,6 +759,8 @@ flames_api.JumpPower = function(JP)
 	end)
 end
 
+print(tostring(BUILD))
+
 flames_api.BuildVersion = function()
 	if not BUILD then return flames_api.notify("Error", "Build variable seems to have been erased?", 6) end
 
