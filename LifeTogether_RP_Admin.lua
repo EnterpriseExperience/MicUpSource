@@ -17,7 +17,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.4.4"
+local Raw_Version = "V4.4.6"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed 'copyavatar' command not copying correctly, the flag was being set wrong, and would bug out."
 local displayTimeMax = 15
@@ -65,7 +65,6 @@ end
 local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
 local users = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
 local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
-
 local watchedUserIds = {
    [7712000520] = true,
    [7740121604] = true,
@@ -367,7 +366,7 @@ function randomString()
 end
 task.wait(0.2)
 function owner_joined(Name)
-   getgenv().notify("Warning", "The owner of the Life Together Admin Commands and Script Hub scripts has joined the server! Username: "..tostring(name), 6)
+   getgenv().notify("Info", "The owner of the Life Together Admin Commands and Script Hub scripts has joined the server! Username: "..tostring(Name), 8)
 end
 
 getgenv().randomString = function()
@@ -741,15 +740,14 @@ local function Get_Char(Player)
    return Player.Character
 end
 
-wait()
-task.wait(0.2)
+wait(0.1)
 getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
 getgenv().Camera = getgenv().Workspace.CurrentCamera
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
 getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
 getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
-getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
+getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait() or Get_Char(getgenv().LocalPlayer)
 wait(0.1)
 for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
    if v:IsA("Frame") and v.Name == "SidebarButtonHolder" and string.find(v.Parent.Name, "OpenPhone") then
@@ -778,6 +776,8 @@ getgenv().RainbowTopBar = true
 local PhoneClock = gui:FindFirstChild("PhoneClock", true)
 local TopBar_Icons = PhoneClock and PhoneClock.Parent:FindFirstChildOfClass("Frame")
 local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+
+getgenv().notify("Success", "STARTING RGB HUE COLOR CYCLE ON PHONE...", 5)
 
 local function cycle_color()
    local hue = 0
@@ -821,6 +821,30 @@ function update_counter_notif_label(label, input_number)
    end
 end
 
+function toggle_flash_priv_server_time(toggle)
+   if toggle == true then
+      getgenv().Send("time_toggle", true)
+      task.wait(0.2)
+      getgenv().ChangingTime_Fast_FE = true
+      while getgenv().ChangingTime_Fast_FE == true do
+      task.wait(0)
+         getgenv().Send("change_time", 4.5)
+         task.wait(0)
+         getgenv().Send("change_time", 5.5)
+         task.wait(0)
+         getgenv().Send("change_time", 12)
+         task.wait(0)
+         getgenv().Send("change_time", 18.5)
+         task.wait(0)
+         getgenv().Send("change_time", 23)
+      end
+   elseif toggle == false then
+      getgenv().ChangingTime_Fast_FE = false
+      repeat task.wait() until getgenv().ChangingTime_Fast_FE == false
+      getgenv().Send("time_toggle", false)
+   end
+end
+
 local function setup_label(label, targetText)
    label.Text = targetText
 
@@ -849,6 +873,8 @@ local function wait_for_single(name)
    until label and label:IsA("TextLabel")
    return label
 end
+
+getgenv().notify("Success", "STARTED RGB HUE COLOR CYCLE.", 5)
 
 local function wait_for_multiple(name)
    local results = {}
@@ -1398,6 +1424,7 @@ local function SafeGetHRP(char)
 	end
 end
 
+getgenv().walkflinging = getgenv().walkflinging or false
 local Animate_Disabled = false
 getgenv().HumanoidRootPart = SafeGetHRP(getgenv().Character)
 getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
@@ -1442,6 +1469,15 @@ getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
 	repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
 	wait(0.5)
    getgenv().Character = newCharacter
+   if getgenv().walkflinging then
+      getgenv().notify("Warning", "WalkFling enabled on death, disabling...", 5)
+      getgenv().walkflinging = false
+      if getgenv().WalkFlinging_Connection then
+         getgenv().WalkFlinging_Connection:Disconnect()
+         getgenv().WalkFlinging_Connection = nil
+      end
+      getgenv().notify("Success", "WalkFling has been disabled.", 5)
+   end
    wait(0.2)
 	getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
 	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
@@ -2667,8 +2703,6 @@ local function ToggleNoclip(toggle)
 end
 
 getgenv().Toggleable_Noclip = ToggleNoclip
-
-getgenv().walkflinging = getgenv().walkflinging or false
 wait()
 local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 
@@ -5452,9 +5486,9 @@ local function handleCommand(sender, message)
       for i = 1, Amount do
          getgenv().Send("request_fire")
       end
-   elseif cmd == "startrgbtool" then
+   elseif cmd == "startrgbtool" or cmd == "rgbtool" then
       rainbow_tool(true)
-   elseif cmd == "stoprgbtool" then
+   elseif cmd == "stoprgbtool" or cmd == "unrgbtool" then
       rainbow_tool(false)
    elseif cmd == "unfly2" then
       getgenv().Stop_Flying()
@@ -5488,9 +5522,9 @@ local function handleCommand(sender, message)
       do_emote("billyjean")
    elseif cmd == "michaelbounce" or cmd == "michaelmyers" or cmd == "jiggybounce" or cmd == "michmyers" or cmd == "myersbounce" or cmd == "michaeldance" or cmd == "michealmyers" or cmd == "michealbounce" then
       do_emote("michaelmyers")
-   elseif cmd == "sturdy" or cmd == "nysturdy" then
+   elseif cmd == "sturdy" or cmd == "nysturdy" or cmd == "newyorksturdy" or cmd == "sturdydance" or cmd == "getsturdy" then
       do_emote("sturdy")
-   elseif cmd == "jiggy" or cmd == "louisiniajigg" or cmd == "getjiggy" or cmd == "jig" or cmd == "jigg" then
+   elseif cmd == "jiggy" or cmd == "louisiniajigg" or cmd == "getjiggy" or cmd == "jig" or cmd == "jigg" or cmd == "louijigg" or cmd == "louijiggy" then
       do_emote("jiggy")
    elseif cmd == "eshuffle" or cmd == "electroshuffle" or cmd == "electricshuffle" then
       do_emote("electroshuffle")
@@ -5498,9 +5532,9 @@ local function handleCommand(sender, message)
       do_emote("takethel")
    elseif cmd == "donkeylaugh" or cmd == "fortnitelaugh" or cmd == "laughitup" or cmd == "fnlaugh" then
       do_emote("laughitup")
-   elseif cmd == "reanimated" or cmd == "reanimate" then
+   elseif cmd == "reanimated" or cmd == "reanimate" or cmd == "fnreanimated" or cmd == "fortnitereanimated" then
       do_emote("reanimated")
-   elseif cmd == "jabba" or cmd == "jabbadance" then
+   elseif cmd == "jabba" or cmd == "jabbadance" or cmd == "jabsway" or cmd == "jabbasway" or cmd == "jabbsway" or cmd == "swayjab" or cmd == "swayjabba" then
       do_emote("jabba")
    elseif cmd == "infyield" or cmd == "infpremium" or cmd == "infiniteyield" or cmd == "infinitepremium" or cmd == "iy" or cmd == "loadiy" then
       infinite_premium()
