@@ -6527,6 +6527,12 @@ getgenv().Players.PlayerAdded:Connect(function(Player)
    local Name = Player and Player.Name
    getgenv().Blacklisted_Friends = getgenv().Blacklisted_Friends or {}
 
+   if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+      if not getgenv().Blacklisted_Friends[Name] then
+         auto_add_friends()
+      end
+   end
+   wait(0.1)
    if Name == "L0CKED_1N1" or Name == "CHEATING_B0SS" then
       owner_joined(Name)
       if getgenv().friend_checked[Name] then
@@ -6537,12 +6543,6 @@ getgenv().Players.PlayerAdded:Connect(function(Player)
       end
       if getgenv().cmds_loaded_plr[Name] then
          getgenv().cmds_loaded_plr[Name] = nil
-      end
-   end
-
-   if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
-      if not getgenv().Blacklisted_Friends[Name] then
-         auto_add_friends()
       end
    end
 end)
