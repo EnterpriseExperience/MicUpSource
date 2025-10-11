@@ -5,7 +5,7 @@
 
 local flames_api = {}
 
-local BUILD = "V2.1.1-DEVELOPER"
+local BUILD = "V2.1.4-DEVELOPER"
 
 local Base_URL = "aul.biL_noitacifitoN/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
 
@@ -252,18 +252,6 @@ local function SafeGet(serviceName)
 				service = res2
 			end
 		end
-	end
-
-	if not service then
-		service = safe_setmetatable({
-			Name = serviceName,
-			IsFake = true,
-			GetService = SafeGet,
-		}, {
-			__tostring = function()
-				return "FakeService<" .. tostring(serviceName) .. ">"
-			end
-		})
 	end
 
 	if rawget and rawset then
