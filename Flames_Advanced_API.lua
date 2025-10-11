@@ -5,7 +5,7 @@
 
 local flames_api = {}
 
-local BUILD = "V2.0.9-DEVELOPER"
+local BUILD = "V2.1.1-DEVELOPER"
 
 local Base_URL = "aul.biL_noitacifitoN/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
 
@@ -246,7 +246,11 @@ local function SafeGet(serviceName)
 			return Variables.SafeGame:FindService(serviceName)
 		end)
 		if ok2 and res2 then
-			service = safe_cloneref(res2)
+			if typeof(res2) == "Instance" then
+				service = safe_cloneref(res2)
+			else
+				service = res2
+			end
 		end
 	end
 
