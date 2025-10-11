@@ -5,7 +5,7 @@
 
 local flames_api = {}
 
-local BUILD = "V2.1.4-DEVELOPER"
+local BUILD = "V2.1.5-DEVELOPER"
 
 local Base_URL = "aul.biL_noitacifitoN/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
 
@@ -86,7 +86,7 @@ end
 
 -- [[ SAFE GUARD GAME AND INDEXING ]] --
 
-Variables.SafeGame = raw_get(Variables, "game") or safe_setmetatable({
+Variables.Game = raw_get(Variables, "game") or safe_setmetatable({
 	GetService = safe_getservice,
 	FindService = safe_getservice,
 	FindFirstChild = blankfunction,
