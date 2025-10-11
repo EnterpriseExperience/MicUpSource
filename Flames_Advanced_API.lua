@@ -4,213 +4,206 @@
 -- Variables.queueteleport -- For more advanced users, but includes queue-teleport functionality, allowing you to make scripts like auto-execute on rejoin scripts, if done correctly of course.
 
 local flames_api = {}
-
-local BUILD = "V2.1.5-DEVELOPER"
-
+local BUILD = "V2.1.8-DEVELOPER"
+local function reverse_string(str) return string.reverse(str) end
 local Base_URL = "aul.biL_noitacifitoN/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
-
 local Base_URL_2 = "aul.PUKCAB_ssapyB_sinodA/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
-
-local function reverse_string(str)
-	return string.reverse(str)
-end
-
 local Base_URL_Decoded = reverse_string(tostring(Base_URL))
-
 local Base_URL_2_Decoded = reverse_string(tostring(Base_URL_2))
 
--- [[ ENVIRONMENTAL PROTECTION ]] --
-
 local function get_safe_env()
-	local ok, env = pcall(function()
-		return (getgenv and getgenv()) or nil
-	end)
-	if ok and type(env) == "table" then
-		return env
-	elseif type(_G) == "table" then
-		return _G
-	else
-		return {}
-	end
+	local ok, env = pcall(function() return (getgenv and getgenv()) or nil end)
+	if ok and type(env) == "table" then return env end
+	if type(_G) == "table" then return _G end
+	return {}
 end
 
--- [[ PER FUNCTION PROTECTION ]] --
-
-local function blankfunction(...)
-	return ...
-end
+local function blankfunction(...) return ... end
 
 local Variables = get_safe_env()
 get_safe_env().Variables = Variables
 
-Variables.SafeGame = game
-
 local safe_cloneref = (type(cloneref) == "function" and cloneref) or blankfunction
-
 local safe_setmetatable = (type(setmetatable) == "function" and setmetatable) or function(tbl) return tbl end
-
-local raw_get = (type(rawget) == "function" and rawget) or blankfunction
-local raw_set = (type(rawset) == "function" and rawset) or blankfunction
+local raw_get = (type(rawget) == "function" and rawget) or function(tbl, key) return tbl and tbl[key] or nil end
+local raw_set = (type(rawset) == "function" and rawset) or function(tbl, key, val) if tbl then tbl[key] = val end end
 local GetConnections = (type(getconnections) == "function" and getconnections) or (type(get_signal_cons) == "function" and get_signal_cons) or blankfunction
 
--- [[ SERVICE PROTECTION ]] --
-
-local function safe_getservice(self, name)
-	local env_game = raw_get(Variables, "game")
-
-	if env_game and type(env_game.GetService) == "function" then
-		local ok, svc = pcall(function()
-			return env_game:GetService(name)
-		end)
-		if ok and svc then
-			return safe_cloneref and safe_cloneref(svc) or svc
-		end
-	end
-
-	if raw_get(Variables, "game") and type(game.GetService) == "function" then
-		local ok, svc = pcall(function()
-			return game:GetService(name)
-		end)
-		if ok and svc then
-			return safe_cloneref(svc)
-		end
-	end
-
-	local fake = {
-		Name = name,
-		IsFake = true,
-		GetService = safe_getservice,
-	}
-	return safe_setmetatable(fake, { __tostring = function() return "FakeService<" .. tostring(name) .. ">" end })
+if not Variables.SafeGame or Variables.SafeGame.IsFake then
+	local ok, g = pcall(function() return (type(safe_cloneref) == "function" and safe_cloneref(game)) or game end)
+	if ok and g then Variables.SafeGame = g end
 end
 
--- [[ SAFE GUARD GAME AND INDEXING ]] --
+if raw_get(Variables, "game") == nil then
+	raw_set(Variables, "game", Variables.SafeGame)
+end
 
-Variables.Game = raw_get(Variables, "game") or safe_setmetatable({
-	GetService = safe_getservice,
-	FindService = safe_getservice,
-	FindFirstChild = blankfunction,
-	FindFirstChildOfClass = blankfunction,
-	FindFirstChildWhichIsA = blankfunction,
-	IsFake = true,
-}, {
-	__index = function(self, index)
-		if index == "Services" then
-			self.Services = {}
-			return self.Services
+local function safe_service_get(name)
+	if Variables.SafeGame and type(Variables.SafeGame.GetService) == "function" then
+		local ok, svc = pcall(function() return Variables.SafeGame:GetService(name) end)
+		if ok and svc then
+			if type(safe_cloneref) == "function" then
+				local ok2, cref = pcall(function() return safe_cloneref(svc) end)
+				if ok2 and cref then return cref end
+			end
+			return svc
 		end
-		return safe_getservice(self, index)
-	end,
-
-	__tostring = function()
-		return "SafeGame<DataModel>"
 	end
-})
 
--- [[ SAFE GUARD SERVICES VIA INDEXING ]] --
-
-local function safe_newservice(index)
-	local svc = nil
-	local ok = pcall(function()
-		svc = Variables.SafeGame:GetService(index)
-	end)
-	if ok and svc then
-		safe_cloneref(svc)
-		return svc
+	if type(game) == "table" and type(game.GetService) == "function" then
+		local ok, svc = pcall(function() return game:GetService(name) end)
+		if ok and svc then
+			if type(safe_cloneref) == "function" then
+				local ok2, cref = pcall(function() return safe_cloneref(svc) end)
+				if ok2 and cref then return cref end
+			end
+			return svc
+		end
 	end
+
 	return nil
 end
 
-local function build_safe_services()
-	local t = {}
-	local mt = {
-		__index = function(self, index)
-			local new_service = safe_newservice(index)
-			if new_service then
-				raw_set(self, index, new_service)
-				return new_service
-			end
-			return nil
-		end,
+local function build_services_table()
+	if type(setmetatable) == "function" then
+		return setmetatable({}, {
+			__index = function(self, index)
+				local existing = raw_get(self, index)
+				if existing ~= nil then return existing end
 
-		__tostring = function()
-			return "SafeServices<Table>"
+				local svc = safe_service_get(index)
+				if svc then
+					raw_set(self, index, svc)
+					return svc
+				end
+
+				local fake = {
+					Name = index,
+					IsFake = true,
+					GetService = function(_, sub) return safe_service_get(sub) end
+				}
+				local mt_fake = {
+					__tostring = function() return "FakeService<" .. tostring(index) .. ">" end
+				}
+				local wrapped = safe_setmetatable(fake, mt_fake)
+				raw_set(self, index, wrapped)
+				return wrapped
+			end,
+
+			__tostring = function() return "SafeServices<Table>" end
+		})
+	else
+		local services = {}
+		local common = {
+			"Players", "Workspace", "Lighting", "ReplicatedStorage", "TweenService",
+			"RunService", "MaterialService", "ReplicatedFirst", "Teams", "StarterPack",
+			"StarterPlayer", "VoiceChatInternal", "VoiceChatService", "CoreGui", "SoundService",
+			"StarterGui", "MarketplaceService", "TeleportService", "Chat", "AssetService",
+			"HttpService", "UserInputService", "TextChatService", "ContextActionService",
+			"GuiService", "PhysicsService",
+		}
+		for _, name in ipairs(common) do
+			local svc = safe_service_get(name)
+			if svc then
+				services[name] = svc
+			else
+				services[name] = { Name = name, IsFake = true }
+			end
 		end
-	}
-	return safe_setmetatable(t, mt)
+		return services
+	end
 end
 
-Variables.Services = build_safe_services()
+Variables.Services = Variables.Services or build_services_table()
 
--- [[ thank you: Infinite Yield (improved checking) ]] --
-local function isNumber(str)
-	if type(str) ~= "string" and type(str) ~= "number" then return false end
-	if tonumber(str) ~= nil or str == "inf" then
-		return true
+local function SafeGet(serviceName)
+	if type(serviceName) ~= "string" then
+		return Variables.SafeGame
 	end
+
+	Variables.Services = Variables.Services or build_services_table()
+
+	local cached = raw_get(Variables.Services, serviceName)
+	if cached and not cached.IsFake then
+		if type(safe_cloneref) == "function" then
+			local ok, v = pcall(function() return safe_cloneref(cached) end)
+			if ok and v then return v end
+		end
+		return cached
+	end
+
+	local service = safe_service_get(serviceName)
+	if service then
+		raw_set(Variables.Services, serviceName, service)
+		return service
+	end
+
+	local ok2, found = pcall(function()
+		if Variables.SafeGame and type(Variables.SafeGame.FindService) == "function" then
+			return Variables.SafeGame:FindService(serviceName)
+		elseif type(game.FindService) == "function" then
+			return game:FindService(serviceName)
+		end
+	end)
+
+	if ok2 and found then
+		if typeof and typeof(found) == "Instance" and type(safe_cloneref) == "function" then
+			local ok3, cref = pcall(function() return safe_cloneref(found) end)
+			if ok3 and cref then
+				raw_set(Variables.Services, serviceName, cref)
+				return cref
+			end
+		end
+		raw_set(Variables.Services, serviceName, found)
+		return found
+	end
+
+	local fake = {
+		Name = serviceName,
+		IsFake = true,
+		GetService = function(_, sub) return SafeGet(sub) end
+	}
+	local mt_fake = { __tostring = function() return "FakeService<" .. tostring(serviceName) .. ">" end }
+	local wrapped = safe_setmetatable(fake, mt_fake)
+	raw_set(Variables.Services, serviceName, wrapped)
+	return wrapped
+end
+
+Variables.SafeGet = SafeGet
+Variables.Services = Variables.Services
+Variables.SafeGame = Variables.SafeGame
+Variables.Game = raw_get(Variables, "game") or Variables.SafeGame
+
+local function isNumber(v)
+	if type(v) ~= "string" and type(v) ~= "number" then return false end
+	if tonumber(v) ~= nil or v == "inf" then return true end
 	return false
 end
 
--- [[ TASK.WAIT .VS. WAIT --> os.clock() | FALLBACK ]] --
-
-local function get_wait()
-	if task and task.wait then
-		return task.wait
-	elseif wait then
-		return wait
-	else
-		return function(t)
-			local start = os.clock()
-			while os.clock() - start < (t or 0) do end
-		end
-	end
+local function choose_wait()
+	if task and task.wait then return task.wait end
+	if wait then return wait end
+	return function(t) local t0 = os.clock(); while os.clock() - t0 < (t or 0) do end end
 end
 
-local safe_wait = get_wait
-
--- [[ TASK.DELAY .VS. DELAY --> task.spawn | FALLBACK ]] --
+local safe_wait = choose_wait()
 
 local function wait_delay(TimeToWait, func)
-	if not isNumber(TimeToWait) then
-		TimeToWait = tonumber(TimeToWait) or 0
-	end
-
-	if typeof(func) == "function" then
+	if not isNumber(TimeToWait) then TimeToWait = tonumber(TimeToWait) or 0 end
+	if type(func) == "function" then
 		if task and task.delay then
 			task.delay(TimeToWait, func)
 		elseif delay then
 			delay(TimeToWait, func)
 		else
-			task.spawn(function()
-				task.wait(TimeToWait)
-				func()
-			end)
+			task.spawn(function() task.wait(TimeToWait); func() end)
 		end
 	end
 end
-
--- [[ PER ENVIRONMENTAL WAIT SELECTION ]] --
-
-local function choose_wait()
-	if task and task.wait then
-		return task.wait
-	elseif wait then
-		return wait
-	else
-		return function(t)
-			local t0 = os.clock()
-			while os.clock() - t0 < (t or 0) do end
-		end
-	end
-end
-
--- [[ ENVIRONMENTAL DELAY SELECTION | is_Function --> function()? ]] --
--- >> new_wait(1, true, function() print('FUNCTION = true') end) << --
 
 local function new_wait(seconds, is_Function, functionality)
 	local func_selected = choose_wait()
 	local sec = tonumber(seconds) or 0
-
 	if not is_Function then
 		func_selected(sec)
 	else
@@ -218,80 +211,39 @@ local function new_wait(seconds, is_Function, functionality)
 	end
 end
 
--- [[ SERVICE GUARD | V2 ]] --
+pcall(function()
+	Variables.JobID = (Variables.SafeGame and Variables.SafeGame.JobId) or (game and game.JobId)
+	Variables.PlaceID = (Variables.SafeGame and Variables.SafeGame.PlaceId) or (game and game.PlaceId)
+end)
 
-local function SafeGet(serviceName)
-	if type(serviceName) ~= "string" then
-		return Variables.SafeGame
-	end
-
-	Variables.Services = Variables.Services or {}
-
-	local existing = raw_get(Variables.Services, serviceName)
-	if existing and not existing.IsFake then
-		return safe_cloneref(existing)
-	end
-
-	local service
-
-	local ok1, res1 = pcall(function()
-		return safe_cloneref(Variables.SafeGame:GetService(serviceName))
-	end)
-	if ok1 and res1 then
-		service = res1
-	end
-
-	if not service then
-		local ok2, res2 = pcall(function()
-			return Variables.SafeGame:FindService(serviceName)
-		end)
-		if ok2 and res2 then
-			if typeof(res2) == "Instance" then
-				service = safe_cloneref(res2)
-			else
-				service = res2
-			end
-		end
-	end
-
-	if rawget and rawset then
-		if not raw_get(Variables.Services, serviceName) then
-			raw_set(Variables.Services, serviceName, service)
-		end
-	end
-
-	return service
-end
-
-Variables.JobID = Variables.SafeGame.JobId
-Variables.PlaceID = Variables.SafeGame.PlaceId
-safe_wait()
 local httpget =
-	(typeof(game.HttpGet) == "function" and game.HttpGet)
-	or (typeof(game.HttpGetAsync) == "function" and game.HttpGetAsync)
-	or request
-	or http_request
-	or (syn and syn.request)
-	or (http and http.request)
-	or (fluxus and fluxus.request)
-	or nil
+	(typeof and typeof(game.HttpGet) == "function" and game.HttpGet) or
+	(typeof and typeof(game.HttpGetAsync) == "function" and game.HttpGetAsync) or
+	request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request) or nil
 
 local function safe_httpget(url)
-   local ok, res = pcall(function()
-		if typeof(httpget) == "function" then
-			return httpget(game, url)
-		elseif typeof(httpget) == "table" and httpget.request then
-			return httpget.request({ Url = url, Method = "GET" }).Body
-		elseif typeof(httpget) == "function" and not pcall(function() return game end) then
-			local r = httpget({ Url = url, Method = "GET" })
+	local ok, res = pcall(function()
+		if type(httpget) == "function" then
+			local okg = pcall(function() return httpget(game, url) end)
+			if okg then return httpget(game, url) end
+			return httpget({ Url = url, Method = "GET" })
+		elseif type(httpget) == "table" and httpget.request then
+			local r = httpget.request({ Url = url, Method = "GET" })
 			return (r and r.Body) or r
 		end
 	end)
 	if ok and res then
+		if type(res) == "table" and res.Body then return res.Body end
 		return res
 	end
 	return ""
 end
+
+flames_api.Variables = Variables
+flames_api.SafeGet = SafeGet
+flames_api.safe_httpget = safe_httpget
+flames_api.safe_wait = safe_wait
+flames_api.new_wait = new_wait
 
 local NotifyLib = loadstring(safe_httpget(Base_URL_Decoded))()
 new_wait(0.1, false)
