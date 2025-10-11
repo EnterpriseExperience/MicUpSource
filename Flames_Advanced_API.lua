@@ -41,6 +41,7 @@ local function blankfunction(...)
 end
 
 local Variables = get_safe_env()
+getgenv().Variables = Variables
 
 Variables.SafeGame = game
 
