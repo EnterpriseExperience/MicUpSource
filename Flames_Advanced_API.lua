@@ -41,7 +41,7 @@ local function blankfunction(...)
 end
 
 local Variables = get_safe_env()
-getgenv().Variables = Variables
+get_safe_env().Variables = Variables
 
 Variables.SafeGame = game
 
@@ -274,7 +274,35 @@ end
 Variables.JobID = Variables.SafeGame.JobId
 Variables.PlaceID = Variables.SafeGame.PlaceId
 safe_wait()
-local NotifyLib = loadstring(Variables.SafeGame:HttpGet(Base_URL_Decoded))()
+local httpget =
+	(typeof(game.HttpGet) == "function" and game.HttpGet)
+	or (typeof(game.HttpGetAsync) == "function" and game.HttpGetAsync)
+	or request
+	or http_request
+	or (syn and syn.request)
+	or (http and http.request)
+	or (fluxus and fluxus.request)
+	or nil
+
+local function safe_httpget(url)
+   local ok, res = pcall(function()
+		if typeof(httpget) == "function" then
+			return httpget(game, url)
+		elseif typeof(httpget) == "table" and httpget.request then
+			return httpget.request({ Url = url, Method = "GET" }).Body
+		elseif typeof(httpget) == "function" and not pcall(function() return game end) then
+			local r = httpget({ Url = url, Method = "GET" })
+			return (r and r.Body) or r
+		end
+	end)
+	if ok and res then
+		return res
+	end
+	return ""
+end
+
+local NotifyLib = loadstring(safe_httpget(Base_URL_Decoded))()
+new_wait(0.1, false)
 function notify(notif_type, msg, duration)
 	local validTypes = {Error=true, Success=true, Info=true, Warning=true}
 	local t = tostring(notif_type)
