@@ -17,13 +17,13 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.4.6"
+local Raw_Version = "???"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed 'copyavatar' command not copying correctly, the flag was being set wrong, and would bug out."
 local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
-local Script_Version = tostring(Raw_Version).."-LifeAdmin"
+local Script_Version = tostring(Raw_Version).."-TESTING_BUILD"
 getgenv().Script_Version_GlobalGenv = Script_Version
 
 function notify(notif_type, msg, duration)
@@ -6525,66 +6525,61 @@ getgenv().notify("Success", "[INITIALIZED]: Life Together RP-Admin has been load
 getgenv().notify("Success", "[LOADED]: | [Life Together-RP : Admin_Commands]: Loaded!", 7)
 wait(0.3)
 function auto_add_friends()
-   for _, v in ipairs(getgenv().Players:GetPlayers()) do
-      if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
-         alreadyCheckedUser(v)
-      end
-   end
+    for _, v in ipairs(getgenv().Players:GetPlayers()) do
+        if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+            alreadyCheckedUser(v)
+        end
+    end
 end
 
 function auto_remove_friends()
-   for _, v in ipairs(getgenv().Players:GetPlayers()) do
-      if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) and v.Character == nil then
-         getgenv().Rainbow_Others_Vehicle = false
-      end
-   end
+    for _, v in ipairs(getgenv().Players:GetPlayers()) do
+        if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) and v.Character == nil then
+            getgenv().Rainbow_Others_Vehicle = false
+        end
+    end
 end
 
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = true
 
 wait(0.1)
 getgenv().Players.PlayerAdded:Connect(function(Player)
-   local Name = Player and Player.Name
-   getgenv().Blacklisted_Friends = getgenv().Blacklisted_Friends or {}
+    local Name = Player and Player.Name
+    getgenv().Blacklisted_Friends = getgenv().Blacklisted_Friends or {}
 
-   if Name == "L0CKED_1N1" or Name == "CHEATING_B0SS" then
-      owner_joined(Name)
-      if getgenv().friend_checked[Name] then
-         getgenv().player_admins[Name] = nil
-      end
-      if getgenv().friend_checked[Name] then
-         getgenv().friend_checked[Name] = nil
-      end
-      if getgenv().cmds_loaded_plr[Name] then
-         getgenv().cmds_loaded_plr[Name] = nil
-      end
-   end
+    if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+        if not getgenv().Blacklisted_Friends[Name] then
+            auto_add_friends()
+        end
+    end
 
-   if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
-      if not getgenv().Blacklisted_Friends[Name] then
-         auto_add_friends()
-      end
-   end
+    if Name == "L0CKED_1N1" or Name == "CHEATING_B0SS" then
+        owner_joined(Name)
+        if getgenv().friend_checked[Name] then
+            getgenv().player_admins[Name] = nil
+        end
+        if getgenv().friend_checked[Name] then
+            getgenv().friend_checked[Name] = nil
+        end
+        if getgenv().cmds_loaded_plr[Name] then
+            getgenv().cmds_loaded_plr[Name] = nil
+        end
+    end
 end)
 
 getgenv().Players.PlayerRemoving:Connect(function(Player)
-   local Name = Player.Name
+    local Name = Player.Name
 
-   if Name == "L0CKED_1N1" or Name == "CHEATING_B0SS" then
-      getgenv().notify("Warning", "The owner of this script has left the server.", 5)
-   end
-
-   disable_rgb_for(Name)
-   getgenv().fully_disable_rgb_plr(Name)
-   if getgenv().Locked_Vehicles[Name] then
-      getgenv().Locked_Vehicles[Name] = false
-   end
-   if getgenv().Unlocked_Vehicles[Name] then
-      getgenv().Unlocked_Vehicles[Name] = false
-   end
+    disable_rgb_for(Name)
+    getgenv().fully_disable_rgb_plr(Name)
+    if getgenv().Locked_Vehicles[Name] then
+        getgenv().Locked_Vehicles[Name] = false
+    end
+    if getgenv().Unlocked_Vehicles[Name] then
+        getgenv().Unlocked_Vehicles[Name] = false
+    end
 end)
 wait()
-getgenv().notify("Success", "Initializing error reporter...", 6)
 local Players = getgenv().Players or cloneref(game:GetService("Players"))
 local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
 local Handle_Error = getgenv().Error_API and getgenv().Error_API.Handle_Error
@@ -6620,8 +6615,6 @@ task.spawn(function()
       end
    end
 end)
-wait(0.1)
-getgenv().notify("Success", "Error reporter should now be fully loaded and working.", 7)
 wait()
 HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
 
@@ -6646,87 +6639,3 @@ else
       end
    end
 end
-
-task.wait(0.2)
-function Notify(message, duration)
-   local NotificationGui = Instance.new("ScreenGui")
-   NotificationGui.Name = "CustomErrorGui"
-   NotificationGui.ResetOnSpawn = false
-   NotificationGui.Parent = getgenv().CoreGui
-   duration = duration or 5
-
-   local Frame = Instance.new("Frame")
-   Frame.Name = "ErrorMessage"
-   Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-   Frame.BackgroundTransparency = 0.3
-   Frame.BorderSizePixel = 0
-   Frame.Size = UDim2.new(0, 400, 0, 60)
-   Frame.Position = UDim2.new(0, 20, 0, 100)
-   Frame.Parent = NotificationGui
-
-   local UICorner = Instance.new("UICorner")
-   UICorner.CornerRadius = UDim.new(0, 6)
-   UICorner.Parent = Frame
-
-   local Icon = Instance.new("ImageLabel")
-   Icon.Name = "ErrorIcon"
-   Icon.AnchorPoint = Vector2.new(0, 0.5)
-   Icon.BackgroundTransparency = 1
-   Icon.Position = UDim2.new(0, 10, 0.5, -20)
-   Icon.Size = UDim2.new(0, 40, 0, 40)
-   Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
-   Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
-   Icon.Parent = Frame
-
-   local Label = Instance.new("TextLabel")
-   Label.Name = "ErrorText"
-   Label.BackgroundTransparency = 1
-   Label.Position = UDim2.new(0, 60, 0, 0)
-   Label.Size = UDim2.new(1, -70, 1, 0)
-   Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
-   Label.Text = message
-   Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-   Label.TextSize = 20
-   Label.TextWrapped = true
-   Label.TextXAlignment = Enum.TextXAlignment.Left
-   Label.TextYAlignment = Enum.TextYAlignment.Center
-   Label.Parent = Frame
-
-   Frame.BackgroundTransparency = 1
-   Icon.ImageTransparency = 1
-   Label.TextTransparency = 1
-   getgenv().TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
-   getgenv().TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
-   getgenv().TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
-
-   task.delay(duration, function()
-      if Frame and Frame.Parent then
-         getgenv().TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-         getgenv().TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
-         getgenv().TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-         task.wait(0.35)
-         Frame:Destroy()
-         NotificationGui:Destroy()
-      end
-   end)
-end
-
-task.spawn(function()
-   getgenv().ConstantUpdate_Checker_Live = true
-   while getgenv().ConstantUpdate_Checker_Live do
-      task.wait(1)
-
-      local success, latestVersionInfo = pcall(function()
-         local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
-         return HttpService:JSONDecode(versionJson)
-      end)
-
-      if success and latestVersionInfo then
-         if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
-            getgenv().ConstantUpdate_Checker_Live = false
-            Notify("[LIFE TOGETHER ADMIN]: There is an update pending, rejoin the game to update!", 20)
-            break
-         end
-      end
-   end
-end)
