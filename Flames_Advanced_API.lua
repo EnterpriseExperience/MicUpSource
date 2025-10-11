@@ -42,7 +42,7 @@ end
 
 local Variables = get_safe_env()
 
-Variables.Game = game
+Variables.SafeGame = game
 
 local safe_cloneref = (type(cloneref) == "function" and cloneref) or blankfunction
 
