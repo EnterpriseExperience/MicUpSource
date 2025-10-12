@@ -4,14 +4,12 @@
 -- Variables.queueteleport -- For more advanced users, but includes queue-teleport functionality, allowing you to make scripts like auto-execute on rejoin scripts, if done correctly of course.
 
 local flames_api = {}
-local BUILD = "V2.1.9-DEVELOPER"
+local BUILD = "V2.2.6-DEVELOPER"
 local function reverse_string(str) return string.reverse(str) end
 local Base_URL = "aul.biL_noitacifitoN/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
 local Base_URL_2 = "aul.PUKCAB_ssapyB_sinodA/niam/sdaeh/sfer/ecruoSpUciM/ecneirepxEesirpretnE/moc.tnetnocresubuhtig.war//:sptth"
 local Base_URL_Decoded = reverse_string(tostring(Base_URL))
 local Base_URL_2_Decoded = reverse_string(tostring(Base_URL_2))
-
-warn(BUILD)
 
 local function get_safe_env()
 	local ok, env = pcall(function() return (getgenv and getgenv()) or nil end)
@@ -31,7 +29,7 @@ local raw_get = (type(rawget) == "function" and rawget) or function(tbl, key) re
 local raw_set = (type(rawset) == "function" and rawset) or function(tbl, key, val) if tbl then tbl[key] = val end end
 local GetConnections = (type(getconnections) == "function" and getconnections) or (type(get_signal_cons) == "function" and get_signal_cons) or blankfunction
 
-if not Variables.SafeGame or Variables.SafeGame.IsFake then
+if not Variables.SafeGame then
 	local ok, g = pcall(function() return (type(safe_cloneref) == "function" and safe_cloneref(game)) or game end)
 	if ok and g then Variables.SafeGame = g end
 end
@@ -126,7 +124,7 @@ local function SafeGet(serviceName)
 	Variables.Services = Variables.Services or build_services_table()
 
 	local cached = raw_get(Variables.Services, serviceName)
-	if cached and not cached.IsFake then
+	if cached then
 		if type(safe_cloneref) == "function" then
 			local ok, v = pcall(function() return safe_cloneref(cached) end)
 			if ok and v then return v end
@@ -261,8 +259,9 @@ wait(0.1)
 Variables.notify = notify
 wait(0.1)
 flames_api.notify = Variables.notify or notify
+local All_Services = Variables.Services
 flames_api.Service = function(serviceName)
-   return SafeGet(serviceName)
+   return All_Services[serviceName]
 end
 
 local function getExecutor()
@@ -292,7 +291,7 @@ flames_api.RandomString = function()
 	return table.concat(array)
 end
 
-local Players = SafeGet("Players")
+local Players = flames_api.Service("Players")
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
    Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
@@ -300,11 +299,35 @@ if not LocalPlayer then
 	Variables.LocalPlayer = LocalPlayer
 end
 new_wait(0.1, false)
+local Players = flames_api.Service("Players")
+
+local LocalPlayer = Players.LocalPlayer
+if not LocalPlayer then
+	local ok = pcall(function()
+		Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+	end)
+	LocalPlayer = Players.LocalPlayer
+end
+
+while not LocalPlayer do
+	task.wait()
+	LocalPlayer = Players.LocalPlayer
+end
+
+Variables.LocalPlayer = LocalPlayer
 flames_api.Players = Players
-flames_api.LocalPlayer = Variables.LocalPlayer
+flames_api.LocalPlayer = LocalPlayer
 flames_api.PlaceID = Variables.PlaceID
 flames_api.JobID = Variables.JobID
-flames_api.PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 5)
+
+local PlayerGui = nil
+pcall(function()
+	PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") 
+		or LocalPlayer:FindFirstChild("PlayerGui") 
+		or LocalPlayer:FindFirstChildWhichIsA("PlayerGui") 
+		or LocalPlayer:WaitForChild("PlayerGui", 5)
+end)
+flames_api.PlayerGui = PlayerGui
 
 local function SafeGetHumanoid(char)
 	return char:FindFirstChildWhichIsA("Humanoid") or char:WaitForChild("Humanoid", 5)
@@ -319,9 +342,14 @@ local function SafeGetHead(char)
 end
 
 local function SafeGetChar(player)
-	if not player then return end
-
-	return player.Character or player.CharacterAdded:Wait(5)
+	if not player then return nil end
+	local char = player.Character
+	if char then return char end
+	local ok, newChar = pcall(function()
+		return player.CharacterAdded:Wait(5)
+	end)
+	if ok then return newChar end
+	return nil
 end
 
 local FlyConnections
@@ -396,7 +424,7 @@ flames_api.Vehicle = function()
 		end
 	end
 
-	return nil
+	return flames_api.notify("Error", "We we're unable to locate/find your Vehicle.", 6)
 end
 
 flames_api.Fly = function(speed)
@@ -689,7 +717,7 @@ end
 flames_api.JumpPower = function(JP)
 	if type(JP) ~= "number" then return flames_api.notify("Warning", "That is not a number!", 4) end
 
-	local StarterPlayer = SafeGet("StarterPlayer")
+	local StarterPlayer = flames_api.Service("StarterPlayer")
 	local CharacterUseJumpPowerCheck = StarterPlayer.CharacterUseJumpPower
 
 	pcall(function()
@@ -700,8 +728,6 @@ flames_api.JumpPower = function(JP)
 		end
 	end)
 end
-
-print(tostring(BUILD))
 
 flames_api.BuildVersion = function()
 	if not BUILD then return flames_api.notify("Error", "Build variable seems to have been erased?", 6) end
@@ -767,7 +793,7 @@ end
 flames_api.HookSpeed = function()
 	if not hookmetamethod then return flames_api.notify("Error", "Your executor does not support 'hookmetamethod'!", 6) end
 
-	local Original_WalkSpeed = SafeGet("StarterPlayer").CharacterWalkSpeed
+	local Original_WalkSpeed = flames_api.Service("StarterPlayer").CharacterWalkSpeed
 	local Character = Variables.Character
 	local hooks = {
 		walkspeed = tonumber(Original_WalkSpeed) or 16,
@@ -793,8 +819,8 @@ end
 flames_api.HookJP = function()
 	if not hookmetamethod then return flames_api.notify("Error", "Your executor does not support 'hookmetamethod'!", 6) end
 
-	local Original_JumpPower = SafeGet("StarterPlayer").CharacterJumpPower
-	local Original_JumpHeight = SafeGet("StarterPlayer").CharacterJumpHeight
+	local Original_JumpPower = flames_api.Service("StarterPlayer").CharacterJumpPower
+	local Original_JumpHeight = flames_api.Service("StarterPlayer").CharacterJumpHeight
 	local Character = Variables.Character
 	local hooks = {
 		jumppower = tonumber(Original_JumpPower) or 50,
@@ -828,7 +854,7 @@ local serviceList = {
 }
 
 for _, serviceName in ipairs(serviceList) do
-	flames_api[serviceName] = SafeGet(serviceName)
+	flames_api[serviceName] = flames_api.Service(serviceName)
 end
 
 return flames_api
