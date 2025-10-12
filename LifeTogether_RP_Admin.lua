@@ -20,8 +20,8 @@ end
 wait()
 local Raw_Version = "V4.5.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Improved 'anticarfling' it will just fully turn off the collision of the Vehicle + (thanks: Certified17381 on Roblox for the idea) added 'outfitsui' allowing you to save outfits, delete them and wear them (FE!) + no outfit limit"
-local displayTimeMax = 35
+local Announcement_Message = "Improved 'anticarfling' it will just fully turn off the collision of the Vehicle + (thanks: Certified17381 on Roblox for the idea, make sure to give me ideas with the 'feedback' command!) added 'outfitsui' allowing you to save outfits, delete them and wear them (FE!) + no outfit limit"
+local displayTimeMax = 37
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
