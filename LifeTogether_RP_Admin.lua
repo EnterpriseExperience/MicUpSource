@@ -1,7 +1,8 @@
 -- [[ This file is quite huge, so if you get a PARSER LOCAL LIMIT, don't be so surprised. ]] --
-getgenv().Game = game
-if not game:IsLoaded() then
-   game.Loaded:Wait()
+getgenv().Game = cloneref and cloneref(game) or game
+wait()
+if not getgenv().Game:IsLoaded() then
+   getgenv().Game.Loaded:Wait()
 end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 getgenv().JobID = getgenv().Game.JobId
@@ -54,8 +55,8 @@ getgenv().Service_Wrap = function(serviceName)
    end
 end
 wait(0.1)
-local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local HttpService = cloneref and cloneref(getgenv().Game:GetService("HttpService")) or getgenv().Game:GetService("HttpService")
+local Players = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
    Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
@@ -235,7 +236,7 @@ Players.PlayerRemoving:Connect(function(plr)
    end
 end)
 
-local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local CoreGui = cloneref and cloneref(getgenv().Game:GetService("CoreGui")) or getgenv().Game:GetService("CoreGui")
 local HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
 
 local toggleGui = Instance.new("ScreenGui")
@@ -403,7 +404,7 @@ if GroupId and GroupId > 0 and LocalPlayer:IsInGroup(GroupId) then
 	end
 end
 wait(0.2)
-local cmdp = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local cmdp = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
 local cmdlp = cmdp.LocalPlayer
 
 function getHum(char)
@@ -619,12 +620,12 @@ end
 wait()
 init_services()
 task.wait()
-local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local HttpService = cloneref and cloneref(getgenv().Game:GetService("HttpService")) or getgenv().Game:GetService("HttpService")
+local Players = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
+local RunService = cloneref and cloneref(getgenv().Game:GetService("RunService")) or getgenv().Game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
-local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local ReplicatedStorage = cloneref and cloneref(getgenv().Game:GetService("ReplicatedStorage")) or getgenv().Game:GetService("ReplicatedStorage")
+local Workspace = cloneref and cloneref(getgenv().Game:GetService("Workspace")) or getgenv().Game:GetService("Workspace")
 local Modules = ReplicatedStorage:WaitForChild("Modules")
 local Core = Modules:WaitForChild("Core")
 local Game = Modules:WaitForChild("Game")
@@ -1047,7 +1048,7 @@ function vehicle_kill_player(TargetPlayer)
    end
 end
 
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local Players = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Owners = {
    ["L0CKED_1N1"] = true,
@@ -1147,7 +1148,7 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "TitleToggleUI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.IgnoreGuiInset = true
-if gethui then ScreenGui.Parent = gethui() else ScreenGui.Parent = game.CoreGui end
+if gethui then ScreenGui.Parent = gethui() else ScreenGui.Parent = getgenv().Game.CoreGui end
 
 local Button = Instance.new("TextButton")
 Button.Size = UDim2.new(0, 140, 0, 40)
