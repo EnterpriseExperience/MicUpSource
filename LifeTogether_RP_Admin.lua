@@ -18,10 +18,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.5.1"
+local Raw_Version = "V4.5.3"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed 'copyavatar' command not working/copying correctly, wasn't copying Animations, Body, Height and Age properly."
-local displayTimeMax = 17
+local Announcement_Message = "Added 'anticarfling' which will delete any Vehicle before it can fling you! + (properly fixed 'copyavatar')"
+local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -3112,6 +3112,8 @@ local function CommandsMenu()
       {prefix}orbit Player Speed Distance - Lets you orbit the target Player.
       {prefix}unorbit - Stops orbiting the target Player.
       {prefix}orbitspeed Speed - Lets you modify your orbit speed.
+      {prefix}anticarfling - Enables 'anticarfling', preventing you from being flung by Vehicles.
+      {prefix}unanticarfling - Disables 'anticarfling' command.
       {prefix}norainbowcar player - Disables the RGB for a player's car (FE).
       {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed.
       {prefix}unadmin player - Removes the player's FE commands (if they're your friend).
@@ -3444,6 +3446,90 @@ end
 
 local function stop_rainbow_others_car(Player)
    RGB_Vehicle_Others(Player, false)
+end
+
+getgenv().VehicleDestroyer_Enabled = getgenv().VehicleDestroyer_Enabled or false
+getgenv().VehicleDestroyer_Connections = getgenv().VehicleDestroyer_Connections or {}
+
+local function clearConnections()
+	for _, conn in ipairs(getgenv().VehicleDestroyer_Connections) do
+		if typeof(conn) == "RBXScriptConnection" then
+			pcall(function() conn:Disconnect() end)
+		end
+	end
+	table.clear(getgenv().VehicleDestroyer_Connections)
+	getgenv().folderAddedConn = nil
+	getgenv().vehiclesChildAddedConn = nil
+	getgenv().vehiclesHeartBeatConnection = nil
+end
+
+local function disableCollisionIn(folder)
+	for _, obj in ipairs(folder:GetDescendants()) do
+		if obj:IsA("BasePart") and obj.CanCollide then
+			obj.CanCollide = false
+		end
+	end
+end
+
+local function setupFolder(folder)
+	disableCollisionIn(folder)
+
+   getgenv().notify("Success", "Anti Vehicle Fling has been enabled.", 5)
+	getgenv().vehiclesChildAddedConn = folder.ChildAdded:Connect(function(child)
+		if not getgenv().VehicleDestroyer_Enabled then return end
+
+		if child:IsA("BasePart") then
+			child.CanCollide = false
+		elseif child:IsA("Model") then
+			child.DescendantAdded:Connect(function(desc)
+				if desc:IsA("BasePart") then
+					desc.CanCollide = false
+				end
+			end)
+			disableCollisionIn(child)
+		end
+	end)
+	table.insert(getgenv().VehicleDestroyer_Connections, getgenv().vehiclesChildAddedConn)
+end
+
+getgenv().DisableVehicleDestroyer = function()
+	getgenv().VehicleDestroyer_Enabled = false
+	clearConnections()
+end
+
+function anti_car_fling(toggle)
+	if toggle == true then
+		getgenv().VehicleDestroyer_Enabled = true
+		clearConnections()
+
+		local vehiclesFolder = getgenv().Workspace:FindFirstChild("Vehicles") or getgenv().Workspace:WaitForChild("Vehicles", 5)
+		if vehiclesFolder then
+			setupFolder(vehiclesFolder)
+		end
+
+		getgenv().folderAddedConn = getgenv().Workspace.ChildAdded:Connect(function(child)
+			if child.Name == "Vehicles" and child:IsA("Folder") then
+				setupFolder(child)
+				vehiclesFolder = child
+			end
+		end)
+		table.insert(getgenv().VehicleDestroyer_Connections, getgenv().folderAddedConn)
+
+		getgenv().vehiclesHeartBeatConnection = getgenv().RunService.Heartbeat:Connect(function()
+			if not getgenv().VehicleDestroyer_Enabled then return end
+			if vehiclesFolder and vehiclesFolder.Parent then
+				disableCollisionIn(vehiclesFolder)
+			else
+				vehiclesFolder = getgenv().Workspace:FindFirstChild("Vehicles")
+			end
+		end)
+		table.insert(getgenv().VehicleDestroyer_Connections, getgenv().vehiclesHeartBeatConnection)
+	elseif toggle == false then
+		getgenv().DisableVehicleDestroyer()
+      getgenv().notify("Success", "Anti Vehicle Fling has been disabled.", 5)
+   else
+      return 
+	end
 end
 
 function Enable_Fly_2(Speed)
@@ -5497,7 +5583,7 @@ local function handleCommand(sender, message)
       wait()
       Enable_Fly_2(Fly_Speed)
    elseif cmd == "spawnfire" or cmd == "fireamount" or cmd == "spawnflames" or cmd == "spawnflame" or cmd == "firespawn" then
-      local Amount = tonumber(split[1])
+      local Amount = tonumber(split[1]) or 5
       getgenv().HasSeen_Fire_AlertFlamesHub = getgenv().HasSeen_Fire_AlertFlamesHub or false
 
       local isVerified = getgenv().LocalPlayer:GetAttribute("is_verified")
@@ -5573,6 +5659,10 @@ local function handleCommand(sender, message)
       do_emote("jabba")
    elseif cmd == "infyield" or cmd == "infpremium" or cmd == "infiniteyield" or cmd == "infinitepremium" or cmd == "iy" or cmd == "loadiy" then
       infinite_premium()
+   elseif cmd == "anticarfling" or cmd == "startanticarfling" or cmd == "antivehiclefling" or cmd == "antivfling" or cmd == "acarfling" then
+      anti_car_fling(true)
+   elseif cmd == "unanticarfling" or cmd == "stopanticarfling" or cmd == "unantivehiclefling" or cmd == "unantivfling" or cmd == "unacarfling" then
+      anti_car_fling(false)
    elseif cmd == "annoy" then
       local Target = findplr(split[1])
       if not Target then
