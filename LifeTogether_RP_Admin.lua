@@ -18,7 +18,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.5.8"
+local Raw_Version = "V4.5.9"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed 'Outfits Manager UI', now should be correctly set to apply/delete your saved avatars + it has a confirmation message before deleting."
 local displayTimeMax = 30
@@ -2082,8 +2082,8 @@ function save_outfits_GUI()
          label.Parent = entry
 
          local wearBtn = Instance.new("TextButton")
-         wearBtn.Size = UDim2.new(0.25,-5,1,-4)
-         wearBtn.Position = UDim2.new(0.5,5,0,2)
+         wearBtn.Size = UDim2.new(0.25, -30, 1, -10)
+         wearBtn.Position = UDim2.new(0.5, 40, 0, 7)
          wearBtn.Text = "💾 Wear 💾"
          wearBtn.BackgroundColor3 = Color3.fromRGB(249,232,0)
          wearBtn.TextColor3 = Color3.fromRGB(0,0,0)
@@ -2092,9 +2092,59 @@ function save_outfits_GUI()
          wearBtn.Parent = entry
          Instance.new("UICorner", wearBtn)
 
+         local renameBtn = Instance.new("TextButton")
+         renameBtn.Size = UDim2.new(0.25, -30, 1, -8)
+         renameBtn.Position = UDim2.new(0, 180, 0, 7)
+         renameBtn.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
+         renameBtn.TextColor3 = Color3.new(1, 1, 1)
+         renameBtn.Font = Enum.Font.SourceSansBold
+         renameBtn.TextScaled = true
+         renameBtn.Text = "✏️ Rename ✏️"
+         renameBtn.Parent = entry
+         renameBtn.LayoutOrder = 2
+
+         local UICorner = Instance.new("UICorner")
+         UICorner.CornerRadius = UDim.new(0, 6)
+         UICorner.Parent = renameBtn
+
+         renameBtn.MouseButton1Click:Connect(function()
+            if g.is_busy_outfit_manager then
+               return g.notify("Warning", "Busy, wait!", 4)
+            end
+
+            local oldFilePath = file
+            if not isfile(oldFilePath) then
+               return g.notify("Error", "File not found!", 4)
+            end
+
+            promptOutfitName(function(newName)
+               if not newName or newName == "" then
+                  return g.notify("Error", "Invalid new name!", 4)
+               end
+
+               local newFilePath = FolderName .. "/" .. newName .. ".json"
+               if isfile(newFilePath) then
+                  return g.notify("Error", "A file with that name already exists!", 4)
+               end
+
+               local success, err = pcall(function()
+                  local content = readfile(oldFilePath)
+                  writefile(newFilePath, content)
+                  delfile(oldFilePath)
+               end)
+
+               if success then
+                  g.notify("Success", "Outfit renamed to: " .. newName, 4)
+                  refreshOutfitList()
+               else
+                  g.notify("Error", "Failed to rename: " .. tostring(err), 4)
+               end
+            end)
+         end)
+
          local delBtn = Instance.new("TextButton")
-         delBtn.Size = UDim2.new(0.25,-5,1,-4)
-         delBtn.Position = UDim2.new(0.75,5,0,2)
+         delBtn.Size = UDim2.new(0.25, -30, 1, -10)
+         delBtn.Position = UDim2.new(0, 380, 0.200000003, 0)
          delBtn.Text = "🗑️"
          delBtn.BackgroundColor3 = Color3.fromRGB(180,40,40)
          delBtn.TextColor3 = Color3.new(1,1,1)
@@ -2216,8 +2266,8 @@ function save_outfits_GUI()
    g.LoadedOutfit_Manager_GUI = true
 
    local Frame = Instance.new("Frame")
-   Frame.Size = UDim2.new(0,340,0,400)
-   Frame.Position = UDim2.new(0.5,-170,0.5,-200)
+   Frame.Size = UDim2.new(0, 500, 0, 400)
+   Frame.Position = UDim2.new(0.5, -250, 0.5, -200)
    Frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
    Frame.BorderSizePixel = 0
    Frame.Parent = ScreenGui
