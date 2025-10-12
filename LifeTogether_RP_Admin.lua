@@ -18,10 +18,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.5.6"
+local Raw_Version = "V4.5.8"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Improved 'anticarfling' it will just fully turn off the collision of the Vehicle + (thanks: Certified17381 on Roblox for the idea, make sure to give me ideas with the 'feedback' command!) added 'outfitsui' allowing you to save outfits, delete them and wear them (FE!) + no outfit limit"
-local displayTimeMax = 37
+local Announcement_Message = "Fixed 'Outfits Manager UI', now should be correctly set to apply/delete your saved avatars + it has a confirmation message before deleting."
+local displayTimeMax = 30
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -1867,30 +1867,24 @@ function save_outfits_GUI()
    if getgenv().Core:FindFirstChild("OutfitManagerUI") then
       return getgenv().notify("Warning", "You're already running Outfit Manager!", 5)
    end
-
    if getgenv().LoadedOutfit_Manager_GUI then
       return getgenv().notify("Warning", "You're already running Outfit Manager UI!", 6)
    end
 
    local g = getgenv()
    local HttpService = g.HttpService
-   local Players = g.Players
    local LocalPlayer = g.LocalPlayer
    local Character = g.Character
-   local Send = g.Send
-   local Get = g.Get
-   local FolderName = "lifetogether_outfits"
+   local Send, Get = g.Send, g.Get
+   local FolderName = "lifetogether_admin_savedoutfits"
+   local ui_refs = {}
 
-   if not isfolder(FolderName) then
-      makefolder(FolderName)
-   end
+   if not isfolder(FolderName) then makefolder(FolderName) end
 
    local function getOutfitFiles()
       local files = {}
       for _, f in ipairs(listfiles(FolderName)) do
-         if f:match("%.json$") then
-            table.insert(files, f)
-         end
+         if f:match("%.json$") then table.insert(files, f) end
       end
       return files
    end
@@ -1898,12 +1892,8 @@ function save_outfits_GUI()
    local function readOutfitData(file)
       local ok, content = pcall(readfile, file)
       if ok and content and #content > 0 then
-         local success, data = pcall(function()
-            return HttpService:JSONDecode(content)
-         end)
-         if success and type(data) == "table" then
-            return data
-         end
+         local success, data = pcall(function() return HttpService:JSONDecode(content) end)
+         if success and type(data) == "table" then return data end
       end
       return {}
    end
@@ -1911,14 +1901,310 @@ function save_outfits_GUI()
    local function writeOutfitData(name, data)
       if not name or name == "" then return end
       local path = FolderName .. "/" .. name .. ".json"
-
       writefile(path, HttpService:JSONEncode(data))
    end
 
    local function deleteOutfit(name)
       local path = FolderName .. "/" .. name .. ".json"
-      if isfile(path) then
-         delfile(path)
+      if isfile(path) then delfile(path) end
+   end
+
+   local function clearAvatar()
+      local Humanoid = g.Humanoid or (g.Character and g.Character:FindFirstChildOfClass("Humanoid"))
+      if not Humanoid then return g.notify("Error", "Humanoid not found!", 5) end
+      local desc = Humanoid:GetAppliedDescription()
+      if not desc then return g.notify("Error", "Cannot get HumanoidDescription!", 5) end
+
+      local assets = {}
+      for _, acc in ipairs(desc:GetAccessories(true)) do
+         if acc.AssetId and acc.AssetId > 0 then
+            table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
+         end
+      end
+      if desc.Shirt > 0 then table.insert(assets, {id = desc.Shirt, type = "Shirt"}) end
+      if desc.Pants > 0 then table.insert(assets, {id = desc.Pants, type = "Pants"}) end
+      if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
+      if desc.Face > 0 then table.insert(assets, {id = desc.Face, type = "Face"}) end
+      for _, part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg"}) do
+         if desc[part] and desc[part] > 0 then table.insert(assets, {id = desc[part], type = part}) end
+      end
+
+      g.notify("Info", "Clearing avatar ("..#assets.." assets)...", 3)
+      for _, data in ipairs(assets) do
+         pcall(function() Get("wear", data.id, data.type) end)
+         task.wait(0.2)
+      end
+
+      local retries = 0
+      while retries < 5 do
+         task.wait(0.5)
+         local check = Humanoid:GetAppliedDescription():GetAccessories(true)
+         if #check == 0 then
+            g.notify("Success", "Avatar fully cleared.", 3)
+            return true
+         end
+         for _, acc in ipairs(check) do
+            pcall(function() Get("wear", acc.AssetId, acc.AccessoryType.Name .. "Accessory") end)
+            task.wait(0.1)
+         end
+         retries += 1
+      end
+      g.notify("Warning", "Avatar clear may be incomplete.", 4)
+      return true
+   end
+
+   local function getAvatarAssets(player)
+      if not player.Character then return {}, nil, nil, nil, nil, nil end
+      local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+      if not humanoid then return {}, nil, nil, nil, nil, nil end
+      local desc = humanoid:GetAppliedDescription()
+
+      local assets = {}
+      for _, acc in ipairs(desc:GetAccessories(true)) do
+         if acc.AssetId and acc.AssetId > 0 then
+            table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
+         end
+      end
+      if desc.Shirt > 0 then table.insert(assets, {id = desc.Shirt, type = "Shirt"}) end
+      if desc.Pants > 0 then table.insert(assets, {id = desc.Pants, type = "Pants"}) end
+      if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
+      if desc.Face > 0 then table.insert(assets, {id = desc.Face, type = "Face"}) end
+      for _, part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg"}) do
+         if desc[part] and desc[part] > 0 then table.insert(assets, {id = desc[part], type = part}) end
+      end
+
+      local anims = {"Fall","Walk","Run","Jump","Idle","Climb","Swim"}
+      local animData = {}
+      for _, anim in ipairs(anims) do
+         local id = desc[anim.."Animation"]
+         if id and id > 0 then table.insert(animData, {id=id,type=anim.."Animation"}) end
+      end
+
+      local skinTone = desc.HeadColor or Color3.new(1,1,1)
+      local height = desc.HeightScale or 1
+      local width = desc.WidthScale or 1
+      local age = player:GetAttribute("age")
+
+      return assets, skinTone, height, width, animData, age
+   end
+
+   local function wearAssets(tbl)
+      for _, data in ipairs(tbl) do
+         pcall(function() Get("wear", data.id, data.type) end)
+         task.wait(0.25)
+      end
+   end
+
+   local function promptOutfitName(callback)
+      local popup = Instance.new("ScreenGui")
+      popup.Name = "OutfitNamePrompt"
+      popup.IgnoreGuiInset = true
+      popup.ResetOnSpawn = false
+      popup.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+      popup.Parent = getgenv().CoreGui
+
+      local frame = Instance.new("Frame")
+      frame.Size = UDim2.new(0, 250, 0, 130)
+      frame.Position = UDim2.new(0.5, -125, 0.5, -65)
+      frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+      frame.Parent = popup
+      Instance.new("UICorner", frame)
+
+      local title = Instance.new("TextLabel")
+      title.Size = UDim2.new(1, -10, 0, 30)
+      title.Position = UDim2.new(0, 5, 0, 5)
+      title.BackgroundTransparency = 1
+      title.Text = "Enter Outfit Name"
+      title.TextColor3 = Color3.new(1, 1, 1)
+      title.Font = Enum.Font.GothamBold
+      title.TextScaled = true
+      title.Parent = frame
+
+      local txt = Instance.new("TextBox")
+      txt.PlaceholderText = "Outfit Name"
+      txt.Size = UDim2.new(1, -20, 0, 35)
+      txt.Position = UDim2.new(0, 10, 0, 40)
+      txt.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+      txt.TextColor3 = Color3.new(1, 1, 1)
+      txt.Font = Enum.Font.Gotham
+      txt.TextScaled = true
+      txt.ClearTextOnFocus = true
+      txt.Text = ""
+      txt.Parent = frame
+      Instance.new("UICorner", txt)
+
+      local save_btn = Instance.new("TextButton")
+      save_btn.Size = UDim2.new(1, -20, 0, 35)
+      save_btn.Position = UDim2.new(0, 10, 0, 85)
+      save_btn.Text = "Save"
+      save_btn.BackgroundColor3 = Color3.fromRGB(40, 170, 90)
+      save_btn.TextColor3 = Color3.new(1, 1, 1)
+      save_btn.Font = Enum.Font.GothamBold
+      save_btn.TextScaled = true
+      save_btn.Parent = frame
+      Instance.new("UICorner", save_btn)
+
+      save_btn.MouseButton1Click:Connect(function()
+         local name = txt.Text:gsub("%s+", "")
+         if name ~= "" then
+            popup:Destroy()
+            task.wait()
+            callback(name)
+         else
+            g.notify("Error", "Enter a valid outfit name.", 5)
+         end
+      end)
+   end
+
+   local function refreshOutfitList()
+      local scroller = ui_refs.scroller
+      if not scroller then return g.notify("Warning", "Scroller missing from UI.", 5) end
+
+      for _, child in ipairs(scroller:GetChildren()) do
+         if child:IsA("Frame") then child:Destroy() end
+      end
+
+      for _, file in ipairs(getOutfitFiles()) do
+         local name = file:match("([^/\\]+)%.json$")
+         local entry = Instance.new("Frame")
+         entry.Size = UDim2.new(1,-5,0,35)
+         entry.BackgroundColor3 = Color3.fromRGB(35,35,35)
+         entry.Parent = scroller
+         Instance.new("UICorner", entry)
+
+         local label = Instance.new("TextLabel")
+         label.Size = UDim2.new(0.5,0,1,0)
+         label.BackgroundTransparency = 1
+         label.Text = name
+         label.TextColor3 = Color3.new(1,1,1)
+         label.Font = Enum.Font.Gotham
+         label.TextScaled = true
+         label.Parent = entry
+
+         local wearBtn = Instance.new("TextButton")
+         wearBtn.Size = UDim2.new(0.25,-5,1,-4)
+         wearBtn.Position = UDim2.new(0.5,5,0,2)
+         wearBtn.Text = "💾 Wear 💾"
+         wearBtn.BackgroundColor3 = Color3.fromRGB(249,232,0)
+         wearBtn.TextColor3 = Color3.fromRGB(0,0,0)
+         wearBtn.Font = Enum.Font.Gotham
+         wearBtn.TextScaled = true
+         wearBtn.Parent = entry
+         Instance.new("UICorner", wearBtn)
+
+         local delBtn = Instance.new("TextButton")
+         delBtn.Size = UDim2.new(0.25,-5,1,-4)
+         delBtn.Position = UDim2.new(0.75,5,0,2)
+         delBtn.Text = "🗑️"
+         delBtn.BackgroundColor3 = Color3.fromRGB(180,40,40)
+         delBtn.TextColor3 = Color3.new(1,1,1)
+         delBtn.Font = Enum.Font.Gotham
+         delBtn.TextScaled = true
+         delBtn.Parent = entry
+         Instance.new("UICorner", delBtn)
+
+         delBtn.MouseButton1Click:Connect(function()
+            g.notify("Warning", "Click again to confirm delete: "..name, 5)
+            delBtn.MouseButton1Click:Once(function()
+               deleteOutfit(name)
+               refreshOutfitList()
+               g.notify("Success", "Deleted outfit: "..name, 5)
+            end)
+         end)
+
+         wearBtn.MouseButton1Click:Connect(function()
+            if g.is_busy_outfit_manager then
+               return g.notify("Warning", "Busy, wait!", 4)
+            end
+            g.is_busy_outfit_manager = true
+
+            local data = readOutfitData(file)
+            if not data or type(data) ~= "table" then
+               g.is_busy_outfit_manager = false
+               return g.notify("Error", "Failed to read outfit data!", 5)
+            end
+
+            clearAvatar()
+            task.wait(0.5)
+
+            local bodyParts = {
+               "Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg"
+            }
+            for _, key in ipairs(bodyParts) do
+               local val = data[key]
+               if val and val ~= 0 and val ~= "" then
+                  pcall(function()
+                     Get("wear", val, key)
+                  end)
+                  task.wait(0.2)
+               end
+            end
+
+            local clothing = {"Shirt","Pants","GraphicTShirt","Face"}
+            for _, key in ipairs(clothing) do
+               local val = data[key]
+               if val and val ~= 0 and val ~= "" then
+                  pcall(function()
+                     Get("wear", val, key)
+                  end)
+                  task.wait(0.2)
+               end
+            end
+
+            if data.Accessories and type(data.Accessories) == "table" then
+               for _, acc in ipairs(data.Accessories) do
+                  if acc.AssetId and acc.AccessoryType then
+                     pcall(function()
+                        Get("wear", acc.AssetId, acc.AccessoryType .. "Accessory")
+                     end)
+                     task.wait(0.25)
+                  end
+               end
+            end
+
+            if data.SkinTone then
+               pcall(function()
+                  local c = Color3.new(data.SkinTone[1], data.SkinTone[2], data.SkinTone[3])
+                  Send("skin_tone", c)
+               end)
+               task.wait(0.3)
+            end
+
+            if data.HeightScale then
+               pcall(function()
+                  Send("body_scale", "HeightScale", data.HeightScale * 100)
+               end)
+            end
+            if data.WidthScale then
+               pcall(function()
+                  Send("body_scale", "WidthScale", data.WidthScale * 100)
+               end)
+            end
+
+            if data.Age then
+               pcall(function()
+                  Get("age", tostring(data.Age))
+               end)
+               task.wait(0.3)
+            end
+
+            local animKeys = {
+               "FallAnimation","WalkAnimation","RunAnimation",
+               "JumpAnimation","IdleAnimation","ClimbAnimation","SwimAnimation"
+            }
+            for _, key in ipairs(animKeys) do
+               local val = data[key]
+               if val and val ~= 0 and val ~= "" then
+                  pcall(function()
+                     Get("wear", val, key)
+                  end)
+                  task.wait(0.2)
+               end
+            end
+
+            g.notify("Success", "Outfit applied successfully!", 4)
+            g.is_busy_outfit_manager = false
+         end)
       end
    end
 
@@ -1926,62 +2212,30 @@ function save_outfits_GUI()
    ScreenGui.Name = "OutfitManagerUI"
    ScreenGui.ResetOnSpawn = false
    ScreenGui.IgnoreGuiInset = true
-   ScreenGui.Parent = getgenv().CoreGui
-
-   getgenv().LoadedOutfit_Manager_GUI = true
+   ScreenGui.Parent = g.CoreGui
+   g.LoadedOutfit_Manager_GUI = true
 
    local Frame = Instance.new("Frame")
-   Frame.Size = UDim2.new(0, 340, 0, 400)
-   Frame.Position = UDim2.new(0.5, -170, 0.5, -200)
-   Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+   Frame.Size = UDim2.new(0,340,0,400)
+   Frame.Position = UDim2.new(0.5,-170,0.5,-200)
+   Frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
    Frame.BorderSizePixel = 0
    Frame.Parent = ScreenGui
    Instance.new("UICorner", Frame)
 
-   local Title = Instance.new("TextLabel")
-   Title.Size = UDim2.new(1, 0, 0, 35)
-   Title.BackgroundTransparency = 1
-   Title.Text = "👔 Outfits Manager    "
-   Title.TextColor3 = Color3.new(1, 1, 1)
-   Title.Font = Enum.Font.GothamBold
-   Title.TextScaled = true
-   Title.TextSize = 18
-   Title.Parent = Frame
+   local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+   local TweenService = getgenv().TweenService or cloneref(game:GetService("TweenService"))
 
-   local CloseButton = Instance.new("TextButton")
-   CloseButton.Size = UDim2.new(0, 30, 0, 30)
-   CloseButton.Position = UDim2.new(1, -35, 0, 5)
-   CloseButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-   CloseButton.Text = "✖"
-   CloseButton.TextColor3 = Color3.fromRGB(196, 40, 28)
-   CloseButton.Font = Enum.Font.GothamBold
-   CloseButton.TextSize = 16
-   CloseButton.Parent = Frame
-   Instance.new("UICorner", CloseButton)
+   local dragging = false
+   local drag_start, start_pos
 
-   CloseButton.MouseButton1Click:Connect(function()
-      ScreenGui:Destroy()
-      getgenv().LoadedOutfit_Manager_GUI = false
-   end)
+   local smoothness = 0.20
 
-   local dragging, dragInput, dragStart, startPos
-
-   local function update(input)
-      local delta = input.Position - dragStart
-      Frame.Position = UDim2.new(
-         startPos.X.Scale,
-         startPos.X.Offset + delta.X,
-         startPos.Y.Scale,
-         startPos.Y.Offset + delta.Y
-      )
-   end
-
-   Title.InputBegan:Connect(function(input)
+   Frame.InputBegan:Connect(function(input)
       if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
          dragging = true
-         dragStart = input.Position
-         startPos = Frame.Position
-
+         drag_start = input.Position
+         start_pos = Frame.Position
          input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                dragging = false
@@ -1990,24 +2244,46 @@ function save_outfits_GUI()
       end
    end)
 
-   Title.InputChanged:Connect(function(input)
-      if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-         dragInput = input
+   UserInputService.InputChanged:Connect(function(input)
+      if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+         local delta = input.Position - drag_start
+         local target = UDim2.new(start_pos.X.Scale, start_pos.X.Offset + delta.X, start_pos.Y.Scale, start_pos.Y.Offset + delta.Y)
+         TweenService:Create(Frame, TweenInfo.new(smoothness, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), { Position = target }):Play()
       end
    end)
 
-   getgenv().UserInputService.InputChanged:Connect(function(input)
-      if input == dragInput and dragging then
-         update(input)
-      end
+   local Title = Instance.new("TextLabel")
+   Title.Size = UDim2.new(1,0,0,35)
+   Title.BackgroundTransparency = 1
+   Title.Text = "👔 Outfits Manager    "
+   Title.TextColor3 = Color3.new(1,1,1)
+   Title.Font = Enum.Font.GothamBold
+   Title.TextScaled = true
+   Title.TextSize = 18
+   Title.Parent = Frame
+
+   local CloseButton = Instance.new("TextButton")
+   CloseButton.Size = UDim2.new(0,30,0,30)
+   CloseButton.Position = UDim2.new(1,-35,0,5)
+   CloseButton.BackgroundColor3 = Color3.fromRGB(50,50,50)
+   CloseButton.Text = "✖"
+   CloseButton.TextColor3 = Color3.fromRGB(196,40,28)
+   CloseButton.Font = Enum.Font.GothamBold
+   CloseButton.TextSize = 16
+   CloseButton.Parent = Frame
+   Instance.new("UICorner", CloseButton)
+
+   CloseButton.MouseButton1Click:Connect(function()
+      ScreenGui:Destroy()
+      g.LoadedOutfit_Manager_GUI = false
    end)
 
    local SaveButton = Instance.new("TextButton")
-   SaveButton.Size = UDim2.new(0.5, -5, 0, 35)
-   SaveButton.Position = UDim2.new(0, 5, 0, 40)
+   SaveButton.Size = UDim2.new(0.5,-5,0,35)
+   SaveButton.Position = UDim2.new(0,5,0,40)
    SaveButton.Text = "💾 Save Outfit 💾"
-   SaveButton.BackgroundColor3 = Color3.fromRGB(40, 170, 90)
-   SaveButton.TextColor3 = Color3.new(1, 1, 1)
+   SaveButton.BackgroundColor3 = Color3.fromRGB(40,170,90)
+   SaveButton.TextColor3 = Color3.new(1,1,1)
    SaveButton.Font = Enum.Font.Gotham
    SaveButton.TextScaled = true
    SaveButton.TextSize = 16
@@ -2015,190 +2291,125 @@ function save_outfits_GUI()
    Instance.new("UICorner", SaveButton)
 
    local RefreshButton = Instance.new("TextButton")
-   RefreshButton.Size = UDim2.new(0.5, -5, 0, 35)
-   RefreshButton.Position = UDim2.new(0.5, 0, 0, 40)
+   RefreshButton.Size = UDim2.new(0.5,-5,0,35)
+   RefreshButton.Position = UDim2.new(0.5,0,0,40)
    RefreshButton.Text = "🔁 Refresh 🔁"
-   RefreshButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-   RefreshButton.TextColor3 = Color3.new(1, 1, 1)
+   RefreshButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
+   RefreshButton.TextColor3 = Color3.new(1,1,1)
    RefreshButton.Font = Enum.Font.Gotham
    RefreshButton.TextScaled = true
    RefreshButton.TextSize = 16
    RefreshButton.Parent = Frame
    Instance.new("UICorner", RefreshButton)
 
-   local ScrollingFrame = Instance.new("ScrollingFrame")
-   ScrollingFrame.Size = UDim2.new(1, -10, 1, -90)
-   ScrollingFrame.Position = UDim2.new(0, 5, 0, 80)
-   ScrollingFrame.BackgroundTransparency = 1
-   ScrollingFrame.BorderSizePixel = 0
-   ScrollingFrame.ScrollBarThickness = 6
-   ScrollingFrame.Parent = Frame
+   ui_refs.frame = Frame
+
+   local scroller = Instance.new("ScrollingFrame")
+   scroller.Name = "ScrollingFrame"
+   scroller.Size = UDim2.new(1,-10,1,-90)
+   scroller.Position = UDim2.new(0,5,0,80)
+   scroller.BackgroundTransparency = 1
+   scroller.BorderSizePixel = 0
+   scroller.ScrollBarThickness = 6
+   scroller.Parent = Frame
+
+   ui_refs.scroller = scroller
+
+   local UIListLayout = Instance.new("UIListLayout")
+   UIListLayout.Padding = UDim.new(0,6)
+   UIListLayout.Parent = scroller
 
    local UIListLayout = Instance.new("UIListLayout", ScrollingFrame)
-   UIListLayout.Padding = UDim.new(0, 6)
-
-   local function promptOutfitName(callback)
-      local popup = Instance.new("Frame")
-      popup.Size = UDim2.new(0, 200, 0, 100)
-      popup.Position = UDim2.new(0.5, -100, 0.5, -50)
-      popup.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-      popup.Parent = ScreenGui
-      Instance.new("UICorner", popup)
-
-      local txt = Instance.new("TextBox")
-      txt.PlaceholderText = "Outfit Name"
-      txt.Size = UDim2.new(1, -10, 0, 35)
-      txt.Position = UDim2.new(0, 5, 0, 10)
-      txt.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-      txt.TextColor3 = Color3.new(1, 1, 1)
-      txt.Text = "Outfit Name"
-      txt.Font = Enum.Font.Gotham
-      txt.TextScaled = true
-      txt.TextSize = 14
-      txt.Parent = popup
-      Instance.new("UICorner", txt)
-
-      local btn = Instance.new("TextButton")
-      btn.Size = UDim2.new(1, -10, 0, 35)
-      btn.Position = UDim2.new(0, 5, 0, 55)
-      btn.Text = "Save"
-      btn.BackgroundColor3 = Color3.fromRGB(40, 170, 90)
-      btn.TextColor3 = Color3.new(1, 1, 1)
-      btn.Font = Enum.Font.Gotham
-      btn.TextScaled = true
-      btn.TextSize = 16
-      btn.Parent = popup
-      Instance.new("UICorner", btn)
-
-      btn.MouseButton1Click:Connect(function()
-         local name = txt.Text:gsub("%s+", "")
-         popup:Destroy()
-         if name ~= "" then
-            callback(name)
-         end
-      end)
-   end
-
-   local function refreshOutfitList()
-      for _, child in ipairs(ScrollingFrame:GetChildren()) do
-         if child:IsA("Frame") then
-            child:Destroy()
-         end
-      end
-
-      for _, file in ipairs(getOutfitFiles()) do
-         local name = file:match("([^/\\]+)%.json$")
-         local entry = Instance.new("Frame")
-         entry.Size = UDim2.new(1, -5, 0, 35)
-         entry.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-         entry.Parent = ScrollingFrame
-         Instance.new("UICorner", entry)
-
-         local label = Instance.new("TextLabel")
-         label.Size = UDim2.new(0.5, 0, 1, 0)
-         label.BackgroundTransparency = 1
-         label.TextScaled = true
-         label.Text = name
-         label.TextColor3 = Color3.new(1, 1, 1)
-         label.Font = Enum.Font.Gotham
-         label.TextSize = 14
-         label.Parent = entry
-
-         local wearBtn = Instance.new("TextButton")
-         wearBtn.Size = UDim2.new(0.25, -5, 1, -4)
-         wearBtn.Position = UDim2.new(0.5, 5, 0, 2)
-         wearBtn.Text = "💾 Wear 💾"
-         wearBtn.BackgroundColor3 = Color3.fromRGB(249, 232, 0)
-         wearBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-         wearBtn.Font = Enum.Font.Gotham
-         wearBtn.TextScaled = true
-         wearBtn.TextSize = 14
-         wearBtn.Parent = entry
-         Instance.new("UICorner", wearBtn)
-
-         local delBtn = Instance.new("TextButton")
-         delBtn.Size = UDim2.new(0.25, -5, 1, -4)
-         delBtn.Position = UDim2.new(0.75, 5, 0, 2)
-         delBtn.Text = "🗑️"
-         delBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-         delBtn.TextColor3 = Color3.new(1, 1, 1)
-         delBtn.Font = Enum.Font.Gotham
-         delBtn.TextScaled = true
-         delBtn.TextSize = 14
-         delBtn.Parent = entry
-         Instance.new("UICorner", delBtn)
-
-         wearBtn.MouseButton1Click:Connect(function()
-            local data = readOutfitData(file)
-            for k, v in pairs(data) do
-               if k == "Age" then
-                  Get("age", tostring(v))
-               elseif k == "SkinTone" then
-                  Send("skin_tone", Color3.new(v, v, v))
-               elseif k == "HeightScale" then
-                  Send("body_scale", "HeightScale", v * 100)
-               elseif k == "WidthScale" then
-                  Send("body_scale", "WidthScale", v * 100)
-               else
-                  Send("wear", v, k)
-               end
-            end
-         end)
-
-         delBtn.MouseButton1Click:Connect(function()
-            deleteOutfit(name)
-            refreshOutfitList()
-         end)
-      end
-   end
+   UIListLayout.Padding = UDim.new(0,6)
 
    SaveButton.MouseButton1Click:Connect(function()
+      if g.is_busy_outfit_manager then
+         return g.notify("Warning", "Busy, wait!", 4)
+      end
+      g.is_busy_outfit_manager = true
+
       promptOutfitName(function(name)
-         if not Character then return end
-         local humanoid = getgenv().Humanoid
-         if not humanoid then return end
-
-         local desc = humanoid:GetAppliedDescription()
-         local outfit = {}
-         local props = {
-            "HatAccessory", "HairAccessory", "FaceAccessory", "NeckAccessory",
-            "ShouldersAccessory", "FrontAccessory", "BackAccessory", "WaistAccessory",
-            "ClimbAnimation", "FallAnimation", "IdleAnimation", "JumpAnimation",
-            "RunAnimation", "SwimAnimation", "WalkAnimation", "Shirt", "Pants", "Face"
-         }
-
-         for _, prop in ipairs(props) do
-            local ok, val = pcall(function()
-               return desc[prop]
-            end)
-            if ok and val and val ~= "" then
-               outfit[prop] = val
-            end
+         local char = Character
+         if not char or not char:FindFirstChildOfClass("Humanoid") then
+            g.is_busy_outfit_manager = false
+            return g.notify("Error", "Character or Humanoid missing!", 4)
          end
 
+         local humanoid = char:FindFirstChildOfClass("Humanoid")
+         local desc = humanoid and humanoid:GetAppliedDescription()
+         if not desc then
+            g.is_busy_outfit_manager = false
+            return g.notify("Error", "Failed to get HumanoidDescription!", 4)
+         end
+
+         local outfit = {}
+
+         outfit.Accessories = {}
+         for _, info in ipairs(desc:GetAccessories(true)) do
+            table.insert(outfit.Accessories, {
+               AssetId = info.AssetId,
+               AccessoryType = info.AccessoryType.Name,
+               IsLayered = info.IsLayered
+            })
+         end
+
+         outfit.Shirt = desc.Shirt
+         outfit.Pants = desc.Pants
+         outfit.GraphicTShirt = desc.GraphicTShirt
+         outfit.Face = desc.Face
+         outfit.Head = desc.Head
+         outfit.Torso = desc.Torso
+         outfit.LeftArm = desc.LeftArm
+         outfit.RightArm = desc.RightArm
+         outfit.LeftLeg = desc.LeftLeg
+         outfit.RightLeg = desc.RightLeg
+         outfit.ClimbAnimation = desc.ClimbAnimation
+         outfit.FallAnimation = desc.FallAnimation
+         outfit.IdleAnimation = desc.IdleAnimation
+         outfit.JumpAnimation = desc.JumpAnimation
+         outfit.RunAnimation = desc.RunAnimation
+         outfit.SwimAnimation = desc.SwimAnimation
+         outfit.WalkAnimation = desc.WalkAnimation
          outfit.HeightScale = desc.HeightScale
          outfit.WidthScale = desc.WidthScale
 
-         local headColor = desc.HeadColor
-         if typeof(headColor) == "Color3" then
-            local avg = (headColor.R + headColor.G + headColor.B) / 3
-            outfit.SkinTone = tonumber(string.format("%.3f", avg))
-         end
+         local hc = desc.HeadColor
+         outfit.SkinTone = { hc.R, hc.G, hc.B }
 
          local age = LocalPlayer:GetAttribute("age")
          if age then
             outfit.Age = tostring(age)
          end
 
-         writeOutfitData(name, outfit)
+         local jsonData
+         local ok, err = pcall(function()
+            jsonData = HttpService:JSONEncode(outfit)
+         end)
+
+         if not ok or not jsonData then
+            g.is_busy_outfit_manager = false
+            return g.notify("Error", "Failed to encode outfit data.", 4)
+         end
+
+         local filePath = FolderName .. "/" .. name .. ".json"
+         local success, writeErr = pcall(function()
+            writefile(filePath, jsonData)
+         end)
+
+         if not success then
+            g.is_busy_outfit_manager = false
+            return g.notify("Error", "Failed to save outfit file!", 4)
+         end
+
+         g.notify("Success", "Saved outfit: " .. name, 4)
          refreshOutfitList()
-         getgenv().notify("Success", "Saved outfit: " .. name)
+         g.is_busy_outfit_manager = false
       end)
    end)
 
    RefreshButton.MouseButton1Click:Connect(refreshOutfitList)
    refreshOutfitList()
-   getgenv().notify("Success", "[Outfit Manager UI]: Integrated Outfit Manager loaded.", 6)
+   g.notify("Success","[Outfit Manager UI]: Loaded.",6)
 end
 
 function RGB_Vehicle(Boolean)
