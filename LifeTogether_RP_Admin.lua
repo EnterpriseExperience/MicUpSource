@@ -18,7 +18,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.4.8"
+local Raw_Version = "V4.5.0"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed 'copyavatar' command not working/copying correctly, wasn't copying Animations, Body, Height and Age properly."
 local displayTimeMax = 17
@@ -4221,6 +4221,7 @@ end
 
 local Original_Age = getgenv().LocalPlayer:GetAttribute("age")
 task.wait(0.1)
+
 function copy_plr_avatar(Player)
    local Players = getgenv().Players
    if getgenv().is_copying_avatar_already_flames then
@@ -4252,17 +4253,27 @@ function copy_plr_avatar(Player)
       if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
       if desc.Face > 0 then table.insert(assets, {id = desc.Face, type = "Face"}) end
 
+      local bodyParts = {"Head", "Torso", "LeftArm", "RightArm", "LeftLeg", "RightLeg"}
+      for _, part in ipairs(bodyParts) do
+         if desc[part] and desc[part] > 0 then
+            table.insert(assets, {id = desc[part], type = part})
+         end
+      end
+
       getgenv().notify("Info", "Clearing avatar (" .. #assets .. " assets)...", 3)
       for _, data in ipairs(assets) do
          pcall(function() getgenv().Get("wear", data.id, data.type) end)
-         task.wait(0.25)
+         task.wait(0.2)
       end
 
       local retries = 0
-      while retries < 3 do
-         task.wait(0.4)
+      while retries < 5 do
+         task.wait(0.5)
          local check = Humanoid:GetAppliedDescription():GetAccessories(true)
-         if #check == 0 then break end
+         if #check == 0 then
+            getgenv().notify("Success", "Avatar fully cleared.", 3)
+            return true
+         end
          for _, acc in ipairs(check) do
             pcall(function()
                getgenv().Get("wear", acc.AssetId, acc.AccessoryType.Name .. "Accessory")
@@ -4272,14 +4283,14 @@ function copy_plr_avatar(Player)
          retries += 1
       end
 
-      getgenv().notify("Success", "Avatar fully cleared.", 3)
+      getgenv().notify("Warning", "Avatar clear may be incomplete after retries.", 4)
       return true
    end
 
    local function getAvatarAssets(player)
-      if not player.Character then return {}, nil, nil, nil, nil end
+      if not player.Character then return {}, nil, nil, nil, nil, nil end
       local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
-      if not humanoid then return {}, nil, nil, nil, nil end
+      if not humanoid then return {}, nil, nil, nil, nil, nil end
       local desc = humanoid:GetAppliedDescription()
 
       local assets = {}
@@ -4288,7 +4299,6 @@ function copy_plr_avatar(Player)
             table.insert(assets, {id = acc.AssetId, type = acc.AccessoryType.Name .. "Accessory"})
          end
       end
-
       if desc.Shirt > 0 then table.insert(assets, {id = desc.Shirt, type = "Shirt"}) end
       if desc.Pants > 0 then table.insert(assets, {id = desc.Pants, type = "Pants"}) end
       if desc.GraphicTShirt > 0 then table.insert(assets, {id = desc.GraphicTShirt, type = "TShirt"}) end
@@ -4335,7 +4345,7 @@ function copy_plr_avatar(Player)
 
       if not clearAvatar() then
          getgenv().is_copying_avatar_already_flames = false
-         return 
+         return getgenv().notify("Warning", "Something unexpected happened when trying to clear your Avatar.", 6)
       end
 
       task.wait(0.5)
@@ -4347,13 +4357,20 @@ function copy_plr_avatar(Player)
          return 
       end
 
-      getgenv().notify("Info", "Copy all assets from: "..target.Name.."...", 5)
+      getgenv().notify("Info", "Copying avatar from: "..target.Name.."...", 5)
       wearAssets(targetAssets)
 
       if skinTone then
          pcall(function()
             getgenv().Send("skin_tone", skinTone)
          end)
+      end
+
+      if age then
+         pcall(function()
+            getgenv().Get("age", tostring(age))
+         end)
+         task.wait(0.3)
       end
 
       if height then
@@ -4367,12 +4384,6 @@ function copy_plr_avatar(Player)
          end)
       end
 
-      if age then
-         pcall(function()
-            getgenv().Get("age", tostring(age))
-         end)
-      end
-
       if animData and #animData > 0 then
          for _, anim in ipairs(animData) do
             pcall(function()
@@ -4380,6 +4391,13 @@ function copy_plr_avatar(Player)
             end)
             task.wait(0.2)
          end
+      end
+
+      if age then
+         pcall(function()
+            getgenv().Get("age", tostring(age))
+         end)
+         task.wait(0.2)
       end
 
       getgenv().notify("Success", "Copied full avatar from: " .. target.Name, 5)
