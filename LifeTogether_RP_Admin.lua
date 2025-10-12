@@ -18,7 +18,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.5.0"
+local Raw_Version = "V4.5.1"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed 'copyavatar' command not working/copying correctly, wasn't copying Animations, Body, Height and Age properly."
 local displayTimeMax = 17
@@ -1621,7 +1621,7 @@ local fileName = "LifeTogether_Admin_Configuration.json"
 -- [[ Now we have an allowed Prefix system, so we can correctly modify your Prefix if it's broken. ]] --
 local Allowed_Prefixes = {
    "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "_", "+", ",",
-   ".", "/", ">", "<", "?", "~", "`", "}", "{", "[", "]", ":"
+   ".", "/", ">", "<", "?", "~", "`", "}", "{", "[", "]", ":", "1", "2", "3", "4", "5", "·", "•", "∙", "⋅", "£"
 }
 local function isAllowedPrefix(prefix)
    for _, p in ipairs(Allowed_Prefixes) do
