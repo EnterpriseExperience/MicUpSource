@@ -2073,7 +2073,7 @@ function save_outfits_GUI()
          Instance.new("UICorner", entry)
 
          local label = Instance.new("TextLabel")
-         label.Size = UDim2.new(0.5,0,1,0)
+         label.Size = UDim2.new(0.349999994, 0, 1, 0)
          label.BackgroundTransparency = 1
          label.Text = name
          label.TextColor3 = Color3.new(1,1,1)
