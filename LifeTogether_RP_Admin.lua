@@ -18,7 +18,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.5.5"
+local Raw_Version = "V4.5.6"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Improved 'anticarfling' it will just fully turn off the collision of the Vehicle + (thanks: Certified17381 on Roblox for the idea, make sure to give me ideas with the 'feedback' command!) added 'outfitsui' allowing you to save outfits, delete them and wear them (FE!) + no outfit limit"
 local displayTimeMax = 37
@@ -1941,7 +1941,7 @@ function save_outfits_GUI()
    local Title = Instance.new("TextLabel")
    Title.Size = UDim2.new(1, 0, 0, 35)
    Title.BackgroundTransparency = 1
-   Title.Text = "👔 Outfit Manager 👔"
+   Title.Text = "👔 Outfits Manager    "
    Title.TextColor3 = Color3.new(1, 1, 1)
    Title.Font = Enum.Font.GothamBold
    Title.TextScaled = true
@@ -1953,7 +1953,7 @@ function save_outfits_GUI()
    CloseButton.Position = UDim2.new(1, -35, 0, 5)
    CloseButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
    CloseButton.Text = "✖"
-   CloseButton.TextColor3 = Color3.new(1, 1, 1)
+   CloseButton.TextColor3 = Color3.fromRGB(196, 40, 28)
    CloseButton.Font = Enum.Font.GothamBold
    CloseButton.TextSize = 16
    CloseButton.Parent = Frame
@@ -1961,6 +1961,7 @@ function save_outfits_GUI()
 
    CloseButton.MouseButton1Click:Connect(function()
       ScreenGui:Destroy()
+      getgenv().LoadedOutfit_Manager_GUI = false
    end)
 
    local dragging, dragInput, dragStart, startPos
@@ -2050,7 +2051,9 @@ function save_outfits_GUI()
       txt.Position = UDim2.new(0, 5, 0, 10)
       txt.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
       txt.TextColor3 = Color3.new(1, 1, 1)
+      txt.Text = "Outfit Name"
       txt.Font = Enum.Font.Gotham
+      txt.TextScaled = true
       txt.TextSize = 14
       txt.Parent = popup
       Instance.new("UICorner", txt)
@@ -2104,9 +2107,9 @@ function save_outfits_GUI()
          local wearBtn = Instance.new("TextButton")
          wearBtn.Size = UDim2.new(0.25, -5, 1, -4)
          wearBtn.Position = UDim2.new(0.5, 5, 0, 2)
-         wearBtn.Text = "Toggle"
-         wearBtn.BackgroundColor3 = Color3.fromRGB(80, 120, 220)
-         wearBtn.TextColor3 = Color3.new(1, 1, 1)
+         wearBtn.Text = "💾 Wear 💾"
+         wearBtn.BackgroundColor3 = Color3.fromRGB(249, 232, 0)
+         wearBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
          wearBtn.Font = Enum.Font.Gotham
          wearBtn.TextScaled = true
          wearBtn.TextSize = 14
@@ -2182,7 +2185,7 @@ function save_outfits_GUI()
             outfit.SkinTone = tonumber(string.format("%.3f", avg))
          end
 
-         local age = LocalPlayer:GetAttribute("Age")
+         local age = LocalPlayer:GetAttribute("age")
          if age then
             outfit.Age = tostring(age)
          end
