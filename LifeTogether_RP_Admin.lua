@@ -18,10 +18,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.5.9"
+local Raw_Version = "V4.6.0"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed 'Outfits Manager UI', now should be correctly set to apply/delete your saved avatars + it has a confirmation message before deleting."
-local displayTimeMax = 30
+local Announcement_Message = "Forgot to add 'outfitsui' as a command on the commands list, it still existed as a command though, just not with the 'cmds' command."
+local displayTimeMax = 29
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -3711,6 +3711,7 @@ local function CommandsMenu()
       {prefix}orbit Player Speed Distance - Lets you orbit the target Player.
       {prefix}unorbit - Stops orbiting the target Player.
       {prefix}orbitspeed Speed - Lets you modify your orbit speed.
+      {prefix}outfitsui - Allows you to save how ever many outfits you want with our new GUI.
       {prefix}anticarfling - Enables 'anticarfling', preventing you from being flung by Vehicles.
       {prefix}unanticarfling - Disables 'anticarfling' command.
       {prefix}norainbowcar player - Disables the RGB for a player's car (FE).
