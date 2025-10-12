@@ -698,11 +698,6 @@ function change_vehicle_color(Color, Vehicle)
    send_remote("vehicle_color", Color, Vehicle)
 end
 
-if getgenv().LocalPlayer.Name == "L0CKED_1N1" or getgenv().LocalPlayer.Name == "CHEATING_B0SS" then
-   local newbio = "act like a god damn demon and get sent to heavens gates like you supposed to gng"
-   getgenv().Send("bio", tostring(newbio))
-end
-
 function sit_in_vehicle(Vehicle)
    if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle! spawn one.", 5) end
 
