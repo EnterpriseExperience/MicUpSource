@@ -2305,7 +2305,7 @@ function save_outfits_GUI()
    local Title = Instance.new("TextLabel")
    Title.Size = UDim2.new(1,0,0,35)
    Title.BackgroundTransparency = 1
-   Title.Text = "👔 Outfits Manager    "
+   Title.Text = "👔 Outfits Manager 👔   "
    Title.TextColor3 = Color3.new(1,1,1)
    Title.Font = Enum.Font.GothamBold
    Title.TextScaled = true
