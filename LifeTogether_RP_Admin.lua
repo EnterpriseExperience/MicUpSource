@@ -18,14 +18,24 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.6.0"
+local Raw_Version = "V4.6.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Forgot to add 'outfitsui' as a command on the commands list, it still existed as a command though, just not with the 'cmds' command."
-local displayTimeMax = 29
+local Announcement_Message = "Added automatic prevention against chat spamming + tags spam bans/suspensions, will disable chat (FOR 10 SECONDS) if you spam too many hashtags to prevent you from being banned."
+local displayTimeMax = 30
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
+
+local function Service_Wrap(service)
+   if cloneref then
+      return cloneref(game:GetService(service))
+   else
+      return game:GetService(service)
+   end
+end
+wait(0.1)
+getgenv().Service_Wrap = Service_Wrap
 
 function notify(notif_type, msg, duration)
    NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
@@ -37,7 +47,6 @@ if getgenv().LifeTogether_RP_ScriptHub_Loaded then
    return NotifyLib:External_Notification("Warning", "You already have Life Together RP (Script Hub) loaded, you cannot load both the Admin and Script Hub due to unexpected issues.", 9)
 end
 
-wait()
 if getgenv().LifeTogetherRP_Admin and getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub == false then
    getgenv().LifeTogetherRP_Admin = false
    return getgenv().notify("Error", "Life Together RP Admin appears to not have loaded correctly, try re-running the script and trying again.", 6)
@@ -46,15 +55,210 @@ elseif getgenv().LifeTogetherRP_Admin and getgenv().Script_Loaded_Correctly_Life
 end
 wait(0.3)
 getgenv().LifeTogetherRP_Admin = true
+getgenv().TextChatService = Service_Wrap("TextChatService")
+getgenv().Players = Service_Wrap("Players")
+getgenv().LocalPlayer = getgenv().Players.LocalPlayer or getgenv().Game.Players.LocalPlayer or game.Players.LocalPlayer
+getgenv().StarterGui = Service_Wrap("StarterGui") or cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui") or getgenv().Game:GetService("StarterGui")
 
-getgenv().Service_Wrap = function(serviceName)
-   if cloneref then
-      return cloneref(getgenv().Game:GetService(serviceName))
+getgenv().ChatMessageHooks = getgenv().ChatMessageHooks or {}
+wait(0.1) -- always load properly.
+if not getgenv().ChatMessageConnection then
+   getgenv().ChatMessageConnection = getgenv().TextChatService.MessageReceived:Connect(function(msg)
+      if not msg.TextSource then return end
+      local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
+      if not (sender and msg.Text) then return end
+
+      for _, fn in ipairs(getgenv().ChatMessageHooks) do
+         local ok, err = pcall(fn, sender, msg)
+         if not ok then
+            getgenv().notify("Error", "[TextChatService_Message_Conn_Error]: "..tostring(err), 11)
+         end
+      end
+   end)
+end
+
+local function make_input_normal(str)
+   if type(str) ~= "string" then
+      str = tostring(str or "")
+   end
+
+   local okLower, lowered = pcall(string.lower, str)
+   if not okLower then
+      lowered = tostring(str)
+   end
+
+   local cleaned = {}
+   for i = 1, #lowered do
+      local c = lowered:sub(i, i)
+      if c:match("[%w]") then
+         table.insert(cleaned, c)
+      end
+   end
+
+   return table.concat(cleaned)
+end
+
+task.defer(function()
+   local ok, name = pcall(function()
+      return identifyexecutor and identifyexecutor() or "Unknown Executor"
+   end)
+   executor_Name = ok and tostring(name) or "Unknown Executor"
+
+   task.wait(0.1)
+
+   executor_Name = make_input_normal(executor_Name)
+end)
+
+local Allowed_Executors = {
+   ["Volcano"] = true,
+   ["Wave"] = false,
+   ["Zenith"] = true,
+   ["Delta"] = false,
+   ["CodeX"] = false,
+   ["Velocity"] = false,
+   ["Bunni"] = true,
+   ["Swift"] = true,
+   ["Sirhurt"] = true,
+   ["KRNL"] = false,
+   ["Potassium"] = true,
+   ["Macsploit"] = false,
+   ["Seliware"] = true,
+   ["Hydrogen"] = false,
+   ["Lx63"] = false,
+   ["Cryptic"] = false,
+   ["Arceus"] = false,
+   ["Vega"] = false,
+   ["Synapse"] = false,
+   ["Valex"] = false,
+   ["Nucleus"] = false,
+   ["Opiumware"] = false,
+}
+
+local function allowed_executor()
+   local normalizedExec = make_input_normal(executor_Name or "")
+   for allowedName, isAllowed in pairs(Allowed_Executors) do
+      if isAllowed and normalizedExec:find(make_input_normal(allowedName), 1, true) then
+         return true
+      end
+   end
+   return false
+end
+
+function startCooldownSystem()
+   if getgenv().TextChatAntiBanApplied then
+      local CooldownTime = 10
+      local Chat = Enum.CoreGuiType.Chat
+      getgenv().CooldownActive = getgenv().CooldownActive or false
+      getgenv().HashtagCount = getgenv().HashtagCount or 0
+
+      local function startCooldown(duration)
+         if getgenv().CooldownActive then
+            return getgenv().notify("Warning", "Your TextChat cooldown is still currently active.", 6)
+         end
+         getgenv().CooldownActive = true
+         getgenv().notify("Info", "Cooldown has now started for: " .. duration .. " seconds.", 8)
+
+         task.delay(duration, function()
+            getgenv().CooldownActive = false
+            getgenv().HashtagCount = 0
+            if not replicatesignal then
+               getgenv().notify("Error", "Your executor does not (unfortunately) support 'replicatesignal', cannot unsuspend Chat.", 10)
+            else
+               replicatesignal(getgenv().TextChatService.UpdateChatTimeout, getgenv().LocalPlayer.UserId, 0, 10)
+            end
+            getgenv().StarterGui:SetCoreGuiEnabled(Chat, true)
+            getgenv().notify("Success", "Chat is now re-enabled, cooldown has stopped.", 7)
+         end)
+      end
+
+      getgenv().TextChatService.MessageReceived:Connect(function(msg)
+         local source = msg.TextSource
+         if not source then return end
+         local player = getgenv().Players:GetPlayerByUserId(source.UserId)
+         if player ~= getgenv().LocalPlayer then return end
+
+         local text = msg.Text
+         if text and text:match("^#+$") then
+            getgenv().HashtagCount += 1
+            if getgenv().HashtagCount >= 4 then
+               getgenv().StarterGui:SetCoreGuiEnabled(Chat, false)
+               startCooldown(CooldownTime)
+               getgenv().notify("Warning", "Chat disabled temporarily, too many filtered messages have been sent (possible risk of ban).", 10)
+            end
+         end
+      end)
    else
-      return getgenv().Game:GetService(serviceName)
+      getgenv().notify("Info", "Skipping this part, hook not applied.", 3)
    end
 end
-wait(0.1)
+
+local function safe_chat_hookin()
+	if not hookmetamethod or not getnamecallmethod then
+		return getgenv().notify("Warning", "Your executor does not support hookmetamethod or getnamecallmethod.", 5)
+	end
+	if not allowed_executor() then
+		return getgenv().notify("Warning", "Executor not allowed for chat protection hook.", 5)
+	end
+	if getgenv().TextChatAntiBanApplied then
+		return getgenv().notify("Info", "TextChatAntiBan hook already applied.", 5)
+	end
+
+	local okService, TextChatService = pcall(function()
+		return cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+	end)
+	if not okService or not TextChatService then
+		return getgenv().notify("Warning", "TextChatService not found; cannot apply hook.", 5)
+	end
+
+	local oldNamecall, oldIndex
+
+	local function hookMetatable()
+		local ok, err = pcall(function()
+			oldNamecall = hookmetamethod(TextChatService, "__namecall", newcclosure(function(self, ...)
+				local method = getnamecallmethod()
+				if method == "SendAsync" and getgenv().CooldownActive then
+					getgenv().notify("Warning", "You cannot send messages during cooldown.", 6)
+					return nil
+				end
+				return oldNamecall(self, ...)
+			end))
+
+			oldIndex = hookmetamethod(TextChatService, "__index", newcclosure(function(self, key)
+				if key == "SendAsync" and getgenv().CooldownActive then
+					return function()
+						getgenv().notify("Warning", "Chat disabled during cooldown.", 6)
+						return nil
+					end
+				end
+				return oldIndex(self, key)
+			end))
+		end)
+
+		if not ok then
+			getgenv().notify("Error", "Failed to hook metatable safely: " .. tostring(err), 8)
+			return false
+		end
+		return true
+	end
+
+   local hookApplied = hookMetatable()
+   if hookApplied then
+      getgenv().TextChatAntiBanApplied = true
+      getgenv().notify("Success", "TextChatService hook successfully applied.", 6)
+      startCooldownSystem()
+   else
+      getgenv().notify("Warning", "Hook attempt failed or blocked by executor sandbox.", 6)
+   end
+end
+
+task.defer(function()
+	if allowed_executor() then
+		safe_chat_hookin()
+	else
+		getgenv().notify("Warning", "Executor not allowed to apply SendAsync hook.", 6)
+	end
+end)
+
 local HttpService = cloneref and cloneref(getgenv().Game:GetService("HttpService")) or getgenv().Game:GetService("HttpService")
 local Players = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -300,24 +504,9 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local StarterGui = getgenv().Service_Wrap("StarterGui")
+local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
 task.wait(0.2)
 getgenv().StarterGui = StarterGui
-
-local function getExecutor()
-   local name
-   if identifyexecutor then
-      name = identifyexecutor()
-   end
-   return { Name = name or "Unknown Executor"}
-end
-
-local function executor_details()
-   local executorDetails = getExecutor()
-   return string.format("%s", executorDetails.Name)
-end
-
-local executor_Name = executor_details()
 
 getgenv().print_executor = function()
    local function retrieve_executor()
@@ -379,7 +568,7 @@ getgenv().randomString = function()
    return table.concat(array)
 end
 
-local Players = getgenv().Service_Wrap("Players")
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local GroupId = getgenv().Game.CreatorId
 local staffRoles = {
@@ -925,28 +1114,28 @@ end)
 wait(0.3)
 if not getgenv().Players then
    warn("getgenv().Players was not detected, fixing...")
-   getgenv().Players = getgenv().Service_Wrap("Players")
+   getgenv().Players = Service_Wrap("Players")
 end
 if not getgenv().ReplicatedStorage then
    warn("getgenv().ReplicatedStorage was not detected, fixing...")
-   getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
+   getgenv().ReplicatedStorage = Service_Wrap("ReplicatedStorage")
 end
 if not getgenv().TextChatService then
    warn("getgenv().TextChatService was not detected, fixing...")
-   getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
+   getgenv().TextChatService = Service_Wrap("TextChatService")
 end
 if not getgenv().Workspace then
    warn("getgenv().Workspace was not detected, fixing...")
-   getgenv().Workspace = getgenv().Service_Wrap("Workspace")
+   getgenv().Workspace = Service_Wrap("Workspace")
 end
 if not getgenv().Lighting then
    warn("getgenv().Lighting was not detected, fixing...")
-   getgenv().Lighting = getgenv().Service_Wrap("Lighting")
+   getgenv().Lighting = Service_Wrap("Lighting")
 end
 if not getgenv().LocalPlayer then
    warn("getgenv().LocalPlayer was not detected, fixing...")
    task.wait()
-   getgenv().LocalPlayer = getgenv().Players.LocalPlayer or getgenv().Service_Wrap("Players").LocalPlayer
+   getgenv().LocalPlayer = getgenv().Players.LocalPlayer or Service_Wrap("Players").LocalPlayer
 end
 
 function create_void_part()
@@ -2729,7 +2918,7 @@ shadow.ZIndex = 0
 shadow.Parent = holder
 
 button.MouseButton1Click:Connect(function()
-   if not replicatesignal then return getgenv().notify("Error", "Your executor does not (unfortunately) support 'replicatesignal', cannot unsuspend TextChat") end
+   if not replicatesignal then return getgenv().notify("Error", "Your executor does not (unfortunately) support 'replicatesignal', cannot unsuspend TextChat", 10) end
    
    replicatesignal(TextChatService.UpdateChatTimeout, LocalPlayer.UserId, 0, 10)
 end)
@@ -2748,6 +2937,56 @@ local function stop_rainbow_skin()
       task.wait(0.2)
       getgenv().Send("skin_tone", Old_Skintone)
    end
+end
+
+local function initCooldownHandler()
+   local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+   local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
+   local CooldownTime = 10
+   local Chat = Enum.CoreGuiType.Chat
+
+   getgenv().CooldownActive = getgenv().CooldownActive or false
+   getgenv().HashtagCount = getgenv().HashtagCount or 0
+
+   local function startCooldown(duration)
+      if getgenv().CooldownActive then
+         return getgenv().notify("Warning", "Your TextChat cooldown is still currently active.", 6)
+      end
+      getgenv().CooldownActive = true
+      getgenv().notify("Info", "Cooldown started for: " .. duration .. "s.", 8)
+
+      task.delay(duration, function()
+         getgenv().CooldownActive = false
+         getgenv().HashtagCount = 0
+         pcall(function()
+            StarterGui:SetCoreGuiEnabled(Chat, true)
+         end)
+         getgenv().notify("Success", "Chat re-enabled, cooldown ended.", 7)
+      end)
+   end
+
+   local function cooldownListener(sender, msg)
+      if sender ~= Players.LocalPlayer then return end
+      local text = msg.Text
+      if text and text:match("^#+$") then
+         getgenv().HashtagCount += 1
+         if getgenv().HashtagCount >= 4 then
+            pcall(function()
+               StarterGui:SetCoreGuiEnabled(Chat, false)
+            end)
+            startCooldown(CooldownTime)
+            getgenv().notify("Warning", "Too many filtered messages, chat disabled temporarily (10 seconds).", 10)
+         end
+      end
+   end
+
+   table.insert(getgenv().ChatMessageHooks, cooldownListener)
+end
+
+if getgenv().ChatMetaMethodHookApplied then
+   initCooldownHandler()
+else
+   getgenv().notify("Info", "Skipping cooldown handler — hook not applied.", 3)
 end
 
 if getgenv().FireParticlesAdded then
@@ -7239,16 +7478,16 @@ wait(0.5)
 getgenv().notify("Success", "[HOOKED]: We have hooked the Camera successfully.", 5)
 wait(0.2)
 getgenv().notify("Warning", "[INITIALIZING]: Setting up command receiver...", 5)
-getgenv().TextChatService.MessageReceived:Connect(function(msg)
-   if not msg.TextSource then return end
-   local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
-   if sender and msg.Text then
-      handleCommand(sender, msg.Text)
-      if sender and sender.UserId == getgenv().LocalPlayer.UserId then
-         getgenv().TextChatServiceAPI.Handle_Message(sender, tostring(msg.Text))
-      end
+
+local function handleChatCommand(sender, msg)
+   handleCommand(sender, msg.Text)
+
+   if sender and sender.UserId == getgenv().LocalPlayer.UserId then
+      getgenv().TextChatServiceAPI.Handle_Message(sender, tostring(msg.Text))
    end
-end)
+end
+
+table.insert(getgenv().ChatMessageHooks, handleChatCommand)
 wait(0.1)
 setup_cmd_handler_plr(v)
 wait(0.2)
