@@ -3479,6 +3479,12 @@ function EnableFly(speed)
    if getgenv().HD_FlyEnabled then
       return getgenv().notify("Warning", "Fly is already enabled!", 5)
    end
+   if getgenv().antiFlingEnabled then
+      return getgenv().notify("Error", "You have AntiFling enabled, turn it off first!", 6)
+   end
+   if getgenv().antiKnockbackEnabled then
+      return getgenv().notify("Error", "You have AntiFling enabled, turn it off first!", 6)
+   end
 
    if not (HRP and Humanoid and Camera) then return end
 
@@ -4093,12 +4099,20 @@ local function setupFolder(folder)
 end
 
 getgenv().DisableVehicleDestroyer = function()
+   if not getgenv().VehicleDestroyer_Enabled then
+      return getgenv().notify("Warning", "Anti Vehicle Fling is not enabled!", 5)
+   end
+   wait(0.1)
 	getgenv().VehicleDestroyer_Enabled = false
 	clearConnections()
 end
 
 function anti_car_fling(toggle)
 	if toggle == true then
+      if getgenv().VehicleDestroyer_Enabled then
+         return getgenv().notify("Warning", "Anti Vehicle Fling is already enabled!", 5)
+      end
+      wait(0.1)
 		getgenv().VehicleDestroyer_Enabled = true
 		clearConnections()
 
@@ -4134,6 +4148,17 @@ end
 
 function Enable_Fly_2(Speed)
    local Speed = tonumber(Speed) or 75
+
+   if getgenv().antiFlingEnabled then
+      return getgenv().notify("Error", "You have AntiFling enabled, turn it off first!", 6)
+   end
+   if getgenv().antiKnockbackEnabled then
+      return getgenv().notify("Error", "You have AntiFling enabled, turn it off first!", 6)
+   end
+   if getgenv().Enabled_Flying then
+      return getgenv().notify("Warning", "Fly-2 is already enabled!", 5)
+   end
+   wait(0.1)
    local Flying = false
    getgenv().Enabled_Flying = Flying
    local Controls = {F=0,B=0,L=0,R=0,U=0,D=0}
