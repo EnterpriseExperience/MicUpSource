@@ -20,8 +20,8 @@ end
 wait()
 local Raw_Version = "V4.6.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Added automatic prevention against chat spamming + tags spam bans/suspensions, will disable chat (FOR 10 SECONDS) if you spam too many hashtags to prevent you from being banned."
-local displayTimeMax = 30
+local Announcement_Message = "Slight changes have been made, instead of disabling the chat, it'll auto-refresh/auto-unsuspend your chat to prevent hashtags from coming often, so you can type more frequently, and easier."
+local displayTimeMax = 31
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
