@@ -3902,9 +3902,9 @@ local function CommandsMenu()
    local currentPrefix = getgenv().AdminPrefix
    local channel = getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
    local cmdsString = [[
-      {prefix}rgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle).
-      {prefix}unrgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle).
-      {prefix}feedback - Gives you a menu to be able to send me feedback for the script.
+      {prefix}rgbcar - Enables RGB/Rainbow Vehicle (flashing Rainbow Vehicle).
+      {prefix}unrgbcar - Disables RGB/Rainbow Vehicle (flashing Rainbow Vehicle).
+      {prefix}feedback - Gives you a menu to be able to send me feedback/suggestions/rating for the script!
       {prefix}infyield - Executes Infinite Premium (my Infinite Yield).
       {prefix}spawnfire NUMBER - Spawns fire with a specified number argument.
       {prefix}rainbowcar Player - Makes a players car RGB (FRIENDS ONLY!, FE).
@@ -3915,6 +3915,9 @@ local function CommandsMenu()
       {prefix}stopsignspam - Stops spamming the text on your Tool Sign.
       {prefix}orbit Player Speed Distance - Lets you Orbit around the target Player (FE).
       {prefix}unorbit - Stops orbiting the target Player.
+      {prefix}speed Number - Changes your WalkSpeed.
+      {prefix}jp Number - Changes your JumpHeight.
+      {prefix}grav Number - Changes your Gravity.
       {prefix}orbitspeed NewSpeed - Lets you modify your Orbit speed.
       {prefix}outfitsui (🔥POPULAR FEATURE🔥) - Allows you to save how ever many outfits you want with our new GUI.
       {prefix}anticarfling (🔥HOT🔥) - Enables 'anticarfling', preventing you from being flung by Vehicles.
@@ -4387,6 +4390,38 @@ end
 
 function change_bio(New_Bio)
    send_remote("bio", tostring(New_Bio))
+end
+
+local DefaultSpeed = getgenv().StarterPlayer.CharacterWalkSpeed
+local DefaultJP = getgenv().StarterPlayer.CharacterJumpHeight
+local Old_Workspace_Gravity = getgenv().Workspace.Gravity
+wait(0.1)
+function change_property(property, new_property_value)
+   local properties_allowed_to_be_changed = {
+      WalkSpeed = true,
+      JumpHeight = true,
+      HipHeight = true
+   }
+
+   if properties_allowed_to_be_changed[property] and getgenv().Humanoid then
+      getgenv().Humanoid[property] = new_property_value
+   end
+end
+
+function change_gravity_val(new_val)
+   if new_val > 300 then
+      new_val = 196
+   end
+
+   getgenv().Workspace.Gravity = tonumber(new_val) or 196
+end
+
+function reset_properties()
+   if not getgenv().Humanoid then return end
+
+   getgenv().Humanoid.WalkSpeed = DefaultSpeed or 16
+   getgenv().Humanoid.JumpHeight = DefaultJP or 7
+   getgenv().Workspace.Gravity = Old_Workspace_Gravity or 196
 end
 
 local function rainbow_car()
@@ -6429,34 +6464,33 @@ local function handleCommand(sender, message)
       while getgenv().Every_Job == true do
       task.wait(0.1)
          getgenv().Send("job", "Police")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Firefighter")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Baker")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Pizza Worker")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Janitor")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Mechanic")
          task.wait(0.1)
          getgenv().Send("job", "Barista")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Doctor")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Prisoner")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Nurse")
          task.wait(0.1)
          getgenv().Send("job", "Student")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Teacher")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Principal")
-         task.wait(0)
+         task.wait(0.1)
          getgenv().Send("job", "Lifeguard")
-         task.wait(.1)
-         getgenv().Send("job")
+         task.wait(0.1)
       end
    elseif cmd == "jobsoff" or cmd == "nojobs" or cmd == "unjobspam" or cmd == "stopjobspam" or cmd == "stopjobspammer" then
       if not getgenv().Every_Job then
@@ -6644,6 +6678,28 @@ local function handleCommand(sender, message)
       loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
    elseif cmd == "allcars" or cmd == "allvehicles" or cmd == "listvehicles" then
       car_listing_gui()
+   elseif cmd == "speed" or cmd == "setspeed" or cmd == "newspeed" or cmd == "ws" or cmd == "walkspeed" or cmd == "walks" then
+      local New_Val = split[1] or 16
+
+      if not getgenv().Humanoid then
+         return getgenv().notify("Warning", "Wait until you respawn, we think you are dead, Humanoid is missing!", 8)
+      end
+
+      change_property("WalkSpeed", New_Val)
+      getgenv().notify("Success", "Updated WalkSpeed to: "..tostring(New_Val), 5)
+   elseif cmd == "jp" or cmd == "newjp" or cmd == "jumpheight" or cmd == "newjh" or cmd == "jumph" or cmd == "setjh" or cmd == "setjp" then
+      local New_ValJP = split[1] or 7
+
+      if not getgenv().Humanoid then
+         return getgenv().notify("Warning", "Wait until you respawn, we think you are dead, Humanoid is missing!", 8)
+      end
+
+      change_property("JumpHeight", New_ValJP)
+      getgenv().notify("Success", "Updated JumpHeight to: "..tostring(New_ValJP), 5)
+   elseif cmd == "grav" or cmd == "gravity" or cmd == "setgravity" or cmd == "setgrav" or cmd == "newgrav" or cmd == "gravvalue" then
+      local New_Grav = split[1] or 196
+
+      change_gravity_val(New_Grav)
    elseif cmd == "unannoy" then
       if not getgenv().easy_click_plr then
          return getgenv().notify("Error", "You do not have 'annoy PlayerName' enabled! usage: "..tostring(getgenv().AdminPrefix).."annoy PlayerName", 10)
