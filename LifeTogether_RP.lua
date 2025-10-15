@@ -219,8 +219,7 @@ local Emotes = {
 EmoteNames = {"griddy", "scenario", "worm", "zen", "glitching", "superman", "aura", "orangejustice", "default", "koto", "popular", "michaelmyers", "billyjean", "billybounce", "michaelmyers", "sturdy", "louisianajigg", "takethel", "electroshuffle"}
 wait(0.2)
 local whitelisted = {
-    "creatormobbbb",
-    "ilovezootedfl"
+    "Roblox"
 }
 
 Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -467,7 +466,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.5.4-LIFE"
+local Script_Version = "2.5.5-LIFE"
 
 local function getExecutor()
     local name
