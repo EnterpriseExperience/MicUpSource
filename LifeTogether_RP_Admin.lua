@@ -3875,8 +3875,8 @@ local function CommandsMenu()
       {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone).
       {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone).
       {prefix}checkpremium player - Checks if a player has premium or not.
-      {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone).
-      {prefix}stoprgbphone (🔥HOT🔥) - Disable RGB Phone (flashing Rainbow Phone).
+      {prefix}startrgbphone (🔥HOT🔥) - Enable RGB Phone (flashing Rainbow Phone).
+      {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone).
       {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding).
       {prefix}startrgbtool - Enables RGB Tool (FE, Flashing Rainbow Tool).
       {prefix}stoprgbtool - Disables RGB Tool (FE, Flashing Rainbow Tool).
