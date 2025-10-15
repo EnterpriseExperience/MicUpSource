@@ -25,9 +25,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.8.2"
+local Raw_Version = "V4.8.4"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Controls modified from IY's Fly Controls system (thanks IY lol), moved Unsuspend Chat GUI to TopBar + improved Performance Statistics GUI."
+local Announcement_Message = "Added 'speed', 'jp' and 'grav' commands, letting you change your speed, gravity, and jumppower + added anti-idle controller system."
 local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -1367,6 +1367,28 @@ if not getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") then
 end
 if not getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") then
    create_void_part()
+end
+
+if not getgenv().Anti_Idle_Controller_Loaded then
+   if getconnections or get_signal_cons then
+      getgenv().notify("Info", "Loading Anti-Idle controller...", 5)
+      local GC = getconnections or get_signal_cons
+
+      getgenv().Anti_Idle_Controller_Loaded = true
+      getgenv().LocalPlayer.Idled:Connect(function()
+         wait(2.5)
+         for i,v in pairs(GC(getgenv().LocalPlayer.Idled)) do
+            if v["Disable"] then
+               v["Disable"](v)
+            elseif v["Disconnect"] then
+               v["Disconnect"](v)
+            end
+         end
+         getgenv().Humanoid:ChangeState(3)
+      end)
+   end
+else
+   getgenv().notify("Warning", "You've already loaded our Anti-Idle controller!", 6)
 end
 
 local function decodeHTMLEntities(str)
