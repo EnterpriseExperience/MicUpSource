@@ -2797,7 +2797,7 @@ end
 
 local container = find_icon_container()
 
-getgenv().notify("Info", "Wait about 10-ish seconds, we're trying to find TopBarApp/TopBar...", 8)
+getgenv().notify("Info", "Wait - 13 seconds, we're trying to find TopBarApp/TopBar...", 12)
 
 if container then
    getgenv().notify("Success", "[Found]: "..tostring(container).." successfully, sent GUI to TopBar Parent.", 8)
