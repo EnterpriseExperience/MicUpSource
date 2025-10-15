@@ -19,7 +19,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.7.2"
+local Raw_Version = "V4.7.3"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Currently still improving Title system (improved for now), re-worked + improved 'anti-fling' command, reworked commands system (added more aliases), forgot to put the 'copyav' command in the commands list, SORRY!."
 local displayTimeMax = 40
@@ -374,10 +374,12 @@ task.spawn(function()
    while task.wait(5) do
       local list = apiList()
       for uid, payload in pairs(list) do
-         local player = getgenv().Players:GetPlayerByUserId(tonumber(uid))
-
-         if player then
-            task.spawn(createBillboard, player)
+         local userId = tonumber(uid)
+         if userId then
+            local player = getgenv().Players:GetPlayerByUserId(userId)
+            if player then
+               task.spawn(createBillboard, player)
+            end
          end
       end
    end
@@ -5020,7 +5022,6 @@ local function setup_cmd_handler_plr(player)
    TextChatService.MessageReceived:Connect(function(chatMessage)
       local speaker = chatMessage.TextSource
       if not (speaker and speaker.Name ~= localPlayerName and getgenv().player_admins[speaker.Name]) then return end
-      if getgenv().CheckIfUserIs_InAPI_Executed(getgenv().Players[speaker.Name].UserId) then return end
 
       local normalizedMessage = trim(chatMessage.Text:lower())
       if normalizedMessage:sub(1, #prefix) ~= prefix then return end
@@ -5188,7 +5189,6 @@ local function setup_cmd_handler_plr(player)
          end
       elseif levenshtein(command, "cmds") <= 2 then
          if getgenv().Is_OnCooldown then return end
-         if getgenv().CheckIfUserIs_InAPI_Executed(getgenv().Players[speaker.Name].UserId) then return end
 
          getgenv().Is_OnCooldown = true
          getgenv().Wait_Time_Cooldown = 30
