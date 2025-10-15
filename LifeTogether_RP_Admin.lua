@@ -19,10 +19,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.7.3"
+local Raw_Version = "V4.7.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Currently still improving Title system (improved for now), re-worked + improved 'anti-fling' command, reworked commands system (added more aliases), forgot to put the 'copyav' command in the commands list, SORRY!."
-local displayTimeMax = 40
+local Announcement_Message = "Fixed sloppy controls (i didn't see them) for 'fly2' command, let me know if it's right + fixed being able to run both fly commands at once."
+local displayTimeMax = 30
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -4450,12 +4450,6 @@ end
 function Enable_Fly_2(Speed)
    local Speed = tonumber(Speed) or 75
 
-   if getgenv().antiFlingEnabled then
-      return getgenv().notify("Error", "You have AntiFling enabled, turn it off first!", 6)
-   end
-   if getgenv().antiKnockbackEnabled then
-      return getgenv().notify("Error", "You have AntiFling enabled, turn it off first!", 6)
-   end
    if getgenv().Enabled_Flying then
       return getgenv().notify("Warning", "Fly-2 is already enabled!", 5)
    end
@@ -4566,7 +4560,7 @@ function Enable_Fly_2(Speed)
 
    local function createMobileUI()
       if not UserInputService.TouchEnabled then return end
-      local gui = Instance.new("ScreenGui", PlayerGui)
+      local gui = Instance.new("ScreenGui", getgenv().CoreGui)
       gui.Name = "FlyControls"
 
       local function makeBtn(txt,pos,callback)
@@ -4578,20 +4572,73 @@ function Enable_Fly_2(Speed)
          btn.TextSize = 20
          btn.TextColor3 = Color3.new(1,1,1)
          btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
-         btn.MouseButton1Down:Connect(function() callback(true) end)
-         btn.MouseButton1Up:Connect(function() callback(false) end)
+         btn.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+               callback(true)
+            end
+         end)
+
+         btn.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+               callback(false)
+            end
+         end)
       end
 
-      local baseY = 0.75
-      makeBtn("↑",UDim2.new(0,10,baseY,0),function(d) Controls.F=d and 1 or 0 end)
-      makeBtn("↓",UDim2.new(0,10,baseY+0.12,0),function(d) Controls.B=d and 1 or 0 end)
-      makeBtn("←",UDim2.new(0,-50,baseY+0.06,0),function(d) Controls.L=d and 1 or 0 end)
-      makeBtn("→",UDim2.new(0,70,baseY+0.06,0),function(d) Controls.R=d and 1 or 0 end)
-      makeBtn("⤒",UDim2.new(0,140,baseY,0),function(d) Controls.U=d and 1 or 0 end)
-      makeBtn("⤓",UDim2.new(0,140,baseY+0.12,0),function(d) Controls.D=d and 1 or 0 end)
-      makeBtn("FLY",UDim2.new(0,220,baseY+0.06,0),function()
-         if Flying then stopFlying() else startFlying() end
-      end)
+      local function createMobileUI()
+         if not UserInputService.TouchEnabled then return end
+
+         local gui = Instance.new("ScreenGui")
+         gui.Name = "FlyControls_2"
+         gui.ResetOnSpawn = false
+         gui.Parent = getgenv().CoreGui
+         local flyGui = gui
+
+         local function makeBtn(txt, pos, callback)
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(0.08, 0, 0.08, 0)
+            btn.Position = pos
+            btn.Text = txt
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 24
+            btn.TextColor3 = Color3.new(1, 1, 1)
+            btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            btn.BackgroundTransparency = 0.2
+            btn.AutoButtonColor = true
+            btn.Parent = gui
+            btn.AnchorPoint = Vector2.new(0.5, 0.5)
+            btn.ZIndex = 5
+            btn.TextScaled = true
+
+            btn.InputBegan:Connect(function(input)
+               if input.UserInputType == Enum.UserInputType.Touch then
+                  callback(true)
+               end
+            end)
+
+            btn.InputEnded:Connect(function(input)
+               if input.UserInputType == Enum.UserInputType.Touch then
+                  callback(false)
+               end
+            end)
+         end
+
+         local baseX, baseY = 0.12, 0.75
+         makeBtn("↑", UDim2.new(baseX, 0, baseY, 0), function(d) Controls.F = d and 1 or 0 end)
+         makeBtn("↓", UDim2.new(baseX, 0, baseY + 0.12, 0), function(d) Controls.B = d and 1 or 0 end)
+         makeBtn("←", UDim2.new(baseX - 0.08, 0, baseY + 0.06, 0), function(d) Controls.L = d and 1 or 0 end)
+         makeBtn("→", UDim2.new(baseX + 0.08, 0, baseY + 0.06, 0), function(d) Controls.R = d and 1 or 0 end)
+         local rightX = 0.85
+         makeBtn("⤒", UDim2.new(rightX, 0, baseY, 0), function(d) Controls.U = d and 1 or 0 end)
+         makeBtn("⤓", UDim2.new(rightX, 0, baseY + 0.12, 0), function(d) Controls.D = d and 1 or 0 end)
+         makeBtn("FLY", UDim2.new(0.5, 0, 0.85, 0), function()
+            if Flying then
+               stopFlying()
+            else
+               startFlying()
+            end
+         end)
+      end
    end
 
    if Flying then 
@@ -4604,6 +4651,9 @@ end
 wait(0.2)
 function Disable_Flying()
    getgenv().Stop_Flying()
+   if getgenv().CoreGui:FindFirstChild("FlyControls") then
+      getgenv().CoreGui:FindFirstChild("FlyControls", true):Destroy()
+   end
 end
 
 function check_premium_player(plr)
@@ -6488,10 +6538,13 @@ local function handleCommand(sender, message)
 
       change_bio(new_bio)
    elseif cmd == "fly" or cmd == "fly1" then
-      local flySpeed = tonumber(split[1]) or 125
+      local flySpeed = tonumber(split[1]) or 10
 
       if getgenv().HD_FlyEnabled then
          return getgenv().notify("Error", "HD-Admin Fly is already enabled!", 5)
+      end
+      if getgenv().Enabled_Flying then
+         return getgenv().notify("Error", "You cannot run 2 fly scripts at once!", 5)
       end
       wait(0.2)
       EnableFly(flySpeed)
@@ -6500,9 +6553,13 @@ local function handleCommand(sender, message)
    elseif cmd == "unfly" or cmd == "unfly1" then
       DisableFlyScript()
    elseif cmd == "fly2" then
-      local Fly_Speed = tonumber(split[1])
-      if not Fly_Speed then
-         Fly_Speed = 10
+      local Fly_Speed = tonumber(split[1]) or 50
+
+      if getgenv().Enabled_Flying then
+         return getgenv().notify("Error", "Fly-2 seems to already be enabled!", 5)
+      end
+      if getgenv().HD_FlyEnabled then
+         return getgenv().notify("Error", "You cannot run 2 fly scripts at one time.", 6)
       end
       wait()
       Enable_Fly_2(Fly_Speed)
