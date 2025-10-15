@@ -354,6 +354,9 @@ local function createBillboard(player)
       label.Text = "🔥 FLAMES HUB | CLIENT 🔥"
       label.TextColor3 = Color3.fromRGB(0, 0, 0)
       label.BackgroundColor3 = Color3.fromRGB(245, 245, 245)
+      if label and label.Visible then
+         label.Visible = false
+      end
    end
 end
 
@@ -4319,9 +4322,9 @@ getgenv().DisableAntiFling = function()
 end
 
 getgenv().Toggle_AntiFling_Boolean_Func = function(toggled)
-   if toggle == true then
+   if toggled == true then
       getgenv().EnableAntiFling()
-   elseif toggle == false then
+   elseif toggled == false then
       getgenv().DisableAntiFling()
    else
       return getgenv().notify("Warning", "[Invalid arguments]: Expected true/false brocaroni and cheese.", 5)
