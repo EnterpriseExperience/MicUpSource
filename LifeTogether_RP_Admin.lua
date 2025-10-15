@@ -6964,13 +6964,14 @@ local function handleCommand(sender, message)
          return notify("Error", "NoSit/AntiSit is already enabled!", 5)
       end
 
-      notify("Success", "Anti-Sit/No-Sit is now enabled!", 5)
+      getgenv().notify("Success", "Anti-Sit/No-Sit is now enabled!", 5)
       show_notification("Success:", "AntiSit/NoSit is now enabled!", "Normal")
       wait(0.2)
       getgenv().Not_Ever_Sitting = true
 
       while getgenv().Not_Ever_Sitting == true do
       task.wait()
+         getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
          require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
       end
    elseif cmd == "carcolor" then
@@ -7021,10 +7022,11 @@ local function handleCommand(sender, message)
 
       getgenv().Not_Ever_Sitting = false
       wait(0.2)
+      getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
       require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
       wait(0.1)
       -- might as well use both 🤷
-      notify("Success", "Sitting is now enabled!", 5)
+      getgenv().notify("Success", "Sitting is now enabled!", 5)
       Phone.show_notification("Success:", "Sitting is now enabled!", "Normal")
    elseif cmd == "flashname" then
       if getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == true then
