@@ -18,10 +18,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.6.5"
+local Raw_Version = "V4.7.2"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Slight changes have been made, instead of disabling the chat, it'll auto-refresh/auto-unsuspend your chat to prevent hashtags from coming often, so you can type more frequently, and easier."
-local displayTimeMax = 31
+local Announcement_Message = "Currently still improving Title system (improved for now), re-worked + improved 'anti-fling' command, reworked commands system (added more aliases), forgot to put the 'copyav' command in the commands list, SORRY!."
+local displayTimeMax = 40
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -259,16 +259,11 @@ task.defer(function()
 	end
 end)
 
-local HttpService = cloneref and cloneref(getgenv().Game:GetService("HttpService")) or getgenv().Game:GetService("HttpService")
-local Players = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-if not LocalPlayer then
-   Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
-   LocalPlayer = Players.LocalPlayer
-end
-
+local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
-local users = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
 local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
 local watchedUserIds = {
    [7712000520] = true,
@@ -277,76 +272,53 @@ local watchedUserIds = {
 
 local function httpRequestSafe(opts)
    if not httprequest then return end
-
-   local normalized = {
-      url     = opts.url or opts.Url,
-      method  = opts.method or opts.Method,
-      headers = opts.headers or opts.Headers,
-      body    = opts.body or opts.Body,
-   }
-
-   local ok, res = pcall(function() return httprequest(normalized) end)
+   local ok, res = pcall(function()
+      return httprequest({
+         Url = opts.url,
+         Method = opts.method or "GET",
+         Headers = opts.headers,
+         Body = opts.body,
+      })
+   end)
    if not ok or not res then return nil end
-
-   if res.body and not res.Body then res.Body = res.body end
-   if res.status_code and not res.StatusCode then res.StatusCode = res.status_code end
+   res.Body = res.Body or res.body
+   res.StatusCode = res.StatusCode or res.status_code
 
    return res
 end
 
 local function safeJsonDecode(body)
-   if not body then return {} end
-   if type(body) ~= "string" then
-      if type(body) == "table" then return body end
-      return {}
-   end
-   if body:sub(1,1) ~= '{' and body:sub(1,1) ~= '[' then return {} end
-   local ok, tbl = pcall(HttpService.JSONDecode, HttpService, body)
-   return ok and type(tbl) == "table" and tbl or {}
+   if not body or type(body) ~= "string" then return {} end
+   local ok, decoded = pcall(HttpService.JSONDecode, HttpService, body)
+   return ok and decoded or {}
 end
 
 local function apiList()
-   local res = httpRequestSafe({ url = API_URL .. "/list", method = "GET" })
-   local body = res and (res.Body or res.body)
-   return safeJsonDecode(body)
+   local res = httpRequestSafe({ url = API_URL .. "/list" })
+   return res and safeJsonDecode(res.Body) or {}
 end
 
 local function apiSet(payload)
-   local ok, res = pcall(function()
-      return httpRequestSafe({
-         url = API_URL .. "/set",
-         method = "POST",
-         headers = { ["content-type"] = "application/json" },
-         body = HttpService:JSONEncode(payload)
-      })
-   end)
-   return ok and res and (res.StatusCode == 200 or res.status_code == 200)
+   return httpRequestSafe({
+      url = API_URL .. "/set",
+      method = "POST",
+      headers = { ["Content-Type"] = "application/json" },
+      body = HttpService:JSONEncode(payload),
+   })
 end
 
 local function apiDelete(userId)
-   local ok, res = pcall(function()
-      return httpRequestSafe({
-         url = API_URL .. "/delete",
-         method = "POST",
-         headers = { ["content-type"] = "application/json" },
-         body = HttpService:JSONEncode({ userId = userId })
-      })
-   end)
-   return ok and res and (res.StatusCode == 200 or res.status_code == 200)
+   return httpRequestSafe({
+      url = API_URL .. "/delete",
+      method = "POST",
+      headers = { ["Content-Type"] = "application/json" },
+      body = HttpService:JSONEncode({ userId = userId }),
+   })
 end
 
-local function isUserInAPI(userId)
-   local list = apiList()
-   return list and list[tostring(userId)] ~= nil
-end
-
-wait(0.1)
-getgenv().CheckIfUserIs_InAPI_Executed = isUserInAPI
-
-local localBillboardEnabled = true
-local function createBillboard(player, payload)
-   local char = player.Character or player.CharacterAdded:Wait()
-   local head = char:FindFirstChild("Head")
+local function createBillboard(player)
+   if not player or not player.Character then return end
+   local head = player.Character:FindFirstChild("Head") or player.Character:WaitForChild("Head", 5)
    if not head then return end
 
    local existing = head:FindFirstChild("FlamesHubBillboard")
@@ -358,47 +330,52 @@ local function createBillboard(player, payload)
    billboard.Size = UDim2.new(0, 200, 0, 50)
    billboard.StudsOffset = Vector3.new(0, 2.5, 0)
    billboard.AlwaysOnTop = true
-   billboard.Enabled = true
    billboard.Parent = head
 
-   local textLabel = Instance.new("TextLabel")
-   textLabel.BackgroundTransparency = 0.2
-   textLabel.Size = UDim2.new(1, 0, 1, 0)
-   textLabel.Font = Enum.Font.GothamBold
-   textLabel.TextScaled = true
-   textLabel.TextStrokeTransparency = 0
+   local label = Instance.new("TextLabel")
+   label.Size = UDim2.new(1, 0, 1, 0)
+   label.BackgroundTransparency = 0.2
+   label.TextScaled = true
+   label.Font = Enum.Font.GothamBold
+   label.TextStrokeTransparency = 0
+   label.Parent = billboard
 
    local corner = Instance.new("UICorner")
    corner.CornerRadius = UDim.new(0, 8)
-   corner.Parent = textLabel
+   corner.Parent = label
 
    if watchedUserIds[player.UserId] then
-      textLabel.Text = "🔥 FLAMES HUB | OWNER 🔥"
-      textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-      textLabel.BackgroundColor3 = Color3.fromRGB(0, 16, 176)
+      label.Text = "🔥 FLAMES HUB | OWNER 🔥"
+      label.TextColor3 = Color3.fromRGB(255, 255, 255)
+      label.BackgroundColor3 = Color3.fromRGB(0, 16, 176)
    else
-      textLabel.Text = "🔥 FLAMES HUB | CLIENT 🔥"
-      textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
-      textLabel.BackgroundColor3 = Color3.fromRGB(245, 245, 245)
-   end
-
-   textLabel.Parent = billboard
-   if player == LocalPlayer then
-      billboard.Enabled = localBillboardEnabled
+      label.Text = "🔥 FLAMES HUB | CLIENT 🔥"
+      label.TextColor3 = Color3.fromRGB(0, 0, 0)
+      label.BackgroundColor3 = Color3.fromRGB(245, 245, 245)
    end
 end
 
 task.spawn(function()
-   while task.wait(2) do
-      local data = apiList() or {}
-      for userId, payload in pairs(data) do
-         local uid = tonumber(userId)
-         if not uid and type(userId) == "number" then uid = userId end
-         if uid then
-            local plr = Players:GetPlayerByUserId(uid)
-            if plr then
-               pcall(createBillboard, plr, payload)
-            end
+   apiSet({ userId = LocalPlayer.UserId, state = "enable" })
+   while task.wait(10) do
+      apiSet({ userId = LocalPlayer.UserId, state = "enable" })
+   end
+end)
+
+Players.PlayerRemoving:Connect(function(plr)
+   if plr == LocalPlayer then
+      apiDelete(LocalPlayer.UserId)
+   end
+end)
+
+task.spawn(function()
+   while task.wait(5) do
+      local list = apiList()
+      for uid, payload in pairs(list) do
+         local player = Players:GetPlayerByUserId(tonumber(uid))
+
+         if player then
+            task.spawn(createBillboard, player)
          end
       end
    end
@@ -407,99 +384,23 @@ end)
 Players.PlayerAdded:Connect(function(plr)
    plr.CharacterAdded:Connect(function()
       task.wait(1)
-      local data = apiList()
-      local payload = data and data[tostring(plr.UserId)]
-      if payload then
-         pcall(createBillboard, plr, payload)
-      end
+      createBillboard(plr)
    end)
-end)
-
-apiSet({
-   userId = LocalPlayer.UserId,
-   state = "enable",
-})
-
-task.spawn(function()
-   while task.wait(30) do
-      pcall(apiSet, { userId = LocalPlayer.UserId, state = "enable" })
-   end
-end)
-
-Players.PlayerRemoving:Connect(function(plr)
-   pcall(function()
-      local head = plr.Character and plr.Character:FindFirstChild("Head")
-      if head then
-         local bb = head:FindFirstChild("FlamesHubBillboard")
-         if bb then bb:Destroy() end
-      end
-   end)
-
-   if plr == LocalPlayer then
-      pcall(apiDelete, LocalPlayer.UserId)
-   end
-end)
-
-local CoreGui = cloneref and cloneref(getgenv().Game:GetService("CoreGui")) or getgenv().Game:GetService("CoreGui")
-local HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
-
-local toggleGui = Instance.new("ScreenGui")
-toggleGui.IgnoreGuiInset = true
-toggleGui.ResetOnSpawn = false
-toggleGui.Enabled = false
-toggleGui.Name = "FlamesHubToggle"
-if HiddenUI then
-   toggleGui.Parent = HiddenUI
-elseif CoreGui then
-   toggleGui.Parent = CoreGui
-else
-   toggleGui.Parent = LocalPlayer:WaitForChild("PlayerGui", 1)
-end
-
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.AnchorPoint = Vector2.new(1, 1)
-toggleBtn.Position = UDim2.new(1, -15, 1, -15)
-toggleBtn.Size = UDim2.new(0, 120, 0, 36)
-toggleBtn.Text = "Hide Title"
-toggleBtn.Font = Enum.Font.GothamBold
-toggleBtn.TextSize = 14
-toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-toggleBtn.AutoButtonColor = true
-toggleBtn.Parent = toggleGui
-if toggleBtn.Visible then
-   toggleBtn.Visible = false
-end
-
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
-corner.Parent = toggleBtn
-
-local shadow = Instance.new("UIStroke")
-shadow.Thickness = 1.5
-shadow.Color = Color3.fromRGB(70, 70, 70)
-shadow.Parent = toggleBtn
-
-toggleBtn.MouseButton1Click:Connect(function()
-   localBillboardEnabled = not localBillboardEnabled
-   toggleBtn.Text = localBillboardEnabled and "Hide Title" or "Show Title"
-
-   local head = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head")
-   if head then
-      local bb = head:FindFirstChild("FlamesHubBillboard")
-      if bb then
-         bb.Enabled = localBillboardEnabled
-      end
-   end
 end)
 
 LocalPlayer.CharacterAdded:Connect(function(char)
    task.wait(1)
-   local head = char:FindFirstChild("Head")
-   if head then
-      local bb = head:FindFirstChild("FlamesHubBillboard")
-      if bb then
-         bb.Enabled = localBillboardEnabled
+   createBillboard(LocalPlayer)
+end)
+
+task.spawn(function()
+   while task.wait(3) do
+      if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head") then
+         local head = LocalPlayer.Character:WaitForChild("Head", 3)
+
+         if not head:FindFirstChild("FlamesHubBillboard") then
+            createBillboard(LocalPlayer)
+         end
       end
    end
 end)
@@ -3914,7 +3815,7 @@ local function CommandsMenu()
    closeButton.Size = UDim2.new(0, 30, 0, 30)
    closeButton.Position = UDim2.new(1, -35, 0, 5)
    closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-   closeButton.TextColor3 = Color3.new(1, 1, 1)
+   closeButton.TextColor3 = Color3.fromRGB(196, 40, 28)
    closeButton.Parent = mainFrame
 
    Instance.new("UICorner", closeButton).CornerRadius = UDim.new(0, 8)
@@ -3944,22 +3845,23 @@ local function CommandsMenu()
    local currentPrefix = getgenv().AdminPrefix
    local channel = getgenv().TextChatService:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
    local cmdsString = [[
-      {prefix}startrgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle).
-      {prefix}stoprgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle).
+      {prefix}rgbcar - Enable RGB Vehicle (flashing Rainbow Vehicle).
+      {prefix}unrgbcar - Disable RGB Vehicle (flashing Rainbow Vehicle).
       {prefix}feedback - Gives you a menu to be able to send me feedback for the script.
       {prefix}infyield - Executes Infinite Premium (my Infinite Yield).
       {prefix}spawnfire NUMBER - Spawns fire with a specified number argument.
-      {prefix}rainbowcar player - Makes a players car RGB (FE).
-      {prefix}annoyergui - Enables the GUI that lets you annoy players (FE).
-      {prefix}startsignspam - Spams the text on a sign (FE).
-      {prefix}stopsignspam - Stops spamming the text on your tool Sign.
-      {prefix}orbit Player Speed Distance - Lets you orbit the target Player.
+      {prefix}rainbowcar Player - Makes a players car RGB (FRIENDS ONLY!, FE).
+      {prefix}copyav Player (🔥POPULAR FEATURE🔥) - Copies the target players avatar/outfit in full (animations, body, everything! FE!).
+      {prefix}norainbowcar Player - Disables the RGB for a players car (FRIENDS ONLY!, FE).
+      {prefix}annoyergui - Enables the GUI that lets you pick and toggle annoy players (FE).
+      {prefix}startsignspam - Spams the text on your Tool Sign (FE).
+      {prefix}stopsignspam - Stops spamming the text on your Tool Sign.
+      {prefix}orbit Player Speed Distance - Lets you Orbit around the target Player (FE).
       {prefix}unorbit - Stops orbiting the target Player.
-      {prefix}orbitspeed Speed - Lets you modify your orbit speed.
-      {prefix}outfitsui - Allows you to save how ever many outfits you want with our new GUI.
-      {prefix}anticarfling - Enables 'anticarfling', preventing you from being flung by Vehicles.
+      {prefix}orbitspeed NewSpeed - Lets you modify your Orbit speed.
+      {prefix}outfitsui (🔥POPULAR FEATURE🔥) - Allows you to save how ever many outfits you want with our new GUI.
+      {prefix}anticarfling (🔥HOT🔥) - Enables 'anticarfling', preventing you from being flung by Vehicles.
       {prefix}unanticarfling - Disables 'anticarfling' command.
-      {prefix}norainbowcar player - Disables the RGB for a player's car (FE).
       {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed.
       {prefix}unadmin player - Removes the player's FE commands (if they're your friend).
       {prefix}admin player - Adds the player to the FE commands whitelist (if they're your friend).
@@ -3967,7 +3869,7 @@ local function CommandsMenu()
       {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone).
       {prefix}checkpremium player - Checks if a player has premium or not.
       {prefix}startrgbphone - Enable RGB Phone (flashing Rainbow Phone).
-      {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone).
+      {prefix}stoprgbphone (🔥HOT🔥) - Disable RGB Phone (flashing Rainbow Phone).
       {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding).
       {prefix}startrgbtool - Enables RGB Tool (FE, Flashing Rainbow Tool).
       {prefix}stoprgbtool - Disables RGB Tool (FE, Flashing Rainbow Tool).
@@ -4005,11 +3907,11 @@ local function CommandsMenu()
       {prefix}unantivoid - Disables anti-void.
       {prefix}alljobs - Repeatedly spams all jobs.
       {prefix}jobsoff - Stops spamming all jobs.
-      {prefix}fly SpeedNumber - Enable/disable flying.
+      {prefix}fly Speed - Enable/disable flying.
       {prefix}unfly - Disables (Fly) command.
-      {prefix}annoy Player - Spam calls and request carries the target (FE).
+      {prefix}annoy Player - Spam calls + spam request carries the target player (FE).
       {prefix}unannoy - Disables annoy player system.
-      {prefix}fly2 SpeedNumber - Enables magic carpet fly (ONLY VISUAL rainbow!).
+      {prefix}fly2 Speed - Enables magic carpet fly (ONLY VISUAL rainbow!).
       {prefix}unfly2 - Disables Fly2/Magic carpet fly (with the client side rainbow).
       {prefix}noclip - Enables Noclip, letting you walk through everything.
       {prefix}clip - Disables Noclip, so you cannot walk through everything.
@@ -4031,25 +3933,25 @@ local function CommandsMenu()
       {prefix}noflashinvis - Disables the flashing of the invisibility GamePass for you're character (you need to actually own the GamePass).
       {prefix}nosit - Disables all VehicleSeats and Seats.
       {prefix}resit - Re-enables all Seats.
-      {prefix}view player - Smooth view's the target's Character.
+      {prefix}view Player - Smooth view's the target's Character.
       {prefix}unview - Disables the 'view' command.
-      {prefix}void player - Uses the SchoolBus Vehicle to void the target.
-      {prefix}kill player - Uses the SchoolBus Vehicle to kill the target.
-      {prefix}bring player - Uses the SchoolBus Vehicle to bring the target.
-      {prefix}goto player - Teleports your Character to the target player.
-      {prefix}skydive player - Uses the SchoolBus Vehicle to skydive the target.
+      {prefix}void Player - Uses the SchoolBus Vehicle to void the target.
+      {prefix}kill Player - Uses the SchoolBus Vehicle to kill the target.
+      {prefix}bring Player - Uses the SchoolBus Vehicle to bring the target.
+      {prefix}goto Player - Teleports your Character to the target player.
+      {prefix}skydive Player - Uses the SchoolBus Vehicle to skydive the target.
       {prefix}freepay - Gives you LifePay Premium for free.
       {prefix}rejoin - Rejoins you, but does NOT execute the script automatically.
-      {prefix}caraccel number - Modifies your "max_acc" on your car/vehicle.
-      {prefix}carspeed number - Modifies your "max_speed" on your car/vehicle.
-      {prefix}accel number - Modifies your "acc_0_60" on your car/vehicle (take off time/speed).
-      {prefix}turnangle number - Modifies your "turn_angle" on your car/vehicle (how fast you turn).
+      {prefix}caraccel Number - Modifies your "max_acc" on your car/vehicle.
+      {prefix}carspeed Number - Modifies your "max_speed" on your car/vehicle.
+      {prefix}accel Number - Modifies your "acc_0_60" on your car/vehicle (take off time/speed).
+      {prefix}turnangle Number - Modifies your "turn_angle" on your car/vehicle (how fast you turn).
       {prefix}gotocar - Teleports you straight to your car/vehicle directly.
-      {prefix}tpcar player - Teleports your vehicle/car to the specified target.
+      {prefix}tpcar Player - Teleports your vehicle/car to the specified target.
       {prefix}antihouseban - Prevents you from being banned/kicked/teleported out of houses.
       {prefix}unantiban - Turns off 'antihouseban' command.
-      {prefix}spawn CarName - Allows you to spawn any Vehicle.
-      {prefix}prefix symbol - Changes your prefix.
+      {prefix}spawn CarName - Allows you to spawn any Vehicle in the game (FE).
+      {prefix}prefix NewPrefixHere - Changes your prefix.
       {prefix}inject - Secret (???).
    ]]
 
@@ -4268,6 +4170,159 @@ function CreateCreditsLabel()
 end
 wait(0.2)
 CreateCreditsLabel()
+
+local Players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+getgenv().AntiFling_Tracked = getgenv().AntiFling_Tracked or setmetatable({}, { __mode = "k" })
+getgenv().AntiFling_Signals = getgenv().AntiFling_Signals or setmetatable({}, { __mode = "k" })
+getgenv().AntiFling_Enabled = false
+getgenv().AntiFling_SteppedConnection = getgenv().AntiFling_SteppedConnection or nil
+getgenv().AntiFling_PlayerAddedConn = getgenv().AntiFling_PlayerAddedConn or nil
+getgenv().AntiFling_PlayerRemovingConn = getgenv().AntiFling_PlayerRemovingConn or nil
+local tracked = getgenv().AntiFling_Tracked
+local signals = getgenv().AntiFling_Signals
+
+getgenv().AntiFling_SafeSetCanCollide = function(part, value)
+   if typeof(part) == "Instance" and part:IsA("BasePart") then
+      pcall(function()
+         if part.CanCollide ~= value then
+            part.CanCollide = value
+         end
+      end)
+   end
+end
+
+getgenv().AntiFling_Apply = function(part)
+   if not (part and part:IsA("BasePart")) or tracked[part] then return end
+   tracked[part] = true
+   getgenv().AntiFling_SafeSetCanCollide(part, false)
+
+   signals[part] = part:GetPropertyChangedSignal("CanCollide"):Connect(function()
+      if part and part.Parent and part.CanCollide ~= false then
+         getgenv().AntiFling_SafeSetCanCollide(part, false)
+      end
+   end)
+end
+
+getgenv().AntiFling_ProtectCharacter = function(char)
+   if not char then return end
+
+   for _, inst in ipairs(char:GetDescendants()) do
+      if inst:IsA("BasePart") then
+         getgenv().AntiFling_Apply(inst)
+      end
+   end
+
+   char.DescendantAdded:Connect(function(inst)
+      if inst:IsA("BasePart") then
+         getgenv().AntiFling_Apply(inst)
+      end
+   end)
+
+   char.DescendantRemoving:Connect(function(inst)
+      if tracked[inst] then
+         if signals[inst] then
+            signals[inst]:Disconnect()
+            signals[inst] = nil
+         end
+         tracked[inst] = nil
+      end
+   end)
+end
+
+getgenv().AntiFling_HookPlayer = function(plr)
+   if plr == LocalPlayer then return end
+   if plr.Character then
+      getgenv().AntiFling_ProtectCharacter(plr.Character)
+   end
+   plr.CharacterAdded:Connect(getgenv().AntiFling_ProtectCharacter)
+end
+
+getgenv().EnableAntiFling = function()
+   if getgenv().AntiFling_Enabled then
+      return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
+   end
+   getgenv().AntiFling_Enabled = true
+
+   for _, plr in ipairs(Players:GetPlayers()) do
+      getgenv().AntiFling_HookPlayer(plr)
+   end
+
+   getgenv().AntiFling_PlayerAddedConn = Players.PlayerAdded:Connect(getgenv().AntiFling_HookPlayer)
+   getgenv().AntiFling_PlayerRemovingConn = Players.PlayerRemoving:Connect(function(plr)
+      if plr == LocalPlayer then return end
+      local char = plr.Character
+      if not char then return end
+
+      for _, part in ipairs(char:GetDescendants()) do
+         if tracked[part] then
+            if signals[part] then
+               signals[part]:Disconnect()
+               signals[part] = nil
+            end
+            tracked[part] = nil
+         end
+      end
+   end)
+
+   getgenv().AntiFling_SteppedConnection = RunService.Stepped:Connect(function()
+      for part in pairs(tracked) do
+         if typeof(part) == "Instance" and part:IsA("BasePart") and part.Parent then
+            if part.CanCollide ~= false then
+               getgenv().AntiFling_SafeSetCanCollide(part, false)
+            end
+         end
+      end
+   end)
+
+   if getgenv().notify then
+      getgenv().notify("Anti-Fling", "Anti Fling Enabled!", 4)
+   end
+end
+
+getgenv().DisableAntiFling = function()
+   if not getgenv().AntiFling_Enabled then
+      return getgenv().notify("Error", "Anti Fling is not enabled!", 5)
+   end
+   getgenv().AntiFling_Enabled = false
+
+   if getgenv().AntiFling_SteppedConnection then
+      getgenv().AntiFling_SteppedConnection:Disconnect()
+      getgenv().AntiFling_SteppedConnection = nil
+   end
+   if getgenv().AntiFling_PlayerAddedConn then
+      getgenv().AntiFling_PlayerAddedConn:Disconnect()
+      getgenv().AntiFling_PlayerAddedConn = nil
+   end
+   if getgenv().AntiFling_PlayerRemovingConn then
+      getgenv().AntiFling_PlayerRemovingConn:Disconnect()
+      getgenv().AntiFling_PlayerRemovingConn = nil
+   end
+
+   for part, conn in pairs(signals) do
+      if conn.Disconnect then
+         pcall(conn.Disconnect, conn)
+      end
+   end
+
+   table.clear(signals)
+   table.clear(tracked)
+
+   if getgenv().notify then
+      getgenv().notify("Anti-Fling", "Anti Fling Disabled!", 4)
+   end
+end
+
+getgenv().Toggle_AntiFling_Boolean_Func = function(toggled)
+   if toggle == true then
+      getgenv().EnableAntiFling()
+   elseif toggle == false then
+      getgenv().DisableAntiFling()
+   else
+      return getgenv().notify("Warning", "[Invalid arguments]: Expected true/false brocaroni and cheese.", 5)
+   end
+end
 
 function change_RP_Name(New_Name)
    send_remote("roleplay_name", tostring(New_Name))
@@ -6219,7 +6274,7 @@ local function handleCommand(sender, message)
       end
 
       if not valid then
-         return getgenv().notify("Warning", "This is not an allowed Prefix, sorry! Please use a regular symbol prefix.", 5)
+         return getgenv().notify("Warning", "This is not an allowed Prefix, sorry! Please use a regular symbolized prefix.", 7)
       end
       wait(0.1)
       -- Yes, I know, finally add a check for the Prefix command, to ensure you're not able to set a blank prefix, or one with any white spaces at all.
@@ -6233,13 +6288,13 @@ local function handleCommand(sender, message)
       return 
    end
 
-   if cmd == "startrgbcar" then
+   if cmd == "startrgbcar" or cmd == "startrgbvehicle" or cmd == "rgbcar" or cmd == "rgbvehicle" or cmd == "rgbcaron" or cmd == "rgbvehicleon" then
       if getgenv().Rainbow_Vehicle then
          return getgenv().notify("Warning", "RGB vehicle is already enabled!", 5)
       end
 
       rainbow_car()
-   elseif cmd == "stoprgbcar" then
+   elseif cmd == "stoprgbcar" or cmd == "stoprgbvehicle" or cmd == "unrgbcar" or cmd == "norgbcar" or cmd == "unrgbvehicle" or cmd == "rgbcaroff" or cmd == "rgbvehicleoff" then
       if not getgenv().Rainbow_Vehicle then
          return getgenv().notify("Warning", "RGB vehicle is not enabled!", 5)
       end
@@ -6264,7 +6319,7 @@ local function handleCommand(sender, message)
       else
          return getgenv().notify("Error", "Something unexpectedly happened while checking Player.", 5)
       end
-   elseif cmd == "rainbowcar" then
+   elseif cmd == "rainbowcar" or cmd == "startrainbowcar" or cmd == "" then
       local PlayerToRGBCar = findplr(split[1])
       if not PlayerToRGBCar then return getgenv().notify("Error", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCar) then return getgenv().notify("Error", "Player does not have a Vehicle spawned!", 5) end
@@ -6312,7 +6367,7 @@ local function handleCommand(sender, message)
             return getgenv().notify("Error", "Player must have left the game.", 5)
          end
       end
-   elseif cmd == "norainbowcar" then
+   elseif cmd == "norainbowcar" or cmd == "unrainbowcar" or cmd == "stoprainbowcar" then
       local PlayerToRGBCarStop = findplr(split[1])
       if not PlayerToRGBCarStop then return getgenv().notify("Error", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCarStop) then return getgenv().notify("Error", "Player does not have a Vehicle spawned!", 5) end
@@ -6323,7 +6378,7 @@ local function handleCommand(sender, message)
       end
 
       disable_rgb_for(PlayerToRGBCarStop)
-   elseif cmd == "orbit" or cmd == "circlearound" or cmd == "startorbit" then
+   elseif cmd == "orbit" or cmd == "circlearound" or cmd == "startorbit" or cmd == "circleplr" then
       local Target = findplr(split[1])
       if not Target then return getgenv().notify("Error", "Target doesn't exist or has left the game.", 5) end
       local speed = tonumber(split[2]) or 1
@@ -6333,7 +6388,7 @@ local function handleCommand(sender, message)
       end
 
       start_orbit_plr(Target, speed, distance)
-   elseif cmd == "unorbit" or cmd == "noorbit" or cmd == "stoporbit" or cmd == "uncirclearound" then
+   elseif cmd == "unorbit" or cmd == "noorbit" or cmd == "stoporbit" or cmd == "uncirclearound" or cmd == "uncircleplr" then
       if not getgenv().Is_Orbiting then
          return getgenv().notify("Warning", "You're not orbiting anyone!", 5)
       end
@@ -6347,7 +6402,7 @@ local function handleCommand(sender, message)
       end
 
       set_orbit_speed(new_speed)
-   elseif cmd == "alljobs" then
+   elseif cmd == "alljobs" or cmd == "startjobspammer" or cmd == "everyjob" or cmd == "jobspammer" or cmd == "jobspam" or cmd == "startjobspam" then
       if getgenv().Every_Job then
          return getgenv().notify("Warning", "Job spammer is already enabled! disable it first.", 5)
       end
@@ -6385,7 +6440,7 @@ local function handleCommand(sender, message)
          task.wait(.1)
          getgenv().Send("job")
       end
-   elseif cmd == "jobsoff" then
+   elseif cmd == "jobsoff" or cmd == "nojobs" or cmd == "unjobspam" or cmd == "stopjobspam" or cmd == "stopjobspammer" then
       if not getgenv().Every_Job then
          return getgenv().notify("Warning", "Job spammer is not enabled! enable it first.", 5)
       end
@@ -6419,15 +6474,15 @@ local function handleCommand(sender, message)
       end
 
       spam_sign_text(false)
-   elseif cmd == "name" then
+   elseif cmd == "name" cmd == "rpname" or cmd == "newname" then
       local new_name = table.concat(split, " ")
 
       change_RP_Name(new_name)
-   elseif cmd == "bio" then
+   elseif cmd == "bio" or cmd == "rpbio" or cmd == "newbio" then
       local new_bio = table.concat(split, " ")
 
       change_bio(new_bio)
-   elseif cmd == "fly" then
+   elseif cmd == "fly" or cmd == "fly1" then
       local flySpeed = tonumber(split[1]) or 125
 
       if getgenv().HD_FlyEnabled then
@@ -6437,7 +6492,7 @@ local function handleCommand(sender, message)
       EnableFly(flySpeed)
       getgenv().notify("Success", "Fly enabled at speed: "..tostring(flySpeed), 5)
       getgenv().notify("Warning", "E = up, Q = down, WASD to move", 5)
-   elseif cmd == "unfly" then
+   elseif cmd == "unfly" or cmd == "unfly1" then
       DisableFlyScript()
    elseif cmd == "fly2" then
       local Fly_Speed = tonumber(split[1])
@@ -6557,7 +6612,7 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "freeemotes" or cmd == "freeemotesgui" or cmd == "allemotes" then
       if getgenv().FreeEmotes_Enabled then
-         return getgenv().notify("Warning", "You already have Free Emotes loaded!", 5)
+         return getgenv().notify("Warning", "You already have Free Emotes GUI loaded!", 5)
       end
       wait()
       getgenv().FreeEmotes_Enabled = true
@@ -6575,7 +6630,7 @@ local function handleCommand(sender, message)
       getgenv().StartWalkFling()
    elseif cmd == "unwalkfling" or cmd == "unwalkf" or cmd == "stopwalkfling" then
       getgenv().StopWalkFling()
-   elseif cmd == "autolockcar" then
+   elseif cmd == "autolockcar" or cmd == "startautolockcar" or cmd == "startlockingcar" then
       if getgenv().AutoLockOn then
          return getgenv().notify("Error", "You already have 'AutoLockCar' enabled, disable it first!", 5)
       end
@@ -6596,7 +6651,7 @@ local function handleCommand(sender, message)
 
             if car and car:GetAttribute("locked") == true then
                lock_vehicle(car)
-               getgenv().notify("Success", "Vehicle unlocked and AutoLock disabled", 5)
+               getgenv().notify("Success", "Vehicle unlocked and AutoLock disabled.", 5)
             else
                getgenv().notify("Warning", "Vehicle not found, cannot unlock, disabled loop.", 5)
             end
@@ -6616,14 +6671,14 @@ local function handleCommand(sender, message)
       end
       wait(0.1)
       getgenv().ToggleAutoLock(true)
-   elseif cmd == "unautolockcar" then
+   elseif cmd == "unautolockcar" or cmd == "stopautolockcar" or cmd == "stoplockingcar" then
       if not getgenv().ToggleAutoLock then return getgenv().notify("Error", "You have not enabled the 'AutoLockCar' command, function not found.", 5) end
       if not getgenv().AutoLockOn then
          return getgenv().notify("Error", "You do not have 'AutoLockCar' enabled!", 5)
       end
 
       getgenv().ToggleAutoLock(false)
-   elseif cmd == "copyavatar" or cmd == "copy" or cmd == "copyav" or cmd == "copyava" then
+   elseif cmd == "copyavatar" or cmd == "copy" or cmd == "copyav" or cmd == "copyava" or cmd == "stealav" or cmd == "stealavatar" or cmd == "steal" then
       local Target = findplr(split[1])
       if not Target then return getgenv().notify("Error", "That player doesn't exist in this game!", 5) end
       
@@ -6660,13 +6715,13 @@ local function handleCommand(sender, message)
 
       getgenv().Workspace.FallenPartsDestroyHeight = getgenv().originalFPDH or -500
       getgenv().notify("Success", "Disabled anti-void.", 5)
-   elseif cmd == "clip" then
+   elseif cmd == "clip" or cmd == "unnoclip" then
       if not getgenv().Noclip_Enabled then
          return getgenv().notify("Error", "Noclip is not enabled, enable it first.", 5)
       end
 
       ToggleNoclip(false)
-   elseif cmd == "view" then
+   elseif cmd == "view" or cmd == "spectate" then
       local View_Target = findplr(split[1])
       if not View_Target then return getgenv().notify("Error", "Target was not found or does not exist!", 5) end
       wait(0.1)
@@ -6678,7 +6733,7 @@ local function handleCommand(sender, message)
          
          getgenv().viewTarget(View_Target)
       end
-   elseif cmd == "unview" then
+   elseif cmd == "unview" or cmd == "unspectate" then
       if not getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == false then
          return getgenv().notify("Error", "Your not viewing anybody!", 5)
       end
@@ -6691,10 +6746,10 @@ local function handleCommand(sender, message)
       if not Current_Car then return getgenv().notify("Error", "You do not have a vehicle spawned!", 5) end
 
       if Current_Car:GetAttribute("locked") == true then
-         return notify("Error", "Your vehicle is already locked.", 5)
+         return getgenv().notify("Error", "Your Vehicle is already locked.", 5)
       else
          lock_vehicle(get_vehicle())
-         notify("Success", "Locked vehicle: "..tostring(Current_Car), 5)
+         getgenv().notify("Success", "Locked vehicle: "..tostring(Current_Car), 5)
       end
    elseif cmd == "unlockcar" then
       local Current_Car = get_vehicle()
@@ -6712,14 +6767,20 @@ local function handleCommand(sender, message)
       glitch_outfit(false)
    elseif cmd == "despawn" then
       local Current_Car = get_vehicle()
-      if not Current_Car then return notify("Error", "You do not have a vehicle spawned!", 5) end
+      if not Current_Car then return getgenv().notify("Error", "You do not have a vehicle spawned!", 5) end
       
       if Current_Car then
          spawn_any_vehicle(tostring(Current_Car))
       end
-   elseif cmd == "trailer" then
+   elseif cmd == "trailer" or cmd == "addtrailer" then
+      local Vehicle = get_vehicle()
+      if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle spawned, spawn one and try again!", 7) end
+
       water_skie_trailer(true, get_vehicle())
    elseif cmd == "notrailer" then
+      local Vehicle = get_vehicle()
+      if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle spawned, spawn one and try again!", 7) end
+
       water_skie_trailer(false, get_vehicle())
    elseif cmd == "rainbowtime" then
       local Player = findplr(split[1])
@@ -6738,9 +6799,9 @@ local function handleCommand(sender, message)
 
       task.wait(0.2)
       notify("Success", "Set rainbow delay for " .. Name .. " to " .. new_delay)
-   elseif cmd == "annoyergui" or cmd == "annoyancegui" or cmd == "annoyancemenu" or cmd == "annoyplrgui" or cmd == "groupspampgui" or cmd == "gcspamgui" then
+   elseif cmd == "annoyergui" or cmd == "annoyancegui" or cmd == "annoyancemenu" or cmd == "annoyplrgui" or cmd == "groupspamgui" or cmd == "gcspamgui" then
       annoyance_GUI()
-   elseif cmd == "blacklist" then
+   elseif cmd == "blacklist" or cmd == "addblacklist" then
       local Player = findplr(split[1])
       if not Player then return end
       local Name = Player.Name
@@ -6766,7 +6827,7 @@ local function handleCommand(sender, message)
       if getgenv().Rainbow_Tasks[Name] then
          getgenv().Rainbow_Tasks[Name] = nil
       end
-   elseif cmd == "unblacklist" then
+   elseif cmd == "unblacklist" or cmd == "noblacklist" or cmd == "removeblacklist" then
       local Player = findplr(split[1])
       if not Player then return end
       local Name = Player.Name
@@ -6776,7 +6837,7 @@ local function handleCommand(sender, message)
             getgenv().Blacklisted_Friends[Name] = nil
          end
       end
-   elseif cmd == "admin" then
+   elseif cmd == "admin" or cmd == "addadmin" then
       local Player = findplr(split[1])
       if not Player then return notify("Error", "Player does not exist!", 5) end
 
@@ -6791,7 +6852,7 @@ local function handleCommand(sender, message)
       else
          return notify("Error", "This player isn't friends with you! add them!", 5)
       end
-   elseif cmd == "unadmin" then
+   elseif cmd == "unadmin" or cmd == "removeadmin" then
       local Player = findplr(split[1])
       if not Player then return notify("Error", "Player does not exist!", 5) end
 
@@ -6828,7 +6889,7 @@ local function handleCommand(sender, message)
       end
    elseif cmd == "feedback" or cmd == "feedbackgui" or cmd == "feedbackui" or cmd == "sendfeedback" or cmd == "sendfeedbackgui" or cmd == "sendfeedbackui" then
       feedback_GUI()
-   elseif cmd == "bringcar" then
+   elseif cmd == "bringcar" or cmd == "bringvehicle" or cmd == "bringv" then
       local Vehicle = get_vehicle()
       if not Vehicle then return notify("Error", "You do not have a vehicle spawned!", 5) end
       local Old_CF_BringCar = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
@@ -6855,16 +6916,21 @@ local function handleCommand(sender, message)
       myVehicle:PivotTo(Old_CF_BringCar * CFrame.new(0, 10, 0))
       wait(0.1)
       notify("Success", "Brung car to player: "..tostring(getgenv().LocalPlayer), 5)
-   elseif cmd == "gotocar" then
+   elseif cmd == "gotocar" or cmd == "teleporttocar" or cmd == "tptocar" or cmd == "gotovehicle" then
       local Vehicle = get_vehicle()
-      if not Vehicle then return notify("Error", "You do not have a vehicle spawned!", 5) end
+      if not Vehicle then return getgenv().notify("Error", "You do not have a vehicle spawned, spawn one and try again!", 7) end
 
       if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") then
          getgenv().Character:PivotTo(get_vehicle():GetPivot() * CFrame.new(0, 5, 0))
       end
-   elseif cmd == "tpcar" then
+   elseif cmd == "viewcar" or cmd == "viewvehicle" or cmd == "spectatecar" or cmd == "spectatevehicle" then
+      local Camera = getgenv().Workspace.CurrentCamera
       local Vehicle = get_vehicle()
-      if not Vehicle then return notify("Error", "You do not have a vehicle spawned!", 5) end
+      if not Vehicle then return getgenv().notify("Error", "You don't have a Vehicle spawned, spawn one and try again!", 7) end
+      
+   elseif cmd == "tpcar" or cmd == "teleportcar" or cmd == "tpvehicle" or cmd == "teleportvehicle" then
+      local Vehicle = get_vehicle()
+      if not Vehicle then return getgenv().notify("Error", "You do not have a vehicle spawned, spawn one and try again!", 7) end
       local Goto_Player = findplr(split[1])
       local Old_CFrame_TP_Car = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
 
@@ -6900,7 +6966,7 @@ local function handleCommand(sender, message)
             getgenv().HumanoidRootPart.CFrame = Old_CFrame_TP_Car
          end
          wait(0.1)
-         notify("Success", "Teleported vehicle to player: "..tostring(Goto_Player), 5)
+         getgenv().notify("Success", "Teleported vehicle to target player: "..tostring(Goto_Player), 5)
       end
    elseif cmd == "nosit" or cmd == "antisit" then
       local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
@@ -7101,83 +7167,25 @@ local function handleCommand(sender, message)
       end
 
       safe_teleport()
-   elseif cmd == "antifling" then
-      if getgenv().antiFlingEnabled then
+   elseif cmd == "antifling" or cmd == "startantifling" or cmd == "antiflingon" then
+      if getgenv().AntiFling_Enabled then
          return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
       end
-      if getgenv().antiKnockbackEnabled then
-         return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
+      if getgenv().hasSeen_AntiFling_WarningPrompt then
+         getgenv().notify("Success", "Successfully enabled Anti-Fling.", 5)
+         getgenv().Toggle_AntiFling_Boolean_Func(true)
+      else
+         getgenv().notify("Error", "YOU ARE NOW GAY FOR TOGGLING THIS, nah im joking it still worked, you SHOULD use anti fling btw, you're not gay :).", 12)
+         getgenv().Toggle_AntiFling_Boolean_Func(true)
+         getgenv().hasSeen_AntiFling_WarningPrompt = true
+         getgenv().notify("Success", "Successfully enabled Anti-Fling. (the joke won't show again, dont worry)", 9)
       end
-      task.wait(0.1)
-      getgenv().antiFlingEnabled = true
-      getgenv().antiKnockbackEnabled = true
-
-      local RunService = getgenv().RunService
-      local Players = getgenv().Players
-      local lp = getgenv().LocalPlayer
-
-      local function cleanUpForces()
-         local hrp = getgenv().HumanoidRootPart
-         if not hrp then return end
-
-         for _, obj in ipairs(hrp:GetChildren()) do
-            if obj:IsA("BodyMover") or obj:IsA("VectorForce") or obj:IsA("Torque") or obj:IsA("LinearVelocity") then
-               obj:Destroy()
-            end
-         end
+   elseif cmd == "unantifling" or cmd == "stopantifling" or cmd == "antiflingoff" then
+      if not getgenv().AntiFling_Enabled then
+         return getgenv().notify("Error", "Hold up a damn minute, your ass don't got this enabled, nice try (joking).", 8)
       end
 
-      getgenv().notify("Success", "Enabled AntiFling, you will not be flung.", 5)
-
-      local function onHeartbeat()
-         if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
-
-         local hrp = getgenv().HumanoidRootPart
-         local humanoid = lp.Character and lp.Character:FindFirstChildWhichIsA("Humanoid")
-         if not hrp or not humanoid then return end
-
-         local maxSpeed = 45
-         local maxAngularSpeed = 60
-
-         if hrp.Velocity.Magnitude > maxSpeed then
-            hrp.Velocity = hrp.Velocity.Unit * maxSpeed
-         end
-
-         if hrp.AssemblyLinearVelocity.Magnitude > maxSpeed then
-            hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity.Unit * maxSpeed
-         end
-
-         if hrp.RotVelocity.Magnitude > maxAngularSpeed then
-            hrp.RotVelocity = Vector3.zero
-         end
-
-         if hrp.AssemblyAngularVelocity.Magnitude > maxAngularSpeed then
-            hrp.AssemblyAngularVelocity = Vector3.zero
-         end
-
-         if humanoid.PlatformStand then
-            humanoid.PlatformStand = false
-         end
-         wait()
-         cleanUpForces()
-      end
-
-      if getgenv().anti_knockback_connection then
-         getgenv().anti_knockback_connection:Disconnect()
-         getgenv().anti_knockback_connection = nil
-      end
-      wait(0.2)
-      getgenv().anti_knockback_connection = RunService.Heartbeat:Connect(onHeartbeat)
-   elseif cmd == "unantifling" then
-      getgenv().antiFlingEnabled = false
-      getgenv().antiKnockbackEnabled = false
-
-      getgenv().notify("Success", "Disabled AntiFling.", 5)
-
-      if getgenv().anti_knockback_connection then
-         getgenv().anti_knockback_connection:Disconnect()
-         getgenv().anti_knockback_connection = nil
-      end
+      getgenv().Toggle_AntiFling_Boolean_Func(false)
    elseif cmd == "bring" and split[1] then
       local target = findplr(split[1])
       if not target then return getgenv().notify("Error", "Target not found.", 5) end
