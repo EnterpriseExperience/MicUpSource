@@ -27,6 +27,7 @@ task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
+getgenv().Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 
 local function Service_Wrap(service)
    if cloneref then
@@ -373,7 +374,7 @@ task.spawn(function()
    while task.wait(5) do
       local list = apiList()
       for uid, payload in pairs(list) do
-         local player = Players:GetPlayerByUserId(tonumber(uid))
+         local player = getgenv().Players:GetPlayerByUserId(tonumber(uid))
 
          if player then
             task.spawn(createBillboard, player)
