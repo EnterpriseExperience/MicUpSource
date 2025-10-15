@@ -19,10 +19,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.7.5"
+local Raw_Version = "V4.7.6"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed sloppy controls (i didn't see them) for 'fly2' command, let me know if it's right + fixed being able to run both fly commands at once."
-local displayTimeMax = 30
+local Announcement_Message = "Removed the manual button controls for 'fly2', let me know if it works now normally + fixed being able to run both fly commands at once."
+local displayTimeMax = 35
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -4447,16 +4447,15 @@ function anti_car_fling(toggle)
 	end
 end
 
-function Enable_Fly_2(Speed)
-   local Speed = tonumber(Speed) or 75
-
+function Enable_Fly_2(speed)
+   local speed = tonumber(speed) or 75
    if getgenv().Enabled_Flying then
       return getgenv().notify("Warning", "Fly-2 is already enabled!", 5)
    end
-   wait(0.1)
-   local Flying = false
-   getgenv().Enabled_Flying = Flying
-   local Controls = {F=0,B=0,L=0,R=0,U=0,D=0}
+
+   local g = getgenv()
+   getgenv().Enabled_Flying = true
+
    local RainbowColors = {
       Color3.fromRGB(255,0,0),
       Color3.fromRGB(255,128,0),
@@ -4466,193 +4465,107 @@ function Enable_Fly_2(Speed)
       Color3.fromRGB(0,0,255),
       Color3.fromRGB(128,0,255)
    }
-   local HRP = getgenv().HumanoidRootPart
-   local gyro, velocity, hold
+
+   local HRP = g.HumanoidRootPart
+   local RunService = g.RunService
+   local Player = getgenv().LocalPlayer
+   local Character = getgenv().Character
+   local Humanoid = getgenv().Humanoid
    local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+   local Debris = cloneref and cloneref(game:GetService("Debris")) or game:GetService("Debris")
 
-   local function startFlying()
-      if Flying then return end
-      Flying = true
-      getgenv().Enabled_Flying = true
+   local fly_gyro = Instance.new("BodyGyro")
+   fly_gyro.P = 10000
+   fly_gyro.MaxTorque = Vector3.new(1,1,1)*1e7
+   fly_gyro.CFrame = HRP.CFrame
+   fly_gyro.Parent = HRP
 
-      gyro = Instance.new("BodyGyro")
-      gyro.P = 10000
-      gyro.MaxTorque = Vector3.new(1,1,1)*1e7
-      gyro.CFrame = HRP.CFrame
-      gyro.Parent = HRP
+   local fly_velocity = Instance.new("BodyVelocity")
+   fly_velocity.MaxForce = Vector3.new(1,1,1)*1e7
+   fly_velocity.P = 1000
+   fly_velocity.Velocity = Vector3.new()
+   fly_velocity.Parent = HRP
 
-      velocity = Instance.new("BodyVelocity")
-      velocity.MaxForce = Vector3.new(1,1,1)*1e7
-      velocity.Velocity = Vector3.new()
-      velocity.P = 1000
-      velocity.Parent = HRP
+   local fly_hold = Instance.new("BodyPosition")
+   fly_hold.MaxForce = Vector3.new(0,0,0)
+   fly_hold.P = 100000
+   fly_hold.Position = HRP.Position
+   fly_hold.Parent = HRP
 
-      hold = Instance.new("BodyPosition")
-      hold.MaxForce = Vector3.new(0,0,0)
-      hold.P = 100000
-      hold.Position = HRP.Position
-      hold.Parent = HRP
-   end
-   wait(0.1)
-   getgenv().Start_Flying = startFlying
+   local fly_vertical = 0
+   local fly_last_pos = nil
+   getgenv().Humanoid.PlatformStand = true
 
-   function stopFlying()
-      Flying = false
-      getgenv().Enabled_Flying = false
-      if gyro then gyro:Destroy() gyro=nil end
-      if velocity then velocity:Destroy() velocity=nil end
-      if hold then hold:Destroy() hold=nil end
-      getgenv().HumanoidRootPart.Velocity = Vector3.new()
-   end
-   wait(0.1)
-   getgenv().Stop_Flying = stopFlying
-
-   local lastPos
-   RunService.Heartbeat:Connect(function(dt)
-      if Flying and HRP and HRP.Parent then
-         local camCF = workspace.CurrentCamera.CFrame
-         local moveDir = (camCF.LookVector*(Controls.F-Controls.B))+(camCF.RightVector*(Controls.R-Controls.L))+Vector3.new(0,(Controls.U-Controls.D),0)
-         if moveDir.Magnitude > 0 then
-            moveDir = moveDir.Unit*Speed
-            velocity.Velocity = moveDir
-            hold.MaxForce = Vector3.new(0,0,0)
-         else
-            velocity.Velocity = Vector3.new()
-            hold.MaxForce = Vector3.new(1,1,1)*1e7
-            hold.Position = HRP.Position
-         end
-         gyro.CFrame = camCF
-
-         local pos = HRP.Position
-         if not lastPos or (pos-lastPos).Magnitude > 1 then
-            local part = Instance.new("Part")
-            local Debris = cloneref and cloneref(game:GetService("Debris")) or game:GetService("Debris")
-            part.Anchored = true
-            part.CanCollide = false
-            part.Material = Enum.Material.Neon
-            part.Size = Vector3.new(1,1,(pos-(lastPos or pos)).Magnitude+2)
-            part.CFrame = CFrame.new((lastPos or pos)+((pos-(lastPos or pos))/2), pos)
-            part.Color = RainbowColors[math.random(1,#RainbowColors)]
-            part.Parent = workspace
-            Debris:AddItem(part,1)
-            lastPos = pos
-         end
-      end
-   end)
-
-   UserInputService.InputBegan:Connect(function(input,gpe)
+   g.fly2_input_began = UserInputService.InputBegan:Connect(function(input, gpe)
       if gpe then return end
-      if input.KeyCode==Enum.KeyCode.W then Controls.F=1 end
-      if input.KeyCode==Enum.KeyCode.S then Controls.B=1 end
-      if input.KeyCode==Enum.KeyCode.A then Controls.L=1 end
-      if input.KeyCode==Enum.KeyCode.D then Controls.R=1 end
-      if input.KeyCode==Enum.KeyCode.Space then Controls.U=1 end
-      if input.KeyCode==Enum.KeyCode.LeftShift then Controls.D=1 end
-   end)
-   UserInputService.InputEnded:Connect(function(input)
-      if input.KeyCode==Enum.KeyCode.W then Controls.F=0 end
-      if input.KeyCode==Enum.KeyCode.S then Controls.B=0 end
-      if input.KeyCode==Enum.KeyCode.A then Controls.L=0 end
-      if input.KeyCode==Enum.KeyCode.D then Controls.R=0 end
-      if input.KeyCode==Enum.KeyCode.Space then Controls.U=0 end
-      if input.KeyCode==Enum.KeyCode.LeftShift then Controls.D=0 end
+      if input.KeyCode == Enum.KeyCode.Space then fly_vertical = 1 end
+      if input.KeyCode == Enum.KeyCode.LeftShift then fly_vertical = -1 end
    end)
 
-   local function createMobileUI()
-      if not UserInputService.TouchEnabled then return end
-      local gui = Instance.new("ScreenGui", getgenv().CoreGui)
-      gui.Name = "FlyControls"
+   g.fly2_input_ended = UserInputService.InputEnded:Connect(function(input)
+      if input.KeyCode == Enum.KeyCode.Space or input.KeyCode == Enum.KeyCode.LeftShift then
+         fly_vertical = 0
+      end
+   end)
 
-      local function makeBtn(txt,pos,callback)
-         local btn = Instance.new("TextButton", gui)
-         btn.Size = UDim2.new(0,60,0,60)
-         btn.Position = pos
-         btn.Text = txt
-         btn.Font = Enum.Font.GothamBold
-         btn.TextSize = 20
-         btn.TextColor3 = Color3.new(1,1,1)
-         btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
-         btn.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Touch then
-               callback(true)
-            end
-         end)
+   g.fly2_heartbeat = RunService.Heartbeat:Connect(function()
+      if not g.Enabled_Flying or not HRP or not HRP.Parent then return end
 
-         btn.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Touch then
-               callback(false)
-            end
-         end)
+      local camCF = getgenv().Workspace.CurrentCamera.CFrame
+      local moveDir = Humanoid.MoveDirection
+      local finalDir = (camCF.LookVector * moveDir.Z) + (camCF.RightVector * moveDir.X) + Vector3.new(0, fly_vertical, 0)
+
+      if finalDir.Magnitude > 0 then
+         fly_velocity.Velocity = finalDir.Unit * speed
+         fly_hold.MaxForce = Vector3.new(0,0,0)
+      else
+         fly_velocity.Velocity = Vector3.new()
+         fly_hold.MaxForce = Vector3.new(1,1,1)*1e7
+         fly_hold.Position = HRP.Position
       end
 
-      local function createMobileUI()
-         if not UserInputService.TouchEnabled then return end
+      fly_gyro.CFrame = camCF
 
-         local gui = Instance.new("ScreenGui")
-         gui.Name = "FlyControls_2"
-         gui.ResetOnSpawn = false
-         gui.Parent = getgenv().CoreGui
-         local flyGui = gui
-
-         local function makeBtn(txt, pos, callback)
-            local btn = Instance.new("TextButton")
-            btn.Size = UDim2.new(0.08, 0, 0.08, 0)
-            btn.Position = pos
-            btn.Text = txt
-            btn.Font = Enum.Font.GothamBold
-            btn.TextSize = 24
-            btn.TextColor3 = Color3.new(1, 1, 1)
-            btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-            btn.BackgroundTransparency = 0.2
-            btn.AutoButtonColor = true
-            btn.Parent = gui
-            btn.AnchorPoint = Vector2.new(0.5, 0.5)
-            btn.ZIndex = 5
-            btn.TextScaled = true
-
-            btn.InputBegan:Connect(function(input)
-               if input.UserInputType == Enum.UserInputType.Touch then
-                  callback(true)
-               end
-            end)
-
-            btn.InputEnded:Connect(function(input)
-               if input.UserInputType == Enum.UserInputType.Touch then
-                  callback(false)
-               end
-            end)
-         end
-
-         local baseX, baseY = 0.12, 0.75
-         makeBtn("↑", UDim2.new(baseX, 0, baseY, 0), function(d) Controls.F = d and 1 or 0 end)
-         makeBtn("↓", UDim2.new(baseX, 0, baseY + 0.12, 0), function(d) Controls.B = d and 1 or 0 end)
-         makeBtn("←", UDim2.new(baseX - 0.08, 0, baseY + 0.06, 0), function(d) Controls.L = d and 1 or 0 end)
-         makeBtn("→", UDim2.new(baseX + 0.08, 0, baseY + 0.06, 0), function(d) Controls.R = d and 1 or 0 end)
-         local rightX = 0.85
-         makeBtn("⤒", UDim2.new(rightX, 0, baseY, 0), function(d) Controls.U = d and 1 or 0 end)
-         makeBtn("⤓", UDim2.new(rightX, 0, baseY + 0.12, 0), function(d) Controls.D = d and 1 or 0 end)
-         makeBtn("FLY", UDim2.new(0.5, 0, 0.85, 0), function()
-            if Flying then
-               stopFlying()
-            else
-               startFlying()
-            end
-         end)
+      local pos = HRP.Position
+      if not fly_last_pos or (pos - fly_last_pos).Magnitude > 1 then
+         local part = Instance.new("Part")
+         part.Anchored = true
+         part.CanCollide = false
+         part.Material = Enum.Material.Neon
+         part.Size = Vector3.new(1,1,(pos - (fly_last_pos or pos)).Magnitude + 2)
+         part.CFrame = CFrame.new((fly_last_pos or pos) + ((pos - (fly_last_pos or pos)) / 2), pos)
+         part.Color = RainbowColors[math.random(1, #RainbowColors)]
+         part.Parent = workspace
+         Debris:AddItem(part, 1)
+         fly_last_pos = pos
       end
-   end
-
-   if Flying then 
-      getgenv().Stop_Flying()
-   else
-      startFlying()
-   end
-   createMobileUI()
+   end)
 end
-wait(0.2)
+
 function Disable_Flying()
-   getgenv().Stop_Flying()
-   if getgenv().CoreGui:FindFirstChild("FlyControls") then
-      getgenv().CoreGui:FindFirstChild("FlyControls", true):Destroy()
+   local g = getgenv()
+   if not g.Enabled_Flying then return getgenv().notify("Error", "Fly-2 is not currently enabled.", 5) end
+   g.Enabled_Flying = false
+   if g.fly2_heartbeat then g.fly_heartbeat:Disconnect() g.fly_heartbeat = nil end
+   if g.fly2_input_began then g.fly_input_began:Disconnect() g.fly_input_began = nil end
+   if g.fly2_input_ended then g.fly_input_ended:Disconnect() g.fly_input_ended = nil end
+   if getgenv().HumanoidRootPart:FindFirstChild("BodyGyro") then
+      getgenv().HumanoidRootPart:FindFirstChild("BodyGyro"):Destroy()
+   end
+   if getgenv().HumanoidRootPart:FindFirstChild("BodyVelocity") then
+      getgenv().HumanoidRootPart:FindFirstChild("BodyVelocity"):Destroy()
+   end
+   if getgenv().HumanoidRootPart:FindFirstChild("BodyPosition") then
+      getgenv().HumanoidRootPart:FindFirstChild("BodyPosition"):Destroy()
+   end
+
+   local HRP = g.HumanoidRootPart
+   if HRP then HRP.Velocity = Vector3.new() end
+
+   local Player = getgenv().LocalPlayer
+   local Character = getgenv().Character
+   if Character then
+      getgenv().Humanoid.PlatformStand = false
    end
 end
 
@@ -6595,7 +6508,7 @@ local function handleCommand(sender, message)
    elseif cmd == "stoprgbtool" or cmd == "unrgbtool" then
       rainbow_tool(false)
    elseif cmd == "unfly2" then
-      getgenv().Stop_Flying()
+      Disable_Flying()
    elseif cmd == "noemote" then
       disable_emoting()
    elseif cmd == "griddy" then
