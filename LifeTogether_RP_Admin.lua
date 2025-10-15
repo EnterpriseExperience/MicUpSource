@@ -11,6 +11,12 @@ getgenv().PlaceID = getgenv().Game.PlaceId
 local set_fps = setfpscap or setfps
 getgenv().SetFPSCap = set_fps
 
+function notify(notif_type, msg, duration)
+   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
+end
+wait(0.1)
+getgenv().notify = notify
+
 if setfpscap or setfps then
    set_fps(250)
 end
@@ -19,7 +25,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.8.1"
+local Raw_Version = "V4.8.2"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Controls modified from IY's Fly Controls system (thanks IY lol), moved Unsuspend Chat GUI to TopBar + improved Performance Statistics GUI."
 local displayTimeMax = 20
@@ -50,11 +56,6 @@ if not getgenv().performance_stats then
    end
 end
 
-function notify(notif_type, msg, duration)
-   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
-end
-wait(0.1)
-getgenv().notify = notify
 wait()
 if getgenv().LifeTogether_RP_ScriptHub_Loaded then
    return NotifyLib:External_Notification("Warning", "You already have Life Together RP (Script Hub) loaded, you cannot load both the Admin and Script Hub due to unexpected issues.", 9)
