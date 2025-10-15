@@ -19,10 +19,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.7.8"
+local Raw_Version = "V4.8.1"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Controls modified from IY's Fly Controls system (thanks IY lol), moved Unsuspend Chat GUI to TopBar."
-local displayTimeMax = 25
+local Announcement_Message = "Controls modified from IY's Fly Controls system (thanks IY lol), moved Unsuspend Chat GUI to TopBar + improved Performance Statistics GUI."
+local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -38,6 +38,17 @@ local function Service_Wrap(service)
 end
 wait(0.1)
 getgenv().Service_Wrap = Service_Wrap
+
+if not getgenv().performance_stats then
+   getgenv().notify("Info", "Loading Performance Statistics GUI...", 5)
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
+   wait(3)
+   if getgenv().performance_stats then
+      getgenv().notify("Success", "Loaded Performance Statistics GUI.", 5)
+   else
+      getgenv().notify("Warning", "Not sure if we we're able to load Performance Statistics GUI or not.", 8)
+   end
+end
 
 function notify(notif_type, msg, duration)
    NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
@@ -2782,68 +2793,83 @@ function anti_void()
    end)
 end
 
-local function find_icon_container()
-   for i = 1, 50 do
-      local topbar = getgenv().CoreGui:FindFirstChild("TopBarApp") or getgenv().CoreGui:FindFirstChild("TopBar")
-      if topbar then
-         local container = topbar:FindFirstChildWhichIsA("Frame", true)
-         if container and #container:GetChildren() > 3 then
-            return container
-         end
-      end
-      task.wait(0)
+function unsuspend_GUI_topbar()
+   local CoreGui
+   local Players
+
+   if cloneref then
+      Players = cloneref(game:GetService("Players"))
+      CoreGui = cloneref(game:GetService("CoreGui"))
+   else
+      Players = game:GetService("Players")
+      CoreGui = game:GetService("CoreGui")
    end
-end
 
-local container = find_icon_container()
-
-getgenv().notify("Info", "Wait - 13 seconds, we're trying to find TopBarApp/TopBar...", 12)
-
-if container then
-   getgenv().notify("Success", "[Found]: "..tostring(container).." successfully, sent GUI to TopBar Parent.", 8)
-   local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-   local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-   local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+   task.wait(0.1)
    local LocalPlayer = Players.LocalPlayer
 
-   local icon = Instance.new("ImageButton")
-   icon.Name = "UnsuspendChat_Icon"
-   icon.BackgroundTransparency = 1
-   icon.Size = UDim2.new(0, 36, 0, 36)
-   icon.Image = "rbxassetid://6031090993"
-   icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
-   icon.ZIndex = 10
-   icon.Parent = container
+   local ScreenGui = Instance.new("ScreenGui")
+   ScreenGui.Name = "TopBarUI_UNSUSPEND"
+   if get_hidden_gui or gethui then
+      local hiddenUI = get_hidden_gui or gethui
+      ScreenGui.Parent = hiddenUI() or CoreGui
+   else
+      ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui", 5)
+   end
+   ScreenGui.IgnoreGuiInset = true
+   ScreenGui.ResetOnSpawn = false
 
-   local uiaspect = Instance.new("UIAspectRatioConstraint")
-   uiaspect.AspectRatio = 1
-   uiaspect.Parent = icon
+   local UnsuspendTxt_Chat = Instance.new("TextButton")
+   UnsuspendTxt_Chat.Name = "UnsuspendTextChat"
+   UnsuspendTxt_Chat.Parent = ScreenGui
+   UnsuspendTxt_Chat.Size = UDim2.new(0, 100, 0, 30)
+   UnsuspendTxt_Chat.Position = UDim2.new(1, -240, 0, 10)
+   UnsuspendTxt_Chat.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+   UnsuspendTxt_Chat.BorderSizePixel = 0
+   UnsuspendTxt_Chat.TextColor3 = Color3.fromRGB(0, 255, 0)
+   UnsuspendTxt_Chat.TextScaled = true
+   UnsuspendTxt_Chat.Font = Enum.Font.SourceSansBold
+   UnsuspendTxt_Chat.Text = "Unsuspend Chat"
 
-   local tip = Instance.new("TextLabel")
-   tip.AnchorPoint = Vector2.new(0.5, 0)
-   tip.Position = UDim2.new(0.5, 0, 1, 2)
-   tip.Size = UDim2.new(1.5, 0, 0, 16)
-   tip.BackgroundTransparency = 1
-   tip.Text = "Unsuspend Chat"
-   tip.TextColor3 = Color3.fromRGB(255, 255, 255)
-   tip.TextScaled = true
-   tip.Font = Enum.Font.GothamBold
-   tip.Visible = false
-   tip.ZIndex = 20
-   tip.Parent = icon
+   local UICorner = Instance.new("UICorner")
+   UICorner.CornerRadius = UDim.new(0, 20)
+   UICorner.Parent = UnsuspendTxt_Chat
 
-   icon.MouseButton1Click:Connect(function()
-      if not replicatesignal then
-         return getgenv().notify("Error", "Your executor does not support 'replicatesignal'.", 8)
+   local UIContainer = Instance.new("Frame")
+   UIContainer.Name = "UIContainer"
+   UIContainer.Parent = ScreenGui
+   UIContainer.Size = UDim2.new(0, 1105, 0, 40)
+   UIContainer.Position = UDim2.new(0.5, -550, 0, 0)
+   UIContainer.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+   UIContainer.BackgroundTransparency = 0.2
+   UIContainer.BorderSizePixel = 0
+   UIContainer.Visible = false
+
+   local UICorner = Instance.new("UICorner")
+   UICorner.CornerRadius = UDim.new(0, 8)
+   UICorner.Parent = UIContainer
+
+   local UIStroke = Instance.new("UIStroke")
+   UIStroke.Color = Color3.fromRGB(0, 0, 0)
+   UIStroke.Thickness = 1
+   UIStroke.Parent = UIContainer
+
+   getgenv().unsuspend_chat_GUI = true
+
+   UnsuspendTxt_Chat.MouseButton1Click:Connect(function()
+      if not replicatesignal then return getgenv().notify("Error", "Your executor does not support 'replicatesignal'!", 6) end
+
+      if replicatesignal then
+         replicatesignal(getgenv().TextChatService.UpdateChatTimeout, getgenv().LocalPlayer.UserId, 0, 10)
+         getgenv().notify("Success", "Unsuspended TextChat, you may now use your Chat like normal.", 6)
       end
-      replicatesignal(TextChatService.UpdateChatTimeout, LocalPlayer.UserId, 0, 10)
-      getgenv().notify("Success", "Attempted to unsuspend TextChat (FE)", 5)
    end)
+end
 
-   icon.MouseEnter:Connect(function() tip.Visible = true end)
-   icon.MouseLeave:Connect(function() tip.Visible = false end)
+if not getgenv().unsuspend_chat_GUI then
+   unsuspend_GUI_topbar()
 else
-   getgenv().notify("Info", "Skipping unsuspend button (container Parent not found).", 7)
+   getgenv().notify("Warning", "You've already loaded Unsuspend TextChat GUI!", 5)
 end
 
 local function stop_rainbow_skin()
