@@ -6474,7 +6474,7 @@ local function handleCommand(sender, message)
       end
 
       spam_sign_text(false)
-   elseif cmd == "name" cmd == "rpname" or cmd == "newname" then
+   elseif cmd == "name" or cmd == "rpname" or cmd == "newname" then
       local new_name = table.concat(split, " ")
 
       change_RP_Name(new_name)
