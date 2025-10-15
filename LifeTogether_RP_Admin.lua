@@ -19,10 +19,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.7.6"
+local Raw_Version = "V4.7.8"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Removed the manual button controls for 'fly2', let me know if it works now normally + fixed being able to run both fly commands at once."
-local displayTimeMax = 35
+local Announcement_Message = "Controls modified from IY's Fly Controls system (thanks IY lol), moved Unsuspend Chat GUI to TopBar."
+local displayTimeMax = 25
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -2782,54 +2782,67 @@ function anti_void()
    end)
 end
 
-local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-local LocalPlayer = Players.LocalPlayer
+local function find_icon_container()
+   for i = 1, 80 do
+      local topbar = CoreGui:FindFirstChild("TopBarApp") or CoreGui:FindFirstChild("TopBar")
+      if topbar then
+         local container = topbar:FindFirstChildWhichIsA("Frame", true)
+         if container and #container:GetChildren() > 3 then
+            return container
+         end
+      end
+      task.wait(0.25)
+   end
+end
 
-local gui = Instance.new("ScreenGui")
-gui.Name = "UnsuspendChatGUI"
-gui.ResetOnSpawn = false
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-gui.Parent = CoreGui
+local container = find_icon_container()
 
-local holder = Instance.new("Frame")
-holder.Size = UDim2.new(0, 150, 0, 50)
-holder.AnchorPoint = Vector2.new(1, 1)
-holder.Position = UDim2.new(1, -20, 1, -200)
-holder.BackgroundTransparency = 1
-holder.Parent = gui
+if container then
+   getgenv().notify("Success", "[Found]: "..tostring(container).." successfully, sent GUI to TopBar Parent.", 8)
+   local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+   local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+   local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+   local LocalPlayer = Players.LocalPlayer
 
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(1, 0, 1, 0)
-button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-button.Text = "Unsuspend TextChat (FE)"
-button.TextScaled = true
-button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.Font = Enum.Font.GothamBold
-button.AutoButtonColor = true
-button.Parent = holder
+   local icon = Instance.new("ImageButton")
+   icon.Name = "UnsuspendChat_Icon"
+   icon.BackgroundTransparency = 1
+   icon.Size = UDim2.new(0, 36, 0, 36)
+   icon.Image = "rbxassetid://6031090993"
+   icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+   icon.ZIndex = 10
+   icon.Parent = container
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 12)
-corner.Parent = button
+   local uiaspect = Instance.new("UIAspectRatioConstraint")
+   uiaspect.AspectRatio = 1
+   uiaspect.Parent = icon
 
-local shadow = Instance.new("ImageLabel")
-shadow.AnchorPoint = Vector2.new(0.5, 0.5)
-shadow.Position = UDim2.new(0.5, 0, 0.5, 4)
-shadow.Size = UDim2.new(1, 20, 1, 20)
-shadow.BackgroundTransparency = 1
-shadow.Image = "rbxassetid://1316045217"
-shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-shadow.ImageTransparency = 0.5
-shadow.ZIndex = 0
-shadow.Parent = holder
+   local tip = Instance.new("TextLabel")
+   tip.AnchorPoint = Vector2.new(0.5, 0)
+   tip.Position = UDim2.new(0.5, 0, 1, 2)
+   tip.Size = UDim2.new(1.5, 0, 0, 16)
+   tip.BackgroundTransparency = 1
+   tip.Text = "Unsuspend Chat"
+   tip.TextColor3 = Color3.fromRGB(255, 255, 255)
+   tip.TextScaled = true
+   tip.Font = Enum.Font.GothamBold
+   tip.Visible = false
+   tip.ZIndex = 20
+   tip.Parent = icon
 
-button.MouseButton1Click:Connect(function()
-   if not replicatesignal then return getgenv().notify("Error", "Your executor does not (unfortunately) support 'replicatesignal', cannot unsuspend TextChat", 10) end
-   
-   replicatesignal(TextChatService.UpdateChatTimeout, LocalPlayer.UserId, 0, 10)
-end)
+   icon.MouseButton1Click:Connect(function()
+      if not replicatesignal then
+         return getgenv().notify("Error", "Your executor does not support 'replicatesignal'.", 8)
+      end
+      replicatesignal(TextChatService.UpdateChatTimeout, LocalPlayer.UserId, 0, 10)
+      getgenv().notify("Success", "Attempted to unsuspend TextChat (FE)", 5)
+   end)
+
+   icon.MouseEnter:Connect(function() tip.Visible = true end)
+   icon.MouseLeave:Connect(function() tip.Visible = false end)
+else
+   getgenv().notify("Info", "Skipping unsuspend button (container Parent not found).", 7)
+end
 
 local function stop_rainbow_skin()
    getgenv().RainbowSkin_FE = false
@@ -6509,7 +6522,7 @@ local function handleCommand(sender, message)
       rainbow_tool(false)
    elseif cmd == "unfly2" then
       Disable_Flying()
-   elseif cmd == "noemote" then
+   elseif cmd == "noemote" or cmd == "noemotes" or cmd == "nodance" or cmd == "nodances" or cmd == "dancingoff" or cmd == "emotingoff" or cmd == "unemote" or cmd == "undance" then
       disable_emoting()
    elseif cmd == "griddy" then
       do_emote("griddy")
