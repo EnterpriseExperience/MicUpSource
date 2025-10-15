@@ -5937,9 +5937,8 @@ function Notify(message, duration)
         end
     end
 
-    local Players = safe_wrapper("Players")
+    local CoreGui = safe_wrapper("CoreGui")
     local TweenService = safe_wrapper("TweenService")
-    local CoreGui = get_hidden_gui and get_hidden_gui() or gethui and gethui() or safe_wrapper("CoreGui")
 
     local NotificationGui = Instance.new("ScreenGui")
     NotificationGui.Name = "CustomErrorGui"
@@ -5952,20 +5951,20 @@ function Notify(message, duration)
     Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     Frame.BackgroundTransparency = 0.3
     Frame.BorderSizePixel = 0
-    Frame.Size = UDim2.new(0, 400, 0, 60)
+    Frame.Size = UDim2.new(0, 500, 0, 120)
     Frame.Position = UDim2.new(0, 20, 0, 100)
     Frame.Parent = NotificationGui
 
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 6)
+    UICorner.CornerRadius = UDim.new(0, 10)
     UICorner.Parent = Frame
 
     local Icon = Instance.new("ImageLabel")
     Icon.Name = "ErrorIcon"
     Icon.AnchorPoint = Vector2.new(0, 0.5)
     Icon.BackgroundTransparency = 1
-    Icon.Position = UDim2.new(0, 10, 0.5, -20)
-    Icon.Size = UDim2.new(0, 40, 0, 40)
+    Icon.Position = UDim2.new(0, 15, 0.5, -25)
+    Icon.Size = UDim2.new(0, 50, 0, 50)
     Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
     Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
     Icon.Parent = Frame
@@ -5973,15 +5972,15 @@ function Notify(message, duration)
     local Label = Instance.new("TextLabel")
     Label.Name = "ErrorText"
     Label.BackgroundTransparency = 1
-    Label.Position = UDim2.new(0, 60, 0, 0)
-    Label.Size = UDim2.new(1, -70, 1, 0)
+    Label.Position = UDim2.new(0, 80, 0, 10)
+    Label.Size = UDim2.new(1, -90, 1, -20)
     Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
     Label.Text = message
     Label.TextColor3 = Color3.fromRGB(255, 255, 255)
     Label.TextSize = 20
     Label.TextWrapped = true
     Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.TextYAlignment = Enum.TextYAlignment.Center
+    Label.TextYAlignment = Enum.TextYAlignment.Top
     Label.Parent = Frame
 
     Frame.BackgroundTransparency = 1
