@@ -7735,6 +7735,11 @@ else
    end
 end
 
+local function return_correct_script_ver()
+   local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
+   return HttpService:JSONDecode(versionJson)
+end
+
 task.wait(0.2)
 function Notify(message, duration)
    local NotificationGui = Instance.new("ScreenGui")
@@ -7812,7 +7817,7 @@ task.spawn(function()
       if success and latestVersionInfo then
          if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
             getgenv().ConstantUpdate_Checker_Live = false
-            Notify("[LIFE TOGETHER ADMIN]: There is an update pending, rejoin the game to update!", 20)
+            Notify("[LIFE TOGETHER ADMIN]: A new update is now pending. New version: "..tostring(latestVersionInfo.LifeTogether_Admin_Version).." | rejoin to update!", 25)
             break
          end
       end
