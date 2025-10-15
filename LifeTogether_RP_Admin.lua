@@ -7741,10 +7741,13 @@ end
 
 task.wait(0.2)
 function Notify(message, duration)
+   local CoreGui = getgenv().CoreGui
+   local TweenService = getgenv().TweenService
+
    local NotificationGui = Instance.new("ScreenGui")
    NotificationGui.Name = "CustomErrorGui"
    NotificationGui.ResetOnSpawn = false
-   NotificationGui.Parent = getgenv().CoreGui
+   NotificationGui.Parent = CoreGui
    duration = duration or 5
 
    local Frame = Instance.new("Frame")
@@ -7752,20 +7755,20 @@ function Notify(message, duration)
    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
    Frame.BackgroundTransparency = 0.3
    Frame.BorderSizePixel = 0
-   Frame.Size = UDim2.new(0, 400, 0, 60)
+   Frame.Size = UDim2.new(0, 500, 0, 120)
    Frame.Position = UDim2.new(0, 20, 0, 100)
    Frame.Parent = NotificationGui
 
    local UICorner = Instance.new("UICorner")
-   UICorner.CornerRadius = UDim.new(0, 6)
+   UICorner.CornerRadius = UDim.new(0, 10)
    UICorner.Parent = Frame
 
    local Icon = Instance.new("ImageLabel")
    Icon.Name = "ErrorIcon"
    Icon.AnchorPoint = Vector2.new(0, 0.5)
    Icon.BackgroundTransparency = 1
-   Icon.Position = UDim2.new(0, 10, 0.5, -20)
-   Icon.Size = UDim2.new(0, 40, 0, 40)
+   Icon.Position = UDim2.new(0, 15, 0.5, -25)
+   Icon.Size = UDim2.new(0, 50, 0, 50)
    Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
    Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
    Icon.Parent = Frame
@@ -7773,29 +7776,29 @@ function Notify(message, duration)
    local Label = Instance.new("TextLabel")
    Label.Name = "ErrorText"
    Label.BackgroundTransparency = 1
-   Label.Position = UDim2.new(0, 60, 0, 0)
-   Label.Size = UDim2.new(1, -70, 1, 0)
+   Label.Position = UDim2.new(0, 80, 0, 10)
+   Label.Size = UDim2.new(1, -90, 1, -20)
    Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
    Label.Text = message
    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
    Label.TextSize = 20
    Label.TextWrapped = true
    Label.TextXAlignment = Enum.TextXAlignment.Left
-   Label.TextYAlignment = Enum.TextYAlignment.Center
+   Label.TextYAlignment = Enum.TextYAlignment.Top
    Label.Parent = Frame
 
    Frame.BackgroundTransparency = 1
    Icon.ImageTransparency = 1
    Label.TextTransparency = 1
-   getgenv().TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
-   getgenv().TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
-   getgenv().TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+   TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
+   TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
+   TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 
    task.delay(duration, function()
       if Frame and Frame.Parent then
-         getgenv().TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-         getgenv().TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
-         getgenv().TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+         TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+         TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+         TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
          task.wait(0.35)
          Frame:Destroy()
          NotificationGui:Destroy()
