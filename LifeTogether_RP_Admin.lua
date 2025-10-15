@@ -2783,19 +2783,21 @@ function anti_void()
 end
 
 local function find_icon_container()
-   for i = 1, 80 do
-      local topbar = CoreGui:FindFirstChild("TopBarApp") or CoreGui:FindFirstChild("TopBar")
+   for i = 1, 50 do
+      local topbar = getgenv().CoreGui:FindFirstChild("TopBarApp") or getgenv().CoreGui:FindFirstChild("TopBar")
       if topbar then
          local container = topbar:FindFirstChildWhichIsA("Frame", true)
          if container and #container:GetChildren() > 3 then
             return container
          end
       end
-      task.wait(0.25)
+      task.wait(0)
    end
 end
 
 local container = find_icon_container()
+
+getgenv().notify("Info", "Wait about 10-ish seconds, we're trying to find TopBarApp/TopBar...", 8)
 
 if container then
    getgenv().notify("Success", "[Found]: "..tostring(container).." successfully, sent GUI to TopBar Parent.", 8)
