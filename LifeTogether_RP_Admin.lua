@@ -2686,7 +2686,7 @@ else
       end
    end
 end
-wait()
+
 if getgenv().ReplicatedStorage:FindFirstChild("GameAnalyticsRemoteTime") then
    GameAnalytics = getgenv().ReplicatedStorage:FindFirstChild("GameAnalyticsRemoteTime")
 
@@ -2710,7 +2710,15 @@ else
       end
    end
 end
-wait()
+
+for i, v in pairs(getgenv().PlayerGui:GetDescendants()) do
+   if v:IsA("LocalScript") and v.Name == "kickerstript" then
+      if not v.Disabled then
+         v.Disabled = true
+      end
+   end
+end
+
 local Old_Skintone = getgenv().Character:FindFirstChild("Body Colors").TorsoColor3
 
 function rainbow_skin(boolean)
