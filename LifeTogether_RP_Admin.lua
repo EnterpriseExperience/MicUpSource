@@ -24,9 +24,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.8.5"
+local Raw_Version = "V4.8.7"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed 'fly2' not shutting down + fixed fly2 inverted controls on PC (and maybe mobile)."
+local Announcement_Message = "Added 'antioutfitcopier'."
 local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -3056,6 +3056,23 @@ getgenv().spamming_flames = function(toggle)
    end
 end
 
+local Old_Bio = getgenv().LocalPlayer:GetAttribute("bio") or "DEFAULT"
+wait(0.2)
+function anti_outfit_copier(toggle)
+   if toggle == true then
+      getgenv().anti_outfit_stealer = true
+      while getgenv().anti_outfit_stealer == true do
+      task.wait(0)
+         getgenv().Send("bio", "Flames Hub - I HAVE TOGGLED ANTI-STEALER ON!")
+      end
+   elseif toggle == false then
+      getgenv().anti_outfit_stealer = false
+      getgenv().Send("bio", tostring(Old_Bio))
+   else
+      return 
+   end
+end
+
 getgenv().HD_FlyEnabled = false
 local FlyConnection
 local speed = 75
@@ -3940,6 +3957,8 @@ local function CommandsMenu()
       {prefix}jp Number - Changes your JumpHeight.
       {prefix}grav Number - Changes your Gravity.
       {prefix}orbitspeed NewSpeed - Lets you modify your Orbit speed.
+      {prefix}antifitstealer (🔥 #1 FEATURE 🔥) - Allows you to toggle on Anti Outfit Copier (FE, I was forced to add it, I know!!!).
+      {prefix}unanticopyfit - Disables Anti Outfit Copier (FE).
       {prefix}outfitsui (🔥POPULAR FEATURE🔥) - Allows you to save how ever many outfits you want with our new GUI.
       {prefix}anticarfling (🔥HOT🔥) - Enables 'anticarfling', preventing you from being flung by Vehicles.
       {prefix}unanticarfling - Disables 'anticarfling' command.
@@ -5426,6 +5445,13 @@ function copy_plr_avatar(Player)
          return
       end
 
+      local Text = "Flames Hub - I HAVE TOGGLED ANTI-STEALER ON!"
+      local current_bio = target:GetAttribute("bio")
+
+      if current_bio == Text then
+         return getgenv().notify("Warning", "This player has anti outfit stealer on, sorry!", 5)
+      end
+      wait()
       if not clearAvatar() then
          getgenv().is_copying_avatar_already_flames = false
          return getgenv().notify("Warning", "Something unexpected happened when trying to clear your Avatar.", 6)
@@ -6445,6 +6471,10 @@ local function handleCommand(sender, message)
             return getgenv().notify("Error", "Player must have left the game.", 5)
          end
       end
+   elseif cmd == "antioutfitcopier" or cmd == "antifitcopier" or cmd == "antifitstealer" or cmd == "antioutfitstealer" or cmd == "anticopyoutfit" then
+      anti_outfit_copier(true)
+   elseif cmd == "unantioutfitcopier" or cmd == "unantifitcopier" or cmd == "unantifitstealer" or cmd == "unantioutfitstealer" or cmd == "unanticopyoutfit" then
+      anti_outfit_copier(false)
    elseif cmd == "norainbowcar" or cmd == "unrainbowcar" or cmd == "stoprainbowcar" then
       local PlayerToRGBCarStop = findplr(split[1])
       if not PlayerToRGBCarStop then return getgenv().notify("Error", "Player does not exist!", 5) end
