@@ -3996,8 +3996,8 @@ local function CommandsMenu()
       {prefix}copyav Player (🔥POPULAR FEATURE🔥) - Copies the target players avatar/outfit in full (animations, body, everything! FE!).
       {prefix}norainbowcar Player - Disables the RGB for a players car (FRIENDS ONLY!, FE).
       {prefix}annoyergui - Enables the GUI that lets you pick and toggle annoy players (FE).
-      {prefix}startsignspam - Spams the text on your Tool Sign (FE).
-      {prefix}stopsignspam - Stops spamming the text on your Tool Sign.
+      {prefix}signspam - Spams the text on your Tool Sign (FE).
+      {prefix}unsignspam - Stops spamming the text on your Tool Sign.
       {prefix}orbit Player Speed Distance - Lets you Orbit around the target Player (FE).
       {prefix}unorbit - Stops orbiting the target Player.
       {prefix}speed Number - Changes your WalkSpeed.
@@ -6801,13 +6801,13 @@ local function handleCommand(sender, message)
       RGB_Phone(false)
    elseif raw_cmd == "inject" or raw_cmd == "attach" then
       attach_with_script()
-   elseif raw_cmd == "flashsigntext" or raw_cmd == "fastsigntext" or raw_cmd == "startsignspam" then
+   elseif raw_cmd == "flashsigntext" or raw_cmd == "fastsigntext" or raw_cmd == "startsignspam" or raw_cmd == "signspamon" or raw_cmd == "signspam" or raw_cmd == "signspammer" then
       if getgenv().ToolChanger_FE then
          return getgenv().notify("Warning", "Sign spammer is already enabled! disable it first.", 5)
       end
 
       spam_sign_text(true)
-   elseif raw_cmd == "noflashsigntext" or raw_cmd == "unfastsigntext" or raw_cmd == "stopsignspam" then
+   elseif raw_cmd == "noflashsigntext" or raw_cmd == "unfastsigntext" or raw_cmd == "stopsignspam" or raw_cmd == "signspamoff" or cmd == "unsignspam" or cmd == "unsignspammer" then
       if not getgenv().ToolChanger_FE then
          return getgenv().notify("Warning", "Sign spammer is not enabled! enable it first.", 5)
       end
