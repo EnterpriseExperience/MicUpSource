@@ -6575,11 +6575,12 @@ local function handleCommand(sender, message)
    end
 
    -- [[ check if the user was really that much off, and if so, auto-correct the command automatically (people can't type tbh). ]] --
-   if bestDist <= 4 and best ~= raw_cmd then
-      getgenv().notify("Info", "Auto-corrected '"..raw_cmd.."' → '"..prefix..best.."'", 6)
+   local allowedDist = math.max(1, math.floor(#raw_cmd / 3)) -- ~⅓ of command length
+   if bestDist <= allowedDist and best ~= raw_cmd then
+      getgenv().notify("Info", ("Auto-corrected '%s' → '%s%s'"):format(raw_cmd, prefix, best), 6)
       raw_cmd = best
    end
-
+   
    -- [[ clean the sent message command properly (from the raw command that was entered). ]] --
    local cleanedMessage = raw_cmd
    if #args > 0 then
