@@ -24,7 +24,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.8.9"
+local Raw_Version = "V4.9.0"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Improved checking for 'antioutfitstealer' + fixed the hashtag loop issue, and added aliases for 'rgbphone'."
 local displayTimeMax = 20
