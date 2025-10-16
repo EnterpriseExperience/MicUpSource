@@ -26,8 +26,8 @@ end
 wait()
 local Raw_Version = "V4.8.9"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Improved checking for 'antioutfitstealer' + fixed the hashtag loop issue."
-local displayTimeMax = 15
+local Announcement_Message = "Improved checking for 'antioutfitstealer' + fixed the hashtag loop issue, and added aliases for 'rgbphone'."
+local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -4007,8 +4007,8 @@ local function CommandsMenu()
       {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone).
       {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone).
       {prefix}checkpremium player - Checks if a player has premium or not.
-      {prefix}startrgbphone (🔥HOT🔥) - Enable RGB Phone (flashing Rainbow Phone).
-      {prefix}stoprgbphone - Disable RGB Phone (flashing Rainbow Phone).
+      {prefix}rgbphone (🔥HOT🔥) - Enable RGB Phone (flashing Rainbow Phone).
+      {prefix}unrgbphone - Disable RGB Phone (flashing Rainbow Phone).
       {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding).
       {prefix}startrgbtool - Enables RGB Tool (FE, Flashing Rainbow Tool).
       {prefix}stoprgbtool - Disables RGB Tool (FE, Flashing Rainbow Tool).
@@ -6592,15 +6592,15 @@ local function handleCommand(sender, message)
       end
 
       getgenv().Every_Job = false
-   elseif cmd == "stoprgbskin" then
+   elseif cmd == "stoprgbskin" or cmd == "rgbskin" or cmd == "rgbskinon" or cmd == "rainbowskin" then
       rainbow_skin(false)
-   elseif cmd == "startrgbphone" then
+   elseif cmd == "startrgbphone" or cmd == "rgbphone" or cmd == "rgbphoneon" or cmd == "rainbowphone" then
       if getgenv().RGB_Rainbow_Phone then
          return getgenv().notify("Warning", "RGB Phone is already enabled!", 5)
       end
 
       RGB_Phone(true)
-   elseif cmd == "stoprgbphone" then
+   elseif cmd == "stoprgbphone" or cmd == "unrgbphone" or cmd == "rgbphoneoff" or cmd == "unrainbowphone" then
       if not getgenv().RGB_Rainbow_Phone then
          return getgenv().notify("Warning", "RGB Phone is not enabled!", 5)
       end
