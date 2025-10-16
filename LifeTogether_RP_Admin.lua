@@ -24,9 +24,9 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.8.7"
+local Raw_Version = "V4.8.9"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Added 'antioutfitcopier'."
+local Announcement_Message = "Improved checking for 'antioutfitstealer' + fixed the hashtag loop issue."
 local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -3060,11 +3060,50 @@ local Old_Bio = getgenv().LocalPlayer:GetAttribute("bio") or "DEFAULT"
 wait(0.2)
 function anti_outfit_copier(toggle)
    if toggle == true then
-      getgenv().anti_outfit_stealer = true
-      while getgenv().anti_outfit_stealer == true do
-      task.wait(0)
-         getgenv().Send("bio", "Flames Hub - I HAVE TOGGLED ANTI-STEALER ON!")
+      if getgenv().anti_outfit_stealer then
+         return getgenv().notify("Error", "Anti Outfit Stealer is already enabled!", 5)
       end
+      wait()
+      local RunService = getgenv().RunService
+      getgenv().AntiOutfitStealerConn = nil
+
+      getgenv().ToggleAntiFit_Stealer = function(state)
+         if not state then
+            getgenv().anti_outfit_stealer = false
+
+            if getgenv().AntiOutfitStealerConn then
+               getgenv().AntiOutfitStealerConn:Disconnect()
+               getgenv().AntiOutfitStealerConn = nil
+            end
+
+            local bio = getgenv().LocalPlayer:GetAttribute("bio")
+
+            if bio and bio ~= "ANTI COPIER ENABLED HERE - THANKS!" then
+               getgenv().Send("bio", "ANTI COPIER ENABLED HERE - THANKS!")
+               getgenv().notify("Success", "Bio changed, reverted change.", 5)
+            else
+               getgenv().notify("Warning", "Bio not found, cannot unlock, disabled loop.", 5)
+            end
+            return 
+         else
+            getgenv().AutoLockOn = true
+         end
+
+         getgenv().notify("Success", "Anti Outfit Stealer enabled, waiting for RP bio change...", 5)
+
+         getgenv().AutoLockConnection = getgenv().RunService.Heartbeat:Connect(function()
+            local bio = getgenv().LocalPlayer:GetAttribute("bio")
+
+            if bio and bio ~= "ANTI COPIER ENABLED HERE - THANKS!" then
+               getgenv().Send("bio", "ANTI COPIER ENABLED HERE - THANKS!")
+               getgenv().notify("Success", "Bio changed, reverted change.", 5)
+            else
+               getgenv().notify("Warning", "Bio not found, cannot unlock, disabled loop.", 5)
+            end
+         end)
+      end
+      wait(0.1)
+      getgenv().ToggleAntiFit_Stealer(true)
    elseif toggle == false then
       getgenv().anti_outfit_stealer = false
       getgenv().Send("bio", tostring(Old_Bio))
@@ -5445,7 +5484,7 @@ function copy_plr_avatar(Player)
          return
       end
 
-      local Text = "Flames Hub - I HAVE TOGGLED ANTI-STEALER ON!"
+      local Text = "ANTI COPIER ENABLED HERE - THANKS!"
       local current_bio = target:GetAttribute("bio")
 
       if current_bio == Text then
@@ -6820,6 +6859,12 @@ local function handleCommand(sender, message)
       
       if getgenv().is_copying_avatar_already_flames then
          return getgenv().notify("Warning", "Copy avatar is already running!, wait a moment, until it's done.", 5)
+      end
+
+      local Target_Bio = Target:GetAttribute("bio")
+
+      if Target_Bio and Target_Bio == "ANTI COPIER ENABLED HERE - THANKS!" then
+         return getgenv().notify("Warning", "This player has Anti Outfit Stealer on! sorry!", 7)
       end
 
       copy_plr_avatar(Target)
