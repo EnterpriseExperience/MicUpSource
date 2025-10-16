@@ -24,10 +24,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.9.5"
+local Raw_Version = "V4.9.6"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed command handler not stripping the emojis and other junk out of the command, and added command auto-corrector, so if you spell it wrong, it'll still work (depending on how badly it's mis-spelled though)."
-local displayTimeMax = 35
+local Announcement_Message = "Enabled chat tabs, allowing you to actively keep up with private chats more accurately, without scrolling up and what not."
+local displayTimeMax = 20
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -89,6 +89,43 @@ if not getgenv().ChatMessageConnection then
       end
    end)
 end
+
+local function isProperty(inst, prop)
+	local s, r = pcall(function() return inst[prop] end)
+	if not s then return nil end
+	return r
+end
+
+local function hasProp(inst, prop)
+   return inst and isProperty(inst, prop) ~= nil
+end
+
+local function setProperty(inst, prop, v)
+	local s, _ = pcall(function() inst[prop] = v end)
+	return s
+end
+
+local function safeSet(inst, prop, val)
+   if inst and hasProp(inst, prop) then setProperty(inst, prop, val) end
+end
+
+function toggle_chat_tabs(toggle)
+   local Tabs = Text_CS:FindFirstChildOfClass("ChannelTabsConfiguration")
+   wait(0.1)
+   if toggle == true then
+      if Tabs then
+         safeSet(Tabs, "Enabled", true)
+      end
+   elseif toggle == false then
+      if Tabs then
+         safeSet(Tabs, "Enabled", false)
+      end
+   else
+      return 
+   end
+end
+wait(0.1)
+toggle_chat_tabs(true)
 
 local function make_input_normal(str)
    if type(str) ~= "string" then
