@@ -3064,7 +3064,7 @@ function anti_outfit_copier(toggle)
          return getgenv().notify("Error", "Anti Outfit Stealer is already enabled!", 5)
       end
 
-      getgenv().notify("Info", "Do NOT change your Bio, this will not work otherwise (it'll auto-change back for you though incase you do)", 15)
+      getgenv().notify("Info", "NOTE: UNHIDE YOUR NAME AND do NOT change your Bio, this will not work otherwise (it'll auto-change back for you though incase you do)", 15)
       wait()
       local RunService = getgenv().RunService
       getgenv().AntiOutfitStealerConn = nil
