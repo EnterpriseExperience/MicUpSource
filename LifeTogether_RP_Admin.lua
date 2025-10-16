@@ -24,10 +24,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.9.0"
+local Raw_Version = "V4.9.1"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Improved checking for 'antioutfitstealer' + fixed the hashtag loop issue, and added aliases for 'rgbphone'."
-local displayTimeMax = 20
+local Announcement_Message = "Fixed non-looping emotes so that they now loop if they aren't already."
+local displayTimeMax = 10
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -3180,6 +3180,8 @@ local Emotes = {
       132887675877488,
       95483853291380,
       70921452128720,
+      86617727183442,
+      135502214162191,
       124656572577172,
       107282826166809,
       107357050902519,
@@ -3250,6 +3252,7 @@ local Emotes = {
       123102740029981,
       126102210823846,
       78250036534439,
+      101439065941822,
    },
    sturdy = {
       122687759897103,
@@ -3395,12 +3398,19 @@ function do_emote(input)
       end
       local ok, track = Humanoid:PlayEmoteAndGetAnimTrackById(choice)
       wait(.1)
+      for _, v in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks(getgenv().Humanoid)) do
+         v.Looped = true
+      end
       local animate = getgenv().Character:FindFirstChild("Animate", true) or getgenv().Character:WaitForChild("Animate", 5)
       if animate then
          animate.Disabled = true
       end
 
       if ok and track then
+         -- [[ Some emotes don't like to loop, so let's force that. ]] --
+         for _, v in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks(getgenv().Humanoid)) do
+            v.Looped = true
+         end
          task.spawn(function()
             local conn
             conn = track.Stopped:Connect(function()
