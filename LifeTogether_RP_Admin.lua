@@ -6597,7 +6597,7 @@ local function handleCommand(sender, message)
    getgenv().Noclip_Connection = nil
    local Clip = false
 
-   if cmd == "prefix" then
+   if raw_cmd == "prefix" then
       local new_prefix = tostring(split[1] or ""):gsub("%s+", "")
 
       local valid = false
@@ -6623,25 +6623,25 @@ local function handleCommand(sender, message)
       return 
    end
 
-   if cmd == "startrgbcar" or cmd == "startrgbvehicle" or cmd == "rgbcar" or cmd == "rgbvehicle" or cmd == "rgbcaron" or cmd == "rgbvehicleon" then
+   if raw_cmd == "startrgbcar" or raw_cmd == "startrgbvehicle" or raw_cmd == "rgbcar" or raw_cmd == "rgbvehicle" or raw_cmd == "rgbcaron" or raw_cmd == "rgbvehicleon" then
       if getgenv().Rainbow_Vehicle then
          return getgenv().notify("Warning", "RGB vehicle is already enabled!", 5)
       end
 
       rainbow_car()
-   elseif cmd == "stoprgbcar" or cmd == "stoprgbvehicle" or cmd == "unrgbcar" or cmd == "norgbcar" or cmd == "unrgbvehicle" or cmd == "rgbcaroff" or cmd == "rgbvehicleoff" then
+   elseif raw_cmd == "stoprgbcar" or raw_cmd == "stoprgbvehicle" or raw_cmd == "unrgbcar" or raw_cmd == "norgbcar" or raw_cmd == "unrgbvehicle" or raw_cmd == "rgbcaroff" or raw_cmd == "rgbvehicleoff" then
       if not getgenv().Rainbow_Vehicle then
          return getgenv().notify("Warning", "RGB vehicle is not enabled!", 5)
       end
 
       stop_rainbow_car()
-   elseif cmd == "startrgbskin" then
+   elseif raw_cmd == "startrgbskin" then
       rainbow_skin(true)
-   elseif cmd == "flames" or cmd == "flameson" or cmd == "startflames" then
+   elseif raw_cmd == "flames" or raw_cmd == "flameson" or raw_cmd == "startflames" then
       getgenv().spamming_flames(true)
-   elseif cmd == "noflames" or cmd == "flamesoff" or cmd == "stopflames" then
+   elseif raw_cmd == "noflames" or raw_cmd == "flamesoff" or raw_cmd == "stopflames" then
       getgenv().spamming_flames(false)
-   elseif cmd == "checkpremium" or cmd == "haspremium" or cmd == "premiumcheck" or cmd == "haslifepay" then
+   elseif raw_cmd == "checkpremium" or raw_cmd == "haspremium" or raw_cmd == "premiumcheck" or raw_cmd == "haslifepay" then
       local Player = findplr(split[1])
       if not Player then return getgenv().notify("Error", "Player doesn't exist or left the game.", 5) end
 
@@ -6654,7 +6654,7 @@ local function handleCommand(sender, message)
       else
          return getgenv().notify("Error", "Something unexpectedly happened while checking Player.", 5)
       end
-   elseif cmd == "rainbowcar" or cmd == "startrainbowcar" or cmd == "" then
+   elseif raw_cmd == "rainbowcar" or raw_cmd == "startrainbowcar" or raw_cmd == "" then
       local PlayerToRGBCar = findplr(split[1])
       if not PlayerToRGBCar then return getgenv().notify("Error", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCar) then return getgenv().notify("Error", "Player does not have a Vehicle spawned!", 5) end
@@ -6702,11 +6702,11 @@ local function handleCommand(sender, message)
             return getgenv().notify("Error", "Player must have left the game.", 5)
          end
       end
-   elseif cmd == "antioutfitcopier" or cmd == "antifitcopier" or cmd == "antifitstealer" or cmd == "antioutfitstealer" or cmd == "anticopyoutfit" then
+   elseif raw_cmd == "antioutfitcopier" or raw_cmd == "antifitcopier" or raw_cmd == "antifitstealer" or raw_cmd == "antioutfitstealer" or raw_cmd == "anticopyoutfit" then
       anti_outfit_copier(true)
-   elseif cmd == "unantioutfitcopier" or cmd == "unantifitcopier" or cmd == "unantifitstealer" or cmd == "unantioutfitstealer" or cmd == "unanticopyoutfit" then
+   elseif raw_cmd == "unantioutfitcopier" or raw_cmd == "unantifitcopier" or raw_cmd == "unantifitstealer" or raw_cmd == "unantioutfitstealer" or raw_cmd == "unanticopyoutfit" then
       anti_outfit_copier(false)
-   elseif cmd == "norainbowcar" or cmd == "unrainbowcar" or cmd == "stoprainbowcar" then
+   elseif raw_cmd == "norainbowcar" or raw_cmd == "unrainbowcar" or raw_cmd == "stoprainbowcar" then
       local PlayerToRGBCarStop = findplr(split[1])
       if not PlayerToRGBCarStop then return getgenv().notify("Error", "Player does not exist!", 5) end
       if not get_other_vehicle(PlayerToRGBCarStop) then return getgenv().notify("Error", "Player does not have a Vehicle spawned!", 5) end
@@ -6717,7 +6717,7 @@ local function handleCommand(sender, message)
       end
 
       disable_rgb_for(PlayerToRGBCarStop)
-   elseif cmd == "orbit" or cmd == "circlearound" or cmd == "startorbit" or cmd == "circleplr" then
+   elseif raw_cmd == "orbit" or raw_cmd == "circlearound" or raw_cmd == "startorbit" or raw_cmd == "circleplr" then
       local Target = findplr(split[1])
       if not Target then return getgenv().notify("Error", "Target doesn't exist or has left the game.", 5) end
       local speed = tonumber(split[2]) or 1
@@ -6727,13 +6727,13 @@ local function handleCommand(sender, message)
       end
 
       start_orbit_plr(Target, speed, distance)
-   elseif cmd == "unorbit" or cmd == "noorbit" or cmd == "stoporbit" or cmd == "uncirclearound" or cmd == "uncircleplr" then
+   elseif raw_cmd == "unorbit" or raw_cmd == "noorbit" or raw_cmd == "stoporbit" or raw_cmd == "uncirclearound" or raw_cmd == "uncircleplr" then
       if not getgenv().Is_Orbiting then
          return getgenv().notify("Warning", "You're not orbiting anyone!", 5)
       end
       
       stop_orbit()
-   elseif cmd == "orbitspeed" or cmd == "changeorbitspeed" or cmd == "neworbitspeed" or cmd == "ospeed" then
+   elseif raw_cmd == "orbitspeed" or raw_cmd == "changeorbitspeed" or raw_cmd == "neworbitspeed" or raw_cmd == "ospeed" then
       local new_speed = tonumber(split[1])
 
       if not getgenv().Is_Orbiting then
@@ -6741,7 +6741,7 @@ local function handleCommand(sender, message)
       end
 
       set_orbit_speed(new_speed)
-   elseif cmd == "alljobs" or cmd == "startjobspammer" or cmd == "everyjob" or cmd == "jobspammer" or cmd == "jobspam" or cmd == "startjobspam" then
+   elseif raw_cmd == "alljobs" or raw_cmd == "startjobspammer" or raw_cmd == "everyjob" or raw_cmd == "jobspammer" or raw_cmd == "jobspam" or raw_cmd == "startjobspam" then
       if getgenv().Every_Job then
          return getgenv().notify("Warning", "Job spammer is already enabled! disable it first.", 5)
       end
@@ -6778,49 +6778,49 @@ local function handleCommand(sender, message)
          getgenv().Send("job", "Lifeguard")
          task.wait(0.1)
       end
-   elseif cmd == "jobsoff" or cmd == "nojobs" or cmd == "unjobspam" or cmd == "stopjobspam" or cmd == "stopjobspammer" then
+   elseif raw_cmd == "jobsoff" or raw_cmd == "nojobs" or raw_cmd == "unjobspam" or raw_cmd == "stopjobspam" or raw_cmd == "stopjobspammer" then
       if not getgenv().Every_Job then
          return getgenv().notify("Warning", "Job spammer is not enabled! enable it first.", 5)
       end
 
       getgenv().Every_Job = false
-   elseif cmd == "stoprgbskin" or cmd == "rgbskin" or cmd == "rgbskinon" or cmd == "rainbowskin" then
+   elseif raw_cmd == "stoprgbskin" or raw_cmd == "rgbskin" or raw_cmd == "rgbskinon" or raw_cmd == "rainbowskin" then
       rainbow_skin(false)
-   elseif cmd == "startrgbphone" or cmd == "rgbphone" or cmd == "rgbphoneon" or cmd == "rainbowphone" then
+   elseif raw_cmd == "startrgbphone" or raw_cmd == "rgbphone" or raw_cmd == "rgbphoneon" or raw_cmd == "rainbowphone" then
       if getgenv().RGB_Rainbow_Phone then
          return getgenv().notify("Warning", "RGB Phone is already enabled!", 5)
       end
 
       RGB_Phone(true)
-   elseif cmd == "stoprgbphone" or cmd == "unrgbphone" or cmd == "rgbphoneoff" or cmd == "unrainbowphone" then
+   elseif raw_cmd == "stoprgbphone" or raw_cmd == "unrgbphone" or raw_cmd == "rgbphoneoff" or raw_cmd == "unrainbowphone" then
       if not getgenv().RGB_Rainbow_Phone then
          return getgenv().notify("Warning", "RGB Phone is not enabled!", 5)
       end
 
       RGB_Phone(false)
-   elseif cmd == "inject" or cmd == "attach" then
+   elseif raw_cmd == "inject" or raw_cmd == "attach" then
       attach_with_script()
-   elseif cmd == "flashsigntext" or cmd == "fastsigntext" or cmd == "startsignspam" then
+   elseif raw_cmd == "flashsigntext" or raw_cmd == "fastsigntext" or raw_cmd == "startsignspam" then
       if getgenv().ToolChanger_FE then
          return getgenv().notify("Warning", "Sign spammer is already enabled! disable it first.", 5)
       end
 
       spam_sign_text(true)
-   elseif cmd == "noflashsigntext" or cmd == "unfastsigntext" or cmd == "stopsignspam" then
+   elseif raw_cmd == "noflashsigntext" or raw_cmd == "unfastsigntext" or raw_cmd == "stopsignspam" then
       if not getgenv().ToolChanger_FE then
          return getgenv().notify("Warning", "Sign spammer is not enabled! enable it first.", 5)
       end
 
       spam_sign_text(false)
-   elseif cmd == "name" or cmd == "rpname" or cmd == "newname" then
+   elseif raw_cmd == "name" or raw_cmd == "rpname" or raw_cmd == "newname" then
       local new_name = table.concat(split, " ")
 
       change_RP_Name(new_name)
-   elseif cmd == "bio" or cmd == "rpbio" or cmd == "newbio" then
+   elseif raw_cmd == "bio" or raw_cmd == "rpbio" or raw_cmd == "newbio" then
       local new_bio = table.concat(split, " ")
 
       change_bio(new_bio)
-   elseif cmd == "fly" or cmd == "fly1" then
+   elseif raw_cmd == "fly" or raw_cmd == "fly1" then
       local flySpeed = tonumber(split[1]) or 10
 
       if getgenv().HD_FlyEnabled then
@@ -6833,9 +6833,9 @@ local function handleCommand(sender, message)
       EnableFly(flySpeed)
       getgenv().notify("Success", "Fly enabled at speed: "..tostring(flySpeed), 5)
       getgenv().notify("Warning", "E = up, Q = down, WASD to move", 5)
-   elseif cmd == "unfly" or cmd == "unfly1" then
+   elseif raw_cmd == "unfly" or raw_cmd == "unfly1" then
       DisableFlyScript()
-   elseif cmd == "fly2" then
+   elseif raw_cmd == "fly2" then
       local Fly_Speed = tonumber(split[1]) or 50
 
       if getgenv().Enabled_Flying then
@@ -6846,9 +6846,9 @@ local function handleCommand(sender, message)
       end
       wait()
       Enable_Fly_2(Fly_Speed)
-   elseif cmd == "outfitmanager" or cmd == "saveoutfitsgui" or cmd == "outfitsui" or cmd == "outfitsgui" or cmd == "saveoutfitsmanager" or cmd == "fitsmanager" or cmd == "fitmanager" or cmd == "savedoutfitsgui" or cmd == "savedoutfitsui" then
+   elseif raw_cmd == "outfitmanager" or raw_cmd == "saveoutfitsgui" or raw_cmd == "outfitsui" or raw_cmd == "outfitsgui" or raw_cmd == "saveoutfitsmanager" or raw_cmd == "fitsmanager" or raw_cmd == "fitmanager" or raw_cmd == "savedoutfitsgui" or raw_cmd == "savedoutfitsui" then
       save_outfits_GUI()
-   elseif cmd == "spawnfire" or cmd == "fireamount" or cmd == "spawnflames" or cmd == "spawnflame" or cmd == "firespawn" then
+   elseif raw_cmd == "spawnfire" or raw_cmd == "fireamount" or raw_cmd == "spawnflames" or raw_cmd == "spawnflame" or raw_cmd == "firespawn" then
       local Amount = tonumber(split[1]) or 5
       getgenv().HasSeen_Fire_AlertFlamesHub = getgenv().HasSeen_Fire_AlertFlamesHub or false
 
@@ -6873,63 +6873,63 @@ local function handleCommand(sender, message)
       for i = 1, Amount do
          getgenv().Send("request_fire")
       end
-   elseif cmd == "startrgbtool" or cmd == "rgbtool" then
+   elseif raw_cmd == "startrgbtool" or raw_cmd == "rgbtool" then
       rainbow_tool(true)
-   elseif cmd == "stoprgbtool" or cmd == "unrgbtool" then
+   elseif raw_cmd == "stoprgbtool" or raw_cmd == "unrgbtool" then
       rainbow_tool(false)
-   elseif cmd == "unfly2" then
+   elseif raw_cmd == "unfly2" then
       Disable_Flying()
-   elseif cmd == "noemote" or cmd == "noemotes" or cmd == "nodance" or cmd == "nodances" or cmd == "dancingoff" or cmd == "emotingoff" or cmd == "unemote" or cmd == "undance" then
+   elseif raw_cmd == "noemote" or raw_cmd == "noemotes" or raw_cmd == "nodance" or raw_cmd == "nodances" or raw_cmd == "dancingoff" or raw_cmd == "emotingoff" or raw_cmd == "unemote" or raw_cmd == "undance" then
       disable_emoting()
-   elseif cmd == "griddy" then
+   elseif raw_cmd == "griddy" then
       do_emote("griddy")
-   elseif cmd == "scenario" then
+   elseif raw_cmd == "scenario" then
       do_emote("scenario")
-   elseif cmd == "superman" then
+   elseif raw_cmd == "superman" then
       do_emote("superman")
-   elseif cmd == "zen" then
+   elseif raw_cmd == "zen" then
       do_emote("zen")
-   elseif cmd == "orangej" then
+   elseif raw_cmd == "orangej" then
       do_emote("orangej")
-   elseif cmd == "aura" or cmd == "aurafarm" or cmd == "aurafarming" then
+   elseif raw_cmd == "aura" or raw_cmd == "aurafarm" or raw_cmd == "aurafarming" then
       do_emote("aura")
-   elseif cmd == "popular" then
+   elseif raw_cmd == "popular" then
       do_emote("popular")
-   elseif cmd == "kotonai" then
+   elseif raw_cmd == "kotonai" then
       do_emote("kotonai")
-   elseif cmd == "defaultd" then
+   elseif raw_cmd == "defaultd" then
       do_emote("defaultdance")
-   elseif cmd == "worm" then
+   elseif raw_cmd == "worm" then
       do_emote("worm")
-   elseif cmd == "glitching" then
+   elseif raw_cmd == "glitching" then
       do_emote("glitch")
-   elseif cmd == "billyb" or cmd == "billybounce" then
+   elseif raw_cmd == "billyb" or raw_cmd == "billybounce" then
       do_emote("billybounce")
-   elseif cmd == "billyjean" then
+   elseif raw_cmd == "billyjean" then
       do_emote("billyjean")
-   elseif cmd == "michaelbounce" or cmd == "michaelmyers" or cmd == "jiggybounce" or cmd == "michmyers" or cmd == "myersbounce" or cmd == "michaeldance" or cmd == "michealmyers" or cmd == "michealbounce" then
+   elseif raw_cmd == "michaelbounce" or raw_cmd == "michaelmyers" or raw_cmd == "jiggybounce" or raw_cmd == "michmyers" or raw_cmd == "myersbounce" or raw_cmd == "michaeldance" or raw_cmd == "michealmyers" or raw_cmd == "michealbounce" then
       do_emote("michaelmyers")
-   elseif cmd == "sturdy" or cmd == "nysturdy" or cmd == "newyorksturdy" or cmd == "sturdydance" or cmd == "getsturdy" then
+   elseif raw_cmd == "sturdy" or raw_cmd == "nysturdy" or raw_cmd == "newyorksturdy" or raw_cmd == "sturdydance" or raw_cmd == "getsturdy" then
       do_emote("sturdy")
-   elseif cmd == "jiggy" or cmd == "louisiniajigg" or cmd == "getjiggy" or cmd == "jig" or cmd == "jigg" or cmd == "louijigg" or cmd == "louijiggy" then
+   elseif raw_cmd == "jiggy" or raw_cmd == "louisiniajigg" or raw_cmd == "getjiggy" or raw_cmd == "jig" or raw_cmd == "jigg" or raw_cmd == "louijigg" or raw_cmd == "louijiggy" then
       do_emote("jiggy")
-   elseif cmd == "eshuffle" or cmd == "electroshuffle" or cmd == "electricshuffle" then
+   elseif raw_cmd == "eshuffle" or raw_cmd == "electroshuffle" or raw_cmd == "electricshuffle" then
       do_emote("electroshuffle")
-   elseif cmd == "takethel" or cmd == "takel" or cmd == "takeanl" then
+   elseif raw_cmd == "takethel" or raw_cmd == "takel" or raw_cmd == "takeanl" then
       do_emote("takethel")
-   elseif cmd == "donkeylaugh" or cmd == "fortnitelaugh" or cmd == "laughitup" or cmd == "fnlaugh" then
+   elseif raw_cmd == "donkeylaugh" or raw_cmd == "fortnitelaugh" or raw_cmd == "laughitup" or raw_cmd == "fnlaugh" then
       do_emote("laughitup")
-   elseif cmd == "reanimated" or cmd == "reanimate" or cmd == "fnreanimated" or cmd == "fortnitereanimated" then
+   elseif raw_cmd == "reanimated" or raw_cmd == "reanimate" or raw_cmd == "fnreanimated" or raw_cmd == "fortnitereanimated" then
       do_emote("reanimated")
-   elseif cmd == "jabba" or cmd == "jabbadance" or cmd == "jabsway" or cmd == "jabbasway" or cmd == "jabbsway" or cmd == "swayjab" or cmd == "swayjabba" then
+   elseif raw_cmd == "jabba" or raw_cmd == "jabbadance" or raw_cmd == "jabsway" or raw_cmd == "jabbasway" or raw_cmd == "jabbsway" or raw_cmd == "swayjab" or raw_cmd == "swayjabba" then
       do_emote("jabba")
-   elseif cmd == "infyield" or cmd == "infpremium" or cmd == "infiniteyield" or cmd == "infinitepremium" or cmd == "iy" or cmd == "loadiy" then
+   elseif raw_cmd == "infyield" or raw_cmd == "infpremium" or raw_cmd == "infiniteyield" or raw_cmd == "infinitepremium" or raw_cmd == "iy" or raw_cmd == "loadiy" then
       infinite_premium()
-   elseif cmd == "anticarfling" or cmd == "startanticarfling" or cmd == "antivehiclefling" or cmd == "antivfling" or cmd == "acarfling" then
+   elseif raw_cmd == "anticarfling" or raw_cmd == "startanticarfling" or raw_cmd == "antivehiclefling" or raw_cmd == "antivfling" or raw_cmd == "acarfling" then
       anti_car_fling(true)
-   elseif cmd == "unanticarfling" or cmd == "stopanticarfling" or cmd == "unantivehiclefling" or cmd == "unantivfling" or cmd == "unacarfling" then
+   elseif raw_cmd == "unanticarfling" or raw_cmd == "stopanticarfling" or raw_cmd == "unantivehiclefling" or raw_cmd == "unantivfling" or raw_cmd == "unacarfling" then
       anti_car_fling(false)
-   elseif cmd == "annoy" then
+   elseif raw_cmd == "annoy" then
       local Target = findplr(split[1])
       if not Target then
          show_notification("Error:", "Player does not exist!", "Error")
@@ -6955,16 +6955,16 @@ local function handleCommand(sender, message)
          task.wait(0)
          getgenv().Send("end_call", Target)
       end
-   elseif cmd == "freeemotes" or cmd == "freeemotesgui" or cmd == "allemotes" then
+   elseif raw_cmd == "freeemotes" or raw_cmd == "freeemotesgui" or raw_cmd == "allemotes" then
       if getgenv().FreeEmotes_Enabled then
          return getgenv().notify("Warning", "You already have Free Emotes GUI loaded!", 5)
       end
       wait()
       getgenv().FreeEmotes_Enabled = true
       loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
-   elseif cmd == "allcars" or cmd == "allvehicles" or cmd == "listvehicles" then
+   elseif raw_cmd == "allcars" or raw_cmd == "allvehicles" or raw_cmd == "listvehicles" then
       car_listing_gui()
-   elseif cmd == "speed" or cmd == "setspeed" or cmd == "newspeed" or cmd == "ws" or cmd == "walkspeed" or cmd == "walks" then
+   elseif raw_cmd == "speed" or raw_cmd == "setspeed" or raw_cmd == "newspeed" or raw_cmd == "ws" or raw_cmd == "walkspeed" or raw_cmd == "walks" then
       local New_Val = split[1] or 16
 
       if not getgenv().Humanoid then
@@ -6973,7 +6973,7 @@ local function handleCommand(sender, message)
 
       change_property("WalkSpeed", New_Val)
       getgenv().notify("Success", "Updated WalkSpeed to: "..tostring(New_Val), 5)
-   elseif cmd == "jp" or cmd == "newjp" or cmd == "jumpheight" or cmd == "newjh" or cmd == "jumph" or cmd == "setjh" or cmd == "setjp" then
+   elseif raw_cmd == "jp" or raw_cmd == "newjp" or raw_cmd == "jumpheight" or raw_cmd == "newjh" or raw_cmd == "jumph" or raw_cmd == "setjh" or raw_cmd == "setjp" then
       local New_ValJP = split[1] or 7
 
       if not getgenv().Humanoid then
@@ -6982,22 +6982,22 @@ local function handleCommand(sender, message)
 
       change_property("JumpHeight", New_ValJP)
       getgenv().notify("Success", "Updated JumpHeight to: "..tostring(New_ValJP), 5)
-   elseif cmd == "grav" or cmd == "gravity" or cmd == "setgravity" or cmd == "setgrav" or cmd == "newgrav" or cmd == "gravvalue" then
+   elseif raw_cmd == "grav" or raw_cmd == "gravity" or raw_cmd == "setgravity" or raw_cmd == "setgrav" or raw_cmd == "newgrav" or raw_cmd == "gravvalue" then
       local New_Grav = split[1] or 196
 
       change_gravity_val(New_Grav)
-   elseif cmd == "unannoy" then
+   elseif raw_cmd == "unannoy" then
       if not getgenv().easy_click_plr then
          return getgenv().notify("Error", "You do not have 'annoy PlayerName' enabled! usage: "..tostring(getgenv().AdminPrefix).."annoy PlayerName", 10)
       end
       wait()
       getgenv().Currently_Annoying_Player = nil
       getgenv().easy_click_plr = false
-   elseif cmd == "walkfling" or cmd == "walkf" or cmd == "startwalkfling" then
+   elseif raw_cmd == "walkfling" or raw_cmd == "walkf" or raw_cmd == "startwalkfling" then
       getgenv().StartWalkFling()
-   elseif cmd == "unwalkfling" or cmd == "unwalkf" or cmd == "stopwalkfling" then
+   elseif raw_cmd == "unwalkfling" or raw_cmd == "unwalkf" or raw_cmd == "stopwalkfling" then
       getgenv().StopWalkFling()
-   elseif cmd == "autolockcar" or cmd == "startautolockcar" or cmd == "startlockingcar" then
+   elseif raw_cmd == "autolockcar" or raw_cmd == "startautolockcar" or raw_cmd == "startlockingcar" then
       if getgenv().AutoLockOn then
          return getgenv().notify("Error", "You already have 'AutoLockCar' enabled, disable it first!", 5)
       end
@@ -7038,14 +7038,14 @@ local function handleCommand(sender, message)
       end
       wait(0.1)
       getgenv().ToggleAutoLock(true)
-   elseif cmd == "unautolockcar" or cmd == "stopautolockcar" or cmd == "stoplockingcar" then
+   elseif raw_cmd == "unautolockcar" or raw_cmd == "stopautolockcar" or raw_cmd == "stoplockingcar" then
       if not getgenv().ToggleAutoLock then return getgenv().notify("Error", "You have not enabled the 'AutoLockCar' command, function not found.", 5) end
       if not getgenv().AutoLockOn then
          return getgenv().notify("Error", "You do not have 'AutoLockCar' enabled!", 5)
       end
 
       getgenv().ToggleAutoLock(false)
-   elseif cmd == "copyavatar" or cmd == "copy" or cmd == "copyav" or cmd == "copyava" or cmd == "stealav" or cmd == "stealavatar" or cmd == "steal" then
+   elseif raw_cmd == "copyavatar" or raw_cmd == "copy" or raw_cmd == "copyav" or raw_cmd == "copyava" or raw_cmd == "stealav" or raw_cmd == "stealavatar" or raw_cmd == "steal" then
       local Target = findplr(split[1])
       if not Target then return getgenv().notify("Error", "That player doesn't exist in this game!", 5) end
       
@@ -7060,19 +7060,19 @@ local function handleCommand(sender, message)
       end
 
       copy_plr_avatar(Target)
-   elseif cmd == "noclip" then
+   elseif raw_cmd == "noclip" then
       if getgenv().Noclip_Enabled then
          return getgenv().notify("Error", "NoClip is already enabled!", 5)
       end
 
       ToggleNoclip(true)
-   elseif cmd == "autonoflames" or cmd == "autohideflames" then
+   elseif raw_cmd == "autonoflames" or raw_cmd == "autohideflames" then
       getgenv().notify("Success", "Now reducing the lag from fire spam!", 5)
       getgenv().CompletelyHideFlamesComingIn(true)
-   elseif cmd == "unautonoflames" or cmd == "unautohideflames" then
+   elseif raw_cmd == "unautonoflames" or raw_cmd == "unautohideflames" then
       getgenv().notify("Success", "No longer protected against fire spam.", 5)
       getgenv().CompletelyHideFlamesComingIn(false)
-   elseif cmd == "antivoid" or cmd == "novoid" then
+   elseif raw_cmd == "antivoid" or raw_cmd == "novoid" then
       if not getgenv().originalFPDH then
          getgenv().originalFPDH = getgenv().Workspace.FallenPartsDestroyHeight
       end
@@ -7080,7 +7080,7 @@ local function handleCommand(sender, message)
       task.wait(0.1)
       getgenv().Workspace.FallenPartsDestroyHeight = -9e9
       getgenv().notify("Success", "Enabled antivoid.", 5)
-   elseif cmd == "unantivoid" or cmd == "unnovoid" then
+   elseif raw_cmd == "unantivoid" or raw_cmd == "unnovoid" then
       if not getgenv().originalFPDH then
          getgenv().originalFPDH = -500
          return getgenv().notify("Error", "Original destroy height doesn't exist!", 5)
@@ -7088,13 +7088,13 @@ local function handleCommand(sender, message)
 
       getgenv().Workspace.FallenPartsDestroyHeight = getgenv().originalFPDH or -500
       getgenv().notify("Success", "Disabled anti-void.", 5)
-   elseif cmd == "clip" or cmd == "unnoclip" then
+   elseif raw_cmd == "clip" or raw_cmd == "unnoclip" then
       if not getgenv().Noclip_Enabled then
          return getgenv().notify("Error", "Noclip is not enabled, enable it first.", 5)
       end
 
       ToggleNoclip(false)
-   elseif cmd == "view" or cmd == "spectate" then
+   elseif raw_cmd == "view" or raw_cmd == "spectate" then
       local View_Target = findplr(split[1])
       if not View_Target then return getgenv().notify("Error", "Target was not found or does not exist!", 5) end
       wait(0.1)
@@ -7106,7 +7106,7 @@ local function handleCommand(sender, message)
          
          getgenv().viewTarget(View_Target)
       end
-   elseif cmd == "unview" or cmd == "unspectate" then
+   elseif raw_cmd == "unview" or raw_cmd == "unspectate" then
       if not getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == false then
          return getgenv().notify("Error", "Your not viewing anybody!", 5)
       end
@@ -7114,7 +7114,7 @@ local function handleCommand(sender, message)
       if getgenv().Viewing_A_Player or getgenv().Viewing_A_Player == true then
          getgenv().unview_player()
       end
-   elseif cmd == "lockcar" then
+   elseif raw_cmd == "lockcar" then
       local Current_Car = get_vehicle()
       if not Current_Car then return getgenv().notify("Error", "You do not have a vehicle spawned!", 5) end
 
@@ -7124,7 +7124,7 @@ local function handleCommand(sender, message)
          lock_vehicle(get_vehicle())
          getgenv().notify("Success", "Locked vehicle: "..tostring(Current_Car), 5)
       end
-   elseif cmd == "unlockcar" then
+   elseif raw_cmd == "unlockcar" then
       local Current_Car = get_vehicle()
       if not Current_Car then return notify("Error", "You do not have a vehicle spawned!", 5) end
       
@@ -7134,28 +7134,28 @@ local function handleCommand(sender, message)
       else
          return notify("Error", "Your vehicle is unlocked already!", 5)
       end
-   elseif cmd == "glitchoutfit" then
+   elseif raw_cmd == "glitchoutfit" then
       glitch_outfit(true)
-   elseif cmd == "noglitchoutfit" then
+   elseif raw_cmd == "noglitchoutfit" then
       glitch_outfit(false)
-   elseif cmd == "despawn" then
+   elseif raw_cmd == "despawn" then
       local Current_Car = get_vehicle()
       if not Current_Car then return getgenv().notify("Error", "You do not have a vehicle spawned!", 5) end
       
       if Current_Car then
          spawn_any_vehicle(tostring(Current_Car))
       end
-   elseif cmd == "trailer" or cmd == "addtrailer" then
+   elseif raw_cmd == "trailer" or raw_cmd == "addtrailer" then
       local Vehicle = get_vehicle()
       if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle spawned, spawn one and try again!", 7) end
 
       water_skie_trailer(true, get_vehicle())
-   elseif cmd == "notrailer" then
+   elseif raw_cmd == "notrailer" then
       local Vehicle = get_vehicle()
       if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle spawned, spawn one and try again!", 7) end
 
       water_skie_trailer(false, get_vehicle())
-   elseif cmd == "rainbowtime" then
+   elseif raw_cmd == "rainbowtime" then
       local Player = findplr(split[1])
       if not Player then
          return notify("Error", "Player doesn't exist or has left!")
@@ -7172,9 +7172,9 @@ local function handleCommand(sender, message)
 
       task.wait(0.2)
       notify("Success", "Set rainbow delay for " .. Name .. " to " .. new_delay)
-   elseif cmd == "annoyergui" or cmd == "annoyancegui" or cmd == "annoyancemenu" or cmd == "annoyplrgui" or cmd == "groupspamgui" or cmd == "gcspamgui" then
+   elseif raw_cmd == "annoyergui" or raw_cmd == "annoyancegui" or raw_cmd == "annoyancemenu" or raw_cmd == "annoyplrgui" or raw_cmd == "groupspamgui" or raw_cmd == "gcspamgui" then
       annoyance_GUI()
-   elseif cmd == "blacklist" or cmd == "addblacklist" then
+   elseif raw_cmd == "blacklist" or raw_cmd == "addblacklist" then
       local Player = findplr(split[1])
       if not Player then return end
       local Name = Player.Name
@@ -7200,7 +7200,7 @@ local function handleCommand(sender, message)
       if getgenv().Rainbow_Tasks[Name] then
          getgenv().Rainbow_Tasks[Name] = nil
       end
-   elseif cmd == "unblacklist" or cmd == "noblacklist" or cmd == "removeblacklist" then
+   elseif raw_cmd == "unblacklist" or raw_cmd == "noblacklist" or raw_cmd == "removeblacklist" then
       local Player = findplr(split[1])
       if not Player then return end
       local Name = Player.Name
@@ -7210,7 +7210,7 @@ local function handleCommand(sender, message)
             getgenv().Blacklisted_Friends[Name] = nil
          end
       end
-   elseif cmd == "admin" or cmd == "addadmin" then
+   elseif raw_cmd == "admin" or raw_cmd == "addadmin" then
       local Player = findplr(split[1])
       if not Player then return notify("Error", "Player does not exist!", 5) end
 
@@ -7225,7 +7225,7 @@ local function handleCommand(sender, message)
       else
          return notify("Error", "This player isn't friends with you! add them!", 5)
       end
-   elseif cmd == "unadmin" or cmd == "removeadmin" then
+   elseif raw_cmd == "unadmin" or raw_cmd == "removeadmin" then
       local Player = findplr(split[1])
       if not Player then return notify("Error", "Player does not exist!", 5) end
 
@@ -7260,9 +7260,9 @@ local function handleCommand(sender, message)
       else
          return notify("Error", "This player isn't friends with you! add them!", 5)
       end
-   elseif cmd == "feedback" or cmd == "feedbackgui" or cmd == "feedbackui" or cmd == "sendfeedback" or cmd == "sendfeedbackgui" or cmd == "sendfeedbackui" then
+   elseif raw_cmd == "feedback" or raw_cmd == "feedbackgui" or raw_cmd == "feedbackui" or raw_cmd == "sendfeedback" or raw_cmd == "sendfeedbackgui" or raw_cmd == "sendfeedbackui" then
       feedback_GUI()
-   elseif cmd == "bringcar" or cmd == "bringvehicle" or cmd == "bringv" then
+   elseif raw_cmd == "bringcar" or raw_cmd == "bringvehicle" or raw_cmd == "bringv" then
       local Vehicle = get_vehicle()
       if not Vehicle then return notify("Error", "You do not have a vehicle spawned!", 5) end
       local Old_CF_BringCar = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
@@ -7289,19 +7289,19 @@ local function handleCommand(sender, message)
       myVehicle:PivotTo(Old_CF_BringCar * CFrame.new(0, 10, 0))
       wait(0.1)
       notify("Success", "Brung car to player: "..tostring(getgenv().LocalPlayer), 5)
-   elseif cmd == "gotocar" or cmd == "teleporttocar" or cmd == "tptocar" or cmd == "gotovehicle" then
+   elseif raw_cmd == "gotocar" or raw_cmd == "teleporttocar" or raw_cmd == "tptocar" or raw_cmd == "gotovehicle" then
       local Vehicle = get_vehicle()
       if not Vehicle then return getgenv().notify("Error", "You do not have a vehicle spawned, spawn one and try again!", 7) end
 
       if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") then
          getgenv().Character:PivotTo(get_vehicle():GetPivot() * CFrame.new(0, 5, 0))
       end
-   elseif cmd == "viewcar" or cmd == "viewvehicle" or cmd == "spectatecar" or cmd == "spectatevehicle" then
+   elseif raw_cmd == "viewcar" or raw_cmd == "viewvehicle" or raw_cmd == "spectatecar" or raw_cmd == "spectatevehicle" then
       local Camera = getgenv().Workspace.CurrentCamera
       local Vehicle = get_vehicle()
       if not Vehicle then return getgenv().notify("Error", "You don't have a Vehicle spawned, spawn one and try again!", 7) end
       
-   elseif cmd == "tpcar" or cmd == "teleportcar" or cmd == "tpvehicle" or cmd == "teleportvehicle" then
+   elseif raw_cmd == "tpcar" or raw_cmd == "teleportcar" or raw_cmd == "tpvehicle" or raw_cmd == "teleportvehicle" then
       local Vehicle = get_vehicle()
       if not Vehicle then return getgenv().notify("Error", "You do not have a vehicle spawned, spawn one and try again!", 7) end
       local Goto_Player = findplr(split[1])
@@ -7341,7 +7341,7 @@ local function handleCommand(sender, message)
          wait(0.1)
          getgenv().notify("Success", "Teleported vehicle to target player: "..tostring(Goto_Player), 5)
       end
-   elseif cmd == "nosit" or cmd == "antisit" then
+   elseif raw_cmd == "nosit" or raw_cmd == "antisit" then
       local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
       
       if not is_enabled or is_enabled == false then
@@ -7359,7 +7359,7 @@ local function handleCommand(sender, message)
          getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
          require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
       end
-   elseif cmd == "carcolor" then
+   elseif raw_cmd == "carcolor" then
       local Target = findplr(split[1])
       local Color = split[2]
       if not Target then return notify("Error", "Player does not exist or was not found!", 5) end
@@ -7397,7 +7397,7 @@ local function handleCommand(sender, message)
             getgenv().notify("Error", "Unknown color: "..tostring(Color), 5)
          end
       end
-   elseif cmd == "resit" or cmd == "unantisit" then
+   elseif raw_cmd == "resit" or raw_cmd == "unantisit" then
       local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
       
       if is_enabled or is_enabled == true then
@@ -7413,19 +7413,19 @@ local function handleCommand(sender, message)
       -- might as well use both 🤷
       getgenv().notify("Success", "Sitting is now enabled!", 5)
       Phone.show_notification("Success:", "Sitting is now enabled!", "Normal")
-   elseif cmd == "flashname" then
+   elseif raw_cmd == "flashname" then
       if getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == true then
          return notify("Error", "Your already running Flash Name!", 5)
       end
 
       flashy_name(true)
-   elseif cmd == "noflashname" then
+   elseif raw_cmd == "noflashname" then
       if not getgenv().Flashing_Name_Title or getgenv().Flashing_Name_Title == false then
          return notify("Error", "Your not currently running Flash Name!", 5)
       end
       
       flashy_name(false)
-   elseif cmd == "flashinvis" then
+   elseif raw_cmd == "flashinvis" then
       local is_verified = Data.is_verified
       local invis_bought = Data.invisible_bought
       local Invisible_Module = require(getgenv().Game_Folder:FindFirstChild("InvisibleMode"))
@@ -7450,9 +7450,9 @@ local function handleCommand(sender, message)
          Invisible_Module.enabled.set(false)
          task.wait(0.05)
       end
-   elseif cmd == "noflashinvis" then
+   elseif raw_cmd == "noflashinvis" then
       getgenv().Invisible_Flash = false
-   elseif cmd == "kill" and split[1] then
+   elseif raw_cmd == "kill" and split[1] then
       local target = findplr(split[1])
       if not target then return notify("Error", "Target not found.", 5) end
       if getgenv().Not_Ever_Sitting then return getgenv().notify("Error", "Anti-Sit is enabled, turn it off first!", 5) end
@@ -7484,7 +7484,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
-   elseif cmd == "void" and split[1] then
+   elseif raw_cmd == "void" and split[1] then
       local target = findplr(split[1])
       if not target then return getgenv().notify("Error", "Target Player not found.", 5) end
       if getgenv().Not_Ever_Sitting then return getgenv().notify("Error", "Anti-Sit is enabled, turn it off first!", 5) end
@@ -7516,7 +7516,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
-   elseif cmd == "rejoin" or cmd == "rj" or cmd == "rej" then
+   elseif raw_cmd == "rejoin" or raw_cmd == "rj" or raw_cmd == "rej" then
       local Players = getgenv().Players
       local TeleportService = getgenv().TeleportService
       local LocalPlayer = getgenv().LocalPlayer
@@ -7542,7 +7542,7 @@ local function handleCommand(sender, message)
       end
 
       safe_teleport()
-   elseif cmd == "antifling" or cmd == "startantifling" or cmd == "antiflingon" then
+   elseif raw_cmd == "antifling" or raw_cmd == "startantifling" or raw_cmd == "antiflingon" then
       if getgenv().AntiFling_Enabled then
          return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
       end
@@ -7555,13 +7555,13 @@ local function handleCommand(sender, message)
          getgenv().hasSeen_AntiFling_WarningPrompt = true
          getgenv().notify("Success", "Successfully enabled Anti-Fling. (the joke won't show again, dont worry)", 9)
       end
-   elseif cmd == "unantifling" or cmd == "stopantifling" or cmd == "antiflingoff" then
+   elseif raw_cmd == "unantifling" or raw_cmd == "stopantifling" or raw_cmd == "antiflingoff" then
       if not getgenv().AntiFling_Enabled then
          return getgenv().notify("Error", "Hold up a damn minute, your ass don't got this enabled, nice try (joking).", 8)
       end
 
       getgenv().Toggle_AntiFling_Boolean_Func(false)
-   elseif cmd == "bring" and split[1] then
+   elseif raw_cmd == "bring" and split[1] then
       local target = findplr(split[1])
       if not target then return getgenv().notify("Error", "Target not found.", 5) end
       if getgenv().Not_Ever_Sitting then return getgenv().notify("Error", "Anti-Sit is enabled, turn it off first!", 5) end
@@ -7593,7 +7593,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
-   elseif cmd == "skydive" then
+   elseif raw_cmd == "skydive" then
       local target = findplr(split[1])
       if not target then return notify("Error", "Target not found.", 3) end
       if getgenv().Not_Ever_Sitting then return getgenv().notify("Error", "Anti-Sit is enabled, turn it off first!", 5) end
@@ -7625,7 +7625,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Failed to spawn/find SchoolBus.", 3)
       end
-   elseif cmd == "goto" then
+   elseif raw_cmd == "goto" then
       local target = findplr(split[1])
       if not target then return getgenv().notify("Error", "Target player does not exist!", 5) end
       wait()
@@ -7642,7 +7642,7 @@ local function handleCommand(sender, message)
             getgenv().Character:PivotTo(Char_Pos)
          end
       end
-   elseif cmd == "caraccel" then
+   elseif raw_cmd == "caraccel" then
       local val = tonumber(args[1])
       if not val then return getgenv().notify("Warning", "Usage: caraccel [number], got: "..tostring(args[1]), 4) end
 
@@ -7653,7 +7653,7 @@ local function handleCommand(sender, message)
       else
          return getgenv().notify("Error", "Car not found, or your vehicle does not have a 'max_acc' attribute.", 4)
       end
-   elseif cmd == "carspeed" then
+   elseif raw_cmd == "carspeed" then
       local val = tonumber(args[1])
       if not val then return getgenv().notify("Warning", "Usage: carspeed [number], got: "..tostring(args[1]), 5) end
 
@@ -7664,7 +7664,7 @@ local function handleCommand(sender, message)
       else
          notify("Error", "Car not found or your car does not have a 'max_speed' attribute.", 4)
       end
-   elseif cmd == "turnangle" then
+   elseif raw_cmd == "turnangle" then
       local turn_angle_val = tonumber(args[1])
       if not turn_angle_val then return getgenv().notify("Warning", "Usage: turnangle [number], got: "..tostring(args[1]), 5) end
 
@@ -7675,7 +7675,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Car not found or your car does not have a 'turn_angle' value.", 5)
       end
-   elseif cmd == "accel" then
+   elseif raw_cmd == "accel" then
       local val = tonumber(args[1])
       if not val then return getgenv().notify("Warning", "Usage: accel [number], got: "..tostring(args[1]), 5) end
 
@@ -7686,7 +7686,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Car not found or your car does not have a 'acc_0_60' attribute.", 4)
       end
-   elseif cmd == "freepay" then
+   elseif raw_cmd == "freepay" then
       for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
          if v:GetAttribute("IsVerifiedOnly") == true then
             v:SetAttribute("IsVerifiedOnly", false)
@@ -7706,7 +7706,7 @@ local function handleCommand(sender, message)
       else
          return getgenv().notify("Error", "You have already executed FreePay!", 5)
       end
-   elseif cmd == "spawn" and split[1] then
+   elseif raw_cmd == "spawn" and split[1] then
       local name = split[1]:lower()
       for carKey, fullName in pairs(CarMap) do
          if carKey:find(name) then
@@ -7717,7 +7717,7 @@ local function handleCommand(sender, message)
       end
 
       getgenv().notify("Error", "Name not matched.", 5)
-   elseif cmd == "antihouseban" then
+   elseif raw_cmd == "antihouseban" then
       if getgenv().never_banned_houses then
          return getgenv().notify("Error", "AntiHouseBan is already enabled!", 5)
       end
@@ -7771,7 +7771,7 @@ local function handleCommand(sender, message)
             end
          end
       end)
-   elseif cmd == "unantiban" then
+   elseif raw_cmd == "unantiban" then
       if not getgenv().never_banned_houses then
          getgenv().AntiTeleport = false
          return getgenv().notify("Warning", "AntiHouseBan is not enabled!", 5)
@@ -7799,7 +7799,7 @@ local function handleCommand(sender, message)
          end
          getgenv().AntiTeleportConnections = {}
       end
-   elseif cmd == "carspeed" and split[2] then
+   elseif raw_cmd == "carspeed" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
          return getgenv().notify("Error", "You do not have a car spawned!", 5) 
@@ -7817,7 +7817,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Your vehicle does not have 'max_speed' attribute.", 5)
       end
-   elseif cmd == "caraccel" and split[2] then
+   elseif raw_cmd == "caraccel" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
          return getgenv().notify("Error", "You do not have a vehicle spawned!", 5) 
@@ -7835,7 +7835,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Your vehicle does not have 'max_acc' attribute.", 5)
       end
-   elseif cmd == "accel" and split[2] then
+   elseif raw_cmd == "accel" and split[2] then
       local Vehicle = get_vehicle()
       if not Vehicle then 
          return getgenv().notify("Error", "You do not have a car spawned!", 5) 
@@ -7853,7 +7853,7 @@ local function handleCommand(sender, message)
       else
          getgenv().notify("Error", "Your vehicle does not have 'acc_0_60' attribute.", 5)
       end
-   elseif cmd == "cmds" then
+   elseif raw_cmd == "cmds" then
       CommandsMenu()
    end
 end
