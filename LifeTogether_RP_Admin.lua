@@ -110,7 +110,7 @@ local function safeSet(inst, prop, val)
 end
 
 function toggle_chat_tabs(toggle)
-   local Tabs = Text_CS:FindFirstChildOfClass("ChannelTabsConfiguration")
+   local Tabs = getgenv().TextChatService:FindFirstChildOfClass("ChannelTabsConfiguration")
    wait(0.1)
    if toggle == true then
       if Tabs then
