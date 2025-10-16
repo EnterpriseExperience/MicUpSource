@@ -24,7 +24,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.9.4"
+local Raw_Version = "V4.9.5"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Fixed command handler not stripping the emojis and other junk out of the command, and added command auto-corrector, so if you spell it wrong, it'll still work (depending on how badly it's mis-spelled though)."
 local displayTimeMax = 35
