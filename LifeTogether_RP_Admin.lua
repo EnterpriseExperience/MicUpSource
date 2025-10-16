@@ -3082,7 +3082,7 @@ function anti_outfit_copier(toggle)
 
             if bio and bio ~= "ANTI COPIER ENABLED HERE - THANKS!" then
                getgenv().Send("bio", "ANTI COPIER ENABLED HERE - THANKS!")
-               getgenv().notify("Success", "Bio changed, reverted change.", 5)
+               getgenv().notify("Success", "Bio changed, reverted change.", 2)
             else
                getgenv().notify("Warning", "Bio not found, cannot unlock, disabled loop.", 5)
             end
@@ -3096,7 +3096,7 @@ function anti_outfit_copier(toggle)
 
             if bio and bio ~= "ANTI COPIER ENABLED HERE - THANKS!" then
                getgenv().Send("bio", "ANTI COPIER ENABLED HERE - THANKS!")
-               getgenv().notify("Success", "Bio changed, reverted change.", 5)
+               getgenv().notify("Success", "Bio changed, reverted change.", 2)
             end
          end)
       end
