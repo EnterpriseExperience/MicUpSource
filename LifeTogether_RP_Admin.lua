@@ -7067,23 +7067,39 @@ local function handleCommand(sender, message)
 
       ToggleNoclip(true)
    elseif raw_cmd == "autonoflames" or raw_cmd == "autohideflames" then
+      if getgenv().SpamFire then
+         return getgenv().notify("Error", "Flame spamming is already enabled! Disable it before trying again.", 7)
+      end
+
+      wait(0.1)
       getgenv().notify("Success", "Now reducing the lag from fire spam!", 5)
       getgenv().CompletelyHideFlamesComingIn(true)
    elseif raw_cmd == "unautonoflames" or raw_cmd == "unautohideflames" then
+      if not getgenv().SpamFire then
+         return getgenv().notify("Error", "Flame spamming is not enabled! Enable it before trying again.", 7)
+      end
+
+      wait(0.1)
       getgenv().notify("Success", "No longer protected against fire spam.", 5)
       getgenv().CompletelyHideFlamesComingIn(false)
    elseif raw_cmd == "antivoid" or raw_cmd == "novoid" then
       if not getgenv().originalFPDH then
          getgenv().originalFPDH = getgenv().Workspace.FallenPartsDestroyHeight
       end
-
-      task.wait(0.1)
+      if getgenv().Anti_Void_Enabled_Bool then
+         return getgenv().notify("Warning", "Anti-Void is already enabled!", 5)
+      end
+      wait(0.1)
       getgenv().Workspace.FallenPartsDestroyHeight = -9e9
       getgenv().notify("Success", "Enabled antivoid.", 5)
+      getgenv().Anti_Void_Enabled_Bool = true
    elseif raw_cmd == "unantivoid" or raw_cmd == "unnovoid" then
       if not getgenv().originalFPDH then
          getgenv().originalFPDH = -500
          return getgenv().notify("Error", "Original destroy height doesn't exist!", 5)
+      end
+      if not getgenv().Anti_Void_Enabled_Bool then
+         return getgenv().notify("Warning", "Anti-Void has not been enabled!", 5)
       end
 
       getgenv().Workspace.FallenPartsDestroyHeight = getgenv().originalFPDH or -500
