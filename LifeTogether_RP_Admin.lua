@@ -24,10 +24,10 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.9.1"
+local Raw_Version = "V4.9.4"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed non-looping emotes so that they now loop if they aren't already."
-local displayTimeMax = 10
+local Announcement_Message = "Fixed command handler not stripping the emojis and other junk out of the command, and added command auto-corrector, so if you spell it wrong, it'll still work (depending on how badly it's mis-spelled though)."
+local displayTimeMax = 35
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -6396,18 +6396,202 @@ end)
 local function handleCommand(sender, message)
    if not Admins[sender.Name] then return end
 
+   -- [[ write to getgenv().Known_Admin_Commands if not already existant to prevent further issues. ]] --
+   getgenv().Known_Admin_Commands = getgenv().Known_Admin_Commands or nil
+   wait()
+   if not getgenv().Known_Admin_Commands then
+      -- [[ all commands copied from the cmdsString local variable from earlier in the code. ]] --
+      local cmdsString = [[
+         {prefix}rgbcar - Enables RGB/Rainbow Vehicle (flashing Rainbow Vehicle).
+         {prefix}unrgbcar - Disables RGB/Rainbow Vehicle (flashing Rainbow Vehicle).
+         {prefix}feedback - Gives you a menu to be able to send me feedback/suggestions/rating for the script!
+         {prefix}infyield - Executes Infinite Premium (my Infinite Yield).
+         {prefix}spawnfire NUMBER - Spawns fire with a specified number argument.
+         {prefix}rainbowcar Player - Makes a players car RGB (FRIENDS ONLY!, FE).
+         {prefix}copyav Player (🔥POPULAR FEATURE🔥) - Copies the target players avatar/outfit in full (animations, body, everything! FE!).
+         {prefix}norainbowcar Player - Disables the RGB for a players car (FRIENDS ONLY!, FE).
+         {prefix}annoyergui - Enables the GUI that lets you pick and toggle annoy players (FE).
+         {prefix}startsignspam - Spams the text on your Tool Sign (FE).
+         {prefix}stopsignspam - Stops spamming the text on your Tool Sign.
+         {prefix}orbit Player Speed Distance - Lets you Orbit around the target Player (FE).
+         {prefix}unorbit - Stops orbiting the target Player.
+         {prefix}speed Number - Changes your WalkSpeed.
+         {prefix}jp Number - Changes your JumpHeight.
+         {prefix}grav Number - Changes your Gravity.
+         {prefix}orbitspeed NewSpeed - Lets you modify your Orbit speed.
+         {prefix}antifitstealer (🔥 #1 FEATURE 🔥) - Allows you to toggle on Anti Outfit Copier (FE, I was forced to add it, I know!!!).
+         {prefix}unanticopyfit - Disables Anti Outfit Copier (FE).
+         {prefix}outfitsui (🔥POPULAR FEATURE🔥) - Allows you to save how ever many outfits you want with our new GUI.
+         {prefix}anticarfling (🔥HOT🔥) - Enables 'anticarfling', preventing you from being flung by Vehicles.
+         {prefix}unanticarfling - Disables 'anticarfling' command.
+         {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed.
+         {prefix}unadmin player - Removes the player's FE commands (if they're your friend).
+         {prefix}admin player - Adds the player to the FE commands whitelist (if they're your friend).
+         {prefix}startrgbskin - Enable RGB Skin (flashing Rainbow Skintone).
+         {prefix}stoprgbskin - Disable RGB Skin (flashing Rainbow Skintone).
+         {prefix}checkpremium player - Checks if a player has premium or not.
+         {prefix}rgbphone (🔥HOT🔥) - Enable RGB Phone (flashing Rainbow Phone).
+         {prefix}unrgbphone - Disable RGB Phone (flashing Rainbow Phone).
+         {prefix}glitchoutfit - Enables the glitching of your outfit (very blinding).
+         {prefix}startrgbtool - Enables RGB Tool (FE, Flashing Rainbow Tool).
+         {prefix}stoprgbtool - Disables RGB Tool (FE, Flashing Rainbow Tool).
+         {prefix}noglitchoutfit - Disables the glitching of your outfit.
+         {prefix}flames - Spams fire all over you.
+         {prefix}noflames - Disables the spamming of fire.
+         {prefix}autonoflames - Deletes flames from your game automatically and completely, reducing lag.
+         {prefix}unautohideflames - Disables the auto-hide flames lag reducer.
+         {prefix}name NewName - Lets you change your RP name.
+         {prefix}bio NewBio - Lets you change your RP bio.
+         {prefix}freeemotes - Gives you the Free Emotes GUI.
+         {prefix}allcars - Gives you the GUI list that shows all the car names.
+         {prefix}noemote - Disables any emote you are currently doing.
+         {prefix}griddy - Makes you do the Griddy emote (FE).
+         {prefix}scenario - Makes you do the Scenario emote (FE).
+         {prefix}superman - Makes you do the Superman emote (FE).
+         {prefix}zen - Makes you do the Zen emote (FE).
+         {prefix}orangej - Makes you do the Orange Justice emote (FE).
+         {prefix}aurafarm - Makes you do an Aura Float emote (FE).
+         {prefix}worm - Makes you do The Worm emote (FE).
+         {prefix}jabba - Makes you do the Jabba emote (FE).
+         {prefix}popular - Makes you do the Popular emote (FE).
+         {prefix}defaultd - Makes you do the Default Dance emote (FE).
+         {prefix}kotonai - Makes you do the Koto Nai emote (FE).
+         {prefix}glitching - Makes you do the Glitching emote (FE).
+         {prefix}billyjean - Makes you do the Billie Jean emote (FE).
+         {prefix}billybounce - Makes you do the Billy Bounce emote (FE).
+         {prefix}michaelmyers - Makes you do the Michael Myers emote (FE).
+         {prefix}sturdy - Makes you do the New York Sturdy emote (FE).
+         {prefix}eshuffle - Makes you do the Electro Shuffle emote (FE).
+         {prefix}takethel - Makes you do the Take The L emote (FE).
+         {prefix}laughitup - Makes you do the Donkey Laugh emote (FE).
+         {prefix}reanimated - Makes you do the Reanimated emote (FE).
+         {prefix}antivoid - Enables anti-void.
+         {prefix}unantivoid - Disables anti-void.
+         {prefix}alljobs - Repeatedly spams all jobs.
+         {prefix}jobsoff - Stops spamming all jobs.
+         {prefix}fly Speed - Enable/disable flying.
+         {prefix}unfly - Disables (Fly) command.
+         {prefix}annoy Player - Spam calls + spam request carries the target player (FE).
+         {prefix}unannoy - Disables annoy player system.
+         {prefix}fly2 Speed - Enables magic carpet fly (ONLY VISUAL rainbow!).
+         {prefix}unfly2 - Disables Fly2/Magic carpet fly (with the client side rainbow).
+         {prefix}noclip - Enables Noclip, letting you walk through everything.
+         {prefix}clip - Disables Noclip, so you cannot walk through everything.
+         {prefix}trailer - Gives you the WaterSkies trailer (on any car/vehicle).
+         {prefix}notrailer - Removes the WaterSkies trailer (on your current spawned car/vehicle).
+         {prefix}autolockcar - Automatically (loop) locks your vehicle/car when there is one spawned.
+         {prefix}unautolockcar - Turn off/disables the loop that automatically locks your vehicle/car.
+         {prefix}lockcar - Locks your car.
+         {prefix}unlockcar - Unlocks your car.
+         {prefix}despawn - Despawns your car.
+         {prefix}blacklist Player - Blacklists friends you specify from using the admin commands (even if they are already on).
+         {prefix}unblacklist Player - Removes the blacklist from the friend you specified in the 'blacklist' command, allowing them to do ;rgbcar and such again.
+         {prefix}antifling - Fully prevents you from being flung, by other exploiters/cheaters, and fling outfits (FULL BYPASS).
+         {prefix}unantifling - Disables anti-fling.
+         {prefix}bringcar - Teleport car to you and sit in it.
+         {prefix}flashname - Enables the flashing of your "Bio" and "Name" (above your head).
+         {prefix}noflashname - Disables the flashing of your "Bio" and "Name" (above your head).
+         {prefix}flashinvis - Enables the flashing of the invisibility GamePass for you're character (you need to actually own the GamePass).
+         {prefix}noflashinvis - Disables the flashing of the invisibility GamePass for you're character (you need to actually own the GamePass).
+         {prefix}nosit - Disables all VehicleSeats and Seats.
+         {prefix}resit - Re-enables all Seats.
+         {prefix}view Player - Smooth view's the target's Character.
+         {prefix}unview - Disables the 'view' command.
+         {prefix}void Player - Uses the SchoolBus Vehicle to void the target.
+         {prefix}kill Player - Uses the SchoolBus Vehicle to kill the target.
+         {prefix}bring Player - Uses the SchoolBus Vehicle to bring the target.
+         {prefix}goto Player - Teleports your Character to the target player.
+         {prefix}skydive Player - Uses the SchoolBus Vehicle to skydive the target.
+         {prefix}freepay - Gives you LifePay Premium for free.
+         {prefix}rejoin - Rejoins you, but does NOT execute the script automatically.
+         {prefix}caraccel Number - Modifies your "max_acc" on your car/vehicle.
+         {prefix}carspeed Number - Modifies your "max_speed" on your car/vehicle.
+         {prefix}accel Number - Modifies your "acc_0_60" on your car/vehicle (take off time/speed).
+         {prefix}turnangle Number - Modifies your "turn_angle" on your car/vehicle (how fast you turn).
+         {prefix}gotocar - Teleports you straight to your car/vehicle directly.
+         {prefix}tpcar Player - Teleports your vehicle/car to the specified target.
+         {prefix}antihouseban - Prevents you from being banned/kicked/teleported out of houses.
+         {prefix}unantiban - Turns off 'antihouseban' command.
+         {prefix}spawn CarName - Allows you to spawn any Vehicle in the game (FE).
+         {prefix}prefix NewPrefixHere - Changes your prefix.
+         {prefix}inject - Secret (???).
+      ]]
+
+      local known = {}
+      for cmd in cmdsString:gmatch("{prefix}([%w_%-]+)") do
+         table.insert(known, cmd:lower())
+      end
+      getgenv().Known_Admin_Commands = known
+   end
+
+   local function sanitize_message(str)
+      local cleaned = str:gsub("%b()", "")
+      cleaned = cleaned:gsub("[%z\1-\127\194-\244][\128-\191]*", function(c)
+         return (c:match("[%w%s%p]") and c) or ""
+      end)
+      return cleaned:match("^%s*(.-)%s*$")
+   end
+
+   message = sanitize_message(message or "") -- fully wipe the message to check if includes other unwanted text.
+
    local prefix = tostring(getgenv().AdminPrefix or ";")
    if message:sub(1, #prefix):lower() ~= prefix:lower() then return end
 
-   message = message:sub(#prefix + 1)
-   wait()
-   local split = message:split(" ")
-   -- This does not actually handle command processing, it just handles Roblox's laziness in they're TextChatService, but I cannot share that method with you right now (don't worry, I will leak it soon, it's not important though, it's not a TextChatService bypass or anything, but Roblox and developers still cannot see it, not right now).
-   if getgenv().LocalPlayer.Name ~= "L0CKED_1N1" and getgenv().LocalPlayer.Name ~= "CHEATING_B0SS" then
-      getgenv().CommandAPI.Handle_Command(getgenv().LocalPlayer or game.Players.LocalPlayer, tostring(prefix)..tostring(message))
+   -- [[ levenshtein functionality handler, handles pure text difference for us. ]] --
+   local function levenshtein(s, t)
+      if s == t then return 0 end
+      local len_s, len_t = #s, #t
+      if len_s == 0 then return len_t end
+      if len_t == 0 then return len_s end
+      local d = {}
+      for i = 0, len_s do d[i] = {[0] = i} end
+      for j = 0, len_t do d[0][j] = j end
+      for i = 1, len_s do
+         for j = 1, len_t do
+            local cost = (s:sub(i,i) == t:sub(j,j)) and 0 or 1
+            d[i][j] = math.min(
+               d[i-1][j] + 1,
+               d[i][j-1] + 1,
+               d[i-1][j-1] + cost
+            )
+         end
+      end
+      return d[len_s][len_t]
    end
-   local cmd = table.remove(split, 1):lower()
+
+   local msg_no_prefix = message:sub(#prefix + 1)
+   local split = msg_no_prefix:split(" ")
+   local raw_cmd = (table.remove(split, 1) or ""):lower() -- fully strip the command from split to ensure the command is processed correctly.
    local args = split
+   local best, bestDist = raw_cmd, math.huge
+
+   -- [[ add the distance with the command and compare it to make sure the command is an actual command. ]] --
+   for _, real in ipairs(getgenv().Known_Admin_Commands) do
+      local dist = levenshtein(raw_cmd, real)
+      if dist < bestDist then
+         bestDist = dist
+         best = real
+      end
+   end
+
+   -- [[ check if the user was really that much off, and if so, auto-correct the command automatically (people can't type tbh). ]] --
+   if bestDist <= 4 and best ~= raw_cmd then
+      getgenv().notify("Info", "Auto-corrected '"..raw_cmd.."' → '"..prefix..best.."'", 6)
+      raw_cmd = best
+   end
+
+   -- [[ clean the sent message command properly (from the raw command that was entered). ]] --
+   local cleanedMessage = raw_cmd
+   if #args > 0 then
+      cleanedMessage = cleanedMessage .. " " .. table.concat(args, " ")
+   end
+
+   if getgenv().LocalPlayer.Name ~= "L0CKED_1N1" and getgenv().LocalPlayer.Name ~= "CHEATING_B0SS" then
+      getgenv().CommandAPI.Handle_Command(
+         getgenv().LocalPlayer or game.Players.LocalPlayer,
+         prefix .. cleanedMessage
+      )
+   end
    getgenv().Anti_Sit_Connection = nil
    getgenv().anti_knockback_connection = nil
    getgenv().Noclip_Connection = nil
