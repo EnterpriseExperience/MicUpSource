@@ -5,6 +5,7 @@ if not getgenv().Game:IsLoaded() then
    getgenv().Game.Loaded:Wait()
 end
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
 getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
 local set_fps = setfpscap or setfps
@@ -2029,6 +2030,8 @@ local function get_other_vehicle(Player)
 
    return nil
 end
+
+loadstring(game:HttpGet(tostring(Handler_API)))()
 
 function save_outfits_GUI()
    if getgenv().Core:FindFirstChild("OutfitManagerUI") then
@@ -8062,87 +8065,87 @@ end
 
 task.wait(0.2)
 function Notify(message, duration)
-   local CoreGui = getgenv().CoreGui
-   local TweenService = getgenv().TweenService
+    local CoreGui = getgenv().CoreGui
+    local TweenService = getgenv().TweenService
 
-   local NotificationGui = Instance.new("ScreenGui")
-   NotificationGui.Name = "CustomErrorGui"
-   NotificationGui.ResetOnSpawn = false
-   NotificationGui.Parent = CoreGui
-   duration = duration or 5
+    local NotificationGui = Instance.new("ScreenGui")
+    NotificationGui.Name = "CustomErrorGui"
+    NotificationGui.ResetOnSpawn = false
+    NotificationGui.Parent = CoreGui
+    duration = duration or 5
 
-   local Frame = Instance.new("Frame")
-   Frame.Name = "ErrorMessage"
-   Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-   Frame.BackgroundTransparency = 0.3
-   Frame.BorderSizePixel = 0
-   Frame.Size = UDim2.new(0, 500, 0, 120)
-   Frame.Position = UDim2.new(0, 20, 0, 100)
-   Frame.Parent = NotificationGui
+    local Frame = Instance.new("Frame")
+    Frame.Name = "ErrorMessage"
+    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BackgroundTransparency = 0.3
+    Frame.BorderSizePixel = 0
+    Frame.Size = UDim2.new(0, 500, 0, 120)
+    Frame.Position = UDim2.new(0, 20, 0, 100)
+    Frame.Parent = NotificationGui
 
-   local UICorner = Instance.new("UICorner")
-   UICorner.CornerRadius = UDim.new(0, 10)
-   UICorner.Parent = Frame
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 10)
+    UICorner.Parent = Frame
 
-   local Icon = Instance.new("ImageLabel")
-   Icon.Name = "ErrorIcon"
-   Icon.AnchorPoint = Vector2.new(0, 0.5)
-   Icon.BackgroundTransparency = 1
-   Icon.Position = UDim2.new(0, 15, 0.5, -25)
-   Icon.Size = UDim2.new(0, 50, 0, 50)
-   Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
-   Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
-   Icon.Parent = Frame
+    local Icon = Instance.new("ImageLabel")
+    Icon.Name = "ErrorIcon"
+    Icon.AnchorPoint = Vector2.new(0, 0.5)
+    Icon.BackgroundTransparency = 1
+    Icon.Position = UDim2.new(0, 15, 0.5, -25)
+    Icon.Size = UDim2.new(0, 50, 0, 50)
+    Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
+    Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+    Icon.Parent = Frame
 
-   local Label = Instance.new("TextLabel")
-   Label.Name = "ErrorText"
-   Label.BackgroundTransparency = 1
-   Label.Position = UDim2.new(0, 80, 0, 10)
-   Label.Size = UDim2.new(1, -90, 1, -20)
-   Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
-   Label.Text = message
-   Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-   Label.TextSize = 20
-   Label.TextWrapped = true
-   Label.TextXAlignment = Enum.TextXAlignment.Left
-   Label.TextYAlignment = Enum.TextYAlignment.Top
-   Label.Parent = Frame
+    local Label = Instance.new("TextLabel")
+    Label.Name = "ErrorText"
+    Label.BackgroundTransparency = 1
+    Label.Position = UDim2.new(0, 80, 0, 10)
+    Label.Size = UDim2.new(1, -90, 1, -20)
+    Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
+    Label.Text = message
+    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Label.TextSize = 20
+    Label.TextWrapped = true
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.TextYAlignment = Enum.TextYAlignment.Top
+    Label.Parent = Frame
 
-   Frame.BackgroundTransparency = 1
-   Icon.ImageTransparency = 1
-   Label.TextTransparency = 1
-   TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
-   TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
-   TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+    Frame.BackgroundTransparency = 1
+    Icon.ImageTransparency = 1
+    Label.TextTransparency = 1
+    TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
+    TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
+    TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 
-   task.delay(duration, function()
-      if Frame and Frame.Parent then
-         TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-         TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
-         TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-         task.wait(0.35)
-         Frame:Destroy()
-         NotificationGui:Destroy()
-      end
-   end)
+    task.delay(duration, function()
+        if Frame and Frame.Parent then
+            TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+            TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+            task.wait(0.35)
+            Frame:Destroy()
+            NotificationGui:Destroy()
+        end
+    end)
 end
 
 task.spawn(function()
-   getgenv().ConstantUpdate_Checker_Live = true
-   while getgenv().ConstantUpdate_Checker_Live do
-      task.wait(1)
+    getgenv().ConstantUpdate_Checker_Live = true
+    while getgenv().ConstantUpdate_Checker_Live do
+        task.wait(1)
 
-      local success, latestVersionInfo = pcall(function()
-         local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
-         return HttpService:JSONDecode(versionJson)
-      end)
+        local success, latestVersionInfo = pcall(function()
+            local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
+            return HttpService:JSONDecode(versionJson)
+        end)
 
-      if success and latestVersionInfo then
-         if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
-            getgenv().ConstantUpdate_Checker_Live = false
-            Notify("[LIFE TOGETHER ADMIN]: A new update is now pending. New version: "..tostring(latestVersionInfo.LifeTogether_Admin_Version).." | rejoin to update!", 25)
-            break
-         end
-      end
-   end
+        if success and latestVersionInfo then
+            if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
+                getgenv().ConstantUpdate_Checker_Live = false
+                Notify("[LIFE TOGETHER ADMIN]: A new update is now pending. New version: "..tostring(latestVersionInfo.LifeTogether_Admin_Version).." | rejoin to update!", 25)
+                break
+            end
+        end
+    end
 end)
