@@ -7,6 +7,7 @@ getgenv().JobID = getgenv().Game.JobId
 getgenv().PlaceID = getgenv().Game.PlaceId
 wait()
 local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
 
 if getgenv().LifeTogether_RP_ScriptHub_Loaded then
     return NotifyLib:External_Notification("Warning", "You already have Life Together RP (Script Hub) loaded.", 6)
@@ -466,7 +467,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
    end
 end)
 task.wait(0.2)
-local Script_Version = "2.5.5-LIFE"
+local Script_Version = "2.5.6-LIFE"
 
 local function getExecutor()
     local name
@@ -3343,6 +3344,7 @@ getgenv().stopRainbow = function()
     Rain:SetTransparency(0)
     getgenv().ChangeToNight_Time = false
 end
+loadstring(game:HttpGet(tostring(Handler_API)))()
 task.wait(0.1)
 getgenv().RainbowRain_NotFE = Tab3:CreateToggle({
 Name = "Rainbow Rain (Not FE, Working!)",
