@@ -25,7 +25,7 @@ if getgenv().PlaceID ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.9.6"
+local Raw_Version = "V4.9.7"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Enabled chat tabs, allowing you to actively keep up with private chats more accurately, without scrolling up and what not."
 local displayTimeMax = 20
