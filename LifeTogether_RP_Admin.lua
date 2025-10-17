@@ -1777,7 +1777,7 @@ local RunService = getgenv().RunService or game:GetService("RunService")
 local function ToggleNoclip(toggle)
    if toggle == true then
       if getgenv().Noclip_Enabled then
-         return getgenv().notify("Error", "Noclip already enabled!", 5)
+         return getgenv().notify("Error", "Noclip is already enabled!", 5)
       end
 
       local function NoclipLoop()
@@ -3136,6 +3136,41 @@ end
 
 function change_bio(New_Bio)
    send_remote("bio", tostring(New_Bio))
+end
+
+function job_spammer(toggle)
+   if toggle == true then
+      if getgenv().Every_Job then
+         return getgenv().notify("Warning", "Job spammer is already enabled! disable it first.", 5)
+      end
+      wait()
+      getgenv().Every_Job = true
+      task.spawn(function()
+         while getgenv().Every_Job == true do
+         task.wait(0)
+            getgenv().Send("job", "Police")
+            task.wait(0)
+            getgenv().Send("job", "Firefighter")
+            task.wait(0)
+            getgenv().Send("job", "Baker")
+            task.wait(0)
+            getgenv().Send("job", "Pizza Worker")
+            task.wait(0)
+            getgenv().Send("job", "Barista")
+            task.wait(0)
+            getgenv().Send("job", "Doctor")
+            task.wait(0)
+         end
+      end)
+   elseif toggle == false then
+      if not getgenv().Every_Job then
+         return getgenv().notify("Warning", "Job spammer is not enabled! enable it first.", 5)
+      end
+
+      getgenv().Every_Job = false
+   else
+      return 
+   end
 end
 
 local DefaultSpeed = getgenv().StarterPlayer.CharacterWalkSpeed
@@ -5315,44 +5350,13 @@ local function handleCommand(sender, message)
          return getgenv().notify("Warning", "Job spammer is already enabled! disable it first.", 5)
       end
       wait()
-      getgenv().Every_Job = true
-      while getgenv().Every_Job == true do
-      task.wait(0.1)
-         getgenv().Send("job", "Police")
-         task.wait(0.1)
-         getgenv().Send("job", "Firefighter")
-         task.wait(0.1)
-         getgenv().Send("job", "Baker")
-         task.wait(0.1)
-         getgenv().Send("job", "Pizza Worker")
-         task.wait(0.1)
-         getgenv().Send("job", "Janitor")
-         task.wait(0.1)
-         getgenv().Send("job", "Mechanic")
-         task.wait(0.1)
-         getgenv().Send("job", "Barista")
-         task.wait(0.1)
-         getgenv().Send("job", "Doctor")
-         task.wait(0.1)
-         getgenv().Send("job", "Prisoner")
-         task.wait(0.1)
-         getgenv().Send("job", "Nurse")
-         task.wait(0.1)
-         getgenv().Send("job", "Student")
-         task.wait(0.1)
-         getgenv().Send("job", "Teacher")
-         task.wait(0.1)
-         getgenv().Send("job", "Principal")
-         task.wait(0.1)
-         getgenv().Send("job", "Lifeguard")
-         task.wait(0.1)
-      end
+      job_spammer(true)
    elseif raw_cmd == "jobsoff" or raw_cmd == "nojobs" or raw_cmd == "unjobspam" or raw_cmd == "stopjobspam" or raw_cmd == "stopjobspammer" then
       if not getgenv().Every_Job then
          return getgenv().notify("Warning", "Job spammer is not enabled! enable it first.", 5)
       end
 
-      getgenv().Every_Job = false
+      job_spammer(false)
    elseif raw_cmd == "stoprgbskin" or raw_cmd == "rgbskin" or raw_cmd == "rgbskinon" or raw_cmd == "rainbowskin" then
       rainbow_skin(false)
    elseif raw_cmd == "startrgbphone" or raw_cmd == "rgbphone" or raw_cmd == "rgbphoneon" or raw_cmd == "rainbowphone" then
