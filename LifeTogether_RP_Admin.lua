@@ -1,49 +1,35 @@
--- [[ This file is quite huge, so if you get a PARSER LOCAL LIMIT, don't be so surprised. ]] --
 getgenv().Game = cloneref and cloneref(game) or game
 wait()
 if not getgenv().Game:IsLoaded() then
    getgenv().Game.Loaded:Wait()
 end
-local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
-getgenv().JobID = getgenv().Game.JobId
-getgenv().PlaceID = getgenv().Game.PlaceId
-local set_fps = setfpscap or setfps
-getgenv().SetFPSCap = set_fps
+local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/refs/heads/main/configuration.lua"
 
 function notify(notif_type, msg, duration)
    NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
 end
 wait(0.1)
 getgenv().notify = notify
+local set_fps = setfpscap or setfps
 
 if setfpscap or setfps then
-   set_fps(250)
+   set_fps(999)
 end
 wait()
-if getgenv().PlaceID ~= 13967668166 then
+if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V4.9.7"
+local Raw_Version = "V5.0.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Enabled chat tabs, allowing you to actively keep up with private chats more accurately, without scrolling up and what not."
-local displayTimeMax = 20
+local Announcement_Message = "Re-worked entire Framework system + improved command processor, lowered response time + improved performance, added BETA configuration settings + added fire spam detector limiter, and more!."
+local displayTimeMax = 35
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
 getgenv().Script_Version_GlobalGenv = Script_Version
-getgenv().Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-
-local function Service_Wrap(service)
-   if cloneref then
-      return cloneref(game:GetService(service))
-   else
-      return game:GetService(service)
-   end
-end
-wait(0.1)
-getgenv().Service_Wrap = Service_Wrap
 
 if not getgenv().performance_stats then
    getgenv().notify("Info", "Loading Performance Statistics GUI...", 5)
@@ -68,34 +54,58 @@ elseif getgenv().LifeTogetherRP_Admin and getgenv().Script_Loaded_Correctly_Life
    return getgenv().notify("Warning", "Life Together RP Admin is already running!", 5)
 end
 wait(0.3)
-getgenv().LifeTogetherRP_Admin = true
-getgenv().TextChatService = Service_Wrap("TextChatService")
-getgenv().Players = Service_Wrap("Players")
-getgenv().LocalPlayer = getgenv().Players.LocalPlayer or getgenv().Game.Players.LocalPlayer or game.Players.LocalPlayer
-getgenv().StarterGui = Service_Wrap("StarterGui") or cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui") or getgenv().Game:GetService("StarterGui")
-
-getgenv().ChatMessageHooks = getgenv().ChatMessageHooks or {}
-wait(0.1) -- always load properly.
-if not getgenv().ChatMessageConnection then
-   getgenv().ChatMessageConnection = getgenv().TextChatService.MessageReceived:Connect(function(msg)
-      if not msg.TextSource then return end
-      local sender = getgenv().Players:GetPlayerByUserId(msg.TextSource.UserId)
-      if not (sender and msg.Text) then return end
-
-      for _, fn in ipairs(getgenv().ChatMessageHooks) do
-         local ok, err = pcall(fn, sender, msg)
-         if not ok then
-            getgenv().notify("Error", "[TextChatService_Message_Conn_Error]: "..tostring(err), 11)
-         end
-      end
-   end)
-end
-
 local function isProperty(inst, prop)
 	local s, r = pcall(function() return inst[prop] end)
 	if not s then return nil end
 	return r
 end
+
+local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+local fileName = "LifeTogether_Admin_Configuration.json"
+-- [[ Now we have an allowed Prefix system, so we can correctly modify your Prefix if it's broken. ]] --
+local Allowed_Prefixes = {
+   "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "_", "+", ",",
+   ".", "/", ">", "<", "?", "~", "`", "}", "{", "[", "]", ":", "1", "2", "3", "4", "5", "·", "•", "∙", "⋅", "£"
+}
+local function isAllowedPrefix(prefix)
+   for _, p in ipairs(Allowed_Prefixes) do
+      if prefix == p then
+         return true
+      end
+   end
+   return false
+end
+-- [[ Now checks if your Prefix is allowed or not, so we can always check if it's broken or not. ]] --
+
+local function loadPrefix()
+   local defaultPrefix = "-"
+   local data = { prefix = defaultPrefix }
+
+   if isfile and isfile(fileName) then
+      local success, decoded = pcall(function()
+         return HttpService:JSONDecode(readfile(fileName))
+      end)
+
+      if success and type(decoded) == "table" and decoded.prefix then
+         local prefix = tostring(decoded.prefix)
+         if prefix == "symbol" or not isAllowedPrefix(prefix) then
+            -- [[ Fix the users Prefix if we found that it's broken. ]] --
+            getgenv().notify("Info", "We've automatically modified your Prefix, it was broken or not an allowed Prefix.", 7)
+            decoded.prefix = defaultPrefix
+            writefile(fileName, HttpService:JSONEncode(decoded))
+            return defaultPrefix
+         else
+            -- [[ Otherwise return the correct Prefix and continue. ]] --
+            return prefix
+         end
+      end
+   end
+
+   writefile(fileName, HttpService:JSONEncode(data))
+   return defaultPrefix
+end
+wait(0.1)
+getgenv().loadPrefix = loadPrefix
 
 local function hasProp(inst, prop)
    return inst and isProperty(inst, prop) ~= nil
@@ -110,6 +120,53 @@ local function safeSet(inst, prop, val)
    if inst and hasProp(inst, prop) then setProperty(inst, prop, val) end
 end
 
+if not getgenv().All_Services_Initialized then
+   local function exec_ls(url)
+      local FormattedURL = tostring(url)
+
+      return loadstring(game:HttpGet(FormattedURL))()
+   end
+   wait(0.1)
+   getgenv().exec_ls = exec_ls
+   wait(0.6)
+   getgenv().notify("Success", "Initializing framework and libraries necessary for Life Together Admin...", 6)
+   function exec_lib(Name)
+      local Formatted_Library = tostring(Name)
+
+      exec_ls("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/"..Formatted_Library)
+   end
+   wait(0.3)
+   exec_lib("GlobalEnv_Framework.lua")
+   wait(0.3)
+   exec_lib("Life_Together_Network.lua")
+   wait(0.5)
+   exec_lib("TextChatService_MessageConnection.lua")
+   wait(0.3)
+   exec_lib("LifeTogether_Anti_Staff.lua")
+   wait(0.1)
+   exec_lib("BillboardGui_Framework.lua")
+   wait(0.2)
+   exec_lib("TextChatService_Unsuspension_Framework.lua")
+   wait(0.1)
+   exec_lib("Vehicle_Mapper.lua")
+   wait(0.2)
+   exec_lib("LifeTogether_Framework_Base_1.lua")
+   wait(0.2)
+   exec_lib("LifeTogether_Framework_Base_2.lua")
+   wait(0.2)
+   exec_lib("Dex_Explorer_Checker.lua")
+   wait(0.2)
+   exec_lib("Error_Handler_Framework.lua")
+   wait(0.3)
+   getgenv().All_Services_Initialized = true
+   wait(1)
+   if getgenv().All_Services_Initialized then
+      getgenv().notify("Success", "Framework and libraries have been initialized.", 6)
+   else
+      getgenv().notify("Warning", "Not sure if all our Framework has been initialized properly.", 6)
+   end
+end
+wait(1)
 function toggle_chat_tabs(toggle)
    local Tabs = getgenv().TextChatService:FindFirstChildOfClass("ChannelTabsConfiguration")
    wait(0.1)
@@ -127,939 +184,10 @@ function toggle_chat_tabs(toggle)
 end
 wait(0.1)
 toggle_chat_tabs(true)
-
-local function make_input_normal(str)
-   if type(str) ~= "string" then
-      str = tostring(str or "")
-   end
-
-   local okLower, lowered = pcall(string.lower, str)
-   if not okLower then
-      lowered = tostring(str)
-   end
-
-   local cleaned = {}
-   for i = 1, #lowered do
-      local c = lowered:sub(i, i)
-      if c:match("[%w]") then
-         table.insert(cleaned, c)
-      end
-   end
-
-   return table.concat(cleaned)
-end
-
-task.defer(function()
-   local ok, name = pcall(function()
-      return identifyexecutor and identifyexecutor() or "Unknown Executor"
-   end)
-   executor_Name = ok and tostring(name) or "Unknown Executor"
-
-   task.wait(0.1)
-
-   executor_Name = make_input_normal(executor_Name)
-end)
-
-local Allowed_Executors = {
-   ["Volcano"] = true,
-   ["Wave"] = false,
-   ["Zenith"] = true,
-   ["Delta"] = false,
-   ["CodeX"] = false,
-   ["Velocity"] = false,
-   ["Bunni"] = true,
-   ["Swift"] = true,
-   ["Sirhurt"] = true,
-   ["KRNL"] = false,
-   ["Potassium"] = true,
-   ["Macsploit"] = false,
-   ["Seliware"] = true,
-   ["Hydrogen"] = false,
-   ["Lx63"] = false,
-   ["Cryptic"] = false,
-   ["Arceus"] = false,
-   ["Vega"] = false,
-   ["Synapse"] = false,
-   ["Valex"] = false,
-   ["Nucleus"] = false,
-   ["Opiumware"] = false,
-}
-
-local function allowed_executor()
-   local normalizedExec = make_input_normal(executor_Name or "")
-   for allowedName, isAllowed in pairs(Allowed_Executors) do
-      if isAllowed and normalizedExec:find(make_input_normal(allowedName), 1, true) then
-         return true
-      end
-   end
-   return false
-end
-
-function startCooldownSystem()
-   if getgenv().TextChatAntiBanApplied then
-      local CooldownTime = 10
-      local Chat = Enum.CoreGuiType.Chat
-      getgenv().CooldownActive = getgenv().CooldownActive or false
-      getgenv().HashtagCount = getgenv().HashtagCount or 0
-
-      local function startCooldown(duration)
-         if getgenv().CooldownActive then
-            return getgenv().notify("Warning", "Your TextChat cooldown is still currently active.", 6)
-         end
-         getgenv().CooldownActive = true
-         getgenv().notify("Info", "Cooldown has now started for: " .. duration .. " seconds.", 8)
-
-         task.delay(duration, function()
-            getgenv().CooldownActive = false
-            getgenv().HashtagCount = 0
-            if not replicatesignal then
-               getgenv().notify("Error", "Your executor does not (unfortunately) support 'replicatesignal', cannot unsuspend Chat.", 10)
-            else
-               replicatesignal(getgenv().TextChatService.UpdateChatTimeout, getgenv().LocalPlayer.UserId, 0, 10)
-            end
-            getgenv().StarterGui:SetCoreGuiEnabled(Chat, true)
-            getgenv().notify("Success", "Chat is now re-enabled, cooldown has stopped.", 7)
-         end)
-      end
-
-      getgenv().TextChatService.MessageReceived:Connect(function(msg)
-         local source = msg.TextSource
-         if not source then return end
-         local player = getgenv().Players:GetPlayerByUserId(source.UserId)
-         if player ~= getgenv().LocalPlayer then return end
-
-         local text = msg.Text
-         if text and text:match("^#+$") then
-            getgenv().HashtagCount += 1
-            if getgenv().HashtagCount >= 4 then
-               getgenv().StarterGui:SetCoreGuiEnabled(Chat, false)
-               startCooldown(CooldownTime)
-               getgenv().notify("Warning", "Chat disabled temporarily, too many filtered messages have been sent (possible risk of ban).", 10)
-            end
-         end
-      end)
-   else
-      getgenv().notify("Info", "Skipping this part, hook not applied.", 3)
-   end
-end
-
-local function safe_chat_hookin()
-	if not hookmetamethod or not getnamecallmethod then
-		return getgenv().notify("Warning", "Your executor does not support hookmetamethod or getnamecallmethod.", 5)
-	end
-	if not allowed_executor() then
-		return getgenv().notify("Warning", "Executor not allowed for chat protection hook.", 5)
-	end
-	if getgenv().TextChatAntiBanApplied then
-		return getgenv().notify("Info", "TextChatAntiBan hook already applied.", 5)
-	end
-
-	local okService, TextChatService = pcall(function()
-		return cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
-	end)
-	if not okService or not TextChatService then
-		return getgenv().notify("Warning", "TextChatService not found; cannot apply hook.", 5)
-	end
-
-	local oldNamecall, oldIndex
-
-	local function hookMetatable()
-		local ok, err = pcall(function()
-			oldNamecall = hookmetamethod(TextChatService, "__namecall", newcclosure(function(self, ...)
-				local method = getnamecallmethod()
-				if method == "SendAsync" and getgenv().CooldownActive then
-					getgenv().notify("Warning", "You cannot send messages during cooldown.", 6)
-					return nil
-				end
-				return oldNamecall(self, ...)
-			end))
-
-			oldIndex = hookmetamethod(TextChatService, "__index", newcclosure(function(self, key)
-				if key == "SendAsync" and getgenv().CooldownActive then
-					return function()
-						getgenv().notify("Warning", "Chat disabled during cooldown.", 6)
-						return nil
-					end
-				end
-				return oldIndex(self, key)
-			end))
-		end)
-
-		if not ok then
-			getgenv().notify("Error", "Failed to hook metatable safely: " .. tostring(err), 8)
-			return false
-		end
-		return true
-	end
-
-   local hookApplied = hookMetatable()
-   if hookApplied then
-      getgenv().TextChatAntiBanApplied = true
-      getgenv().notify("Success", "TextChatService hook successfully applied.", 6)
-      startCooldownSystem()
-   else
-      getgenv().notify("Warning", "Hook attempt failed or blocked by executor sandbox.", 6)
-   end
-end
-
-task.defer(function()
-	if allowed_executor() then
-		safe_chat_hookin()
-	else
-		getgenv().notify("Warning", "Executor not allowed to apply SendAsync hook.", 6)
-	end
-end)
-
-local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
-local API_URL = "https://flameshub-worker.flameshub.workers.dev/api/flameshub"
-local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
-local watchedUserIds = {
-   [7712000520] = true,
-   [7740121604] = true,
-}
-
-local function httpRequestSafe(opts)
-   if not httprequest then return end
-   local ok, res = pcall(function()
-      return httprequest({
-         Url = opts.url,
-         Method = opts.method or "GET",
-         Headers = opts.headers,
-         Body = opts.body,
-      })
-   end)
-   if not ok or not res then return nil end
-   res.Body = res.Body or res.body
-   res.StatusCode = res.StatusCode or res.status_code
-
-   return res
-end
-
-local function safeJsonDecode(body)
-   if not body or type(body) ~= "string" then return {} end
-   local ok, decoded = pcall(HttpService.JSONDecode, HttpService, body)
-   return ok and decoded or {}
-end
-
-local function apiList()
-   local res = httpRequestSafe({ url = API_URL .. "/list" })
-   return res and safeJsonDecode(res.Body) or {}
-end
-
-local function apiSet(payload)
-   return httpRequestSafe({
-      url = API_URL .. "/set",
-      method = "POST",
-      headers = { ["Content-Type"] = "application/json" },
-      body = HttpService:JSONEncode(payload),
-   })
-end
-
-local function apiDelete(userId)
-   return httpRequestSafe({
-      url = API_URL .. "/delete",
-      method = "POST",
-      headers = { ["Content-Type"] = "application/json" },
-      body = HttpService:JSONEncode({ userId = userId }),
-   })
-end
-
-local function createBillboard(player)
-   if not player or not player.Character then return end
-   local head = player.Character:FindFirstChild("Head") or player.Character:WaitForChild("Head", 5)
-   if not head then return end
-
-   local existing = head:FindFirstChild("FlamesHubBillboard")
-   if existing then existing:Destroy() end
-
-   local billboard = Instance.new("BillboardGui")
-   billboard.Name = "FlamesHubBillboard"
-   billboard.Adornee = head
-   billboard.Size = UDim2.new(0, 200, 0, 50)
-   billboard.StudsOffset = Vector3.new(0, 2.5, 0)
-   billboard.AlwaysOnTop = true
-   billboard.Parent = head
-
-   local label = Instance.new("TextLabel")
-   label.Size = UDim2.new(1, 0, 1, 0)
-   label.BackgroundTransparency = 0.2
-   label.TextScaled = true
-   label.Font = Enum.Font.GothamBold
-   label.TextStrokeTransparency = 0
-   label.Parent = billboard
-
-   local corner = Instance.new("UICorner")
-   corner.CornerRadius = UDim.new(0, 8)
-   corner.Parent = label
-
-   if watchedUserIds[player.UserId] then
-      label.Text = "🔥 FLAMES HUB | OWNER 🔥"
-      label.TextColor3 = Color3.fromRGB(255, 255, 255)
-      label.BackgroundColor3 = Color3.fromRGB(0, 16, 176)
-   else
-      label.Text = "🔥 FLAMES HUB | CLIENT 🔥"
-      label.TextColor3 = Color3.fromRGB(0, 0, 0)
-      label.BackgroundColor3 = Color3.fromRGB(245, 245, 245)
-      if label and label.Visible then
-         label.Visible = false
-      end
-   end
-end
-
-task.spawn(function()
-   apiSet({ userId = LocalPlayer.UserId, state = "enable" })
-   while task.wait(10) do
-      apiSet({ userId = LocalPlayer.UserId, state = "enable" })
-   end
-end)
-
-Players.PlayerRemoving:Connect(function(plr)
-   if plr == LocalPlayer then
-      apiDelete(LocalPlayer.UserId)
-   end
-end)
-
-task.spawn(function()
-   while task.wait(5) do
-      local list = apiList()
-      for uid, payload in pairs(list) do
-         local userId = tonumber(uid)
-         if userId then
-            local player = getgenv().Players:GetPlayerByUserId(userId)
-            if player then
-               task.spawn(createBillboard, player)
-            end
-         end
-      end
-   end
-end)
-
-Players.PlayerAdded:Connect(function(plr)
-   plr.CharacterAdded:Connect(function()
-      task.wait(1)
-      createBillboard(plr)
-   end)
-end)
-
-LocalPlayer.CharacterAdded:Connect(function(char)
-   task.wait(1)
-   createBillboard(LocalPlayer)
-end)
-
-task.spawn(function()
-   while task.wait(3) do
-      if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head") then
-         local head = LocalPlayer.Character:WaitForChild("Head", 3)
-
-         if not head:FindFirstChild("FlamesHubBillboard") then
-            createBillboard(LocalPlayer)
-         end
-      end
-   end
-end)
-task.wait(0.2)
-local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
-task.wait(0.2)
-getgenv().StarterGui = StarterGui
-
-getgenv().print_executor = function()
-   local function retrieve_executor()
-      local name
-      if identifyexecutor then
-         name = identifyexecutor()
-      end
-      return { Name = name or "Unknown Executor"}
-   end
-
-   local function identify_executor()
-      local executorDetails = retrieve_executor()
-      return string.format("%s", executorDetails.Name)
-   end
-   wait(0.1)
-   local executor_string = identify_executor()
-
-   return print(executor_string)
-end
-
-getgenv().warn_executor = function()
-   local function retrieve_executor()
-      local name
-      if identifyexecutor then
-         name = identifyexecutor()
-      end
-      return { Name = name or "Unknown Executor"}
-   end
-
-   local function identify_executor()
-      local executorDetails = retrieve_executor()
-      return string.format("%s", executorDetails.Name)
-   end
-   wait(0.1)
-   local executor_string = identify_executor()
-
-   return warn(executor_string)
-end
-
-function randomString()
-   local length = math.random(10,20)
-   local array = {}
-   for i = 1, length do
-      array[i] = string.char(math.random(32, 126))
-   end
-   return table.concat(array)
-end
 task.wait(0.2)
 function owner_joined(Name)
    getgenv().notify("Info", "The owner of the Life Together Admin Commands and Script Hub scripts has joined the server! Username: "..tostring(Name), 8)
 end
-
-getgenv().randomString = function()
-   local length = math.random(10,20)
-   local array = {}
-   for i = 1, length do
-      array[i] = string.char(math.random(32, 126))
-   end
-   return table.concat(array)
-end
-
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local GroupId = getgenv().Game.CreatorId
-local staffRoles = {
-   "Admin", "Technical Assistance", "Developer A", "Technical Lead", "Finance", "Owner", "QA Lead", "Creator"
-}
-
-local function isStaffRole(role)
-	for _, staff in ipairs(staffRoles) do
-		if role:lower():find(staff) then
-			return true
-		end
-	end
-	return false
-end
-
-if GroupId and GroupId > 0 and LocalPlayer:IsInGroup(GroupId) then
-	local role = LocalPlayer:GetRoleInGroup(GroupId)
-	if isStaffRole(role) then
-		LocalPlayer:Kick("\n\nRolewatch\nYou are in the group with a staff role: \"" .. role .. "\"")
-      wait(0.2)
-      while true do end
-	end
-end
-wait(0.2)
-local cmdp = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
-local cmdlp = cmdp.LocalPlayer
-
-function getHum(char)
-   if not char then return nil end
-
-   local hum = char:FindFirstChildWhichIsA("Humanoid")
-
-   if not hum then
-      hum = char:WaitForChild("Humanoid", 5)
-   end
-
-   if hum and hum:IsDescendantOf(workspace) then
-      return hum
-   end
-
-   return nil
-end
-wait(0.1)
-getgenv().getHuman = getHum
-
-function getRoot(char)
-   rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-   return rootPart
-end
-wait(0.1)
-getgenv().getRoot = getRoot
-wait()
-function findplr(args)
-   local tbl = cmdp:GetPlayers()
-
-   if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName or args == cmdlp then
-      return 
-   end
-
-   if args == "random" then
-      local validPlayers = {}
-      for _, v in pairs(tbl) do
-         if v ~= cmdlp then
-            table.insert(validPlayers, v)
-         end
-      end
-      return #validPlayers > 0 and validPlayers[math.random(1, #validPlayers)] or nil
-   end
-
-   if args == "new" then
-      local vAges = {}
-      for _, v in pairs(tbl) do
-         if v.AccountAge < 30 and v ~= cmdlp then
-            table.insert(vAges, v)
-         end
-      end
-      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-   end
-
-   if args == "old" then
-      local vAges = {}
-      for _, v in pairs(tbl) do
-         if v.AccountAge > 30 and v ~= cmdlp then
-            table.insert(vAges, v)
-         end
-      end
-      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-   end
-
-   if args == "bacon" then
-      local vAges = {}
-      for _, v in pairs(tbl) do
-         if v ~= cmdlp and v.Character and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
-            table.insert(vAges, v)
-         end
-      end
-      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-   end
-
-   if args == "friend" then
-      local friendList = {}
-      for _, v in pairs(tbl) do
-         if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-            table.insert(friendList, v)
-         end
-      end
-      return #friendList > 0 and friendList[math.random(1, #friendList)] or nil
-   end
-
-   if args == "notfriend" then
-      local vAges = {}
-      for _, v in pairs(tbl) do
-         if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-            table.insert(vAges, v)
-         end
-      end
-      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-   end
-
-   if args == "ally" then
-      local vAges = {}
-      for _, v in pairs(tbl) do
-         if v.Team == cmdlp.Team and v ~= cmdlp then
-            table.insert(vAges, v)
-         end
-      end
-      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-   end
-
-   if args == "enemy" then
-      local vAges = {}
-      for _, v in pairs(tbl) do
-         if v.Team ~= cmdlp.Team and v ~= cmdlp then
-            table.insert(vAges, v)
-         end
-      end
-      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-   end
-
-   if args == "near" then
-      local vAges = {}
-      for _, v in pairs(tbl) do
-         if v ~= cmdlp and v.Character and cmdlp.Character then
-            local vRootPart = getgenv().getRoot(v.Character)
-            local cmdlpRootPart = getgenv().getRoot(cmdlp.Character)
-            if vRootPart and cmdlpRootPart then
-               local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-               if distance < 30 then
-                  table.insert(vAges, v)
-               end
-            end
-         end
-      end
-      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-   end
-
-   if args == "far" then
-      local vAges = {}
-      for _, v in pairs(tbl) do
-         if v ~= cmdlp and v.Character and cmdlp.Character then
-            local vRootPart = getgenv().getRoot(v.Character)
-            local cmdlpRootPart = getgenv().getRoot(cmdlp.Character)
-            if vRootPart and cmdlpRootPart then
-               local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-               if distance > 30 then
-                  table.insert(vAges, v)
-               end
-            end
-         end
-      end
-      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-   end
-
-   if typeof(args) ~= "string" or args == "" then
-      return nil
-   end
-
-   for _, v in pairs(tbl) do
-      if v ~= cmdlp then
-         local name, display = v.Name:lower(), v.DisplayName:lower()
-         if name:find(args:lower()) or display:find(args:lower()) then
-            return v
-         end
-      end
-   end
-end
-wait(0.1)
-getgenv().findplr = findplr
-
-getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-queueteleport = getgenv().queueteleport
-
-local function init_services()
-   local services = {
-      "Players",
-      "Workspace",
-      "Lighting",
-      "ReplicatedStorage",
-      "TweenService",
-      "RunService",
-      "MaterialService",
-      "ReplicatedFirst",
-      "Teams",
-      "StarterPack",
-      "StarterPlayer",
-      "VoiceChatInternal",
-      "VoiceChatService",
-      "CoreGui",
-      "SoundService",
-      "StarterGui",
-      "MarketplaceService",
-      "TeleportService",
-      "Chat",
-      "AssetService",
-      "HttpService",
-      "UserInputService",
-      "TextChatService",
-      "ContextActionService",
-      "GuiService",
-      "PhysicsService",
-      "ScriptContext"
-   }
-
-   for _, serviceName in pairs(services) do
-      getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
-   end
-   wait(0.1)
-   if getgenv().StarterPlayer:FindFirstChildOfClass("StarterPlayerScripts") then
-      getgenv().StarterPlayerScripts = getgenv().StarterPlayer:FindFirstChildOfClass("StarterPlayerScripts") or getgenv().StarterPlayer:FindFirstChildWhichIsA("StarterPlayerScripts")
-   end
-   if getgenv().StarterPlayer:FindFirstChildOfClass("StarterCharacterScripts") then
-      getgenv().StarterCharacterScripts = getgenv().StarterPlayer:FindFirstChildOfClass("StarterCharacterScripts") or getgenv().StarterPlayer:FindFirstChildWhichIsA("StarterCharacterScripts")
-   end
-end
-wait()
-init_services()
-task.wait()
-local HttpService = cloneref and cloneref(getgenv().Game:GetService("HttpService")) or getgenv().Game:GetService("HttpService")
-local Players = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
-local RunService = cloneref and cloneref(getgenv().Game:GetService("RunService")) or getgenv().Game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-local ReplicatedStorage = cloneref and cloneref(getgenv().Game:GetService("ReplicatedStorage")) or getgenv().Game:GetService("ReplicatedStorage")
-local Workspace = cloneref and cloneref(getgenv().Game:GetService("Workspace")) or getgenv().Game:GetService("Workspace")
-local Modules = ReplicatedStorage:WaitForChild("Modules")
-local Core = Modules:WaitForChild("Core")
-local Game = Modules:WaitForChild("Game")
-local Invisible_Module = require(Game:FindFirstChild("InvisibleMode"))
-local Billboard_GUI = require(Game:FindFirstChild("CharacterBillboardGui"))
-local PlotMarker = require(Game:FindFirstChild("PlotMarker"))
-local Data = require(Core:FindFirstChild("Data"))
-local Phone_Module = Game:FindFirstChild("Phone")
-local Phone = require(Game:FindFirstChild("Phone"))
-local Privacy = require(Core:FindFirstChild("Privacy"))
-local AppModules = Phone_Module:FindFirstChild("AppModules")
-local Messages = require(AppModules:FindFirstChild("Messages"))
-local Network = require(Core:FindFirstChild("Net"))
-local CCTV = require(Game:FindFirstChild("CCTV"))
-local Tween = require(Core:FindFirstChild("Tween"))
-local Modules = ReplicatedStorage:FindFirstChild("Modules")
-local CCTV = require(Game:FindFirstChild("CCTV"))
-wait(0.1)
-function show_notification(Title, Text, Method, Image)
-   if Method == "Normal" and not Image then
-      Phone.show_notification(tostring(Title), tostring(Text))
-   elseif Method == "Warning" then
-      Phone.show_notification(
-         tostring(Title),
-         tostring(Text),
-         nil,
-         "rbxassetid://13828984843"
-      )
-   elseif Method == "Error" then
-      Phone.show_notification(
-         tostring(Title),
-         tostring(Text),
-         nil,
-         "rbxassetid://14930908086"
-      )
-   end
-end
-wait(0.2)
-getgenv().Modules = Modules
-getgenv().Core = Core
-getgenv().Game_Folder = Game
-getgenv().Net = Network
-wait(0.1)
-function send_function(...)
-   Network.get(...)
-end
-
-function send_remote(...)
-   Network.send(...)
-end
-wait(0.1)
-getgenv().Get = send_function
-getgenv().Send = send_remote
-wait()
-local FireReparented_Folder
-task.wait(0.3)
-function create_script_fire_folder()
-   if not getgenv().StarterGui:FindFirstChild("FireTemporaryReparentFolder") then
-      FireReparented_Folder = Instance.new("Folder")
-      FireReparented_Folder.Name = "FireTemporaryReparentFolder"
-      FireReparented_Folder.Parent = getgenv().StarterGui
-   else
-      FireReparented_Folder = getgenv().StarterGui:FindFirstChild("FireTemporaryReparentFolder")
-   end
-end
-task.wait(0.2)
-create_script_fire_folder()
-wait()
-function change_vehicle_color(Color, Vehicle)
-   send_remote("vehicle_color", Color, Vehicle)
-end
-
-function sit_in_vehicle(Vehicle)
-   if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle! spawn one.", 5) end
-
-   getgenv().Get("sit", Vehicle)
-   wait(0.1)
-   if Vehicle:FindFirstChild("VehicleSeat") then
-      Vehicle:FindFirstChild("VehicleSeat"):Sit(getgenv().Humanoid)
-   else
-      return getgenv().notify("Error", "Unable to sit in Vehicle, missing VehicleSeat!", 5)
-   end
-end
-
-function spawn_any_vehicle(Vehicle)
-   getgenv().Get("spawn_vehicle", Vehicle)
-end
-
-local function get_vehicle()
-   for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
-      if v.owner.Value == getgenv().LocalPlayer then
-         return v
-      end
-   end
-
-   return nil
-end
-wait(0.2)
-getgenv().get_vehicle = get_vehicle
-
-local function Get_Char(Player)
-   if not Player or not Player.Character then
-      local Char = nil
-      local conn
-      conn = Player.CharacterAdded:Connect(function(c)
-         Char = c
-      end)
-
-      repeat task.wait() until Char or not Player.Parent
-      if conn then conn:Disconnect() end
-      return Char
-   end
-   return Player.Character
-end
-
-wait(0.1)
-getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
-getgenv().Camera = getgenv().Workspace.CurrentCamera
-getgenv().LocalPlayer = getgenv().Players.LocalPlayer
-getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
-getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
-getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait() or Get_Char(getgenv().LocalPlayer)
-wait(0.1)
-for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
-   if v:IsA("Frame") and v.Name == "SidebarButtonHolder" and string.find(v.Parent.Name, "OpenPhone") then
-      v.Position = UDim2.new(0.925, 0, 0.35, 0)
-   end
-end
-wait()
-for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
-   if v:IsA("Frame") and v.Name == "VehicleSpeedFrame" then
-      if v:FindFirstChild("Slider"):FindFirstChild("Title") then
-         local Title = v:FindFirstChild("Slider"):FindFirstChild("Title")
-
-         Title.TextScaled = false
-         Title.TextSize = 21
-         Title.TextColor3 = Color3.fromRGB(0, 255, 0)
-         Title.Text = "SPEED (Hello from: Flames Hub)!"
-      end
-   end
-end
-wait()
-getgenv().notify("Success", "SPOOFING NOTIFICATION COUNTERS...", 5)
-
-local gui = getgenv().PlayerGui
-local TweenService = getgenv().TweenService
-getgenv().RainbowTopBar = true
-local PhoneClock = gui:FindFirstChild("PhoneClock", true)
-local TopBar_Icons = PhoneClock and PhoneClock.Parent:FindFirstChildOfClass("Frame")
-local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-
-getgenv().notify("Success", "STARTING RGB HUE COLOR CYCLE ON PHONE...", 5)
-
-local function cycle_color()
-   local hue = 0
-   while getgenv().RainbowTopBar do
-      if not PhoneClock or not TopBar_Icons then break end
-
-      if hue > 1 then hue = 0 end
-      local color = Color3.fromHSV(hue, 1, 1)
-
-      if PhoneClock:IsA("TextLabel") then
-         TweenService:Create(PhoneClock, tweenInfo, {TextColor3 = color}):Play()
-      end
-
-      for _, obj in ipairs(TopBar_Icons:GetChildren()) do
-         if obj:IsA("ImageLabel") then
-            TweenService:Create(obj, tweenInfo, {ImageColor3 = color}):Play()
-         end
-      end
-
-      hue = hue + 0.02
-      task.wait(0.05)
-   end
-end
-
-task.spawn(cycle_color)
-
-function update_counter_notif_label(label, input_number)
-   local Inputted_Number = tostring(input_number)
-   label.Text = Inputted_Number
-
-   if label.Parent and label.Parent:IsA("Frame") then
-      if not label.Parent.Visible then
-         label.Parent.Visible = true
-      end
-   end
-
-   label.TextScaled = true
-
-   if not label.Visible then
-      label.Visible = true
-   end
-end
-
-function toggle_flash_priv_server_time(toggle)
-   if toggle == true then
-      getgenv().Send("time_toggle", true)
-      task.wait(0.2)
-      getgenv().ChangingTime_Fast_FE = true
-      while getgenv().ChangingTime_Fast_FE == true do
-      task.wait(0)
-         getgenv().Send("change_time", 4.5)
-         task.wait(0)
-         getgenv().Send("change_time", 5.5)
-         task.wait(0)
-         getgenv().Send("change_time", 12)
-         task.wait(0)
-         getgenv().Send("change_time", 18.5)
-         task.wait(0)
-         getgenv().Send("change_time", 23)
-      end
-   elseif toggle == false then
-      getgenv().ChangingTime_Fast_FE = false
-      repeat task.wait() until getgenv().ChangingTime_Fast_FE == false
-      getgenv().Send("time_toggle", false)
-   end
-end
-
-local function setup_label(label, targetText)
-   label.Text = targetText
-
-   if label.Parent and label.Parent:IsA("Frame") then
-      label.Parent.Visible = true
-
-      if label.Parent.Name == "SumNotificationCount" then
-         label.Parent.Size = UDim2.new(0.4, 0, 0.4, 0)
-      end
-   end
-
-   local connection = label:GetPropertyChangedSignal("Text"):Connect(function()
-      if label.Text ~= targetText then
-         update_counter_notif_label(label, targetText)
-      end
-   end)
-
-   return connection
-end
-
-local function wait_for_single(name)
-   local label
-   repeat
-      label = gui:FindFirstChild(name, true)
-      task.wait()
-   until label and label:IsA("TextLabel")
-   return label
-end
-
-getgenv().notify("Success", "STARTED RGB HUE COLOR CYCLE.", 5)
-
-local function wait_for_multiple(name)
-   local results = {}
-   repeat
-      results = {}
-      for _, v in ipairs(gui:GetDescendants()) do
-         if v:IsA("TextLabel") and v.Name == name then
-            table.insert(results, v)
-         end
-      end
-      task.wait()
-   until #results > 0
-   return results
-end
-
-local counter_label = wait_for_single("SumNotificationCountLabel")
-getgenv().ActivelyChanging_CounterLabel = setup_label(counter_label, "999+")
-
-local notif_labels = wait_for_multiple("AppNotificationCountLabel")
-getgenv().ActivelyChanging_NotifCountingLabel = {}
-for _, label in ipairs(notif_labels) do
-   table.insert(getgenv().ActivelyChanging_NotifCountingLabel, setup_label(label, "999+"))
-end
-
-gui.DescendantAdded:Connect(function(obj)
-   if obj:IsA("TextLabel") then
-      if obj.Name == "SumNotificationCountLabel" then
-         if getgenv().ActivelyChanging_CounterLabel then
-            getgenv().ActivelyChanging_CounterLabel:Disconnect()
-         end
-         getgenv().ActivelyChanging_CounterLabel = setup_label(obj, "999+")
-      elseif obj.Name == "AppNotificationCountLabel" then
-         table.insert(getgenv().ActivelyChanging_NotifCountingLabel, setup_label(obj, "999+"))
-      end
-   end
-end)
-wait(0.1)
-getgenv().notify("Success", "Spoofed notification counter numbers.", 5)
 wait(0.1)
 getgenv().LocalPlayer.OnTeleport:Connect(function(State)
    if (not getgenv().TeleportCheck_Admin) and getgenv().queueteleport then
@@ -1069,363 +197,8 @@ getgenv().LocalPlayer.OnTeleport:Connect(function(State)
 end)
 
 wait(0.3)
-if not getgenv().Players then
-   warn("getgenv().Players was not detected, fixing...")
-   getgenv().Players = Service_Wrap("Players")
-end
-if not getgenv().ReplicatedStorage then
-   warn("getgenv().ReplicatedStorage was not detected, fixing...")
-   getgenv().ReplicatedStorage = Service_Wrap("ReplicatedStorage")
-end
-if not getgenv().TextChatService then
-   warn("getgenv().TextChatService was not detected, fixing...")
-   getgenv().TextChatService = Service_Wrap("TextChatService")
-end
-if not getgenv().Workspace then
-   warn("getgenv().Workspace was not detected, fixing...")
-   getgenv().Workspace = Service_Wrap("Workspace")
-end
-if not getgenv().Lighting then
-   warn("getgenv().Lighting was not detected, fixing...")
-   getgenv().Lighting = Service_Wrap("Lighting")
-end
 if not getgenv().LocalPlayer then
-   warn("getgenv().LocalPlayer was not detected, fixing...")
-   task.wait()
-   getgenv().LocalPlayer = getgenv().Players.LocalPlayer or Service_Wrap("Players").LocalPlayer
-end
-
-function create_void_part()
-   if getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") then return end
-   task.wait(0.1)
-   local Kill_Model_Script = Instance.new("Model")
-   Kill_Model_Script.Name = "Void_Model_Script(KEEP)"
-   Kill_Model_Script.Parent = getgenv().Workspace
-   task.wait(0.1)
-   local Kill_Part = Instance.new("Part")
-   Kill_Part.Name = "SCRIPT_VOIDPART_VOID"
-   Kill_Part.Anchored = true
-   Kill_Part.CanCollide = false
-   Kill_Part.Size = Vector3.new(10, 10, 10)
-   Kill_Part.CFrame = CFrame.new(9e9, 9e9, 9e9)
-   Kill_Part.Parent = Kill_Model_Script
-end
-
-wait()
-function create_kill_part()
-   if getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") then return end
-   task.wait(0.1)
-   local Kill_Model_Script = Instance.new("Model")
-   Kill_Model_Script.Name = "Kill_Model_Script(KEEP)"
-   Kill_Model_Script.Parent = getgenv().Workspace
-   task.wait(0.1)
-   local Kill_Part = Instance.new("Part")
-   Kill_Part.Name = "SCRIPT_KILLPART_VOID"
-   Kill_Part.Anchored = true
-   Kill_Part.CanCollide = false
-   Kill_Part.Size = Vector3.new(10, 10, 10)
-   Kill_Part.CFrame = CFrame.new(0, -470, 0)
-   Kill_Part.Parent = Kill_Model_Script
-end
-wait(0.1)
-function vehicle_kill_player(TargetPlayer)
-   if not TargetPlayer or not TargetPlayer.Character then return end
-   local targetChar = TargetPlayer.Character
-   local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
-   if not targetHRP then return end
-
-   local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-
-   local voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)")
-   if not voidPart then create_kill_part() voidPart = getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") end
-   local voidCF = voidPart:FindFirstChild("SCRIPT_KILLPART_VOID") and voidPart:FindFirstChild("SCRIPT_KILLPART_VOID").CFrame
-   if not voidCF then return end
-
-   local MyPlayer = getgenv().LocalPlayer
-   local MyChar = getgenv().Character or MyPlayer.Character
-   local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
-   local MyBus = nil
-
-   for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
-      if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
-         if v:FindFirstChild("VehicleSeat") then
-            MyBus = v
-            break
-         end
-      end
-   end
-
-   if not MyBus then return warn("No owned SchoolBus found") end
-   local seat = MyBus:FindFirstChild("VehicleSeat")
-   if seat and MyHumanoid then
-      MyChar:PivotTo(seat.CFrame)
-      task.wait(0.2)
-      seat:Sit(MyHumanoid)
-   end
-
-   local maxTries = 40
-   for i = 1, maxTries do
-      local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
-      local isSitting = targetHumanoid and targetHumanoid.Sit
-      if isSitting then break end
-
-      MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
-      task.wait(0.2)
-   end
-   wait(0.1)
-   MyBus:PivotTo(voidCF)
-   wait(0.4)
-   local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
-   if getgenv().Humanoid.Sit then
-      getgenv().Humanoid:ChangeState(3)
-      wait(0.1)
-      myHRP.CFrame = Old_CF
-      wait(0.5)
-      if not get_vehicle() then return end
-
-      spawn_any_vehicle(tostring(get_vehicle().Name))
-   end
-   if myHRP then
-      myHRP.CFrame = Old_CF
-      wait(0.5)
-      if not get_vehicle() then return end
-
-      spawn_any_vehicle(tostring(get_vehicle().Name))
-   end
-end
-
-local Players = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Owners = {
-   ["L0CKED_1N1"] = true,
-   ["CHEATING_B0SS"] = true,
-}
-getgenv().ShowTitle = getgenv().ShowTitle or true
-local TITLE_TEXT = "🔥 Flames Hub | Owner 🔥"
-local TITLE_COLOR = Color3.fromRGB(196, 40, 28)
-local NOTE_TEXT = "Talk to me if you ever need support with the script 👍."
-local NOTE_COLOR = Color3.fromRGB(255, 255, 255)
-
-local function createBillboard_Support(player)
-   if player == LocalPlayer then return end
-   if not Owners[player.Name] then return end
-
-   local character = player.Character or player.CharacterAdded:Wait()
-   local head = character:WaitForChild("Head", 1)
-   if not head then return warn("Could not find Head for: " .. tostring(player.Name)) end
-
-   if head:FindFirstChild("CustomTitle") then
-      head.CustomTitle:Destroy()
-   end
-
-   local billboard = Instance.new("BillboardGui")
-   billboard.Name = "CustomTitle"
-   billboard.Adornee = head
-   billboard.Size = UDim2.new(0, 300, 0, 110)
-   billboard.StudsOffset = Vector3.new(0, 6, 0)
-   billboard.AlwaysOnTop = true
-   billboard.Parent = head
-
-   local noteBox = Instance.new("Frame")
-   noteBox.Size = UDim2.new(1, 0, 0.4, 0)
-   noteBox.Position = UDim2.new(0, 0, 0, 0)
-   noteBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-   noteBox.BackgroundTransparency = 0.3
-   noteBox.Parent = billboard
-
-   local noteCorner = Instance.new("UICorner")
-   noteCorner.CornerRadius = UDim.new(0, 8)
-   noteCorner.Parent = noteBox
-
-   local note = Instance.new("TextLabel")
-   note.Size = UDim2.new(1, -10, 1, -4)
-   note.Position = UDim2.new(0, 5, 0, 2)
-   note.BackgroundTransparency = 1
-   note.Text = NOTE_TEXT
-   note.TextColor3 = NOTE_COLOR
-   note.Font = Enum.Font.GothamSemibold
-   note.TextScaled = true
-   note.TextWrapped = true
-   note.Parent = noteBox
-
-   local titleBox = Instance.new("Frame")
-   titleBox.Size = UDim2.new(1, 0, 0.6, 0)
-   titleBox.Position = UDim2.new(0, 0, 0.4, 0)
-   titleBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-   titleBox.BackgroundTransparency = 0.2
-   titleBox.Parent = billboard
-
-   local titleCorner = Instance.new("UICorner")
-   titleCorner.CornerRadius = UDim.new(0, 10)
-   titleCorner.Parent = titleBox
-
-   local title = Instance.new("TextLabel")
-   title.Size = UDim2.new(1, -10, 1, -4)
-   title.Position = UDim2.new(0, 5, 0, 2)
-   title.BackgroundTransparency = 1
-   title.Text = TITLE_TEXT
-   title.TextColor3 = TITLE_COLOR
-   title.Font = Enum.Font.GothamBold
-   title.TextScaled = true
-   title.TextWrapped = true
-   title.Parent = titleBox
-   title.Name = "ToggleTitle"
-
-   billboard.Enabled = true
-   title.Visible = getgenv().ShowTitle
-end
-
-local function refreshTitles()
-   for _, player in ipairs(Players:GetPlayers()) do
-      createBillboard_Support(player)
-   end
-end
-
-refreshTitles()
-
-Players.PlayerAdded:Connect(function(p)
-   p.CharacterAdded:Connect(function()
-      p.CharacterAdded:Wait()
-      createBillboard_Support(p)
-   end)
-end)
-
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "TitleToggleUI"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.IgnoreGuiInset = true
-if gethui then ScreenGui.Parent = gethui() else ScreenGui.Parent = getgenv().Game.CoreGui end
-
-local Button = Instance.new("TextButton")
-Button.Size = UDim2.new(0, 140, 0, 40)
-Button.Position = UDim2.new(1, -150, 1, -50)
-Button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button.Font = Enum.Font.GothamBold
-Button.TextSize = 16
-Button.TextScaled = true
-Button.Text = "Hide Owner Title"
-Button.Parent = ScreenGui
-Button.AutoButtonColor = true
-if Button.Visible then
-   Button.Visible = false
-end
-
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 10)
-UICorner.Parent = Button
-
-Button.MouseButton1Click:Connect(function()
-   getgenv().ShowTitle = not getgenv().ShowTitle
-   Button.Text = getgenv().ShowTitle and "Hide Owner Title" or "Show Owner Title"
-
-   for _, player in ipairs(Players:GetPlayers()) do
-      local char = player.Character
-      if char and char:FindFirstChild("Head") then
-         local gui = char.Head:FindFirstChild("CustomTitle")
-         if gui then
-            local toggleTitle = gui:FindFirstChild("ToggleTitle")
-            if toggleTitle then
-               toggleTitle.Visible = getgenv().ShowTitle
-            end
-         end
-      end
-   end
-end)
-
-function vehicle_void_player(TargetPlayer)
-   if not TargetPlayer or not TargetPlayer.Character then return end
-   local targetChar = TargetPlayer.Character
-   local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
-   if not targetHRP then return end
-
-   local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-
-   local voidPart = getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)")
-   if not voidPart then create_kill_part() voidPart = getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") end
-   local voidCF = voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID") and voidPart:FindFirstChild("SCRIPT_VOIDPART_VOID").CFrame
-   if not voidCF then return end
-
-   local MyPlayer = getgenv().LocalPlayer
-   local MyChar = getgenv().Character or MyPlayer.Character
-   local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
-   local MyBus = nil
-
-   for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
-      if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
-         if v:FindFirstChild("VehicleSeat") then
-            MyBus = v
-            break
-         end
-      end
-   end
-
-   if not MyBus then return warn("No owned SchoolBus found") end
-   local seat = MyBus:FindFirstChild("VehicleSeat")
-   if seat and MyHumanoid then
-      MyChar:PivotTo(seat.CFrame)
-      task.wait(0.2)
-      seat:Sit(MyHumanoid)
-   end
-
-   local maxTries = 40
-   for i = 1, maxTries do
-      local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
-      local isSitting = targetHumanoid and targetHumanoid.Sit
-      if isSitting then break end
-
-      MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.1, 0))
-      task.wait(0.2)
-   end
-   wait(0.1)
-   MyBus:PivotTo(voidCF)
-   wait(0.4)
-   local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
-   if getgenv().Humanoid.Sit then
-      getgenv().Humanoid:ChangeState(3)
-      wait(0.1)
-      myHRP.CFrame = Old_CF
-      wait(0.5)
-      if not get_vehicle() then return end
-
-      spawn_any_vehicle(tostring(get_vehicle().Name))
-   end
-   if myHRP then
-      myHRP.CFrame = Old_CF
-      wait(0.5)
-      if not get_vehicle() then return end
-
-      spawn_any_vehicle(tostring(get_vehicle().Name))
-   end
-end
-
-if not getgenv().Workspace:FindFirstChild("Kill_Model_Script(KEEP)") then
-   create_kill_part()
-end
-if not getgenv().Workspace:FindFirstChild("Void_Model_Script(KEEP)") then
-   create_void_part()
-end
-
-if not getgenv().Anti_Idle_Controller_Loaded then
-   if getconnections or get_signal_cons then
-      getgenv().notify("Info", "Loading Anti-Idle controller...", 5)
-      local GC = getconnections or get_signal_cons
-
-      getgenv().Anti_Idle_Controller_Loaded = true
-      getgenv().LocalPlayer.Idled:Connect(function()
-         wait(2.5)
-         for i,v in pairs(GC(getgenv().LocalPlayer.Idled)) do
-            if v["Disable"] then
-               v["Disable"](v)
-            elseif v["Disconnect"] then
-               v["Disconnect"](v)
-            end
-         end
-         getgenv().Humanoid:ChangeState(3)
-      end)
-   end
-else
-   getgenv().notify("Warning", "You've already loaded our Anti-Idle controller!", 6)
+   getgenv().LocalPlayer = getgenv().Players and getgenv().Players.LocalPlayer or Service_Wrap("Players").LocalPlayer
 end
 
 local function decodeHTMLEntities(str)
@@ -1436,180 +209,10 @@ local function decodeHTMLEntities(str)
               :gsub("&#39;", "'")
 end
 
-function vehicle_skydive_player(TargetPlayer)
-   if not TargetPlayer or not TargetPlayer.Character then return end
-   local targetChar = TargetPlayer.Character
-   local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
-   if not targetHRP then return end
-
-   local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-
-   local skydive_pos = Vector3.new(-250.02537536621094, 4000.80411911010742, 194.1149139404297)
-   local skydive_cf = CFrame.new(skydive_pos)
-
-   local MyPlayer = game.Players.LocalPlayer
-   local MyChar = getgenv().Character or MyPlayer.Character
-   local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
-   local MyBus = nil
-
-   for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
-      if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
-         if v:FindFirstChild("VehicleSeat") then
-            MyBus = v
-            break
-         end
-      end
-   end
-
-   if not MyBus then return warn("No owned SchoolBus found") end
-   local seat = MyBus:FindFirstChild("VehicleSeat")
-   if seat and MyHumanoid then
-      MyChar:PivotTo(seat.CFrame)
-      task.wait(0.2)
-      seat:Sit(MyHumanoid)
-   end
-
-   local maxTries = 40
-   for i = 1, maxTries do
-      local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
-      local isSitting = targetHumanoid and targetHumanoid.Sit
-      if isSitting then break end
-
-      MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
-      task.wait(0.2)
-   end
-
-   wait(0.1)
-   MyBus:PivotTo(skydive_cf)
-   wait(0.4)
-
-   local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
-   if getgenv().Humanoid.Sit then
-      getgenv().Humanoid:ChangeState(3)
-      wait(0.1)
-      myHRP.CFrame = Old_CF
-      wait(0.5)
-      if not get_vehicle() then return end
-
-      spawn_any_vehicle(tostring(get_vehicle().Name))
-   end
-
-   if myHRP then
-      myHRP.CFrame = Old_CF
-      wait(0.5)
-      if not get_vehicle() then return end
-      
-      spawn_any_vehicle(tostring(get_vehicle().Name))
-   end
-end
-
-wait()
-function vehicle_bring_player(TargetPlayer)
-   if not TargetPlayer or not TargetPlayer.Character then return end
-   local targetChar = TargetPlayer.Character
-   local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
-   if not targetHRP then return end
-   wait(0.2)
-   local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-
-   local MyPlayer = getgenv().LocalPlayer
-   local MyChar = getgenv().Character or MyPlayer.Character
-   local MyHumanoid = getgenv().Humanoid or MyChar:FindFirstChildWhichIsA("Humanoid")
-   local MyBus = nil
-
-   for _, v in ipairs(getgenv().Workspace.Vehicles:GetChildren()) do
-      if v:IsA("Model") and v:FindFirstChild("owner") and v.owner.Value == MyPlayer then
-         if v:FindFirstChild("VehicleSeat") then
-            MyBus = v
-            break
-         end
-      end
-   end
-
-   if not MyBus then return warn("No owned SchoolBus found") end
-   local seat = MyBus:FindFirstChild("VehicleSeat")
-   if seat and MyHumanoid then
-      MyChar:PivotTo(seat.CFrame)
-      task.wait(0.2)
-      seat:Sit(MyHumanoid)
-   end
-
-   local maxTries = 40
-   for i = 1, maxTries do
-      local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
-      local isSitting = targetHumanoid and targetHumanoid.Sit
-      if isSitting then break end
-
-      MyBus:PivotTo(targetHRP.CFrame + Vector3.new(0, 0.3, 0))
-      task.wait(0.4)
-   end
-   wait(0.1)
-   MyBus:PivotTo(Old_CF)
-   wait(0.4)
-   local myHRP = getgenv().Character:FindFirstChild("HumanoidRootPart")
-   if getgenv().Humanoid.Sit then
-      getgenv().Humanoid:ChangeState(3)
-      wait(0.1)
-      myHRP.CFrame = Old_CF
-      wait(0.5)
-      if not get_vehicle() then return end
-
-      spawn_any_vehicle(tostring(get_vehicle().Name))
-   end
-   if myHRP then
-      myHRP.CFrame = Old_CF
-      wait(0.5)
-      if not get_vehicle() then return end
-
-      spawn_any_vehicle(tostring(get_vehicle().Name))
-   end
-end
-
-local function SafeGetHumanoid(char)
-	local hum = char:FindFirstChildWhichIsA("Humanoid")
-
-	if hum and hum:IsA("Humanoid") then
-		return hum
-	else
-		return char:WaitForChild("Humanoid", 5)
-	end
-end
-
-local function SafeGetHead(char)
-	local head = char:FindFirstChild("Head")
-	if head and head:IsA("BasePart") then
-		return head
-	else
-		return char:WaitForChild("Head", 5)
-	end
-end
-
-local function SafeGetHRP(char)
-	local hrp = char:FindFirstChild("HumanoidRootPart")
-	if hrp and hrp:IsA("BasePart") then
-		return hrp
-	else
-		return char:WaitForChild("HumanoidRootPart", 5)
-	end
-end
-
 getgenv().walkflinging = getgenv().walkflinging or false
 local Animate_Disabled = false
-getgenv().HumanoidRootPart = SafeGetHRP(getgenv().Character)
-getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
-getgenv().Head = SafeGetHead(getgenv().Character)
 wait(0.5)
 local function Dynamic_Character_Updater(character)
-	getgenv().Character = character
-	wait(0.4)
-   if getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") then
-      getgenv().HumanoidRootPart = SafeGetHRP(character)
-      getgenv().Humanoid = SafeGetHumanoid(character)
-      getgenv().Head = SafeGetHead(character)
-   elseif not getgenv().Character then
-      repeat task.wait() until character
-      getgenv().Character = character
-   end
    local Animate = character:WaitForChild("Animate", 3)
    if Animate_Disabled or Animate_Disabled == true then
       if Animate then
@@ -1617,9 +220,9 @@ local function Dynamic_Character_Updater(character)
       end
    end
    if getgenv().Is_Currently_Emoting then
-      getgenv().notify("Warning", "Emoting was enabled when respawning, we disabled it, don't worry.", 6)
+      getgenv().notify("Info", "Emoting was enabled when respawning, we disabled it, don't worry.", 6)
       getgenv().Is_Currently_Emoting = false
-      getgenv().Character:WaitForChild("Animate", 1).Disabled = false
+      getgenv().Character:WaitForChild("Animate", 3).Disabled = false
    end
    task.wait(0.3)
    if getgenv().Humanoid then
@@ -1633,105 +236,9 @@ end
 Dynamic_Character_Updater(getgenv().Character)
 task.wait(0.2)
 getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-	task.wait(0.2)
-	Dynamic_Character_Updater(newCharacter)
-	repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
-	wait(0.5)
-   getgenv().Character = newCharacter
-   if getgenv().walkflinging then
-      getgenv().notify("Warning", "WalkFling enabled on death, disabling...", 5)
-      getgenv().walkflinging = false
-      if getgenv().WalkFlinging_Connection then
-         getgenv().WalkFlinging_Connection:Disconnect()
-         getgenv().WalkFlinging_Connection = nil
-      end
-      getgenv().notify("Success", "WalkFling has been disabled.", 5)
-   end
-   wait(0.2)
-	getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
-	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
-	getgenv().Head = SafeGetHead(newCharacter)
-   wait(0.3)
-   if getgenv().Humanoid then
-      getgenv().Humanoid.JumpHeight = 7
-      getgenv().Humanoid.JumpPower = 50
-   elseif getgenv().Character then
-      getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
-      wait(0.3)
-      getgenv().Humanoid.JumpHeight = 7
-   else
-      getgenv().notify("Error", "It seems we we're unable to update your Humanoid properly, please reset!", 8)
-   end
-   if getgenv().Not_Ever_Sitting then
-      if getgenv().Humanoid then
-         getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-      end
-      wait()
-      getgenv().notify("Warning", "We disabled the sitting function again (anti-sit is enabled).", 5)
-   end
-   getgenv().Is_Currently_Emoting = false
-	wait(0.2)
 	Dynamic_Character_Updater(newCharacter)
 end)
 
--- try and outsmart directory wide searching with effective-ness Life Together RP, you'll never patch this Logs disabler, you'd have to remove it other-wise.
--- there is quite literally no where else these dick-heads could put it to beat this system, they'd have to remove it entirely to "patch this".
--- and even if they did, it wouldn't touch my script at all, since I have 'if' checks everywhere, so, they are forced to do 1 thing and 1 thing only (delete it).
-local Directories = {
-   ["ReplicatedFirst"] = true,
-   ["ReplicatedStorage"] = true,
-   ["Workspace"] = true,
-   ["TweenService"] = true,
-   ["SoundService"] = true,
-   ["Players"] = true,
-   ["Lighting"] = true,
-   ["MaterialService"] = true,
-   ["Teams"] = true,
-   ["StarterGui"] = true,
-   ["StarterPack"] = true,
-   ["Chat"] = true,
-   ["TextChatService"] = true,
-   ["StarterPlayer"] = true,
-}
-
--- [[ If you use this code, it'll break the game. ]] --
---[[for serviceName in pairs(Directories) do
-   local service = getgenv().Game:GetService(serviceName)
-   if service then
-      for _, descendant in ipairs(service:GetDescendants()) do
-         if descendant:IsA("LocalScript") and descendant.Name:lower():find("logs") then
-            descendant.Disabled = true
-         end
-      end
-   end
-end--]]
-
--- [[ Reduces the spammy and un-necessary logging in the game. ]] --
-local playerScripts = getgenv().PlayerScripts
-if playerScripts then
-   local clientBase = playerScripts:FindFirstChild("ClientBase")
-   if clientBase then
-      local logsScript = clientBase:FindFirstChild("Logs")
-      if logsScript and logsScript:IsA("LocalScript") then
-         logsScript.Disabled = true
-      end
-   end
-end
-
--- [[ Disables the StarterPlayerScripts logging LocalScript package. ]] --
-local sps = getgenv().StarterPlayerScripts
-if sps then
-   local package = sps:FindFirstChild("StarterPlayerScripts_Package")
-   if package then
-      local clientBase = package:FindFirstChild("ClientBase")
-      if clientBase then
-         local logsScript = clientBase:FindFirstChild("Logs")
-         if logsScript and logsScript:IsA("LocalScript") then
-            logsScript.Disabled = true
-         end
-      end
-   end
-end
 wait(0.5)
 -- [[ Function to check if the script is supported and works on the current executor. ]] --
 local success, response = pcall(function()
@@ -1765,91 +272,7 @@ else
       return getgenv().notify("Error", "You cannot run this script on this executor, we're sorry! (if you believe this was in error, re-run the script).", 12)
    end
 end
-wait()
--- [[ Coming Soon ]] --
---[[local Defaults = {
-   ["Vehicle"] = "None", -- Or the vehicle name, example: "SVJ".
-   ["AntiSit"] = false,
-   ["RGBPhone"] = false,
-   ["RGBVehicle"] = false,
-   ["Noclip"] = false,
-   ["AntiHouseBan"] = false,
-   ["AntiFling"] = false,
-   ["FreePay"] = false,
-   ["Vehicle0To60"] = 0.2,
-   ["VehicleSpeed"] = 300, -- The default maximum speed for Life Together RP vehicles (when you have LifePay Premium, but can be higher to what ever you want with the script).
-   ["VehicleAcceleration"] = 200, -- Just to be clear, this is the vehicle Maximum Acceleration, not the take off time (that's "Vehicle0To60")
-   -- These are my two personal setups I use, even though I am not a developer or an admin lol.
-   ["Name"] = "DEVELOPER",
-   ["Bio"] = "-AURA-",
-}--]]
-wait()
-local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local fileName = "LifeTogether_Admin_Configuration.json"
--- [[ Now we have an allowed Prefix system, so we can correctly modify your Prefix if it's broken. ]] --
-local Allowed_Prefixes = {
-   "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "_", "+", ",",
-   ".", "/", ">", "<", "?", "~", "`", "}", "{", "[", "]", ":", "1", "2", "3", "4", "5", "·", "•", "∙", "⋅", "£"
-}
-local function isAllowedPrefix(prefix)
-   for _, p in ipairs(Allowed_Prefixes) do
-      if prefix == p then
-         return true
-      end
-   end
-   return false
-end
--- [[ Now checks if your Prefix is allowed or not, so we can always check if it's broken or not. ]] --
-
-local function loadPrefix()
-   local defaultPrefix = "-"
-   local data = { prefix = defaultPrefix }
-
-   if isfile and isfile(fileName) then
-      local success, decoded = pcall(function()
-         return HttpService:JSONDecode(readfile(fileName))
-      end)
-
-      if success and type(decoded) == "table" and decoded.prefix then
-         local prefix = tostring(decoded.prefix)
-         if prefix == "symbol" or not isAllowedPrefix(prefix) then
-            -- [[ Fix the users Prefix if we found that it's broken. ]] --
-            getgenv().notify("Warning", "We've automatically modified your Prefix, it was broken or not an allowed Prefix.", 5)
-            decoded.prefix = defaultPrefix
-            writefile(fileName, HttpService:JSONEncode(decoded))
-            return defaultPrefix
-         else
-            -- [[ Otherwise return the correct Prefix and continue. ]] --
-            return prefix
-         end
-      end
-   end
-
-   writefile(fileName, HttpService:JSONEncode(data))
-   return defaultPrefix
-end
-
 wait(0.1)
-local Loaded_Prefix = loadPrefix()
-local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-local HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
-
-if HiddenUI then
-   for _, v in ipairs(HiddenUI:GetDescendants()) do
-      if v:IsA("Frame") and v.Name == "ResizeControls" and v.Parent.Name == "Main" then
-         if v.Parent.Parent:IsA("ScreenGui") then
-            getgenv().notify("Warning", "Are you using Dex Explorer with our script? I surely hope not, seems like you are... the script is literally open source.", 15)
-         end
-      end
-   end
-else
-   for _, v in ipairs(CoreGui:GetDescendants()) do
-      if v:IsA("Frame") and v.Name == "ResizeControls" and v.Parent.Name == "Main" then
-         getgenv().notify("Warning", "Are you using Dex Explorer with our script? I surely hope not, seems like you are... the script is literally open source.", 15)
-      end
-   end
-end
-
 local UserInputService = getgenv().UserInputService
 local TweenService = getgenv().TweenService
 wait(0.3)
@@ -2020,6 +443,89 @@ function car_listing_gui()
    end)
 end
 
+loadstring(game:HttpGet(tostring(Configuration_API)))()
+wait(1)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "FlamesConfigPrompt"
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Enabled = true
+ScreenGui.Parent = getgenv().CoreGui
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 350, 0, 180)
+Frame.Position = UDim2.new(0.5, -175, 0.5, -90)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Frame.BackgroundTransparency = 0.05
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 14)
+UICorner.Parent = Frame
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 0, 80)
+Title.Position = UDim2.new(0, 20, 0, 25)
+Title.BackgroundTransparency = 1
+Title.Text = "Do you want to try our new configuration system?"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextScaled = true
+Title.TextWrapped = true
+Title.Parent = Frame
+
+local ButtonHolder = Instance.new("Frame")
+ButtonHolder.Size = UDim2.new(1, 0, 0, 60)
+ButtonHolder.Position = UDim2.new(0, 0, 1, -70)
+ButtonHolder.BackgroundTransparency = 1
+ButtonHolder.Parent = Frame
+
+local YesButton = Instance.new("TextButton")
+YesButton.Size = UDim2.new(0.45, 0, 1, 0)
+YesButton.Position = UDim2.new(0.05, 0, 0, 0)
+YesButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+YesButton.Text = "Yes"
+YesButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+YesButton.Font = Enum.Font.GothamBold
+YesButton.TextScaled = true
+YesButton.Parent = ButtonHolder
+
+local YesCorner = Instance.new("UICorner")
+YesCorner.CornerRadius = UDim.new(0, 10)
+YesCorner.Parent = YesButton
+
+local NoButton = Instance.new("TextButton")
+NoButton.Size = UDim2.new(0.45, 0, 1, 0)
+NoButton.Position = UDim2.new(0.5, 0, 0, 0)
+NoButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+NoButton.Text = "No"
+NoButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+NoButton.Font = Enum.Font.GothamBold
+NoButton.TextScaled = true
+NoButton.Parent = ButtonHolder
+
+local NoCorner = Instance.new("UICorner")
+NoCorner.CornerRadius = UDim.new(0, 10)
+NoCorner.Parent = NoButton
+
+YesButton.MouseButton1Click:Connect(function()
+   getgenv().set_enrolled_state("enabled")
+   if getgenv().CoreGui:FindFirstChild("FlamesAdminGUI") then
+      getgenv().CoreGui:FindFirstChild("FlamesAdminGUI").Enabled = true
+   end
+   wait(0.1)
+	ScreenGui:Destroy()
+end)
+
+NoButton.MouseButton1Click:Connect(function()
+	ScreenGui:Destroy()
+   if getgenv().CoreGui:FindFirstChild("FlamesAdminGUI") then
+      getgenv().CoreGui:FindFirstChild("FlamesAdminGUI").Enabled = false
+   end
+   getgenv().set_enrolled_state("disabled")
+end)
+
 local function get_other_vehicle(Player)
    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
       if not v:FindFirstChild("owner") then return getgenv().notify("Error", "There is not an Owner value in this players Vehicle!", 7) end
@@ -2031,7 +537,50 @@ local function get_other_vehicle(Player)
    return nil
 end
 
-loadstring(game:HttpGet(tostring(Handler_API)))()
+function change_phone_color(New_Color)
+   send_remote("phone_color", New_Color)
+end
+task.wait(0.2)
+function RGB_Phone(Boolean)
+   getgenv().RGB_Rainbow_Phone = Boolean
+
+   local colors = {
+      Color3.fromRGB(255, 255, 255),
+      Color3.fromRGB(128, 128, 128),
+      Color3.fromRGB(0, 0, 0),
+      Color3.fromRGB(0, 0, 255),
+      Color3.fromRGB(0, 255, 0),
+      Color3.fromRGB(0, 255, 255),
+      Color3.fromRGB(255, 165, 0),
+      Color3.fromRGB(139, 69, 19),
+      Color3.fromRGB(255, 255, 0),
+      Color3.fromRGB(50, 205, 50),
+      Color3.fromRGB(255, 0, 0),
+      Color3.fromRGB(255, 155, 172),
+      Color3.fromRGB(128, 0, 128),
+   }
+
+   if Boolean == true then
+      getgenv().notify("Success", "Started RGB/Rainbow Phone.", 5)
+      while getgenv().RGB_Rainbow_Phone == true do
+      task.wait(0)
+         for _, color in ipairs(colors) do
+            if getgenv().RGB_Rainbow_Phone ~= true then return end
+            task.wait(0)
+            change_phone_color(color)
+         end
+      end
+   elseif Boolean == false then
+      Boolean = false
+      getgenv().RGB_Rainbow_Phone = false
+      getgenv().notify("Success", "Stopped RGB/Rainbow Phone.", 5)
+      task.wait(0.6)
+      repeat task.wait() until getgenv().RGB_Rainbow_Phone == false
+      if getgenv().RGB_Rainbow_Phone == false then
+         change_phone_color(Color3.fromRGB(255, 255, 255))
+      end
+   end
+end
 
 function save_outfits_GUI()
    if getgenv().Core:FindFirstChild("OutfitManagerUI") then
@@ -2839,30 +1388,6 @@ function set_fire_amount_FE(amount)
    Amount_Input = amount
 end
 
-function anti_void()
-   local root = getgenv().getRoot(getgenv().Character)
-   local oldpos = root.CFrame
-
-   if getgenv().Anti_Void_Falling then
-      getgenv().Anti_Void_Falling:Disconnect()
-      getgenv().Anti_Void_Falling = nil
-   end
-
-   local OrgDestroyHeight = getgenv().Workspace.FallenPartsDestroyHeight
-   task.wait(0.2)
-   getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
-   task.wait(0.1)
-   root.CFrame = CFrame.new(Vector3.new(0, OrgDestroyHeight - 25, 0))
-   task.wait(1)
-   root.CFrame = oldpos
-   task.wait(0.1)
-   getgenv().Anti_Void_Falling = getgenv().RunService.Stepped:Connect(function()
-      if root and root.Position.Y <= OrgDestroyHeight + 25 then
-         root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
-      end
-   end)
-end
-
 function unsuspend_GUI_topbar()
    local CoreGui
    local Players
@@ -3096,6 +1621,242 @@ getgenv().spamming_flames = function(toggle)
    end
 end
 
+getgenv().fire_detection_amount = 50
+getgenv().FireDetector_Enabled = false
+getgenv().FireDetector_Conn = nil
+
+local function check_fire_count()
+   local count = 0
+   for _, obj in ipairs(getgenv().Workspace:GetChildren()) do
+      if obj:IsA("Model") and obj.Name == "Fire" then
+         count += 1
+      end
+   end
+   if count >= getgenv().fire_detection_amount then
+      getgenv().CompletelyHideFlamesComingIn(true)
+      return getgenv().notify("Info", "Enabled auto-hide flames, flames limit threshold reached (50+ fires found (spam), you're welcome).", 10)
+   end
+end
+
+getgenv().EnableFireDetector = function()
+   if getgenv().FireDetector_Enabled then return getgenv().notify("Warning", "Fire Spam detector is already enabled!", 5) end
+   getgenv().FireDetector_Enabled = true
+   check_fire_count()
+
+   getgenv().FireDetector_Conn = getgenv().Workspace.ChildAdded:Connect(function(obj)
+      if not getgenv().FireDetector_Enabled then return end
+      if obj:IsA("Model") and obj.Name == "Fire" then
+         check_fire_count()
+      end
+   end)
+end
+
+getgenv().DisableFireDetector = function()
+   if not getgenv().FireDetector_Enabled then return getgenv().notify("Warning", "Fire Spam detector is not enabled!", 5) end
+   getgenv().FireDetector_Enabled = false
+   if getgenv().FireDetector_Conn then
+      getgenv().FireDetector_Conn:Disconnect()
+      getgenv().FireDetector_Conn = nil
+   end
+end
+wait(0.2)
+getgenv().EnableFireDetector()
+
+local Players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+getgenv().AntiFling_Tracked = getgenv().AntiFling_Tracked or setmetatable({}, { __mode = "k" })
+getgenv().AntiFling_Signals = getgenv().AntiFling_Signals or setmetatable({}, { __mode = "k" })
+getgenv().AntiFling_Enabled = false
+getgenv().AntiFling_SteppedConnection = getgenv().AntiFling_SteppedConnection or nil
+getgenv().AntiFling_PlayerAddedConn = getgenv().AntiFling_PlayerAddedConn or nil
+getgenv().AntiFling_PlayerRemovingConn = getgenv().AntiFling_PlayerRemovingConn or nil
+local tracked = getgenv().AntiFling_Tracked
+local signals = getgenv().AntiFling_Signals
+
+getgenv().AntiFling_SafeSetCanCollide = function(part, value)
+   if typeof(part) == "Instance" and part:IsA("BasePart") then
+      pcall(function()
+         if part.CanCollide ~= value then
+            part.CanCollide = value
+         end
+      end)
+   end
+end
+
+getgenv().AntiFling_Apply = function(part)
+   if not (part and part:IsA("BasePart")) or tracked[part] then return end
+   tracked[part] = true
+   getgenv().AntiFling_SafeSetCanCollide(part, false)
+
+   signals[part] = part:GetPropertyChangedSignal("CanCollide"):Connect(function()
+      if part and part.Parent and part.CanCollide ~= false then
+         getgenv().AntiFling_SafeSetCanCollide(part, false)
+      end
+   end)
+end
+
+getgenv().AntiFling_ProtectCharacter = function(char)
+   if not char then return end
+
+   for _, inst in ipairs(char:GetDescendants()) do
+      if inst:IsA("BasePart") then
+         getgenv().AntiFling_Apply(inst)
+      end
+   end
+
+   char.DescendantAdded:Connect(function(inst)
+      if inst:IsA("BasePart") then
+         getgenv().AntiFling_Apply(inst)
+      end
+   end)
+
+   char.DescendantRemoving:Connect(function(inst)
+      if tracked[inst] then
+         if signals[inst] then
+            signals[inst]:Disconnect()
+            signals[inst] = nil
+         end
+         tracked[inst] = nil
+      end
+   end)
+end
+
+getgenv().AntiFling_HookPlayer = function(plr)
+   if plr == LocalPlayer then return end
+   if plr.Character then
+      getgenv().AntiFling_ProtectCharacter(plr.Character)
+   end
+   plr.CharacterAdded:Connect(getgenv().AntiFling_ProtectCharacter)
+end
+
+getgenv().EnableAntiFling = function()
+   if getgenv().AntiFling_Enabled then
+      return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
+   end
+   getgenv().AntiFling_Enabled = true
+
+   for _, plr in ipairs(Players:GetPlayers()) do
+      getgenv().AntiFling_HookPlayer(plr)
+   end
+
+   getgenv().AntiFling_PlayerAddedConn = Players.PlayerAdded:Connect(getgenv().AntiFling_HookPlayer)
+   getgenv().AntiFling_PlayerRemovingConn = Players.PlayerRemoving:Connect(function(plr)
+      if plr == LocalPlayer then return end
+      local char = plr.Character
+      if not char then return end
+
+      for _, part in ipairs(char:GetDescendants()) do
+         if tracked[part] then
+            if signals[part] then
+               signals[part]:Disconnect()
+               signals[part] = nil
+            end
+            tracked[part] = nil
+         end
+      end
+   end)
+
+   getgenv().AntiFling_SteppedConnection = RunService.Stepped:Connect(function()
+      for part in pairs(tracked) do
+         if typeof(part) == "Instance" and part:IsA("BasePart") and part.Parent then
+            if part.CanCollide ~= false then
+               getgenv().AntiFling_SafeSetCanCollide(part, false)
+            end
+         end
+      end
+   end)
+
+   getgenv().notify("Success", "Anti Fling has been enabled.", 5)
+end
+
+getgenv().Noclip_Enabled = false
+getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
+local RunService = getgenv().RunService or game:GetService("RunService")
+
+local function ToggleNoclip(toggle)
+   if toggle == true then
+      if getgenv().Noclip_Enabled then
+         return getgenv().notify("Error", "Noclip already enabled!", 5)
+      end
+
+      local function NoclipLoop()
+         if getgenv().Character then
+            for _, part in ipairs(getgenv().Character:GetDescendants()) do
+               if part:IsA("BasePart") and part.CanCollide then
+                  part.CanCollide = false
+               end
+            end
+         end
+      end
+
+      getgenv().Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
+      getgenv().Noclip_Enabled = true
+      getgenv().notify("Success", "Noclip has been enabled.", 5)
+   elseif toggle == false then
+      if not getgenv().Noclip_Enabled then
+         return getgenv().notify("Error", "Noclip not enabled!", 5)
+      end
+      if getgenv().Noclip_Connection then
+         getgenv().Noclip_Connection:Disconnect()
+         getgenv().Noclip_Connection = nil
+      end
+
+      for _, part in pairs(getgenv().Character:GetDescendants()) do
+         if part and part:IsA("BasePart") then
+            part.CanCollide = true
+         end
+      end
+      getgenv().Noclip_Enabled = false
+      getgenv().notify("Success", "Noclip has been disabled.", 5)
+   else
+      return getgenv().notify("Error", "Invalid arg, expected true/false", 5)
+   end
+end
+
+getgenv().Toggleable_Noclip = ToggleNoclip
+
+getgenv().DisableAntiFling = function()
+   if not getgenv().AntiFling_Enabled then
+      return getgenv().notify("Error", "Anti Fling is not enabled!", 5)
+   end
+   getgenv().AntiFling_Enabled = false
+
+   if getgenv().AntiFling_SteppedConnection then
+      getgenv().AntiFling_SteppedConnection:Disconnect()
+      getgenv().AntiFling_SteppedConnection = nil
+   end
+   if getgenv().AntiFling_PlayerAddedConn then
+      getgenv().AntiFling_PlayerAddedConn:Disconnect()
+      getgenv().AntiFling_PlayerAddedConn = nil
+   end
+   if getgenv().AntiFling_PlayerRemovingConn then
+      getgenv().AntiFling_PlayerRemovingConn:Disconnect()
+      getgenv().AntiFling_PlayerRemovingConn = nil
+   end
+
+   for part, conn in pairs(signals) do
+      if conn.Disconnect then
+         pcall(conn.Disconnect, conn)
+      end
+   end
+
+   table.clear(signals)
+   table.clear(tracked)
+
+   getgenv().notify("Success", "Anti Fling has been disabled.", 5)
+end
+
+getgenv().Toggle_AntiFling_Boolean_Func = function(toggled)
+   if toggled == true then
+      getgenv().EnableAntiFling()
+   elseif toggled == false then
+      getgenv().DisableAntiFling()
+   else
+      return getgenv().notify("Warning", "[Invalid arguments]: Expected true/false brocaroni and cheese.", 5)
+   end
+end
+
 local Old_Bio = getgenv().LocalPlayer:GetAttribute("bio") or "DEFAULT"
 wait(0.2)
 function anti_outfit_copier(toggle)
@@ -3148,6 +1909,114 @@ function anti_outfit_copier(toggle)
    else
       return 
    end
+end
+
+function anti_sit_func(toggle)
+   local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
+   
+   if toggle == true then
+      if is_enabled then
+         show_notification("Failure:", "AntiSit is already enabled!", "Warning")
+         return getgenv().notify("Error", "AntiSit is already enabled!", 5)
+      end
+      if getgenv().Not_Ever_Sitting then
+         return getgenv().notify("Warning", "AntiSit is already enabled!", 5)
+      end
+
+      getgenv().notify("Success", "Anti-Sit is now enabled!", 5)
+      show_notification("Success:", "Anti-Sit is now enabled!", "Normal")
+      wait(0.2)
+      getgenv().Not_Ever_Sitting = true
+
+      while getgenv().Not_Ever_Sitting == true do
+      task.wait()
+         getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+         require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
+      end
+   elseif toggle == false then
+      if not is_enabled then
+         show_notification("Failure:", "AntiSit is not enabled!", "Warning")
+         return notify("Error", "AntiSit is not enabled!", 5)
+      end
+      if not getgenv().Not_Ever_Sitting then
+         return getgenv().notify("Warning", "AntiSit is not enabled!", 5)
+      end
+
+      getgenv().Not_Ever_Sitting = false
+      wait(0.2)
+      getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+      require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
+      wait(0.1)
+      getgenv().notify("Success", "Sitting is now enabled!", 5)
+      Phone.show_notification("Success:", "Sitting is now enabled!", "Normal")
+   end
+end
+
+function anti_void(toggle)
+   if toggle == true then
+      if not getgenv().originalFPDH then
+         getgenv().originalFPDH = getgenv().Workspace.FallenPartsDestroyHeight
+      end
+      if getgenv().Anti_Void_Enabled_Bool then
+         return getgenv().notify("Warning", "Anti-Void is already enabled!", 5)
+      end
+
+      getgenv().Workspace.FallenPartsDestroyHeight = -9e9
+      getgenv().notify("Success", "Enabled anti-void.", 5)
+      getgenv().Anti_Void_Enabled_Bool = true
+   elseif toggle == false then
+      if not getgenv().originalFPDH then
+         getgenv().originalFPDH = -500
+         return getgenv().notify("Error", "Original destroy height doesn't exist!", 5)
+      end
+      if not getgenv().Anti_Void_Enabled_Bool then
+         return getgenv().notify("Warning", "Anti-Void has not been enabled!", 5)
+      end
+
+      getgenv().Workspace.FallenPartsDestroyHeight = getgenv().originalFPDH or -500
+      getgenv().notify("Success", "Disabled anti-void.", 5)
+   else
+      return 
+   end
+end
+
+function anti_car_fling(toggle)
+	if toggle == true then
+      if getgenv().VehicleDestroyer_Enabled then
+         return getgenv().notify("Warning", "Anti Vehicle Fling is already enabled!", 5)
+      end
+      wait(0.1)
+		getgenv().VehicleDestroyer_Enabled = true
+		clearConnections()
+
+		local vehiclesFolder = getgenv().Workspace:FindFirstChild("Vehicles") or getgenv().Workspace:WaitForChild("Vehicles", 5)
+		if vehiclesFolder then
+			setupFolder(vehiclesFolder)
+		end
+
+		getgenv().folderAddedConn = getgenv().Workspace.ChildAdded:Connect(function(child)
+			if child.Name == "Vehicles" and child:IsA("Folder") then
+				setupFolder(child)
+				vehiclesFolder = child
+			end
+		end)
+		table.insert(getgenv().VehicleDestroyer_Connections, getgenv().folderAddedConn)
+
+		getgenv().vehiclesHeartBeatConnection = getgenv().RunService.Heartbeat:Connect(function()
+			if not getgenv().VehicleDestroyer_Enabled then return end
+			if vehiclesFolder and vehiclesFolder.Parent then
+				disableCollisionIn(vehiclesFolder)
+			else
+				vehiclesFolder = getgenv().Workspace:FindFirstChild("Vehicles")
+			end
+		end)
+		table.insert(getgenv().VehicleDestroyer_Connections, getgenv().vehiclesHeartBeatConnection)
+	elseif toggle == false then
+		getgenv().DisableVehicleDestroyer()
+      getgenv().notify("Success", "Anti Vehicle Fling has been disabled.", 5)
+   else
+      return 
+	end
 end
 
 getgenv().HD_FlyEnabled = false
@@ -3480,7 +2349,6 @@ function spam_sign_text(toggle)
    local Character = getgenv().Character
    local PlacedModels = Workspace:WaitForChild("PlacedModels")
    local LocalPlayer = getgenv().LocalPlayer
-
    local random_words = {
       "yo","wsg bro","aye","lit","fire","cool","sick","yup",
       "nah","nah bro","bro?","wyd","naw bru","crazy","tuff","wow"
@@ -3534,97 +2402,6 @@ function spam_sign_text(toggle)
       return 
    end
 end
-
-function change_phone_color(New_Color)
-   send_remote("phone_color", New_Color)
-end
-task.wait(0.2)
-function RGB_Phone(Boolean)
-   getgenv().RGB_Rainbow_Phone = Boolean
-
-   local colors = {
-      Color3.fromRGB(255, 255, 255),
-      Color3.fromRGB(128, 128, 128),
-      Color3.fromRGB(0, 0, 0),
-      Color3.fromRGB(0, 0, 255),
-      Color3.fromRGB(0, 255, 0),
-      Color3.fromRGB(0, 255, 255),
-      Color3.fromRGB(255, 165, 0),
-      Color3.fromRGB(139, 69, 19),
-      Color3.fromRGB(255, 255, 0),
-      Color3.fromRGB(50, 205, 50),
-      Color3.fromRGB(255, 0, 0),
-      Color3.fromRGB(255, 155, 172),
-      Color3.fromRGB(128, 0, 128),
-   }
-
-   if Boolean == true then
-      getgenv().notify("Success", "Started RGB/Rainbow Phone.", 5)
-      while getgenv().RGB_Rainbow_Phone == true do
-      task.wait(0)
-         for _, color in ipairs(colors) do
-            if getgenv().RGB_Rainbow_Phone ~= true then return end
-            task.wait(0)
-            change_phone_color(color)
-         end
-      end
-   elseif Boolean == false then
-      Boolean = false
-      getgenv().RGB_Rainbow_Phone = false
-      getgenv().notify("Success", "Stopped RGB/Rainbow Phone.", 5)
-      task.wait(0.6)
-      repeat task.wait() until getgenv().RGB_Rainbow_Phone == false
-      if getgenv().RGB_Rainbow_Phone == false then
-         change_phone_color(Color3.fromRGB(255, 255, 255))
-      end
-   end
-end
-
-getgenv().Noclip_Enabled = false
-getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
-local RunService = getgenv().RunService or game:GetService("RunService")
-
-local function ToggleNoclip(toggle)
-   if toggle == true then
-      if getgenv().Noclip_Enabled then
-         return getgenv().notify("Error", "Noclip already enabled!", 5)
-      end
-
-      local function NoclipLoop()
-         if getgenv().Character then
-            for _, part in ipairs(getgenv().Character:GetDescendants()) do
-               if part:IsA("BasePart") and part.CanCollide then
-                  part.CanCollide = false
-               end
-            end
-         end
-      end
-
-      getgenv().Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
-      getgenv().Noclip_Enabled = true
-      getgenv().notify("Success", "Noclip has been enabled.", 5)
-   elseif toggle == false then
-      if not getgenv().Noclip_Enabled then
-         return getgenv().notify("Error", "Noclip not enabled!", 5)
-      end
-      if getgenv().Noclip_Connection then
-         getgenv().Noclip_Connection:Disconnect()
-         getgenv().Noclip_Connection = nil
-      end
-
-      for _, part in pairs(getgenv().Character:GetDescendants()) do
-         if part and part:IsA("BasePart") then
-            part.CanCollide = true
-         end
-      end
-      getgenv().Noclip_Enabled = false
-      getgenv().notify("Success", "Noclip has been disabled.", 5)
-   else
-      return getgenv().notify("Error", "Invalid arg, expected true/false", 5)
-   end
-end
-
-getgenv().Toggleable_Noclip = ToggleNoclip
 wait()
 local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 
@@ -3685,7 +2462,6 @@ end
 
 getgenv().StartWalkFling = startWalkFling
 getgenv().StopWalkFling = stopWalkFlingInternal
-
 getgenv().OrbitConnections = getgenv().OrbitConnections or {}
 getgenv().Is_Orbiting = false
 getgenv().OrbitSpeed = 1
@@ -3801,12 +2577,6 @@ function EnableFly(speed)
    if getgenv().HD_FlyEnabled then
       return getgenv().notify("Warning", "Fly is already enabled!", 5)
    end
-   if getgenv().antiFlingEnabled then
-      return getgenv().notify("Error", "You have AntiFling enabled, turn it off first!", 6)
-   end
-   if getgenv().antiKnockbackEnabled then
-      return getgenv().notify("Error", "You have AntiFling enabled, turn it off first!", 6)
-   end
 
    if not (HRP and Humanoid and Camera) then return end
 
@@ -3910,6 +2680,8 @@ function EnableFly(speed)
    end)
 end
 
+loadstring(game:HttpGet(tostring(Handler_API)))()
+
 function create_or_get_blur()
    local Blur_Effect = getgenv().Lighting:FindFirstChildOfClass("BlurEffect") or Instance.new("BlurEffect")
    Blur_Effect.Enabled = false
@@ -3940,7 +2712,7 @@ local function CommandsMenu()
    local mainFrame = Instance.new("Frame")
    mainFrame.Size = UDim2.new(0, 600, 0, 500)
    mainFrame.Position = UDim2.new(0.5, -300, 0.5, -250)
-   mainFrame.BackgroundColor3 = Color3.fromRGB(249, 214, 46)
+   mainFrame.BackgroundColor3 = Color3.fromRGB(255, 176, 0)
    mainFrame.BorderSizePixel = 0
    mainFrame.Active = true
    mainFrame.Draggable = true
@@ -3997,7 +2769,7 @@ local function CommandsMenu()
    closeButton.Size = UDim2.new(0, 30, 0, 30)
    closeButton.Position = UDim2.new(1, -35, 0, 5)
    closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-   closeButton.TextColor3 = Color3.fromRGB(196, 40, 28)
+   closeButton.TextColor3 = Color3.fromRGB(0, 0, 0)
    closeButton.Parent = mainFrame
 
    Instance.new("UICorner", closeButton).CornerRadius = UDim.new(0, 8)
@@ -4268,7 +3040,7 @@ local function CommandsMenu()
       local playerGui = getgenv().PlayerGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
       while task.wait(fixDelay) do
-         local gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui()) or playerGui
+         local gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui()) or getgenv().CoreGui or playerGui
          local menu = gui:FindFirstChild("AdminCommandList_LifeTogether_RP", true)
          if not menu then continue end
 
@@ -4305,17 +3077,17 @@ function CreateCreditsLabel()
    creditsGui.Name = "PrefixCreditsGui_LifeTogether"
    creditsGui.ResetOnSpawn = false
    creditsGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-   creditsGui.Parent = Gui_Parent_Default() or CoreGui
+   creditsGui.Parent = Gui_Parent_Default() or CoreGui or getgenv().PlayerGui
 
    local label = Instance.new("TextLabel")
    label.Name = "CreditsLabel"
    label.AnchorPoint = Vector2.new(0.5, 1)
    label.Position = UDim2.new(0.5, 0, 1, -10)
    label.Size = UDim2.new(0.6, 0, 0, 28)
-   label.BackgroundColor3 = Color3.fromRGB(249, 214, 46)
+   label.BackgroundColor3 = Color3.fromRGB(255, 176, 0)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
    local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-   label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." on Discord. | Current Prefix: " .. prefix
+   label.Text = tostring(Script_Version).." | Happy Halloween! | Current Prefix: " .. prefix
    label.Font = Enum.Font.GothamBold
    label.TextScaled = true
    label.RichText = false
@@ -4339,7 +3111,7 @@ function CreateCreditsLabel()
       getgenv()._PrefixUpdateConnection = getgenv().AdminPrefix.Changed:Connect(function()
          lastPrefix = tostring(getgenv().AdminPrefix)
          local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-         label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." on Discord. | Current Prefix: " .. prefix
+         label.Text = tostring(Script_Version).." | Happy Halloween! | Current Prefix: " .. prefix
       end)
    else
       task.spawn(function()
@@ -4349,7 +3121,7 @@ function CreateCreditsLabel()
             if tostring(getgenv().AdminPrefix) ~= lastPrefix then
                lastPrefix = tostring(getgenv().AdminPrefix)
                local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-               label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." on Discord. | Current Prefix: " .. prefix
+               label.Text = tostring(Script_Version).." | Happy Halloween! | Current Prefix: " .. prefix
             end
          end
       end)
@@ -4357,159 +3129,6 @@ function CreateCreditsLabel()
 end
 wait(0.2)
 CreateCreditsLabel()
-
-local Players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-getgenv().AntiFling_Tracked = getgenv().AntiFling_Tracked or setmetatable({}, { __mode = "k" })
-getgenv().AntiFling_Signals = getgenv().AntiFling_Signals or setmetatable({}, { __mode = "k" })
-getgenv().AntiFling_Enabled = false
-getgenv().AntiFling_SteppedConnection = getgenv().AntiFling_SteppedConnection or nil
-getgenv().AntiFling_PlayerAddedConn = getgenv().AntiFling_PlayerAddedConn or nil
-getgenv().AntiFling_PlayerRemovingConn = getgenv().AntiFling_PlayerRemovingConn or nil
-local tracked = getgenv().AntiFling_Tracked
-local signals = getgenv().AntiFling_Signals
-
-getgenv().AntiFling_SafeSetCanCollide = function(part, value)
-   if typeof(part) == "Instance" and part:IsA("BasePart") then
-      pcall(function()
-         if part.CanCollide ~= value then
-            part.CanCollide = value
-         end
-      end)
-   end
-end
-
-getgenv().AntiFling_Apply = function(part)
-   if not (part and part:IsA("BasePart")) or tracked[part] then return end
-   tracked[part] = true
-   getgenv().AntiFling_SafeSetCanCollide(part, false)
-
-   signals[part] = part:GetPropertyChangedSignal("CanCollide"):Connect(function()
-      if part and part.Parent and part.CanCollide ~= false then
-         getgenv().AntiFling_SafeSetCanCollide(part, false)
-      end
-   end)
-end
-
-getgenv().AntiFling_ProtectCharacter = function(char)
-   if not char then return end
-
-   for _, inst in ipairs(char:GetDescendants()) do
-      if inst:IsA("BasePart") then
-         getgenv().AntiFling_Apply(inst)
-      end
-   end
-
-   char.DescendantAdded:Connect(function(inst)
-      if inst:IsA("BasePart") then
-         getgenv().AntiFling_Apply(inst)
-      end
-   end)
-
-   char.DescendantRemoving:Connect(function(inst)
-      if tracked[inst] then
-         if signals[inst] then
-            signals[inst]:Disconnect()
-            signals[inst] = nil
-         end
-         tracked[inst] = nil
-      end
-   end)
-end
-
-getgenv().AntiFling_HookPlayer = function(plr)
-   if plr == LocalPlayer then return end
-   if plr.Character then
-      getgenv().AntiFling_ProtectCharacter(plr.Character)
-   end
-   plr.CharacterAdded:Connect(getgenv().AntiFling_ProtectCharacter)
-end
-
-getgenv().EnableAntiFling = function()
-   if getgenv().AntiFling_Enabled then
-      return getgenv().notify("Error", "Anti Fling is already enabled!", 5)
-   end
-   getgenv().AntiFling_Enabled = true
-
-   for _, plr in ipairs(Players:GetPlayers()) do
-      getgenv().AntiFling_HookPlayer(plr)
-   end
-
-   getgenv().AntiFling_PlayerAddedConn = Players.PlayerAdded:Connect(getgenv().AntiFling_HookPlayer)
-   getgenv().AntiFling_PlayerRemovingConn = Players.PlayerRemoving:Connect(function(plr)
-      if plr == LocalPlayer then return end
-      local char = plr.Character
-      if not char then return end
-
-      for _, part in ipairs(char:GetDescendants()) do
-         if tracked[part] then
-            if signals[part] then
-               signals[part]:Disconnect()
-               signals[part] = nil
-            end
-            tracked[part] = nil
-         end
-      end
-   end)
-
-   getgenv().AntiFling_SteppedConnection = RunService.Stepped:Connect(function()
-      for part in pairs(tracked) do
-         if typeof(part) == "Instance" and part:IsA("BasePart") and part.Parent then
-            if part.CanCollide ~= false then
-               getgenv().AntiFling_SafeSetCanCollide(part, false)
-            end
-         end
-      end
-   end)
-
-   if getgenv().notify then
-      getgenv().notify("Anti-Fling", "Anti Fling Enabled!", 4)
-   end
-end
-
-getgenv().DisableAntiFling = function()
-   if not getgenv().AntiFling_Enabled then
-      return getgenv().notify("Error", "Anti Fling is not enabled!", 5)
-   end
-   getgenv().AntiFling_Enabled = false
-
-   if getgenv().AntiFling_SteppedConnection then
-      getgenv().AntiFling_SteppedConnection:Disconnect()
-      getgenv().AntiFling_SteppedConnection = nil
-   end
-   if getgenv().AntiFling_PlayerAddedConn then
-      getgenv().AntiFling_PlayerAddedConn:Disconnect()
-      getgenv().AntiFling_PlayerAddedConn = nil
-   end
-   if getgenv().AntiFling_PlayerRemovingConn then
-      getgenv().AntiFling_PlayerRemovingConn:Disconnect()
-      getgenv().AntiFling_PlayerRemovingConn = nil
-   end
-
-   for part, conn in pairs(signals) do
-      if conn.Disconnect then
-         pcall(conn.Disconnect, conn)
-      end
-   end
-
-   table.clear(signals)
-   table.clear(tracked)
-
-   if getgenv().notify then
-      getgenv().notify("Anti-Fling", "Anti Fling Disabled!", 4)
-   end
-end
-
-getgenv().Toggle_AntiFling_Boolean_Func = function(toggled)
-   if toggled == true then
-      getgenv().EnableAntiFling()
-   elseif toggled == false then
-      getgenv().DisableAntiFling()
-   else
-      return getgenv().notify("Warning", "[Invalid arguments]: Expected true/false brocaroni and cheese.", 5)
-   end
-end
 
 function change_RP_Name(New_Name)
    send_remote("roleplay_name", tostring(New_Name))
@@ -4565,98 +3184,6 @@ end
 
 local function stop_rainbow_others_car(Player)
    RGB_Vehicle_Others(Player, false)
-end
-
-getgenv().VehicleDestroyer_Enabled = getgenv().VehicleDestroyer_Enabled or false
-getgenv().VehicleDestroyer_Connections = getgenv().VehicleDestroyer_Connections or {}
-
-local function clearConnections()
-	for _, conn in ipairs(getgenv().VehicleDestroyer_Connections) do
-		if typeof(conn) == "RBXScriptConnection" then
-			pcall(function() conn:Disconnect() end)
-		end
-	end
-	table.clear(getgenv().VehicleDestroyer_Connections)
-	getgenv().folderAddedConn = nil
-	getgenv().vehiclesChildAddedConn = nil
-	getgenv().vehiclesHeartBeatConnection = nil
-end
-
-local function disableCollisionIn(folder)
-	for _, obj in ipairs(folder:GetDescendants()) do
-		if obj:IsA("BasePart") and obj.CanCollide then
-			obj.CanCollide = false
-		end
-	end
-end
-
-local function setupFolder(folder)
-	disableCollisionIn(folder)
-
-   getgenv().notify("Success", "Anti Vehicle Fling has been enabled.", 5)
-	getgenv().vehiclesChildAddedConn = folder.ChildAdded:Connect(function(child)
-		if not getgenv().VehicleDestroyer_Enabled then return end
-
-		if child:IsA("BasePart") then
-			child.CanCollide = false
-		elseif child:IsA("Model") then
-			child.DescendantAdded:Connect(function(desc)
-				if desc:IsA("BasePart") then
-					desc.CanCollide = false
-				end
-			end)
-			disableCollisionIn(child)
-		end
-	end)
-	table.insert(getgenv().VehicleDestroyer_Connections, getgenv().vehiclesChildAddedConn)
-end
-
-getgenv().DisableVehicleDestroyer = function()
-   if not getgenv().VehicleDestroyer_Enabled then
-      return getgenv().notify("Warning", "Anti Vehicle Fling is not enabled!", 5)
-   end
-   wait(0.1)
-	getgenv().VehicleDestroyer_Enabled = false
-	clearConnections()
-end
-
-function anti_car_fling(toggle)
-	if toggle == true then
-      if getgenv().VehicleDestroyer_Enabled then
-         return getgenv().notify("Warning", "Anti Vehicle Fling is already enabled!", 5)
-      end
-      wait(0.1)
-		getgenv().VehicleDestroyer_Enabled = true
-		clearConnections()
-
-		local vehiclesFolder = getgenv().Workspace:FindFirstChild("Vehicles") or getgenv().Workspace:WaitForChild("Vehicles", 5)
-		if vehiclesFolder then
-			setupFolder(vehiclesFolder)
-		end
-
-		getgenv().folderAddedConn = getgenv().Workspace.ChildAdded:Connect(function(child)
-			if child.Name == "Vehicles" and child:IsA("Folder") then
-				setupFolder(child)
-				vehiclesFolder = child
-			end
-		end)
-		table.insert(getgenv().VehicleDestroyer_Connections, getgenv().folderAddedConn)
-
-		getgenv().vehiclesHeartBeatConnection = getgenv().RunService.Heartbeat:Connect(function()
-			if not getgenv().VehicleDestroyer_Enabled then return end
-			if vehiclesFolder and vehiclesFolder.Parent then
-				disableCollisionIn(vehiclesFolder)
-			else
-				vehiclesFolder = getgenv().Workspace:FindFirstChild("Vehicles")
-			end
-		end)
-		table.insert(getgenv().VehicleDestroyer_Connections, getgenv().vehiclesHeartBeatConnection)
-	elseif toggle == false then
-		getgenv().DisableVehicleDestroyer()
-      getgenv().notify("Success", "Anti Vehicle Fling has been disabled.", 5)
-   else
-      return 
-	end
 end
 
 function Enable_Fly_2(speed)
@@ -5162,8 +3689,6 @@ if not getgenv().PreRequisites_Loaded then
    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Zacks_Easy_Hub/refs/heads/main/feedback_handler.lua'))()
    wait(0.2)
    getgenv().PreRequisites_Loaded = true
-else
-   getgenv().notify("Warning", "Pre-Requisites and requirements already loaded.", 5)
 end
 wait(0.1)
 local function setup_cmd_handler_plr(player)
@@ -5535,8 +4060,11 @@ function copy_plr_avatar(Player)
       local Text = "ANTI COPIER ENABLED HERE - THANKS!"
       local current_bio = target:GetAttribute("bio")
 
-      if current_bio == Text then
-         return getgenv().notify("Warning", "This player has anti outfit stealer on, sorry!", 5)
+      if getgenv().LocalPlayer.Name ~= "L0CKED_1N1" and getgenv().LocalPlayer.Name ~= "CHEATING_B0SS" then
+         if current_bio == Text then
+            getgenv().is_copying_avatar_already_flames = false
+            return getgenv().notify("Warning", "This player has anti outfit stealer on, sorry!", 5)
+         end
       end
       wait()
       if not clearAvatar() then
@@ -6459,10 +4987,10 @@ local function handleCommand(sender, message)
          {prefix}jp Number - Changes your JumpHeight.
          {prefix}grav Number - Changes your Gravity.
          {prefix}orbitspeed NewSpeed - Lets you modify your Orbit speed.
-         {prefix}antifitstealer (🔥 #1 FEATURE 🔥) - Allows you to toggle on Anti Outfit Copier (FE, I was forced to add it, I know!!!).
-         {prefix}unanticopyfit - Disables Anti Outfit Copier (FE).
+         {prefix}antifitstealer (🔥 #1 FEATURE 🔥) - Allows you to toggle on Anti Outfit Copier (FE).
+         {prefix}unanticopyfit - Disables the 'Anti Outfit Copier' command.
          {prefix}outfitsui (🔥POPULAR FEATURE🔥) - Allows you to save how ever many outfits you want with our new GUI.
-         {prefix}anticarfling (🔥HOT🔥) - Enables 'anticarfling', preventing you from being flung by Vehicles.
+         {prefix}anticarfling (🔥HOT🔥) - Enables 'anticarfling', protecting you from ANY vehicle fling.
          {prefix}unanticarfling - Disables 'anticarfling' command.
          {prefix}rainbowtime Player NUMBER - Sets your whitelisted friends rainbow car speed.
          {prefix}unadmin player - Removes the player's FE commands (if they're your friend).
@@ -6745,7 +5273,7 @@ local function handleCommand(sender, message)
       end
    elseif raw_cmd == "antioutfitcopier" or raw_cmd == "antifitcopier" or raw_cmd == "antifitstealer" or raw_cmd == "antioutfitstealer" or raw_cmd == "anticopyoutfit" then
       anti_outfit_copier(true)
-   elseif raw_cmd == "unantioutfitcopier" or raw_cmd == "unantifitcopier" or raw_cmd == "unantifitstealer" or raw_cmd == "unantioutfitstealer" or raw_cmd == "unanticopyoutfit" then
+   elseif raw_cmd == "unantioutfitcopier" or raw_cmd == "unantifitcopier" or raw_cmd == "unantifitstealer" or raw_cmd == "unantioutfitstealer" or raw_cmd == "unanticopyoutfit" or raw_cmd == "unanticopyfit" then
       anti_outfit_copier(false)
    elseif raw_cmd == "norainbowcar" or raw_cmd == "unrainbowcar" or raw_cmd == "stoprainbowcar" then
       local PlayerToRGBCarStop = findplr(split[1])
@@ -7124,27 +5652,9 @@ local function handleCommand(sender, message)
       getgenv().notify("Success", "No longer protected against fire spam.", 5)
       getgenv().CompletelyHideFlamesComingIn(false)
    elseif raw_cmd == "antivoid" or raw_cmd == "novoid" then
-      if not getgenv().originalFPDH then
-         getgenv().originalFPDH = getgenv().Workspace.FallenPartsDestroyHeight
-      end
-      if getgenv().Anti_Void_Enabled_Bool then
-         return getgenv().notify("Warning", "Anti-Void is already enabled!", 5)
-      end
-      wait(0.1)
-      getgenv().Workspace.FallenPartsDestroyHeight = -9e9
-      getgenv().notify("Success", "Enabled antivoid.", 5)
-      getgenv().Anti_Void_Enabled_Bool = true
+      anti_void(true)
    elseif raw_cmd == "unantivoid" or raw_cmd == "unnovoid" then
-      if not getgenv().originalFPDH then
-         getgenv().originalFPDH = -500
-         return getgenv().notify("Error", "Original destroy height doesn't exist!", 5)
-      end
-      if not getgenv().Anti_Void_Enabled_Bool then
-         return getgenv().notify("Warning", "Anti-Void has not been enabled!", 5)
-      end
-
-      getgenv().Workspace.FallenPartsDestroyHeight = getgenv().originalFPDH or -500
-      getgenv().notify("Success", "Disabled anti-void.", 5)
+      anti_void(false)
    elseif raw_cmd == "clip" or raw_cmd == "unnoclip" then
       if not getgenv().Noclip_Enabled then
          return getgenv().notify("Error", "Noclip is not enabled, enable it first.", 5)
@@ -7774,7 +6284,7 @@ local function handleCommand(sender, message)
       end
 
       getgenv().notify("Error", "Name not matched.", 5)
-   elseif raw_cmd == "antihouseban" then
+   elseif raw_cmd == "antihouseban" or raw_cmd == "antihomeban" or raw_cmd == "preventhouseban" or raw_cmd == "antihousekick" or raw_cmd == "antiteleport" or raw_cmd == "antitp" or raw_cmd == "antihousetp" then
       if getgenv().never_banned_houses then
          return getgenv().notify("Error", "AntiHouseBan is already enabled!", 5)
       end
@@ -7828,7 +6338,7 @@ local function handleCommand(sender, message)
             end
          end
       end)
-   elseif raw_cmd == "unantiban" then
+   elseif raw_cmd == "unantiban" or raw_cmd == "unantihouseban" or raw_cmd == "antihousebanoff" or raw_cmd == "unantihomeban" or raw_cmd == "stopantihouseban" then
       if not getgenv().never_banned_houses then
          getgenv().AntiTeleport = false
          return getgenv().notify("Warning", "AntiHouseBan is not enabled!", 5)
@@ -7994,69 +6504,8 @@ getgenv().Players.PlayerRemoving:Connect(function(Player)
       getgenv().Unlocked_Vehicles[Name] = false
    end
 end)
-wait()
-getgenv().notify("Success", "Initializing error reporter...", 6)
-local Players = getgenv().Players or cloneref(game:GetService("Players"))
-local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
-local Handle_Error = getgenv().Error_API and getgenv().Error_API.Handle_Error
-getgenv().Currently_Handling_Errors = true
-
-local function ReportError(msg, trace)
-   if not Handle_Error then return end
-   local fullMessage = tostring(msg) .. "\n" .. tostring(trace or debug.traceback())
-   Handle_Error(LocalPlayer, fullMessage)
-end
-
-local function SafeWrap(fn)
-   return function(...)
-      return xpcall(fn, function(err)
-         ReportError(err, debug.traceback())
-         return nil
-      end, ...)
-   end
-end
-
-getgenv().ScriptContext.Error:Connect(function(message, stackTrace, scriptInstance)
-   ReportError(message, stackTrace)
-end)
-
-task.spawn(function()
-   while getgenv().Currently_Handling_Errors == true do
-      task.wait(1)
-      local ok, err = pcall(function()
-         
-      end)
-      if not ok and err then
-         ReportError(err, debug.traceback())
-      end
-   end
-end)
 wait(0.1)
 getgenv().notify("Success", "Error reporter should now be fully loaded and working.", 7)
-wait()
-HiddenUI = get_hidden_gui and get_hidden_gui() or gethui and gethui()
-
-if HiddenUI then
-   for _, v in ipairs(HiddenUI:GetDescendants()) do
-      if v:IsA("Frame") and v.Name == "ResizeControls" and v.Parent.Name == "Main" then
-         if v.Parent.Parent:IsA("ScreenGui") then
-            getgenv().notify("Warning", "We know you're using Dex Explorer, this script is open source man!", 5)
-         else
-            getgenv().notify("Warning", "We can see you're using Dex Explorer, this script is open source man!", 5)
-         end
-      end
-   end
-else
-   for _, v in ipairs(getgenv().CoreGui:GetDescendants()) do
-      if v:IsA("Frame") and v.Name == "ResizeControls" and v.Parent.Name == "Main" then
-         if v.Parent.Parent:IsA("ScreenGui") then
-            getgenv().notify("Warning", "We know you're using Dex Explorer, this script is open source man!", 5)
-         else
-            getgenv().notify("Warning", "We can see you're using Dex Explorer, this script is open source man!", 5)
-         end
-      end
-   end
-end
 
 local function return_correct_script_ver()
    local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
@@ -8065,87 +6514,87 @@ end
 
 task.wait(0.2)
 function Notify(message, duration)
-    local CoreGui = getgenv().CoreGui
-    local TweenService = getgenv().TweenService
+   local CoreGui = getgenv().CoreGui
+   local TweenService = getgenv().TweenService
 
-    local NotificationGui = Instance.new("ScreenGui")
-    NotificationGui.Name = "CustomErrorGui"
-    NotificationGui.ResetOnSpawn = false
-    NotificationGui.Parent = CoreGui
-    duration = duration or 5
+   local NotificationGui = Instance.new("ScreenGui")
+   NotificationGui.Name = "CustomErrorGui"
+   NotificationGui.ResetOnSpawn = false
+   NotificationGui.Parent = CoreGui
+   duration = duration or 5
 
-    local Frame = Instance.new("Frame")
-    Frame.Name = "ErrorMessage"
-    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Frame.BackgroundTransparency = 0.3
-    Frame.BorderSizePixel = 0
-    Frame.Size = UDim2.new(0, 500, 0, 120)
-    Frame.Position = UDim2.new(0, 20, 0, 100)
-    Frame.Parent = NotificationGui
+   local Frame = Instance.new("Frame")
+   Frame.Name = "ErrorMessage"
+   Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+   Frame.BackgroundTransparency = 0.3
+   Frame.BorderSizePixel = 0
+   Frame.Size = UDim2.new(0, 500, 0, 120)
+   Frame.Position = UDim2.new(0, 20, 0, 100)
+   Frame.Parent = NotificationGui
 
-    local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 10)
-    UICorner.Parent = Frame
+   local UICorner = Instance.new("UICorner")
+   UICorner.CornerRadius = UDim.new(0, 10)
+   UICorner.Parent = Frame
 
-    local Icon = Instance.new("ImageLabel")
-    Icon.Name = "ErrorIcon"
-    Icon.AnchorPoint = Vector2.new(0, 0.5)
-    Icon.BackgroundTransparency = 1
-    Icon.Position = UDim2.new(0, 15, 0.5, -25)
-    Icon.Size = UDim2.new(0, 50, 0, 50)
-    Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
-    Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
-    Icon.Parent = Frame
+   local Icon = Instance.new("ImageLabel")
+   Icon.Name = "ErrorIcon"
+   Icon.AnchorPoint = Vector2.new(0, 0.5)
+   Icon.BackgroundTransparency = 1
+   Icon.Position = UDim2.new(0, 15, 0.5, -25)
+   Icon.Size = UDim2.new(0, 50, 0, 50)
+   Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
+   Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+   Icon.Parent = Frame
 
-    local Label = Instance.new("TextLabel")
-    Label.Name = "ErrorText"
-    Label.BackgroundTransparency = 1
-    Label.Position = UDim2.new(0, 80, 0, 10)
-    Label.Size = UDim2.new(1, -90, 1, -20)
-    Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
-    Label.Text = message
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.TextSize = 20
-    Label.TextWrapped = true
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.TextYAlignment = Enum.TextYAlignment.Top
-    Label.Parent = Frame
+   local Label = Instance.new("TextLabel")
+   Label.Name = "ErrorText"
+   Label.BackgroundTransparency = 1
+   Label.Position = UDim2.new(0, 80, 0, 10)
+   Label.Size = UDim2.new(1, -90, 1, -20)
+   Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
+   Label.Text = message
+   Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+   Label.TextSize = 20
+   Label.TextWrapped = true
+   Label.TextXAlignment = Enum.TextXAlignment.Left
+   Label.TextYAlignment = Enum.TextYAlignment.Top
+   Label.Parent = Frame
 
-    Frame.BackgroundTransparency = 1
-    Icon.ImageTransparency = 1
-    Label.TextTransparency = 1
-    TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
-    TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
-    TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+   Frame.BackgroundTransparency = 1
+   Icon.ImageTransparency = 1
+   Label.TextTransparency = 1
+   TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
+   TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
+   TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 
-    task.delay(duration, function()
-        if Frame and Frame.Parent then
-            TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-            TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
-            TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-            task.wait(0.35)
-            Frame:Destroy()
-            NotificationGui:Destroy()
-        end
-    end)
+   task.delay(duration, function()
+      if Frame and Frame.Parent then
+         TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+         TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+         TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+         task.wait(0.35)
+         Frame:Destroy()
+         NotificationGui:Destroy()
+      end
+   end)
 end
 
 task.spawn(function()
-    getgenv().ConstantUpdate_Checker_Live = true
-    while getgenv().ConstantUpdate_Checker_Live do
-        task.wait(1)
+   getgenv().ConstantUpdate_Checker_Live = true
+   while getgenv().ConstantUpdate_Checker_Live do
+      task.wait(1)
 
-        local success, latestVersionInfo = pcall(function()
-            local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
-            return HttpService:JSONDecode(versionJson)
-        end)
+      local success, latestVersionInfo = pcall(function()
+         local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
+         return HttpService:JSONDecode(versionJson)
+      end)
 
-        if success and latestVersionInfo then
-            if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
-                getgenv().ConstantUpdate_Checker_Live = false
-                Notify("[LIFE TOGETHER ADMIN]: A new update is now pending. New version: "..tostring(latestVersionInfo.LifeTogether_Admin_Version).." | rejoin to update!", 25)
-                break
-            end
-        end
-    end
+      if success and latestVersionInfo then
+         if Script_Version ~= latestVersionInfo.LifeTogether_Admin_Version then
+            getgenv().ConstantUpdate_Checker_Live = false
+            Notify("[LIFE TOGETHER ADMIN]: A HUGE UPDATE is now pending!!! Update version: "..tostring(latestVersionInfo.LifeTogether_Admin_Version).." | rejoin to update!", 25)
+            break
+         end
+      end
+   end
 end)
