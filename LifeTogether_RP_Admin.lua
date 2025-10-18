@@ -523,6 +523,18 @@ function car_listing_gui()
 end
 
 loadstring(game:HttpGet(tostring(Configuration_API)))()
+wait()
+function get_enrolled_state()
+   if not isfile(config_path) then
+      writefile(config_path, HttpService:JSONEncode(default_config))
+   end
+
+   local config = HttpService:JSONDecode(readfile(config_path))
+   return config.Enrolled
+end
+
+wait(0.1)
+getgenv().get_enrolled_state = get_enrolled_state
 wait(2.5)
 if getgenv().get_enrolled_state() == "enabled" then
    if getgenv().CoreGui:FindFirstChild("FlamesAdminGUI") then
