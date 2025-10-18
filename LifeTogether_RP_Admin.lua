@@ -5460,7 +5460,7 @@ local function handleCommand(sender, message)
       rainbow_skin(true)
    elseif raw_cmd == "flames" or raw_cmd == "flameson" or raw_cmd == "startflames" then
       getgenv().spamming_flames(true)
-   elseif raw_cmd == "noflames" or raw_cmd == "flamesoff" or raw_cmd == "stopflames" then
+   elseif raw_cmd == "noflames" or raw_cmd == "flamesoff" or raw_cmd == "stopflames" or raw_cmd == "unflames" then
       getgenv().spamming_flames(false)
    elseif raw_cmd == "checkpremium" or raw_cmd == "haspremium" or raw_cmd == "premiumcheck" or raw_cmd == "haslifepay" then
       local Player = findplr(split[1])
