@@ -6,6 +6,7 @@ end
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
 local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/refs/heads/main/configuration.lua"
+local config_path = "Flames_Admin_Config.json"
 local function retrieve_executor()
    local name
    if identifyexecutor then
