@@ -524,24 +524,18 @@ function car_listing_gui()
 end
 
 loadstring(game:HttpGet(tostring(Configuration_API)))()
-wait()
-function get_enrolled_state()
-   if not isfile(config_path) then
-      writefile(config_path, HttpService:JSONEncode(default_config))
-   end
-
-   local config = HttpService:JSONDecode(readfile(config_path))
-   return config.Enrolled
+wait(5)
+getgenv().notify("Info", "Waiting until getgenv().get_enrolled_state exists...", 6)
+repeat wait() until getgenv().get_enrolled_state and getgenv().get_enrolled_state ~= nil
+wait(0.2)
+if getgenv().get_enrolled_state then
+   getgenv().notify("Success", "Found get_enrolled_state correctly.", 5)
 end
-
-wait(0.1)
-getgenv().get_enrolled_state = get_enrolled_state
-wait(2.5)
-if getgenv().get_enrolled_state() == "enabled" then
+if getgenv().get_enrolled_state and getgenv().get_enrolled_state() == "enabled" then
    if getgenv().CoreGui:FindFirstChild("FlamesAdminGUI") then
       getgenv().CoreGui:FindFirstChild("FlamesAdminGUI").Enabled = true
    end
-elseif getgenv().get_enrolled_state() == "disabled" then
+elseif getgenv().get_enrolled_state and getgenv().get_enrolled_state() == "disabled" then
    local ScreenGui = Instance.new("ScreenGui")
    ScreenGui.Name = "FlamesConfigPrompt"
    ScreenGui.IgnoreGuiInset = true
