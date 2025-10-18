@@ -56,7 +56,7 @@ if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.0.9"
+local Raw_Version = "V5.1.0"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Added RGB StreetLights (for when it's NightTime, you'll see them be RGB colors)."
 local displayTimeMax = 15
