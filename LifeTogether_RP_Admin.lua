@@ -22,10 +22,10 @@ if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.0.5"
+local Raw_Version = "V5.0.6"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Re-worked entire Framework system + improved command processor, lowered response time + improved performance, added BETA configuration settings + added fire spam detector limiter, and more!."
-local displayTimeMax = 35
+local Announcement_Message = "Fixed Noclip value not detecting properly while enabled + made Sign Spammer VERY fast, ."
+local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -1770,7 +1770,7 @@ getgenv().EnableAntiFling = function()
    getgenv().notify("Success", "Anti Fling has been enabled.", 5)
 end
 
-getgenv().Noclip_Enabled = false
+getgenv().Noclip_Enabled = getgenv().Noclip_Enabled or false
 getgenv().Noclip_Connection = getgenv().Noclip_Connection or nil
 local RunService = getgenv().RunService or game:GetService("RunService")
 
@@ -1778,6 +1778,9 @@ local function ToggleNoclip(toggle)
    if toggle == true then
       if getgenv().Noclip_Enabled then
          return getgenv().notify("Error", "Noclip is already enabled!", 5)
+      end
+      if getgenv().Noclip_Connection then
+         return getgenv().notify("Warning", "Noclip connection is active, disable Noclip and try again.", 6)
       end
 
       local function NoclipLoop()
@@ -2350,8 +2353,7 @@ function spam_sign_text(toggle)
    local PlacedModels = Workspace:WaitForChild("PlacedModels")
    local LocalPlayer = getgenv().LocalPlayer
    local random_words = {
-      "yo","wsg bro","aye","lit","fire","cool","sick","yup",
-      "nah","nah bro","bro?","wyd","naw bru","crazy","tuff","wow"
+      "yo","wsg bro","aye","lit","fire","cool","sick","yup"
    }
 
    local function find_tool_partial(toolName)
@@ -2377,20 +2379,20 @@ function spam_sign_text(toggle)
    end
 
    if toggle == true then
-      if getgenv().ToolChanger_FE then return end
+      if getgenv().ToolChanger_FE then return getgenv().notify("Warning", "Sign Spammer is already enabled!", 5) end
       getgenv().ToolChanger_FE = true
 
       task.spawn(function()
-         while getgenv().ToolChanger_FE do
+         while getgenv().ToolChanger_FE == true do
             local tool = find_tool_partial("sign")
             if not tool then
                getgenv().Send("get_tool", "Sign")
-               task.wait(0.2)
+               task.wait(0)
             else
                for _, word in ipairs(random_words) do
                   if not getgenv().ToolChanger_FE then break end
                   getgenv().Send("change_sign", tool, tostring(word))
-                  task.wait(.1)
+                  task.wait(0)
                end
             end
             task.wait(0)
@@ -5635,7 +5637,10 @@ local function handleCommand(sender, message)
       copy_plr_avatar(Target)
    elseif raw_cmd == "noclip" then
       if getgenv().Noclip_Enabled then
-         return getgenv().notify("Error", "NoClip is already enabled!", 5)
+         return getgenv().notify("Error", "Noclip is already enabled!", 5)
+      end
+      if getgenv().Noclip_Connection then
+         return getgenv().notify("Warning", "Noclip connection is active, disable Noclip and try again.", 6)
       end
 
       ToggleNoclip(true)
@@ -5662,6 +5667,9 @@ local function handleCommand(sender, message)
    elseif raw_cmd == "clip" or raw_cmd == "unnoclip" then
       if not getgenv().Noclip_Enabled then
          return getgenv().notify("Error", "Noclip is not enabled, enable it first.", 5)
+      end
+      if not getgenv().Noclip_Connection then
+         return getgenv().notify("Warning", "Noclip connection is NOT active, enable Noclip and try again.", 6)
       end
 
       ToggleNoclip(false)
