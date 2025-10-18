@@ -276,11 +276,32 @@ end)
 wait(0.5)
 -- [[ Function to check if the script is supported and works on the current executor. ]] --
 local success, response = pcall(function()
-   local Net = require(getgenv().Core:FindFirstChild("Net"))
+   if executor_contains("LX63") then
+      local Net
 
-   Net.get("spawn_vehicle", "SVJ")
+      for _, obj in pairs(getgc(true)) do
+         if typeof(obj) == "table" then
+            if typeof(rawget(obj, "send")) == "function" and typeof(rawget(obj, "get")) == "function" then
+               local info = debug.getinfo(obj.get)
+               if info and info.source and info.source:find("Net") then
+                  Net = obj
+                  break
+               end
+            end
+         end
+      end
+
+      if Net then
+         Net.get("spawn_vehicle", "SVJ")
+      end
+   else
+      local Net = require(getgenv().Core:FindFirstChild("Net"))
+
+      Net.get("spawn_vehicle", "SVJ")
+   end
+
    wait(3)
-
+   
    return get_vehicle()
 end)
 
