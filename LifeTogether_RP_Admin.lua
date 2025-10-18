@@ -334,9 +334,9 @@ if success and response then
    if get_vehicle() and getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
       getgenv().Humanoid:ChangeState(3)
       wait(0.2)
-      local Net.get("spawn_vehicle", get_vehicle().Name or "SVJ")
+      Net.get("spawn_vehicle", get_vehicle().Name or "SVJ")
    elseif get_vehicle() and getgenv().Humanoid.Sit == false then
-      local Net.get("spawn_vehicle", get_vehicle().Name or "SVJ")
+      Net.get("spawn_vehicle", get_vehicle().Name or "SVJ")
    elseif not get_vehicle() then
       getgenv().notify("Warning", "We did spawn the Vehicle it seems, but it seems like you despawned the Vehicle.", 10)
    elseif not get_vehicle() and getgenv().Humanoid.Sit == true then
@@ -1996,7 +1996,7 @@ function anti_outfit_copier(toggle)
 end
 
 function anti_sit_func(toggle)
-   local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
+   local is_enabled = getgenv().Seat.enabled.get()
    
    if toggle == true then
       if is_enabled then
@@ -2015,7 +2015,7 @@ function anti_sit_func(toggle)
       while getgenv().Not_Ever_Sitting == true do
       task.wait()
          getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-         require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
+         getgenv().Seat.enabled.set(false)
       end
    elseif toggle == false then
       if not is_enabled then
@@ -2029,7 +2029,7 @@ function anti_sit_func(toggle)
       getgenv().Not_Ever_Sitting = false
       wait(0.2)
       getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
-      require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
+      getgenv().Seat.enabled.set(true)
       wait(0.1)
       getgenv().notify("Success", "Sitting is now enabled!", 5)
       Phone.show_notification("Success:", "Sitting is now enabled!", "Normal")
@@ -3708,14 +3708,14 @@ wait(0.1)
 if getgenv().HasSeen_Loading_Screen then
    print("Already seen loading screen.")
 else
-   local Blur_Module = require(getgenv().Core:FindFirstChild("Blur"))
+   local Blur_Module = getgenv().Blur
 
    Blur_Module.tween(24, 10)
    wait(0.1)
    local Blur_Effect = getgenv().Lighting:FindFirstChildOfClass("BlurEffect") or Instance.new("BlurEffect")
    Blur_Effect.Enabled = true
    wait(0.1)
-   local Blur_Module = require(getgenv().Core:FindFirstChild("Blur"))
+   local Blur_Module = getgenv().Blur
 
    Blur_Module.tween(21, 10)
    wait(2.5)
@@ -4854,8 +4854,24 @@ auto_add_friends()
 local originalCFrame
 local originalCameraType
 if getgenv().PlayerControls == nil then
-   local PlayerModule = require(getgenv().PlayerScripts:WaitForChild("PlayerModule"))
-   getgenv().PlayerControls = PlayerModule:GetControls()
+   if executor_contains("LX63") then
+      for _, obj in pairs(getgc(true)) do
+         if typeof(obj) == "table" then
+            for _, v in pairs(obj) do
+               if typeof(v) == "function" then
+                  local info = debug.getinfo(v)
+                  if info and info.source and info.source:find("PlayerControls") then
+                     getgenv().PlayerControls = obj
+                     return obj
+                  end
+               end
+            end
+         end
+      end
+   else
+      local PlayerModule = require(getgenv().PlayerScripts:WaitForChild("PlayerModule"))
+      getgenv().PlayerControls = PlayerModule:GetControls()
+   end
 end
 wait(0.1)
 getgenv().Viewing_Plr_Tbl = getgenv().Viewing_Plr_Tbl or {}
@@ -6127,7 +6143,7 @@ local function handleCommand(sender, message)
          getgenv().notify("Success", "Teleported vehicle to target player: "..tostring(Goto_Player), 5)
       end
    elseif raw_cmd == "nosit" or raw_cmd == "antisit" then
-      local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
+      local is_enabled = getgenv().Seat.enabled.get()
       
       if not is_enabled or is_enabled == false then
          show_notification("Failure:", "NoSit/AntiSit is already enabled!", "Warning")
@@ -6142,7 +6158,7 @@ local function handleCommand(sender, message)
       while getgenv().Not_Ever_Sitting == true do
       task.wait()
          getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-         require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(false)
+         getgenv().Seat.enabled.set(false)
       end
    elseif raw_cmd == "carcolor" then
       local Target = findplr(split[1])
@@ -6183,7 +6199,7 @@ local function handleCommand(sender, message)
          end
       end
    elseif raw_cmd == "resit" or raw_cmd == "unantisit" then
-      local is_enabled = require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.get()
+      local is_enabled = getgenv().Seat.enabled.get()
       
       if is_enabled or is_enabled == true then
          show_notification("Failure:", "Sitting is already enabled!", "Warning")
@@ -6193,7 +6209,7 @@ local function handleCommand(sender, message)
       getgenv().Not_Ever_Sitting = false
       wait(0.2)
       getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
-      require(getgenv().Game_Folder:FindFirstChild("Seat")).enabled.set(true)
+      getgenv().Seat.enabled.set(true)
       wait(0.1)
       -- might as well use both 🤷
       getgenv().notify("Success", "Sitting is now enabled!", 5)
@@ -6213,7 +6229,7 @@ local function handleCommand(sender, message)
    elseif raw_cmd == "flashinvis" then
       local is_verified = Data.is_verified
       local invis_bought = Data.invisible_bought
-      local Invisible_Module = require(getgenv().Game_Folder:FindFirstChild("InvisibleMode"))
+      local Invisible_Module = getgenv().Invisible_Module
 
       if not is_verified and not invis_bought then
          return getgenv().notify("Error", "You do not have LifePay or the Invisible GamePass!", 5)
