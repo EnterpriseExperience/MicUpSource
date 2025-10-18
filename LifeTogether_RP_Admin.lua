@@ -6,23 +6,57 @@ end
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
 local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/refs/heads/main/configuration.lua"
-
-function notify(notif_type, msg, duration)
-   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
+local function retrieve_executor()
+   local name
+   if identifyexecutor then
+      name = identifyexecutor()
+   end
+   return { Name = name or "Unknown Executor" }
 end
-wait(0.1)
-getgenv().notify = notify
-local set_fps = setfpscap or setfps
 
-if setfpscap or setfps then
-   set_fps(999)
+local function identify_executor()
+   local executorDetails = retrieve_executor()
+   return tostring(executorDetails.Name)
+end
+
+wait(0.1)
+local executor_string = identify_executor()
+
+local function executor_contains(substr)
+   if type(executor_string) ~= "string" then
+      return false
+   end
+
+   return string.find(string.lower(executor_string), string.lower(substr), 1, true) ~= nil
+end
+
+if executor_contains("LX63") then
+   function notify(notif_type, msg, duration)
+      NotifyLib:StarterGui_Notify(tostring(notif_type), tostring(msg), tonumber(duration))
+   end
+   wait(0.1)
+   getgenv().notify = notify
+else
+   function notify(notif_type, msg, duration)
+      NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
+   end
+   wait(0.1)
+   getgenv().notify = notify
+end
+
+if executor_string == "LX63" then
+   local set_fps = setfpscap or setfps
+
+   if setfpscap or setfps then
+      set_fps(999)
+   end
 end
 wait()
 if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.0.8"
+local Raw_Version = "V5.0.9"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "Added RGB StreetLights (for when it's NightTime, you'll see them be RGB colors)."
 local displayTimeMax = 15
