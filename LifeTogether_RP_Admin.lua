@@ -2353,7 +2353,7 @@ function spam_sign_text(toggle)
    local PlacedModels = Workspace:WaitForChild("PlacedModels")
    local LocalPlayer = getgenv().LocalPlayer
    local random_words = {
-      "yo","wsg bro","aye","lit","fire","cool","sick","yup"
+      "yo","wsg bro","aye","lit","fire"
    }
 
    local function find_tool_partial(toolName)
@@ -2387,7 +2387,7 @@ function spam_sign_text(toggle)
             local tool = find_tool_partial("sign")
             if not tool then
                getgenv().Send("get_tool", "Sign")
-               task.wait(0)
+               task.wait(0.1)
             else
                for _, word in ipairs(random_words) do
                   if not getgenv().ToolChanger_FE then break end
@@ -2395,7 +2395,7 @@ function spam_sign_text(toggle)
                   task.wait(0)
                end
             end
-            task.wait(0)
+            task.wait(0.1)
          end
       end)
    elseif toggle == false then
