@@ -24,7 +24,7 @@ end
 wait()
 local Raw_Version = "V5.0.6"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed Noclip value not detecting properly while enabled + made Sign Spammer VERY fast, ."
+local Announcement_Message = "Fixed Noclip value not detecting properly while enabled + made Sign Spammer VERY fast."
 local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
