@@ -44,7 +44,7 @@ else
    getgenv().notify = notify
 end
 
-if executor_string == "LX63" then
+if not executor_contains("LX63") then
    local set_fps = setfpscap or setfps
 
    if setfpscap or setfps then
