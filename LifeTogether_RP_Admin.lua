@@ -22,9 +22,9 @@ if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.0.6"
+local Raw_Version = "V5.0.8"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed Noclip value not detecting properly while enabled + made Sign Spammer VERY fast."
+local Announcement_Message = "Added RGB StreetLights (for when it's NightTime, you'll see them be RGB colors)."
 local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -2697,6 +2697,64 @@ if not getgenv().VehicleStates[getgenv().LocalPlayer.Name] then
    getgenv().VehicleStates[getgenv().LocalPlayer.Name] = getgenv().LocalPlayer
 end
 
+function toggle_rgb_streetlights(toggle)
+   if toggle == true then
+      if getgenv().RGB_Street_Lights_NightTime_Loop then
+         return getgenv().notify("Warning", "RGB/Rainbow StreetLights is already running!", 5)
+      end
+      if getgenv().StreetLightRainbowConnection then
+         return getgenv().notify("Warning", "RGB/Rainbow StreetLights is already running! [connection]", 5)
+      end
+
+      local Map = Workspace:FindFirstChild("Map", true)
+      if not Map then return getgenv().notify("Error", "Map Folder not found inside of Workspace!", 6) end
+      local StreetLs = Map and Map:FindFirstChild("StreetLights", true)
+      if not StreetLs then return getgenv().notify("Error", "StreetLights not found inside of Map Folder!", 5) end
+
+      local TweenService = TweenService
+      getgenv().all_street_lights = getgenv().all_street_lights or {}
+
+      if not next(getgenv().all_street_lights) then
+         for _, v in ipairs(StreetLs:GetDescendants()) do
+            if v:IsA("PointLight") then
+               table.insert(getgenv().all_street_lights, v)
+            end
+         end
+      end
+
+      local hue = 0
+      getgenv().RGB_Street_Lights_NightTime_Loop = true
+      getgenv().notify("Success", "RGB/Rainbow StreetLights has been enabled, when it's NightTime, you'll see it.", 10)
+      getgenv().StreetLightRainbowConnection = RunService.Heartbeat:Connect(function(dt)
+         local clock_time = g.Lighting.ClockTime
+         if clock_time >= 18.5 or clock_time <= 7.5 then
+            hue = (hue + dt * 30) % 360
+            local color = Color3.fromHSV(hue / 360, 1, 1)
+            for _, light in ipairs(getgenv().all_street_lights) do
+               local tween = TweenService:Create(light, TweenInfo.new(0.2, Enum.EasingStyle.Linear), {Color = color})
+               tween:Play()
+            end
+         end
+      end)
+   elseif toggle == false then
+      if not getgenv().RGB_Street_Lights_NightTime_Loop then
+         return getgenv().notify("Warning", "RGB/Rainbow StreetLights is not enabled!", 5)
+      end
+      if not getgenv().StreetLightRainbowConnection then
+         return getgenv().notify("Warning", "RGB/Rainbow StreetLights is not enabled! [connection]", 5)
+      end
+      
+      getgenv().RGB_Street_Lights_NightTime_Loop = false
+      if getgenv().StreetLightRainbowConnection then
+         getgenv().StreetLightRainbowConnection:Disconnect()
+         getgenv().StreetLightRainbowConnection = nil
+      end
+      getgenv().notify("Success", "RGB/Rainbow StreetLights have been disabled, when it's NightTime, you will not see it.", 10)
+   else
+      return 
+   end
+end
+
 local Prefix = getgenv().AdminPrefix
 local Gui_Parent_Default = get_hidden_gui or gethui
 local CoreGui = getgenv().CoreGui or getgenv().PlayerGui
@@ -2810,6 +2868,8 @@ local function CommandsMenu()
       {prefix}copyav Player (🔥POPULAR FEATURE🔥) - Copies the target players avatar/outfit in full (animations, body, everything! FE!).
       {prefix}norainbowcar Player - Disables the RGB for a players car (FRIENDS ONLY!, FE).
       {prefix}annoyergui - Enables the GUI that lets you pick and toggle annoy players (FE).
+      {prefix}rgbstreetlights - Enables RGB StreetLights (flashing Rainbow StreetLights, NOT FE! VISUAL!).
+      {prefix}unrgbstreetlights - Disables RGB StreetLights (NOT FE! VISUAL!).
       {prefix}signspam - Spams the text on your Tool Sign (FE).
       {prefix}unsignspam - Stops spamming the text on your Tool Sign.
       {prefix}orbit Player Speed Distance - Lets you Orbit around the target Player (FE).
@@ -5241,6 +5301,10 @@ local function handleCommand(sender, message)
       end
 
       stop_rainbow_car()
+   elseif raw_cmd == "rgbstreetlights" or raw_cmd == "rainbowstreetlights" or raw_cmd == "rgbstreetl" or raw_cmd == "startrgbstreetlights" or raw_cmd == "togglergbsl" or raw_cmd == "rgbsl" then
+      toggle_rgb_streetlights(true)
+   elseif raw_cmd == "unrgbstreetlights" or raw_cmd == "unrainbowstreetlights" or raw_cmd == "unrgbstreetl" or raw_cmd == "stoprgbstreetlights" or raw_cmd == "untogglergbsl" or raw_cmd == "unrgbsl" then
+      toggle_rgb_streetlights(false)
    elseif raw_cmd == "startrgbskin" then
       rainbow_skin(true)
    elseif raw_cmd == "flames" or raw_cmd == "flameson" or raw_cmd == "startflames" then
