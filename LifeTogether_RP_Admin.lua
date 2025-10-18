@@ -243,6 +243,30 @@ local function decodeHTMLEntities(str)
               :gsub("&#39;", "'")
 end
 
+if executor_contains("LX63") then
+   local Net
+
+   for _, obj in pairs(getgc(true)) do
+      if typeof(obj) == "table" then
+         if typeof(rawget(obj, "send")) == "function" and typeof(rawget(obj, "get")) == "function" then
+            local info = debug.getinfo(obj.get)
+            if info and info.source and info.source:find("Net") then
+               Net = obj
+               break
+            end
+         end
+      end
+   end
+
+   if Net then
+      Net.get("spawn_vehicle", "SVJ")
+   end
+else
+   local Net = require(getgenv().Core:FindFirstChild("Net"))
+
+   Net.get("spawn_vehicle", "SVJ")
+end
+
 getgenv().walkflinging = getgenv().walkflinging or false
 local Animate_Disabled = false
 wait(0.5)
@@ -310,9 +334,9 @@ if success and response then
    if get_vehicle() and getgenv().Humanoid.Sit or getgenv().Humanoid.Sit == true then
       getgenv().Humanoid:ChangeState(3)
       wait(0.2)
-      require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", get_vehicle().Name or "SVJ")
+      local Net.get("spawn_vehicle", get_vehicle().Name or "SVJ")
    elseif get_vehicle() and getgenv().Humanoid.Sit == false then
-      require(getgenv().Core:FindFirstChild("Net")).get("spawn_vehicle", get_vehicle().Name or "SVJ")
+      local Net.get("spawn_vehicle", get_vehicle().Name or "SVJ")
    elseif not get_vehicle() then
       getgenv().notify("Warning", "We did spawn the Vehicle it seems, but it seems like you despawned the Vehicle.", 10)
    elseif not get_vehicle() and getgenv().Humanoid.Sit == true then
