@@ -569,6 +569,7 @@ function RGB_Phone(Boolean)
             task.wait(0)
             change_phone_color(color)
          end
+         getgenv().RunService.Heartbeat:Wait()
       end
    elseif Boolean == false then
       Boolean = false
@@ -1209,6 +1210,7 @@ function RGB_Vehicle(Boolean)
             if getgenv().Rainbow_Vehicle ~= true then return end
             change_vehicle_color(color, get_vehicle())
          end
+         getgenv().RunService.Heartbeat:Wait()
       end
    elseif Boolean == false then
       getgenv().Rainbow_Vehicle = false
@@ -3222,6 +3224,7 @@ function job_spammer(toggle)
             task.wait(0)
             getgenv().Send("job", "Doctor")
             task.wait(0)
+            RunService.Heartbeat:Wait()
          end
       end)
    elseif toggle == false then
@@ -5572,7 +5575,7 @@ local function handleCommand(sender, message)
       local Target = findplr(split[1])
       if not Target then
          show_notification("Error:", "Player does not exist!", "Error")
-         return getgenv().notify("Error", "Player does not exist!", 5)
+         return getgenv().notify("Error", "That Player does not exist!", 5)
       end
       
       if getgenv().easy_click_plr then
@@ -5593,6 +5596,13 @@ local function handleCommand(sender, message)
          getgenv().Send("request_call", Target)
          task.wait(0)
          getgenv().Send("end_call", Target)
+         RunService.Heartbeat:Wait()
+
+         if not Target or not Target.Parent then
+            getgenv().Currently_Annoying_Player = nil
+            getgenv().easy_click_plr = false
+            return getgenv().notify("Warning", "Target player has left, turned off Annoyance loop.", 6)
+         end
       end
    elseif raw_cmd == "freeemotes" or raw_cmd == "freeemotesgui" or raw_cmd == "allemotes" then
       if getgenv().FreeEmotes_Enabled then
