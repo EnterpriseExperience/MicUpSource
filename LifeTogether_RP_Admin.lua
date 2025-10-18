@@ -2726,7 +2726,7 @@ function toggle_rgb_streetlights(toggle)
       getgenv().RGB_Street_Lights_NightTime_Loop = true
       getgenv().notify("Success", "RGB/Rainbow StreetLights has been enabled, when it's NightTime, you'll see it.", 10)
       getgenv().StreetLightRainbowConnection = RunService.Heartbeat:Connect(function(dt)
-         local clock_time = g.Lighting.ClockTime
+         local clock_time = getgenv().Lighting.ClockTime
          if clock_time >= 18.5 or clock_time <= 7.5 then
             hue = (hue + dt * 30) % 360
             local color = Color3.fromHSV(hue / 360, 1, 1)
