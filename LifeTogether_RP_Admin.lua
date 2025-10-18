@@ -523,87 +523,97 @@ function car_listing_gui()
 end
 
 loadstring(game:HttpGet(tostring(Configuration_API)))()
-wait(1)
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "FlamesConfigPrompt"
-ScreenGui.IgnoreGuiInset = true
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Enabled = true
-ScreenGui.Parent = getgenv().CoreGui
-
-local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 350, 0, 180)
-Frame.Position = UDim2.new(0.5, -175, 0.5, -90)
-Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Frame.BackgroundTransparency = 0.05
-Frame.BorderSizePixel = 0
-Frame.Parent = ScreenGui
-
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 14)
-UICorner.Parent = Frame
-
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, -40, 0, 80)
-Title.Position = UDim2.new(0, 20, 0, 25)
-Title.BackgroundTransparency = 1
-Title.Text = "Do you want to try our new configuration system?"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.GothamBold
-Title.TextScaled = true
-Title.TextWrapped = true
-Title.Parent = Frame
-
-local ButtonHolder = Instance.new("Frame")
-ButtonHolder.Size = UDim2.new(1, 0, 0, 60)
-ButtonHolder.Position = UDim2.new(0, 0, 1, -70)
-ButtonHolder.BackgroundTransparency = 1
-ButtonHolder.Parent = Frame
-
-local YesButton = Instance.new("TextButton")
-YesButton.Size = UDim2.new(0.45, 0, 1, 0)
-YesButton.Position = UDim2.new(0.05, 0, 0, 0)
-YesButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-YesButton.Text = "Yes"
-YesButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-YesButton.Font = Enum.Font.GothamBold
-YesButton.TextScaled = true
-YesButton.Parent = ButtonHolder
-
-local YesCorner = Instance.new("UICorner")
-YesCorner.CornerRadius = UDim.new(0, 10)
-YesCorner.Parent = YesButton
-
-local NoButton = Instance.new("TextButton")
-NoButton.Size = UDim2.new(0.45, 0, 1, 0)
-NoButton.Position = UDim2.new(0.5, 0, 0, 0)
-NoButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-NoButton.Text = "No"
-NoButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-NoButton.Font = Enum.Font.GothamBold
-NoButton.TextScaled = true
-NoButton.Parent = ButtonHolder
-
-local NoCorner = Instance.new("UICorner")
-NoCorner.CornerRadius = UDim.new(0, 10)
-NoCorner.Parent = NoButton
-
-YesButton.MouseButton1Click:Connect(function()
-   getgenv().set_enrolled_state("enabled")
+wait(2.5)
+if getgenv().get_enrolled_state() == "enabled" then
    if getgenv().CoreGui:FindFirstChild("FlamesAdminGUI") then
       getgenv().CoreGui:FindFirstChild("FlamesAdminGUI").Enabled = true
    end
-   wait(0.1)
-	ScreenGui:Destroy()
-end)
+elseif getgenv().get_enrolled_state() == "disabled" then
+   local ScreenGui = Instance.new("ScreenGui")
+   ScreenGui.Name = "FlamesConfigPrompt"
+   ScreenGui.IgnoreGuiInset = true
+   ScreenGui.ResetOnSpawn = false
+   ScreenGui.Enabled = true
+   ScreenGui.Parent = getgenv().CoreGui
 
-NoButton.MouseButton1Click:Connect(function()
-	ScreenGui:Destroy()
+   local Frame = Instance.new("Frame")
+   Frame.Size = UDim2.new(0, 350, 0, 180)
+   Frame.Position = UDim2.new(0.5, -175, 0.5, -90)
+   Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+   Frame.BackgroundTransparency = 0.05
+   Frame.BorderSizePixel = 0
+   Frame.Parent = ScreenGui
+
+   local UICorner = Instance.new("UICorner")
+   UICorner.CornerRadius = UDim.new(0, 14)
+   UICorner.Parent = Frame
+
+   local Title = Instance.new("TextLabel")
+   Title.Size = UDim2.new(1, -40, 0, 80)
+   Title.Position = UDim2.new(0, 20, 0, 25)
+   Title.BackgroundTransparency = 1
+   Title.Text = "Do you want to try our new configuration system?"
+   Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+   Title.Font = Enum.Font.GothamBold
+   Title.TextScaled = true
+   Title.TextWrapped = true
+   Title.Parent = Frame
+
+   local ButtonHolder = Instance.new("Frame")
+   ButtonHolder.Size = UDim2.new(1, 0, 0, 60)
+   ButtonHolder.Position = UDim2.new(0, 0, 1, -70)
+   ButtonHolder.BackgroundTransparency = 1
+   ButtonHolder.Parent = Frame
+
+   local YesButton = Instance.new("TextButton")
+   YesButton.Size = UDim2.new(0.45, 0, 1, 0)
+   YesButton.Position = UDim2.new(0.05, 0, 0, 0)
+   YesButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+   YesButton.Text = "Yes"
+   YesButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+   YesButton.Font = Enum.Font.GothamBold
+   YesButton.TextScaled = true
+   YesButton.Parent = ButtonHolder
+
+   local YesCorner = Instance.new("UICorner")
+   YesCorner.CornerRadius = UDim.new(0, 10)
+   YesCorner.Parent = YesButton
+
+   local NoButton = Instance.new("TextButton")
+   NoButton.Size = UDim2.new(0.45, 0, 1, 0)
+   NoButton.Position = UDim2.new(0.5, 0, 0, 0)
+   NoButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+   NoButton.Text = "No"
+   NoButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+   NoButton.Font = Enum.Font.GothamBold
+   NoButton.TextScaled = true
+   NoButton.Parent = ButtonHolder
+
+   local NoCorner = Instance.new("UICorner")
+   NoCorner.CornerRadius = UDim.new(0, 10)
+   NoCorner.Parent = NoButton
+
+   YesButton.MouseButton1Click:Connect(function()
+      getgenv().set_enrolled_state("enabled")
+      if getgenv().CoreGui:FindFirstChild("FlamesAdminGUI") then
+         getgenv().CoreGui:FindFirstChild("FlamesAdminGUI").Enabled = true
+      end
+      wait(0.1)
+      ScreenGui:Destroy()
+   end)
+
+   NoButton.MouseButton1Click:Connect(function()
+      ScreenGui:Destroy()
+      if getgenv().CoreGui:FindFirstChild("FlamesAdminGUI") then
+         getgenv().CoreGui:FindFirstChild("FlamesAdminGUI").Enabled = false
+      end
+      getgenv().set_enrolled_state("notallowed")
+   end)
+else
    if getgenv().CoreGui:FindFirstChild("FlamesAdminGUI") then
       getgenv().CoreGui:FindFirstChild("FlamesAdminGUI").Enabled = false
    end
-   getgenv().set_enrolled_state("disabled")
-end)
+end
 
 local function get_other_vehicle(Player)
    for i, v in pairs(getgenv().Workspace:FindFirstChild("Vehicles"):GetChildren()) do
