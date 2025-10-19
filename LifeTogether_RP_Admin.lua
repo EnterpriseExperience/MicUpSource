@@ -57,9 +57,9 @@ if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.1.0"
+local Raw_Version = "V5.1.1"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Added RGB StreetLights (for when it's NightTime, you'll see them be RGB colors)."
+local Announcement_Message = "Fixed 'Anti Outfit Stealer' command not turning off properly."
 local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -1965,6 +1965,9 @@ function anti_outfit_copier(toggle)
       if getgenv().anti_outfit_stealer then
          return getgenv().notify("Error", "Anti Outfit Stealer is already enabled!", 5)
       end
+      if getgenv().AutoLockConnection then
+         return getgenv().notify("Error", "Anti Outfit Stealer is already enabled! [connection]", 5)
+      end
 
       getgenv().notify("Info", "NOTE: UNHIDE YOUR NAME AND do NOT change your Bio, this will not work otherwise (it'll auto-change back for you though incase you do)", 15)
       wait()
@@ -2005,7 +2008,17 @@ function anti_outfit_copier(toggle)
       wait(0.1)
       getgenv().ToggleAntiFit_Stealer(true)
    elseif toggle == false then
-      getgenv().anti_outfit_stealer = false
+      if not getgenv().anti_outfit_stealer then
+         return getgenv().notify("Error", "Anti Outfit Copier is not enabled!", 5)
+      end
+
+      if getgenv().anti_outfit_stealer then
+         getgenv().anti_outfit_stealer = false
+      end
+      if getgenv().AutoLockConnection then
+         getgenv().AutoLockConnection:Disconnect()
+         getgenv().AutoLockConnection = nil
+      end
       getgenv().Send("bio", tostring(Old_Bio))
    else
       return 
