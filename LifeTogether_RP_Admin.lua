@@ -57,9 +57,9 @@ if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.1.1"
+local Raw_Version = "V5.1.2"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed 'Anti Outfit Stealer' command not turning off properly."
+local Announcement_Message = "Made emotes disable automatically before copying a Players avatar (due to Emotes breaking)."
 local displayTimeMax = 15
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -4225,6 +4225,13 @@ function copy_plr_avatar(Player)
          return false
       end
 
+      if getgenv().Is_Currently_Emoting then
+         getgenv().notify("Info", "Emoting was enabled when clearing current avatar, disabled (to not break the Emote).", 6)
+         if getgenv().disable_emoting_script then
+            getgenv().disable_emoting_script()
+         end
+      end
+
       local assets = {}
       for _, acc in ipairs(desc:GetAccessories(true)) do
          if acc.AssetId and acc.AssetId > 0 then
@@ -4339,6 +4346,13 @@ function copy_plr_avatar(Player)
       if not clearAvatar() then
          getgenv().is_copying_avatar_already_flames = false
          return getgenv().notify("Warning", "Something unexpected happened when trying to clear your Avatar.", 6)
+      end
+
+      if getgenv().Is_Currently_Emoting then
+         getgenv().notify("Info", "Emoting was enabled when clearing current avatar, disabled (to not break the Emote).", 6)
+         if getgenv().disable_emoting_script then
+            getgenv().disable_emoting_script()
+         end
       end
 
       task.wait(0.5)
