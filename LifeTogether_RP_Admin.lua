@@ -2019,6 +2019,7 @@ function anti_outfit_copier(toggle)
          getgenv().AutoLockConnection:Disconnect()
          getgenv().AutoLockConnection = nil
       end
+      getgenv().notify("Success", "Disabled Anti Outfit Stealer.", 5)
       getgenv().Send("bio", tostring(Old_Bio))
    else
       return 
@@ -2371,6 +2372,10 @@ local Emotes = {
       97263887198327,
       126450121068943,
    },
+   freaky = {
+      71014156366577, -- a fucking bang Emote on Roblox, we're cooked bro, I'm telling you.
+      135404588651407,
+   }
 }
 
 local Aliases = {
@@ -3371,6 +3376,7 @@ function job_spammer(toggle)
       end
       wait()
       getgenv().Every_Job = true
+      getgenv().notify("Success", "Job Spammer has been enabled.", 5)
       task.spawn(function()
          while getgenv().Every_Job == true do
          task.wait(0)
@@ -3395,6 +3401,7 @@ function job_spammer(toggle)
       end
 
       getgenv().Every_Job = false
+      getgenv().notify("Success", "Job Spammer has been disabled.", 5)
    else
       return 
    end
@@ -4403,8 +4410,8 @@ function annoyance_GUI()
       CoreGui.AnnoyGUI:Destroy()
    end
 
-   getgenv().AnnoyList = {}
-   getgenv().group_chatting_users = {}
+   getgenv().AnnoyList = getgenv().AnnoyList or {}
+   getgenv().group_chatting_users = getgenv().group_chatting_users or {}
    getgenv().Creating_Groups = false
 
    local ScreenGui = Instance.new("ScreenGui")
@@ -5598,7 +5605,7 @@ local function handleCommand(sender, message)
       end
       wait()
       job_spammer(true)
-   elseif raw_cmd == "jobsoff" or raw_cmd == "nojobs" or raw_cmd == "unjobspam" or raw_cmd == "stopjobspam" or raw_cmd == "stopjobspammer" then
+   elseif raw_cmd == "jobsoff" or raw_cmd == "nojobs" or raw_cmd == "unjobspam" or raw_cmd == "stopjobspam" or raw_cmd == "stopjobspammer" or raw_cmd == "unjobspammer" then
       if not getgenv().Every_Job then
          return getgenv().notify("Warning", "Job spammer is not enabled! enable it first.", 5)
       end
@@ -5974,18 +5981,25 @@ local function handleCommand(sender, message)
       if not Current_Car then return getgenv().notify("Error", "You do not have a vehicle spawned!", 5) end
       
       if Current_Car then
-         spawn_any_vehicle(tostring(Current_Car))
+         getgenv().notify("Success", "Despawned Vehicle: "..tostring(Current_Car), 5)
+         spawn_any_vehicle(tostring(Current_Car.Name))
       end
    elseif raw_cmd == "trailer" or raw_cmd == "addtrailer" then
       local Vehicle = get_vehicle()
       if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle spawned, spawn one and try again!", 7) end
 
-      water_skie_trailer(true, get_vehicle())
+      if get_vehicle() then
+         getgenv().notify("Success", "Added WaterSkies to Vehicle: "..tostring(Vehicle), 5)
+         water_skie_trailer(true, get_vehicle())
+      end
    elseif raw_cmd == "notrailer" then
       local Vehicle = get_vehicle()
       if not Vehicle then return getgenv().notify("Error", "You do not have a Vehicle spawned, spawn one and try again!", 7) end
 
-      water_skie_trailer(false, get_vehicle())
+      if get_vehicle() then
+         getgenv().notify("Success", "Removed WaterSkies trailer from: "..tostring(Vehicle), 5)
+         water_skie_trailer(false, get_vehicle())
+      end
    elseif raw_cmd == "rainbowtime" then
       local Player = findplr(split[1])
       if not Player then
@@ -6004,6 +6018,8 @@ local function handleCommand(sender, message)
       task.wait(0.2)
       notify("Success", "Set rainbow delay for " .. Name .. " to " .. new_delay)
    elseif raw_cmd == "annoyergui" or raw_cmd == "annoyancegui" or raw_cmd == "annoyancemenu" or raw_cmd == "annoyplrgui" or raw_cmd == "groupspamgui" or raw_cmd == "gcspamgui" then
+
+
       annoyance_GUI()
    elseif raw_cmd == "blacklist" or raw_cmd == "addblacklist" then
       local Player = findplr(split[1])
