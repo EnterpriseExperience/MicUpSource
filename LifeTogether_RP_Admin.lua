@@ -57,10 +57,10 @@ if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.1.6"
+local Raw_Version = "V5.1.7"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed 'walkfling' still being enabled after respawning, fixed 'Anti Outfit Stealer' still being on after disabling + made script easier to run (more lighter now!), added back my credits."
-local displayTimeMax = 30
+local Announcement_Message = "Not an update, but I've not been working on the scripts for Life Together RP because I'm proud to announce that I'm working on the Berry Avenue RP script!, will be released soon (will be an admin)."
+local displayTimeMax = 35
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
