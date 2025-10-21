@@ -59,8 +59,8 @@ end
 wait()
 local Raw_Version = "V5.1.5"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed 'walkfling' still being enabled after respawning, fixed 'Anti Outfit Stealer' still being on after disabling + made script easier to run (more lighter now!)."
-local displayTimeMax = 20
+local Announcement_Message = "Fixed 'walkfling' still being enabled after respawning, fixed 'Anti Outfit Stealer' still being on after disabling + made script easier to run (more lighter now!), added back my credits."
+local displayTimeMax = 30
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -2711,7 +2711,7 @@ function CreateCreditsLabel()
    label.BackgroundColor3 = Color3.fromRGB(255, 176, 0)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
    local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-   label.Text = tostring(Script_Version).." | Happy Halloween! | Current Prefix: " .. prefix
+   label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." | Happy Halloween! | Current Prefix: " .. prefix
    label.Font = Enum.Font.GothamBold
    label.TextScaled = true
    label.RichText = false
@@ -2735,7 +2735,7 @@ function CreateCreditsLabel()
       getgenv()._PrefixUpdateConnection = getgenv().AdminPrefix.Changed:Connect(function()
          lastPrefix = tostring(getgenv().AdminPrefix)
          local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-         label.Text = tostring(Script_Version).." | Happy Halloween! | Current Prefix: " .. prefix
+         label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." | Happy Halloween! | Current Prefix: " .. prefix
       end)
    else
       task.spawn(function()
@@ -2745,7 +2745,7 @@ function CreateCreditsLabel()
             if tostring(getgenv().AdminPrefix) ~= lastPrefix then
                lastPrefix = tostring(getgenv().AdminPrefix)
                local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
-               label.Text = tostring(Script_Version).." | Happy Halloween! | Current Prefix: " .. prefix
+               label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." | Happy Halloween! | Current Prefix: " .. prefix
             end
          end
       end)
