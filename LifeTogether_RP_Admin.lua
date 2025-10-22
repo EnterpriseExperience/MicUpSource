@@ -4,7 +4,7 @@ if not getgenv().Game:IsLoaded() then
    getgenv().Game.Loaded:Wait()
 end
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
-local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
+local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/handler.lua"
 local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/refs/heads/main/configuration.lua"
 local config_path = "Flames_Admin_Config.json"
 local function retrieve_executor()
@@ -57,9 +57,9 @@ if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.1.7"
+local Raw_Version = "V5.1.8"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Not an update, but I've not been working on the scripts for Life Together RP because I'm proud to announce that I'm working on the Berry Avenue RP script!, will be released soon (will be an admin)."
+local Announcement_Message = "Fixed slow loading time issues."
 local displayTimeMax = 35
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
@@ -5465,7 +5465,6 @@ local function handleCommand(sender, message)
       getgenv().Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
       getgenv().Seat.enabled.set(true)
       wait(0.1)
-      -- might as well use both 🤷
       getgenv().notify("Success", "Sitting is now enabled!", 5)
       Phone.show_notification("Success:", "Sitting is now enabled!", "Normal")
    elseif raw_cmd == "flashname" then
