@@ -3,9 +3,9 @@ wait()
 if not getgenv().Game:IsLoaded() then
    getgenv().Game.Loaded:Wait()
 end
-local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
 local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/handler.lua"
-local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/refs/heads/main/configuration.lua"
+local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/main/configuration.lua"
 local config_path = "Flames_Admin_Config.json"
 local function retrieve_executor()
    local name
@@ -6073,7 +6073,7 @@ task.spawn(function()
       task.wait(1)
 
       local success, latestVersionInfo = pcall(function()
-         local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON?cachebust=" .. tick())
+         local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Script_Versions_JSON?cachebust=" .. tick())
          return HttpService:JSONDecode(versionJson)
       end)
 
