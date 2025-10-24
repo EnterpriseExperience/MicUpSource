@@ -3,8 +3,9 @@ wait()
 if not getgenv().Game:IsLoaded() then
    getgenv().Game.Loaded:Wait()
 end
+wait(0.2)
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
-local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/handler.lua"
+local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/refs/heads/main/handler.lua"
 local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/main/configuration.lua"
 local config_path = "Flames_Admin_Config.json"
 local function retrieve_executor()
@@ -57,10 +58,10 @@ if getgenv().Game.PlaceId ~= 13967668166 then
    return NotifyLib:External_Notification("Error", "This is not Life Together RP! You cannot run this here!", 6)
 end
 wait()
-local Raw_Version = "V5.1.8"
+local Raw_Version = "V5.1.9"
 local Script_Creator = "computerbinaries"
-local Announcement_Message = "Fixed slow loading time issues."
-local displayTimeMax = 35
+local Announcement_Message = "Seriously improved Character initialization time."
+local displayTimeMax = 10
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_LifeTogether_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-LifeAdmin"
@@ -68,7 +69,7 @@ getgenv().Script_Version_GlobalGenv = Script_Version
 
 if not getgenv().performance_stats then
    getgenv().notify("Info", "Loading Performance Statistics GUI...", 5)
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/main/grab_file_performance"))()
    wait(3)
    if getgenv().performance_stats then
       getgenv().notify("Success", "Loaded Performance Statistics GUI.", 5)
@@ -176,7 +177,7 @@ if not getgenv().All_Services_Initialized then
    function exec_lib(Name)
       local Formatted_Library = tostring(Name)
 
-      exec_ls("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/"..Formatted_Library)
+      exec_ls("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/main/"..Formatted_Library)
    end
    wait(0.3)
    exec_lib("GlobalEnv_Framework.lua")
@@ -252,10 +253,153 @@ else
    Net.get("spawn_vehicle", "SVJ")
 end
 
+getgenv().get_char = function(Player)
+   if not Player or typeof(Player) ~= "Instance" or not Player:IsA("Player") then
+      getgenv().notify("Error", "That is not a Player, or Player entered isn't an actual player.", 5)
+      return nil
+   end
+
+   local character = Player.Character
+   local attempts = 0
+   local max_attempts = 25
+
+   while not character and attempts < max_attempts do
+      task.wait(0.2)
+      character = Player.Character
+      attempts += 1
+   end
+
+   if not character then
+      local ok, newChar = pcall(function()
+         return Player.CharacterAdded:Wait()
+      end)
+      if ok and newChar then
+         character = newChar
+      end
+   end
+
+   if not character then
+      getgenv().notify("Error", "Could not fetch Character for: "..tostring(Player or "???"), 6)
+      return nil
+   end
+
+   return character
+end
+wait(0.2)
+
+local function get_human(Player)
+   local character = getgenv().get_char(Player)
+   if not character then
+      return nil
+   end
+
+   local humanoid = character:FindFirstChildOfClass("Humanoid")
+   local attempts = 0
+   local max_attempts = 25
+
+   while not humanoid and attempts < max_attempts do
+      task.wait(0.2)
+      humanoid = character:FindFirstChildOfClass("Humanoid")
+      attempts += 1
+   end
+
+   if not humanoid then
+      local ok, hum = pcall(function()
+         return character:WaitForChild("Humanoid", 5)
+      end)
+      if ok and hum then
+         humanoid = hum
+      end
+   end
+
+   if not humanoid then
+      return nil
+   end
+
+   return humanoid
+end
+
+local function get_root(Player)
+   local character = getgenv().get_char(Player)
+   if not character then
+      return nil
+   end
+
+   local root = character:FindFirstChild("HumanoidRootPart")
+   local attempts = 0
+   local max_attempts = 25
+
+   while not root and attempts < max_attempts do
+      task.wait(0.2)
+      root = character:FindFirstChild("HumanoidRootPart")
+      attempts += 1
+   end
+
+   if not root then
+      local ok, hrp = pcall(function()
+         return character:WaitForChild("HumanoidRootPart", 5)
+      end)
+      if ok and hrp then
+         root = hrp
+      end
+   end
+
+   if not root then
+      return nil
+   end
+
+   return root
+end
+
+local function get_head(Player)
+   if not Player or typeof(Player) ~= "Instance" or not Player:IsA("Player") then
+      getgenv().notify("Error", "Invalid Player provided to get_head.", 5)
+      return nil
+   end
+
+   local character = getgenv().get_char(Player)
+   if not character then
+      return nil
+   end
+
+   local head = character:FindFirstChild("Head")
+   local attempts = 0
+   local max_attempts = 25
+
+   while not head and attempts < max_attempts do
+      task.wait(0.1)
+      head = character:FindFirstChild("Head")
+      attempts += 1
+   end
+
+   if not head then
+      local ok, result = pcall(function()
+         return character:WaitForChild("Head", 5)
+      end)
+      if ok and result then
+         head = result
+      end
+   end
+
+   if not head or not head:IsA("BasePart") then
+      return nil
+   end
+
+   return head
+end
+
 getgenv().walkflinging = getgenv().walkflinging or false
 local Animate_Disabled = false
 wait(0.5)
 local function Dynamic_Character_Updater(character)
+   character = character or getgenv().get_char(getgenv().LocalPlayer)
+   if not character then
+      character = getgenv().LocalPlayer.CharacterAdded:Wait()
+   end
+   getgenv().Humanoid = get_human(getgenv().LocalPlayer)
+   getgenv().HumanoidRootPart = get_root(getgenv().LocalPlayer)
+   getgenv().Head = get_head(getgenv().LocalPlayer)
+
    if character then
       local Animate = character:WaitForChild("Animate", 3)
       if Animate_Disabled or Animate_Disabled == true then
@@ -272,8 +416,6 @@ local function Dynamic_Character_Updater(character)
       if getgenv().Humanoid then
          getgenv().Humanoid.JumpHeight = 7
          getgenv().Humanoid.JumpPower = 50
-      else
-         getgenv().notify("Error", "It seems we we're unable to update your Humanoid, please reset!", 8)
       end
       if getgenv().walkflinging then
          getgenv().walkflinging = false
@@ -288,6 +430,13 @@ local function Dynamic_Character_Updater(character)
    end
 end
 
+if not getgenv().Character then
+   getgenv().Character = Get_Char(getgenv().LocalPlayer)
+end
+getgenv().HumanoidRootPart = SafeGetHRP(getgenv().Character)
+getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
+getgenv().Head = SafeGetHead(getgenv().Character)
+wait(0.2)
 Dynamic_Character_Updater(getgenv().Character)
 task.wait(0.2)
 getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
@@ -1282,8 +1431,6 @@ function save_outfits_GUI()
 end
 
 function RGB_Vehicle(Boolean)
-   getgenv().Rainbow_Vehicle = Boolean
-
    local colors = {
       Color3.fromRGB(255, 255, 255),
       Color3.fromRGB(128, 128, 128),
@@ -1301,6 +1448,11 @@ function RGB_Vehicle(Boolean)
    }
 
    if Boolean == true then
+      if getgenv().Rainbow_Vehicle then
+         return getgenv().notify("Warning", "Rainbow/RGB Vehicle is already enabled.", 5)
+      end
+
+      getgenv().Rainbow_Vehicle = true
       getgenv().notify("Success", "[Enabled]: Rainbow Vehicle.", 4)
       while getgenv().Rainbow_Vehicle == true do
          task.wait(0)
@@ -1312,6 +1464,10 @@ function RGB_Vehicle(Boolean)
          getgenv().RunService.Heartbeat:Wait()
       end
    elseif Boolean == false then
+      if not getgenv().Rainbow_Vehicle then
+         return getgenv().notify("Warning", "Rainbow/RGB Vehicle is not enabled.", 5)
+      end
+
       getgenv().Rainbow_Vehicle = false
       Boolean = false
       getgenv().notify("Success", "[Disabled]: Rainbow Vehicle.", 4)
@@ -1360,6 +1516,7 @@ function RGB_Vehicle_Others(Player, Boolean)
       Boolean = false
    end
 end
+loadstring(game:HttpGet(tostring(Handler_API)))()
 wait(0.1)
 local GameAnalytics
 local GA_Client
@@ -1931,121 +2088,98 @@ end
 wait()
 
 function EnableFly(speed)
-   local player = getgenv().LocalPlayer
-   local HRP = getgenv().HumanoidRootPart
-   local Humanoid = getgenv().Humanoid
-   local Camera = getgenv().Camera
-   local RunService = getgenv().RunService
-   local UIS = getgenv().UserInputService
-   speed = tonumber(speed) or 125
+	local player = getgenv().LocalPlayer
+	local HRP = getgenv().HumanoidRootPart
+	local Humanoid = getgenv().Humanoid
+	local Camera = getgenv().Camera
+	local RunService = getgenv().RunService
+	local UIS = getgenv().UserInputService
+	local PlayerScripts = player:FindFirstChildOfClass("PlayerScripts")
+	speed = tonumber(speed) or 25
 
-   if getgenv().HD_FlyEnabled then
-      return getgenv().notify("Warning", "Fly is already enabled!", 5)
-   end
+	if getgenv().HD_FlyEnabled then
+		return getgenv().notify("Warning", "Fly is already enabled!", 5)
+	end
+	if not (HRP and Humanoid and Camera) then
+		return getgenv().notify("Error", "Missing character components!", 5)
+	end
 
-   if not (HRP and Humanoid and Camera) then return end
+	getgenv().HD_FlyEnabled = true
+	local vertical = 0
 
-   getgenv().HD_FlyEnabled = true
-   local vertical = 0
+	local function getMoveVector()
+		if not PlayerScripts or not require then
+			return Vector3.zero
+		end
 
-   local function createMobileFlyButtons()
-      local ScreenGui = Instance.new("ScreenGui")
-      ScreenGui.Name = "FlyControls"
-      ScreenGui.ResetOnSpawn = false
-      ScreenGui.IgnoreGuiInset = true
-      ScreenGui.Parent = getgenv().PlayerGui
+		local ok, controlModule = pcall(function()
+			local pm = require(PlayerScripts:WaitForChild("PlayerModule"))
+			return pm:GetControls()
+		end)
 
-      local function makeArrowButton(name, position, text)
-         local btn = Instance.new("TextButton")
-         btn.Name = name
-         btn.Text = text
-         btn.Size = UDim2.new(0, 60, 0, 60)
-         btn.Position = position
-         btn.AnchorPoint = Vector2.new(1, 1)
-         btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-         btn.TextColor3 = Color3.new(1, 1, 1)
-         btn.TextScaled = true
-         btn.BorderSizePixel = 0
-         btn.AutoButtonColor = true
-         btn.BackgroundTransparency = 0.2
-         btn.Parent = ScreenGui
-         return btn
-      end
+		if ok and controlModule and type(controlModule.GetMoveVector) == "function" then
+			local moveVec = controlModule:GetMoveVector()
+			return Vector3.new(moveVec.X, 0, -moveVec.Y)
+		end
 
-      local upBtn = makeArrowButton("FlyUp", UDim2.new(1, -20, 1, -140), "↑")
-      local downBtn = makeArrowButton("FlyDown", UDim2.new(1, -20, 1, -70), "↓")
+		return Vector3.zero
+	end
 
-      upBtn.MouseButton1Down:Connect(function()
-         vertical = 1
-      end)
-      upBtn.MouseButton1Up:Connect(function()
-         vertical = 0
-      end)
-      downBtn.MouseButton1Down:Connect(function()
-         vertical = -1
-      end)
-      downBtn.MouseButton1Up:Connect(function()
-         vertical = 0
-      end)
+	UIS.InputBegan:Connect(function(input, gpe)
+		if gpe then return end
+		if input.KeyCode == Enum.KeyCode.E then vertical = 1 end
+		if input.KeyCode == Enum.KeyCode.Q then vertical = -1 end
+	end)
 
-      return ScreenGui
-   end
+	UIS.InputEnded:Connect(function(input)
+		if input.KeyCode == Enum.KeyCode.E or input.KeyCode == Enum.KeyCode.Q then
+			vertical = 0
+		end
+	end)
 
-   local isTouch = UIS.TouchEnabled or UIS.KeyboardEnabled == false
-   local mobileGui
-   if isTouch then
-      mobileGui = createMobileFlyButtons()
-   end
+	local bodyGyro = Instance.new("BodyGyro")
+	bodyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+	bodyGyro.P = 4000
+	bodyGyro.D = 150
+	bodyGyro.CFrame = HRP.CFrame
+	bodyGyro.Name = "ExecutorFlyGyro"
+	bodyGyro.Parent = HRP
 
-   UIS.InputBegan:Connect(function(input, gpe)
-      if gpe then return end
-      if input.KeyCode == Enum.KeyCode.E then vertical = 1 end
-      if input.KeyCode == Enum.KeyCode.Q then vertical = -1 end
-   end)
+	local bodyPos = Instance.new("BodyPosition")
+	bodyPos.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+	bodyPos.P = 7500
+	bodyPos.D = 1000
+	bodyPos.Position = HRP.Position
+	bodyPos.Name = "ExecutorFlyPosition"
+	bodyPos.Parent = HRP
 
-   UIS.InputEnded:Connect(function(input)
-      if input.KeyCode == Enum.KeyCode.E or input.KeyCode == Enum.KeyCode.Q then
-         vertical = 0
-      end
-   end)
+	Humanoid.PlatformStand = true
 
-   local bodyGyro = Instance.new("BodyGyro")
-   bodyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
-   bodyGyro.P = 4000
-   bodyGyro.D = 150
-   bodyGyro.CFrame = HRP.CFrame
-   bodyGyro.Name = "ExecutorFlyGyro"
-   bodyGyro.Parent = HRP
+	getgenv().FlyConnection = RunService.RenderStepped:Connect(function()
+		if not getgenv().HD_FlyEnabled then
+			bodyGyro:Destroy()
+			bodyPos:Destroy()
+			Humanoid.PlatformStand = false
+			if getgenv().FlyConnection then
+				getgenv().FlyConnection:Disconnect()
+				getgenv().FlyConnection = nil
+			end
+			return
+		end
 
-   local bodyPos = Instance.new("BodyPosition")
-   bodyPos.MaxForce = Vector3.new(1e9, 1e9, 1e9)
-   bodyPos.P = 7500
-   bodyPos.D = 1000
-   bodyPos.Position = HRP.Position
-   bodyPos.Name = "ExecutorFlyPosition"
-   bodyPos.Parent = HRP
+		local moveVec = getMoveVector()
+		local moveWorld = (Camera.CFrame.RightVector * moveVec.X + Camera.CFrame.LookVector * moveVec.Z)
+		local verticalMove = Vector3.new(0, vertical, 0)
 
-   Humanoid.PlatformStand = true
+		local totalDir = moveWorld + verticalMove
+		if totalDir.Magnitude > 0 then
+			totalDir = totalDir.Unit
+		end
 
-   FlyConnection = RunService.RenderStepped:Connect(function(dt)
-      if not getgenv().HD_FlyEnabled then
-         bodyGyro:Destroy()
-         bodyPos:Destroy()
-         Humanoid.PlatformStand = false
-         FlyConnection:Disconnect()
-         if mobileGui then mobileGui:Destroy() end
-         return
-      end
-
-      local moveDir = Humanoid.MoveDirection
-      local movement = moveDir * speed
-      local verticalMove = Vector3.new(0, vertical * speed, 0)
-      bodyPos.Position = HRP.Position + movement + verticalMove
-      bodyGyro.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector)
-   end)
+		bodyPos.Position = HRP.Position + (totalDir * speed * (task.wait() and 0 or 1))
+		bodyGyro.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector)
+	end)
 end
-
-loadstring(game:HttpGet(tostring(Handler_API)))()
 
 function create_or_get_blur()
    local Blur_Effect = getgenv().Lighting:FindFirstChildOfClass("BlurEffect") or Instance.new("BlurEffect")
