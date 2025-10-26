@@ -8,6 +8,10 @@ local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ent
 local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/handler.lua"
 local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/main/configuration.lua"
 local config_path = "Flames_BerryAve_Admin_Config.json"
+local Raw_Version = "V1.1.8"
+local Script_Creator = "computerbinaries"
+local Announcement_Message = "."
+local displayTimeMax = 30
 local cmdsString = [[
    {prefix}rgbcar - Enables RGB/Rainbow Vehicle (FE).
    {prefix}unrgbcar - Disables RGB/RainbowVehicle.
@@ -23,7 +27,8 @@ local cmdsString = [[
    {prefix}unjobspam - Disables Job Spammer (FE).
    {prefix}gotohouse - Teleports you to your house (if you have one, FE).
    {prefix}lockcar - Locks your Vehicle (FE).
-   {prefix}unlockcar - Unlocks your Vehicle.
+   {prefix}unlockcar - Unlocks your Vehicle (FE).
+   {prefix}despawn - Despawns your currently spawned Vehicle (FE).
    {prefix}cmds - Lists/shows all the available commands.
 ]]
 wait(0.1)
@@ -88,11 +93,6 @@ wait()
 if getgenv().Game.PlaceId ~= 8481844229 then
    return NotifyLib:External_Notification("Error", "This is not Berry Avenue RP! You cannot run this here!", 6)
 end
-wait()
-local Raw_Version = "V1.1.6"
-local Script_Creator = "computerbinaries"
-local Announcement_Message = "."
-local displayTimeMax = 30
 task.wait(0.1)
 getgenv().Script_Loaded_Correctly_BerryAve_Admin_Flames_Hub = getgenv().Script_Loaded_Correctly_BerryAve_Admin_Flames_Hub or false
 local Script_Version = tostring(Raw_Version).."-BerryAveAdmin"
@@ -1354,6 +1354,15 @@ function tp_to_house()
    getgenv().Network_Sender("CallMethod", args)
 end
 
+function despawn_vehicle()
+   local vehicle = getgenv().current_vehicle
+   if vehicle == nil then
+      return getgenv().notify("Warning", "You do not have a Vehicle spawned!", 5)
+   end
+
+   getgenv().Network_Sender(tostring(vehicle.Name))
+end
+
 getgenv().ToggleLockVehicle = function(state)
    if state == true then
       local car = getgenv().current_vehicle
@@ -1566,6 +1575,8 @@ local function handleCommand(sender, message)
       getgenv().ToggleLockVehicle(true)
    elseif raw_cmd == "unlockcar" then
       getgenv().ToggleLockVehicle(false)
+   elseif raw_cmd == "despawn" or raw_cmd == "delcar" or raw_cmd == "despawncar" or raw_cmd == "delvehicle" then
+      despawn_vehicle()
    elseif raw_cmd == "cmds" or raw_cmd == "commands" then
       CommandsMenu()
    end
