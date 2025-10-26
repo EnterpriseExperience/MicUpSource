@@ -8,7 +8,7 @@ local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ent
 local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/handler.lua"
 local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/main/configuration.lua"
 local config_path = "Flames_BerryAve_Admin_Config.json"
-local Raw_Version = "V1.1.8"
+local Raw_Version = "V1.2.0"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "."
 local displayTimeMax = 30
@@ -1412,15 +1412,16 @@ getgenv().StartFlyingMechanic = function(state, speed)
 
    if state == true then
       getgenv().FlyEnabled = true
-      if ControllerModule.KnitStart then
-         task.spawn(function()
-            pcall(ControllerModule.KnitStart, ControllerModule)
-         end)
-      end
       local hum = getgenv().Humanoid
       if hum then hum.WalkSpeed = getgenv().FlySpeed end
+      if ControllerModule.SetFlying then
+         ControllerModule:SetFlying(true)
+      end
    elseif state == false then
       getgenv().FlyEnabled = false
+      if ControllerModule.SetFlying then
+         ControllerModule:SetFlying(false)
+      end
       local hum = getgenv().Humanoid
       if hum then hum.WalkSpeed = getgenv().DefaultGameWS or 16 end
    else
