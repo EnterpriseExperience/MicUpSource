@@ -1358,7 +1358,7 @@ getgenv().ToggleLockVehicle = function(state)
 
       getgenv().Network_Sender("VehicleRequest", "Lock")
       getgenv().notify("Success", "Vehicle has been locked.", 5)
-   elseif toggle == false then
+   elseif state == false then
       local car = getgenv().current_vehicle
 
       if car == nil then
