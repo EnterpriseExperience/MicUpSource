@@ -8,7 +8,7 @@ local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ent
 local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/handler.lua"
 local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/main/configuration.lua"
 local config_path = "Flames_BerryAve_Admin_Config.json"
-local Raw_Version = "V1.2.0"
+local Raw_Version = "V1.2.5"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "."
 local displayTimeMax = 30
@@ -29,6 +29,7 @@ local cmdsString = [[
    {prefix}lockcar - Locks your Vehicle (FE).
    {prefix}unlockcar - Unlocks your Vehicle (FE).
    {prefix}despawn - Despawns your currently spawned Vehicle (FE).
+   {prefix}modcar - Mods your Vehicle making it faster (FE).
    {prefix}cmds - Lists/shows all the available commands.
 ]]
 wait(0.1)
@@ -1336,13 +1337,26 @@ function tp_to_house()
    getgenv().Network_Sender("CallMethod", args)
 end
 
+function mod_vehicle_preset()
+   if getgenv().current_vehicle == nil then
+      return getgenv().notify("Warning", "You do not have a Vehicle spawned!", 5)
+   end
+
+   local CarConfig = require(getgenv().current_vehicle:WaitForChild("Configuration"))
+
+   CarConfig.MaxSpeed = 350
+   CarConfig.ReverseSpeed = 100
+   CarConfig.Acceleration = 90
+   CarConfig.BrakePower = 999999
+end
+
 function despawn_vehicle()
    local vehicle = getgenv().current_vehicle
    if vehicle == nil then
       return getgenv().notify("Warning", "You do not have a Vehicle spawned!", 5)
    end
 
-   getgenv().Network_Sender(tostring(vehicle.Name))
+   getgenv().Network_Sender("SpawnVehicle", tostring(vehicle.Name))
 end
 
 getgenv().ToggleLockVehicle = function(state)
@@ -1567,6 +1581,8 @@ local function handleCommand(sender, message)
       getgenv().ToggleLockVehicle(false)
    elseif raw_cmd == "despawn" or raw_cmd == "delcar" or raw_cmd == "despawncar" or raw_cmd == "delvehicle" then
       despawn_vehicle()
+   elseif raw_cmd == "modcar" or raw_cmd == "modvehicle" or raw_cmd == "fastcar" then
+      mod_vehicle_preset()
    elseif raw_cmd == "cmds" or raw_cmd == "commands" then
       CommandsMenu()
    end
