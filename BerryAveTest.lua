@@ -1391,7 +1391,7 @@ end
 
 getgenv().FlySpeed = getgenv().FlySpeed or 25
 getgenv().FlyEnabled = false
-getgenv().DefaultGameWS = tonumber(getgenv().StarterPlayer.CharacterWalkSpeed)
+getgenv().DefaultGameWS = (getgenv().Humanoid and getgenv().Humanoid.WalkSpeed) or (getgenv().StarterPlayer and getgenv().StarterPlayer.CharacterWalkSpeed) or 16
 wait(0.2)
 getgenv().StartFlyingMechanic = function(state, speed)
    if type(speed) ~= "number" then speed = 25 end
@@ -1554,7 +1554,7 @@ local function handleCommand(sender, message)
 
       getgenv().notify("Error", "Name not matched.", 5)
    elseif raw_cmd == "fly" or raw_cmd == "startfly" then
-      local speed = split[1] or 10
+      local speed = tonumber(split[1]) or 10
 
       getgenv().StartFlyingMechanic(true, speed)
    elseif raw_cmd == "unfly" or raw_cmd == "stopfly" then
