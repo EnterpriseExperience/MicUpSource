@@ -266,32 +266,29 @@ end
 
 -- define all services and their subfolders before-hand --
 if not getgenv()._KnitServices_Initialized then
+   local total = 0
+
    for _, service in ipairs(ServicesFolder:GetChildren()) do
       if service:IsA("Folder") then
          local baseName = service.Name
-         local RF = service:FindFirstChild("RF", true)
-         local RE = service:FindFirstChild("RE", true)
+         getgenv()[baseName] = service
 
-         if RF then
-            local rfName = baseName .. "_RF"
-            getgenv()[rfName] = RF
+         local RF = service:FindFirstChild("RF")
+         local RE = service:FindFirstChild("RE")
+
+         if RF and RF:IsA("Folder") then
+            getgenv()[baseName .. "_RF"] = RF
+            total += #RF:GetChildren()
          end
 
-         if RE then
-            local reName = baseName .. "_RE"
-            getgenv()[reName] = RE
+         if RE and RE:IsA("Folder") then
+            getgenv()[baseName .. "_RE"] = RE
+            total += #RE:GetChildren()
          end
       end
    end
 
-   local total = 0
-   for name, value in pairs(getgenv()) do
-      if typeof(value) == "Instance" and (value:IsA("RemoteEvent") or value:IsA("RemoteFunction")) then
-         total += 1
-      end
-   end
-
-   getgenv().notify("Success", "Knit services initialized ("..total.." remotes)", 5)
+   getgenv().notify("Success", "Knit services initialized (" .. total .. " remotes)", 5)
    getgenv()._KnitServices_Initialized = true
 end
 
@@ -554,54 +551,33 @@ local PlayerScripts = getgenv().LocalPlayer:FindFirstChildOfClass("PlayerScripts
 local ControllersFolder = PlayerScripts:FindFirstChild("Controllers", true) or PlayerScripts:WaitForChild("Controllers", 5)
 local VehicleController = require(ControllersFolder:FindFirstChild("VehicleController"))
 getgenv().current_vehicle = getgenv().current_vehicle or nil
-wait(0.2)
+task.wait(0.2)
 local function set_current_vehicle(v)
-   if typeof(v) == "Instance" then
-      getgenv().current_vehicle = v
-   else
-      return
-   end
+	if typeof(v) == "Instance" then
+		getgenv().current_vehicle = v
+	else
+		getgenv().current_vehicle = nil
+	end
 end
 
-local function onVehicleSpawned(vehicleInstance)
-   set_current_vehicle(vehicleInstance)
-end
+if not getgenv().VehicleWatcher then
+	getgenv().VehicleWatcher = task.spawn(function()
+		getgenv().VehicleService_RE:FindFirstChild("VehicleSpawned").OnClientEvent:Connect(function(vehicle)
+			if typeof(vehicle) == "Instance" then
+				set_current_vehicle(vehicle)
+			end
+		end)
 
-if not getgenv().VehicleWatcher or not task.cancel then
-   getgenv().VehicleWatcher = task.spawn(function()
-      local lastVehicle = nil
+		while task.wait(0.2) do
+			local v = rawget and rawget(getgenv(), "current_vehicle") or getgenv().current_vehicle
 
-      while task.wait(0.2) do
-         local ok, vehicle = pcall(function() return getgenv().current_vehicle end)
-         if not ok then
-            vehicle = nil
-         end
-
-         if vehicle and typeof(vehicle) ~= "Instance" then
-            getgenv().current_vehicle = nil
-            lastVehicle = nil
-            continue
-         end
-
-         if vehicle then
-            local ok2, parent = pcall(function() return vehicle.Parent end)
-            if not ok2 then
-               getgenv().current_vehicle = nil
-               lastVehicle = nil
-               continue
-            end
-            if not parent then
-               getgenv().current_vehicle = nil
-               lastVehicle = nil
-               continue
-            end
-         end
-
-         if vehicle and vehicle ~= lastVehicle then
-            lastVehicle = vehicle
-         end
-      end
-   end)
+			if v and typeof(v) ~= "Instance" then
+				set_current_vehicle(nil)
+			elseif v and not v.Parent then
+				set_current_vehicle(nil)
+			end
+		end
+	end)
 end
 
 getgenv().get_char = function(Player)
@@ -760,6 +736,12 @@ function spawn_any_vehicle(name)
 
    if car_name then
       getgenv().Network_Sender("SpawnVehicle", car_name)
+   end
+end
+
+function pickup_plr(target)
+   if target then
+      getgenv().Network_Sender("PickupPlayer", target)
    end
 end
 
@@ -1393,7 +1375,7 @@ getgenv().ToggleLockVehicle = function(state)
    end
 end
 
-getgenv().FlySpeed = 25
+getgenv().FlySpeed = getgenv().FlySpeed or 25
 getgenv().FlyEnabled = false
 getgenv().DefaultGameWS = tonumber(getgenv().StarterPlayer.CharacterWalkSpeed)
 wait(0.2)
@@ -1411,19 +1393,26 @@ getgenv().StartFlyingMechanic = function(state, speed)
    getgenv().FlyController = ControllerModule
 
    if state == true then
-      getgenv().FlyEnabled = true
       local hum = getgenv().Humanoid
-      if hum then hum.WalkSpeed = getgenv().FlySpeed end
+      getgenv().FlyEnabled = true
       if ControllerModule.SetFlying then
          ControllerModule:SetFlying(true)
       end
+      wait(0.1)
+      if hum then
+         hum.WalkSpeed = speed
+         getgenv().FlySpeed = getgenv().FlySpeed or speed
+      end
    elseif state == false then
+      local hum = getgenv().Humanoid
       getgenv().FlyEnabled = false
       if ControllerModule.SetFlying then
          ControllerModule:SetFlying(false)
       end
-      local hum = getgenv().Humanoid
-      if hum then hum.WalkSpeed = getgenv().DefaultGameWS or 16 end
+      wait(0.1)
+      if hum then
+         hum.WalkSpeed = getgenv().DefaultGameWS or 16
+      end
    else
       return 
    end
