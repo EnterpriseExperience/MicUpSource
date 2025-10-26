@@ -8,7 +8,7 @@ local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ent
 local Handler_API = "https://raw.githubusercontent.com/EnterpriseExperience/FakeChatGUI/main/handler.lua"
 local Configuration_API = "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/main/configuration.lua"
 local config_path = "Flames_BerryAve_Admin_Config.json"
-local Raw_Version = "V1.2.5"
+local Raw_Version = "V1.2.7"
 local Script_Creator = "computerbinaries"
 local Announcement_Message = "."
 local displayTimeMax = 30
@@ -646,6 +646,12 @@ local function get_human(Player)
    end
 
    return humanoid
+end
+
+if getgenv().StarterPlayer.CharacterUseJumpPower then
+   getgenv().Humanoid.JumpPower = 50
+else
+   getgenv().Humanoid.JumpHeight = 7
 end
 
 local function get_root(Player)
