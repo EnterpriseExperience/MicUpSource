@@ -940,7 +940,7 @@ local function CommandsMenu()
    local mainFrame = Instance.new("Frame")
    mainFrame.Size = UDim2.new(0, 600, 0, 500)
    mainFrame.Position = UDim2.new(0.5, -300, 0.5, -250)
-   mainFrame.BackgroundColor3 = Color3.fromRGB(255, 176, 0)
+   mainFrame.BackgroundColor3 = Color3.fromRGB(75, 151, 75)
    mainFrame.BorderSizePixel = 0
    mainFrame.Active = true
    mainFrame.Draggable = true
@@ -1197,7 +1197,7 @@ function CreateCreditsLabel()
    label.AnchorPoint = Vector2.new(0.5, 1)
    label.Position = UDim2.new(0.5, 0, 1, -10)
    label.Size = UDim2.new(0.6, 0, 0, 28)
-   label.BackgroundColor3 = Color3.fromRGB(255, 176, 0)
+   label.BackgroundColor3 = Color3.fromRGB(75, 151, 75)
    label.TextColor3 = Color3.fromRGB(0, 0, 0)
    local prefix = decodeHTMLEntities(tostring(getgenv().AdminPrefix))
    label.Text = tostring(Script_Version).." | Made By: "..tostring(Script_Creator).." | Happy Halloween! | Current Prefix: " .. prefix
