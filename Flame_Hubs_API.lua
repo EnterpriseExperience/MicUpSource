@@ -54,17 +54,139 @@ flames_api.LocalPlayer = LocalPlayer
 flames_api.PlaceID = getgenv().PlaceID
 flames_api.JobID = getgenv().JobID
 flames_api.PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 3)
+wait(0.1)
+getgenv().get_char = function(Player)
+   if not Player or typeof(Player) ~= "Instance" or not Player:IsA("Player") then
+      getgenv().notify("Error", "That is not a Player, or Player entered isn't an actual player.", 5)
+      return nil
+   end
 
-local function SafeGetHumanoid(char)
-	return char:FindFirstChildWhichIsA("Humanoid") or char:WaitForChild("Humanoid", 5)
+   local character = Player.Character
+   local attempts = 0
+   local max_attempts = 25
+
+   while not character and attempts < max_attempts do
+      task.wait(0.2)
+      character = Player.Character
+      attempts += 1
+   end
+
+   if not character then
+      local ok, newChar = pcall(function()
+         return Player.CharacterAdded:Wait()
+      end)
+      if ok and newChar then
+         character = newChar
+      end
+   end
+
+   if not character then
+      getgenv().notify("Error", "Could not fetch Character for: "..tostring(Player or "???"), 6)
+      return nil
+   end
+
+   return character
+end
+wait(0.2)
+local function SafeGetHumanoid(Player)
+   local character = getgenv().get_char(Player)
+   if not character then
+      return nil
+   end
+
+   local humanoid = character:FindFirstChildOfClass("Humanoid")
+   local attempts = 0
+   local max_attempts = 25
+
+   while not humanoid and attempts < max_attempts do
+      task.wait(0.2)
+      humanoid = character:FindFirstChildOfClass("Humanoid")
+      attempts += 1
+   end
+
+   if not humanoid then
+      local ok, hum = pcall(function()
+         return character:WaitForChild("Humanoid", 5)
+      end)
+      if ok and hum then
+         humanoid = hum
+      end
+   end
+
+   if not humanoid then
+      return nil
+   end
+
+   return humanoid
 end
 
-local function SafeGetHRP(char)
-	return char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("HumanoidRootPart", 5)
+local function SafeGetHRP(Player)
+   local character = getgenv().get_char(Player)
+   if not character then
+      return nil
+   end
+
+   local root = character:FindFirstChild("HumanoidRootPart")
+   local attempts = 0
+   local max_attempts = 25
+
+   while not root and attempts < max_attempts do
+      task.wait(0.2)
+      root = character:FindFirstChild("HumanoidRootPart")
+      attempts += 1
+   end
+
+   if not root then
+      local ok, hrp = pcall(function()
+         return character:WaitForChild("HumanoidRootPart", 5)
+      end)
+      if ok and hrp then
+         root = hrp
+      end
+   end
+
+   if not root then
+      return nil
+   end
+
+   return root
 end
 
-local function SafeGetHead(char)
-	return char:FindFirstChild("Head") or char:WaitForChild("Head", 5)
+local function SafeGetHead(Player)
+   if not Player or typeof(Player) ~= "Instance" or not Player:IsA("Player") then
+      getgenv().notify("Error", "Invalid Player provided to get_head.", 5)
+      return nil
+   end
+
+   local character = getgenv().get_char(Player)
+   if not character then
+      return nil
+   end
+
+   local head = character:FindFirstChild("Head")
+   local attempts = 0
+   local max_attempts = 25
+
+   while not head and attempts < max_attempts do
+      task.wait(0.1)
+      head = character:FindFirstChild("Head")
+      attempts += 1
+   end
+
+   if not head then
+      local ok, result = pcall(function()
+         return character:WaitForChild("Head", 5)
+      end)
+      if ok and result then
+         head = result
+      end
+   end
+
+   if not head or not head:IsA("BasePart") then
+      return nil
+   end
+
+   return head
 end
 
 local FlyConnections
@@ -72,18 +194,23 @@ local FlyConnections
 FlyConnections = FlyConnections or {}
 getgenv().FlyPart = getgenv().FlyPart or nil
 getgenv().FlySpeed = getgenv().FlySpeed or 10
+flames_api.Character = getgenv().get_char(LocalPlayer)
+flames_api.Humanoid = SafeGetHumanoid(LocalPlayer)
+flames_api.HumanoidRootPart = SafeGetHRP(LocalPlayer)
+flames_api.Head = SafeGetHead(LocalPlayer)
 
 local function Dynamic_Character_Updater(character)
-	flames_api.Character = character
+	flames_api.Character = getgenv().get_char(LocalPlayer) or character
 	wait(0.3)
-	flames_api.Humanoid = SafeGetHumanoid(character)
-	flames_api.HumanoidRootPart = SafeGetHRP(character)
-	flames_api.Head = SafeGetHead(character)
+	flames_api.Humanoid = SafeGetHumanoid(LocalPlayer)
+	flames_api.HumanoidRootPart = SafeGetHRP(LocalPlayer)
+	flames_api.Head = SafeGetHead(LocalPlayer)
 	flames_api.SeatPart = flames_api.Humanoid and flames_api.Humanoid.SeatPart or nil
 end
 
 flames_api.Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local 
 Dynamic_Character_Updater(flames_api.Character)
 
 LocalPlayer.CharacterAdded:Connect(function(newCharacter)
