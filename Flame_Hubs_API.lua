@@ -208,9 +208,6 @@ local function Dynamic_Character_Updater(character)
 	flames_api.SeatPart = flames_api.Humanoid and flames_api.Humanoid.SeatPart or nil
 end
 
-flames_api.Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local 
 Dynamic_Character_Updater(flames_api.Character)
 
 LocalPlayer.CharacterAdded:Connect(function(newCharacter)
