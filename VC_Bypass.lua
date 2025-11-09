@@ -1,3 +1,5 @@
+-- [[ This method is OLD, use/see: https://github.com/EnterpriseExperience/MicUpSource/blob/main/New_VC_Bypass.lua ]] --
+
 local VoiceChat_Internal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
 local VoiceChat_Service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
 
