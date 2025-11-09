@@ -4,7 +4,8 @@ local VoiceChat_Internal = cloneref and cloneref(game:GetService("VoiceChatInter
 local VoiceChat_Service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
 
 if getgenv().voiceChat_Check then
-    warn("Voice Chat already initialized.")
+    return 
+    --warn("Voice Chat already initialized.")
 else
     getgenv().voiceChat_Check = true 
     
@@ -13,13 +14,11 @@ else
     local maxAttempts = 250
     
     local function unsuspend()
-        if reconnecting then return warn("Voice Chat Is Still Reconnecting.") end
+        if reconnecting then return end
         reconnecting = true
     
         local attempts = 0
         while attempts < maxAttempts do
-            print("Attempting to reconnect to voice chat... Attempt:", attempts + 1)
-            wait()
             VoiceChat_Internal:Leave()
             wait(0.2)
             VoiceChat_Service:rejoinVoice()
@@ -32,7 +31,6 @@ else
             VoiceChat_Service:joinVoice()
             wait(0.5)
             if VoiceChat_Internal.StateChanged ~= Enum.VoiceChatState.Ended then
-                print("Successfully reconnected to voice chat!")
                 reconnecting = false
                 return 
             end
@@ -41,13 +39,12 @@ else
             wait(retryDuration)
         end
     
-        warn("Failed to reconnect after " .. maxAttempts .. " attempts.")
+        warn("Failed to reconnect after: " .. maxAttempts .. " attempts.")
         reconnecting = false
     end
     
     local function state_changed_connection(_, newState)
         if newState == Enum.VoiceChatState.Ended and not reconnecting then
-            print("Voice chat disconnected, attempting to reconnect...")
             unsuspend()
         end
     end
