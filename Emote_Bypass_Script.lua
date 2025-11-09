@@ -3,14 +3,14 @@
 --NOW SUPPORTS UGC EMOTES, CAN LOAD ALL! AND CAN REFRESH!
 
 local IsStudio = false
-local ContextActionService = game:FindService("ContextActionService")
-local HttpService = game:FindService("HttpService")
-local GuiService = game:FindService("GuiService")
-local CoreGui = game:FindService("CoreGui")
-local AvatarEditorService = game:FindService("AvatarEditorService")
-local Players = game:FindService("Players")
-local StarterGui = game:FindService("StarterGui")
-local UserInputService = game:FindService("UserInputService")
+local ContextActionService = game:GetService("ContextActionService")
+local HttpService = game:GetService("HttpService")
+local GuiService = game:GetService("GuiService")
+local CoreGui = game:GetService("CoreGui")
+local AvatarEditorService = game:GetService("AvatarEditorService")
+local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
 local Emotes = {}
