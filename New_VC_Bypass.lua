@@ -1,3 +1,4 @@
+-- [[ Full unsuspend VoiceChat method. ]] --
 local function safe_wrap(serv)
     if cloneref then
         return cloneref(game:FindService(serv))
