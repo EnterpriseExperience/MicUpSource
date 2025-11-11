@@ -9,7 +9,7 @@ local scripts = {
     },
     ["LifeTogether RP"] = {
         id = 13967668166,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua" -- if you really wanna use it, but it's not updated anymore.
     },
     ["LifeTogether Admin Commands (FE)"] = {
         id = 13967668166,
@@ -61,55 +61,8 @@ end
 for name, data in pairs(scripts) do
     if data.id == getgenv().PlaceID then
         if data.id == scripts["LifeTogether RP"].id then
-            local Players = getgenv().Service_Wrap("Players")
-            local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
-
-            local ScreenGui = Instance.new("ScreenGui")
-            ScreenGui.ResetOnSpawn = false
-            ScreenGui.Parent = PlayerGui
-
-            local Frame = Instance.new("Frame")
-            Frame.Size = UDim2.new(0, 300, 0, 150)
-            Frame.Position = UDim2.new(0.5, -150, 0.5, -75)
-            Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-            Frame.BorderSizePixel = 0
-            Frame.Parent = ScreenGui
-
-            local Title = Instance.new("TextLabel")
-            Title.Size = UDim2.new(1, 0, 0, 40)
-            Title.BackgroundTransparency = 1
-            Title.Text = "Which script would you like to execute?"
-            Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-            Title.TextScaled = true
-            Title.Parent = Frame
-
-            local CmdsButton = Instance.new("TextButton")
-            CmdsButton.Size = UDim2.new(0.5, -5, 0, 50)
-            CmdsButton.Position = UDim2.new(0, 0, 1, -55)
-            CmdsButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            CmdsButton.Text = "Life Together Admin Commands"
-            CmdsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            CmdsButton.Parent = Frame
-
-            local HubButton = Instance.new("TextButton")
-            HubButton.Size = UDim2.new(0.5, -5, 0, 50)
-            HubButton.Position = UDim2.new(0.5, 5, 1, -55)
-            HubButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            HubButton.Text = "Life Together Script Hub"
-            HubButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            HubButton.Parent = Frame
-
-            CmdsButton.MouseButton1Click:Connect(function()
-                ScreenGui:Destroy()
-                loadScript(scripts["LifeTogether Admin Commands (FE)"].link)
-                return 
-            end)
-
-            HubButton.MouseButton1Click:Connect(function()
-                ScreenGui:Destroy()
-                loadScript(scripts["LifeTogether RP"].link)
-                return 
-            end)
+			loadScript(scripts["LifeTogether Admin Commands (FE)"].link)
+			return 
         else
             loadScript(data.link)
             return 
