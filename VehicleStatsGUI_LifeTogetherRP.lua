@@ -5,16 +5,18 @@ local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStora
 local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
 local LocalPlayer = Players.LocalPlayer
 local Vehicles = getgenv().Workspace:FindFirstChild("Vehicles")
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
 
-function notify(title, msg, duration)
-   StarterGui:SetCore("SendNotification", {
-      Title = tostring(title);
-      Text = tostring(msg);
-      Duration = tonumber(duration);
-      Icon = "rbxassetid://0";
-   })
-end
 wait()
+
+function notify(notif_type, msg, duration)
+   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
+end
+wait(0.1)
+if not getgenv().notify then
+   getgenv().notify = notify
+end
+wait(0.2)
 local function get_other_vehicle(Player)
    for i, v in pairs(Workspace:FindFirstChild("Vehicles"):GetChildren()) do
       if v.owner.Value == Player then
@@ -24,8 +26,6 @@ local function get_other_vehicle(Player)
 
    return nil
 end
-wait()
-getgenv().notify = notify
 
 if not Vehicles then
    return warn("Vehicles folder not found.")
@@ -62,17 +62,17 @@ local Game = Modules:FindFirstChild("Game")
 local Network = require(Core:FindFirstChild("Net"))
 
 getgenv().VehicleStatsGUI = ScreenGui
-function send_function(arg1, arg2, arg3)
-   if arg1 and arg2 and arg3 then
-      Network.get(arg1, arg2, arg3)
-   elseif arg1 and arg2 then
-      Network.get(arg1, arg2)
-   elseif arg1 then
-      Network.get(arg1)
-   end
+function send_function(...)
+   Network.get(...)
+end
+
+function send_remote(...)
+   Network.send(...)
 end
 wait(0.1)
-getgenv().Get = send_function
+if not getgenv().Get then
+   getgenv().Get = send_function
+end
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
