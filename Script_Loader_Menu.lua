@@ -1,1 +1,176 @@
-local v0={["Tower Of Misery"]={id=4954752502,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua"},["Ultimate Driving"]={id=54865335,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"},["LifeTogether RP"]={id=13967668166,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"},["LifeTogether Admin Commands (FE)"]={id=13967668166,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"},["Hide And Seek Extreme"]={id=205224386,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"},["Player or AI"]={id=95217169945642,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"},["Main Street RP"]={id=18753889337,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua"},["Southwest Florida Beta"]={id=5104202731,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Southwest_Florida.lua"},["Driving Empire"]={id=3351674303,link="https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"}};if  not getgenv().Game then getgenv().Game=(cloneref and cloneref(game)) or game ;end if  not getgenv().Service_Wrap then getgenv().protector=function(v44) if cloneref then return cloneref(getgenv().Game:GetService(v44));else return getgenv().Game:GetService(v44);end end;end local function v1(v12) if  not v12 then return;end if (typeof(v12)~="string") then return;end loadstring(game:HttpGet(v12))();end for v13,v14 in pairs(v0) do if (v14.id==getgenv().PlaceID) then if (v14.id==v0["LifeTogether RP"].id) then v1(v0["LifeTogether Admin Commands (FE)"].link);return;else v1(v14.link);return;end return;end end function randomstr() local v15=math.random(10,20);local v16={};for v36=1,v15 do v16[v36]=string.char(math.random(32,126));end return table.concat(v16);end wait(0.1);if  not getgenv().randomized_str then getgenv().randomized_str=randomstr;end wait(0.1);local function v2() local v17={"Players","Workspace","Lighting","ReplicatedStorage","TweenService","RunService","MaterialService","ReplicatedFirst","Teams","StarterPack","StarterPlayer","VoiceChatInternal","VoiceChatService","CoreGui","SoundService","StarterGui","MarketplaceService","TeleportService","Chat","AssetService","HttpService","UserInputService","TextChatService","ContextActionService","GuiService","PhysicsService"};for v39,v40 in pairs(v17) do getgenv()[v40]=(cloneref and cloneref(getgenv().Game:GetService(v40))) or getgenv().Game:GetService(v40) ;end wait(0.2);getgenv().Services_Fully_Initialized=true;end wait();if  not getgenv().Services_Fully_Initialized then v2();end wait(0.3);task.wait(0.2);local function v3() local v19=0;local v20=10;local v21=false;local v22;repeat v19+=1 v21,v22=pcall(function() local v45=game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary");local v46=loadstring(v45);return v46();end);if ( not v21 or  not v22) then warn("Loading failed on attempt: ("   .. tostring(v19)   .. "), with result being: "   .. tostring(v22) );task.wait(1);end until (v21 and v22) or (v19>=v20)  return v22;end local v4;Rayfield=v3();if ((typeof(Rayfield)=="table") and Rayfield.CreateWindow) then v4=Rayfield:CreateWindow({Name="🏠 Script Hub Loader 🏠",LoadingTitle="Welcome, "   .. tostring(game.Players.LocalPlayer) ,LoadingSubtitle="...",ConfigurationSaving={Enabled=false,FolderName="ScriptHub-Config",FileName="ScriptHubLoader_Hub"},Discord={Enabled=false,Invite="",RememberJoins=true},KeySystem=false,KeySettings={Title="cmon mane...",Subtitle="nah, no key system.",Note="ok?",FileName="Key",SaveKey=false,GrabKeyFromSite=false,Key={""}}});end wait(0.2);function notify(v23,v24,v25) Rayfield:Notify({Title=tostring(v23),Content=tostring(v24),Duration=tonumber(v25),Image=93594537601787,Actions={Ignore={Name="Alright.",Callback=function() print("...");end}}});end wait(0.1);if  not getgenv().notify then getgenv().notify=notify;end getgenv().Buttons=getgenv().Buttons or {} ;local v6=v4:CreateTab("🏡 Scripts 🏡",0);local v7=v6:CreateSection("| 🏡 Scripts Section 🏡 |");local v8=v4:CreateTab("🎮 Game TPs 🎮",0);local v9=v8:CreateSection("| 🎮 Scripts Section 🎮 |");wait(0.2);local function v10(v26) return v26:gsub("%W","_");end getgenv().FlamesHubUniversal=v6:CreateButton({Name="Flames Hub (Universal)",Callback=function() loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))();end});for v27,v28 in pairs(v0) do local v29=v10(v27);local v30=v28;getgenv().Buttons[v29]=v6:CreateButton({Name=v27,Callback=function() getgenv().GameName=v27;if ( not v30.id or  not v30.link) then return getgenv().notify("Failure:","Script for: '"   .. tostring(v27)   .. "' seems to be invalid?" ,7);end if (getgenv().PlaceID==v30.id) then local v48,v49=pcall(function() local v50=getgenv().Game:HttpGet(v30.link);local v51=loadstring(v50);if  not v51 then error("loadstring returned literally nothing.");end return v51();end);if  not v48 then getgenv().notify("Failure:",tostring(v49),7);elseif (p and p.DestroyGui) then p:DestroyGui();end else getgenv().notify("Failure:","You're not in the correct game: "   .. v27   .. " (fly in from stupid town?)." ,8);end end});end for v32,v33 in pairs(v0) do if (v32~="LifeTogether Admin Commands (FE)") then getgenv()[tostring(v32)]=v8:CreateButton({Name="Teleport To Life Together RP (game).",Callback=function() if v33.id then getgenv().TeleportService:Teleport(v33.id,lp);end end});end end
+local scriptstoload = {
+    ["Tower Of Misery"] = {
+        id = 4954752502,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Tower_Of_Misery_ScriptHub.lua"
+    },
+    ["Ultimate Driving"] = {
+        id = 54865335,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"
+    },
+    ["LifeTogether RP"] = { -- ion update ts no more
+        id = {13967668166, 99644611200703, 99154507657228},
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
+    },
+    ["LifeTogether Admin Commands (FE)"] = {
+        id = {13967668166, 99644611200703, 99154507657228},
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
+    },
+    ["Hide And Seek Extreme"] = {
+        id = 205224386,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
+    },
+    ["Player or AI"] = {
+        id = 95217169945642,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
+    },
+    ["Main Street RP"] = {
+        id = 18753889337,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua"
+    },
+    ["Southwest Florida Beta"] = {
+        id = 5104202731,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Southwest_Florida.lua"
+    },
+    ["Driving Empire"] = {
+        id = 3351674303,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"
+    },
+}
+
+if not getgenv().Game then
+    getgenv().Game = cloneref and cloneref(game) or game
+end
+wait()
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
+wait(0.2)
+function notify(notif_type, msg, duration)
+   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
+end
+wait(0.1)
+if not getgenv().notify then
+    getgenv().notify = notify
+end
+
+local function matcheswhat(tpplaces, togo)
+    if typeof(tpplaces) == "number" then
+        return tpplaces == togo
+    elseif typeof(tpplaces) == "table" then
+        for _, id in ipairs(tpplaces) do
+            if id == togo then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+local function load_str(url)
+    if not url then return end
+    if typeof(url) ~= "string" then return end
+
+    loadstring(game:HttpGet(url))()
+end
+wait(0.1)
+for name, all_scripts in pairs(scriptstoload) do
+    if matcheswhat(all_scripts.id, game.PlaceId) then
+        if matcheswhat(scriptstoload["LifeTogether RP"].id, game.PlaceId) then
+            if not getgenv().LifeTogetherRP_Admin then
+                return load_str(scriptstoload["LifeTogether Admin Commands (FE)"].link)
+            else
+                return 
+            end
+        end
+
+        load_str(all_scripts.link)
+        return
+    end
+end
+
+local rf = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary"))()
+wait(0.1)
+local window = rf:CreateWindow({
+    Name = "🏠 Script Hub Loader 🏠",
+    LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
+    LoadingSubtitle = "...",
+    ConfigurationSaving = {
+        Enabled = false,
+        FolderName = "ScriptHub-Config",
+        FileName = "ScriptHubLoader_Hub"
+    },
+    Discord = {
+        Enabled = false,
+        Invite = "",
+        RememberJoins = true
+    },
+    KeySystem = false,
+    KeySettings = {
+        Title = "cmon mane...",
+        Subtitle = "nah, no key system.",
+        Note = "ok?",
+        FileName = "Key",
+        SaveKey = false,
+        GrabKeyFromSite = false,
+        Key = {""}
+    }
+})
+wait(0.1)
+getgenv().Buttons = getgenv().Buttons or {}
+
+local Tab1 = window:CreateTab("🏡 Scripts 🏡", 0)
+local Section1 = Tab1:CreateSection("| 🏡 Scripts Section 🏡 |")
+local Tab2 = window:CreateTab("🎮 Game TPs 🎮", 0)
+local Section2 = Tab2:CreateSection("| 🎮 Scripts Section 🎮 |")
+wait(0.2)
+
+getgenv().FlamesHubUniversal = Tab1:CreateButton({
+Name = "Flames Hub (Universal)",
+Callback = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
+end,})
+
+for name, dude in pairs(scriptstoload) do
+    local strname = name:gsub("%W", "_")
+
+    getgenv().Buttons[strname] = Tab1:CreateButton({
+    Name = name,
+    Callback = function()
+        if not dude.id or not dude.link then
+            return 
+        end
+
+        if game.PlaceId == dude.id then
+            loadstring(game:HttpGet(dude.link))
+        else
+            return 
+        end
+    end,})
+end
+
+for name, schnawg in pairs(scriptstoload) do
+    if name ~= "LifeTogether Admin Commands (FE)" then
+        getgenv()[name] = Tab2:CreateButton({
+        Name = "TP to game: "..name,
+        Callback = function()
+            local idkok = type(schnawg.id) == "table" and schnawg.id[1] or schnawg.id
+            if not idkok then return end
+
+            local function funcok()
+                if type(schnawg.id) == "number" then
+                    return game.PlaceId == schnawg.id
+                end
+                for _, v in ipairs(schnawg.id) do
+                    if game.PlaceId == v then
+                        return true
+                    end
+                end
+                return false
+            end
+
+            if funcok() then
+                return 
+            end
+
+            game.TeleportService:Teleport(idkok, game.Players.LocalPlayer)
+        end,})
+    end
+end
