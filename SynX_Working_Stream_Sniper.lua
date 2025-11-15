@@ -59,6 +59,8 @@ TextLabel.Font = Enum.Font.SourceSansLight
 TextLabel.Text = "Synapse X Stream Sniper - V5"
 TextLabel.TextSize = 24.000
 
+make_round(TextLabel, 8)
+
 TextLabel_2.Parent = Frame
 TextLabel_2.Active = true
 TextLabel_2.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
@@ -66,7 +68,7 @@ TextLabel_2.BorderColor3 = Color3.fromRGB(31, 31, 31)
 TextLabel_2.Position = UDim2.new(0, 10, 0, 49)
 TextLabel_2.Size = UDim2.new(0, 150, 0, 20)
 TextLabel_2.Font = Enum.Font.SourceSansLight
-TextLabel_2.Text = "Username/UserId:"
+TextLabel_2.Text = "Username/UserID:"
 TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextLabel_2.TextSize = 16.000
 
@@ -90,7 +92,7 @@ TextLabel_3.Active = true
 TextLabel_3.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 TextLabel_3.BorderColor3 = Color3.fromRGB(31, 31, 31)
 TextLabel_3.Position = UDim2.new(0, 10, 0, 130)
-TextLabel_3.Size = UDim2.new(0, 150, 0, 20)
+TextLabel_3.Size = UDim2.new(0, 130, 0, 20)
 TextLabel_3.Font = Enum.Font.SourceSansLight
 TextLabel_3.Text = "Place ID:"
 TextLabel_3.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -120,8 +122,11 @@ StartButton.Position = UDim2.new(0, 10, 0, 210)
 StartButton.Size = UDim2.new(0, 380, 0, 40)
 StartButton.Font = Enum.Font.SourceSansLight
 StartButton.Text = "Start"
+StartButton.TextScaled = true
 StartButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 StartButton.TextSize = 24.000
+
+make_round(StartButton, 8)
 
 TextLabel_4.Parent = Frame
 TextLabel_4.Active = true
@@ -145,7 +150,7 @@ UsernameLabel.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 UsernameLabel.BackgroundTransparency = 1.000
 UsernameLabel.BorderColor3 = Color3.fromRGB(31, 31, 31)
 UsernameLabel.Position = UDim2.new(0.5, 0, 0, 0)
-UsernameLabel.Size = UDim2.new(0, 150, 0, 20)
+UsernameLabel.Size = UDim2.new(0, 130, 0, 20)
 UsernameLabel.Font = Enum.Font.SourceSansLight
 UsernameLabel.Text = ""
 UsernameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -167,6 +172,28 @@ TextLabel_5.TextSize = 16.000
 TextLabel_5.TextWrapped = true
 TextLabel_5.TextXAlignment = Enum.TextXAlignment.Left
 
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Parent = Frame
+CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseBtn.BorderColor3 = Color3.fromRGB(31, 31, 31)
+CloseBtn.Position = UDim2.new(1, -35, 0, 5)
+CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.Text = "X"
+CloseBtn.TextScaled = true
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize = 20
+
+make_round(CloseBtn, 8)
+
+CloseBtn.MouseButton1Click:Connect(function()
+   searching = false
+   confirm = false
+   if Screenguini then
+      Screenguini:Destroy()
+   end
+end)
+
 UserIdLabel.Name = "UserIdLabel"
 UserIdLabel.Parent = TextLabel_5
 UserIdLabel.Active = true
@@ -174,7 +201,7 @@ UserIdLabel.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 UserIdLabel.BackgroundTransparency = 1.000
 UserIdLabel.BorderColor3 = Color3.fromRGB(31, 31, 31)
 UserIdLabel.Position = UDim2.new(0.5, 0, 0, 0)
-UserIdLabel.Size = UDim2.new(0, 150, 0, 20)
+UserIdLabel.Size = UDim2.new(0, 130, 0, 20)
 UserIdLabel.Font = Enum.Font.SourceSansLight
 UserIdLabel.Text = ""
 UserIdLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -187,6 +214,8 @@ GamerPicture.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 GamerPicture.Position = UDim2.new(0, 200, 0, 95)
 GamerPicture.Size = UDim2.new(0, 97, 0, 97)
 GamerPicture.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+
+make_round(GamerPicture, 8)
 
 if shared.STREAM_SNIPER then
    shared.STREAM_SNIPER:Destroy()
