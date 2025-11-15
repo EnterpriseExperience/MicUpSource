@@ -38,6 +38,18 @@ Frame.BorderColor3 = Color3.fromRGB(31, 31, 31)
 Frame.Draggable = true
 Frame.Size = UDim2.new(0, 400, 0, 260)
 
+if not getgenv().make_round then
+   local function make_round(obj, radius)
+      local uic = Instance.new("UICorner")
+      uic.CornerRadius = UDim.new(0, radius)
+      uic.Parent = obj
+   end
+   wait(0.1)
+   getgenv().make_round = make_round
+end
+wait(0.2)
+make_round(Frame, 8)
+
 TextLabel.Parent = Frame
 TextLabel.Active = true
 TextLabel.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
@@ -66,10 +78,12 @@ UsernameBox.Position = UDim2.new(0, 10, 0, 80)
 UsernameBox.Size = UDim2.new(0, 150, 0, 35)
 UsernameBox.Font = Enum.Font.SourceSansLight
 UsernameBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
-UsernameBox.PlaceholderText = "Enter Username Here"
+UsernameBox.PlaceholderText = "Username Here."
 UsernameBox.Text = ""
 UsernameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 UsernameBox.TextSize = 18.000
+
+make_round(UsernameBox, 8)
 
 TextLabel_3.Parent = Frame
 TextLabel_3.Active = true
@@ -90,10 +104,13 @@ PlaceIdBox.Position = UDim2.new(0, 10, 0, 157)
 PlaceIdBox.Size = UDim2.new(0, 150, 0, 35)
 PlaceIdBox.Font = Enum.Font.SourceSansLight
 PlaceIdBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
-PlaceIdBox.PlaceholderText = "Enter PlaceID Here"
-PlaceIdBox.Text = ""
+PlaceIdBox.PlaceholderText = "PlaceID Here."
+PlaceIdBox.Text = tostring(game.PlaceId)
+PlaceIdBox.TextScaled = true
 PlaceIdBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlaceIdBox.TextSize = 18.000
+
+make_round(PlaceIdBox, 8)
 
 StartButton.Name = "StartButton"
 StartButton.Parent = Frame
@@ -115,7 +132,7 @@ TextLabel_4.Position = UDim2.new(0, 200, 0, 49)
 TextLabel_4.Size = UDim2.new(0, 0, 0, 20)
 TextLabel_4.AutomaticSize = Enum.AutomaticSize.X
 TextLabel_4.Font = Enum.Font.SourceSansBold
-TextLabel_4.Text = "Username:"
+TextLabel_4.Text = "Name:"
 TextLabel_4.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextLabel_4.TextSize = 16.000
 TextLabel_4.TextWrapped = true
