@@ -56,7 +56,7 @@ TextLabel.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 TextLabel.BorderColor3 = Color3.fromRGB(31, 31, 40)
 TextLabel.Size = UDim2.new(0, 400, 0, 40)
 TextLabel.Font = Enum.Font.GothamBold
-TextLabel.Text = "Synapse X Stream Sniper - V5"
+TextLabel.Text = "Synapse X Stream Sniper"
 TextLabel.TextSize = 24.000
 
 make_round(TextLabel, 8)
@@ -396,7 +396,7 @@ StartButton.MouseButton1Click:Connect(function()
 
    Status("Searching for (".. UserId ..")")
    
-   Status("Getting place id...")
+   Status("Getting place ID...")
    
    local placeId = tonumber(PlaceIdBox.Text)
 
@@ -414,71 +414,67 @@ StartButton.MouseButton1Click:Connect(function()
    local players = 0
 
    while searching do
-   if not Screenguini or not Screenguini.Parent then
-      break
-   end
-   local s, result = getServers(placeId, cursor)
-
-   if s and result and type(result.data) == "table" then
-      local servers = result.data
-      cursor = result.nextPageCursor
-
-      if StartButton.Text:match("Searching") then
-         maxSearchs = maxSearchs + #servers
-         Status(searched .."/".. maxSearchs .." servers scanned, players found: ".. players)
+      if not Screenguini or not Screenguini.Parent then
+         break
       end
+      local s, result = getServers(placeId, cursor)
 
-      for index, server in ipairs(servers) do
-         local function fetchServer()
-            local s, thumbs = fetchThumbs(server.playerTokens)
-            if s then
-               players = players + #thumbs
-               for _, playerThumb in ipairs(thumbs) do
-                  if playerThumb.imageUrl then
-                     if playerThumb.imageUrl == thumbnail then
-                        searching = false
-                        Status("Found player, teleporting...")
+      if s and result and type(result.data) == "table" then
+         local servers = result.data
+         cursor = result.nextPageCursor
 
-                        teleport(placeId, server.id)
-                        local try = 0
-                        Player.OnTeleport:Connect(function(teleportState)
-                           if teleportState == Enum.TeleportState.Failed then
-                              try = try + 1
-                              Status("Teleport failed, try #".. try)
-                              teleport(placeId, server.id)
-                           end
-                        end)
+         if StartButton.Text:match("Searching") then
+            maxSearchs = maxSearchs + #servers
+            Status(searched .."/".. maxSearchs .." servers scanned, players found: ".. players)
+         end
+
+         for index, server in ipairs(servers) do
+            local function fetchServer()
+               local s, thumbs = fetchThumbs(server.playerTokens)
+               if s then
+                  players = players + #thumbs
+                  for _, playerThumb in ipairs(thumbs) do
+                     if playerThumb.imageUrl then
+                        if playerThumb.imageUrl == thumbnail then
+                           searching = false
+                           Status("Found player, teleporting...")
+
+                           teleport(placeId, server.id)
+                           local try = 0
+                           Player.OnTeleport:Connect(function(teleportState)
+                              if teleportState == Enum.TeleportState.Failed then
+                                 try = try + 1
+                                 Status("Teleport failed, try #".. try)
+                                 teleport(placeId, server.id)
+                              end
+                           end)
+                        end
+                     else
+                        Status("token failed, id:", playerThumb.requestId, playerThumb.state, playerThumb.errorMessage)
                      end
-                  else
-                     Status("token failed, id:", playerThumb.requestId, playerThumb.state, playerThumb.errorMessage)
                   end
+               else
+                  Status("token failed", s, thumbs)
                end
+            end
+
+            searched = searched + 1
+            if index % threads ~= 0 then
+               task.spawn(fetchServer)
+               task.wait()
             else
-               Status("token failed", s, thumbs)
+               fetchServer()
+            end
+
+            if searching then
+               Status(searched .."/".. maxSearchs .." servers scanned, players found: ".. players)
             end
          end
 
-         searched = searched + 1
-         if index % threads ~= 0 then
-            task.spawn(fetchServer)
-            task.wait()
-         else
-            fetchServer()
-         end
-
-         if searching then
-            Status(searched .."/".. maxSearchs .." servers scanned, players found: ".. players)
-         end
+         if not cursor then break end
+      else
+         warn("Failed to fetch servers or no data returned.")
+         return Status("Failed to find servers", 3)
       end
-
-      if not cursor then break end
-   else
-      warn("Failed to fetch servers or no data returned.")
-      return Status("Failed to find servers", 3)
-   end
-
-   if searching then
-      Status("Failed to find ".. Username ..", maybe in a vip server", 3)
-   end
    end
 end)
