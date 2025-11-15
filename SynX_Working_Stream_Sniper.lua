@@ -55,7 +55,7 @@ TextLabel.Active = true
 TextLabel.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 TextLabel.BorderColor3 = Color3.fromRGB(31, 31, 40)
 TextLabel.Size = UDim2.new(0, 400, 0, 40)
-TextLabel.Font = Enum.Font.SourceSansLight
+TextLabel.Font = Enum.Font.GothamBold
 TextLabel.Text = "Synapse X Stream Sniper - V5"
 TextLabel.TextSize = 24.000
 
