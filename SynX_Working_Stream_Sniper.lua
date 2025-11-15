@@ -1,6 +1,7 @@
 -- now works. --
 -- watches for rate-limiting (and waits). --
 -- username/userID searching works. --
+-- gui fully hidden with hiddenui (if supported). --
 -- everything fixed. --
 
 local http_req = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
