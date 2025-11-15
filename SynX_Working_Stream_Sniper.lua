@@ -1,4 +1,9 @@
-local httprequest = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
+-- now works. --
+-- watches for rate-limiting (and waits). --
+-- username/userID searching works. --
+-- everything fixed. --
+
+local http_req = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
 local Screenguini = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local TextLabel = Instance.new("TextLabel")
@@ -15,11 +20,14 @@ local GamerPicture = Instance.new("ImageLabel")
 
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 5)
 local TeleportService = cloneref and cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local gui_parent = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui()) or CoreGui or PlayerGui
 
 Screenguini.Name = HttpService:GenerateGUID(false)
-Screenguini.Parent = CoreGui
+Screenguini.Parent = gui_parent
 
 Frame.Parent = Screenguini
 Frame.Active = true
@@ -34,7 +42,7 @@ TextLabel.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 TextLabel.BorderColor3 = Color3.fromRGB(31, 31, 40)
 TextLabel.Size = UDim2.new(0, 400, 0, 40)
 TextLabel.Font = Enum.Font.SourceSansLight
-TextLabel.Text = "Synapse X Stream Sniper"
+TextLabel.Text = "Synapse X Stream Sniper - V5"
 TextLabel.TextSize = 24.000
 
 TextLabel_2.Parent = Frame
@@ -169,27 +177,52 @@ shared.STREAM_SNIPER = Screenguini
 local searching = false
 local confirm = false
 
-local function HttpGet(url)
-    return pcall(HttpService.JSONDecode, HttpService, game:HttpGet(url))
-end
-
 local function Status(text, tout)
    StartButton.Text = text
 
    if tout then
-       task.delay(tout, function()
-           if StartButton.Text == text then
-               searching = false
-               StartButton.Text = "Start"    
-           end
-       end)
+      task.delay(tout, function()
+         if StartButton.Text == text then
+            searching = false
+            StartButton.Text = "Start"    
+         end
+      end)
    end
+end
+
+local function SafeRequest(options)
+   local response = http_req(options)
+
+   if not response then
+      return false, "No response"
+   end
+
+   if response.StatusCode == 429 then
+      Status("Rate limited, waiting 30s...")
+      task.wait(30)
+      return SafeRequest(options)
+   end
+
+   return true, response
+end
+wait(0.1)
+local function HttpGet(url)
+   local ok, result = SafeRequest({Url = url, Method = "GET"})
+   if not ok or not result or not result.Body then
+      return false, "No response"
+   end
+
+   local success, decoded = pcall(function()
+      return HttpService:JSONDecode(result.Body)
+   end)
+
+   return success, decoded
 end
 
 local function getServers(id, cursor)
    local fullurl = "https://games.roblox.com/v1/games/".. id .."/servers/Public?limit=100"
    if cursor then
-       fullurl = "&cursor=".. cursor
+      fullurl = fullurl .. "&cursor=".. cursor
    end
 
    return HttpGet(fullurl)
@@ -197,28 +230,27 @@ end
 
 local function fetchThumbs(tokens)
    local payload = {
-       Url = "https://thumbnails.roblox.com/v1/batch",
-       Headers = {
-           ["Content-Type"] = "application/json"
-       },
-       Method = "POST",
-
-       Body = {}
+      Url = "https://thumbnails.roblox.com/v1/batch",
+      Headers = {
+         ["Content-Type"] = "application/json"
+      },
+      Method = "POST",
+      Body = {}
    }
 
    for _, token in ipairs(tokens) do
-       table.insert(payload.Body, {
-           requestId = "0:".. token ..":AvatarHeadshot:150x150:png:regular",
-           type = "AvatarHeadShot",
-           targetId = 0,
-           token = token,
-           format = "png",
-           size = "150x150"
-       })
+      table.insert(payload.Body, {
+         requestId = "0:".. token ..":AvatarHeadshot:150x150:png:regular",
+         type = "AvatarHeadShot",
+         targetId = 0,
+         token = token,
+         format = "png",
+         size = "150x150"
+      })
    end
 
    payload.Body = HttpService:JSONEncode(payload.Body)
-   local result = httprequest(payload)
+   local result = http_req(payload)
    local s, data = pcall(HttpService.JSONDecode, HttpService, result.Body)
    
    return s, data and data.data or data
@@ -228,43 +260,81 @@ local function teleport(placeId, guid)
    TeleportService:TeleportToPlaceInstance(placeId, guid)
 end
 
-
 local threads = 30
 
 StartButton.MouseButton1Click:Connect(function()
    if confirm then
-       confirm = false
-       searching = false
-       Status("Cancelled")
-       return
+      confirm = false
+      searching = false
+      Status("Cancelled")
+      return
    end
 
    if searching then
-       confirm = true
-       local old = StartButton.Text
-       Status("Click again to confirm.")
-       task.delay(5, function()
-           if "Click again to confirm." == StartButton.Text then
-               confirm = false
-               StartButton.Text = old
-           end
-       end)
-       return
+      confirm = true
+      local old = StartButton.Text
+      Status("Click again to confirm.")
+      task.delay(5, function()
+         if "Click again to confirm." == StartButton.Text then
+            confirm = false
+            StartButton.Text = old
+         end
+      end)
+      return 
    end
 
    searching = true
 
    Status("Getting user id...")
 
-   local s, Username, UserId = pcall(function()
-        local userId = tonumber(UsernameBox.Text) or Players:GetUserIdFromNameAsync(UsernameBox.Text)
-        local username = Players:GetNameFromUserIdAsync(userId)
-        return username, userId
-    end)
+   local function resolveUser(input)
+      local asNumber = tonumber(input)
+      if asNumber then
+         local ok, data = HttpGet("https://users.roblox.com/v1/users/"..asNumber)
+         if ok and data and data.name then
+            return data.name, asNumber
+         else
+            return nil, nil, "Invalid UserId"
+         end
+      end
 
-    if not s then
-        return Status("Username or UserId does not exist!", 3)
-    end
+      local payload = HttpService:JSONEncode({
+         usernames = { input },
+         excludeBannedUsers = false
+      })
+
+      local result = http_req({
+         Url = "https://users.roblox.com/v1/usernames/users",
+         Method = "POST",
+         Headers = {
+            ["Content-Type"] = "application/json"
+         },
+         Body = payload
+      })
+
+      if not result or not result.Body then
+         return nil, nil, "No response"
+      end
+
+      local ok, data = pcall(HttpService.JSONDecode, HttpService, result.Body)
+      if not ok or not data or not data.data or not data.data[1] then
+         return nil, nil, "Invalid Username"
+      end
+
+      local entry = data.data[1]
+
+      if entry.id then
+         return entry.name, entry.id
+      else
+         return nil, nil, "Invalid Username"
+      end
+   end
+
+   local Username, UserId, err = resolveUser(UsernameBox.Text)
+
+   if not Username or not UserId then
+      return Status(err or "Failed to resolve user", 3)
+   end
 
    local s, thumbUrl = pcall(Players.GetUserThumbnailAsync, Players, UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
 
@@ -283,11 +353,10 @@ StartButton.MouseButton1Click:Connect(function()
    local placeId = tonumber(PlaceIdBox.Text)
 
    if PlaceIdBox.Text:gsub("%s", "") == "" then
-       placeId = game.PlaceId
-
+      placeId = game.PlaceId
    elseif not placeId then
-       Status("Invalid place id", 3)
-       return
+      Status("Invalid place id", 3)
+      return 
    end
    
    Status("Searching...")
@@ -297,74 +366,71 @@ StartButton.MouseButton1Click:Connect(function()
    local players = 0
 
    while searching do
-       if not Screenguini or not Screenguini.Parent then
-           break
-       end
-       local s, result = getServers(placeId, cursor)
-
-       if s then
-           local servers = result.data
-           cursor = result.nextPageCursor
-           
-           if StartButton.Text:match("Searching") then
-               maxSearchs = maxSearchs + #servers
-               Status(searched .."/".. maxSearchs .." servers scanned, players found: ".. players)
-           end
-
-           for index, server in ipairs(servers) do
-               local function fetchServer()
-                   local s, thumbs = fetchThumbs(server.playerTokens)
-                   if s then
-                       players = players + #thumbs
-                       for _, playerThumb in ipairs(thumbs) do
-                           if playerThumb.imageUrl then
-                               if playerThumb.imageUrl == thumbnail then
-                                   searching = false
-                                   Status("Found player, teleporting...")
-
-                                   teleport(placeId, server.id)
-                                   local try = 0
-                                   Player.OnTeleport:Connect(function(teleportState)
-                                       if teleportState == Enum.TeleportState.Failed then
-                                           try = try + 1
-                                           Status("Teleport failed, try #".. try)
-                                           teleport(placeId, server.id)
-                                       end
-                                   end)
-                               end
-                           else
-                               Status("token failed, id:", playerThumb.requestId, playerThumb.state, playerThumb.errorMessage)
-                           end
-                       end
-                   else
-                       Status("token failed", s, thumb)
-                   end
-               end
-               searched = searched + 1
-               if index % threads ~= 0 then
-                   task.spawn(fetchServer)
-                   task.wait()
-
-               else
-                   fetchServer()
-               end
-
-               if searching then
-                   Status(searched .."/".. maxSearchs .." servers scanned, players found: ".. players)
-               end
-           end
-           
-           if not cursor then
-               break
-           end
-       else
-           return Status("Failed to find servers", 3)
-       end
-
-       task.wait()
+   if not Screenguini or not Screenguini.Parent then
+      break
    end
-   
+   local s, result = getServers(placeId, cursor)
+
+   if s and result and type(result.data) == "table" then
+      local servers = result.data
+      cursor = result.nextPageCursor
+
+      if StartButton.Text:match("Searching") then
+         maxSearchs = maxSearchs + #servers
+         Status(searched .."/".. maxSearchs .." servers scanned, players found: ".. players)
+      end
+
+      for index, server in ipairs(servers) do
+         local function fetchServer()
+            local s, thumbs = fetchThumbs(server.playerTokens)
+            if s then
+               players = players + #thumbs
+               for _, playerThumb in ipairs(thumbs) do
+                  if playerThumb.imageUrl then
+                     if playerThumb.imageUrl == thumbnail then
+                        searching = false
+                        Status("Found player, teleporting...")
+
+                        teleport(placeId, server.id)
+                        local try = 0
+                        Player.OnTeleport:Connect(function(teleportState)
+                           if teleportState == Enum.TeleportState.Failed then
+                              try = try + 1
+                              Status("Teleport failed, try #".. try)
+                              teleport(placeId, server.id)
+                           end
+                        end)
+                     end
+                  else
+                     Status("token failed, id:", playerThumb.requestId, playerThumb.state, playerThumb.errorMessage)
+                  end
+               end
+            else
+               Status("token failed", s, thumbs)
+            end
+         end
+
+         searched = searched + 1
+         if index % threads ~= 0 then
+            task.spawn(fetchServer)
+            task.wait()
+         else
+            fetchServer()
+         end
+
+         if searching then
+            Status(searched .."/".. maxSearchs .." servers scanned, players found: ".. players)
+         end
+      end
+
+      if not cursor then break end
+   else
+      warn("Failed to fetch servers or no data returned.")
+      return Status("Failed to find servers", 3)
+   end
+
    if searching then
-       Status("Failed to find ".. Username ..", maybe in a vip server", 3)
+      Status("Failed to find ".. Username ..", maybe in a vip server", 3)
+   end
    end
 end)
