@@ -1,4 +1,6 @@
-getgenv().Game = game
+if not getgenv().Game then
+    getgenv().Game = cloneref and cloneref(game) or game
+end
 wait()
 local function safe_wrapper(S)
     if cloneref then
@@ -10,12 +12,16 @@ end
 
 local Players = safe_wrapper("Players")
 local TweenService = safe_wrapper("TweenService")
-local CoreGui = get_hidden_gui and get_hidden_gui() or gethui and gethui() or safe_wrapper("CoreGui")
+repeat task.wait() until Players.LocalPlayer and Players.LocalPlayer:FindFirstChild("PlayerGui")
+local CoreGui = safe_wrapper("CoreGui")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 3)
+local parent_gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui()) or CoreGui or PlayerGui
 local StarterGui = safe_wrapper("StarterGui")
 local GuiService = safe_wrapper("GuiService")
 local Workspace = safe_wrapper("Workspace")
 local UserInputService = safe_wrapper("UserInputService")
-local NotificationLibrary_External = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))()
+local NotificationLibrary_External = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib_New.lua"))()
 local Sound_ID_Windows = "rbxassetid://8183296024"
 local Sound_ID_iPhone = "rbxassetid://73722479618078"
 local Sound_ID_Android = "rbxassetid://17582299860"
@@ -101,10 +107,10 @@ function Notification_Wrapper:StarterGui_Notify(title, content, duration)
         Icon = "rbxassetid://0";
     })
 end
-wait()
+wait(0.2)
 function Notification_Wrapper:Rayfield_Notify(title, content, duration)
     if not getgenv().Rayfield then
-        return Notification_Wrapper:External_Notification("Error", "To use this you must be running my Rayfield UI Library, which seems to not have been loaded, if you want to use Rayfield UI Library notifier, load one of my script hubs.", 15)
+        return Notification_Wrapper:StarterGui_Notify("Error", "Please load one of my script hubs first!", 15)
     end
 
     if getgenv().Rayfield then
