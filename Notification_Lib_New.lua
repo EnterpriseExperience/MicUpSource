@@ -15,7 +15,7 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 3)
 local TweenService = game:GetService("TweenService")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-local parent_gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui()) or CoreGui or PlayerGui
+local parent_gui = CoreGui
 local library
 local templateFolder
 local canvas
@@ -26,6 +26,7 @@ function NotificationLibrary:Load()
     library.Name = LibraryName
     library.Parent = parent_gui
 end
+
 function NotificationLibrary:SendNotification(Mode, Text, Duration)
     local libaryCore = CoreGui:FindFirstChild(LibraryName)
     if not parent_gui:FindFirstChild(LibraryName) then
