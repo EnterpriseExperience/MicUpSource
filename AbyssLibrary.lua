@@ -80,12 +80,9 @@ local Library = {
     WindowVisible = true,
     Communication = Instance.new("BindableEvent")
 }
---
 local Utility = {}
---
 getgenv().Library = Library
 getgenv().Utility = Utility
------------------------------------------------------------------
 do
     Utility.AddInstance = function(NewInstance, Properties)
         local NewInstance = Instance.new(NewInstance)
