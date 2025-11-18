@@ -28,6 +28,11 @@ local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 local HttpService = Secure.HttpService
 local Mouse = LocalPlayer:GetMouse()
+
+if CoreGui:FindFirstChild("LoadedAbyssMenu") then
+    CoreGui.LoadedAbyssMenu:Destroy()
+end
+wait(0.1)
 local InputGUI = Instance.new("ScreenGui")
 InputGUI.Name = "LoadedAbyssMenu"
 InputGUI.Parent = CoreGui
