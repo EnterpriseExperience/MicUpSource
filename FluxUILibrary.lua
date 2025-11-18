@@ -13,10 +13,15 @@ local UserInputService = service("UserInputService")
 local TweenService = service("TweenService")
 local RunService = service("RunService")
 local Players = service("Players")
+local CoreGui = service("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local CloseBind = Enum.KeyCode.RightControl
 
+if CoreGui:FindFirstChild("FluxLib") then
+    CoreGui.FluxLib:Destroy()
+end
+wait(0.2)
 local FluxLib = Instance.new("ScreenGui")
 FluxLib.Name = "FluxLib"
 FluxLib.Parent = game.CoreGui
