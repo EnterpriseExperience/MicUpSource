@@ -32,7 +32,11 @@ local Mouse = LocalPlayer:GetMouse()
 if getgenv().Library then
     getgenv().Library.SelfDestruct()
 end
-wait(0.1)
+wait(0.2)
+if CoreGui:FindFirstChild("LoadedAbyssMenu") then
+    CoreGui.LoadedAbyssMenu:Destroy()
+end
+wait(0.2)
 local InputGUI = Instance.new("ScreenGui")
 InputGUI.Name = "LoadedAbyssMenu"
 InputGUI.Parent = CoreGui
