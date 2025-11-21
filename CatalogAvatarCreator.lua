@@ -66,18 +66,7 @@ local ReplicatedStorage = service_wrap("ReplicatedStorage")
 local TweenService = service_wrap("TweenService")
 
 function close_menu()
-    local windowInstance = getgenv().UIElementsLum.Window
-
-    if windowInstance then
-        local closeWindowTween = TweenService:Create(windowInstance.Background, TweenInfo.new(.15, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)})
-        closeWindowTween.Completed:Connect(function()
-            task.wait()
-            if windowInstance then
-                windowInstance:Destroy()
-            end
-        end)
-        closeWindowTween:Play()
-    end
+    closeWindow()
     getgenv().CatalogAvatarCreator_Script_Menu_Loaded = false
 end
 
@@ -247,6 +236,7 @@ local Catalog_Remote = ReplicatedStorage:FindFirstChild("CatalogGuiRemote", true
 local Remote = Catalog_Remote
 local Settings_RF = ReplicatedStorage:FindFirstChild("SettingsRemoteFunction")
 local Events_Folder = ReplicatedStorage:FindFirstChild("Events", true)
+local Save_Fit_RE = Events_Folder and Events_Folder:FindFirstChild("SavedOutfitsRemote", true)
 local Upd_Plr_Status = Events_Folder and Events_Folder:FindFirstChild("UpdatePlayerStatus", true)
 local IsPriv_RF = Events_Folder and Events_Folder:FindFirstChild("GetIsVIPServer", true)
 local ApplyPose_RE = Events_Folder and Events_Folder:FindFirstChild("ApplyPose", true)
@@ -303,6 +293,18 @@ local function wait_for_datamodel(inst)
     end
 
     return false
+end
+
+function save_current_avatar(name)
+    local args = {
+        [1] = {
+            ["OutfitName"] = tostring(name);
+            ["Configs"] = {};
+            ["Action"] = "CreateNewOutfit";
+        };
+    }
+
+    Save_Fit_RE:InvokeServer(unpack(args))
 end
 
 local function wait_for_child_safe(parent, name)
@@ -1047,6 +1049,32 @@ end)
 
 getgenv().Float_Idle_Animation = R6AnimationsSection:Toggle("Float Idle (FE)", function(state)
     float_idle(state)
+end)
+
+PlayersSection:TextBox("Save Current Outfit", function(curname)
+    save_current_avatar(curname)
+    ingame_notify("success", "saved outfit: "..tostring(name), "green", 10)
+end)
+
+getgenv().WearAllPlrsOutfits = PlayersSection:Toggle("Wear Everyones Outfits (Loop, FE)", function(state)
+    if state then
+        getgenv().wearing_everyones_outfits = true
+        while getgenv().wearing_everyones_outfits == true do
+        task.wait(0)
+            for _, v in ipairs(Players:GetPlayers()) do
+                if v ~= Players.LocalPlayer then
+                    local theirhum = get_human(v)
+                    local theirrig = rig_to_string(theirhum)
+
+                    if theirhum then
+                        make_avatar(v, theirrgi)
+                    end
+                end
+            end
+        end
+    else
+        getgenv().wearing_everyones_outfits = false
+    end
 end)
 
 UISection:Button("Destroy GUI", function()
