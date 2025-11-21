@@ -124,7 +124,6 @@ local mouse = player:GetMouse()
 local viewPortSize = workspace.CurrentCamera.ViewportSize
 
 local originalElements = {}
-getgenv().UIElementsLum = originalElements
 -- Add Tween Dictonary with format Tweens.ElementType.TweenName to ignore repetitive variables
 
 local Library = {}
@@ -1985,6 +1984,8 @@ function Library.new(windowName: string, constrainToScreen: boolean?, width: num
         end)
         closeWindowTween:Play()
 	end
+	wait(0.2)
+	getgenv().closeWindow = closeWindow
 
 	local function minimizeWindow()
 		window.IsMinimized = true
