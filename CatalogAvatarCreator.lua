@@ -1060,14 +1060,14 @@ getgenv().WearAllPlrsOutfits = PlayersSection:Toggle("Wear Everyones Outfits (Lo
     if state then
         getgenv().wearing_everyones_outfits = true
         while getgenv().wearing_everyones_outfits == true do
-        task.wait(0)
+        task.wait(3)
             for _, v in ipairs(Players:GetPlayers()) do
                 if v ~= Players.LocalPlayer then
                     local theirhum = get_human(v)
                     local theirrig = rig_to_string(theirhum)
 
                     if theirhum then
-                        make_avatar(v, theirrgi)
+                        make_avatar(v, theirrig)
                     end
                 end
             end
