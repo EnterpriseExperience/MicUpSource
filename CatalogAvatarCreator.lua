@@ -482,29 +482,35 @@ function copy_avatar(player)
     end
 end
 
-function make_avatar(user, rig_type)
-    if user and user:IsA("Player") then
-        user = tonumber(user.UserId)
+function make_avatar(targetPlayer, rig_type)
+    local userId
+    
+    if typeof(targetPlayer) == "Instance" and targetPlayer:IsA("Player") then
+        userId = targetPlayer.UserId
+    else
+        userId = tonumber(targetPlayer)
     end
 
-    local rig = rig_type:lower()
-    local data
+    if not userId then
+        return ingame_notify("error", "invalid userId", "red", 10)
+    end
+
+    local rig = string.lower(rig_type or "")
+    local humanoidRig
 
     if rig == "r6" then
-        data = {
-            RigType = Enum.HumanoidRigType.R6,
-            Action = "MorphIntoPlayer",
-            UserId = tonumber(user)
-        }
+        humanoidRig = Enum.HumanoidRigType.R6
     elseif rig == "r15" then
-        data = {
-            RigType = Enum.HumanoidRigType.R15,
-            Action = "MorphIntoPlayer",
-            UserId = tonumber(user)
-        }
+        humanoidRig = Enum.HumanoidRigType.R15
     else
         return ingame_notify("error", "provide a valid rigtype lil bro.", "red", 10)
     end
+
+    local data = {
+        Action = "MorphIntoPlayer",
+        UserId = userId,
+        RigType = humanoidRig
+    }
 
     Catalog_Remote:InvokeServer(data)
 end
@@ -686,7 +692,7 @@ PlayersSection:TextBox("Copy Avatar (FE)", function(player_user)
     local copy_target_hum = get_human(copy_target)
 
     ingame_notify("success", "copying: "..tostring(copy_target), "green", 5)
-    make_avatar(copy_target.UserId, rig_to_string(copy_target_hum))
+    make_avatar(copy_target, rig_to_string(copy_target_hum))
 end)
 
 AvatarSection:Button("Refresh Character (FE)", function()
