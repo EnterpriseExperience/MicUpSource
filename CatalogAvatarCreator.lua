@@ -17,13 +17,13 @@ repeat task.wait() until service_wrap
 local MarketplaceService = service_wrap("MarketplaceService")
 local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/main/cerberus.lua"))()
-local Window = Library.new(tostring(game_name))
+local Window = Library.new(tostring(game_name).." - Control Panel")
 local HomeTab = Window:Tab("Home")
 local ReanimationTab = Window:Tab("Reanimation")
 local AvatarSection = HomeTab:Section("Character")
 local PlayersSection = HomeTab:Section("Players")
 local PrivServerSection = HomeTab:Section("Private Server")
-local AnimationsSection = ReanimationTab:Section("Animations")
+local R6AnimationsSection = ReanimationTab:Section("R6 Animations")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
@@ -540,39 +540,79 @@ end
 function gun_idle_cool_anim(toggle)
     if toggle then
         getgenv().gun_animation_idle_animation = true
+
         task.spawn(function()
             local t = 0
-            while getgenv().gun_animation_idle_animation == true do
-                t += 0.035
+            while getgenv().gun_animation_idle_animation do
+                t += 0.045
 
                 local pose = {
                     ["RootJoint"] = {
-                        C0 = CFrame.new(0, 0.1 * math.sin(t/4), 0) * CFrame.Angles(0, math.sin(t/6)*0.15, 0),
-                        C1 = CFrame.new(0, 0, 0)
+                        C0 = CFrame.new(
+                            0, 
+                            0.1 * math.sin(t/4), 
+                            0
+                        ) * CFrame.Angles(
+                            0,
+                            math.sin(t/8) * 0.2,
+                            0
+                        ),
+                        C1 = CFrame.new(0,0,0)
                     },
 
                     ["Neck"] = {
-                        C0 = CFrame.new(0, 1, 0) * CFrame.Angles(0, math.sin(t/5)*0.25, 0),
+                        C0 = CFrame.new(0, 1, 0)
+                            * CFrame.Angles(
+                                math.sin(t/12)*0.05,
+                                math.sin(t/6)*0.25,
+                                0
+                            ),
                         C1 = CFrame.new(0, -0.5, 0)
                     },
 
                     ["Right Shoulder"] = {
-                        C0 = CFrame.new(1, 1, 0) * CFrame.Angles(-0.1 + math.sin(t/3)*0.1, 0, 0),
-                        C1 = CFrame.new(0.5, -1, 0)
+                        C0 = CFrame.new(1, 0.75, 0)
+                            * CFrame.Angles(
+                                -0.2 + math.sin(t/4)*0.1,
+                                math.sin(t/7)*0.1,
+                                math.sin(t/6)*0.05
+                            ),
+                        C1 = CFrame.new(0.5, -0.75, 0)
                     },
 
                     ["Left Shoulder"] = {
-                        C0 = CFrame.new(-1, 1, 0) * CFrame.Angles(-0.1 + math.sin(t/3 + 1)*0.1, 0, 0),
-                        C1 = CFrame.new(-0.5, -1, 0)
+                        C0 = CFrame.new(-1, 0.75, 0)
+                            * CFrame.Angles(
+                                -0.2 + math.sin(t/4 + 1)*0.1,
+                                math.sin(t/7 + 2)*0.1,
+                                math.sin(t/6 + 1)*0.05
+                            ),
+                        C1 = CFrame.new(-0.5, -0.75, 0)
                     },
 
                     ["Right Hip"] = {
-                        C0 = CFrame.new(1, -1, 0 + math.sin(t/4)*0.05),
+                        C0 = CFrame.new(
+                            1,
+                            -1,
+                            0.05 * math.sin(t/5)
+                        ) * CFrame.Angles(
+                            math.sin(t/7)*0.05,
+                            0,
+                            math.sin(t/10)*0.05
+                        ),
                         C1 = CFrame.new(0.5, 1, 0)
                     },
 
                     ["Left Hip"] = {
-                        C0 = CFrame.new(-1, -1, 0 + math.sin(t/4 + 1)*0.05),
+                        C0 = CFrame.new(
+                            -1,
+                            -1,
+                            0.05 * math.sin(t/5 + 1)
+                        ) * CFrame.Angles(
+                            math.sin(t/7 + 1)*0.05,
+                            0,
+                            math.sin(t/10 + 2)*0.05
+                        ),
                         C1 = CFrame.new(-0.5, 1, 0)
                     }
                 }
@@ -894,10 +934,10 @@ getgenv().PrivServerNotificationSpamToggle = PrivServerSection:Toggle("Notificat
     vip_server_notif_spam(state)
 end)
 
-getgenv().SelfWalkingLegs_Anim = AnimationsSection:Toggle("Self Walking Anim (FE)", function(state)
+getgenv().SelfWalkingLegs_Anim = R6AnimationsSection:Toggle("Self Walking Anim (FE)", function(state)
     self_walking_reanimation_legs(state)
 end)
 
-getgenv().Gun_Idle_Animation = AnimationsSection:Toggle("Gun Idle (FE)", function(state)
+getgenv().Gun_Idle_Animation = R6AnimationsSection:Toggle("Gun Idle (FE)", function(state)
     gun_idle_cool_anim(state)
 end)
