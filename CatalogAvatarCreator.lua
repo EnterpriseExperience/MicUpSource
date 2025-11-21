@@ -18,9 +18,10 @@ local MarketplaceService = service_wrap("MarketplaceService")
 local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/main/cerberus.lua"))()
 local Window = Library.new(tostring(game_name))
-local AvatarTab = Window:Tab("Home")
-local AvatarSection = AvatarTab:Section("Character")
-local PlayersSection = AvatarTab:Section("Players")
+local HomeTab = Window:Tab("Home")
+local AvatarSection = HomeTab:Section("Character")
+local PlayersSection = HomeTab:Section("Players")
+local PrivServerSection = HomeTab:Section("Private Server")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
@@ -579,6 +580,31 @@ function flash_name_title(toggle)
     end
 end
 
+function vip_server_notif_spam(toggle)
+    local ohTable1 = {
+        ["Action"] = "ToggleGearsEnabled",
+        ["Enabled"] = true
+    }
+    local ohTable2 = {
+        ["Action"] = "ToggleGearsEnabled",
+        ["Enabled"] = false
+    }
+
+    if toggle == true then
+        getgenv().settings_spam = true
+        while getgenv().settings_spam == true do
+        task.wait()
+            Settings_RF:InvokeServer(ohTable1)
+            task.wait(0)
+            Settings_RF:InvokeServer(ohTable2)
+        end
+    elseif toggle == false then
+        getgenv().settings_spam = false
+    else
+        return 
+    end
+end
+
 getgenv().saved_colors = getgenv().saved_colors or {}
 local function is_r15(hum)
    return hum and hum.RigType == Enum.HumanoidRigType.R15
@@ -716,4 +742,8 @@ getgenv().Flash_Name_Toggle = PlayersSection:Toggle("Spam Titles (FE)", function
     else
         flash_name_title(false)
     end
+end)
+
+getgenv().PrivServerNotificationSpamToggle = PrivServerSection:Toggle("Notification Spam (Blinding, FE)", function(state)
+    vip_server_notif_spam(state)
 end)
