@@ -19,9 +19,11 @@ local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/main/cerberus.lua"))()
 local Window = Library.new(tostring(game_name))
 local HomeTab = Window:Tab("Home")
+local ReanimationTab = Window:Tab("Reanimation")
 local AvatarSection = HomeTab:Section("Character")
 local PlayersSection = HomeTab:Section("Players")
 local PrivServerSection = HomeTab:Section("Private Server")
+local AnimationsSection = ReanimationTab:Section("Animations")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
@@ -228,6 +230,7 @@ local Settings_RF = ReplicatedStorage:FindFirstChild("SettingsRemoteFunction")
 local Events_Folder = ReplicatedStorage:FindFirstChild("Events", true)
 local Upd_Plr_Status = Events_Folder and Events_Folder:FindFirstChild("UpdatePlayerStatus", true)
 local IsPriv_RF = Events_Folder and Events_Folder:FindFirstChild("GetIsVIPServer", true)
+local ApplyPose_RE = Events_Folder and Events_Folder:FindFirstChild("ApplyPose", true)
 local g = getgenv()
 wait(0.3)
 function ingame_notify(title, message, colorName, dur)
@@ -295,6 +298,52 @@ local function retry_find(func, retries, delay)
         task.wait(delay)
     end
     return nil
+end
+
+function self_walking_reanimation_legs(toggle)
+    local angle = 0
+    
+    if toggle then
+        getgenv().self_walking_legs = true
+        task.spawn(function()
+            local t = 0
+            while getgenv().self_walking_legs == true do
+                t += 0.07
+
+                local pose = {
+                    ["Right Hip"] = {
+                        C0 = CFrame.new(1, -1, math.sin(t) * 6),
+                        C1 = CFrame.new(0.5, 1, 0)
+                    },
+                    ["Left Hip"] = {
+                        C0 = CFrame.new(-1, -1, math.sin(t + 1) * 6),
+                        C1 = CFrame.new(-0.5, 1, 0)
+                    }
+                }
+
+                ApplyPose_RE:FireServer(pose)
+                task.wait(0.03)
+            end
+        end)
+    else
+        getgenv().self_walking_legs = false
+        repeat task.wait() until not getgenv().self_walking_legs
+        wait(0.3)
+        if not getgenv().self_walking_legs then
+            local ohTable1 = {}
+
+            ApplyPose_RE:FireServer(ohTable1)
+            wait(0.3)
+            local okhum = get_human(LocalPlayer)
+            local okchar = get_char(LocalPlayer)
+
+            if okhum then
+                okhum:ChangeState(Enum.HumanoidStateType.Dead)
+            else
+                okchar:BreakJoints()
+            end
+        end
+    end
 end
 
 g.get_char = g.get_char or function(Player)
@@ -770,4 +819,8 @@ end)
 
 getgenv().PrivServerNotificationSpamToggle = PrivServerSection:Toggle("Notification Spam (Blinding, FE)", function(state)
     vip_server_notif_spam(state)
+end)
+
+getgenv().SelfWalkingLegs_Anim = AnimationsSection:Toggle("Self Walking Anim (FE)", function(state)
+    weird_reanimation_legs(state)
 end)
