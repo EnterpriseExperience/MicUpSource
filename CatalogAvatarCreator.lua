@@ -837,5 +837,5 @@ getgenv().PrivServerNotificationSpamToggle = PrivServerSection:Toggle("Notificat
 end)
 
 getgenv().SelfWalkingLegs_Anim = AnimationsSection:Toggle("Self Walking Anim (FE)", function(state)
-    weird_reanimation_legs(state)
+    self_walking_reanimation_legs(state)
 end)
