@@ -300,52 +300,6 @@ local function retry_find(func, retries, delay)
     return nil
 end
 
-function self_walking_reanimation_legs(toggle)
-    local angle = 0
-    
-    if toggle then
-        getgenv().self_walking_legs = true
-        task.spawn(function()
-            local t = 0
-            while getgenv().self_walking_legs == true do
-                t += 0.07
-
-                local pose = {
-                    ["Right Hip"] = {
-                        C0 = CFrame.new(1, -1, math.sin(t) * 6),
-                        C1 = CFrame.new(0.5, 1, 0)
-                    },
-                    ["Left Hip"] = {
-                        C0 = CFrame.new(-1, -1, math.sin(t + 1) * 6),
-                        C1 = CFrame.new(-0.5, 1, 0)
-                    }
-                }
-
-                ApplyPose_RE:FireServer(pose)
-                task.wait(0.03)
-            end
-        end)
-    else
-        getgenv().self_walking_legs = false
-        repeat task.wait() until not getgenv().self_walking_legs
-        wait(0.3)
-        if not getgenv().self_walking_legs then
-            local ohTable1 = {}
-
-            ApplyPose_RE:FireServer(ohTable1)
-            wait(0.3)
-            local okhum = get_human(LocalPlayer)
-            local okchar = get_char(LocalPlayer)
-
-            if okhum then
-                okhum:ChangeState(Enum.HumanoidStateType.Dead)
-            else
-                okchar:BreakJoints()
-            end
-        end
-    end
-end
-
 g.get_char = g.get_char or function(Player)
     if not Player or not Player:IsA("Player") then
         ingame_notify("error", "player don't exist: "..tostring(player), "red", 5)
@@ -530,6 +484,67 @@ function copy_avatar(player)
     local bc = char:FindFirstChildOfClass("BodyColors")
     if bc then
         ApplySkin(bc)
+    end
+end
+
+function self_walking_reanimation_legs(toggle)
+    local angle = 0
+    
+    if toggle then
+        getgenv().self_walking_legs = true
+        task.spawn(function()
+            local t = 0
+            while getgenv().self_walking_legs == true do
+                t += 0.07
+
+                local pose = {
+                    ["Right Hip"] = {
+                        C0 = CFrame.new(1, -1, math.sin(t) * 6),
+                        C1 = CFrame.new(0.5, 1, 0)
+                    },
+                    ["Left Hip"] = {
+                        C0 = CFrame.new(-1, -1, math.sin(t + 1) * 6),
+                        C1 = CFrame.new(-0.5, 1, 0)
+                    }
+                }
+
+                ApplyPose_RE:FireServer(pose)
+                task.wait(0.03)
+            end
+        end)
+    else
+        getgenv().self_walking_legs = false
+        repeat task.wait() until not getgenv().self_walking_legs
+        wait(0.3)
+        if not getgenv().self_walking_legs then
+            local ohTable1 = {}
+
+            ApplyPose_RE:FireServer(ohTable1)
+            wait(0.3)
+            local okhum = get_human(LocalPlayer)
+            local okchar = get_char(LocalPlayer)
+
+            if okhum then
+                okhum:ChangeState(Enum.HumanoidStateType.Dead)
+            else
+                okchar:BreakJoints()
+            end
+        end
+    end
+end
+
+function reset_reanimation()
+    local ohTable1 = {}
+
+    ApplyPose_RE:FireServer(ohTable1)
+    wait(0.3)
+    local okhum = get_human(LocalPlayer)
+    local okchar = get_char(LocalPlayer)
+
+    if okhum then
+        okhum:ChangeState(Enum.HumanoidStateType.Dead)
+    else
+        okchar:BreakJoints()
     end
 end
 
