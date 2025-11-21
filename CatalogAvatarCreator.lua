@@ -1053,7 +1053,7 @@ end)
 
 PlayersSection:TextBox("Save Current Outfit", function(curname)
     save_current_avatar(curname)
-    ingame_notify("success", "saved outfit: "..tostring(name), "green", 10)
+    ingame_notify("success", "saved outfit: "..tostring(curname), "green", 10)
 end)
 
 getgenv().WearAllPlrsOutfits = PlayersSection:Toggle("Wear Everyones Outfits (Loop, FE)", function(state)
