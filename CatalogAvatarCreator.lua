@@ -487,6 +487,21 @@ function copy_avatar(player)
     end
 end
 
+function disable_reanimation()
+    local ohTable1 = {}
+
+    ApplyPose_RE:FireServer(ohTable1)
+    wait(0.3)
+    local okhum = get_human(LocalPlayer)
+    local okchar = get_char(LocalPlayer)
+
+    if okhum then
+        okhum:ChangeState(Enum.HumanoidStateType.Dead)
+    else
+        okchar:BreakJoints()
+    end
+end
+wait(0.2)
 function self_walking_reanimation_legs(toggle)
     local angle = 0
     
@@ -515,20 +530,63 @@ function self_walking_reanimation_legs(toggle)
     else
         getgenv().self_walking_legs = false
         repeat task.wait() until not getgenv().self_walking_legs
-        wait(0.3)
+        wait(0.5)
         if not getgenv().self_walking_legs then
-            local ohTable1 = {}
+            disable_reanimation()
+        end
+    end
+end
 
-            ApplyPose_RE:FireServer(ohTable1)
-            wait(0.3)
-            local okhum = get_human(LocalPlayer)
-            local okchar = get_char(LocalPlayer)
+function gun_idle_cool_anim(toggle)
+    if toggle then
+        getgenv().gun_animation_idle_animation = true
+        task.spawn(function()
+            local t = 0
+            while getgenv().gun_animation_idle_animation == true do
+                t += 0.035
 
-            if okhum then
-                okhum:ChangeState(Enum.HumanoidStateType.Dead)
-            else
-                okchar:BreakJoints()
+                local pose = {
+                    ["RootJoint"] = {
+                        C0 = CFrame.new(0, 0.1 * math.sin(t/4), 0) * CFrame.Angles(0, math.sin(t/6)*0.15, 0),
+                        C1 = CFrame.new(0, 0, 0)
+                    },
+
+                    ["Neck"] = {
+                        C0 = CFrame.new(0, 1, 0) * CFrame.Angles(0, math.sin(t/5)*0.25, 0),
+                        C1 = CFrame.new(0, -0.5, 0)
+                    },
+
+                    ["Right Shoulder"] = {
+                        C0 = CFrame.new(1, 1, 0) * CFrame.Angles(-0.1 + math.sin(t/3)*0.1, 0, 0),
+                        C1 = CFrame.new(0.5, -1, 0)
+                    },
+
+                    ["Left Shoulder"] = {
+                        C0 = CFrame.new(-1, 1, 0) * CFrame.Angles(-0.1 + math.sin(t/3 + 1)*0.1, 0, 0),
+                        C1 = CFrame.new(-0.5, -1, 0)
+                    },
+
+                    ["Right Hip"] = {
+                        C0 = CFrame.new(1, -1, 0 + math.sin(t/4)*0.05),
+                        C1 = CFrame.new(0.5, 1, 0)
+                    },
+
+                    ["Left Hip"] = {
+                        C0 = CFrame.new(-1, -1, 0 + math.sin(t/4 + 1)*0.05),
+                        C1 = CFrame.new(-0.5, 1, 0)
+                    }
+                }
+
+                ApplyPose_RE:FireServer(pose)
+                task.wait(0.03)
             end
+        end)
+    else
+        getgenv().gun_animation_idle_animation = false
+        repeat task.wait() until not getgenv().gun_animation_idle_animation
+        wait(0.5)
+        if not getgenv().gun_animation_idle_animation then
+            disable_reanimation()
         end
     end
 end
@@ -838,4 +896,8 @@ end)
 
 getgenv().SelfWalkingLegs_Anim = AnimationsSection:Toggle("Self Walking Anim (FE)", function(state)
     self_walking_reanimation_legs(state)
+end)
+
+getgenv().Gun_Idle_Animation = AnimationsSection:Toggle("Gun Idle (FE)", function(state)
+    gun_idle_cool_anim(state)
 end)
