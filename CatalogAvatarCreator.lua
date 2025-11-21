@@ -19,11 +19,13 @@ local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/main/cerberus.lua"))()
 local Window = Library.new(tostring(game_name).." - Control Panel")
 local HomeTab = Window:Tab("Home")
+local UITab = Window:Tab("UI")
 local ReanimationTab = Window:Tab("Reanimation")
 local AvatarSection = HomeTab:Section("Character")
 local PlayersSection = HomeTab:Section("Players")
 local PrivServerSection = HomeTab:Section("Private Server")
 local R6AnimationsSection = ReanimationTab:Section("R6 Animations")
+local UISection = UITab:Section("UI")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
@@ -61,7 +63,24 @@ local cmdlp = cmdp.LocalPlayer
 local Players = service_wrap("Players")
 local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = service_wrap("ReplicatedStorage")
-wait(0.2)
+local TweenService = service_wrap("TweenService")
+
+function close_menu()
+    local windowInstance = getgenv().UIElementsLum.Window
+
+    if windowInstance then
+        local closeWindowTween = TweenService:Create(windowInstance.Background, TweenInfo.new(.15, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)})
+        closeWindowTween.Completed:Connect(function()
+            task.wait()
+            if windowInstance then
+                windowInstance:Destroy()
+            end
+        end)
+        closeWindowTween:Play()
+    end
+    getgenv().CatalogAvatarCreator_Script_Menu_Loaded = false
+end
+
 if not getgenv().findplr then
     getgenv().findplr = function(args)
         local tbl = cmdp:GetPlayers()
@@ -1028,4 +1047,8 @@ end)
 
 getgenv().Float_Idle_Animation = R6AnimationsSection:Toggle("Float Idle (FE)", function(state)
     float_idle(state)
+end)
+
+UISection:Button("Destroy GUI", function()
+    close_menu()
 end)
