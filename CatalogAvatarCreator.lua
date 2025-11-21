@@ -226,7 +226,8 @@ local Catalog_Remote = ReplicatedStorage:FindFirstChild("CatalogGuiRemote", true
 local Remote = Catalog_Remote
 local Settings_RF = ReplicatedStorage:FindFirstChild("SettingsRemoteFunction")
 local Events_Folder = ReplicatedStorage:FindFirstChild("Events", true)
-local Upd_Plr_Status = Events_Folder:FindFirstChild("UpdatePlayerStatus", true)
+local Upd_Plr_Status = Events_Folder and Events_Folder:FindFirstChild("UpdatePlayerStatus", true)
+local IsPriv_RF = Events_Folder and Events_Folder:FindFirstChild("GetIsVIPServer", true)
 local g = getgenv()
 wait(0.3)
 function ingame_notify(title, message, colorName, dur)
@@ -516,6 +517,23 @@ function make_avatar(targetPlayer, rig_type)
     Catalog_Remote:InvokeServer(data)
 end
 
+local function is_vip_owner()
+    local success, result = pcall(function()
+        return IsPriv_RF:InvokeServer()
+    end)
+
+    if not success then
+        ingame_notify("error", "Remote failed: "..tostring(result), "red", 5)
+        return false
+    end
+
+    if result == LocalPlayer.UserId then
+        return true
+    else
+        return false
+    end
+end
+
 local function rig_to_string(hum)
     if not hum then return nil end
     return hum.RigType == Enum.HumanoidRigType.R6 and "r6" or "r15"
@@ -589,6 +607,12 @@ function vip_server_notif_spam(toggle)
         ["Action"] = "ToggleGearsEnabled",
         ["Enabled"] = false
     }
+    local is_priv_server = is_vip_owner()
+
+    if not is_priv_server then
+        getgenv().settings_spam = false
+        return ingame_notify("error", "you don't own this private server, or it is a public server.", "red", 15)
+    end
 
     if toggle == true then
         getgenv().settings_spam = true
