@@ -659,7 +659,7 @@ function float_idle(toggle)
             while getgenv().float_idle == true do
                 t += 0.05
 
-                local hover = math.sin(t/4) * 0.35
+                local hover = math.sin(t/4) * 3
                 local tilt  = math.sin(t/6) * 0.05
 
                 local pose = {
