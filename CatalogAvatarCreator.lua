@@ -18,7 +18,7 @@ local MarketplaceService = service_wrap("MarketplaceService")
 local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/main/cerberus.lua"))()
 local Window = Library.new(tostring(game_name))
-local AvatarTab = Window:Tab("Avatar")
+local AvatarTab = Window:Tab("Home")
 local AvatarSection = AvatarTab:Section("Character")
 local PlayersSection = AvatarTab:Section("Players")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -49,7 +49,7 @@ getgenv().toggle_logging = function(state)
     end
 end
 wait(0.2)
---getgenv().toggle_logging(true)
+getgenv().toggle_logging(true)
 -- saving for later --
 -- local title = section:Title("Character") --
 -- title:ChangeText("Title") --
