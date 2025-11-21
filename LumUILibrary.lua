@@ -124,9 +124,7 @@ local mouse = player:GetMouse()
 local viewPortSize = workspace.CurrentCamera.ViewportSize
 
 local originalElements = {}
-if not getgenv().UIElementsLum then
-    getgenv().UIElementsLum = originalElements
-end
+getgenv().UIElementsLum = originalElements
 -- Add Tween Dictonary with format Tweens.ElementType.TweenName to ignore repetitive variables
 
 local Library = {}
