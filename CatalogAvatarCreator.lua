@@ -631,6 +631,90 @@ function gun_idle_cool_anim(toggle)
     end
 end
 
+function float_idle(toggle)
+    if toggle then
+        getgenv().float_idle = true
+
+        task.spawn(function()
+            local t = 0
+            while getgenv().float_idle == true do
+                t += 0.05
+
+                local hover = math.sin(t/4) * 0.35
+                local tilt  = math.sin(t/6) * 0.05
+
+                local pose = {
+                    ["RootJoint"] = {
+                        C0 = CFrame.new(0, hover, 0) 
+                            * CFrame.Angles(0, 0, tilt),
+                        C1 = CFrame.new(0,0,0)
+                    },
+
+                    ["Neck"] = {
+                        C0 = CFrame.new(0, 1, 0)
+                            * CFrame.Angles(
+                                math.sin(t/10)*0.05,
+                                math.sin(t/8)*0.2,
+                                0
+                            ),
+                        C1 = CFrame.new(0,-0.5,0)
+                    },
+
+                    ["Left Shoulder"] = {
+                        C0 = CFrame.new(-1, 0.5 + hover*0.3, 0)
+                            * CFrame.Angles(
+                                -0.15 + math.sin(t/4)*0.1,
+                                0,
+                                math.sin(t/7)*0.08
+                            ),
+                        C1 = CFrame.new(0.5,0.5,0)
+                    },
+
+                    ["Right Shoulder"] = {
+                        C0 = CFrame.new(1, 0.5 + hover*0.3, 0)
+                            * CFrame.Angles(
+                                -0.15 + math.sin(t/4 + 1)*0.1,
+                                0,
+                                math.sin(t/7 + 2)*0.08
+                            ),
+                        C1 = CFrame.new(-0.5,0.5,0)
+                    },
+
+                    ["Left Hip"] = {
+                        C0 = CFrame.new(-1, -1 + hover*0.4, 0)
+                            * CFrame.Angles(
+                                math.sin(t/6)*0.07,
+                                0,
+                                math.sin(t/8)*0.05
+                            ),
+                        C1 = CFrame.new(-0.5,1,0)
+                    },
+
+                    ["Right Hip"] = {
+                        C0 = CFrame.new(1, -1 + hover*0.4, 0)
+                            * CFrame.Angles(
+                                math.sin(t/6 + 1)*0.07,
+                                0,
+                                math.sin(t/8 + 2)*0.05
+                            ),
+                        C1 = CFrame.new(0.5,1,0)
+                    }
+                }
+
+                ApplyPose_RE:FireServer(pose)
+                task.wait(0.03)
+            end
+        end)
+    else
+        getgenv().float_idle = false
+        repeat task.wait() until not getgenv().float_idle
+        wait(0.5)
+        if not getgenv().float_idle then
+            disable_reanimation()
+        end
+    end
+end
+
 function reset_reanimation()
     local ohTable1 = {}
 
@@ -938,6 +1022,10 @@ getgenv().SelfWalkingLegs_Anim = R6AnimationsSection:Toggle("Self Walking Anim (
     self_walking_reanimation_legs(state)
 end)
 
-getgenv().Gun_Idle_Animation = R6AnimationsSection:Toggle("Gun Idle (FE)", function(state)
+getgenv().Gun_Idle_Animation = R6AnimationsSection:Toggle("Gun Idle (Kinda Broken, FE)", function(state)
     gun_idle_cool_anim(state)
+end)
+
+getgenv().Float_Idle_Animation = R6AnimationsSection:Toggle("Float Idle (FE)", function(state)
+    float_idle(state)
 end)
