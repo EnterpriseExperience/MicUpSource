@@ -16,7 +16,7 @@ end
 repeat task.wait() until service_wrap
 local MarketplaceService = service_wrap("MarketplaceService")
 local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/main/cerberus.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LumUILibrary.lua"))()
 local Window = Library.new(tostring(game_name).." - Control Panel")
 local HomeTab = Window:Tab("Home")
 local UITab = Window:Tab("UI")
