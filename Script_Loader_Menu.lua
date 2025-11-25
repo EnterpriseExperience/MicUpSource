@@ -44,7 +44,7 @@ wait()
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
 wait(0.2)
 function notify(notif_type, msg, duration)
-   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
+    NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
 end
 wait(0.1)
 if not getgenv().notify then
@@ -77,7 +77,7 @@ for name, all_scripts in pairs(scriptstoload) do
             if not getgenv().LifeTogetherRP_Admin then
                 return load_str(scriptstoload["LifeTogether Admin Commands (FE)"].link)
             else
-                return 
+                return getgenv().notify("Error", "You have already loaded the Life Together Admin commands.", 10)
             end
         end
 
