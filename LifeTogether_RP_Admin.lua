@@ -1,3 +1,9 @@
+if not game:IsLoaded() then game.Loaded:Wait() end
+
+local function blankfunction(...)
+   return ...
+end
+
 local http_requesting = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request) or blankfunction
 
 local function isbad(body, code)
@@ -51,3 +57,4 @@ end
 if not success then
     return warn("Failed to load script from all URLs.")
 end
+
