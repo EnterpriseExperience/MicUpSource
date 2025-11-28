@@ -30,7 +30,7 @@ g.flames_api = g.flames_api or {}
 local flames_api = g.flames_api
 local get_gc = getconnections or get_signal_cons
 
-local function get_or_set(name, value)
+g.get_or_set = g.get_or_set or function(name, value)
 	if rawget and rawset then
 		local existing = rawget(g, name)
 		if existing == nil then
@@ -49,8 +49,6 @@ local function get_or_set(name, value)
 
 	return existing
 end
-
-g.get_or_set = g.get_or_set or get_or_set
 
 g.low_level_executor = g.low_level_executor or function()
 	if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
@@ -94,6 +92,8 @@ repeat task.wait() until SafeGet and type(SafeGet) == "function"
 get_or_set("SafeGet", SafeGet)
 get_or_set("safe_wrapper", SafeGet)
 get_or_set("Safe_Wrapper", SafeGet)
+get_or_set("Service_Wrap", SafeGet)
+get_or_set("Service_Wrapper", SafeGet)
 
 local NotifyLib = loadstring(game:HttpGet(
    "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"
@@ -103,7 +103,7 @@ if SafeGet and type(SafeGet) == "function" then
 	get_or_set("SafeGet", SafeGet)
 end
 
-function isnumber(str)
+g.isnumber = g.isnumber or function(str)
 	if tonumber(str) ~= nil or str == 'inf' or str == '9e9' or str == 'math.huge' then
 		return true
 	end
