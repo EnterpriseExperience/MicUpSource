@@ -1,23 +1,150 @@
--- FOR ADVANCED USERS: --
--- getgenv().AllClipboards("text you want to copy here") -- Checks if the clipboard functions are available and allows you to let the user copy what ever you put in here.
--- getgenv().httprequest_Init -- For more advanced users, but includes ALL functions for httprequest, and making requests to Discord, and such.
--- getgenv().getgenv().queueteleport -- For more advanced users, but includes queue-teleport functionality, allowing you to make scripts like auto-execute on rejoin scripts, if done correctly of course.
+-- [[ ADVANCED USERS ONLY ]] --
 
-local flames_api = {}
+--[[
+	getgenv().AllClipboards("text you want to copy here")
 
-local function SafeGet(serviceName)
-	local ok, service = pcall(function()
-		return cloneref and cloneref(game:GetService(serviceName)) or game:GetService(serviceName)
-	end)
-	return ok and service or nil
+	-- [INFO] --
+	Includes: Supported function(s) for setclipboard, which checks if the clipboard functions are available and allows you to set the users clipboard to what ever you put in it.
+--]]
+
+--[[ 
+	getgenv().httprequest_Init(payload json table or something here)
+
+	-- [INFO] --
+	Includes: Supported function(s) for httprequest, which lets you to make HTTP requests to URLs like: Discord, Roblox, etc.
+--]]
+
+--[[
+	getgenv().queueteleport("loadstring here")
+
+	-- [INFO] --
+	Includes: Supported function(s) for queueteleport, which lets you make scripts auto-execute on rejoin/server-hop, if set correctly with a boolean flag (e.g: getgenv().RejoinExecuted = true).
+--]]
+
+if not game:IsLoaded() then
+   game.Loaded:Wait()
+end
+local g = getgenv()
+repeat task.wait() until g or getgenv()
+g.flames_api = g.flames_api or {}
+local flames_api = g.flames_api
+
+local function get_or_set(name, value)
+	if rawget and rawset then
+		local existing = rawget(g, name)
+		if existing == nil then
+			rawset(g, name, value)
+			return value
+		end
+		return existing
+	end
+
+	local existing = g[name]
+
+	if existing == nil then
+		g[name] = value
+		return value
+	end
+
+	return existing
 end
 
-getgenv().Game = game
+g.get_or_set = g.get_or_set or get_or_set
+
+g.low_level_executor = g.low_level_executor or function()
+	if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
+		return true
+	else
+		return false
+	end
+end
+
+local SafeGet
+
+if setmetatable then
+	local services = setmetatable({}, {
+		__index = function(self, index)
+			local svc = game.GetService(game, index)
+			if cloneref and svc then
+				svc = cloneref(svc)
+			end
+			if svc then
+				self[index] = svc
+			end
+			return svc
+		end
+	})
+
+	SafeGet = function(service)
+		return services[service]
+	end
+else
+	SafeGet = function(service)
+		if cloneref then
+			return cloneref(game:GetService(service))
+		else
+			return game:GetService(service)
+		end
+	end
+end
+
+repeat task.wait() until SafeGet and type(SafeGet) == "function"
+
+get_or_set("SafeGet", SafeGet)
+
+local NotifyLib = loadstring(game:HttpGet(
+   "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"
+))()
+
+if SafeGet and type(SafeGet) == "function" then
+	get_or_set("SafeGet", SafeGet)
+end
+
+local valid_titles = {
+	success = "Success",
+	info = "Info",
+	warning = "Warning",
+	error = "Error"
+}
+
+local function format_title(str)
+	if typeof(str) ~= "string" then
+		return "Info"
+	end
+
+	local key = str:lower()
+	return valid_titles[key] or "Info"
+end
+
+function notify_func(title, msg, dur)
+   local fixed_title = format_title(title)
+   NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
+end
+
+get_or_set("notify", notify_func)
+
+if not low_level_executor() then
+	flames_api.notify = function(title, content, dur)
+		local fixed_title = format_title(title)
+   	NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
+	end
+else
+	flames_api.notify = function(title, content, dur)
+		flames_api.Service("StarterGui"):SetCore("SendNotification", {
+			Title = tostring(title);
+			Text = tostring(content);
+			Duration = tonumber(dur);
+		})
+	end
+end
+
+-- [[ when teleporting via queueteleport : needs to update dynamically, leave these like this. ]] --
+getgenv().Game = cloneref and cloneref(game) or game
 getgenv().JobID = game.JobId
 getgenv().PlaceID = game.PlaceId
 
-flames_api.Service = function(serviceName)
-   return SafeGet(serviceName)
+flames_api.Service = function(service)
+   return SafeGet(service)
 end
 
 local function getExecutor()
@@ -33,10 +160,6 @@ end
 
 flames_api.ExecutorName = executor_details()
 
-getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-
 flames_api.RandomString = function()
 	local length = math.random(10, 50)
 	local array = {}
@@ -46,182 +169,318 @@ flames_api.RandomString = function()
 	return table.concat(array)
 end
 
+local function get_player_gui(plr)
+	if not plr then return nil end
+
+	local pg = plr:FindFirstChildOfClass("PlayerGui")
+	if pg then return pg end
+
+	local added_conn
+	added_conn = plr.ChildAdded:Connect(function(c)
+		if c:IsA("PlayerGui") then
+			pg = c
+			added_conn:Disconnect()
+		end
+	end)
+
+	while not pg do
+		task.wait()
+		local existing = plr:FindFirstChildOfClass("PlayerGui")
+		if existing then
+			pg = existing
+			if added_conn then added_conn:Disconnect() end
+			break
+		end
+	end
+
+	return pg
+end
+
+get_or_set("AllClipboards", setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set))
+get_or_set("httprequest_Init", (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request)
+get_or_set("queueteleport", (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport))
+get_or_set("RandomString", RandomString)
+get_or_set("randomString", RandomString)
+get_or_set("randomstring", RandomString)
+
 local Players = SafeGet("Players")
 local LocalPlayer = Players.LocalPlayer
-
 flames_api.Players = Players
 flames_api.LocalPlayer = LocalPlayer
-flames_api.PlaceID = getgenv().PlaceID
-flames_api.JobID = getgenv().JobID
-flames_api.PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 3)
+flames_api.PlaceId = getgenv().PlaceID or game.PlaceId
+flames_api.placeid = getgenv().PlaceID or game.PlaceId
+flames_api.PlaceID = getgenv().PlaceID or game.PlaceId
+flames_api.JobID = getgenv().JobID or game.JobId
+flames_api.JobId = getgenv().JobID or game.JobId
+flames_api.jobid = getgenv().JobID or game.JobId
+flames_api.PlayerGui = get_player_gui(LocalPlayer)
 wait(0.1)
-getgenv().get_char = function(Player)
-   if not Player or typeof(Player) ~= "Instance" or not Player:IsA("Player") then
-      getgenv().notify("Error", "That is not a Player, or Player entered isn't an actual player.", 5)
-      return nil
-   end
+g.get_char = g.get_char or function(Player)
+	if not Player or not Player:IsA("Player") then return nil end
 
-   local character = Player.Character
-   local attempts = 0
-   local max_attempts = 25
+	local current_char
+	local diedconn
+	local added_conn
 
-   while not character and attempts < max_attempts do
-      task.wait(0.2)
-      character = Player.Character
-      attempts += 1
-   end
+	local function hookchar(char)
+		current_char = char
 
-   if not character then
-      local ok, newChar = pcall(function()
-         return Player.CharacterAdded:Wait()
-      end)
-      if ok and newChar then
-         character = newChar
-      end
-   end
+		if diedconn then diedconn:Disconnect() end
 
-   if not character then
-      getgenv().notify("Error", "Could not fetch Character for: "..tostring(Player or "???"), 6)
-      return nil
-   end
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then
+			diedconn = hum.Died:Once(function()
+				current_char = nil
+			end)
+		end
+	end
 
-   return character
+	if Player.Character and Player.Character.Parent then
+		hookchar(Player.Character)
+	end
+
+	added_conn = Player.CharacterAdded:Connect(hookchar)
+
+	while not current_char do
+		task.wait()
+		local char = Player.Character
+		if char and char.Parent then
+			hookchar(char)
+		end
+	end
+
+	return current_char
 end
-wait(0.2)
-local function SafeGetHumanoid(Player)
-   local character = getgenv().get_char(Player)
-   if not character then
-      return nil
-   end
+wait(0.5)
+g.get_human = get_human or function(Player)
+	local char = g.get_char(Player)
+	if not char then return nil end
 
-   local humanoid = character:FindFirstChildOfClass("Humanoid")
-   local attempts = 0
-   local max_attempts = 25
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then return hum end
 
-   while not humanoid and attempts < max_attempts do
-      task.wait(0.2)
-      humanoid = character:FindFirstChildOfClass("Humanoid")
-      attempts += 1
-   end
+	local hum_conn
+	hum_conn = char.ChildAdded:Connect(function(c)
+		if c:IsA("Humanoid") then
+			hum = c
+			hum_conn:Disconnect()
+		end
+	end)
 
-   if not humanoid then
-      local ok, hum = pcall(function()
-         return character:WaitForChild("Humanoid", 5)
-      end)
-      if ok and hum then
-         humanoid = hum
-      end
-   end
+	local died = false
+	local h = char:FindFirstChildOfClass("Humanoid")
+	if h then
+		h.Died:Connect(function()
+			died = true
+		end)
+	end
 
-   if not humanoid then
-      return nil
-   end
+	while not hum and not died do
+		task.wait()
+	end
 
-   return humanoid
-end
+	if hum_conn then hum_conn:Disconnect() end
 
-local function SafeGetHRP(Player)
-   local character = getgenv().get_char(Player)
-   if not character then
-      return nil
-   end
-
-   local root = character:FindFirstChild("HumanoidRootPart")
-   local attempts = 0
-   local max_attempts = 25
-
-   while not root and attempts < max_attempts do
-      task.wait(0.2)
-      root = character:FindFirstChild("HumanoidRootPart")
-      attempts += 1
-   end
-
-   if not root then
-      local ok, hrp = pcall(function()
-         return character:WaitForChild("HumanoidRootPart", 5)
-      end)
-      if ok and hrp then
-         root = hrp
-      end
-   end
-
-   if not root then
-      return nil
-   end
-
-   return root
+	return (not died) and hum or nil
 end
 
-local function SafeGetHead(Player)
-   if not Player or typeof(Player) ~= "Instance" or not Player:IsA("Player") then
-      getgenv().notify("Error", "Invalid Player provided to get_head.", 5)
-      return nil
-   end
+g.get_root = get_root or function(Player)
+	local char = g.get_char(Player)
+	if not char then return nil end
 
-   local character = getgenv().get_char(Player)
-   if not character then
-      return nil
-   end
+	local root = char:FindFirstChild("HumanoidRootPart")
+			or char:FindFirstChild("UpperTorso")
+			or char:FindFirstChild("Torso")
+	if root then return root end
 
-   local head = character:FindFirstChild("Head")
-   local attempts = 0
-   local max_attempts = 25
+	local targets = {
+		HumanoidRootPart = true,
+		UpperTorso = true,
+		Torso = true
+	}
 
-   while not head and attempts < max_attempts do
-      task.wait(0.1)
-      head = character:FindFirstChild("Head")
-      attempts += 1
-   end
+	local died = false
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum.Died:Connect(function() died = true end)
+	end
 
-   if not head then
-      local ok, result = pcall(function()
-         return character:WaitForChild("Head", 5)
-      end)
-      if ok and result then
-         head = result
-      end
-   end
+	local added_conn
+	added_conn = char.ChildAdded:Connect(function(c)
+		if targets[c.Name] then
+			root = c
+			added_conn:Disconnect()
+		end
+	end)
 
-   if not head or not head:IsA("BasePart") then
-      return nil
-   end
+	while not root and not died do
+		task.wait()
+	end
 
-   return head
+	if added_conn then added_conn:Disconnect() end
+
+	return (not died) and root or nil
+end
+
+g.get_head = g.get_head or function(Player)
+	local char = g.get_char(Player)
+	if not char then return nil end
+
+	local head = char:FindFirstChild("Head")
+	if head then return head end
+
+	local died = false
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum.Died:Connect(function() died = true end)
+	end
+
+	local added_conn
+	added_conn = char.ChildAdded:Connect(function(c)
+		if c.Name == "Head" then
+			head = c
+			added_conn:Disconnect()
+		end
+	end)
+
+	while not head and not died do
+		task.wait()
+	end
+
+	if added_conn then added_conn:Disconnect() end
+
+	return (not died) and head or nil
 end
 
 local FlyConnections
 
+local function sync_api()
+	flames_api.Character = g.Character or get_char(g.LocalPlayer or game.Players.LocalPlayer)
+	flames_api.Humanoid = g.Humanoid or get_human(g.LocalPlayer or game.Players.LocalPlayer)
+	flames_api.HumanoidRootPart = g.HumanoidRootPart or get_root(g.LocalPlayer or game.Players.LocalPlayer)
+	flames_api.Head = g.Head or get_head(g.LocalPlayer or game.Players.LocalPlayer)
+end
+
+task.spawn(sync_api)
+
 FlyConnections = FlyConnections or {}
 getgenv().FlyPart = getgenv().FlyPart or nil
 getgenv().FlySpeed = getgenv().FlySpeed or 10
-flames_api.Character = getgenv().get_char(LocalPlayer)
-flames_api.Humanoid = SafeGetHumanoid(LocalPlayer)
-flames_api.HumanoidRootPart = SafeGetHRP(LocalPlayer)
-flames_api.Head = SafeGetHead(LocalPlayer)
+sync_api()
 
-local function Dynamic_Character_Updater(character)
-	flames_api.Character = getgenv().get_char(LocalPlayer) or character
-	wait(0.3)
-	flames_api.Humanoid = SafeGetHumanoid(LocalPlayer)
-	flames_api.HumanoidRootPart = SafeGetHRP(LocalPlayer)
-	flames_api.Head = SafeGetHead(LocalPlayer)
-	flames_api.SeatPart = flames_api.Humanoid and flames_api.Humanoid.SeatPart or nil
+if setmetatable and rawset then
+	setmetatable(flames_api, {
+		__index = function(_, key)
+			if key == "Character" then
+				return g.get_char(g.LocalPlayer)
+			elseif key == "Humanoid" then
+				return g.get_human(g.LocalPlayer)
+			elseif key == "HumanoidRootPart" then
+				return g.get_root(g.LocalPlayer)
+			elseif key == "Head" then
+				return g.get_head(g.LocalPlayer)
+			else
+				return rawget(flames_api, key)
+			end
+		end,
+
+		__index = function(_, key)
+			if key == "Character" then
+				return g.get_char(g.LocalPlayer) or g.Character
+			end
+			if key == "Humanoid" then
+				return g.get_human(g.LocalPlayer) or g.Humanoid
+			end
+			if key == "HumanoidRootPart" then
+				return g.get_root(g.LocalPlayer) or g.HumanoidRootPart
+			end
+			if key == "Head" then
+				return g.get_head(g.LocalPlayer) or g.Head
+			end
+
+			return rawget(flames_api, key)
+		end
+	})
+else
+	flames_api.Character = function()
+		return g.get_char(g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer)
+	end
+
+	flames_api.Humanoid = function()
+		return g.get_human(g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer)
+	end
+
+	flames_api.HumanoidRootPart = function()
+		return g.get_root(g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer)
+	end
+
+	flames_api.Head = function()
+		return g.get_head(g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer)
+	end
 end
 
-Dynamic_Character_Updater(flames_api.Character)
+local updating = false
 
-LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-	task.wait(0.3)
-	Dynamic_Character_Updater(newCharacter)
-	repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
-	wait(0.6)
-	flames_api.Humanoid = SafeGetHumanoid(LocalPlayer)
-	flames_api.HumanoidRootPart = SafeGetHRP(LocalPlayer)
-	flames_api.Head = SafeGetHead(LocalPlayer)
-	flames_api.SeatPart = SafeGetHumanoid(LocalPlayer).SeatPart
-	wait(0.2)
-	Dynamic_Character_Updater(newCharacter)
-end)
+local function hook_updates()
+	if updating then return end
+	updating = true
+
+	task.spawn(function()
+		while g.Character == nil do task.wait() end
+		sync_api()
+		updating = false
+	end)
+end
+
+local function update_character_refs()
+	local lp = g.LocalPlayer
+	local char
+
+	while true do
+		char = g.get_char(lp)
+		if char then break end
+		task.wait()
+	end
+
+	g.Character = char
+
+	while true do
+		local hum = g.get_human(lp)
+		if hum then
+			g.Humanoid = hum
+			break
+		end
+		task.wait()
+	end
+
+	while true do
+		local root = g.get_root(lp)
+		if root then
+			g.HumanoidRootPart = root
+			break
+		end
+		task.wait()
+	end
+
+	while true do
+		local head = g.get_head(lp)
+		if head then
+			g.Head = head
+			break
+		end
+		task.wait()
+	end
+end
+
+if not g.Flames_Hub_Dynamic_CharAdded_Checker then
+	g.Flames_Hub_Dynamic_CharAdded_Checker = true
+
+	g.LocalPlayer.CharacterAdded:Connect(function()
+		task.spawn(update_character_refs)
+	end)
+end
+
+task.spawn(update_character_refs)
 
 flames_api.Vehicle = function()
 	local character = flames_api.Character
@@ -244,16 +503,8 @@ flames_api.Vehicle = function()
 	return nil
 end
 
-flames_api.notify = function(title, content, duration)
-   flames_api.Service("StarterGui"):SetCore("SendNotification", {
-      Title = tostring(title);
-      Text = tostring(content);
-      Duration = tonumber(duration);
-   })
-end
-
 flames_api.Fly = function(speed)
-	if getgenv().FlyEnabled then return flames_api.notify("Failure:", "Fly is already enabled!", 5) end
+	if getgenv().FlyEnabled then return flames_api.notify("Error", "Fly is already enabled!", 5) end
 	local HumanoidRootPart = flames_api.HumanoidRootPart
 	local Workspace = flames_api.Service("Workspace")
 	local StarterPack = flames_api.Service("StarterPack")
@@ -266,7 +517,7 @@ flames_api.Fly = function(speed)
 	getgenv().FlyEnabled = getgenv().FlyEnabled or false
 
 	getgenv().StartFly = function()
-		if getgenv().FlyEnabled then return flames_api.notify("Failure:", "Fly is already enabled!", 5) end
+		if getgenv().FlyEnabled then return flames_api.notify("Error", "Fly is already enabled!", 5) end
 		getgenv().FlyEnabled = true
 
 		local dir = {w = false, a = false, s = false, d = false, q = false, e = false}
@@ -502,16 +753,15 @@ flames_api.GoTo = function(playerArg)
 	end)
 
 	if not success then
-		warn("[GoTo_Error]: " .. tostring(err))
+		getgenv().notify("Error", "[Teleport Error]: "..tostring(err), 5)
 	end
 end
 
 flames_api.BypassAdonis = function()
 	if getgenv().AdonisBypass_Already_Loaded then
-		return 
+		return getgenv().notify("Warning", "You've already loaded Adonis Bypass.", 5)
 	end
-	wait()
-
+	
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Adonis_Bypass_BACKUP.lua'))()
 	wait(0.2)
 	getgenv().AdonisBypass_Already_Loaded = true
@@ -539,13 +789,13 @@ end
 
 flames_api.BypassWalkSpeed = function()
 	if not getconnections then
-		return warn("[ERROR]:", "Your executor does not support 'getconnections'!")
+		return getgenv().notify("Error", "Your executor does not support 'getconnections'!", 5)
 	end
 
 	local humanoid = flames_api.Humanoid
 
 	if not humanoid then
-		return warn("[ERROR]:", "Humanoid not found inside Character at runtime.")
+		return getgenv().notify("Error", "Humanoid not found inside Character at runtime.", 5)
 	end
 
 	local signal = humanoid:GetPropertyChangedSignal("WalkSpeed")
@@ -559,13 +809,13 @@ end
 
 flames_api.BypassJumpPower = function()
 	if not getconnections then
-		return warn("[ERROR]:", "Your executor does not support 'getconnections'!")
+		return getgenv().notify("Error", "Your executor does not support 'getconnections'!", 5)
 	end
 
 	local humanoid = flames_api.Humanoid
 
 	if not humanoid then
-		return warn("[ERROR]:", "Humanoid not found inside Character at runtime.")
+		return getgenv().notify("Error", "Humanoid not found inside Character at runtime.", 5)
 	end
 
 	local signal = humanoid:GetPropertyChangedSignal("JumpHeight")
