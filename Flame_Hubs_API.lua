@@ -28,6 +28,7 @@ local g = getgenv()
 repeat task.wait() until g or getgenv()
 g.flames_api = g.flames_api or {}
 local flames_api = g.flames_api
+local get_gc = getconnections or get_signal_cons
 
 local function get_or_set(name, value)
 	if rawget and rawset then
@@ -98,6 +99,12 @@ local NotifyLib = loadstring(game:HttpGet(
 
 if SafeGet and type(SafeGet) == "function" then
 	get_or_set("SafeGet", SafeGet)
+end
+
+function isnumber(str)
+	if tonumber(str) ~= nil or str == 'inf' or str == '9e9' or str == 'math.huge' then
+		return true
+	end
 end
 
 local valid_titles = {
@@ -214,6 +221,10 @@ flames_api.JobID = getgenv().JobID or game.JobId
 flames_api.JobId = getgenv().JobID or game.JobId
 flames_api.jobid = getgenv().JobID or game.JobId
 flames_api.PlayerGui = get_player_gui(LocalPlayer)
+local FlyConnections
+local Old_WS_Value = isnumber(SafeGet("StarterPlayer").CharacterWalkSpeed)
+local Old_JP_Value = isnumber(SafeGet("StarterPlayer").CharacterJumpPower)
+local Old_JH_Value = isnumber(SafeGet("StarterPlayer").CharacterJumpHeight)
 wait(0.1)
 g.get_char = g.get_char or function(Player)
 	if not Player or not Player:IsA("Player") then return nil end
@@ -351,8 +362,6 @@ g.get_head = g.get_head or function(Player)
 
 	return (not died) and head or nil
 end
-
-local FlyConnections
 
 local function sync_api()
 	flames_api.Character = g.Character or get_char(g.LocalPlayer or game.Players.LocalPlayer)
@@ -788,7 +797,7 @@ flames_api.JumpPower = function(JP)
 end
 
 flames_api.BypassWalkSpeed = function()
-	if not getconnections then
+	if not get_gc then
 		return getgenv().notify("Error", "Your executor does not support 'getconnections'!", 5)
 	end
 
@@ -799,7 +808,7 @@ flames_api.BypassWalkSpeed = function()
 	end
 
 	local signal = humanoid:GetPropertyChangedSignal("WalkSpeed")
-	local connections = getconnections(signal)
+	local connections = get_gc(signal)
 	for _, conn in ipairs(connections) do
 		pcall(function()
 			conn:Disable()
@@ -808,7 +817,7 @@ flames_api.BypassWalkSpeed = function()
 end
 
 flames_api.BypassJumpPower = function()
-	if not getconnections then
+	if not get_gc then
 		return getgenv().notify("Error", "Your executor does not support 'getconnections'!", 5)
 	end
 
@@ -819,14 +828,14 @@ flames_api.BypassJumpPower = function()
 	end
 
 	local signal = humanoid:GetPropertyChangedSignal("JumpHeight")
-	local connections = getconnections(signal)
+	local connections = get_gc(signal)
 	for _, conn in ipairs(connections) do
 		pcall(function()
 			conn:Disable()
 		end)
 	end
 	local signal = humanoid:GetPropertyChangedSignal("UseJumpPower")
-	local connections = getconnections(signal)
+	local connections = get_gc(signal)
 	for _, conn in ipairs(connections) do
 		pcall(function()
 			conn:Disable()
@@ -834,7 +843,7 @@ flames_api.BypassJumpPower = function()
 	end
 	wait()
 	local signal = humanoid:GetPropertyChangedSignal("JumpPower")
-	local connections = getconnections(signal)
+	local connections = get_gc(signal)
 	for _, conn in ipairs(connections) do
 		pcall(function()
 			conn:Disable()
@@ -842,7 +851,62 @@ flames_api.BypassJumpPower = function()
 	end
 end
 
-local serviceList = {
+flames_api.BypassWS = function()
+	if not hookmetamethod then
+		return getgenv().notify("Error", "'hookmetamethod' is unsupported.", 5)
+	end
+
+	local lp = LocalPlayer
+	local hooks = {
+		walkspeed = Old_WS_Value
+	}
+	local index
+	local newindex
+
+	index = hookmetamethod(game,"__index",function(self,property)
+		if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+			return hooks[property:lower()]
+		end
+		return index(self,property)
+	end)
+
+	newindex = hookmetamethod(game,"__newindex",function(self,property,value)
+		if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+			return value
+		end
+		return newindex(self,property,value)
+	end)
+end
+
+flames_api.BypassJP = function()
+	if not hookmetamethod then
+		return getgenv().notify("Error", "'hookmetamethod' is unsupported.", 5)
+	end
+
+	local lp = LocalPlayer
+	local hooks = {
+		jumppower = Old_JP_Value,
+		jumpheight = Old_JH_Value
+	}
+	local index
+	local newindex
+
+	index = hookmetamethod(game,"__index",function(self,property)
+		if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+			return hooks[property:lower()]
+		end
+		return index(self,property)
+	end)
+
+	newindex = hookmetamethod(game,"__newindex",function(self,property,value)
+		if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and hooks[property:lower()] then
+			return value
+		end
+		return newindex(self,property,value)
+	end)
+end
+
+local service_list = {
 	"Players", "Workspace", "Lighting", "ReplicatedStorage", "TweenService",
 	"RunService", "MaterialService", "ReplicatedFirst", "Teams", "StarterPack",
 	"StarterPlayer", "VoiceChatInternal", "VoiceChatService", "CoreGui", "SoundService",
@@ -851,8 +915,8 @@ local serviceList = {
 	"GuiService", "PhysicsService"
 }
 
-for _, serviceName in ipairs(serviceList) do
-	flames_api[serviceName] = SafeGet(serviceName)
+for _, service in ipairs(service_list) do
+	flames_api[service] = SafeGet(service)
 end
 
 return flames_api
