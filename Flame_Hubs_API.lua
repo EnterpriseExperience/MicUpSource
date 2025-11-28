@@ -104,7 +104,6 @@ end
 
 repeat task.wait() until SafeGet and type(SafeGet) == "function"
 
-get_or_set("LocalPlayer", SafeGet("Players").LocalPlayer or game.Players.LocalPlayer)
 get_or_set("SafeGet", SafeGet)
 get_or_set("safe_wrapper", SafeGet)
 get_or_set("Safe_Wrapper", SafeGet)
@@ -221,6 +220,8 @@ local function get_player_gui(plr)
 	return pg
 end
 
+get_or_set("PlayerGui", find_player_gui(game.Players.LocalPlayer))
+get_or_set("find_player_gui", find_player_gui)
 get_or_set("AllClipboards", setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set))
 get_or_set("httprequest_Init", (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request)
 get_or_set("queueteleport", (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport))
@@ -871,11 +872,7 @@ end
 
 flames_api.BypassWS = function()
 	if not hookmetamethod then
-        if getgenv().notify then
-		    return getgenv().notify("Error", "'hookmetamethod' is unsupported.", 5)
-        else
-            return 
-        end
+		return getgenv().notify("Error", "'hookmetamethod' is unsupported.", 5)
 	end
 
 	local lp = LocalPlayer
@@ -902,11 +899,7 @@ end
 
 flames_api.BypassJP = function()
 	if not hookmetamethod then
-        if getgenv().notify then
-		    return getgenv().notify("Error", "'hookmetamethod' is unsupported.", 5)
-        else
-            return 
-        end
+		return getgenv().notify("Error", "'hookmetamethod' is unsupported.", 5)
 	end
 
 	local lp = LocalPlayer
