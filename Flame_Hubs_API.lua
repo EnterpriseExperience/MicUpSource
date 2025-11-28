@@ -50,6 +50,21 @@ g.get_or_set = g.get_or_set or function(name, value)
 	return existing
 end
 
+local function retrieve_executor()
+   local name
+   if identifyexecutor then
+      name = identifyexecutor()
+   end
+   return { Name = name or "Unknown Executor" }
+end
+
+local function identify_executor()
+   local executorDetails = retrieve_executor()
+   return tostring(executorDetails.Name)
+end
+
+local executor_Name = identify_executor()
+
 g.low_level_executor = g.low_level_executor or function()
 	if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
 		return true
