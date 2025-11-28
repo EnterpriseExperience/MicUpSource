@@ -25,13 +25,13 @@ if not game:IsLoaded() then
    game.Loaded:Wait()
 end
 local g = getgenv()
+print("flames hub api: starting.")
 g.flames_api = g.flames_api or {}
 local flames_api = g.flames_api
 local get_gc = getconnections or get_signal_cons
-local GlobalEnv = tostring("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua")
-if GlobalEnv then
-	loadstring(game:HttpGet(GlobalEnv))()
-end
+--loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+
+print("flames hub api: 0")
 
 g.get_or_set = g.get_or_set or function(name, value)
 	if rawget and rawset then
@@ -52,6 +52,8 @@ g.get_or_set = g.get_or_set or function(name, value)
 
 	return existing
 end
+
+print("flames hub api: 1")
 
 local function retrieve_executor()
    local name
@@ -75,6 +77,8 @@ g.low_level_executor = g.low_level_executor or function()
 		return false
 	end
 end
+
+print("flames hub api: 2")
 
 local SafeGet
 
@@ -105,6 +109,78 @@ else
 	end
 end
 
+print("flames hub api: 3")
+
+g.findplayerchild = g.findplayerchild or function(plr, target)
+	if not plr or not target then return nil end
+	target = tostring(target):lower()
+
+	local class
+	if target == "playergui" then
+		class = "PlayerGui"
+	elseif target == "playerscripts" then
+		class = "PlayerScripts"
+	elseif target == "backpack" then
+		class = "Backpack"
+	end
+
+	local obj
+	if class then
+		obj = plr:FindFirstChildOfClass(class)
+		if not obj then
+			obj = plr:FindFirstChildWhichIsA(class)
+		end
+		if obj then return obj end
+	else
+		for _, c in ipairs(plr:GetChildren()) do
+			if c.Name:lower() == target then
+				return c
+			end
+		end
+	end
+
+	local conn
+	conn = plr.ChildAdded:Connect(function(c)
+		if class then
+			if c:IsA(class) then
+				obj = c
+				conn:Disconnect()
+			end
+		else
+			if c.Name:lower() == target then
+				obj = c
+				conn:Disconnect()
+			end
+		end
+	end)
+
+	while not obj do
+		task.wait()
+		if class then
+			local a = plr:FindFirstChildOfClass(class)
+			if not a then
+				a = plr:FindFirstChildWhichIsA(class)
+			end
+			if a then
+				obj = a
+				conn:Disconnect()
+				break
+			end
+		else
+			for _, c in ipairs(plr:GetChildren()) do
+				if c.Name:lower() == target then
+					obj = c
+					conn:Disconnect()
+					break
+				end
+			end
+		end
+	end
+
+	return obj
+end
+
+get_or_set("LocalPlayer", SafeGet("Players").LocalPlayer)
 get_or_set("SafeGet", SafeGet)
 get_or_set("safe_wrapper", SafeGet)
 get_or_set("Safe_Wrapper", SafeGet)
@@ -115,6 +191,8 @@ local NotifyLib = loadstring(game:HttpGet(
    "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"
 ))()
 
+print("flames hub api: 4")
+
 if SafeGet and type(SafeGet) == "function" then
 	get_or_set("SafeGet", SafeGet)
 end
@@ -124,6 +202,8 @@ g.isnumber = g.isnumber or function(str)
 		return true
 	end
 end
+
+print("flames hub api: 5")
 
 local valid_titles = {
 	success = "Success",
@@ -146,6 +226,8 @@ function notify_func(title, msg, dur)
    NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
 end
 
+print("flames hub api: 6")
+
 get_or_set("notify", notify_func)
 
 if not low_level_executor() then
@@ -162,6 +244,8 @@ else
 		})
 	end
 end
+
+print("flames hub api: 7")
 
 -- [[ when teleporting via queueteleport : needs to update dynamically, leave these like this. ]] --
 getgenv().Game = cloneref and cloneref(game) or game
@@ -183,7 +267,13 @@ local function executor_details()
 	return getExecutor().Name
 end
 
+print("flames hub api: 8")
+
 flames_api.ExecutorName = executor_details()
+
+g.find_player_gui = g.find_player_gui or function()
+	return g.findplayerchild("PlayerGui")
+end
 
 flames_api.RandomString = function()
 	local length = math.random(10, 50)
