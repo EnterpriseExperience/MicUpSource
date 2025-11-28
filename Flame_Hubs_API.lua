@@ -29,6 +29,10 @@ repeat task.wait() until g or getgenv()
 g.flames_api = g.flames_api or {}
 local flames_api = g.flames_api
 local get_gc = getconnections or get_signal_cons
+local GlobalEnv = tostring("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua")
+if GlobalEnv then
+	loadstring(game:HttpGet(GlobalEnv))()
+end
 
 g.get_or_set = g.get_or_set or function(name, value)
 	if rawget and rawset then
