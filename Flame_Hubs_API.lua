@@ -902,7 +902,11 @@ end
 
 flames_api.BypassJP = function()
 	if not hookmetamethod then
-		return getgenv().notify("Error", "'hookmetamethod' is unsupported.", 5)
+        if getgenv().notify then
+		    return getgenv().notify("Error", "'hookmetamethod' is unsupported.", 5)
+        else
+            return 
+        end
 	end
 
 	local lp = LocalPlayer
