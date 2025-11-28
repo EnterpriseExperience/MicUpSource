@@ -25,13 +25,9 @@ if not game:IsLoaded() then
    game.Loaded:Wait()
 end
 local g = getgenv()
-print("flames hub api: starting.")
 g.flames_api = g.flames_api or {}
 local flames_api = g.flames_api
 local get_gc = getconnections or get_signal_cons
---loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
-
-print("flames hub api: 0")
 
 g.get_or_set = g.get_or_set or function(name, value)
 	if rawget and rawset then
@@ -52,8 +48,6 @@ g.get_or_set = g.get_or_set or function(name, value)
 
 	return existing
 end
-
-print("flames hub api: 1")
 
 local function retrieve_executor()
    local name
@@ -77,8 +71,6 @@ g.low_level_executor = g.low_level_executor or function()
 		return false
 	end
 end
-
-print("flames hub api: 2")
 
 local SafeGet
 
@@ -108,8 +100,6 @@ else
 		end
 	end
 end
-
-print("flames hub api: 3")
 
 g.findplayerchild = g.findplayerchild or function(plr, target)
 	if not plr or not target then return nil end
@@ -191,8 +181,6 @@ local NotifyLib = loadstring(game:HttpGet(
    "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"
 ))()
 
-print("flames hub api: 4")
-
 if SafeGet and type(SafeGet) == "function" then
 	get_or_set("SafeGet", SafeGet)
 end
@@ -202,8 +190,6 @@ g.isnumber = g.isnumber or function(str)
 		return true
 	end
 end
-
-print("flames hub api: 5")
 
 local valid_titles = {
 	success = "Success",
@@ -226,8 +212,6 @@ function notify_func(title, msg, dur)
    NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
 end
 
-print("flames hub api: 6")
-
 get_or_set("notify", notify_func)
 
 if not low_level_executor() then
@@ -244,8 +228,6 @@ else
 		})
 	end
 end
-
-print("flames hub api: 7")
 
 -- [[ when teleporting via queueteleport : needs to update dynamically, leave these like this. ]] --
 getgenv().Game = cloneref and cloneref(game) or game
@@ -266,8 +248,6 @@ end
 local function executor_details()
 	return getExecutor().Name
 end
-
-print("flames hub api: 8")
 
 flames_api.ExecutorName = executor_details()
 
