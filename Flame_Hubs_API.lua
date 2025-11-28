@@ -104,6 +104,7 @@ end
 
 repeat task.wait() until SafeGet and type(SafeGet) == "function"
 
+get_or_set("LocalPlayer", SafeGet("Players").LocalPlayer or game.Players.LocalPlayer)
 get_or_set("SafeGet", SafeGet)
 get_or_set("safe_wrapper", SafeGet)
 get_or_set("Safe_Wrapper", SafeGet)
