@@ -25,7 +25,6 @@ if not game:IsLoaded() then
    game.Loaded:Wait()
 end
 local g = getgenv()
-repeat task.wait() until g or getgenv()
 g.flames_api = g.flames_api or {}
 local flames_api = g.flames_api
 local get_gc = getconnections or get_signal_cons
@@ -105,8 +104,6 @@ else
 		end
 	end
 end
-
-repeat task.wait() until SafeGet and type(SafeGet) == "function"
 
 get_or_set("SafeGet", SafeGet)
 get_or_set("safe_wrapper", SafeGet)
@@ -207,12 +204,14 @@ local function get_player_gui(plr)
 	added_conn = plr.ChildAdded:Connect(function(c)
 		if c:IsA("PlayerGui") then
 			pg = c
-			added_conn:Disconnect()
+			if added_conn then added_conn:Disconnect() end
 		end
 	end)
 
-	while not pg do
+	local timeout = 10
+	while timeout > 0 and not pg do
 		task.wait()
+		timeout = timeout - 0.03
 		local existing = plr:FindFirstChildOfClass("PlayerGui")
 		if existing then
 			pg = existing
@@ -221,6 +220,7 @@ local function get_player_gui(plr)
 		end
 	end
 
+	if added_conn then added_conn:Disconnect() end
 	return pg
 end
 
