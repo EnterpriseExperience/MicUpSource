@@ -1263,6 +1263,9 @@ Extras:Button("IY", function()
     if getgenv().IY_LOADED then
         return getgenv().notify("Error", "You've already loaded Infinite Yield.", 5)
     end
+    if getgenv().GET_LOADED_IY then
+        return getgenv().notify("Error", "You've already loaded Infinite Premium.", 5)
+    end
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 end)
