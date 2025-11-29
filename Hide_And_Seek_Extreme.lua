@@ -1,12 +1,34 @@
-getgenv().Game = game
-getgenv().JobID = getgenv().Game.JobId
-getgenv().PlaceID = getgenv().Game.PlaceId
+if not game:IsLoaded() then game.Loaded:Wait() end
 
-getgenv().Service_Wrap = function(serviceName)
+local g = getgenv() or _G
+
+g.Game = cloneref and cloneref(game) or game
+
+if not getgenv().GlobalEnvironmentFramework_Initialized then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+    wait(0.1)
+    getgenv().GlobalEnvironmentFramework_Initialized = true
+end
+
+g.get_jobid = function()
+    return game.JobId
+end
+
+g.get_placeid = function()
+    return game.PlaceId
+end
+
+local id = g.get_jobid()
+local place = g.get_placeid()
+
+g.JobID = id
+g.PlaceID = place
+
+g.Service_Wrap = g.Service_Wrap or function(service)
     if cloneref then
-        return cloneref(getgenv().Game:GetService(serviceName))
+        return cloneref(game:GetService(service))
     else
-        return getgenv().Game:GetService(serviceName)
+        return game:GetService(service)
     end
 end
 wait(0.5)
@@ -41,83 +63,40 @@ local function init_services()
     }
 
     for _, serviceName in pairs(services) do
-        getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
+        g[serviceName] = cloneref and cloneref(game:GetService(serviceName)) or game:GetService(serviceName)
     end
 end
-wait(0.2)
+
 init_services()
-wait(0.5)
-local lib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/Turtle_UI_Remake.lua"))()
+
+local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/Turtle_UI_Remake.lua"))()
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 local Main = lib:Window("Main")
 local Players_Tab = lib:Window("Players")
 local Extras = lib:Window("Extras")
 local Audio = lib:Window("Music/Audio")
+local valid_titles = {
+    success = "Success",
+    info = "Info",
+    warning = "Warning",
+    error = "Error"
+}
 
-getgenv().notify = function(Title, Content, Time)
-   local Image = "7201212960"
-
-   getgenv().StarterGui:SetCore("SendNotification", {
-      Title = tostring(Title);
-      Text = tostring(Content);
-      Duration = tonumber(Time);
-      Icon = "rbxassetid://"..Image;
-   })
-end
-
-local function getExecutor()
-    local name
-    if identifyexecutor then
-        name = identifyexecutor()
-    end
-    return { Name = name or "Unknown Executor"}
-end
-
-local function executor_details()
-    local executorDetails = getExecutor()
-    return string.format("%s", executorDetails.Name)
-end
-
-local executor_Name = executor_details()
-
-getgenv().print_executor = function()
-    local function retrieve_executor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
+local function format_title(str)
+    if typeof(str) ~= "string" then
+        return "Info"
     end
 
-    local function identify_executor()
-        local executorDetails = retrieve_executor()
-        return string.format("%s", executorDetails.Name)
-    end
-    wait(0.1)
-    local executor_string = identify_executor()
-
-    return print(executor_string)
+    local key = str:lower()
+    return valid_titles[key] or "Info"
 end
 
-getgenv().warn_executor = function()
-    local function retrieve_executor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
-    end
-
-    local function identify_executor()
-        local executorDetails = retrieve_executor()
-        return string.format("%s", executorDetails.Name)
-    end
-    wait(0.1)
-    local executor_string = identify_executor()
-
-    return warn(executor_string)
+getgenv().notify = getgenv().notify or function(title, msg, dur)
+    local fixed_title = format_title(title)
+    NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
 end
 
-function randomString()
+getgenv().randomString = getgenv().randomString or function()
     local length = math.random(10,20)
     local array = {}
     for i = 1, length do
@@ -126,16 +105,7 @@ function randomString()
     return table.concat(array)
 end
 
-getgenv().randomString = function()
-    local length = math.random(10,20)
-    local array = {}
-    for i = 1, length do
-        array[i] = string.char(math.random(32, 126))
-    end
-    return table.concat(array)
-end
-
-local cmdp = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local cmdp = g.Players or Players or game.Players
 local cmdlp = cmdp.LocalPlayer
 
 function findplr(args)
@@ -266,12 +236,12 @@ function findplr(args)
     end
 end
 
-getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-queueteleport = getgenv().queueteleport
-wait()
+g.AllClipboards = g.AllClipboards or setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+g.httprequest_Init = g.httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+get_http = g.httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+g.queueteleport = g.queueteleport or (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+queueteleport = g.queueteleport
+
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
@@ -279,122 +249,172 @@ local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 
-if getgenv().AllClipboards then
-    getgenv().AllClipboards("https://github.com/EnterpriseExperience/MicUpSource/releases -- check all my current patch notes and new updates/releases.")
+g.get_char = g.get_char or function(Player)
+    if not Player or not Player:IsA("Player") then return nil end
+
+    local current_char
+    local diedconn
+    local added_conn
+
+    local function hookchar(char)
+        current_char = char
+
+        if diedconn then diedconn:Disconnect() end
+
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            diedconn = hum.Died:Once(function()
+                current_char = nil
+            end)
+        end
+    end
+
+    if Player.Character and Player.Character.Parent then
+        hookchar(Player.Character)
+    end
+
+    added_conn = Player.CharacterAdded:Connect(hookchar)
+
+    while not current_char do
+        task.wait()
+        local char = Player.Character
+        if char and char.Parent then
+            hookchar(char)
+        end
+    end
+
+    return current_char
+end
+wait(0.5)
+if not g.get_human then
+    g.get_human = function(Player)
+        local char = g.get_char(Player)
+        if not char then return nil end
+
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then return hum end
+
+        local hum_conn
+        hum_conn = char.ChildAdded:Connect(function(c)
+            if c:IsA("Humanoid") then
+                hum = c
+                hum_conn:Disconnect()
+            end
+        end)
+
+        local died = false
+        local h = char:FindFirstChildOfClass("Humanoid")
+        if h then
+            h.Died:Connect(function()
+                died = true
+            end)
+        end
+
+        while not hum and not died do
+            task.wait()
+        end
+
+        if hum_conn then hum_conn:Disconnect() end
+
+        return (not died) and hum or nil
+    end
 end
 
-wait(0.3)
+if not g.get_root then
+    g.get_root = function(Player)
+        local char = g.get_char(Player)
+        if not char then return nil end
+
+        local root = char:FindFirstChild("HumanoidRootPart")
+                or char:FindFirstChild("UpperTorso")
+                or char:FindFirstChild("Torso")
+        if root then return root end
+
+        local targets = {
+            HumanoidRootPart = true,
+            UpperTorso = true,
+            Torso = true
+        }
+
+        local died = false
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.Died:Connect(function() died = true end)
+        end
+
+        local added_conn
+        added_conn = char.ChildAdded:Connect(function(c)
+            if targets[c.Name] then
+                root = c
+                added_conn:Disconnect()
+            end
+        end)
+
+        while not root and not died do
+            task.wait()
+        end
+
+        if added_conn then added_conn:Disconnect() end
+
+        return (not died) and root or nil
+    end
+end
+
+if not g.get_head then
+    g.get_head = function(Player)
+        local char = g.get_char(Player)
+        if not char then return nil end
+
+        local head = char:FindFirstChild("Head")
+        if head then return head end
+
+        local died = false
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.Died:Connect(function() died = true end)
+        end
+
+        local added_conn
+        added_conn = char.ChildAdded:Connect(function(c)
+            if c.Name == "Head" then
+                head = c
+                added_conn:Disconnect()
+            end
+        end)
+
+        while not head and not died do
+            task.wait()
+        end
+
+        if added_conn then added_conn:Disconnect() end
+
+        return (not died) and head or nil
+    end
+end
+
 if not getgenv().Players then
-    warn("getgenv().Players was not detected, fixing...")
     getgenv().Players = getgenv().Service_Wrap("Players")
 end
 if not getgenv().ReplicatedStorage then
-    warn("getgenv().ReplicatedStorage was not detected, fixing...")
     getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
 end
 if not getgenv().TextChatService then
-    warn("getgenv().TextChatService was not detected, fixing...")
     getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
 end
 if not getgenv().Workspace then
-    warn("getgenv().Workspace was not detected, fixing...")
     getgenv().Workspace = getgenv().Service_Wrap("Workspace")
 end
 if not getgenv().Lighting then
-    warn("getgenv().Lighting was not detected, fixing...")
     getgenv().Lighting = getgenv().Service_Wrap("Lighting")
 end
-if getgenv().performance_stats then
-    warn("Performance stats checked.")
-else
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
-    wait(0.1)
-    getgenv().performance_stats = true
-end
 
-task.wait(0.2)
-getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
-getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
-getgenv().LocalPlayer = getgenv().Players.LocalPlayer
-getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
-getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
-getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
+getgenv().Terrain = getgenv().Terrain or getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
+getgenv().Camera = getgenv().Camera or getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
+getgenv().LocalPlayer = getgenv().LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+getgenv().Backpack = getgenv().Backpack or getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
+getgenv().PlayerGui = getgenv().PlayerGui or getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
+getgenv().PlayerScripts = getgenv().PlayerScripts or getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
 
-local function SafeGetHumanoid(char)
-	local hum = char:FindFirstChildWhichIsA("Humanoid")
-
-	if hum and hum:IsA("Humanoid") then
-		return hum
-	else
-		return char:WaitForChild("Humanoid", 5)
-	end
-end
-
-local function SafeGetHead(char)
-	local head = char:FindFirstChild("Head")
-	if head and head:IsA("BasePart") then
-		return head
-	else
-		return char:WaitForChild("Head", 5)
-	end
-end
-
-local function SafeGetHRP(char)
-	local hrp = char:FindFirstChild("HumanoidRootPart")
-	if hrp and hrp:IsA("BasePart") then
-		return hrp
-	else
-		return char:WaitForChild("HumanoidRootPart", 5)
-	end
-end
-
-getgenv().HumanoidRootPart = SafeGetHRP(getgenv().Character)
-getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
-getgenv().Head = SafeGetHead(getgenv().Character)
-wait(0.2)
-local function Dynamic_Character_Updater(character)
-   wait(0.2)
-	getgenv().Character = character
-	wait(0.3)
-	getgenv().HumanoidRootPart = SafeGetHRP(character)
-	getgenv().Humanoid = SafeGetHumanoid(character)
-	getgenv().Head = SafeGetHead(character)
-   wait(0.3)
-   if character:FindFirstChild("Humanoid") then
-      print("Character has loaded, and it's Humanoid is initialized and loaded as well!")
-      character:FindFirstChild("Humanoid").JumpPower = 50
-      character:FindFirstChild("Humanoid").JumpHeight = 7
-   else
-      warn("Character has not loaded or does not have an existing Humanoid, switching to getgenv() method...")
-      wait(1)
-      getgenv().Humanoid.JumpPower = 50
-      getgenv().Humanoid.JumpHeight = 7
-   end
-end
-
-Dynamic_Character_Updater(getgenv().Character)
-wait(0.2)
-getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-   task.wait(0.2)
-   Dynamic_Character_Updater(newCharacter)
-   repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
-   wait(0.6)
-   getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
-   getgenv().Humanoid = SafeGetHumanoid(newCharacter)
-   getgenv().Head = SafeGetHead(newCharacter)
-   wait(0.2)
-   if newCharacter:FindFirstChild("Humanoid") then
-      newCharacter:FindFirstChild("Humanoid").JumpHeight = 7
-      newCharacter:FindFirstChild("Humanoid").JumpPower = 50
-   else
-      warn("newCharacter has not loaded it's Humanoid yet, failure!, switching to getgenv().Humanoid method instead...")
-   end
-   getgenv().Humanoid.JumpHeight = 7
-   getgenv().Humanoid.JumpPower = 50
-   Dynamic_Character_Updater(newCharacter)
-end)
-wait(0.2)
 local has_hookfunction = typeof(hookfunction) == "function"
 if not has_hookfunction then warn("[ERROR]:", "HOOKFUNCTION UNSUPPORTED!") end
 local has_hookmetamethod = typeof(hookmetamethod) == "function"
@@ -415,17 +435,13 @@ print("setmetatable:", has_setmetatable)
 print("getgenv().advanced_workaround_method:", getgenv().advanced_workaround_method)
 
 if not getgenv().advanced_workaround_method and has_hookfunction and has_hookmetamethod and has_getmetatable then
-    print("Advanced exploit detected, using bypass method.")
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua"))()
     wait(0.1)
     getgenv().advanced_workaround_method = true
 elseif not (has_hookfunction or has_hookmetamethod or has_getmetatable or has_setmetatable) then
-    warn("No advanced level exploit detected, skipping..")
-    wait(0.1)
     getgenv().advanced_workaround_method = true
 elseif getgenv().advanced_workaround_method == true then
-    warn("Advanced level exploit already reviewed and secured.")
-    wait(0.1)
+    -- [[ do nothing ]] --
 end
 wait(0.5)
 local Workspace = getgenv().Workspace
@@ -437,27 +453,27 @@ local Humanoid = getgenv().Humanoid
 local ReplicatedStorage = getgenv().ReplicatedStorage
 local ws = getgenv().Workspace
 
-local function LocalPlayer_loaded()
-   local player = Players.LocalPlayer
-   if not player then
-      repeat task.wait() until Players.LocalPlayer
-      player = Players.LocalPlayer
-   end
+local function LocalPlayer_Loaded()
+    local player = Players.LocalPlayer
+    if not player then
+        repeat task.wait() until Players.LocalPlayer
+        player = Players.LocalPlayer
+    end
 
-   if not player.Character or not player.Character:FindFirstChild("Humanoid") then
-      player.CharacterAdded:Wait()
-      repeat task.wait() until player.Character:FindFirstChild("Humanoid")
-   end
+    if not player.Character or not player.Character:FindFirstChild("Humanoid") then
+        player.CharacterAdded:Wait()
+        repeat task.wait() until player.Character:FindFirstChild("Humanoid")
+    end
 end
 
 local function render_safe()
    RunService.RenderStepped:Wait()
    task.wait(0.2)
 end
-wait(0.1)
-LocalPlayer_loaded()
+
+LocalPlayer_Loaded()
 render_safe()
-wait(0.2)
+
 local Game_Data = ReplicatedStorage:FindFirstChild("GameData")
 local It_Val = Game_Data:FindFirstChild("It")
 wait(0.2)
@@ -476,51 +492,52 @@ getgenv().WHITELIST = WHITELIST
 wait(0.2)
 function add_whitelist_plr(user)
     if not user or not user.Name then
-        return getgenv().notify("FAILURE:", "Player doesn't exist!", 5)
+        return getgenv().notify("Error", "Player: "..tostring(user).." does not exist.", 6)
     end
 
     if not WHITELIST[user.Name] then
         WHITELIST[user.Name] = true
-        getgenv().notify("[WHITELISTED]:", user.Name .. " has been added to the whitelist.", 5)
+        getgenv().notify("Success", tostring(user.Name).." has been added to the whitelist.", 5)
     else
-        getgenv().notify("INFO:", user.Name .. " is already in the whitelist.", 5)
+        getgenv().notify("Warning", tostring(user.Name).." is already in the whitelist.", 5)
     end
 end
 wait(0.1)
 function remove_whitelist_plr(user)
     if not user or not user.Name then
-        return getgenv().notify("FAILURE:", "Player doesn't exist!", 5)
+        return getgenv().notify("Error", "Player: "..tostring(user).." does not exist.", 6)
     end
 
     if WHITELIST[user.Name] then
         WHITELIST[user.Name] = nil
-        getgenv().notify("[REMOVED]:", user.Name .. " has been removed from the whitelist.", 5)
+        getgenv().notify("Success", tostring(user.Name).." has been removed from the whitelist.", 5)
     else
-        getgenv().notify("INFO:", user.Name .. " is not in the whitelist.", 5)
+        getgenv().notify("Warning", tostring(user.Name).." is not in the whitelist.", 5)
     end
 end
 wait(0.3)
-local Game_Objects = Workspace:FindFirstChild("GameObjects")
-local Player_Data = getgenv().LocalPlayer:FindFirstChild("PlayerData")
-local It_LocalPlr_Value = Player_Data:FindFirstChild("It")
-local InGame_LocalPlr_Value = Player_Data:FindFirstChild("InGame")
-local Is_Seeking = Game_Data:FindFirstChild("ItSeeking")
-local Selecting_Map = Game_Data:FindFirstChild("SelectingMap")
-local Selecting_It = Game_Data:FindFirstChild("SelectingIt")
-local Showing_EndGame_GUI = Game_Data:FindFirstChild("ShowingEndGameGui")
-local Total_Hiders = Game_Data:FindFirstChild("StartingAmountOfHiders")
-local Stopping_Game = Game_Data:FindFirstChild("StoppingGame")
-local Chosen_Map = Game_Data:FindFirstChild("MapSelection"):FindFirstChild("NameLabelValue")
-local Animation_Replication = ReplicatedStorage:FindFirstChild("AnimationReplication")
-local Place_Glue_RE = Animation_Replication:FindFirstChild("PlaceGlue")
-local Play_Sound_Boombox_RE = Animation_Replication:FindFirstChild("PlaySoundBoombox")
-local Stop_Sound_Boombox_FE = Animation_Replication:FindFirstChild("StopSoundBoombox")
+local Game_Objects = Workspace:FindFirstChild("GameObjects") or Workspace:WaitForChild("GameObjects", 10)
+local Player_Data = getgenv().LocalPlayer:FindFirstChild("PlayerData", true) or LocalPlayer:WaitForChild("PlayerData", 10)
+local It_LocalPlr_Value = Player_Data and Player_Data:FindFirstChild("It", true) or Player_Data:WaitForChild("It", 5)
+local InGame_LocalPlr_Value = Player_Data and Player_Data:FindFirstChild("InGame", true) or Player_Data:WaitForChild("InGame", 5)
+local Is_Seeking = Game_Data and Game_Data:FindFirstChild("ItSeeking", true) or Game_Data:WaitForChild("ItSeeking", 5)
+local Selecting_Map = Game_Data and Game_Data:FindFirstChild("SelectingMap", true) or Game_Data:WaitForChild("SelectingMap", 5)
+local Selecting_It = Game_Data and Game_Data:FindFirstChild("SelectingIt", true) or Game_Data:WaitForChild("SelectingIt", 5)
+local Showing_EndGame_GUI = Game_Data and Game_Data:FindFirstChild("ShowingEndGameGui", true) or Game_Data:WaitForChild("ShowingEndGameGui", 5)
+local Total_Hiders = Game_Data and Game_Data:FindFirstChild("StartingAmountOfHiders", true) or Game_Data:WaitForChild("StartingAmountOfHiders", 5)
+local Stopping_Game = Game_Data and Game_Data:FindFirstChild("StoppingGame", true) or Game_Data:WaitForChild("StoppingGame", 5)
+local Map_Selection = Game_Data and Game_Data:FindFirstChild("MapSelection", true) or Game_Data:WaitForChild("MapSelection", 5)
+local Chosen_Map = Map_Selection and Map_Selection:FindFirstChild("NameLabelValue", true) or Map_Selection:WaitForChild("NameLabelValue", 5)
+local Animation_Replication = ReplicatedStorage:FindFirstChild("AnimationReplication", true) or ReplicatedStorage:WaitForChild("AnimationReplication", 5)
+local Place_Glue_RE = Animation_Replication and Animation_Replication:FindFirstChild("PlaceGlue", true) or Animation_Replication:WaitForChild("PlaceGlue", 5)
+local Play_Sound_Boombox_RE = Animation_Replication and Animation_Replication:FindFirstChild("PlaySoundBoombox", true) or Animation_Replication:WaitForChild("PlaySoundBoombox", 5)
+local Stop_Sound_Boombox_FE = Animation_Replication and Animation_Replication:FindFirstChild("StopSoundBoombox", true) or Animation_Replication:WaitForChild("StopSoundBoombox", 5)
 wait(0.2)
 function find_all_players_whitelist()
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and not WHITELIST[player.Name] then
-            local char = player.Character
-            local myChar = getgenv().Character
+            local char = get_char(player)
+            local myChar = getgenv().Character or game.Players.LocalPlayer.Character
             if char and myChar and char:FindFirstChild("HumanoidRootPart") and myChar:FindFirstChild("HumanoidRootPart") then
                 myChar:PivotTo(char.HumanoidRootPart.CFrame + Vector3.new(0, 1.5, 0))
                 task.wait(0.2)
@@ -532,8 +549,8 @@ end
 function find_all_players_no_whitelist()
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
-            local char = player.Character
-            local myChar = getgenv().Character
+            local char = get_char(player)
+            local myChar = getgenv().Character or game.Players.LocalPlayer.Character
             if char and myChar and char:FindFirstChild("HumanoidRootPart") and myChar:FindFirstChild("HumanoidRootPart") then
                 myChar:PivotTo(char:FindFirstChild("HumanoidRootPart").CFrame + Vector3.new(0, 1.5, 0))
                 task.wait(0.2)
@@ -542,34 +559,13 @@ function find_all_players_no_whitelist()
     end
 end
 
-local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes")
-local Play_Sound_Others_RE = Remotes:FindFirstChild("PlaySoundOthers")
+local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes", true) or ReplicatedStorage:WaitForChild("Remotes", 5)
+local Play_Sound_Others_RE = Remotes and Remotes:FindFirstChild("PlaySoundOthers") or Remotes:WaitForChild("PlaySoundOthers", 5)
 local espTransparency = 0.3
 local Players = getgenv().Players or getgenv().Service_Wrap("Players") or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local RunService = getgenv().RunService
-local CoreGui = getgenv().Service_Wrap("CoreGui")
-local LocalPlayer = Players.LocalPlayer
-
-function getRoot(char)
-	if typeof(char) ~= "Instance" or not char:IsA("Model") then
-		return nil
-	end
-
-	local potentialRoots = {
-		"HumanoidRootPart",
-		"UpperTorso",
-		"Torso"
-	}
-
-	for _, partName in ipairs(potentialRoots) do
-		local part = char:FindFirstChild(partName)
-		if part and part:IsA("BasePart") then
-			return part
-		end
-	end
-
-	return nil
-end
+local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local CoreGui = getgenv().Service_Wrap("CoreGui") or game:GetService("CoreGui")
+local LocalPlayer = Players.LocalPlayer or game.Players.LocalPlayer
 
 local function round(num, numDecimalPlaces)
 	local mult = 10^(numDecimalPlaces or 0)
@@ -577,30 +573,37 @@ local function round(num, numDecimalPlaces)
 end
 
 function safe_spot_tp()
-    local Lobby = ws:FindFirstChild("Lobby")
+    local Lobby = ws:FindFirstChild("Lobby") or ws:WaitForChild("Lobby", 10)
     local Base_Plate
 
+    if not Lobby then
+        return getgenv().notify("Error", "Lobby was not found inside of Workspace (game updated?).", 7)
+    end
+    
     for _, v in pairs(Lobby:GetChildren()) do
         if v:IsA("BasePart") and v.CanCollide == false then
             v.CanCollide = true
         end
     end
-    wait(0.1)
+
     for _, v in pairs(Lobby:GetChildren()) do
         if v:IsA("BasePart") and v.Name == "BasePlate" and v.BrickColor == BrickColor.new("Ghost grey") then
             Base_Plate = v
         end
     end
     wait(0.3)
-    getgenv().HumanoidRootPart.CFrame = CFrame.new(Base_Plate.Position + Vector3.new(0, 3, 0))
+    HumanoidRootPart.CFrame = CFrame.new(Base_Plate.Position + Vector3.new(0, 3, 0))
 end
 
 getgenv().toggle_spawn_box_visible = getgenv().toggle_spawn_box_visible or false
 
 function toggle_visible_spawn_box(state)
-    local ws = getgenv().Workspace or workspace
-    local Lobby = ws:FindFirstChild("Lobby")
-    if not Lobby or not Lobby:IsA("Model") then return end
+    local ws = getgenv().Workspace or cloneref and cloneref(game:GetService("Workspace")) or workspace
+    local Lobby = ws:FindFirstChild("Lobby") or ws:WaitForChild("Lobby", 10)
+
+    if not Lobby or not Lobby:IsA("Model") then
+        return getgenv().notify("Error", "Lobby was not found inside of Workspace (game updated?).", 7)
+    end
 
     local visible
     if typeof(state) == "boolean" then
@@ -619,28 +622,31 @@ function toggle_visible_spawn_box(state)
 
     local status = visible and "VISIBLE" or "INVISIBLE"
     if getgenv().notify then
-        getgenv().notify("SPAWN BOX TOGGLE", "Lobby parts are now " .. status, 3)
+        getgenv().notify("Success", "Lobby parts are now: "..tostring(status), 6)
     end
 end
 
 function play_music_others(ID)
     for _, v in ipairs(getgenv().Players:GetChildren()) do
         if v ~= getgenv().LocalPlayer then
-            local Target_Char = v.Character or v.CharacterAdded:Wait()
-            local Target_HRP = Target_Char and Target_Char:FindFirstChild("HumanoidRootPart") or Target_Char:WaitForChild("HumanoidRootPart", 3)
-            if not Target_Char then return getgenv().notify("Failure:", "Player's Character does not exist!", 5) end
-            if not Target_HRP then return getgenv().notify("Failure:", "Player's HumanoidRootPart is missing1", 5) end
-        
-            local args = {
-                tonumber(ID),
-                {
-                    Parent = Target_HRP,
-                    Pitch = 1,
-                    Volume = 2
+            local main_target_plr = v or game.Players:FindFirstChild(v.Name)
+            local Target_Char = get_char(main_target_plr) or main_target_plr.Character
+            local Target_HRP = get_root(main_target_plr)
+            if not Target_Char then return getgenv().notify("Error", "Player's Character does not exist!", 5) end
+            if not Target_HRP then return getgenv().notify("Error", "Player's HumanoidRootPart is missing1", 5) end
+            
+            if Play_Sound_Others_RE and Play_Sound_Others_RE:IsA("RemoteEvent") then
+                local args = {
+                    tonumber(ID),
+                    {
+                        Parent = Target_HRP,
+                        Pitch = 1,
+                        Volume = 2
+                    }
                 }
-            }
 
-            Play_Sound_Others_RE:FireServer(unpack(args))
+                Play_Sound_Others_RE:FireServer(unpack(args))
+            end
         end
     end
 end
@@ -660,7 +666,7 @@ function Try_To_predict_IT_Plr()
     if Is_On_Cooldown then
         local time_left = math.ceil(Cooldown_End_Time - tick())
         if time_left < 1 then time_left = 1 end
-        return getgenv().notify("Wait!", "You are on prediction cooldown (" .. time_left .. " seconds left)!", 5)
+        return getgenv().notify("Warning", "You are on prediction cooldown ("..tostring(time_left).." seconds left).", 10)
     end
 
     Is_On_Cooldown = true
@@ -702,7 +708,7 @@ function Try_To_predict_IT_Plr()
     for i = 1, roll_times do
         local temp_player = get_random_player()
         if temp_player then
-            label.Text = "🎲 " .. temp_player.Name
+            label.Text = "🎲 "..tostring(temp_player.DisplayName).." 🎲"
         else
             label.Text = "No players..."
         end
@@ -710,10 +716,10 @@ function Try_To_predict_IT_Plr()
     end
 
     local predicted_player = get_random_player()
-    if predicted_player and Players:FindFirstChild(predicted_player.Name) then
-        label.Text = "🎯 Predicted IT: " .. predicted_player.Name
+    if predicted_player and Players:FindFirstChild(predicted_player.DisplayName) then
+        label.Text = "🎯 Predicted IT: "..tostring(predicted_player.DisplayName).." 🎯"
     else
-        label.Text = "⚠️ Prediction Failed (player left)"
+        label.Text = "⚠️ Prediction Failed (player left?). ⚠️"
     end
 
     task.delay(3, function()
@@ -737,14 +743,16 @@ function ESP(plr)
 		if CoreGui:FindFirstChild(plr.Name.."_ESP") then return end
 
 		local holder = Instance.new("Folder", CoreGui)
-		holder.Name = plr.Name.."_ESP"
+		holder.Name = tostring(plr.Name).."_ESP"
 
-		repeat task.wait(1) until getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid")
+        local esp_targ_char = get_char(plr) or plr.Character
 
-		for _, part in ipairs(plr.Character:GetChildren()) do
+		repeat task.wait(0.5) until get_root(plr) and esp_targ_char:FindFirstChildOfClass("Humanoid")
+
+		for _, part in ipairs(get_char(plr):GetChildren()) do
 			if part:IsA("BasePart") then
 				local box = Instance.new("BoxHandleAdornment")
-				box.Name = plr.Name
+				box.Name = tostring(plr.Name)
 				box.Parent = holder
 				box.Adornee = part
 				box.AlwaysOnTop = true
@@ -755,11 +763,11 @@ function ESP(plr)
 			end
 		end
 
-		if plr.Character:FindFirstChild("Head") then
+		if get_head(plr) or get_char(plr):FindFirstChild("Head") then
 			local bb = Instance.new("BillboardGui")
 			local label = Instance.new("TextLabel")
 
-			bb.Adornee = plr.Character.Head
+			bb.Adornee = get_head(plr)
 			bb.Name = plr.Name
 			bb.Parent = holder
 			bb.Size = UDim2.new(0, 100, 0, 150)
@@ -796,12 +804,9 @@ function ESP(plr)
 
 			local function updateESP()
 				if not getgenv().ESPenabled or not holder or not holder.Parent then return end
-				if plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid")
-					and LocalPlayer.Character and getRoot(LocalPlayer.Character)
-					and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-
-					local dist = (getRoot(LocalPlayer.Character).Position - getRoot(plr.Character).Position).Magnitude
-					local hp = plr.Character:FindFirstChildOfClass("Humanoid").Health
+				if get_char(plr) and get_root(plr) and get_human(plr) and Character and get_root(LocalPlayer) and Humanoid then
+					local dist = (HumanoidRootPart.Position - get_root(plr).Position).Magnitude
+					local hp = get_human(plr).Health
 					label.Text = string.format("Name: %s | Health: %s | Studs: %s", plr.Name, round(hp, 1), round(dist, 1))
 
 					local isIt = is_player_it(plr)
@@ -862,10 +867,10 @@ end
 function pivot_to_plr(Player)
     if not Player then return end
 
-    local Targets_Char = Player.Character or Player.CharacterAdded:Wait()
+    local Targets_Char = get_char(Player) or Player.Character
 
     if Targets_Char and Targets_Char:FindFirstChild("Humanoid") then
-        getgenv().Character:PivotTo(Targets_Char:GetPivot())
+        Character:PivotTo(Targets_Char:GetPivot())
     end
 end
 
@@ -887,28 +892,32 @@ end
 
 function collect_all_coins(method)
     if method == "no_tp" then
-        if not firetouchinterest then return getgenv.notify("Failure:", "Your exploit does not support 'firetouchinterest'!", 5) end
+        if not firetouchinterest then
+            return g.notify("Error", "Your exploit does not support 'firetouchinterest'!", 6)
+        end
 
         for _, v in pairs(Game_Objects:GetChildren()) do
-            if v:IsA("BasePart") and v.Name == "Credit" then
+            if v:IsA("BasePart") and v.Name:lower():find("credit") then
                 wait(0.1)
-                firetouchinterest(getgenv().HumanoidRootPart, v, 0)
-                wait(0.1)
-                firetouchinterest(getgenv().HumanoidRootPart, v, 1)
+                pcall(function()
+                    firetouchinterest(HumanoidRootPart, v, 0)
+                    wait(0.1)
+                    firetouchinterest(HumanoidRootPart, v, 1)
+                end)
                 wait(0.1)
             end
         end
     elseif method == "teleport" then
         for _, v in pairs(Game_Objects:GetChildren()) do
-            if v:IsA("BasePart") and v.Name == "Credit" then
-                wait()
-                getgenv().Character:PivotTo(v:GetPivot())
+            if v:IsA("BasePart") and v.Name:lower():find("credit") then
+                wait(0.1)
+                Character:PivotTo(v:GetPivot())
                 wait(0.2)
-                getgenv().notify("Hang On:", "Picking up Credit: "..tostring(v), 5)
+                getgenv().notify("Info", "Picking up Credit: "..tostring(v), 5)
             end
         end
     else
-        return getgenv().notify("Failure:", "Invalid argument specified when calling function.", 5)
+        return getgenv().notify("Error", "Invalid argument specified when calling function.", 6)
     end
 end
 
@@ -917,7 +926,6 @@ wait(0.2)
 Audio:Box("(FE): Music", function(text, focuslost)
     if focuslost then
         local id = tonumber(text)
-        wait()
         Current_ID = id
     end
 end)
@@ -930,24 +938,32 @@ Audio:Button("Stop Music", function()
     Stop_Sound_Boombox_FE:FireServer()
 end)
 
-Extras:Button("Get Coins (No TP)", function()
-    collect_all_coins("no_tp")
-end)
+--[[Extras:Button("Get Coins (No TP)", function()
+    local result_parts = count_parts(Game_Objects)
+
+    if result_parts == false then
+        return getgenv().notify("Error", "GameObjects doesn't exist, try again!", 5)
+    elseif result_parts == 0 then
+        return getgenv().notify("Error", "No Credit's found to collect!", 5)
+    elseif result_parts > 0 then
+        collect_all_coins("no_tp")
+    end
+end)--]]
 
 Extras:Button("Get Coins (TP)", function()
-   local result_parts = count_parts(Game_Objects)
+    local result_parts = count_parts(Game_Objects)
 
-   if result_parts == false then
-      return getgenv().notify("Failure:", "GameObjects doesn't exist, try again!", 5)
-   elseif result_parts == 0 then
-      return getgenv().notify("Failure:", "No Credit's found to collect!", 5)
-   elseif result_parts > 0 then
-      local Old_CF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-      wait(0.2)
-      collect_all_coins("teleport")
-      wait(0.3)
-      getgenv().HumanoidRootPart.CFrame = Old_CF
-   end
+    if result_parts == false then
+        return getgenv().notify("Error", "GameObjects doesn't exist, try again!", 5)
+    elseif result_parts == 0 then
+        return getgenv().notify("Error", "No Credit's found to collect!", 5)
+    elseif result_parts > 0 then
+        local Old_CF = Character:FindFirstChild("HumanoidRootPart").CFrame
+        wait(0.2)
+        collect_all_coins("teleport")
+        wait(0.3)
+        HumanoidRootPart.CFrame = Old_CF
+    end
 end)
 
 Main:Box("Whitelist Plr:", function(target_whitelist, focuslost)
@@ -956,7 +972,7 @@ Main:Box("Whitelist Plr:", function(target_whitelist, focuslost)
     if focuslost and target then
         add_whitelist_plr(target)
     elseif not target then
-        return getgenv().notify("Failure:", "Target does not exist!", 5)
+        return getgenv().notify("Error", tostring(target).." does not exist!", 5)
     end
 end)
 
@@ -966,17 +982,17 @@ Main:Box("Remove Plr:", function(target_remove_whitelist, focuslost)
     if focuslost and target_unwhitelist then
         remove_whitelist_plr(target_unwhitelist)
     elseif not target_unwhitelist then
-        return getgenv().notify("Failure:", "Target does not exist!", 5)
+        return getgenv().notify("Error", tostring(target_unwhitelist).." does not exist!", 5)
     end
 end)
 
 Main:Button("Find All (No Whitelist)", function()
     if not InGame_LocalPlr_Value.Value then
-        return getgenv().notify("Failure:", "You are not currently in-game!", 5)
+        return getgenv().notify("Error", "You are not currently in-game!", 5)
     end
 
     if not It_LocalPlr_Value.Value then
-        return getgenv().notify("Failure:", "You are not currently IT/seeker!", 5)
+        return getgenv().notify("Error", "You are not the IT/seeker!", 5)
     end
 
     task.wait(0.1)
@@ -984,12 +1000,12 @@ Main:Button("Find All (No Whitelist)", function()
 end)
 
 Main:Button("Find All (Whitelist)", function()
-        if not InGame_LocalPlr_Value.Value then
-        return getgenv().notify("Failure:", "You are not currently in-game!", 5)
+    if not InGame_LocalPlr_Value.Value then
+        return getgenv().notify("Error", "You are not currently in-game!", 5)
     end
 
     if not It_LocalPlr_Value.Value then
-        return getgenv().notify("Failure:", "You are not currently IT/seeker!", 5)
+        return getgenv().notify("Error", "You are not the IT/seeker!", 5)
     end
     task.wait(0.1)
     find_all_players_whitelist()
@@ -997,9 +1013,21 @@ end)
 
 Players_Tab:Toggle("Timer Flasher", false, function(flashing)
     if flashing then
-        local TimerFolder = ReplicatedStorage:WaitForChild("Timer")
-        local TimeVisible = TimerFolder:WaitForChild("TimeVisible")
-        local Time = TimerFolder:WaitForChild("Time")
+        local TimerFolder = ReplicatedStorage:FindFirstChild("Timer", true) or ReplicatedStorage:WaitForChild("Timer", 5)
+        if not TimerFolder then
+            getgenv().FlashTimer = false
+            return getgenv().notify("Error", "TimerFolder was not found inside ReplicatedStorage.", 5)
+        end
+        local TimeVisible = TimerFolder and TimerFolder:FindFirstChild("TimeVisible", true) or TimerFolder:WaitForChild("TimeVisible", 5)
+        if not TimeVisible then
+            getgenv().FlashTimer = false
+            return getgenv().notify("Error", "TimeVisible was not found inside TimerFolder.", 5)
+        end
+        local Time = TimerFolder:FindFirstChild("Time", true) or TimerFolder:WaitForChild("Time", 5)
+        if not Time then
+            getgenv().FlashTimer = false
+            return getgenv().notify("Error", "Time was not found inside TimerFolder.", 5)
+        end
 
         getgenv().FlashTimer = true
 
@@ -1030,23 +1058,37 @@ Players_Tab:Toggle("Timer Flasher", false, function(flashing)
     else
         getgenv().FlashTimer = false
         wait(0.7)
-        local TimerFolder = ReplicatedStorage:WaitForChild("Timer")
-        local TimeVisible = TimerFolder:WaitForChild("TimeVisible")
+        local TimerFolder = ReplicatedStorage:FindFirstChild("Timer", true) or ReplicatedStorage:WaitForChild("Timer", 5)
+        if not TimerFolder then
+            return getgenv().notify("Error", "TimerFolder was not found inside ReplicatedStorage.", 5)
+        end
+        local TimeVisible = TimerFolder and TimerFolder:FindFirstChild("TimeVisible", true) or TimerFolder:WaitForChild("TimeVisible", 5)
+        if not TimeVisible then
+            return getgenv().notify("Error", "TimeVisible was not found inside TimerFolder.", 5)
+        end
 
         TimeVisible.Value = true
     end
 end)
 
 Players_Tab:Toggle("Player ESP", false, function(esp_enabled)
-   if esp_enabled then
-      toggle_ESP(true)
-   else
-      toggle_ESP(false)
-   end
+    if esp_enabled then
+        toggle_ESP(true)
+    else
+        toggle_ESP(false)
+    end
 end)
 
 Players_Tab:Button("Whos It", function()
-   getgenv().notify("Current Seeker:", tostring(It_Val.Value), 5)
+    local stored = tostring(It_Val.Value)
+    local players = Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local plr = players:FindFirstChild(stored)
+
+    if plr then
+        getgenv().notify("Success", "Name: "..plr.Name.." | DisplayName: "..tostring(plr.DisplayName), 10)
+    else
+        getgenv().notify("Error", "Nobody seems to be it, got result: "..tostring(stored).." with found result: "..tostring(plr), 15)
+    end
 end)
 
 Main:Button("Safe Spot TP", function()
@@ -1062,14 +1104,20 @@ Extras:Toggle("Visible Spawn", false, function(is_spawn_visible)
 end)
 
 Players_Tab:Slider("WalkSpeed",16,500,16, function(WalkSpeed)
-    getgenv().Humanoid.WalkSpeed = WalkSpeed
+    pcall(function()
+        getgenv().Humanoid.WalkSpeed = WalkSpeed
+    end)
 end)
 
 Players_Tab:Slider("JumpPower",50,500,50, function(New_JP)
     if getgenv().Humanoid.UseJumpPower or getgenv().Humanoid.UseJumpPower == true then
-        getgenv().Humanoid.JumpPower = New_JP
+        pcall(function()
+            getgenv().Humanoid.JumpPower = New_JP
+        end)
     else
-        getgenv().Humanoid.JumpHeight = New_JP
+        pcall(function()
+            getgenv().Humanoid.JumpHeight = New_JP
+        end)
     end
 end)
 
@@ -1080,77 +1128,75 @@ end)
 Players_Tab:Box("TP To Player:", function(Target)
     local Player_To_Teleport_To = findplr(Target)
 
-    if not Player_To_Teleport_To then return getgenv().notify("Failure:", "Player does not exist!", 5) end
+    if not Player_To_Teleport_To then return getgenv().notify("Error", tostring(Player_To_Teleport_To).." does not exist!", 5) end
 
     pivot_to_plr(Player_To_Teleport_To)
 end)
 
 Extras:Toggle("Rainbow Timer", false, function(rainbow_timer_text)
-   if rainbow_timer_text then
-      local TweenService = getgenv().TweenService
-      local RunService = getgenv().RunService
+    if rainbow_timer_text then
+        local TweenService = getgenv().TweenService
+        local RunService = getgenv().RunService
 
-      local Main_GUI = getgenv().PlayerGui:FindFirstChild("MainGui")
-      if not Main_GUI then return getgenv().notify("Failure:", "MainGui doesn't exist in PlayerGui!", 5) end
-      local Timer_Frame = Main_GUI:FindFirstChild("TimerFrame")
-      if not Timer_Frame then return getgenv("Failure:", "TimerFrame doesn't exist in MainGui!", 5) end
-      local Time_TextLabel = Timer_Frame:FindFirstChild("Time")
-      local TimerText_TextLabel = Timer_Frame:FindFirstChild("TimerText")
-      if not TimerText_TextLabel then return getgenv().notify("Failure:", "TimerText TextLabel doesn't exist in Timer_Frame!", 5) end
-      if not Time_TextLabel then return getgenv().notify("Failure:", "Timer TextLabel doesn't exist in Timer_Frame!", 5) end
-      wait(0.1)
-      getgenv().RainbowText = true
+        local Main_GUI = getgenv().PlayerGui:FindFirstChild("MainGui", true)
+        if not Main_GUI then return getgenv().notify("Error", "MainGui doesn't exist in PlayerGui!", 5) end
+        local Timer_Frame = Main_GUI and Main_GUI:FindFirstChild("TimerFrame") or Main_GUI:WaitForChild("TimerFrame", 5)
+        if not Timer_Frame then return getgenv("Error", "TimerFrame doesn't exist in MainGui!", 5) end
+        local Time_TextLabel = Timer_Frame and Timer_Frame:FindFirstChild("Time", true) or Timer_Frame:WaitForChild("Time", 5)
+        if not Time_TextLabel then return getgenv().notify("Error", "Timer TextLabel doesn't exist in Timer_Frame!", 5) end
+        local TimerText_TextLabel = Timer_Frame and Timer_Frame:FindFirstChild("TimerText", true) or Timer_Frame:WaitForChild("TimerText", 5)
+        if not TimerText_TextLabel then return getgenv().notify("Error", "TimerText TextLabel was not found in Timer_Frame!", 5) end
+        wait(0.1)
+        getgenv().RainbowText = true
 
-      local function tweenToColor(object, color, duration)
-         local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
-         local tween = TweenService:Create(object, tweenInfo, {TextColor3 = color})
-         tween:Play()
-         return tween
-      end
+        local function tweenToColor(object, color, duration)
+            local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+            local tween = TweenService:Create(object, tweenInfo, {TextColor3 = color})
+            tween:Play()
+            return tween
+        end
 
-      coroutine.wrap(function()
-         local hue = 0
-         while getgenv().RainbowText do
-            local color = Color3.fromHSV(hue, 1, 1)
+        coroutine.wrap(function()
+            local hue = 0
+            while getgenv().RainbowText do
+                local color = Color3.fromHSV(hue, 1, 1)
 
-            local tween1 = tweenToColor(Time_TextLabel, color, 0.2)
-            local tween2 = tweenToColor(TimerText_TextLabel, color, 0.2)
+                local tween1 = tweenToColor(Time_TextLabel, color, 0.2)
+                local tween2 = tweenToColor(TimerText_TextLabel, color, 0.2)
 
-            tween1.Completed:Wait()
+                tween1.Completed:Wait()
 
-            hue = hue + 0.02
-            if hue > 1 then hue = 0 end
+                hue = hue + 0.02
+                if hue > 1 then hue = 0 end
 
-            RunService.Heartbeat:Wait()
-         end
-      end)()
-   else
-      getgenv().RainbowText = false
-      wait(1)
-      local Main_GUI = getgenv().PlayerGui:FindFirstChild("MainGui")
-      if not Main_GUI then return getgenv().notify("Failure:", "MainGui doesn't exist in PlayerGui!", 5) end
-      local Timer_Frame = Main_GUI:FindFirstChild("TimerFrame")
-      if not Timer_Frame then return getgenv("Failure:", "TimerFrame doesn't exist in MainGui!", 5) end
-      local Time_TextLabel = Timer_Frame:FindFirstChild("Time")
-      local TimerText_TextLabel = Timer_Frame:FindFirstChild("TimerText")
-      if not TimerText_TextLabel then return getgenv().notify("Failure:", "TimerText TextLabel doesn't exist in Timer_Frame!", 5) end
-      if not Time_TextLabel then return getgenv().notify("Failure:", "Timer TextLabel doesn't exist in Timer_Frame!", 5) end
+                RunService.Heartbeat:Wait()
+            end
+        end)()
+    else
+        getgenv().RainbowText = false
+        wait(1)
+        local Main_GUI = getgenv().PlayerGui:FindFirstChild("MainGui", true)
+        if not Main_GUI then return getgenv().notify("Error", "MainGui doesn't exist in PlayerGui!", 5) end
+        local Timer_Frame = Main_GUI and Main_GUI:FindFirstChild("TimerFrame") or Main_GUI:WaitForChild("TimerFrame", 5)
+        if not Timer_Frame then return getgenv("Error", "TimerFrame doesn't exist in MainGui!", 5) end
+        local Time_TextLabel = Timer_Frame and Timer_Frame:FindFirstChild("Time", true) or Timer_Frame:WaitForChild("Time", 5)
+        if not Time_TextLabel then return getgenv().notify("Error", "Timer TextLabel doesn't exist in Timer_Frame!", 5) end
+        local TimerText_TextLabel = Timer_Frame and Timer_Frame:FindFirstChild("TimerText", true) or Timer_Frame:WaitForChild("TimerText", 5)
+        if not TimerText_TextLabel then return getgenv().notify("Error", "TimerText TextLabel was not found in Timer_Frame!", 5) end
 
-      Time_TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-      TimerText_TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-   end
+        Time_TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TimerText_TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
 end)
 
 Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
    if rainbow_UI_frames then
         local RunService = getgenv().RunService
 
-        local Main_GUI = getgenv().PlayerGui:FindFirstChild("MainGui")
-        if not Main_GUI then return getgenv().notify("Failure:", "MainGui doesn't exist in PlayerGui!", 5) end
-
-        local Shop_Frame = Main_GUI:FindFirstChild("ShopFrame")
-        if not Shop_Frame then return getgenv().notify("Failure:", "ShopFrame doesn't exist in MainGui!", 5) end
-
+        local Main_GUI = getgenv().PlayerGui:FindFirstChild("MainGui", true)
+        if not Main_GUI then return getgenv().notify("Error", "MainGui doesn't exist in PlayerGui!", 5) end
+        local Shop_Frame = Main_GUI and Main_GUI:FindFirstChild("ShopFrame", true) or Main_GUI:WaitForChild("ShopFrame", 5)
+        if not Shop_Frame then return getgenv().notify("Error", "ShopFrame doesn't exist in MainGui!", 5) end
         wait(0.1)
         getgenv().Rainbow_Game_UI = true
         getgenv().OriginalColors = {}
@@ -1189,6 +1235,10 @@ Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
    else
         getgenv().Rainbow_Game_UI = false
         wait(0.1)
+        if not next(getgenv().OriginalColors) then
+            getgenv().OriginalColors = nil
+            return 
+        end
 
         for uiObject, colors in pairs(getgenv().OriginalColors) do
             if uiObject and uiObject.Parent then
@@ -1207,15 +1257,14 @@ Extras:Button("Try To Predict IT/Seeker", function()
     Try_To_predict_IT_Plr()
 end)
 
+Extras:Button("IY", function()
+    if getgenv().IY_LOADED then
+        return getgenv().notify("Error", "You've already loaded Infinite Yield.", 5)
+    end
+
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+
 Audio:Box("Music Others", function(music_ID)
     play_music_others(music_ID)
 end)
-
---[[ Bypassed Audios Working As Of: 7/15/2025 -- ]]
-
--- 133381881709184 -- unleaked
--- 81127387662817 -- unleaked
--- 96502224821858 -- cool unleaked phonk
--- 91233243522140 -- cool unleaked phonk
-
---[[ Bypassed Audios Working As Of: 7/15/2025 -- ]]
