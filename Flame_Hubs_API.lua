@@ -238,7 +238,7 @@ flames_api.Service = function(service)
    return SafeGet(service)
 end
 
-flames_api.ExecutorName = executor_details()
+flames_api.ExecutorName = executordet
 
 g.find_player_gui = g.find_player_gui or function()
 	return g.findplayerchild("PlayerGui")
