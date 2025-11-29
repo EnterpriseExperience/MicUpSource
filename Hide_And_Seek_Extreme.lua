@@ -896,15 +896,13 @@ function collect_all_coins(method)
             return g.notify("Error", "Your exploit does not support 'firetouchinterest'!", 6)
         end
 
-        for _, v in pairs(Game_Objects:GetChildren()) do
-            if v:IsA("BasePart") and v.Name:lower():find("credit") then
-                wait(0.1)
-                pcall(function()
-                    firetouchinterest(HumanoidRootPart, v, 0)
-                    wait(0.1)
-                    firetouchinterest(HumanoidRootPart, v, 1)
-                end)
-                wait(0.1)
+        for _, obj in Game_Objects:GetDescendants() do
+            if obj.Name == "Credit" or obj:FindFirstChildOfClass("TouchTransmitter") then
+                local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
+                if part then
+                    firetouchinterest(HumanoidRootPart, part, 0) task.wait()
+                    firetouchinterest(HumanoidRootPart, part, 1)
+                end
             end
         end
     elseif method == "teleport" then
@@ -938,7 +936,7 @@ Audio:Button("Stop Music", function()
     Stop_Sound_Boombox_FE:FireServer()
 end)
 
---[[Extras:Button("Get Coins (No TP)", function()
+Extras:Button("Get Coins (No TP)", function()
     local result_parts = count_parts(Game_Objects)
 
     if result_parts == false then
@@ -948,7 +946,7 @@ end)
     elseif result_parts > 0 then
         collect_all_coins("no_tp")
     end
-end)--]]
+end)
 
 Extras:Button("Get Coins (TP)", function()
     local result_parts = count_parts(Game_Objects)
@@ -1123,6 +1121,10 @@ end)
 
 Players_Tab:Slider("Gravity",0,300,196, function(New_Gravity)
     getgenv().Workspace.Gravity = New_Gravity
+end)
+
+Players_Tab:Slider("FOV",0,120,70, function(New_FOV)
+    getgenv().Workspace.FieldOfView = New_FOV
 end)
 
 Players_Tab:Box("TP To Player:", function(Target)
