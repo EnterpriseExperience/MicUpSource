@@ -49,20 +49,15 @@ g.get_or_set = g.get_or_set or function(name, value)
 	return existing
 end
 
-local function retrieve_executor()
-   local name
-   if identifyexecutor then
-      name = identifyexecutor()
-   end
-   return { Name = name or "Unknown Executor" }
+local function get_executor_name()
+	local ok = identifyexecutor and identifyexecutor()
+	if ok then
+		return tostring(ok)
+	end
+	return "Unknown Executor"
 end
 
-local function identify_executor()
-   local executorDetails = retrieve_executor()
-   return tostring(executorDetails.Name)
-end
-
-local executor_Name = identify_executor()
+local executordet = get_executor_name()
 
 g.low_level_executor = g.low_level_executor or function()
 	if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
@@ -217,7 +212,7 @@ get_or_set("notify", notify_func)
 if not low_level_executor() then
 	flames_api.notify = function(title, content, dur)
 		local fixed_title = format_title(title)
-   	NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
+   	NotifyLib:External_Notification(fixed_title, tostring(content), tonumber(dur))
 	end
 else
 	flames_api.notify = function(title, content, dur)
@@ -236,17 +231,6 @@ getgenv().PlaceID = game.PlaceId
 
 flames_api.Service = function(service)
    return SafeGet(service)
-end
-
-local function getExecutor()
-	if identifyexecutor then
-		return { Name = identifyexecutor() }
-	end
-	return { Name = "Unknown Executor" }
-end
-
-local function executor_details()
-	return getExecutor().Name
 end
 
 flames_api.ExecutorName = executor_details()
@@ -474,28 +458,17 @@ if setmetatable and rawset then
 	setmetatable(flames_api, {
 		__index = function(_, key)
 			if key == "Character" then
-				return g.get_char(g.LocalPlayer)
-			elseif key == "Humanoid" then
-				return g.get_human(g.LocalPlayer)
-			elseif key == "HumanoidRootPart" then
-				return g.get_root(g.LocalPlayer)
-			elseif key == "Head" then
-				return g.get_head(g.LocalPlayer)
-			else
-				return rawget(flames_api, key)
-			end
-		end,
-
-		__index = function(_, key)
-			if key == "Character" then
 				return g.get_char(g.LocalPlayer) or g.Character
 			end
+
 			if key == "Humanoid" then
 				return g.get_human(g.LocalPlayer) or g.Humanoid
 			end
+
 			if key == "HumanoidRootPart" then
 				return g.get_root(g.LocalPlayer) or g.HumanoidRootPart
 			end
+
 			if key == "Head" then
 				return g.get_head(g.LocalPlayer) or g.Head
 			end
@@ -505,19 +478,23 @@ if setmetatable and rawset then
 	})
 else
 	flames_api.Character = function()
-		return g.get_char(g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer)
+		local lp = g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+		return g.get_char(lp) or g.Character
 	end
 
 	flames_api.Humanoid = function()
-		return g.get_human(g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer)
+		local lp = g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+		return g.get_human(lp) or g.Humanoid
 	end
 
 	flames_api.HumanoidRootPart = function()
-		return g.get_root(g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer)
+		local lp = g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+		return g.get_root(lp) or g.HumanoidRootPart
 	end
 
 	flames_api.Head = function()
-		return g.get_head(g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer)
+		local lp = g.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+		return g.get_head(lp) or g.Head
 	end
 end
 
