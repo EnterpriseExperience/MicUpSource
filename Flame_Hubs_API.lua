@@ -49,18 +49,23 @@ g.get_or_set = g.get_or_set or function(name, value)
 	return existing
 end
 
-local function get_executor_name()
-	local ok = identifyexecutor and identifyexecutor()
-	if ok then
-		return tostring(ok)
+local function get_exec()
+	local name
+	if identifyexecutor then
+		name = identifyexecutor()
 	end
-	return "Unknown Executor"
+	return { Name = name or "Unknown Executor"}
 end
 
-local executordet = get_executor_name()
+local function detectexc()
+	local executor = get_exec()
+	return string.format("%s", executor.Name)
+end
+
+local executordet = detectexc()
 
 g.low_level_executor = g.low_level_executor or function()
-	if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
+	if executordet == "Solara" or string.find(executordet, "JJSploit") or executordet == "Xeno" then
 		return true
 	else
 		return false
