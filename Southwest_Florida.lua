@@ -1,8 +1,43 @@
-repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer
-wait()
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+repeat task.wait() until game.Players and game.Players.LocalPlayer
+
 local Flames_API = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua"))()
+local NotifyLib = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"
+))()
 local Workspace, VirtualUser, HttpService, AssetService, Players, SoundService, ReplicatedStorage, Teams, vc_internal, vc_service
-local Script_Version = "V1.2.1-SWFL"
+local Script_Version = "V2.2.4-SWFL"
+local g = getgenv()
+getgenv().ConstantUpdate_Checker_Live = true
+
+if getgenv().SouthwestFlorida_Hub_Executed then
+    return 
+end
+
+getgenv().SouthwestFlorida_Hub_Executed = true
+
+getgenv().notify = getgenv().notify or function(title, msg, dur)
+   local fixed_title = format_title(title)
+
+   NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
+end
+
+local function getExecutor()
+    local name
+    if identifyexecutor then
+        name = identifyexecutor()
+    end
+    return { Name = name or "Unknown Executor"}
+end
+
+local function detectExecutor()
+    local executorDetails = getExecutor()
+    return string.format("%s", executorDetails.Name)
+end
+
+local executor_Name = detectExecutor()
 
 for _, name in ipairs({
     "Workspace",
@@ -41,72 +76,485 @@ for _, name in ipairs({
     end
 end
 
-local WAIT = wait
-local Wait = wait
-local Cars = Workspace:FindFirstChild('Cars') or Workspace:WaitForChild("Cars", 3)
-local loadCharRemote = ReplicatedStorage:FindFirstChild('loadCharRemote')
-local TeamEvent = ReplicatedStorage:FindFirstChild('TeamEvent')
-local SpawnCar = ReplicatedStorage:FindFirstChild('SpawnCar')
-local Song_Control_Event = ReplicatedStorage:WaitForChild("songControlEvent")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character and Character:FindFirstChildWhichIsA('Humanoid') or Character:WaitForChild('Humanoid', 3)
-local Head = Character and Character:FindFirstChild("Head") or Character:WaitForChild("Head", 3)
-local HumanoidRootPart = Character and Character:FindFirstChild('HumanoidRootPart') or Humanoid.RootPart or Character:WaitForChild('HumanoidRootPart', 1)
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") or LocalPlayer:FindFirstChildOfClass("PlayerGui")
-local PlayerScripts = LocalPlayer:FindFirstChildOfClass('PlayerScripts')
-local GC = getconnections or get_signal_cons
-http_request = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-
-local function Dynamic_Character_Updater(character)
-    Character = character or LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    task.wait(0.3)
-    local hrp = character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart", 3)
-    HumanoidRootPart = (hrp and hrp:IsA("BasePart")) and hrp
-
-    local hum = character:FindFirstChildOfClass("Humanoid")
-    Humanoid = (hum and hum:IsA("Humanoid")) and hum
-
-    local head = character:FindFirstChild("Head")
-    Head = (head and head:IsA("BasePart")) and head
+if not Players then
+    Players = g.Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
 end
 
-Dynamic_Character_Updater(Character)
-task.wait(0.2)
-LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-    task.wait(1)
-    Dynamic_Character_Updater(newCharacter)
-    LocalPlayer.CharacterAdded:Wait()
-    task.wait(0.5)
-    Character = newCharacter
-    HumanoidRootPart = newCharacter:FindFirstChild("HumanoidRootPart") or newCharacter:WaitForChild("HumanoidRootPart", 5)
-    Humanoid = newCharacter:FindFirstChild("Humanoid") or newCharacter:FindFirstChildWhichIsA("Humanoid") or newCharacter:WaitForChild("Humanoid", 5)
-    Head = newCharacter:FindFirstChild("Head") or newCharacter:WaitForChild("Head", 5)
-    wait(0.2)
-    if getgenv().JumpCooldown_Bypass or getgenv().JumpCooldown_Bypass == true then
-        local Jump_2 = newCharacter:FindFirstChild('JumpCooldown2')
-        if not Jump_2 then
-            getgenv().NoJumpCooldownToggle:Set(false)
-            return notify("Failure:", "JumpCooldown2 does not exist in Character!", 5)
+if not g.LocalPlayer then
+    g.LocalPlayer = Players.LocalPlayer
+end
+local LocalPlayer = g.LocalPlayer or game.Players.LocalPlayer
+
+g.get_char = g.get_char or function(Player)
+    if not Player or not Player:IsA("Player") then return nil end
+
+    local current_char
+    local diedconn
+    local added_conn
+
+    local function hookchar(char)
+        current_char = char
+
+        if diedconn then diedconn:Disconnect() end
+
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            diedconn = hum.Died:Once(function()
+                current_char = nil
+            end)
         end
-        local Jump = newCharacter:FindFirstChild('JumpCooldown')
-        if not Jump then
-            getgenv().NoJumpCooldownToggle:Set(false)
-            return notify("Failure:", "JumpCooldown does not exist in Character!", 5)
-        end
-        wait()
-        if Jump_2 and Jump_2:IsA("LocalScript") then
-            newCharacter:FindFirstChild("JumpCooldown2").Disabled = true
-            wait(0.2)
-            newCharacter:FindFirstChild('JumpCooldown2'):Destroy()
-        end
-        if Jump and Jump:IsA("LocalScript") then
-            newCharacter:FindFirstChild('JumpCooldown'):Destroy()
-        end
-    else
-        warn("[LOG]:", "JumpCooldown is not enabled!")
     end
-end)
+
+    if Player.Character and Player.Character.Parent then
+        hookchar(Player.Character)
+    end
+
+    added_conn = Player.CharacterAdded:Connect(hookchar)
+
+    while not current_char do
+        task.wait()
+        local char = Player.Character
+        if char and char.Parent then
+            hookchar(char)
+        end
+    end
+
+    return current_char
+end
+wait(0.5)
+if not g.get_human then
+    g.get_human = function(Player)
+        local char = g.get_char(Player)
+        if not char then return nil end
+
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then return hum end
+
+        local hum_conn
+        hum_conn = char.ChildAdded:Connect(function(c)
+            if c:IsA("Humanoid") then
+                hum = c
+                hum_conn:Disconnect()
+            end
+        end)
+
+        local died = false
+        local h = char:FindFirstChildOfClass("Humanoid")
+        if h then
+            h.Died:Connect(function()
+                died = true
+            end)
+        end
+
+        while not hum and not died do
+            task.wait()
+        end
+
+        if hum_conn then hum_conn:Disconnect() end
+
+        return (not died) and hum or nil
+    end
+end
+
+if not g.get_root then
+    g.get_root = function(Player)
+        local char = g.get_char(Player)
+        if not char then return nil end
+
+        local root = char:FindFirstChild("HumanoidRootPart")
+                or char:FindFirstChild("UpperTorso")
+                or char:FindFirstChild("Torso")
+        if root then return root end
+
+        local targets = {
+            HumanoidRootPart = true,
+            UpperTorso = true,
+            Torso = true
+        }
+
+        local died = false
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.Died:Connect(function() died = true end)
+        end
+
+        local added_conn
+        added_conn = char.ChildAdded:Connect(function(c)
+            if targets[c.Name] then
+                root = c
+                added_conn:Disconnect()
+            end
+        end)
+
+        while not root and not died do
+            task.wait()
+        end
+
+        if added_conn then added_conn:Disconnect() end
+
+        return (not died) and root or nil
+    end
+end
+
+if not g.get_head then
+    g.get_head = function(Player)
+        local char = g.get_char(Player)
+        if not char then return nil end
+
+        local head = char:FindFirstChild("Head")
+        if head then return head end
+
+        local died = false
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.Died:Connect(function() died = true end)
+        end
+
+        local added_conn
+        added_conn = char.ChildAdded:Connect(function(c)
+            if c.Name == "Head" then
+                head = c
+                added_conn:Disconnect()
+            end
+        end)
+
+        while not head and not died do
+            task.wait()
+        end
+
+        if added_conn then added_conn:Disconnect() end
+
+        return (not died) and head or nil
+    end
+end
+
+wait(0.1)
+g.Service_Wrap = g.Service_Wrap or function(name)
+    name = tostring(name)
+
+    if setmetatable then
+        if not g._service_cache then
+            g._service_cache = setmetatable({}, {
+                __index = function(self, index)
+                    local svc = game:GetService(index)
+
+                    if cloneref and svc then
+                        svc = cloneref(svc)
+                    end
+
+                    self[index] = svc
+                    return svc
+                end
+            })
+        end
+
+        return g._service_cache[name]
+    end
+
+    local svc = game:GetService(name)
+
+    if cloneref and svc then
+        svc = cloneref(svc)
+    end
+
+    return svc
+end
+
+local special_colors = {
+    {167.00000524520874, 42.000001296401024, 43.00000123679638},
+    {213.00000250339508, 213.00000250339508, 213.00000250339508},
+    {57.00000040233135, 64.00000378489494, 72.00000330805779},
+    {0, 0, 0},
+    {14.000000115484, 75.00000312924385, 130.0000074505806},
+}
+
+local function lerp(a, b, t)
+    return a + (b - a) * t
+end
+
+local function generate_steps(from, to, steps)
+    local out = {}
+    for i = 0, steps do
+        local t = i / steps
+        table.insert(out, {
+            lerp(from[1], to[1], t),
+            lerp(from[2], to[2], t),
+            lerp(from[3], to[3], t),
+        })
+    end
+    return out
+end
+
+getgenv().free_colors = getgenv().free_colors or {}
+
+for i = 1, #special_colors do
+    local a = special_colors[i]
+    local b = special_colors[(i % #special_colors) + 1]
+    local steps = generate_steps(a, b, 20)
+    for _, c in ipairs(steps) do
+        table.insert(getgenv().free_colors, c)
+    end
+end
+
+local colors = {
+    {0,0,0},
+    {87.00000241398811,53.00000064074993,115.00000074505806},
+    {194.00000363588333,0,36.00000165402889},
+    {229.00000154972076,233.00000131130219,229.00000154972076},
+    {227.00000166893005,91.00000217556953,1.0000000591389835},
+    {137.00000703334808,1.0000000591389835,1.0000000591389835},
+    {232.00000137090683,232.00000137090683,232.00000137090683},
+    {33.00000183284283,75.00000312924385,152.0000061392784},
+    {103.0000014603138,106.00000128149986,111.00000098347664},
+    {255,0,225.8773899078369},
+    {83.81617605686188,255,0},
+    {254.2897117137909,255,0},
+}
+
+local function find_RE(name, place)
+    name = name:lower()
+
+    if not place then
+        place = game.ReplicatedStorage
+    end
+
+    local function scan_for_re(obj)
+        for _, v in ipairs(obj:GetChildren()) do
+            if v:IsA("RemoteEvent") and v.Name:lower():find(name) then
+                return v
+            end
+
+            local found = scan_for_re(v)
+            if found then
+                return found
+            end
+        end
+    end
+
+    return scan_for_re(place)
+end
+
+local function find_RF(name, place)
+    name = name:lower()
+
+    if not place then
+        place = game.ReplicatedStorage
+    end
+
+    local function scan_for_rf(obj)
+        for _, v in ipairs(obj:GetChildren()) do
+            if v:IsA("RemoteFunction") and v.Name:lower():find(name) then
+                return v
+            end
+
+            local found = scan_for_rf(v)
+            if found then
+                return found
+            end
+        end
+    end
+
+    return scan_for_rf(place)
+end
+
+local function get_FE_ColorPart(vehicle)
+    if not vehicle then return nil end
+
+    local propFE = vehicle:FindFirstChild("Prop_FE", true)
+    if not propFE then return nil end
+
+    for _, v in ipairs(vehicle:GetDescendants()) do
+        if v:IsA("BasePart") and v.Name:lower():find("color") then
+            return v, propFE
+        end
+    end
+
+    return nil, propFE
+end
+
+local function find_folder(name, place)
+    name = tostring(name):lower()
+    place = place or workspace
+
+    local function scan(obj)
+        for _, v in ipairs(obj:GetChildren()) do
+            if v:IsA("Folder") and v.Name:lower():find(name) then
+                return v
+            end
+            local found = scan(v)
+            if found then
+                return found
+            end
+        end
+    end
+
+    return scan(place)
+end
+
+function low_level_executor()
+    if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
+        return true
+    else
+        return false
+    end
+end
+
+local WAIT = wait
+local Wait = wait
+local Cars = find_folder("Cars")
+local Player_Cars = find_folder("PlayerCars", ReplicatedStorage or game.ReplicatedStorage)
+local loadCharRemote = find_RE("loadChar")
+local TeamEvent = find_RE('TeamEvent')
+local SpawnCar = find_RE('SpawnCar')
+local Settings_Remote = find_RE("settings")
+local Song_Control_Event = find_RE("songcontrol")
+local LocalPlayer = g.LocalPlayer or game.Players.LocalPlayer
+local Character = get_char(LocalPlayer)
+local Humanoid = get_human(LocalPlayer)
+local Head = get_head(LocalPlayer)
+local HumanoidRootPart = get_root(LocalPlayer)
+local PlayerGui = g.PlayerGui or Flames_API.PlayerGui
+local PlayerScripts = LocalPlayer:FindFirstChildOfClass('PlayerScripts') or LocalPlayer:WaitForChild("PlayerScripts", 5)
+local GC = getconnections or get_signal_cons
+
+get_or_set("SoundService", g.SoundService or cloneref and cloneref(game:GetService("SoundService")) or game:GetService("SoundService"))
+
+http_req = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+
+if not getgenv().GunModsSecureBypassInitialized then
+    local function try_hookfunction()
+        if not hookfunction then
+            return false
+        end
+
+        local ok, remote_table = pcall(function()
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local module = ReplicatedStorage.Modules:WaitForChild("RemoteHandler")
+            return require(module)
+        end)
+
+        if not ok or type(remote_table) ~= "table" then
+            return false
+        end
+
+        if type(remote_table.Fire) == "function" then
+            hookfunction(remote_table.Fire, function(...)
+                return
+            end)
+        end
+
+        if type(remote_table.Invoke) == "function" then
+            hookfunction(remote_table.Invoke, function(...)
+                return
+            end)
+        end
+
+        return true
+    end
+
+    local function try_getgc()
+        if not getgc or not debug or not debug.getinfo then
+            return false
+        end
+
+        local targets = { "RemoteHandler" }
+        local found_table
+
+        for _, target in ipairs(targets) do
+            for _, obj in ipairs(getgc(true)) do
+                if typeof(obj) == "table" then
+                    local any_func
+                    for _, v in pairs(obj) do
+                        if typeof(v) == "function" then
+                            any_func = v
+                            break
+                        end
+                    end
+
+                    if any_func then
+                        local info = debug.getinfo(any_func)
+                        if info and info.source and info.source:find(target) then
+                            found_table = obj
+                            break
+                        end
+                    end
+                end
+            end
+            if found_table then break end
+        end
+
+        if not found_table then
+            return false
+        end
+
+        if typeof(found_table.Fire) == "function" then
+            found_table.Fire = function(...)
+                return
+            end
+        end
+
+        if typeof(found_table.Invoke) == "function" then
+            found_table.Invoke = function(...)
+                return
+            end
+        end
+
+        return true
+    end
+
+    local function try_mt_hook()
+        if not getrawmetatable or not setreadonly then
+            return false
+        end
+
+        local meta = getrawmetatable(game)
+        if not meta then
+            return false
+        end
+
+        local backup = meta.__namecall
+
+        setreadonly(meta, false)
+
+        local remotes = game:GetService("ReplicatedStorage"):WaitForChild("Remotes")
+        local target_remote = remotes:FindFirstChild("SecureSettings")
+
+        meta.__namecall = function(self, ...)
+            local method = getnamecallmethod()
+
+            if self == target_remote and (method == "FireServer" or method == "InvokeServer") then
+                return
+            end
+
+            return backup(self, ...)
+        end
+
+        setreadonly(meta, true)
+
+        return true
+    end
+
+    if not try_hookfunction() and not try_getgc() then
+        try_mt_hook()
+    end
+
+    getgenv().GunModsSecureBypassInitialized = true
+end
+
+local function footstep_sounds()
+    if not SoundService then
+        getgenv().notify("Error", "SoundService not found.", 5)
+        return nil
+    end
+
+    for _, v in ipairs(SoundService:GetDescendants()) do
+        if v:IsA("SoundGroup") and v.Name:lower():find("foot") then
+            return v
+        end
+    end
+
+    return nil
+end
 
 wait()
 getgenv().All_Teams = getgenv().All_Teams or {}
@@ -116,37 +564,65 @@ for _, team in pairs(Teams:GetChildren()) do
 end
 wait(0.3)
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
+local jobEvent = find_RE("JobEvent")
+g._jobBlockerActive = g._jobBlockerActive or false
 
-local function retrieve_executor()
-    local name
-    if identifyexecutor then
-        name = identifyexecutor()
+local oldNamecall
+if not g._jobHookInstalled then
+    g._jobHookInstalled = true
+
+    oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+        local method = getnamecallmethod()
+
+        if method == "FireServer" and self == jobEvent then
+            local args = {...}
+            local caller = getcallingscript()
+
+            if g._jobBlockerActive and caller and caller.Name == "jobCheck" then
+                if args[1] == false then
+                    return 
+                end
+            end
+        end
+
+        return oldNamecall(self, ...)
+    end)
+end
+
+local function keepJobAlive()
+    task.spawn(function()
+        while g._jobBlockerActive do
+            pcall(function()
+                jobEvent:FireServer(true)
+            end)
+            task.wait(2)
+        end
+    end)
+end
+
+g.ToggleJob = g.ToggleJob or function(state)
+    g._jobBlockerActive = state
+
+    if state then
+        keepJobAlive()
+        g.notify("Success", "Job protected – you won't stop earning.", 5)
+    else
+        g.notify("Info", "Job restored to normal behavior.", 5)
     end
-    return { Name = name or 'Unknown Executor' }
 end
-
-local function return_correct_executor()
-    local details = retrieve_executor()
-    return string.format('%s', details.Name)
-end
-wait(0.1)
-local executor_Name = return_correct_executor()
 
 local vc_internal = cloneref and cloneref(game:GetService('VoiceChatInternal')) or game:GetService('VoiceChatInternal')
 local vc_service = cloneref and cloneref(game:GetService('VoiceChatService')) or game:GetService('VoiceChatService')
 
-if getgenv().voiceChat_Check then
-    warn('...')
-else
+if not getgenv().voiceChat_Check then
     getgenv().voiceChat_Check = true
-    wait()
     local reconnecting = false
     local retryDuration = 4
     local maxAttempts = 500
 
     local function unsuspend()
         if reconnecting then
-            return warn('Voice Chat Is Still Reconnecting.')
+            return 
         end
         reconnecting = true
 
@@ -167,7 +643,6 @@ else
             VoiceChatService:joinVoice()
             wait(0.5)
             if vc_internal.StateChanged ~= Enum.VoiceChatState.Ended then
-                print('Successfully reconnected to voice chat!')
                 reconnecting = false
                 return
             end
@@ -176,13 +651,11 @@ else
             wait(retryDuration)
         end
 
-        warn('Failed to reconnect after ' .. maxAttempts .. ' attempts.')
         reconnecting = false
     end
 
     local function onVoiceChatStateChanged(_, newState)
         if newState == Enum.VoiceChatState.Ended and not reconnecting then
-            print('Voice chat disconnected, attempting to reconnect...')
             unsuspend()
         end
     end
@@ -206,28 +679,96 @@ if vc_internal.StateChanged == Enum.VoiceChatState.Ended then
     task.wait(0.2)
     vc_service:rejoinVoice()
 end
-wait(0.1)
+
+local function FindInChassisInterface(targetName)
+    local screenGui = PlayerGui:FindFirstChild("A-Chassis Interface")
+    if not screenGui then return nil end
+
+    targetName = tostring(targetName):lower()
+
+    local function scan(obj)
+        for _, child in ipairs(obj:GetChildren()) do
+            if child.Name:lower():find(targetName) then
+                return child
+            end
+            local found = scan(child)
+            if found then return found end
+        end
+    end
+
+    return scan(screenGui)
+end
+
 local function request_vehicle()
-    for _, v in pairs(Cars:GetChildren()) do
-        if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
+    local lp = LocalPlayer
+
+    if Player_Cars then
+        for _, v in ipairs(Player_Cars:GetChildren()) do
+            if v.Name == lp.Name and v.Value then
+                return v.Value
+            end
+        end
+    end
+
+    if Cars and #Cars:GetChildren() > 0 then
+        for _, v in ipairs(Cars:GetChildren()) do
+            local pl = v:FindFirstChild("PlayerLoc")
+            if pl and pl.Value == lp then
+                return v
+            end
+        end
+    end
+
+    return nil
+end
+
+local function is_car_locked()
+    local val = g.LocalPlayer:FindFirstChild("Locked") or game.Players.LocalPlayer:FindFirstChild("Locked")
+
+    if val and val.Value == true then
+        return true
+    elseif val and val.Value == false then
+        return false
+    else
+        return "error"
+    end
+end
+
+local function get_body_from_vehicle()
+    local main_vehicle = request_vehicle()
+    if not main_vehicle then return nil end
+    local target = "body"
+
+    local function scan_car(obj)
+        for _, v in ipairs(obj:GetChildren()) do
+            if v.Name:lower():find(target) then
+                return v
+            end
+            local found = scan_car(v)
+            if found then return found end
+        end
+    end
+
+    return scan_car(main_vehicle)
+end
+
+local function get_part_from_vehicle(part)
+    local car = request_vehicle()
+    if not car then return nil end
+
+    part = part:lower()
+
+    for _, v in ipairs(car:GetDescendants()) do
+        if v.Name:lower():find(part) then
             return v
         end
     end
+
     return nil
 end
-wait(0.1)
-local Player_Vehicle = request_vehicle()
-wait(0.1)
-local Body
-wait(0.1)
-if Player_Vehicle then
-    Body = Player_Vehicle:FindFirstChild("Body")
-else
-    Body = nil
-end
-wait(0.1)
+
 local Window = Rayfield:CreateWindow({
-    Name = 'SWFL Hub | '..tostring(Script_Version)..' | '..tostring(executor_Name),
+    Name = 'Flames Hub | SWFL Hub | '..tostring(Script_Version)..' | '..tostring(executor_Name),
     LoadingTitle = 'Enjoy, '..tostring(LocalPlayer),
     LoadingSubtitle = 'SWFL Hub.',
     ConfigurationSaving = {
@@ -252,7 +793,7 @@ local Window = Rayfield:CreateWindow({
     },
 })
 wait()
-function notify(title, content, duration)
+function notify_rf(title, content, duration)
     Rayfield:Notify({
         Title = tostring(title),
         Content = tostring(content),
@@ -268,8 +809,6 @@ function notify(title, content, duration)
         },
     })
 end
-wait(0.1)
-getgenv().notify = notify
 wait()
 local Tab1 = Window:CreateTab('🏡 Home 🏡', IMAGE_ID)
 local Section1 = Tab1:CreateSection('||| 🏡 Home 🏡 Section |||')
@@ -283,17 +822,17 @@ local Tab5 = Window:CreateTab('🤖‍ Exploits 🤖', IMAGE_ID)
 local Section5 = Tab5:CreateSection('||| 🤖‍ Exploits 🤖‍ Section |||')
 local Tab6 = Window:CreateTab('🦿 Teleports 🦿', IMAGE_ID)
 local Section6 = Tab6:CreateSection('||| 🦿 Teleports 🦿 Section |||')
-wait(0.1)
+
 if PlayerScripts:FindFirstChild("TireSmokeHandler") then
-    notify("Hold On:", "Disabling LocalScript...", 6)
+    notify("Info", "Disabling LocalScript...", 5)
     wait(0.2)
     PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled = true
     wait(0.3)
     if PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled or PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled == true then
-        notify("Success:", "Disabled LocalScript successfully (hooked).", 5)
+        notify("Success", "Disabled LocalScript successfully (hooked).", 5)
     end
 end
-wait(0.1)
+
 getgenv().antiAFK_Toggle = Tab1:CreateToggle({
 Name = 'Anti AFK',
 CurrentValue = false,
@@ -341,11 +880,10 @@ Callback = function(toggleTheAntiAFK)
                 VirtualUser:ClickButton2(Vector2.new())
             end)
         end
-        wait(0.1)
+
         if ReplicatedStorage:FindFirstChild('AfkEvent') then
             ReplicatedStorage:FindFirstChild('AfkEvent').Parent = SoundService
         end
-        wait(0.1)
         if PlayerScripts:FindFirstChild('afkEnable') then
             PlayerScripts:FindFirstChild('afkEnable').Disabled = true
             PlayerScripts:FindFirstChild('afkEnable'):FindFirstChild('afkCheck2').Disabled = true
@@ -353,7 +891,6 @@ Callback = function(toggleTheAntiAFK)
             wait(0.3)
             PlayerScripts:FindFirstChild('afkEnable').Parent = SoundService
         end
-        wait(0.1)
         if GC then
             disableAFKUsingGetConnections()
         else
@@ -371,102 +908,89 @@ Callback = function(toggleTheAntiAFK)
             end
             getgenv().AntiAFK_Connections = nil
         end
-        wait(0.1)
         if SoundService:FindFirstChild('AfkEvent') then
             SoundService:FindFirstChild('AfkEvent').Parent = ReplicatedStorage
         end
-        wait(0.1)
-        SoundService:FindFirstChild('afkEnable').Parent = PlayerScripts
+        if SoundService:FindFirstChild("afkEnable") then
+            SoundService:FindFirstChild('afkEnable').Parent = PlayerScripts
+        end
     end
 end,})
-wait()
-if getgenv().Use_Getconnections or getgenv().Use_VirtualUser then
+
+if getgenv().Use_GetConnections or getgenv().Use_VirtualUser then
     getgenv().antiAFK_Toggle:Set(false)
 end
-wait()
-getgenv().NoWalkingOrJumpingSounds = Tab2:CreateToggle({
-Name = 'Disable Footstep/Walking Sounds',
-CurrentValue = false,
-Flag = 'NoMoreWalkingSounds',
-Callback = function(doCharacterSounds)
-    if doCharacterSounds then
-        SoundService:FindFirstChild("Footsteps").Volume = 0
-        for _, v in ipairs(SoundService:FindFirstChild("Footsteps"):GetDescendants()) do
-            if v:IsA("Sound") then
-                v.Volume = 0
-            end
-        end
-    else
-        SoundService:FindFirstChild("Footsteps").Volume = 1
-        for _, v in ipairs(SoundService:FindFirstChild("Footsteps"):GetDescendants()) do
-            if v:IsA("Sound") then
-                v.Volume = 1
-            end
+
+local footsteps_sound = footstep_sounds()
+
+getgenv().WalkingAndJumpingSounds = Tab2:CreateSlider({
+Name = 'Footstep Sounds Volume',
+Range = {0, 10},
+Increment = 0.1,
+Suffix = "",
+CurrentValue = 1,
+Flag = "FootstepSoundSlider",
+Callback = function(vol)
+    local group = footstep_sounds()
+    if not group then
+        getgenv().WalkingAndJumpingSounds:Set(1)
+        return getgenv().notify("Error", "Footsteps SoundGroup not found.", 5)
+    end
+
+    if not footsteps_sound then
+        return getgenv().notify("Warning", tostring(footsteps_sound).." was not found.", 5)
+    end
+
+    for _, v in ipairs(footsteps_sound:GetChildren()) do
+        if v:IsA("Sound") then
+            v.Volume = tonumber(vol) or vol
         end
     end
 end,})
-wait()
-if SoundService:FindFirstChild("Footsteps"):FindFirstChild("Basalt").Volume == 0 then
-    getgenv().NoWalkingOrJumpingSounds:Set(false)
+
+if footsteps_sound and footsteps_sound:FindFirstChild("Basalt").Volume == 0 then
+    getgenv().WalkingAndJumpingSounds:Set(1)
     wait(0.2)
-    SoundService:FindFirstChild("Footsteps").Volume = 1
-    for _, v in ipairs(SoundService:FindFirstChild("Footsteps"):GetDescendants()) do
+    footsteps_sound.Volume = 1
+    for _, v in ipairs(footsteps_sound:GetDescendants()) do
         if v:IsA("Sound") then
             v.Volume = 1
         end
     end
+elseif not footsteps_sound then
+    getgenv().WalkingAndJumpingSounds:Set(1)
+elseif not footsteps_sound:FindFirstChild("Basalt") then
+    getgenv().WalkingAndJumpingSounds:Set(1)
 end
-wait(0.1)
+
 getgenv().NoJumpCooldownToggle = Tab2:CreateToggle({
-Name = 'Disable Jump Cooldown',
+Name = 'Disable Jump Cooldown (FE)',
 CurrentValue = false,
 Flag = 'ezBypassJumpCooldowns',
 Callback = function(bypassingJumpCooldown)
     if bypassingJumpCooldown then
-        getgenv().JumpCooldown_Bypass = true
-        local Jump_2 = Character:FindFirstChild('JumpCooldown2')
-        if not Jump_2 then
-            getgenv().NoJumpCooldownToggle:Set(false)
-            return notify("Failure:", "JumpCooldown2 does not exist in Character!", 5)
-        end
-        local Jump = Character:FindFirstChild('JumpCooldown')
-        if not Jump then
-            getgenv().NoJumpCooldownToggle:Set(false)
-            return notify("Failure:", "JumpCooldown does not exist in Character!", 5)
-        end
-        wait()
-        if Jump_2 and Jump_2:IsA("LocalScript") then
-            Character:FindFirstChild("JumpCooldown2").Disabled = true
-            wait(0.2)
-            Character:FindFirstChild('JumpCooldown2'):Destroy()
-        end
-        if Jump and Jump:IsA("LocalScript") then
-            Character:FindFirstChild('JumpCooldown'):Destroy()
+        local get_gc_func = getconnections or get_signal_cons
+
+        for _, c in pairs(get_gc_func(Humanoid:GetPropertyChangedSignal("FloorMaterial"))) do
+            c:Disable()
         end
     else
-        getgenv().JumpCooldown_Bypass = false
+        local get_gc_func = getconnections or get_signal_cons
+
+        for _, c in pairs(get_gc_func(Humanoid:GetPropertyChangedSignal("FloorMaterial"))) do
+            c:Enable()
+        end
     end
 end,})
-wait()
-if not Character:FindFirstChild('JumpCooldown2') then
-    getgenv().NoJumpCooldownToggle:Set(false)
-end
-wait()
-if getgenv().Jump_Connection then
-    print('Connection is enabled, disconnecting...')
-    wait()
-    getgenv().Jump_Connection:Disconnect()
-    getgenv().Jump_Connection = nil
-end
-wait(0.1)
+
 getgenv().RespawnCharacterFast = Tab2:CreateButton({
-Name = 'Respawn (fast)',
+Name = 'Respawn (FE)',
 Callback = function()
     loadCharRemote:FireServer()
 end,})
 
 getgenv().ChooseADifferentTeam = Tab1:CreateDropdown({
-Name = 'Choose a Team',
+Name = 'Change Team (FE)',
 Options = getgenv().All_Teams,
 CurrentOption = 'Team',
 MultipleOptions = false,
@@ -487,285 +1011,179 @@ Callback = function()
     Character:PivotTo(DealershipPart:GetPivot())
 end,})
 
-getgenv().MoreRainbowCarColors = Tab3:CreateToggle({
-Name = "Full Rainbow Car (FE, Needs GamePass)",
+getgenv().MakeJobMoneyAnywhere = Tab2:CreateToggle({
+Name = "Make money anywhere from your job (FE).",
+CurrentValue = false,
+Flag = "MakeMoneyAnywhereFromJob",
+Callback = function(ez_job_keeper)
+    if ez_job_keeper then
+        getgenv().ToggleJob(true)
+    else
+        getgenv().ToggleJob(false)
+    end
+end,})
+
+getgenv().LockVehicleToggle = Tab3:CreateToggle({
+Name = "Lock Vehicle (FE)",
+CurrentValue = false,
+Flag = "LockCurrentVehicleToggle",
+Callback = function(locked_vehicle)
+    if locked_vehicle then
+        if Settings_Remote and Settings_Remote:IsA("RemoteEvent") then
+            local args = {
+                "Setting",
+                "Locked",
+                true
+            }
+            
+            Settings_Remote:FireServer(unpack(args))
+        end
+    else
+        if Settings_Remote and Settings_Remote:IsA("RemoteEvent") then
+            local args = {
+                "Setting",
+                "Locked",
+                false
+            }
+            
+            Settings_Remote:FireServer(unpack(args))
+        end
+    end
+end,})
+
+if is_car_locked() == true then
+    getgenv().LockVehicleToggle:Set(false)
+end
+
+--[[getgenv().MoreRainbowCarColors = Tab3:CreateToggle({
+Name = "Full Rainbow Vehicle (FE, Needs GamePass)",
 CurrentValue = false,
 Flag = "MainFullCarColoring",
 Callback = function(full_rainbow_fe_car)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
-
     if not Player_Vehicle then
         getgenv().Full_RGB_Car_Colors = false
         getgenv().MoreRainbowCarColors:Set(false)
-        return getgenv().notify("Failure:", "You have not spawned a vehicle, spawn one!", 5)
+        return getgenv().notify("Error", "You have not spawned a vehicle, spawn one!", 5)
+    end
+
+    local Vehicle_Color_Part = get_part_from_vehicle("Color")
+    local M5_Part = get_part_from_vehicle("M5")
+    local Remote = get_part_from_vehicle("Prop_FE")
+
+    if not Vehicle_Color_Part or not M5_Part or not Remote then
+        getgenv().Full_RGB_Car_Colors = false
+        getgenv().MoreRainbowCarColors:Set(false)
+        return getgenv().notify("Error", "Vehicle missing Color, M5, or Prop_FE!", 5)
     end
 
     if full_rainbow_fe_car then
         getgenv().Full_RGB_Car_Colors = true
-        while getgenv().Full_RGB_Car_Colors == true do
-        wait()
-            local args = {
-                [1] = 'UpdateColor',
-                [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                [3] = 0,
-                [4] = 0,
-                [5] = 0,
-            }
 
-            Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = 'UpdateColor',
-                [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                [3] = 87.00000241398811,
-                [4] = 53.00000064074993,
-                [5] = 115.00000074505806,
-            }
-
-            Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = 'UpdateColor',
-                [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                [3] = 194.00000363588333,
-                [4] = 0,
-                [5] = 36.00000165402889,
-            }
-
-            Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = 'UpdateColor',
-                [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                [3] = 229.00000154972076,
-                [4] = 233.00000131130219,
-                [5] = 229.00000154972076,
-            }
-
-            Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = 'UpdateColor',
-                [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                [3] = 227.00000166893005,
-                [4] = 91.00000217556953,
-                [5] = 1.0000000591389835,
-            }
-
-            Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = 'UpdateColor',
-                [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                137.00000703334808,
-                1.0000000591389835,
-                1.0000000591389835,
-            }
-
-            Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = "UpdateColor",
-                [2] = Player_Vehicle:WaitForChild("Body"):WaitForChild("Main"):WaitForChild("Color"),
-                [3] = 232.00000137090683,
-                [4] = 232.00000137090683,
-                [5] = 232.00000137090683
-            }
-
-            Player_Vehicle:WaitForChild("Prop_FE"):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = "UpdateColor",
-                [2] = Player_Vehicle:WaitForChild("Body"):WaitForChild("Main"):WaitForChild("Color"),
-                [3] = 33.00000183284283,
-                [4] = 75.00000312924385,
-                [5] = 152.0000061392784
-            }
-
-            Player_Vehicle:WaitForChild("Prop_FE"):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = "UpdateColor",
-                [2] = Player_Vehicle:WaitForChild("WE1"):WaitForChild("M5"),
-                [3] = 103.0000014603138,
-                [4] = 106.00000128149986,
-                [5] = 111.00000098347664
-            }
-
-            Player_Vehicle:WaitForChild("Prop_FE"):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = "UpdateColor",
-                [2] = Player_Vehicle:WaitForChild("Body"):WaitForChild("Main"):WaitForChild("Color"),
-                [3] = 255,
-                [4] = 0,
-                [5] = 225.8773899078369
-            }
-
-            Player_Vehicle:WaitForChild("Prop_FE"):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = "UpdateColor",
-                [2] = Player_Vehicle:WaitForChild("WE1"):WaitForChild("M5"),
-                [3] = 83.81617605686188,
-                [4] = 255,
-                [5] = 0
-            }
-
-            Player_Vehicle:WaitForChild("Prop_FE"):FireServer(unpack(args))
-            wait()
-            local args = {
-                [1] = "UpdateColor",
-                [2] = Player_Vehicle:WaitForChild("WE1"):WaitForChild("M5"),
-                [3] = 254.2897117137909,
-                [4] = 255,
-                [5] = 0
-            }
-
-            Player_Vehicle:WaitForChild("Prop_FE"):FireServer(unpack(args))
+        if getgenv().FullRGB_Vehicle_Task then
+            pcall(task.cancel, getgenv().FullRGB_Vehicle_Task)
         end
-    end
-end,})
 
-getgenv().RainbowCarFE = Tab3:CreateToggle({
-Name = 'Rainbow Car (FE, No GamePass needed!)',
-CurrentValue = false,
-Flag = 'rainbowCarFEScript',
-Callback = function(theUltimateRainbowVehicle)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
+        getgenv().FullRGB_Vehicle_Task = task.spawn(function()
+            while task.wait() and getgenv().Full_RGB_Car_Colors == true do
+                local veh = request_vehicle()
+                if not veh then break end
+
+                local ColorP = get_part_from_vehicle("Color")
+                local M5 = get_part_from_vehicle("M5")
+                local Remote = get_part_from_vehicle("Prop_FE")
+
+                if not ColorP or not M5 or not Remote then break end
+
+                for _, rgb in ipairs(colors) do
+                    if not getgenv().Full_RGB_Car_Colors then
+                        break
+                    end
+
+                    Remote:FireServer("UpdateColor", ColorP, rgb[1], rgb[2], rgb[3])
+                    Remote:FireServer("UpdateColor", M5, rgb[1], rgb[2], rgb[3])
+                    task.wait(0.01)
+                end
             end
-        end
-        return nil
-    end
-    wait(0.1)
-    local Player_Vehicle = request_vehicle()
-    
-    if theUltimateRainbowVehicle then
-        if not Player_Vehicle then
-            getgenv().RainbowCarFE:Set(false)
-            return getgenv().notify("Failure", "Please spawn a Vehicle first.", 6)
-        end
-        wait()
-        getgenv().Rainbow_Vehicle = true
-        while getgenv().Rainbow_Vehicle == true do
-            wait()
-            if Player_Vehicle and Player_Vehicle:FindFirstChild('Body') then
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 0,
-                    [4] = 0,
-                    [5] = 0,
-                }
 
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-                wait()
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 147.00000643730164,
-                    [4] = 31.000000052154064,
-                    [5] = 25.000000409781933
-                }
-
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-                wait()
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 167.00000524520874,
-                    [4] = 42.000001296401024,
-                    [5] = 43.00000123679638
-                }
-
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-                wait()
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 229.00000154972076,
-                    [4] = 230.00000149011612,
-                    [5] = 224.000001847744
-                }
-
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-                wait()
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 213.00000250339508,
-                    [4] = 213.00000250339508,
-                    [5] = 213.00000250339508
-                }
-
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-                wait()
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 157.0000058412552,
-                    [4] = 160.00000566244125,
-                    [5] = 162.00000554323196
-                }
-
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-                wait()
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 57.00000040233135,
-                    [4] = 64.00000378489494,
-                    [5] = 72.00000330805779
-                }
-
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-                wait()
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 21.000000648200512,
-                    [4] = 39.00000147521496,
-                    [5] = 79.00000289082527
-                }
-
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-                wait()
-                local args = {
-                    [1] = 'UpdateColor',
-                    [2] = Player_Vehicle:FindFirstChild('Body'):FindFirstChild('Main'):FindFirstChild('Color'),
-                    [3] = 14.000000115484,
-                    [4] = 75.00000312924385,
-                    [5] = 130.0000074505806
-                }
-
-                Player_Vehicle:FindFirstChild('Prop_FE'):FireServer(unpack(args))
-            else
-                getgenv().RainbowCarFE:Set(false)
-            end
-        end
+            getgenv().Full_RGB_Car_Colors = false
+            pcall(function() getgenv().MoreRainbowCarColors:Set(false) end)
+        end)
     else
-        getgenv().Rainbow_Vehicle = false
-        wait(0.1)
-        getgenv().Rainbow_Vehicle = false
-        wait(0.1)
-        getgenv().Rainbow_Vehicle = false
+        getgenv().Full_RGB_Car_Colors = false
+
+        if getgenv().FullRGB_Vehicle_Task then
+            pcall(task.cancel, getgenv().FullRGB_Vehicle_Task)
+        end
+
+        getgenv().FullRGB_Vehicle_Task = nil
     end
 end,})
-wait()
-if getgenv().Rainbow_Vehicle or getgenv().Rainbow_Vehicle == true then
-    getgenv().RainbowCarFE:Set(false)
+
+if getgenv().Full_RGB_Car_Colors then
+    getgenv().Full_RGB_Car_Colors = false
+    getgenv().MoreRainbowCarColors:Set(false)
+end--]]
+
+g._rainbow_lock = g._rainbow_lock or false
+g.Rainbow_Vehicle = g.Rainbow_Vehicle or false
+
+local function start_rainbow(propFE, colorPart)
+    g.Rainbow_Vehicle = true
+
+    task.spawn(function()
+        while g.Rainbow_Vehicle do
+            for _, rgb in ipairs(g.free_colors) do
+                if not g.Rainbow_Vehicle then break end
+                propFE:FireServer("UpdateColor", colorPart, rgb[1], rgb[2], rgb[3])
+                task.wait(0)
+            end
+            task.wait()
+        end
+    end)
+end
+
+local function stop_rainbow()
+    g.Rainbow_Vehicle = false
+end
+
+g.RainbowCarFE = Tab3:CreateToggle({
+Name = "Rainbow Vehicle (FE, No GamePass needed!)",
+CurrentValue = false,
+Flag = "rainbowCarFEScript",
+Callback = function(toggle)
+    if g._rainbow_lock then
+        return
+    end
+
+    local vehicle = request_vehicle()
+
+    if not toggle or not vehicle then
+        stop_rainbow()
+        g._rainbow_lock = true
+        g.RainbowCarFE:Set(false)
+        g._rainbow_lock = false
+        return
+    end
+
+    local colorPart, propFE = get_FE_ColorPart(vehicle)
+
+    if not colorPart or not propFE then
+        stop_rainbow()
+        g._rainbow_lock = true
+        g.RainbowCarFE:Set(false)
+        g._rainbow_lock = false
+        return g.notify("Error", "Vehicle missing Color part or Prop_FE!", 6)
+    end
+
+    start_rainbow(propFE, colorPart)
+end,})
+
+if g.Rainbow_Vehicle then
+    stop_rainbow()
+    g._rainbow_lock = true
+    g.RainbowCarFE:Set(false)
+    g._rainbow_lock = false
 end
 
 getgenv().RemoveRain = Tab1:CreateToggle({
@@ -773,98 +1191,62 @@ Name = "Remove Rain",
 CurrentValue = false,
 Flag = "temporarilyRemoveRainToggle",
 Callback = function(theRainGone)
+    local move_to_where
+    local items = {"thunder1","thunder2","thunder3","thunder4","thunder5","thunder6","rainStorage"}
+    
     if theRainGone then
         getgenv().swapped_rain_stuff = true
-        wait()
-        if Workspace:FindFirstChild("thunder1") then
-            Workspace:FindFirstChild("thunder1").Parent = AssetService
+        move_to_where = AssetService
+
+        for _, name in ipairs(items) do
+            local obj = Workspace:FindFirstChild(name)
+            if obj then obj.Parent = move_to_where end
         end
-        if Workspace:FindFirstChild("thunder2") then
-            Workspace:FindFirstChild("thunder2").Parent = AssetService
-        end
-        if Workspace:FindFirstChild("thunder3") then
-            Workspace:FindFirstChild("thunder3").Parent = AssetService
-        end
-        if Workspace:FindFirstChild("thunder4") then
-            Workspace:FindFirstChild("thunder4").Parent = AssetService
-        end
-        if Workspace:FindFirstChild("thunder5") then
-            Workspace:FindFirstChild("thunder5").Parent = AssetService
-        end
-        if Workspace:FindFirstChild("thunder6") then
-            Workspace:FindFirstChild("thunder6").Parent = AssetService
-        end
-        if Workspace:FindFirstChild("rainStorage") then
-            Workspace:FindFirstChild("rainStorage").Parent = AssetService
-        end
-        if PlayerScripts:FindFirstChild("RainScript") then
-            PlayerScripts:FindFirstChild("RainScript").Parent = AssetService
-        end
-        if ReplicatedStorage:FindFirstChild("Miscs") and ReplicatedStorage:FindFirstChild("Miscs"):FindFirstChild("Rain") then
-            ReplicatedStorage:FindFirstChild("Miscs"):FindFirstChild("Rain").Parent = AssetService
+
+        local rain_local_script = PlayerScripts:FindFirstChild("RainScript")
+        if rain_local_script then rain_local_script.Parent = move_to_where end
+
+        local miscs = ReplicatedStorage:FindFirstChild("Miscs")
+        if miscs and miscs:FindFirstChild("Rain") then
+            miscs.Rain.Parent = move_to_where
         end
     else
         getgenv().swapped_rain_stuff = false
         wait(0.1)
-        if AssetService:FindFirstChild("thunder1") then
-            AssetService:FindFirstChild("thunder1").Parent = Workspace
+        move_to_parents = {
+            Workspace = Workspace,
+            PlayerScripts = PlayerScripts,
+            Miscs = ReplicatedStorage:FindFirstChild("Miscs")
+        }
+
+        for _, name in ipairs(items) do
+            local obj = AssetService:FindFirstChild(name)
+            if obj then obj.Parent = move_to_parents.Workspace end
         end
-        if AssetService:FindFirstChild("thunder2") then
-            AssetService:FindFirstChild("thunder2").Parent = Workspace
-        end
-        if AssetService:FindFirstChild("thunder3") then
-            AssetService:FindFirstChild("thunder3").Parent = Workspace
-        end
-        if AssetService:FindFirstChild("thunder4") then
-            AssetService:FindFirstChild("thunder4").Parent = Workspace
-        end
-        if AssetService:FindFirstChild("thunder5") then
-            AssetService:FindFirstChild("thunder5").Parent = Workspace
-        end
-        if AssetService:FindFirstChild("thunder6") then
-            AssetService:FindFirstChild("thunder6").Parent = Workspace
-        end
-        if AssetService:FindFirstChild("rainStorage") then
-            AssetService:FindFirstChild("rainStorage").Parent = Workspace
-        end
-        if AssetService:FindFirstChild("RainScript") then
-            AssetService:FindFirstChild("RainScript").Parent = PlayerScripts
-        end
-        if AssetService:FindFirstChild("Rain") then
-            AssetService:FindFirstChild("Rain").Parent = ReplicatedStorage:FindFirstChild("Miscs")
-        end
+
+        local rain_script = AssetService:FindFirstChild("RainScript")
+        if rain_script then rain_script.Parent = move_to_parents.PlayerScripts end
+
+        local rain = AssetService:FindFirstChild("Rain")
+        if rain and move_to_parents.Miscs then rain.Parent = move_to_parents.Miscs end
     end
 end,})
-wait()
-if getgenv().swapped_rain_stuff or getgenv().swapped_rain_stuff == true then
+
+if getgenv().swapped_rain_stuff then
     getgenv().RemoveRain:Set(false)
-    if AssetService:FindFirstChild("thunder1") then
-        AssetService:FindFirstChild("thunder1").Parent = Workspace
+    local workspace_items = {"thunder1","thunder2","thunder3","thunder4","thunder5","thunder6","rainStorage"}
+
+    for _, name in ipairs(workspace_items) do
+        local obj = AssetService:FindFirstChild(name)
+        if obj then obj.Parent = Workspace end
     end
-    if AssetService:FindFirstChild("thunder2") then
-        AssetService:FindFirstChild("thunder2").Parent = Workspace
-    end
-    if AssetService:FindFirstChild("thunder3") then
-        AssetService:FindFirstChild("thunder3").Parent = Workspace
-    end
-    if AssetService:FindFirstChild("thunder4") then
-        AssetService:FindFirstChild("thunder4").Parent = Workspace
-    end
-    if AssetService:FindFirstChild("thunder5") then
-        AssetService:FindFirstChild("thunder5").Parent = Workspace
-    end
-    if AssetService:FindFirstChild("thunder6") then
-        AssetService:FindFirstChild("thunder6").Parent = Workspace
-    end
-    if AssetService:FindFirstChild("rainStorage") then
-        AssetService:FindFirstChild("rainStorage").Parent = Workspace
-    end
-    if AssetService:FindFirstChild("RainScript") then
-        AssetService:FindFirstChild("RainScript").Parent = PlayerScripts
-    end
-    if AssetService:FindFirstChild("Rain") then
-        AssetService:FindFirstChild("Rain").Parent = ReplicatedStorage:FindFirstChild("Miscs")
-    end
+
+    local rainScript = AssetService:FindFirstChild("RainScript")
+    if rainScript then rainScript.Parent = PlayerScripts end
+
+    local miscs = ReplicatedStorage:FindFirstChild("Miscs")
+    local rain = AssetService:FindFirstChild("Rain")
+    if rain and miscs then rain.Parent = miscs end
 end
 
 getgenv().playable_audio_id = "1"
@@ -876,37 +1258,20 @@ PlaceholderText = "ID Here",
 RemoveTextAfterFocusLost = true,
 Flag = "audioIDInput",
 Callback = function(theAudioID)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
 
     if not Player_Vehicle then
         getgenv().PlayAnAudioID:Set("ID Here")
-        return getgenv().notify("Failure", "Please spawn a Vehicle first.", 6)
+        return getgenv().notify("Error", "Please spawn a Vehicle first.", 6)
     end
 
     getgenv().playable_audio_id = tostring(theAudioID)
-    local AChassis_GUI = PlayerGui:FindFirstChild("A-Chassis Interface")
-    local Radio_UI = AChassis_GUI:FindFirstChild("RadioUI")
-    local ownRadio_Frame = Radio_UI:FindFirstChild("ownRadio")
-    local ownID_TextLabel = ownRadio_Frame:FindFirstChild("ownID")
-    ownID_TextLabel.Text = getgenv().playable_audio_id
-    if not request_vehicle():FindFirstChild("Body") then
-        return notify("Failure:", "Body was not found inside: "..tostring(request_vehicle().Name).." (broken)!", 5)
-    end
+    local OwnID_TextLabel = FindInChassisInterface("ownID")
+    local Body = get_body_from_vehicle()
+    local radio_tog = get_part_from_vehicle("radioTog")
 
-    if not request_vehicle():FindFirstChild("Body"):FindFirstChild("campos") then
-        return notify("Failure:", "'campos' was not found inside Body inside: "..tostring(request_vehicle().Name).."!", 5)
-    end
-
-    request_vehicle():WaitForChild("Body"):WaitForChild("campos"):WaitForChild("radioTog").Value = true
+    OwnID_TextLabel.Text = getgenv().playable_audio_id
+    radio_tog.Value = true
 end,})
 
 getgenv().PlayAudioID = Tab3:CreateToggle({
@@ -914,42 +1279,33 @@ Name = "Play Set Audio",
 CurrentValue = false,
 Flag = "TheAudioPlaying",
 Callback = function(whatAudioWePlaying)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
+    if not Player_Vehicle then
+        getgenv().PlayAudioID:Set(false)
+        return getgenv().notify("Error", "Please spawn a Vehicle first.", 6)
+    end
+
+    local Body = get_body_from_vehicle()
+    if not Body then
+        getgenv().PlayAudioID:Set(false)
+        return getgenv().notify("Error", "Vehicle missing Body part!", 6)
+    end
+
+    local ownIDConfirm = FindInChassisInterface("ownIDConfirm")
+    local radio_tog = get_part_from_vehicle("radioTog")
 
     if whatAudioWePlaying then
-        if not Player_Vehicle then
-            getgenv().PlayAudioID:Set(false)
-            return getgenv().notify("Failure", "Please spawn a Vehicle first.", 6)
-        end
-        wait()
         getgenv().ok_boys_lets_play = true
-        local args = {
-            [1] = Player_Vehicle,
-            [2] = Player_Vehicle:WaitForChild("Body"):WaitForChild("campos"):WaitForChild("ownIDConfirm"),
-            [3] = getgenv().playable_audio_id
-        }
-
-        ReplicatedStorage:WaitForChild("songControlEvent"):FireServer(unpack(args))
+        if ownIDConfirm then
+            Song_Control_Event:FireServer(Player_Vehicle, ownIDConfirm, getgenv().playable_audio_id)
+        end
     else
         getgenv().ok_boys_lets_play = false
-        Player_Vehicle:WaitForChild("Body"):WaitForChild("campos"):WaitForChild("radioTog").Value = false
+        if radio_tog then radio_tog.Value = false end
         wait(0.1)
-        local args = {
-            [1] = Player_Vehicle,
-            [2] = Player_Vehicle:WaitForChild("Body"):WaitForChild("campos"):WaitForChild("ownIDConfirm"),
-            [3] = "stop"
-        }
-
-        ReplicatedStorage:WaitForChild("songControlEvent"):FireServer(unpack(args))
+        if ownIDConfirm then
+            Song_Control_Event:FireServer(Player_Vehicle, ownIDConfirm, "stop")
+        end
     end
 end,})
 
@@ -958,43 +1314,48 @@ Name = "Toggle Horn",
 CurrentValue = false,
 Flag = "hornUpdatingToggle",
 Callback = function(theHornEnabled)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
 
     if theHornEnabled then
         if not Player_Vehicle then
             getgenv().HornToggledOn:Set(false)
-            return getgenv().notify("Failure", "Please spawn a Vehicle first.", 6)
+            return getgenv().notify("Error", "Please spawn a Vehicle first.", 6)
         end
-        wait()
+        
+        local horn = get_part_from_vehicle("HornUpdate")
+
         getgenv().car_horn = true
-        Player_Vehicle:WaitForChild("HornUpdate"):FireServer(true)
+        if horn and horn:IsA("RemoteEvent") then
+            horn:FireServer(true)
+        else
+            getgenv().car_horn = false
+            getgenv().HornToggledOn:Set(false)
+            return getgenv().notify("Error", "Horn RemoteEvent not found inside Vehicle.", 5)
+        end
     else
+        local horn = get_part_from_vehicle("HornUpdate")
+
         getgenv().car_horn = false
-        Player_Vehicle:WaitForChild("HornUpdate"):FireServer(false)
+        if horn and horn:IsA("RemoteEvent") then
+            horn:FireServer(false)
+        end
     end
 end,})
-wait()
+
+local horn_upd = get_part_from_vehicle("HornUpdate")
+
 if getgenv().car_horn or getgenv().car_horn == true then
     getgenv().car_horn = false
     getgenv().HornToggledOn:Set(false)
     wait(0.1)
-    if Player_Vehicle then
-        Player_Vehicle:WaitForChild("HornUpdate"):FireServer(false)
+    if horn_upd and horn_upd:IsA("RemoteEvent") then
+        horn_upd:FireServer(false)
     end
 end
 
 local Wait_Time
 local FuelAmount
-wait()
+
 getgenv().ModifyFuelAmountToBeRefilled = Tab3:CreateInput({
 Name = "Fuel Amount (For Loop)",
 CurrentValue = "Fuel",
@@ -1020,39 +1381,29 @@ Name = "Refill Car Fuel Loop (Cost Money)",
 CurrentValue = false,
 Flag = "RefillingVehicleFuelLoop",
 Callback = function(refilling_car)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
 
     if not Player_Vehicle then
         getgenv().RefillCarFuelLoop:Set(false)
-        return getgenv().notify("Failure", "Could not find your Vehicle, spawn a vehicle.", 5)
+        return getgenv().notify("Error", "Could not find your Vehicle, spawn a vehicle.", 5)
     end
 
     if not ReplicatedStorage:FindFirstChild("fuelEvent") then
-        getgenv().notify("Failure:", "This might be patched!, read below:", 5)
-        return getgenv().notify("Failure:", "FuelEvent does not exist in ReplicatedStorage!", 5)
+        return getgenv().notify("Error", "This might be patched?: FuelEvent does not exist in ReplicatedStorage!", 10)
     end
 
     if not ReplicatedStorage:FindFirstChild("PetrolPrice") then
-        return getgenv().notify("Failure:", "PetrolPrice does not exist in RepliatedStorage (broken)!", 5)
+        return getgenv().notify("Error", "PetrolPrice does not exist in RepliatedStorage (broken)!", 5)
     end
 
     if not ReplicatedStorage:FindFirstChild("DieselPrice") then
-        return getgenv().notify("Failure:", "DieselPrice does not exist in ReplicatedStorage (broken)!", 5) 
+        return getgenv().notify("Error", "DieselPrice does not exist in ReplicatedStorage (broken)!", 5) 
     end
     wait()
     if refilling_car and request_vehicle() then
         getgenv().refilling_my_vehicle_fuel = true
         while getgenv().refilling_my_vehicle_fuel == true do
-        wait(0.6)
+        task.wait(0.3)
             local args = {
                 [1] = "requestPurchase",
                 [2] = request_vehicle(),
@@ -1061,31 +1412,17 @@ Callback = function(refilling_car)
                 [5] = ReplicatedStorage:WaitForChild("DieselPrice")
             }
 
-            ReplicatedStorage:WaitForChild("fuelEvent"):FireServer(unpack(args))
+            find_RE("fuel"):FireServer(unpack(args))
         end
     elseif not request_vehicle() then
         getgenv().refilling_my_vehicle_fuel = false
-        wait(0.3)
-        getgenv().refilling_my_vehicle_fuel = false
-        wait(0.3)
-        getgenv().refilling_my_vehicle_fuel = false
-        wait(0.5)
-        for i = 1, 500 do
-            getgenv().refilling_my_vehicle_fuel = false
-        end
     elseif not refilling_car or refilling_car == false then
-        getgenv().notify("Hang On:", "Shutting down refilling loop...", 5)
-        getgenv().refilling_my_vehicle_fuel = false
-        wait(0.3)
-        getgenv().refilling_my_vehicle_fuel = false
-        wait(0.3)
+        getgenv().notify("Info", "Shutting down refilling loop...", 5)
         getgenv().refilling_my_vehicle_fuel = false
         wait(0.5)
-        for i = 1, 50 do
-            getgenv().refilling_my_vehicle_fuel = false
+        if not getgenv().refilling_my_vehicle_fuel then
+            notify("Success", "Successfully shut down refilling loop...", 5)
         end
-        wait(0.3)
-        notify("Success:", "Successfully shut down refilling loop...", 5)
     end
 end,})
 
@@ -1097,71 +1434,56 @@ RemoveTextAfterFocusLost = true,
 Flag = "GetFuelForVehicle",
 Callback = function(fuelYouWant)
     if not tonumber(fuelYouWant) then
-        return getgenv().notify("Failure", "You did not enter in a number.", 6)
+        return getgenv().notify("Error", "You did not enter in a number.", 6)
     end
-    wait()
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
+
     local Player_Vehicle = request_vehicle()
+    local fuel_remote = find_RE("fuel")
 
     if not Player_Vehicle then
-        return notify("Failure:", "You do not have a vehicle spawned!", 5)
+        return notify("Error", "You do not have a vehicle spawned!", 5)
     end
-
-    if not ReplicatedStorage:FindFirstChild("fuelEvent") then
-        return notify("Failure:", "fuelEvent does not exist in ReplicatedStorage!", 5)
+    if not fuel_remote then
+        return notify("Error", "Fuel RemoteEvent does not exist in ReplicatedStorage!", 5)
     end
-    wait()
-    local args = {
-        [1] = "requestPurchase",
-        [2] = Player_Vehicle,
-        [3] = tonumber(fuelYouWant),
-        [4] = ReplicatedStorage:WaitForChild("PetrolPrice"),
-        [5] = ReplicatedStorage:WaitForChild("DieselPrice")
-    }
+    
+    if fuel_remote and fuel_remote:IsA("RemoteEvent") then
+        local args = {
+            [1] = "requestPurchase",
+            [2] = Player_Vehicle,
+            [3] = tonumber(fuelYouWant),
+            [4] = ReplicatedStorage:WaitForChild("PetrolPrice"),
+            [5] = ReplicatedStorage:WaitForChild("DieselPrice")
+        }
 
-    ReplicatedStorage:WaitForChild("fuelEvent"):FireServer(unpack(args))
+        find_RE("fuel"):FireServer(unpack(args))
+    end
 end,})
 
 getgenv().StopAllAudios = Tab3:CreateButton({
 Name = "Stop All Car Audios",
 Callback = function()
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
 
     if not Player_Vehicle then
-        return getgenv().notify("Failure", "Please spawn a Vehicle first.", 6)
+        return getgenv().notify("Error", "Please spawn a Vehicle first.", 6)
     end
-    wait()
-    local AChassis_GUI = PlayerGui:FindFirstChild("A-Chassis Interface")
-    local Radio_UI = AChassis_GUI:FindFirstChild("RadioUI")
-    local ownRadio_Frame = Radio_UI:FindFirstChild("ownRadio")
-    local ownID_TextLabel = ownRadio_Frame:FindFirstChild("ownID")
-    wait()
-    local args = {
-        [1] = Player_Vehicle,
-        [2] = Player_Vehicle:WaitForChild("Body"):WaitForChild("campos"):WaitForChild("ownIDConfirm"),
-        [3] = "stop"
-    }
 
-    ReplicatedStorage:WaitForChild("songControlEvent"):FireServer(unpack(args))
-    wait(0.1)
-    ownID_TextLabel.Text = ""
+    local ownID_TextLabel = FindInChassisInterface("ownID")
+
+    if Song_Control_Event and Song_Control_Event:IsA("RemoteEvent") then
+        local args = {
+            [1] = Player_Vehicle,
+            [2] = get_part_from_vehicle("ownIDConfirm"),
+            [3] = "stop"
+        }
+
+        Song_Control_Event:FireServer(unpack(args))
+    end
+    
+    if ownID_TextLabel and ownID_TextLabel.Text then
+        ownID_TextLabel.Text = ""
+    end
 end,})
 
 getgenv().Radio_Volume = Tab3:CreateSlider({
@@ -1172,46 +1494,30 @@ Suffix = "",
 CurrentValue = 0.5,
 Flag = "radioVolumeSliderControl",
 Callback = function(Radio_Volume_Here)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
 
     if not Player_Vehicle then
         return 
     end
-    wait()
-    local args = {
-        [1] = Player_Vehicle,
-        [2] = Player_Vehicle:WaitForChild("Body"):WaitForChild("campos"):WaitForChild("lastVol"),
-        [3] = Radio_Volume_Here
-    }
 
-    Song_Control_Event:FireServer(unpack(args))
+    if Song_Control_Event and Song_Control_Event:IsA("RemoteEvent") then
+        local args = {
+            [1] = Player_Vehicle,
+            [2] = get_part_from_vehicle("lastVol"),
+            [3] = Radio_Volume_Here
+        }
+
+        Song_Control_Event:FireServer(unpack(args))
+    end
 end,})
 
 getgenv().all_lights = getgenv().all_lights or {}
-wait(0.2)
-function table_lights()
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
 
+function table_lights()
     local vehicle = request_vehicle()
 
     if vehicle then
-        local lights = vehicle:FindFirstChild("Body") and vehicle.Body:FindFirstChild("Lights")
+        local lights = get_part_from_vehicle("Lights")
 
         if lights then
             for _, light in ipairs(lights:GetChildren()) do
@@ -1223,17 +1529,7 @@ function table_lights()
     end
 end
 
-wait(0.1)
 local function change_light_colors(color)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
     
     for _, light in ipairs(getgenv().all_lights) do
@@ -1257,24 +1553,15 @@ Name = "Rainbow Lights (FE)",
 CurrentValue = false,
 Flag = "UltimateRGBLights",
 Callback = function(EnableRainbowLights)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
     local Body = Player_Vehicle:FindFirstChild("Body")
-    if not Body then return notify("Failure:", "'Body' was not found inside Vehicle: "..tostring(request_vehicle().Name).."!", 5) end
+    if not Body then return notify("Error", "'Body' was not found inside Vehicle: "..tostring(request_vehicle().Name).."!", 5) end
 
     if EnableRainbowLights then
         if not Player_Vehicle then
             getgenv().spamming_rgb_car_lights = false
             getgenv().TheRainbowLights:Set(false)
-            return getgenv().notify("Failure", "Please spawn a Vehicle first.", 6)
+            return getgenv().notify("Error", "Please spawn a Vehicle first.", 6)
         end
         wait()
         getgenv().spamming_rgb_car_lights = true
@@ -1318,40 +1605,38 @@ end
 getgenv().GetInCar = Tab3:CreateButton({
 Name = "Get In Car (from anywhere, spawn vehicle first)",
 Callback = function()
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
+    local prompt_re = find_RE("prompt")
 
-    if not ReplicatedStorage:FindFirstChild("PromptEvent") then
-        return notify("Failure:", "PromptEvent doesn't exist in ReplicatedStorage! (Patched?)", 5)
+    if not prompt_re then
+        return notify("Error", "PromptEvent doesn't exist in ReplicatedStorage! (Patched?)", 5)
     end
-
     if not Player_Vehicle then
-        return getgenv().notify("Failure", "Please spawn a Vehicle first.", 6)
+        return getgenv().notify("Error", "Please spawn a Vehicle first.", 6)
     end
-    wait()
-    if Character and Character:FindFirstChild("Humanoid") and Character:FindFirstChild("HumanoidRootPart") then
+
+    if Character and Character:FindFirstChild("Humanoid") then
         Character:PivotTo(Player_Vehicle:GetPivot())
     else
-        notify("Hang On:", "It seems as if your character has not loaded yet!", 5)
-        repeat wait() until Character and Character:FindFirstChild("Humanoid") and Character:FindFirstChild("HumanoidRootPart")
+        notify("Info", "It seems as if your character has not loaded yet!", 5)
+        repeat task.wait() until Character and Character:FindFirstChild("Humanoid") and Character:FindFirstChild("HumanoidRootPart")
         wait(0.3)
         Character:PivotTo(Player_Vehicle:GetPivot())
     end
-    wait(0.3)
+
     local args = {
         [1] = "DriveRequest",
-        [2] = request_vehicle():FindFirstChild("DriveSeat") or request_vehicle():WaitForChild("DriveSeat")
+        [2] = Player_Vehicle:FindFirstChild("DriveSeat") or Player_Vehicle:WaitForChild("DriveSeat")
     }
 
-    ReplicatedStorage:WaitForChild("PromptEvent"):FireServer(unpack(args))
+    prompt_re:FireServer(unpack(args))
+    wait(0.3)
+    local args = {
+        "TurnOn",
+        "Car"
+    }
+
+    Player_Vehicle:WaitForChild("IgnitionSoundUpdate", 10):FireServer(unpack(args))
 end,})
 
 getgenv().PVPEnabler = Tab2:CreateToggle({
@@ -1360,49 +1645,98 @@ CurrentValue = false,
 Flag = "ThePVPSwitchToggle",
 Callback = function(pvpEnabled)
     if pvpEnabled then
+        local pvp_manager_re = find_RE("pvpmanager")
+        local pvp_gui = PlayerGui:FindFirstChild("pvpUI", true) or PlayerGui:WaitForChild("pvpUI", 5)
+        local pvp_b
+
+        if pvp_gui and pvp_gui:IsA("ScreenGui") then
+            for _, v in ipairs(pvp_gui:GetDescendants()) do
+                if v:IsA("TextButton") then
+                    pvp_b = v
+                end
+            end
+        else
+            getgenv().is_pvp_on = false
+            getgenv().PVPEnabler:Set(false)
+            return getgenv().notify("Error", "pvpB TextButton not found, try rejoining (patched?).", 7)
+        end
+
         if not HumanoidRootPart:FindFirstChild("jobCharUI") then
             getgenv().PVPEnabler:Set(false)
-            return getgenv().notify("Failure", "jobCharUI not found, try resetting.", 5)
+            return getgenv().notify("Error", "jobCharUI not found, try resetting.", 5)
         end
 
         if not HumanoidRootPart:FindFirstChild("jobCharUI"):FindFirstChild("Frame") then
-            return notify("Failure:", "Frame was not found inside jobCharUI! (Patched?)", 5)
+            return notify("Error", "Frame was not found inside jobCharUI! (Patched?)", 5)
         end
 
-        if not ReplicatedStorage:FindFirstChild("pvpManagerEvent") then
-            return notify("Failure:", "'pvpManagerEvent' RemoteEvent was not found in ReplicatedStorage! (Patched?)", 5)
+        if not pvp_manager_re then
+            return notify("Error", "'pvpManagerEvent' RemoteEvent was not found in ReplicatedStorage! (Patched?)", 5)
         end
 
         if not PlayerGui:FindFirstChild("pvpUI") then
-            return notify("Failure:", "pvpUI was not found in PlayerGui! (Patched?)", 5)
+            return notify("Error", "pvpUI was not found in PlayerGui! (Patched?)", 5)
         end
 
         if not PlayerGui:FindFirstChild("pvpUI"):FindFirstChild("pvpF") then
-            return notify("Failure:", "pvpF was not found inside pvpUI! (Patched?)", 5)
+            return notify("Error", "pvpF was not found inside pvpUI! (Patched?)", 5)
+        end
+        getgenv().is_pvp_on = true
+
+        if pvp_manager_re and pvp_manager_re:IsA("RemoteEvent") then
+            local pvp_check
+
+            for _, v in ipairs(HumanoidRootPart:GetDescendants()) do
+                if v.Name:lower():find("pvpcheck") then
+                    pvp_check = v
+                end
+            end
+            wait(0.2)
+            local args = {
+                [1] = pvp_check
+            }
+
+            pvp_manager_re:FireServer(unpack(args))
         end
         wait()
-        getgenv().is_pvp_on = true
-        wait()
-        local args = {
-            [1] = HumanoidRootPart:FindFirstChild("jobCharUI"):FindFirstChild("Frame"):FindFirstChild("pvpCheck")
-        }
-
-        ReplicatedStorage:WaitForChild("pvpManagerEvent"):FireServer(unpack(args))
-        wait()
-        PlayerGui:FindFirstChild("pvpUI"):FindFirstChild("pvpF"):FindFirstChild("pvpB").Text = "DISABLE PVP"
+        pvp_b.Text = "DISABLE PVP"
     else
-        getgenv().is_pvp_on = false
-        wait()
-        local args = {
-            [1] = HumanoidRootPart:FindFirstChild("jobCharUI"):FindFirstChild("Frame"):FindFirstChild("pvpCheck")
-        }
+        local pvp_manager_re = find_RE("pvpmanager")
+        local pvp_gui = PlayerGui:FindFirstChild("pvpUI", true) or PlayerGui:WaitForChild("pvpUI", 5)
+        local pvp_b
 
-        ReplicatedStorage:WaitForChild("pvpManagerEvent"):FireServer(unpack(args))
+        if pvp_gui and pvp_gui:IsA("ScreenGui") then
+            for _, v in ipairs(pvp_gui:GetDescendants()) do
+                if v:IsA("TextButton") then
+                    pvp_b = v
+                end
+            end
+        else
+            getgenv().is_pvp_on = false
+            return getgenv().notify("Error", "pvpB TextButton not found, try rejoining (patched?).", 7)
+        end
+
+        getgenv().is_pvp_on = false
+        if pvp_manager_re and pvp_manager_re:IsA("RemoteEvent") then
+            local pvp_check
+
+            for _, v in ipairs(HumanoidRootPart:GetDescendants()) do
+                if v.Name:lower():find("pvpcheck") then
+                    pvp_check = v
+                end
+            end
+            wait(0.3)
+            local args = {
+                [1] = pvp_check
+            }
+
+            pvp_manager_re:FireServer(unpack(args))
+        end
         wait(0.1)
-        PlayerGui:FindFirstChild("pvpUI"):FindFirstChild("pvpF"):FindFirstChild("pvpB").Text = "ENABLE PVP"
+        pvp_b.Text = "ENABLE PVP"
     end
 end,})
-wait()
+
 if getgenv().is_pvp_on or getgenv().is_pvp_on == true then
     getgenv().PVPEnabler:Set(false)
     getgenv().is_pvp_on = false
@@ -1415,36 +1749,18 @@ end
 getgenv().TPToCar = Tab6:CreateButton({
 Name = "Teleport To Car",
 Callback = function()
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
     local Player_Vehicle = request_vehicle()
 
     if not Player_Vehicle then
-        return getgenv().notify("Failure", "Please spawn a Vehicle first.", 5)
+        return getgenv().notify("Error", "Please spawn a Vehicle first.", 5)
     end
-    wait()
+
     if Character and Character:FindFirstChild("HumanoidRootPart") then
         Character:PivotTo(request_vehicle():GetPivot())
     end
 end,})
 
-local function change_car_settings(setting, new_value)
-    local function request_vehicle()
-        for _, v in pairs(Cars:GetChildren()) do
-            if v:FindFirstChild('PlayerLoc').Value == LocalPlayer then
-                return v
-            end
-        end
-        return nil
-    end
-    wait(0.1)
+--[[local function change_car_settings(setting, new_value)
     local Player_Vehicle = request_vehicle()
     local requireSupported = true
     local success, result = pcall(function()
@@ -1456,29 +1772,25 @@ local function change_car_settings(setting, new_value)
     end
 
     if not requireSupported then
-        warn("Your exploit does not support 'require' for non-Roblox ModuleScripts.")
-        return getgenv().notify("Failure", "Your exploit does not support 'require'.", 5)
+        return getgenv().notify("Error", "Your exploit does not support 'require'.", 5)
     end
 
     if not Player_Vehicle then
-        warn("No car found for the player.")
-        return getgenv().notify("Failure", "Please spawn a Vehicle first.", 5)
+        return getgenv().notify("Error", "Please spawn a Vehicle first.", 5)
     end
 
     local moduleScript = Player_Vehicle:FindFirstChild("A-Chassis Tune")
-    wait()
+
     if not moduleScript then
-        warn("No ModuleScript found in Vehicle.")
-        return getgenv().notify("Failure", "Unable to properly allocate ModuleScript inside of Vehicle.", 7)
+        return getgenv().notify("Error", "Unable to properly allocate ModuleScript inside of Vehicle.", 7)
     end
 
     local vehicle_configuration = nil
     success, vehicle_configuration = pcall(require, moduleScript)
     if not success then
-        warn("Failed to require the ModuleScript: ", vehicle_configuration)
-        return getgenv().notify("Failure", "Unknown error occurred when rying to pcall vehicle configuration.", 7)
+        return getgenv().notify("Error", "Unknown error occurred when rying to pcall vehicle configuration.", 7)
     end
-    wait()
+
     vehicle_configuration.TCSEnabled = true
     vehicle_configuration.TCSThreshold = 3
     vehicle_configuration.TCSGradient = 3
@@ -1487,31 +1799,15 @@ local function change_car_settings(setting, new_value)
     vehicle_configuration.RDiffPower = 15
     vehicle_configuration.ABSEnabled = false
     vehicle_configuration[setting] = new_value
-end
+end--]]
 
 getgenv().ApplyBestModSettings = Tab4:CreateButton({
 Name = "Apply Fastest/Best Car Mods",
 Callback = function()
-    change_car_settings("TCSEnabled", true)
-    change_car_settings("SpeedEngage", 1000)
-    change_car_settings("TCSThreshold", 3)
-    change_car_settings("TCSGradient", 3)
-    change_car_settings("TCSLimit", 0.1)
-    change_car_settings("RDiffSlipThres", 30)
-    change_car_settings("RDiffPower", 15)
-    change_car_settings("ABSEnabled", false)
-    change_car_settings("BrakeForce", 7500)
-    change_car_settings("BrakeBias", 25)
-    change_car_settings("PBrakeForce", 150000)
-    change_car_settings("EBrakeForce", 50000)
-    change_car_settings("Horsepower", 4000)
-    change_car_settings("RPreCompress", 0.9)
-    change_car_settings("FPreCompress", 0.9)
-    change_car_settings("FinalDrive", 350)
-    change_car_settings("RevAccel", 3000)
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/LegoGameSploit/Roblox_Scripts/main/swflrel.lua"))()
 end,})
 
-getgenv().ModifySpeedEngage = Tab4:CreateSlider({
+--[[getgenv().ModifySpeedEngage = Tab4:CreateSlider({
 Name = "Modify Speed Engage",
 Range = {1, 1000},
 Increment = 1,
@@ -1809,11 +2105,18 @@ CurrentValue = 1.2,
 Flag = "inclineCompControl",
 Callback = function(newInclineComp)
     change_car_settings("InclineComp", newInclineComp)
-end,})
+end,})--]]
 
 getgenv().Infinite_Yield_Premium = Tab5:CreateButton({
 Name = "Infinite Yield Premium",
 Callback = function()
+    if getgenv().GET_LOADED_IY then
+        return 
+    end
+    if getgenv().IY_LOADED then
+        return getgenv().notify("Error", "You already have Infinite Yield (regular) running, you cannot run this.", 10)
+    end
+
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua', true))()
 end,})
 
@@ -1829,28 +2132,100 @@ Callback = function(New_FOV_Value)
         Workspace.CurrentCamera.FieldOfView = New_FOV_Value
     end
 end,})
-wait()
-LocalPlayer.CameraMaxZoomDistance = 999999
-wait()
-getgenv().checkForGui = function()
-    local player = LocalPlayer
-    local playerGui = PlayerGui
 
-    if not playerGui then
-        return
-    end
-
-    playerGui.ChildAdded:Connect(function(child)
-        if child:IsA("ScreenGui") and child.Name == "FULLSCREEN_GUI" then
-            child:Destroy()
-        end
-    end)
-
-    for _, gui in ipairs(playerGui:GetChildren()) do
-        if gui:IsA("ScreenGui") and gui.Name == "FULLSCREEN_GUI" then
-            gui:Destroy()
-        end
+if LocalPlayer.CameraMaxZoomDistance <= 99999 then
+    getgenv().notify("Info", "Setting CameraMaxZoomDistance...", 5)
+    LocalPlayer.CameraMaxZoomDistance = 999999
+    wait(1)
+    if LocalPlayer.CameraMaxZoomDistance >= 99999 then
+        getgenv().notify("Success", "CameraMaxZoomDistance has been maximized.", 5)
     end
 end
 
-getgenv().checkForGui()
+function Notify(message, duration)
+    local CoreGui = CoreGui or cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+    local TweenService = TweenService or SafeGet("TweenService") or safe_wrapper("TweenService") or cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
+
+    local NotificationGui = Instance.new("ScreenGui")
+    NotificationGui.Name = "CustomErrorGui"
+    NotificationGui.ResetOnSpawn = false
+    NotificationGui.Parent = CoreGui
+    duration = duration or 5
+
+    local Frame = Instance.new("Frame")
+    Frame.Name = "ErrorMessage"
+    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BackgroundTransparency = 0.3
+    Frame.BorderSizePixel = 0
+    Frame.Size = UDim2.new(0, 500, 0, 120)
+    Frame.Position = UDim2.new(0, 20, 0, 100)
+    Frame.Parent = NotificationGui
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 10)
+    UICorner.Parent = Frame
+
+    local Icon = Instance.new("ImageLabel")
+    Icon.Name = "ErrorIcon"
+    Icon.AnchorPoint = Vector2.new(0, 0.5)
+    Icon.BackgroundTransparency = 1
+    Icon.Position = UDim2.new(0, 15, 0.5, -25)
+    Icon.Size = UDim2.new(0, 50, 0, 50)
+    Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
+    Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+    Icon.Parent = Frame
+
+    local Label = Instance.new("TextLabel")
+    Label.Name = "ErrorText"
+    Label.BackgroundTransparency = 1
+    Label.Position = UDim2.new(0, 80, 0, 10)
+    Label.Size = UDim2.new(1, -90, 1, -20)
+    Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
+    Label.Text = message
+    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Label.TextSize = 20
+    Label.TextWrapped = true
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.TextYAlignment = Enum.TextYAlignment.Top
+    Label.Parent = Frame
+
+    Frame.BackgroundTransparency = 1
+    Icon.ImageTransparency = 1
+    Label.TextTransparency = 1
+    TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
+    TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
+    TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+
+    task.delay(duration, function()
+        if Frame and Frame.Parent then
+            TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+            TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+            task.wait(0.35)
+            Frame:Destroy()
+            NotificationGui:Destroy()
+        end
+    end)
+end
+
+task.spawn(function()
+    while getgenv().ConstantUpdate_Checker_Live do
+        task.wait(1)
+
+        local success, latestVersionInfo = pcall(function()
+            local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Script_Versions_JSON?cachebust=" .. tick())
+            return HttpService:JSONDecode(versionJson)
+        end)
+
+        if success and latestVersionInfo then
+            if Script_Version ~= latestVersionInfo.Southwest_Florida_Hub_Version then
+                getgenv().ConstantUpdate_Checker_Live = false
+                Notify("[SWFL HUB]: do NOT rejoin! An update is now out! Update version: "..tostring(latestVersionInfo.Southwest_Florida_Hub_Version).." | re-executing automatically...", 30)
+                getgenv().SouthwestFlorida_Hub_Executed = false
+                wait(3)
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Southwest_Florida.lua'))()
+                break
+            end
+        end
+    end
+end)
