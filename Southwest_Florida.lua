@@ -564,97 +564,107 @@ for _, team in pairs(Teams:GetChildren()) do
 end
 wait(0.3)
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary'))()
-getgenv().job_toggled = getgenv().job_toggled or false
-getgenv().job_connections = getgenv().job_connections or {}
-getgenv().job_script_ref = getgenv().job_script_ref or nil
+getgenv().job_hooked = getgenv().job_hooked or false
+getgenv().job_hook_map = getgenv().job_hook_map or {}
+getgenv().job_respawn_conn = getgenv().job_respawn_conn or nil
+getgenv().job_humanoid_died_conn = getgenv().job_humanoid_died_conn or nil
 local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local local_player = players.LocalPlayer
 local get_conns_func = getconnections or get_signal_cons
-
-local function get_char(plr)
+local function get_char_local(plr)
     return plr.Character or plr:FindFirstChild("pChar") or plr:WaitForChild("Character", 3)
 end
 
-local function save_connections(signal, list)
-    for _, v in ipairs(get_conns_func(signal)) do
-        table.insert(list, v)
-    end
-end
-
-local function disable_list(list)
-    for _, v in ipairs(list) do
-        pcall(function()
-            v:Disconnect()
-        end)
-    end
-end
-
-local function restore_list(list)
-    for _, v in ipairs(list) do
-        pcall(function()
-            if v and v.Connected == false and v.Function then
-                v:Connect(v.Function)
-            end
-        end)
-    end
-end
-
-local function break_job()
-    if getgenv().job_toggled then return end
-
-    local char = get_char(local_player)
+local function apply_hooks()
+    if getgenv().job_hooked then return end
+    local char = get_char_local(local_player)
     if not char then return end
-
-    local s = char:FindFirstChild("jobCheck", true)
-    if not s then return end
 
     local hrp = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hrp or not hum then return end
 
-    getgenv().job_connections = {}
+    getgenv().job_hook_map = {}
 
-    save_connections(hrp.Touched, getgenv().job_connections)
-    save_connections(hrp.TouchEnded, getgenv().job_connections)
-    save_connections(hum.HealthChanged, getgenv().job_connections)
+    for _, con in ipairs(get_conns_func(hrp.Touched)) do
+        if con and con.Function then
+            local original = hookfunction(con.Function, function(...)
+                return original(...)
+            end)
+            getgenv().job_hook_map[con] = original
+        end
+    end
 
-    disable_list(getgenv().job_connections)
+    for _, con in ipairs(get_conns_func(hrp.TouchEnded)) do
+        if con and con.Function then
+            local original = hookfunction(con.Function, function(...)
+                return original(...)
+            end)
+            getgenv().job_hook_map[con] = original
+        end
+    end
 
-    getgenv().job_script_ref = s
-    pcall(function() s.Disabled = true end)
+    for _, con in ipairs(get_conns_func(hum.HealthChanged)) do
+        if con and con.Function then
+            local original = hookfunction(con.Function, function(...)
+                return original(...)
+            end)
+            getgenv().job_hook_map[con] = original
+        end
+    end
 
-    getgenv().job_toggled = true
+    getgenv().job_hooked = true
+    if g and g.notify then g.notify("Success", "job spoof active.", 5) end
+
+    if getgenv().job_humanoid_died_conn then
+        pcall(function() getgenv().job_humanoid_died_conn:Disconnect() end)
+        getgenv().job_humanoid_died_conn = nil
+    end
+    getgenv().job_humanoid_died_conn = hum.Died:Connect(function()
+        if g and g.notify then g.notify("Info", "Humanoid died, hooks will reapply on respawn.", 5) end
+    end)
 end
 
-local function restore_job()
-    if not getgenv().job_toggled then return end
+local function remove_hooks()
+    if not getgenv().job_hooked then return end
 
-    local char = get_char(local_player)
-    if not char then return end
-
-    if getgenv().job_script_ref then
+    for con, original in pairs(getgenv().job_hook_map) do
         pcall(function()
-            getgenv().job_script_ref.Disabled = false
+            hookfunction(con.Function, original)
         end)
     end
 
-    restore_list(getgenv().job_connections)
+    getgenv().job_hook_map = {}
+    getgenv().job_hooked = false
 
-    getgenv().job_connections = {}
-    getgenv().job_script_ref = nil
-    getgenv().job_toggled = false
+    if g and g.notify then g.notify("Info", "job spoof disabled.", 5) end
+
+    if getgenv().job_humanoid_died_conn then
+        pcall(function() getgenv().job_humanoid_died_conn:Disconnect() end)
+        getgenv().job_humanoid_died_conn = nil
+    end
 end
 
 getgenv().job_toggle = getgenv().job_toggle or function(state)
     if state then
-        break_job()
-        if g.notify then
-            g.notify("Success", "job status spoofed.", 5)
+        apply_hooks()
+
+        if getgenv().job_respawn_conn then
+            pcall(function() getgenv().job_respawn_conn:Disconnect() end)
+            getgenv().job_respawn_conn = nil
         end
+        getgenv().job_respawn_conn = local_player.CharacterAdded:Connect(function()
+            wait(0.1)
+            if getgenv().job_hooked then
+                apply_hooks()
+            end
+        end)
     else
-        restore_job()
-        if g.notify then
-            g.notify("Success", "job status restored.", 5)
+        remove_hooks()
+
+        if getgenv().job_respawn_conn then
+            pcall(function() getgenv().job_respawn_conn:Disconnect() end)
+            getgenv().job_respawn_conn = nil
         end
     end
 end
