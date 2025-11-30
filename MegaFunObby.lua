@@ -389,14 +389,14 @@ function skip_stage()
     local Next_Stage_Part = current_stage_num and all_stages:FindFirstChild(tostring(current_stage_num + 1))
 
     if current_stage_num and Next_Stage_Part then
-        getgenv().HumanoidRootPart.CFrame = Next_Stage_Part.CFrame
+        getgenv().HumanoidRootPart.CFrame = Next_Stage_Part.CFrame + Vector3.new(0, 2, 0)
     end
 end
 
 function auto_skip_stages(toggle)
     if toggle == true then
         getgenv().auto_skipping_levels = true
-        
+
         task.spawn(function()
             while getgenv().auto_skipping_levels == true do
             task.wait(0)
