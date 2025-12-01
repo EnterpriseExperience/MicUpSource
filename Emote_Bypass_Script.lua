@@ -3,14 +3,6 @@
 -- [[ Loads ALL Roblox emotes (can be heavy though, but works). ]] --
 -- [[ Does lag a little when loading, but that's just because Roblox's UGC emotes system. ]] --
 
-if getgenv().FreeEmotes_GUI then
-	if getgenv().notify then
-		return getgenv().notify("Warning", "Free Emotes GUI is already loaded!", 5)
-	else
-		return 
-	end
-end
-
 local IsStudio = false
 local ContextActionService = game:GetService("ContextActionService")
 local HttpService = game:GetService("HttpService")
@@ -183,8 +175,6 @@ createsort(4, "Alphabetically Last", "alphabeticlast")
 createsort(5, "Highest Price", "highestprice")
 createsort(6, "Lowest Price", "lowestprice")
 
-getgenv().notify("Success", "Welcome to the NEW - [ Free Emote GUI ] - system.", 10)
-
 local SortButton = Instance.new("TextButton")
 SortButton.BorderSizePixel = 0
 SortButton.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -270,8 +260,6 @@ local function LoadEmotes()
 	local collected = {}
 	Emotes = {}
 
-	getgenv().notify("Info", "Searching with search modes...", 5)
-
 	for _, sortType in ipairs(getgenv().search_modes) do
 		local params = CatalogSearchParams.new()
 		params.AssetTypes = {Enum.AvatarAssetType.EmoteAnimation}
@@ -292,8 +280,6 @@ local function LoadEmotes()
 		end
 
 		local catalogPage = getCatalogPage()
-
-		getgenv().notify("Success", "SortType: "..tostring(sortType).." has been executed.", 5)
 
 		while true do
 			local page = catalogPage:GetCurrentPage()
@@ -318,8 +304,6 @@ local function LoadEmotes()
 		end
 	end
 
-	getgenv().notify("Info", "Listing all emotes...", 5)
-
 	local list = {}
 	for _, emote in pairs(collected) do
 		table.insert(list, emote)
@@ -329,15 +313,9 @@ local function LoadEmotes()
 		AddEmote(em.Name, em.Id, em.Price)
 	end
 
-	getgenv().notify("Info", "Adding default emotes...", 3)
-
 	AddEmote("Arm Wave", 5915773155)
 	AddEmote("Head Banging", 5915779725)
 	AddEmote("Face Calisthenics", 9830731012)
-
-	getgenv().notify("Success", "Added default emotes.", 3)
-	wait(0.5)
-	getgenv().notify("Info", "Adding ALL emotes found... (will lag, please wait).", 10)
 
 	table.sort(Emotes, function(a,b) return a.index < b.index end)
 	for i,v in ipairs(Emotes) do v.sort.newestfirst = i end
@@ -352,8 +330,6 @@ local function LoadEmotes()
 	table.sort(Emotes, function(a,b) return a.price > b.price end)
 	for i,v in ipairs(Emotes) do v.sort.highestprice = i end
 
-	wait(6)
-	getgenv().notify("Success", "Successfully sorted, loaded, added and initialized ALL Roblox emotes.", 15)
 	pcall(function()
 		if Loading then
 			Loading:Destroy()
@@ -361,7 +337,6 @@ local function LoadEmotes()
 	end)
 end
 wait(0.2)
-getgenv().notify("Info", "Loading ALL Roblox emotes... (Please wait!).", 60)
 LoadEmotes()
 wait()
 local RefreshButton = Instance.new("TextButton")
@@ -400,7 +375,7 @@ end)
 
 local function openemotes(name, state, input)
 	if state == Enum.UserInputState.Begin then
-		ScreenGui.Enabled = not ScreenGui.Enabled
+		ScreenGui.Enabled = false
 	end
 end
 
@@ -425,6 +400,7 @@ end
 local inputconnect
 ScreenGui:GetPropertyChangedSignal("Enabled"):Connect(function()
 	if ScreenGui.Enabled == true then
+		ScreenGui.Enabled = false
 		EmoteName.Text = "Select an Emote"
 		SearchBar.Text = ""
 		SortFrame.Visible = false
@@ -479,8 +455,6 @@ local function SendNotification(title, text)
 	end
 end
 
-task.wait(.3)
-loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/foundation_intervention'))()
 task.wait()
 local function HumanoidPlayEmote(humanoid, name, id)
 	if IsStudio then
@@ -491,24 +465,24 @@ local function HumanoidPlayEmote(humanoid, name, id)
 end
 
 local function PlayEmote(name: string, id: IntValue)
-    -- ScreenGui.Enabled = false -- This line is now commented out so the panel won't close.
-    SearchBar.Text = ""
-    local Humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-    local Description = Humanoid and Humanoid:FindFirstChildOfClass("HumanoidDescription")
-    if not Description then
-        return
-    end
-    if LocalPlayer.Character.Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
-        local succ, err = pcall(function()
-            HumanoidPlayEmote(Humanoid, name, id)
-        end)
-        if not succ then
-            Description:AddEmote(name, id)
-            HumanoidPlayEmote(Humanoid, name, id)
-        end
-    else
-        SendNotification("r6? lol", "you gotta be r15 dude")
-    end
+	ScreenGui.Enabled = false -- This line is now commented out so the panel won't close.
+	SearchBar.Text = ""
+	local Humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+	local Description = Humanoid and Humanoid:FindFirstChildOfClass("HumanoidDescription")
+	if not Description then
+		return
+	end
+	if LocalPlayer.Character.Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
+		local succ, err = pcall(function()
+			HumanoidPlayEmote(Humanoid, name, id)
+		end)
+		if not succ then
+			Description:AddEmote(name, id)
+			HumanoidPlayEmote(Humanoid, name, id)
+		end
+	else
+		notify("Warning", "You need to be R15 to play Emotes (bruh?).", 5)
+	end
 end
 
 local function WaitForChildOfClass(parent, class)
@@ -521,7 +495,7 @@ end
 
 local function IsFileFunc(...)
 	if IsStudio then
-		return
+		return 
 	elseif isfile then
 		return isfile(...)
 	end
@@ -529,7 +503,7 @@ end
 
 local function WriteFileFunc(...)
 	if IsStudio then
-		return
+		return 
 	elseif writefile then
 		return writefile(...)
 	end
@@ -537,7 +511,7 @@ end
 
 local function ReadFileFunc(...)
 	if IsStudio then
-		return
+		return 
 	elseif readfile then
 		return readfile(...)
 	end
@@ -569,7 +543,6 @@ if not IsStudio then
 		WriteFileFunc("FavoritedEmotes.txt", HttpService:JSONEncode(FavoritedEmotes))
 	end
 end
-
 
 local function CharacterAdded(Character)
 	for i,v in pairs(Frame:GetChildren()) do
