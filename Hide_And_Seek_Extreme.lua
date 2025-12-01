@@ -1,57 +1,10 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
-local g = getgenv() or _G
-
 if not getgenv().GlobalEnvironmentFramework_Initialized then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
     wait(0.1)
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
-
-getgenv().Service_Wrap = getgenv().Service_Wrap or function(service)
-    if cloneref then
-        return cloneref(game:GetService(service))
-    else
-        return game:GetService(service)
-    end
-end
-wait(0.5)
-local function init_services()
-    local services = {
-        "Players",
-        "Workspace",
-        "Lighting",
-        "ReplicatedStorage",
-        "TweenService",
-        "RunService",
-        "MaterialService",
-        "ReplicatedFirst",
-        "Teams",
-        "StarterPack",
-        "StarterPlayer",
-        "VoiceChatInternal",
-        "VoiceChatService",
-        "CoreGui",
-        "SoundService",
-        "StarterGui",
-        "MarketplaceService",
-        "TeleportService",
-        "Chat",
-        "AssetService",
-        "HttpService",
-        "UserInputService",
-        "TextChatService",
-        "ContextActionService",
-        "GuiService",
-        "PhysicsService"
-    }
-
-    for _, serviceName in pairs(services) do
-        getgenv()[serviceName] = cloneref and cloneref(game:GetService(serviceName)) or game:GetService(serviceName)
-    end
-end
-
-init_services()
 
 local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/Turtle_UI_Remake.lua"))()
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
@@ -384,32 +337,9 @@ getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv
 getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
 wait(0.5)
 local Workspace = getgenv().Workspace
-local Players = getgenv().Players
 local LocalPlayer = getgenv().LocalPlayer or getgenv().Players.LocalPlayer
 local ReplicatedStorage = getgenv().ReplicatedStorage
 local ws = getgenv().Workspace
-
-local function LocalPlayer_Loaded()
-    local player = Players.LocalPlayer
-    if not player then
-        repeat task.wait() until Players.LocalPlayer
-        player = Players.LocalPlayer
-    end
-
-    if not player.Character or not player.Character:FindFirstChild("Humanoid") then
-        player.CharacterAdded:Wait()
-        repeat task.wait() until player.Character:FindFirstChild("Humanoid")
-    end
-end
-
-local function render_safe()
-   RunService.RenderStepped:Wait()
-   task.wait(0.2)
-end
-
-LocalPlayer_Loaded()
-render_safe()
-
 local Game_Data = ReplicatedStorage:FindFirstChild("GameData")
 local It_Val = Game_Data:FindFirstChild("It")
 wait(0.2)
@@ -498,9 +428,8 @@ end
 local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes", true) or ReplicatedStorage:WaitForChild("Remotes", 5)
 local Play_Sound_Others_RE = Remotes and Remotes:FindFirstChild("PlaySoundOthers") or Remotes:WaitForChild("PlaySoundOthers", 5)
 local espTransparency = 0.3
-local Players = getgenv().Players or getgenv().Service_Wrap("Players") or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local RunService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-local CoreGui = getgenv().Service_Wrap("CoreGui") or game:GetService("CoreGui")
+local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer or game.Players.LocalPlayer
 
 local function round(num, numDecimalPlaces)
@@ -596,7 +525,6 @@ local Cooldown_Time = 30
 local Cooldown_End_Time = 0
 
 function Try_To_predict_IT_Plr()
-    local Players = getgenv().Players
     local LocalPlayer = getgenv().LocalPlayer
 
     if Is_On_Cooldown then
@@ -669,86 +597,12 @@ function Try_To_predict_IT_Plr()
     end)
 end
 
-local players = game:GetService("Players")
+local players = Players
 local run_service = game:GetService("RunService")
 local local_player = players.LocalPlayer
 
-getgenv().ESPenabled = false
-getgenv().ESP_Objects = {}
-getgenv().ESP_Trash = {}
-
 local function is_it(p)
     return is_player_it and is_player_it(p)
-end
-
-local function create_highlight(p)
-    if getgenv().ESP_Objects[p] then return end
-    if not p.Character then return end
-    local h = Instance.new("Highlight")
-    h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-    h.FillTransparency = 1
-    h.Adornee = p.Character
-    h.OutlineColor = is_it(p) and Color3.fromRGB(0,150,255) or Color3.fromRGB(255,0,0)
-    h.Parent = p.Character
-    getgenv().ESP_Objects[p] = h
-end
-
-local function remove_highlight(p)
-    local h = getgenv().ESP_Objects[p]
-    if h then h:Destroy() end
-    getgenv().ESP_Objects[p] = nil
-end
-
-local function esp_loop()
-    if getgenv().ESP_Connection then return end
-    getgenv().ESP_Connection = run_service.RenderStepped:Connect(function()
-        if not getgenv().ESPenabled then return end
-        for p,h in pairs(getgenv().ESP_Objects) do
-            if typeof(p) ~= "Instance" or not p.Character then
-                getgenv().ESP_Trash[p] = true
-            else
-                h.Adornee = p.Character
-                h.OutlineColor = is_it(p) and Color3.fromRGB(0,150,255) or Color3.fromRGB(255,0,0)
-            end
-        end
-        for p,_ in pairs(getgenv().ESP_Trash) do
-            remove_highlight(p)
-            getgenv().ESP_Trash[p] = nil
-        end
-    end)
-end
-
-local function stop_loop()
-    if getgenv().ESP_Connection then
-        getgenv().ESP_Connection:Disconnect()
-        getgenv().ESP_Connection = nil
-    end
-end
-
-function toggle_ESP(state)
-    getgenv().ESPenabled = state
-    if state then
-        for _,p in ipairs(players:GetPlayers()) do
-            if p ~= local_player then create_highlight(p) end
-        end
-        getgenv().ESP_Add = players.PlayerAdded:Connect(function(p)
-            p.CharacterAdded:Wait()
-            if getgenv().ESPenabled then create_highlight(p) end
-        end)
-        getgenv().ESP_Rem = players.PlayerRemoving:Connect(function(p)
-            getgenv().ESP_Trash[p] = true
-        end)
-        esp_loop()
-    else
-        for p,_ in pairs(getgenv().ESP_Objects) do
-            remove_highlight(p)
-        end
-        getgenv().ESP_Objects = {}
-        getgenv().ESP_Trash = {}
-        if getgenv().ESP_Add then getgenv().ESP_Add:Disconnect() end
-        if getgenv().ESP_Rem then getgenv().ESP_Rem:Disconnect() end
-        stop_loop()
-    end
 end
 
 function pivot_to_plr(Player)
@@ -956,17 +810,8 @@ Players_Tab:Toggle("Timer Flasher", false, function(flashing)
     end
 end)
 
-Players_Tab:Toggle("Player ESP", false, function(esp_enabled)
-    if esp_enabled then
-        toggle_ESP(true)
-    else
-        toggle_ESP(false)
-    end
-end)
-
 Players_Tab:Button("Whos It", function()
     local stored = tostring(It_Val.Value)
-    local players = Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
     local plr = players:FindFirstChild(stored)
 
     if plr then
@@ -989,7 +834,6 @@ end)
 Players_Tab:Button("View IT", function()
     local Cur_Camera = getgenv().Camera or getgenv().Workspace.CurrentCamera or workspace.CurrentCamera
     local stored = tostring(It_Val.Value)
-    local players = Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
     local plr = players:FindFirstChild(stored)
     local their_char = plr.Character or get_human(plr) or get_char(plr)
 
