@@ -456,8 +456,9 @@ if not game:IsLoaded() then
 end
 
 local LocalPlayer = Players.LocalPlayer
+
 if IsStudio then
-	ScreenGui.Parent = LocalPlayer.PlayerGui
+	ScreenGui.Parent = LocalPlayer:FindFirstChildOfClass("PlayerGui")
 else
 	ScreenGui.Parent = CoreGui
 end
@@ -478,7 +479,7 @@ local function SendNotification(title, text)
 end
 
 task.wait(.3)
-loadstring(game:HttpGet('https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/foundation_intervention'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/EmotesGUIToggleButton.lua'))()
 task.wait()
 local function HumanoidPlayEmote(humanoid, name, id)
 	if IsStudio then
@@ -489,24 +490,24 @@ local function HumanoidPlayEmote(humanoid, name, id)
 end
 
 local function PlayEmote(name: string, id: IntValue)
-    -- ScreenGui.Enabled = false -- This line is now commented out so the panel won't close.
-    SearchBar.Text = ""
-    local Humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-    local Description = Humanoid and Humanoid:FindFirstChildOfClass("HumanoidDescription")
-    if not Description then
-        return
-    end
-    if LocalPlayer.Character.Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
-        local succ, err = pcall(function()
-            HumanoidPlayEmote(Humanoid, name, id)
-        end)
-        if not succ then
-            Description:AddEmote(name, id)
-            HumanoidPlayEmote(Humanoid, name, id)
-        end
-    else
-        SendNotification("r6? lol", "you gotta be r15 dude")
-    end
+	-- ScreenGui.Enabled = false -- This line is now commented out so the panel won't close.
+	SearchBar.Text = ""
+	local Humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+	local Description = Humanoid and Humanoid:FindFirstChildOfClass("HumanoidDescription")
+	if not Description then
+		return
+	end
+	if LocalPlayer.Character.Humanoid.RigType ~= Enum.HumanoidRigType.R6 then
+		local succ, err = pcall(function()
+			HumanoidPlayEmote(Humanoid, name, id)
+		end)
+		if not succ then
+			Description:AddEmote(name, id)
+			HumanoidPlayEmote(Humanoid, name, id)
+		end
+	else
+		getgenv().notify("Warning", "You need to be R15 to play Emotes.", 10)
+	end
 end
 
 local function WaitForChildOfClass(parent, class)
