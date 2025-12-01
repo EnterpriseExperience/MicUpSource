@@ -6,9 +6,9 @@ end
 
 getgenv().ParkourObbyMenuLoaded = true
 
-local g = getgenv() or _G
+local g = getgenv()
 
-g.Game = cloneref and cloneref(game) or game
+g.Game = game
 
 if not getgenv().GlobalEnvironmentFramework_Initialized then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
@@ -278,18 +278,28 @@ end
 
 function hide_annoying_GUIs(state)
     if state == true then
-        if Groundbar_Frame and Groundbar_Frame:IsA("ImageLabel") then
-            Groundbar_Frame.Visible = false
-        end
-        if Prompt_Skip_Frame and Prompt_Skip_Frame:IsA("ImageLabel") then
-            Prompt_Skip_Frame.Visible = false
-        end
+        getgenv().hiding_annoying_guis = true
+        task.spawn(function()
+            while getgenv().hiding_annoying_guis == true do
+            task.wait(0.1)
+                if Groundbar_Frame and Groundbar_Frame:IsA("ImageLabel") then
+                    Groundbar_Frame.Visible = false
+                end
+                if Prompt_Skip_Frame and Prompt_Skip_Frame:IsA("ImageLabel") then
+                    Prompt_Skip_Frame.Visible = false
+                end
+            end
+        end)
     elseif state == false then
-        if Groundbar_Frame and Groundbar_Frame:IsA("ImageLabel") then
-            Groundbar_Frame.Visible = true
-        end
-        if Prompt_Skip_Frame and Prompt_Skip_Frame:IsA("ImageLabel") then
-            Prompt_Skip_Frame.Visible = true
+        getgenv().hiding_annoying_guis = false
+        wait(1)
+        if not getgenv().hiding_annoying_guis then
+            if Groundbar_Frame and Groundbar_Frame:IsA("ImageLabel") then
+                Groundbar_Frame.Visible = true
+            end
+            if Prompt_Skip_Frame and Prompt_Skip_Frame:IsA("ImageLabel") then
+                Prompt_Skip_Frame.Visible = true
+            end
         end
     else
         return 
