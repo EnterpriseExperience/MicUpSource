@@ -2,29 +2,13 @@ if not game:IsLoaded() then game.Loaded:Wait() end
 
 local g = getgenv() or _G
 
-g.Game = cloneref and cloneref(game) or game
-
 if not getgenv().GlobalEnvironmentFramework_Initialized then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
     wait(0.1)
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
 
-g.get_jobid = function()
-    return game.JobId
-end
-
-g.get_placeid = function()
-    return game.PlaceId
-end
-
-local id = g.get_jobid()
-local place = g.get_placeid()
-
-g.JobID = id
-g.PlaceID = place
-
-g.Service_Wrap = g.Service_Wrap or function(service)
+getgenv().Service_Wrap = getgenv().Service_Wrap or function(service)
     if cloneref then
         return cloneref(game:GetService(service))
     else
@@ -63,7 +47,7 @@ local function init_services()
     }
 
     for _, serviceName in pairs(services) do
-        g[serviceName] = cloneref and cloneref(game:GetService(serviceName)) or game:GetService(serviceName)
+        getgenv()[serviceName] = cloneref and cloneref(game:GetService(serviceName)) or game:GetService(serviceName)
     end
 end
 
@@ -105,14 +89,14 @@ getgenv().randomString = getgenv().randomString or function()
     return table.concat(array)
 end
 
-local cmdp = g.Players or Players or game.Players
+local cmdp = getgenv().Players or Players or game.Players
 local cmdlp = cmdp.LocalPlayer
 
 function findplr(args)
     local tbl = cmdp:GetPlayers()
 
     if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
-        return getgenv().notify("[Error]:", "You cannot target yourself.", 5)
+        return getgenv().notify("Error", "You cannot target yourself.", 5)
     end
 
     if args == "random" then
@@ -236,11 +220,11 @@ function findplr(args)
     end
 end
 
-g.AllClipboards = g.AllClipboards or setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-g.httprequest_Init = g.httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-get_http = g.httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-g.queueteleport = g.queueteleport or (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-queueteleport = g.queueteleport
+getgenv().AllClipboards = getgenv().AllClipboards or setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+getgenv().httprequest_Init = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+getgenv().queueteleport = getgenv().queueteleport or (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+queueteleport = getgenv().queueteleport
 
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -249,7 +233,7 @@ local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 
-g.get_char = g.get_char or function(Player)
+getgenv().get_char = getgenv().get_char or function(Player)
     if not Player or not Player:IsA("Player") then return nil end
 
     local current_char
@@ -286,9 +270,9 @@ g.get_char = g.get_char or function(Player)
     return current_char
 end
 wait(0.5)
-if not g.get_human then
-    g.get_human = function(Player)
-        local char = g.get_char(Player)
+if not getgenv().get_human then
+    getgenv().get_human = function(Player)
+        local char = getgenv().get_char(Player)
         if not char then return nil end
 
         local hum = char:FindFirstChildOfClass("Humanoid")
@@ -320,9 +304,9 @@ if not g.get_human then
     end
 end
 
-if not g.get_root then
-    g.get_root = function(Player)
-        local char = g.get_char(Player)
+if not getgenv().get_root then
+    getgenv().get_root = function(Player)
+        local char = getgenv().get_char(Player)
         if not char then return nil end
 
         local root = char:FindFirstChild("HumanoidRootPart")
@@ -360,9 +344,9 @@ if not g.get_root then
     end
 end
 
-if not g.get_head then
-    g.get_head = function(Player)
-        local char = g.get_char(Player)
+if not getgenv().get_head then
+    getgenv().get_head = function(Player)
+        local char = getgenv().get_char(Player)
         if not char then return nil end
 
         local head = char:FindFirstChild("Head")
@@ -392,64 +376,16 @@ if not g.get_head then
     end
 end
 
-if not getgenv().Players then
-    getgenv().Players = getgenv().Service_Wrap("Players")
-end
-if not getgenv().ReplicatedStorage then
-    getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
-end
-if not getgenv().TextChatService then
-    getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
-end
-if not getgenv().Workspace then
-    getgenv().Workspace = getgenv().Service_Wrap("Workspace")
-end
-if not getgenv().Lighting then
-    getgenv().Lighting = getgenv().Service_Wrap("Lighting")
-end
-
-getgenv().Terrain = getgenv().Terrain or getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
-getgenv().Camera = getgenv().Camera or getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
-getgenv().LocalPlayer = getgenv().LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
-getgenv().Backpack = getgenv().Backpack or getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
-getgenv().PlayerGui = getgenv().PlayerGui or getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-getgenv().PlayerScripts = getgenv().PlayerScripts or getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
-
-local has_hookfunction = typeof(hookfunction) == "function"
-if not has_hookfunction then warn("[ERROR]:", "HOOKFUNCTION UNSUPPORTED!") end
-local has_hookmetamethod = typeof(hookmetamethod) == "function"
-if not has_hookfunction then warn("[ERROR]:", "HOOKMETAMETHOD UNSUPPORTED!") end
-local has_getmetatable = typeof(getmetatable) == "function"
-if not has_hookfunction then warn("[ERROR]:", "GETMETATABLE UNSUPPORTED!") end
-local has_setmetatable = typeof(setmetatable) == "function"
-if not has_hookfunction then warn("[ERROR]:", "SETMETATABLE UNSUPPORTED!") end
-
-if getgenv().advanced_workaround_method == nil then
-    getgenv().advanced_workaround_method = false
-end
-
-print("hookfunction:", has_hookfunction)
-print("hookmetamethod:", has_hookmetamethod)
-print("getmetatable:", has_getmetatable)
-print("setmetatable:", has_setmetatable)
-print("getgenv().advanced_workaround_method:", getgenv().advanced_workaround_method)
-
-if not getgenv().advanced_workaround_method and has_hookfunction and has_hookmetamethod and has_getmetatable then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua"))()
-    wait(0.1)
-    getgenv().advanced_workaround_method = true
-elseif not (has_hookfunction or has_hookmetamethod or has_getmetatable or has_setmetatable) then
-    getgenv().advanced_workaround_method = true
-elseif getgenv().advanced_workaround_method == true then
-    -- [[ do nothing ]] --
-end
+getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
+getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
+getgenv().LocalPlayer = getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
+getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
+getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
 wait(0.5)
 local Workspace = getgenv().Workspace
 local Players = getgenv().Players
 local LocalPlayer = getgenv().LocalPlayer or getgenv().Players.LocalPlayer
-local Character = getgenv().Character
-local HumanoidRootPart = getgenv().HumanoidRootPart
-local Humanoid = getgenv().Humanoid
 local ReplicatedStorage = getgenv().ReplicatedStorage
 local ws = getgenv().Workspace
 
@@ -536,8 +472,8 @@ wait(0.2)
 function find_all_players_whitelist()
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and not WHITELIST[player.Name] then
-            local char = get_char(player)
-            local myChar = getgenv().Character or game.Players.LocalPlayer.Character
+            local char = get_char(player) or player.Character
+            local myChar = getgenv().Character or get_char(LocalPlayer or game.Players.LocalPlayer) or game.Players.LocalPlayer.Character
             if char and myChar and char:FindFirstChild("HumanoidRootPart") and myChar:FindFirstChild("HumanoidRootPart") then
                 myChar:PivotTo(char.HumanoidRootPart.CFrame + Vector3.new(0, 1.5, 0))
                 task.wait(0.2)
@@ -549,8 +485,8 @@ end
 function find_all_players_no_whitelist()
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
-            local char = get_char(player)
-            local myChar = getgenv().Character or game.Players.LocalPlayer.Character
+            local char = get_char(player) or player.Character
+            local myChar = getgenv().Character or get_char(LocalPlayer or game.Players.LocalPlayer) or game.Players.LocalPlayer.Character
             if char and myChar and char:FindFirstChild("HumanoidRootPart") and myChar:FindFirstChild("HumanoidRootPart") then
                 myChar:PivotTo(char:FindFirstChild("HumanoidRootPart").CFrame + Vector3.new(0, 1.5, 0))
                 task.wait(0.2)
@@ -664,204 +600,155 @@ function Try_To_predict_IT_Plr()
     local LocalPlayer = getgenv().LocalPlayer
 
     if Is_On_Cooldown then
-        local time_left = math.ceil(Cooldown_End_Time - tick())
-        if time_left < 1 then time_left = 1 end
-        return getgenv().notify("Warning", "You are on prediction cooldown ("..tostring(time_left).." seconds left).", 10)
+        local t = math.ceil(Cooldown_End_Time - tick())
+        if t < 1 then t = 1 end
+        return getgenv().notify("Warning","You are on prediction cooldown ("..t.." seconds left).",10)
     end
 
     Is_On_Cooldown = true
     Cooldown_End_Time = tick() + Cooldown_Time
 
-    local function create_dice_gui()
-        local screen = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-        screen.Name = "IT_Predictor_GUI"
-        screen.ResetOnSpawn = false
+    local function CreateDiceGui()
+        local Screen = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+        Screen.Name = "IT_Predictor_GUI"
+        Screen.ResetOnSpawn = false
 
-        local frame = Instance.new("Frame", screen)
-        frame.Size = UDim2.new(0, 500, 0, 200)
-        frame.Position = UDim2.new(0.5, 0, 0.5, 0)
-        frame.AnchorPoint = Vector2.new(0.5, 0.5)
-        frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        frame.BackgroundTransparency = 0.1
-        frame.BorderSizePixel = 0
+        local Frame = Instance.new("Frame", Screen)
+        Frame.Size = UDim2.new(0, 700, 0, 340)
+        Frame.Position = UDim2.new(0.5,0,0.5,0)
+        Frame.AnchorPoint = Vector2.new(0.5,0.5)
+        Frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+        Frame.BackgroundTransparency = 0.05
+        Frame.BorderSizePixel = 0
 
-        local label = Instance.new("TextLabel", frame)
-        label.Size = UDim2.new(1, 0, 1, 0)
-        label.TextScaled = true
-        label.BackgroundTransparency = 1
-        label.TextColor3 = Color3.fromRGB(255, 255, 255)
-        label.Font = Enum.Font.GothamBold
-        label.Text = "Rolling Dice..."
+        local Corner = Instance.new("UICorner", Frame)
+        Corner.CornerRadius = UDim.new(0,26)
 
-        return screen, label
+        local Label = Instance.new("TextLabel", Frame)
+        Label.Size = UDim2.new(1,0,1,0)
+        Label.TextScaled = true
+        Label.BackgroundTransparency = 1
+        Label.TextColor3 = Color3.fromRGB(255,255,255)
+        Label.Font = Enum.Font.GothamBold
+        Label.Text = "Rolling Dice..."
+
+        return Screen, Label
     end
 
-    local function get_random_player()
-        local all_players = Players:GetPlayers()
-        if #all_players == 0 then return nil end
-        return all_players[math.random(1, #all_players)]
+    local function GetRandomPlayer()
+        local list = Players:GetPlayers()
+        if #list == 0 then return nil end
+        return list[math.random(1,#list)]
     end
 
-    local gui, label = create_dice_gui()
+    local Gui, Label = CreateDiceGui()
 
-    local roll_times = 15
-    for i = 1, roll_times do
-        local temp_player = get_random_player()
-        if temp_player then
-            label.Text = "🎲 "..tostring(temp_player.DisplayName).." 🎲"
+    for i = 1,15 do
+        local temp = GetRandomPlayer()
+        if temp then
+            Label.Text = "🎲 "..temp.DisplayName.." 🎲"
         else
-            label.Text = "No players..."
+            Label.Text = "No players..."
         end
         wait(0.1 + i * 0.01)
     end
 
-    local predicted_player = get_random_player()
-    if predicted_player and Players:FindFirstChild(predicted_player.DisplayName) then
-        label.Text = "🎯 Predicted IT: "..tostring(predicted_player.DisplayName).." 🎯"
+    local predicted = GetRandomPlayer()
+    if predicted and Players:FindFirstChild(predicted.Name) then
+        Label.Text = "🎯  Predicted IT: "..predicted.DisplayName.."  🎯"
     else
-        label.Text = "⚠️ Prediction Failed (player left?). ⚠️"
+        Label.Text = "⚠️ Prediction Failed (player left?). ⚠️"
     end
 
-    task.delay(3, function()
-        if gui then gui:Destroy() end
+    task.delay(3,function()
+        if Gui then Gui:Destroy() end
     end)
 
-    task.delay(Cooldown_Time, function()
+    task.delay(Cooldown_Time,function()
         Is_On_Cooldown = false
     end)
 end
 
-function ESP(plr)
-	task.spawn(function()
-		for _, v in pairs(CoreGui:GetChildren()) do
-			if v.Name == plr.Name.."_ESP" then
-				v:Destroy()
-			end
-		end
+local players = game:GetService("Players")
+local run_service = game:GetService("RunService")
+local local_player = players.LocalPlayer
 
-		if not plr.Character or plr == LocalPlayer then return end
-		if CoreGui:FindFirstChild(plr.Name.."_ESP") then return end
+getgenv().ESPenabled = false
+getgenv().ESP_Objects = {}
+getgenv().ESP_Trash = {}
 
-		local holder = Instance.new("Folder", CoreGui)
-		holder.Name = tostring(plr.Name).."_ESP"
+local function is_it(p)
+    return is_player_it and is_player_it(p)
+end
 
-        local esp_targ_char = get_char(plr) or plr.Character
+local function create_highlight(p)
+    if getgenv().ESP_Objects[p] then return end
+    if not p.Character then return end
+    local h = Instance.new("Highlight")
+    h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    h.FillTransparency = 1
+    h.Adornee = p.Character
+    h.OutlineColor = is_it(p) and Color3.fromRGB(0,150,255) or Color3.fromRGB(255,0,0)
+    h.Parent = p.Character
+    getgenv().ESP_Objects[p] = h
+end
 
-		repeat task.wait(0.5) until get_root(plr) and esp_targ_char:FindFirstChildOfClass("Humanoid")
+local function remove_highlight(p)
+    local h = getgenv().ESP_Objects[p]
+    if h then h:Destroy() end
+    getgenv().ESP_Objects[p] = nil
+end
 
-		for _, part in ipairs(get_char(plr):GetChildren()) do
-			if part:IsA("BasePart") then
-				local box = Instance.new("BoxHandleAdornment")
-				box.Name = tostring(plr.Name)
-				box.Parent = holder
-				box.Adornee = part
-				box.AlwaysOnTop = true
-				box.ZIndex = 10
-				box.Size = part.Size
-				box.Transparency = espTransparency
-				box.Color = is_player_it(plr) and BrickColor.new("Bright blue") or BrickColor.new("Bright red")
-			end
-		end
+local function esp_loop()
+    if getgenv().ESP_Connection then return end
+    getgenv().ESP_Connection = run_service.RenderStepped:Connect(function()
+        if not getgenv().ESPenabled then return end
+        for p,h in pairs(getgenv().ESP_Objects) do
+            if typeof(p) ~= "Instance" or not p.Character then
+                getgenv().ESP_Trash[p] = true
+            else
+                h.Adornee = p.Character
+                h.OutlineColor = is_it(p) and Color3.fromRGB(0,150,255) or Color3.fromRGB(255,0,0)
+            end
+        end
+        for p,_ in pairs(getgenv().ESP_Trash) do
+            remove_highlight(p)
+            getgenv().ESP_Trash[p] = nil
+        end
+    end)
+end
 
-		if get_head(plr) or get_char(plr):FindFirstChild("Head") then
-			local bb = Instance.new("BillboardGui")
-			local label = Instance.new("TextLabel")
-
-			bb.Adornee = get_head(plr)
-			bb.Name = plr.Name
-			bb.Parent = holder
-			bb.Size = UDim2.new(0, 100, 0, 150)
-			bb.StudsOffset = Vector3.new(0, 1, 0)
-			bb.AlwaysOnTop = true
-
-			label.Parent = bb
-			label.BackgroundTransparency = 1
-			label.Size = UDim2.new(0, 100, 0, 100)
-			label.Position = UDim2.new(0, 0, 0, -50)
-			label.Font = Enum.Font.SourceSansSemibold
-			label.TextSize = 20
-			label.TextStrokeTransparency = 0
-			label.TextYAlignment = Enum.TextYAlignment.Bottom
-			label.ZIndex = 10
-
-			local itGui = Instance.new("BillboardGui")
-			itGui.Name = "IT_Label"
-			itGui.Adornee = plr.Character.Head
-			itGui.Parent = holder
-			itGui.Size = UDim2.new(0, 100, 0, 50)
-			itGui.StudsOffset = Vector3.new(0, 2.5, 0)
-			itGui.AlwaysOnTop = true
-
-			local itText = Instance.new("TextLabel", itGui)
-			itText.Size = UDim2.new(1, 0, 1, 0)
-			itText.BackgroundTransparency = 1
-			itText.Text = "Seeker/IT"
-			itText.Font = Enum.Font.SourceSansBold
-			itText.TextSize = 22
-			itText.TextColor3 = Color3.fromRGB(100, 255, 200)
-			itText.TextStrokeTransparency = 0.3
-			itText.Visible = is_player_it(plr)
-
-			local function updateESP()
-				if not getgenv().ESPenabled or not holder or not holder.Parent then return end
-				if get_char(plr) and get_root(plr) and get_human(plr) and Character and get_root(LocalPlayer) and Humanoid then
-					local dist = (HumanoidRootPart.Position - get_root(plr).Position).Magnitude
-					local hp = get_human(plr).Health
-					label.Text = string.format("Name: %s | Health: %s | Studs: %s", plr.Name, round(hp, 1), round(dist, 1))
-
-					local isIt = is_player_it(plr)
-					label.TextColor3 = isIt and Color3.fromRGB(100, 200, 255) or Color3.fromRGB(255, 255, 255)
-					itText.Visible = isIt
-
-					for _, adorn in ipairs(holder:GetChildren()) do
-						if adorn:IsA("BoxHandleAdornment") then
-							adorn.Color = isIt and BrickColor.new("Bright blue") or BrickColor.new("Bright red")
-						end
-					end
-				end
-			end
-
-			local renderLoop = RunService.RenderStepped:Connect(updateESP)
-
-			local function rebuild()
-				renderLoop:Disconnect()
-				holder:Destroy()
-				ESP(plr)
-			end
-
-			plr.CharacterAdded:Connect(function()
-				if getgenv().ESPenabled then rebuild() end
-			end)
-
-			plr:GetPropertyChangedSignal("TeamColor"):Connect(function()
-				if getgenv().ESPenabled then rebuild() end
-			end)
-		end
-	end)
+local function stop_loop()
+    if getgenv().ESP_Connection then
+        getgenv().ESP_Connection:Disconnect()
+        getgenv().ESP_Connection = nil
+    end
 end
 
 function toggle_ESP(state)
-	getgenv().ESPenabled = state
-
-	if state then
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p ~= LocalPlayer then
-				ESP(p)
-			end
-		end
-		Players.PlayerAdded:Connect(function(p)
-			if getgenv().ESPenabled then
-				p.CharacterAdded:Wait()
-				ESP(p)
-			end
-		end)
-	else
-		for _, v in pairs(CoreGui:GetChildren()) do
-			if v.Name:match("_ESP$") then
-				v:Destroy()
-			end
-		end
-	end
+    getgenv().ESPenabled = state
+    if state then
+        for _,p in ipairs(players:GetPlayers()) do
+            if p ~= local_player then create_highlight(p) end
+        end
+        getgenv().ESP_Add = players.PlayerAdded:Connect(function(p)
+            p.CharacterAdded:Wait()
+            if getgenv().ESPenabled then create_highlight(p) end
+        end)
+        getgenv().ESP_Rem = players.PlayerRemoving:Connect(function(p)
+            getgenv().ESP_Trash[p] = true
+        end)
+        esp_loop()
+    else
+        for p,_ in pairs(getgenv().ESP_Objects) do
+            remove_highlight(p)
+        end
+        getgenv().ESP_Objects = {}
+        getgenv().ESP_Trash = {}
+        if getgenv().ESP_Add then getgenv().ESP_Add:Disconnect() end
+        if getgenv().ESP_Rem then getgenv().ESP_Rem:Disconnect() end
+        stop_loop()
+    end
 end
 
 function pivot_to_plr(Player)
@@ -893,7 +780,7 @@ end
 function collect_all_coins(method)
     if method == "no_tp" then
         if not firetouchinterest then
-            return g.notify("Error", "Your exploit does not support 'firetouchinterest'!", 6)
+            return getgenv().notify("Error", "Your exploit does not support 'firetouchinterest'!", 6)
         end
 
         for _, obj in Game_Objects:GetDescendants() do
@@ -1093,6 +980,24 @@ Main:Button("Safe Spot TP", function()
     safe_spot_tp()
 end)
 
+Players_Tab:Button("View Self", function()
+    local Cur_Camera = getgenv().Camera or getgenv().Workspace.CurrentCamera or workspace.CurrentCamera
+
+    Cur_Camera.CameraSubject = getgenv().Character or getgenv().Humanoid or get_char(LocalPlayer or game.Players.LocalPlayer) or get_human(LocalPlayer or game.Players.LocalPlayer) or game.Players.LocalPlayer.Character
+end)
+
+Players_Tab:Button("View IT", function()
+    local Cur_Camera = getgenv().Camera or getgenv().Workspace.CurrentCamera or workspace.CurrentCamera
+    local stored = tostring(It_Val.Value)
+    local players = Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local plr = players:FindFirstChild(stored)
+    local their_char = plr.Character or get_human(plr) or get_char(plr)
+
+    if plr then
+        Cur_Camera.CameraSubject = their_char
+    end
+end)
+
 Extras:Toggle("Visible Spawn", false, function(is_spawn_visible)
     if is_spawn_visible then
         toggle_visible_spawn_box(true)
@@ -1124,7 +1029,9 @@ Players_Tab:Slider("Gravity",0,300,196, function(New_Gravity)
 end)
 
 Players_Tab:Slider("FOV",0,120,70, function(New_FOV)
-    getgenv().Workspace.FieldOfView = New_FOV
+    local camera_current = getgenv().Camera or getgenv().Workspace.CurrentCamera or workspace.CurrentCamera
+
+    camera_current.FieldOfView = New_FOV
 end)
 
 Players_Tab:Box("TP To Player:", function(Target)
