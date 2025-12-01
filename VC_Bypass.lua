@@ -1,68 +1,38 @@
--- [[ This method is OLD, use/see: https://github.com/EnterpriseExperience/MicUpSource/blob/main/New_VC_Bypass.lua ]] --
+-- [[ This method is OLD, use/see: https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/New_VC_Bypass.lua ]] --
 
-local VoiceChat_Internal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
-local VoiceChat_Service = cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService")
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local valid_titles = {
+    success = "Success",
+    info = "Info",
+    warning = "Warning",
+    error = "Error"
+}
 
-if getgenv().voiceChat_Check then
-    return 
-    --warn("Voice Chat already initialized.")
-else
-    getgenv().voiceChat_Check = true 
-    
-    local reconnecting = false
-    local retryDuration = 3
-    local maxAttempts = 250
-    
-    local function unsuspend()
-        if reconnecting then return end
-        reconnecting = true
-    
-        local attempts = 0
-        while attempts < maxAttempts do
-            VoiceChat_Internal:Leave()
-            wait(0.2)
-            VoiceChat_Service:rejoinVoice()
-            wait(0.1)
-            VoiceChat_Service:joinVoice()
-            wait(0.3)
-            VoiceChat_Internal:Leave()
-            task.wait(0.3)
-            VoiceChat_Service:rejoinVoice()
-            VoiceChat_Service:joinVoice()
-            wait(0.5)
-            if VoiceChat_Internal.StateChanged ~= Enum.VoiceChatState.Ended then
-                reconnecting = false
-                return 
-            end
-    
-            attempts = attempts + 1
-            wait(retryDuration)
-        end
-    
-        warn("Failed to reconnect after: " .. maxAttempts .. " attempts.")
-        reconnecting = false
+local function format_title(a)
+    if typeof(a) ~= "string" then
+        return "Info"
     end
-    
-    local function state_changed_connection(_, newState)
-        if newState == Enum.VoiceChatState.Ended and not reconnecting then
-            unsuspend()
-        end
-    end
-    
-    VoiceChat_Internal.StateChanged:Connect(state_changed_connection)
+    local k = a:lower()
+    return valid_titles[k] or "Info"
 end
 
-if VoiceChat_Internal.StateChanged == Enum.VoiceChatState.Ended then
-    VoiceChat_Internal:Leave()
-    VoiceChat_Internal:Leave()
-    task.wait(0.1)
-    VoiceChat_Service:rejoinVoice()
-    VoiceChat_Service:joinVoice()
-    wait()
-    VoiceChat_Internal:Leave()
-    wait(0.2)
-    VoiceChat_Service:rejoinVoice()
-    VoiceChat_Service:joinVoice()
-    task.wait(0.2)
-    VoiceChat_Service:rejoinVoice()
+getgenv().notify = getgenv().notify or function(a,b,c)
+    local t = format_title(a)
+    NotifyLib:External_Notification(t, tostring(b), tonumber(c))
+end
+
+local link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/New_VC_Bypass.lua"
+local clip = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+
+if clip then
+    clip(tostring(link))
+    notify("Success", "Copied New VC bypass code link to clipboard.", 10)
+elseif not clip then
+    if writefile then
+        writefile("New_VC_Bypass_Link.txt", tostring(link))
+        notify("Success", "Saved VC bypass link to Workspace folder.", 10)
+    else
+        notify("Error", "Unable to copy or save file.", 10)
+        return notify("Info", "Link: https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/New_VC_Bypass.lua", 35)
+    end
 end
