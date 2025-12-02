@@ -532,4 +532,6 @@ top_toggle.MouseButton1Click:Connect(function()
     main.Visible = not main.Visible
 end)
 
+main.Visible = false
+
 toggle_btn.Text = (hidden.enabled and "Disable NameHider-V1." or "Enable NameHider-V1.")
