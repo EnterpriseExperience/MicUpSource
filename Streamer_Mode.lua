@@ -66,13 +66,19 @@ function dragify(Frame)
     end)
 end
 
-local core_gui=game:GetService("CoreGui")
-local players_srv=game:GetService("Players")
-local fake_name="@Hidden"
-local fake_image="rbxthumb://type=AvatarHeadShot&id=1&w=420&h=420"
+local core_gui = game:GetService("CoreGui")
+local cg = core_gui
+local players_srv = game:GetService("Players")
+local fake_name = "@Hidden"
+local fake_image = "rbxthumb://type=AvatarHeadShot&id=1&w=420&h=420"
 
 getgenv().hidden_settings=getgenv().hidden_settings or {enabled=false,conns={},players_frame=nil,leaderboard_frame=nil}
 local hidden=getgenv().hidden_settings
+local hidden_person = g.hidden_person or {}
+g.hidden_person = hidden_person
+hidden_person.conns = hidden_person.conns or {}
+local fakeName_fallback = fake_name
+local fakeImg_fallback = fake_image
 
 local function find_settings_root()
     for _,v in ipairs(core_gui:GetDescendants()) do
@@ -221,6 +227,59 @@ local function apply_hidden_to_topframe()
     end
 end
 
+local function card_root()
+    local r = cg:FindFirstChild("RobloxGui")
+    if not r then return nil end
+    for _,v in ipairs(r:GetDescendants()) do
+        local n = v.Name:lower()
+        if n:find("personcard") or n:find("cardcontent") then
+            return v
+        end
+    end
+    return nil
+end
+
+local function fix_card(c)
+    for _,v in ipairs(c:GetDescendants()) do
+        local n = v.Name:lower()
+        if v:IsA("TextLabel") and (n:find("name") or n:find("handle") or n:find("username") or n:find("display")) then
+            v.Text = fakeName_fallback
+            if not hidden_person.conns[v] then
+                hidden_person.conns[v] = v:GetPropertyChangedSignal("Text"):Connect(function()
+                    if hidden.enabled then v.Text = fakeName_fallback end
+                end)
+            end
+        elseif v:IsA("ImageLabel") and (n:find("avatar") or n:find("thumb") or n:find("image")) then
+            v.Image = fakeImg_fallback
+            if not hidden_person.conns[v] then
+                hidden_person.conns[v] = v:GetPropertyChangedSignal("Image"):Connect(function()
+                    if hidden.enabled then v.Image = fakeImg_fallback end
+                end)
+            end
+        end
+    end
+end
+
+g.apply_personcard_fallback = g.apply_personcard_fallback or function()
+    if not hidden.enabled then return end
+    local root = card_root()
+    if root then
+        fix_card(root)
+    end
+end
+
+if not hidden_person.conns["dyn"] then
+    hidden_person.conns["dyn"] = cg.DescendantAdded:Connect(function(d)
+        if not hidden.enabled then return end
+        local n = d.Name:lower()
+        if n:find("personcard") or n:find("cardcontent") or n:find("avatar") or n:find("name") then
+            task.defer(function()
+                g.apply_personcard_fallback()
+            end)
+        end
+    end)
+end
+
 local function apply_hidden_to_dropdown()
     local core = game:GetService("CoreGui")
     local drop = core:FindFirstChild("PlayerList", true)
@@ -298,6 +357,7 @@ local function reapply_all()
     apply_hidden_to_leaderboard()
     apply_hidden_to_dropdown()
     apply_hidden_to_topframe()
+    g.apply_personcard_fallback()
 end
 
 local function disconnect_all()
@@ -310,7 +370,7 @@ end
 hidden.toggle = function()
     if not hidden.enabled then
         hidden.enabled=true
-        getgenv().notify("success", "Streamer Mode (V1) is now enabled.", 3)
+        getgenv().notify("success", "Streamer Mode (V1.3) is now enabled.", 3)
         reapply_all()
         if hidden.conns["join"] then hidden.conns["join"]:Disconnect() end
         hidden.conns["join"] = players_srv.PlayerAdded:Connect(function()
@@ -336,7 +396,7 @@ hidden.toggle = function()
         end)
     else
         hidden.enabled=false
-        getgenv().notify("success", "Streamer Mode (V1) is now disabled.", 3)
+        getgenv().notify("success", "Streamer Mode (V1.3) is now disabled.", 3)
         disconnect_all()
     end
 end
@@ -380,7 +440,7 @@ title.Parent=main
 title.Size=UDim2.new(0.75999999, 0, 0, 30)
 title.Position=UDim2.new(0,0,0,0)
 title.BackgroundTransparency=1
-title.Text="Streamer Mode - V1."
+title.Text="Streamer Mode - V1.3."
 title.TextColor3=Color3.fromRGB(255,255,255)
 title.TextScaled=true
 title.Font=Enum.Font.GothamMedium
@@ -413,7 +473,7 @@ local toggle_btn = Instance.new("TextButton")
 toggle_btn.Parent = main
 toggle_btn.Size = UDim2.new(0.8,0,0,40)
 toggle_btn.Position = UDim2.new(0.1,0,0.45,0)
-toggle_btn.Text = "Enable NameHider-V1."
+toggle_btn.Text = "Enable NameHider-V1.3."
 toggle_btn.TextScaled = true
 toggle_btn.TextColor3 = Color3.fromRGB(255,255,255)
 toggle_btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
@@ -518,9 +578,9 @@ end)
 toggle_btn.MouseButton1Click:Connect(function()
     hidden.toggle()
     if hidden.enabled then
-        toggle_btn.Text = "Disable NameHider-V1."
+        toggle_btn.Text = "Disable NameHider-V1.3."
     else
-        toggle_btn.Text = "Enable NameHider-V1."
+        toggle_btn.Text = "Enable NameHider-V1.3."
     end
     g.toggle_playerlist(false)
     wait(0.3)
@@ -534,4 +594,4 @@ end)
 
 main.Visible = false
 
-toggle_btn.Text = (hidden.enabled and "Disable NameHider-V1." or "Enable NameHider-V1.")
+toggle_btn.Text = (hidden.enabled and "Disable NameHider-V1.3." or "Enable NameHider-V1.3.")
