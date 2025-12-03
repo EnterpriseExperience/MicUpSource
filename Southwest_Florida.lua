@@ -8,7 +8,7 @@ local NotifyLib = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"
 ))()
 local Workspace, VirtualUser, HttpService, AssetService, Players, SoundService, ReplicatedStorage, Teams, vc_internal, vc_service
-local Script_Version = "V2.2.4-SWFL"
+local Script_Version = "V2.2.5-SWFL"
 local g = getgenv()
 getgenv().ConstantUpdate_Checker_Live = true
 
@@ -427,27 +427,16 @@ if not getgenv().GunModsSecureBypassInitialized then
             return false
         end
 
-        local ok, remote_table = pcall(function()
-            local ReplicatedStorage = game:GetService("ReplicatedStorage")
-            local module = ReplicatedStorage.Modules:WaitForChild("RemoteHandler")
-            return require(module)
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local Modules = ReplicatedStorage:WaitForChild("Modules")
+        local RemoteHandler = require(Modules:WaitForChild("RemoteHandler"))
+
+        local RemoteHandler__Fire; RemoteHandler__Fire = hookfunction(RemoteHandler.Fire, function(name, ...)
+            if name == "SecureSettings" then
+                return
+            end
+            return RemoteHandler__Fire(name, ...)
         end)
-
-        if not ok or type(remote_table) ~= "table" then
-            return false
-        end
-
-        if type(remote_table.Fire) == "function" then
-            hookfunction(remote_table.Fire, function(...)
-                return
-            end)
-        end
-
-        if type(remote_table.Invoke) == "function" then
-            hookfunction(remote_table.Invoke, function(...)
-                return
-            end)
-        end
 
         return true
     end
