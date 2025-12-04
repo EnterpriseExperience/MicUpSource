@@ -874,10 +874,6 @@ if PlayerScripts:FindFirstChild("TireSmokeHandler") then
     notify("Info", "Disabling LocalScript...", 5)
     wait(0.2)
     PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled = true
-    wait(0.3)
-    if PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled or PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled == true then
-        notify("Success", "Disabled LocalScript successfully (hooked).", 5)
-    end
 end
 
 getgenv().antiAFK_Toggle = Tab1:CreateToggle({
