@@ -557,11 +557,41 @@ getgenv().job_hooked = getgenv().job_hooked or false
 getgenv().job_hook_map = getgenv().job_hook_map or {}
 getgenv().job_respawn_conn = getgenv().job_respawn_conn or nil
 getgenv().job_humanoid_died_conn = getgenv().job_humanoid_died_conn or nil
+getgenv().job_disabled_ref = getgenv().job_disabled_ref or nil
+
 local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local local_player = players.LocalPlayer
 local get_conns_func = getconnections or get_signal_cons
+
 local function get_char_local(plr)
     return plr.Character or plr:FindFirstChild("pChar") or plr:WaitForChild("Character", 3)
+end
+
+local function disable_script_fallback(char)
+    if not char then return end
+    local sc = char:FindFirstChild("jobCheck")
+    if sc and sc:IsA("LocalScript") and not getgenv().job_disabled_ref then
+        sc:SetAttribute("job_toggle_disabled", true)
+        sc.Disabled = true
+        getgenv().job_disabled_ref = sc
+    end
+end
+
+local function restore_script_fallback(char)
+    if not char then return end
+    for _, s in ipairs(char:GetChildren()) do
+        if s.Name == "jobCheck" and s:IsA("LocalScript") then
+            if s:GetAttribute("job_toggle_disabled") then
+                local c = s:Clone()
+                c:SetAttribute("job_toggle_disabled", nil)
+                c.Parent = char
+                c.Disabled = false
+                s:Destroy()
+                getgenv().job_disabled_ref = nil
+                return
+            end
+        end
+    end
 end
 
 local function apply_hooks()
@@ -573,60 +603,58 @@ local function apply_hooks()
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hrp or not hum then return end
 
-    getgenv().job_hook_map = {}
+    if get_conns_func then
+        getgenv().job_hook_map = {}
 
-    for _, con in ipairs(get_conns_func(hrp.Touched)) do
-        if con and con.Function then
-            local original = hookfunction(con.Function, function(...)
-                return original(...)
-            end)
-            getgenv().job_hook_map[con] = original
+        for _, con in ipairs(get_conns_func(hrp.Touched)) do
+            if con and con.Function then
+                local o = hookfunction(con.Function, function(...)
+                    return o(...)
+                end)
+                getgenv().job_hook_map[con] = o
+            end
         end
-    end
 
-    for _, con in ipairs(get_conns_func(hrp.TouchEnded)) do
-        if con and con.Function then
-            local original = hookfunction(con.Function, function(...)
-                return original(...)
-            end)
-            getgenv().job_hook_map[con] = original
+        for _, con in ipairs(get_conns_func(hrp.TouchEnded)) do
+            if con and con.Function then
+                local o = hookfunction(con.Function, function(...)
+                    return o(...)
+                end)
+                getgenv().job_hook_map[con] = o
+            end
         end
-    end
 
-    for _, con in ipairs(get_conns_func(hum.HealthChanged)) do
-        if con and con.Function then
-            local original = hookfunction(con.Function, function(...)
-                return original(...)
-            end)
-            getgenv().job_hook_map[con] = original
+        for _, con in ipairs(get_conns_func(hum.HealthChanged)) do
+            if con and con.Function then
+                local o = hookfunction(con.Function, function(...)
+                    return o(...)
+                end)
+                getgenv().job_hook_map[con] = o
+            end
         end
+    else
+        disable_script_fallback(char)
     end
 
     getgenv().job_hooked = true
-    if g and g.notify then g.notify("Success", "job spoof active.", 5) end
-
-    if getgenv().job_humanoid_died_conn then
-        pcall(function() getgenv().job_humanoid_died_conn:Disconnect() end)
-        getgenv().job_humanoid_died_conn = nil
-    end
-    getgenv().job_humanoid_died_conn = hum.Died:Connect(function()
-        if g and g.notify then g.notify("Info", "Humanoid died, hooks will reapply on respawn.", 5) end
-    end)
 end
 
 local function remove_hooks()
     if not getgenv().job_hooked then return end
 
-    for con, original in pairs(getgenv().job_hook_map) do
-        pcall(function()
-            hookfunction(con.Function, original)
-        end)
+    if get_conns_func then
+        for con, original in pairs(getgenv().job_hook_map) do
+            pcall(function()
+                hookfunction(con.Function, original)
+            end)
+        end
+        getgenv().job_hook_map = {}
+    else
+        local char = get_char_local(local_player)
+        restore_script_fallback(char)
     end
 
-    getgenv().job_hook_map = {}
     getgenv().job_hooked = false
-
-    if g and g.notify then g.notify("Info", "job spoof disabled.", 5) end
 
     if getgenv().job_humanoid_died_conn then
         pcall(function() getgenv().job_humanoid_died_conn:Disconnect() end)
@@ -642,6 +670,7 @@ getgenv().job_toggle = getgenv().job_toggle or function(state)
             pcall(function() getgenv().job_respawn_conn:Disconnect() end)
             getgenv().job_respawn_conn = nil
         end
+
         getgenv().job_respawn_conn = local_player.CharacterAdded:Connect(function()
             wait(0.1)
             if getgenv().job_hooked then
@@ -870,10 +899,15 @@ local Section5 = Tab5:CreateSection('||| 🤖‍ Exploits 🤖‍ Section |||')
 local Tab6 = Window:CreateTab('🦿 Teleports 🦿', IMAGE_ID)
 local Section6 = Tab6:CreateSection('||| 🦿 Teleports 🦿 Section |||')
 
-if PlayerScripts:FindFirstChild("TireSmokeHandler") then
-    notify("Info", "Disabling LocalScript...", 5)
-    wait(0.2)
-    PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled = true
+if PlayerScripts:FindFirstChild("TireSmokeHandler") and PlayerScripts:FindFirstChild("TireSmokeHandler"):IsA("LocalScript") then
+    if PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled == false then
+        getgenv().notify("Info", "Disabling LocalScript...", 5)
+        PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled = true
+        wait(1)
+        if PlayerScripts:FindFirstChild("TireSmokeHandler") and PlayerScripts:FindFirstChild("TireSmokeHandler").Disabled then
+            getgenv().notify("Success", "Disabled TireSmokeHandler (not needed).", 5)
+        end
+    end
 end
 
 getgenv().antiAFK_Toggle = Tab1:CreateToggle({
@@ -1006,22 +1040,91 @@ elseif not footsteps_sound:FindFirstChild("Basalt") then
     getgenv().WalkingAndJumpingSounds:Set(1)
 end
 
+getgenv()._jumpcd_disabled_refs = getgenv()._jumpcd_disabled_refs or {}
+
+if not getgenv().InitializedCharAddedCheckJumpCooldown then
+    local get_conn_func = getconnections or get_signal_cons
+
+    LocalPlayer.CharacterAdded:Connect(function(char)
+        task.wait(1)
+        if not char then
+            repeat task.wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
+        end
+        getgenv().notify("Info", "Got new character: "..tostring(char), 5)
+        if get_conn_func then
+            if getgenv().JumpCooldown_Disabled_Check then
+                for _, c in pairs(get_conn_func(get_human(LocalPlayer):GetPropertyChangedSignal("FloorMaterial"))) do
+                    c:Disable()
+                end
+            end
+        else
+            if getgenv().JumpCooldown_Disabled_Check then
+                local new_char_main = char or get_char(LocalPlayer)
+                if new_char_main then
+                    local main_localscript = new_char_main:FindFirstChild("JumpCooldown2")
+                    if main_localscript and main_localscript:IsA("LocalScript") and main_localscript.Disabled == false then
+                        main_localscript:SetAttribute("ez_disabled_by_toggle", true)
+                        main_localscript.Disabled = true
+                        getgenv()._jumpcd_disabled_refs[main_localscript] = true
+                    end
+                end
+            end
+        end
+    end)
+    wait(0.2)
+    getgenv().InitializedCharAddedCheckJumpCooldown = true
+end
+
+local function restore_jump_script_if_needed(char)
+    if not char then return end
+    for _, child in pairs(char:GetChildren()) do
+        if child.Name == "JumpCooldown2" and child:IsA("LocalScript") then
+            if child and child:GetAttribute("ez_disabled_by_toggle") then
+                local clone = child:Clone()
+                clone:SetAttribute("ez_disabled_by_toggle", nil)
+                clone.Parent = char
+                clone.Disabled = false
+                child:Destroy()
+            end
+        end
+    end
+end
+
 getgenv().NoJumpCooldownToggle = Tab2:CreateToggle({
 Name = 'Disable Jump Cooldown (FE)',
 CurrentValue = false,
 Flag = 'ezBypassJumpCooldowns',
 Callback = function(bypassingJumpCooldown)
     if bypassingJumpCooldown then
-        local get_gc_func = getconnections or get_signal_cons
+        getgenv().JumpCooldown_Disabled_Check = true
+        local get_conn_func = getconnections or get_signal_cons
+        local main_char = get_char(LocalPlayer) or game.Players.LocalPlayer.Character
 
-        for _, c in pairs(get_gc_func(get_human(LocalPlayer):GetPropertyChangedSignal("FloorMaterial"))) do
-            c:Disable()
+        if get_conn_func then
+            for _, c in pairs(get_conn_func(get_human(LocalPlayer):GetPropertyChangedSignal("FloorMaterial"))) do
+                c:Disable()
+            end
+        else
+            if main_char and main_char:FindFirstChild("JumpCooldown2") then
+                local Main_LS = main_char:FindFirstChild("JumpCooldown2")
+                if Main_LS and Main_LS:IsA("LocalScript") then
+                    Main_LS:SetAttribute("ez_disabled_by_toggle", true)
+                    Main_LS.Disabled = true
+                    getgenv()._jumpcd_disabled_refs[Main_LS] = true
+                end
+            end
         end
     else
-        local get_gc_func = getconnections or get_signal_cons
+        getgenv().JumpCooldown_Disabled_Check = false
+        local get_conn_func = getconnections or get_signal_cons
 
-        for _, c in pairs(get_gc_func(get_human(LocalPlayer):GetPropertyChangedSignal("FloorMaterial"))) do
-            c:Enable()
+        if get_conn_func then
+            for _, c in pairs(get_conn_func(get_human(LocalPlayer):GetPropertyChangedSignal("FloorMaterial"))) do
+                c:Enable()
+            end
+        else
+            local main_char = get_char(LocalPlayer) or game.Players.LocalPlayer.Character
+            restore_jump_script_if_needed(main_char)
         end
     end
 end,})
