@@ -8,7 +8,7 @@ local NotifyLib = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"
 ))()
 local Workspace, VirtualUser, HttpService, AssetService, Players, SoundService, ReplicatedStorage, Teams, vc_internal, vc_service
-local Script_Version = "V2.2.5-SWFL"
+local Script_Version = "V2.2.7-SWFL"
 local g = getgenv()
 getgenv().ConstantUpdate_Checker_Live = true
 
@@ -1807,46 +1807,38 @@ Callback = function()
     end
 end,})
 
---[[local function change_car_settings(setting, new_value)
+local function change_car_settings(setting, new_value)
     local Player_Vehicle = request_vehicle()
-    local requireSupported = true
-    local success, result = pcall(function()
-        return require
-    end)
-
-    if not success or type(result) ~= "function" then
-        requireSupported = false
-    end
-
-    if not requireSupported then
-        return getgenv().notify("Error", "Your exploit does not support 'require'.", 5)
-    end
-
     if not Player_Vehicle then
         return getgenv().notify("Error", "Please spawn a Vehicle first.", 5)
     end
 
     local moduleScript = Player_Vehicle:FindFirstChild("A-Chassis Tune")
+    local tried_require = false
 
-    if not moduleScript then
-        return getgenv().notify("Error", "Unable to properly allocate ModuleScript inside of Vehicle.", 7)
+    if moduleScript and not low_level_executor() then
+        local ok, vehicle_configuration = pcall(require, moduleScript)
+        if ok and type(vehicle_configuration) == "table" then
+            tried_require = true
+            vehicle_configuration[setting] = new_value
+            return
+        end
     end
 
-    local vehicle_configuration = nil
-    success, vehicle_configuration = pcall(require, moduleScript)
-    if not success then
-        return getgenv().notify("Error", "Unknown error occurred when rying to pcall vehicle configuration.", 7)
+    for _, v in next, getgc(true) do
+        if type(v) == "table"
+            and rawget(v, "TCSEnabled")
+            and rawget(v, "TCSLimit")
+            and rawget(v, "RDiffPower")
+        then
+            v[setting] = new_value
+        end
     end
 
-    vehicle_configuration.TCSEnabled = true
-    vehicle_configuration.TCSThreshold = 3
-    vehicle_configuration.TCSGradient = 3
-    vehicle_configuration.TCSLimit = 0.1
-    vehicle_configuration.RDiffSlipThres = 30
-    vehicle_configuration.RDiffPower = 15
-    vehicle_configuration.ABSEnabled = false
-    vehicle_configuration[setting] = new_value
-end--]]
+    if not tried_require then
+        getgenv().notify("Info", "Fallback to 'getgc' override applied.", 5)
+    end
+end
 
 getgenv().ApplyBestModSettings = Tab4:CreateButton({
 Name = "Apply Fastest/Best Car Mods",
@@ -1854,7 +1846,7 @@ Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/LegoGameSploit/Roblox_Scripts/main/swflrel.lua"))()
 end,})
 
---[[getgenv().ModifySpeedEngage = Tab4:CreateSlider({
+getgenv().ModifySpeedEngage = Tab4:CreateSlider({
 Name = "Modify Speed Engage",
 Range = {1, 1000},
 Increment = 1,
@@ -2152,7 +2144,7 @@ CurrentValue = 1.2,
 Flag = "inclineCompControl",
 Callback = function(newInclineComp)
     change_car_settings("InclineComp", newInclineComp)
-end,})--]]
+end,})
 
 getgenv().Infinite_Yield_Premium = Tab5:CreateButton({
 Name = "Infinite Yield Premium",
