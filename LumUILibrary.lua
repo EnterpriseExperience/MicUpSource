@@ -8,93 +8,92 @@ local hkf = hookfunction
 local hkm = hookmetamethod
 local setn = setnamecallmethod
 local getn = getnamecallmethod
-local ctxG = syn_context_get or get_thread_identity
-local ctxS = syn_context_set or set_thread_identity
+local ctx_get = syn_context_get or get_thread_identity
+local ctx_set = syn_context_set or set_thread_identity
 
-local function blankfunction(...)
-   return ...
-end
+local function blankfunction(...) return ... end
 
 g.Service_Wrap = g.Service_Wrap or function(name)
-   name = tostring(name)
-
-   if setmetatable then
-      if not g._service_cache then
-         g._service_cache = setmetatable({}, {
-            __index = function(self, index)
-               local svc = game:GetService(index)
-
-               if cloneref and svc then
-                  svc = cloneref(svc)
-               end
-
-               self[index] = svc
-               return svc
-            end
-         })
-      end
-
-      return g._service_cache[name]
-   end
-
-   local svc = game:GetService(name)
-
-   if cloneref and svc then
-      svc = cloneref(svc)
-   end
-
-   return svc
+	name = tostring(name)
+	if setmetatable then
+		if not g._service_cache then
+			g._service_cache = setmetatable({}, {
+				__index = function(self, index)
+					local svc = game:GetService(index)
+					if cloneref and svc then svc = cloneref(svc) end
+					self[index] = svc
+					return svc
+				end
+			})
+		end
+		return g._service_cache[name]
+	end
+	local svc = game:GetService(name)
+	if cloneref and svc then svc = cloneref(svc) end
+	return svc
 end
 
-local function FilterTable(tbl)
-	local id = ctxG and ctxG() or 2
-	if ctxS then ctxS(7) end
+local function filter_table(tbl)
+	local saved_id = ctx_get and ctx_get() or 2
+	if ctx_set then ctx_set(7) end
 	local new_tbl = {}
-	for i,v in ipairs(tbl) do
+	for i, v in ipairs(tbl) do
 		if typeof(v) ~= "Instance" then
-			new_tbl[#new_tbl+1] = v
+			new_tbl[#new_tbl + 1] = v
 		else
 			if v == CoreGui or v == game then
 				for _,k in ipairs(RobloxGuis) do
 					local g = CoreGui:FindFirstChild(k)
-					if g then new_tbl[#new_tbl+1] = g end
+					if g then new_tbl[#new_tbl + 1] = g end
 				end
 				if v == game then
 					for _,x in ipairs(game:GetChildren()) do
-						if x ~= CoreGui then new_tbl[#new_tbl+1] = x end
+						if x ~= CoreGui then new_tbl[#new_tbl + 1] = x end
 					end
 				end
 			else
 				if not CoreGui:IsAncestorOf(v) then
-					new_tbl[#new_tbl+1] = v
+					new_tbl[#new_tbl + 1] = v
 				else
+					local kept = false
 					for _,k in ipairs(RobloxGuis) do
 						local g = CoreGui:FindFirstChild(k)
 						if g and (v == g or g:IsAncestorOf(v)) then
-							new_tbl[#new_tbl+1] = v
+							new_tbl[#new_tbl + 1] = v
+							kept = true
 							break
+						end
+					end
+					if not kept then
+						if v:GetAttribute and v:GetAttribute("jx_drawing") then
+							new_tbl[#new_tbl + 1] = v
 						end
 					end
 				end
 			end
 		end
 	end
-	if ctxS then ctxS(id) end
+	if ctx_set then ctx_set(saved_id) end
 	return new_tbl
 end
 
 if not _G.JxereasExistingHooks.GuiDetectionBypassPreload then
 	if hkf then
-		local old
-		old = hkf(ContentProvider.PreloadAsync, function(self, tbl, cb)
-			if self ~= ContentProvider or type(tbl) ~= "table" or type(cb) ~= "function" then
+		local old = hkf(ContentProvider.PreloadAsync, function(self, tbl, cb)
+			if self ~= ContentProvider or type(tbl) ~= "table" or (cb ~= nil and type(cb) ~= "function") then
 				return old(self, tbl, cb)
 			end
-			local ok = pcall(old, self, tbl)
-			if not ok then
+
+			local err
+			task.spawn(function()
+				local ok, e = pcall(old, self, tbl)
+				if not ok and e then err = e end
+			end)
+			if err then
 				return old(self, tbl)
 			end
-			tbl = FilterTable(tbl)
+
+			tbl = filter_table(tbl)
 			return old(self, tbl, cb)
 		end)
 	end
@@ -106,19 +105,24 @@ if not _G.JxereasExistingHooks.GuiDetectionBypassNamecall then
 		local old
 		old = hkm(game, "__namecall", function(self, ...)
 			local m = getn and getn() or ""
-			if self == ContentProvider and m:lower() == "preloadasync" then
+			local method_lower = (type(m) == "string" and m:lower()) or ""
+			if self == ContentProvider and (method_lower == "preloadasync") then
 				local a = {...}
-				if type(a[1]) ~= "table" or type(a[2]) ~= "function" then
+				if type(a[1]) ~= "table" or (a[2] ~= nil and type(a[2]) ~= "function") then
 					return old(self, ...)
 				end
-				local ok = pcall(function()
+
+				local err
+				task.spawn(function()
 					if setn then setn(m) end
-					old(self, a[1])
+					local ok, e = pcall(old, self, a[1])
+					if not ok and e then err = e end
 				end)
-				if not ok then
+				if err then
 					return old(self, a[1])
 				end
-				a[1] = FilterTable(a[1])
+
+				a[1] = filter_table(a[1])
 				if setn then setn(m) end
 				return old(self, a[1], a[2])
 			end
@@ -130,8 +134,8 @@ end
 
 _G.JxereasExistingHooks.GuiDetectionBypass = true
 
-local real_Drawing = Drawing
-if not real_Drawing then
+local real_drawing = Drawing
+if not real_drawing then
 	local jx_gui = (get_hidden_gui or gethui or function() return CoreGui end)()
 	local JxDrawing = {}
 	local objs = {}
@@ -151,7 +155,16 @@ if not real_Drawing then
 			o.Position = UDim2.new(0,0,0,0)
 			o.BorderSizePixel = 0
 		end
-		o.Parent = jx_gui
+
+		if typeof(jx_gui) == "Instance" and jx_gui.Parent then
+			o.Parent = jx_gui
+		else
+			o.Parent = CoreGui
+		end
+
+		if o.SetAttribute then
+			o:SetAttribute("jx_drawing", true)
+		end
 
 		local w = {}
 		function w.SetPos(p) o.Position = UDim2.new(0,p.X,0,p.Y) end
@@ -188,6 +201,21 @@ else
 	end)
 end
 
+local function safe_rawget(t, k)
+	if rawget then
+		return rawget(t, k)
+	end
+	local mt = getmetatable(t)
+	if mt and mt.__index then
+		local backup = mt.__index
+		mt.__index = nil
+		local v = t[k]
+		mt.__index = backup
+		return v
+	end
+	return t[k]
+end
+
 local TweenService = Service_Wrap("TweenService")
 local TextService = Service_Wrap("TextService")
 local UserInputService = Service_Wrap("UserInputService")
@@ -212,19 +240,45 @@ local textBoxHandler = {}
 local colorWheelHandler = {}
 
 elementHandler.__index = elementHandler
-windowHandler.__index = function(_, i) return rawget(windowHandler, i) or rawget(elementHandler, i) end
-tabHandler.__index = function(_, i ) return rawget(tabHandler, i) or rawget(elementHandler, i) end
-sectionHandler.__index = function(_, i) return rawget(sectionHandler, i) or rawget(elementHandler, i) end
-titleHandler.__index = function(_, i) return rawget(titleHandler, i) or rawget(elementHandler, i) end
-labelHandler.__index = function(_, i) return rawget(labelHandler, i) or rawget(elementHandler, i) end
-toggleHandler.__index = function(_, i) return rawget(toggleHandler, i) or rawget(elementHandler, i) end
-buttonHandler.__index = function(_, i) return rawget(buttonHandler, i) or rawget(elementHandler, i) end
-dropdownHandler.__index = function(_, i) return rawget(dropdownHandler, i) or rawget(elementHandler, i) end
-sliderHandler.__index = function(_, i) return rawget(sliderHandler, i) or rawget(elementHandler, i) end
-searchBarHandler.__index = function(_, i) return rawget(searchBarHandler, i) or rawget(elementHandler, i) end
-keybindHandler.__index = function(_, i) return rawget(keybindHandler, i) or rawget(elementHandler, i) end
-textBoxHandler.__index = function(_, i) return rawget(textBoxHandler, i) or rawget(elementHandler, i) end
-colorWheelHandler.__index = function(_, i) return rawget(colorWheelHandler, i) or rawget(elementHandler, i) end
+windowHandler.__index = function(_, i)
+   return safe_rawget(windowHandler, i) or safe_rawget(elementHandler, i)
+end
+tabHandler.__index = function(_, i)
+   return safe_rawget(tabHandler, i) or safe_rawget(elementHandler, i)
+end
+sectionHandler.__index = function(_, i)
+   return safe_rawget(sectionHandler, i) or safe_rawget(elementHandler, i)
+end
+titleHandler.__index = function(_, i)
+   return safe_rawget(titleHandler, i) or safe_rawget(elementHandler, i)
+end
+labelHandler.__index = function(_, i)
+   return safe_rawget(labelHandler, i) or safe_rawget(elementHandler, i)
+end
+toggleHandler.__index = function(_, i)
+   return safe_rawget(toggleHandler, i) or safe_rawget(elementHandler, i)
+end
+buttonHandler.__index = function(_, i)
+   return safe_rawget(buttonHandler, i) or safe_rawget(elementHandler, i)
+end
+dropdownHandler.__index = function(_, i)
+   return safe_rawget(dropdownHandler, i) or safe_rawget(elementHandler, i)
+end
+sliderHandler.__index = function(_, i)
+   return safe_rawget(sliderHandler, i) or safe_rawget(elementHandler, i)
+end
+searchBarHandler.__index = function(_, i)
+   return safe_rawget(searchBarHandler, i) or safe_rawget(elementHandler, i)
+end
+keybindHandler.__index = function(_, i)
+   return safe_rawget(keybindHandler, i) or safe_rawget(elementHandler, i)
+end
+textBoxHandler.__index = function(_, i)
+   return safe_rawget(textBoxHandler, i) or safe_rawget(elementHandler, i)
+end
+colorWheelHandler.__index = function(_, i)
+   return safe_rawget(colorWheelHandler, i) or safe_rawget(elementHandler, i)
+end
 
 local function animateText(textInstance: Instance, animationSpeed: number, text: string, placeholderText: string?, fillPlaceHolder: boolean?, emptyPlaceHolderText: boolean?): nil
 	if emptyPlaceHolderText then
@@ -1989,10 +2043,8 @@ function elementHandler:Remove()
 	self.GuiToRemove:Destroy()
 end
 
---Add zindex var to determine which window goes over which
---Add var to only have one window open at a time allowed
 function Library.new(windowName: string, constrainToScreen: boolean?, width: number?, height: number?, visibilityKeybind: string?, backgroundImageId: string?): table
-	local window = setmetatable({}, windowHandler) -- remove elementhandler from window hanlers index?
+	local window = setmetatable and setmetatable({}, windowHandler)
 	local windowInstance = originalElements.Window:Clone()
 	local startDragMousePos
 	local startDragWindowPos
@@ -2045,13 +2097,13 @@ function Library.new(windowName: string, constrainToScreen: boolean?, width: num
 	end
 
 	local function closeWindow()
-        local closeWindowTween = TweenService:Create(windowInstance.Background, TweenInfo.new(.15, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)})
-        closeWindowTween.Completed:Connect(function()
-            task.wait()
-			windowInstance:Destroy() -- add cool tween cause cool
-            window = nil
-        end)
-        closeWindowTween:Play()
+		local closeWindowTween = TweenService:Create(windowInstance.Background, TweenInfo.new(.15, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)})
+		closeWindowTween.Completed:Connect(function()
+			task.wait()
+		windowInstance:Destroy()
+			window = nil
+		end)
+		closeWindowTween:Play()
 	end
 	wait(0.2)
 	getgenv().closeWindow = closeWindow
@@ -2140,7 +2192,7 @@ function Library.new(windowName: string, constrainToScreen: boolean?, width: num
 	end)
 
 	heading.Title.Text = windowName or "Cerberus"
-	windowInstance.Parent = game:GetService("CoreGui") -- Change to core later on and add detection bypass
+	windowInstance.Parent = game:GetService("CoreGui")
 	background.Size = UDim2.fromOffset(background.AbsoluteSize.X, background.AbsoluteSize.Y)
 	
 	if width then
@@ -2288,7 +2340,7 @@ function windowHandler:Tab(tabName: string, tabImage: string): table
 	tab.ElementToParentChildren = pageInstance
 	
 	tabInstance.TabText.Text = tabName or "N/A"
-	tabInstance.TabImage.Image = tabImage or "rbxassetid://11436779516" -- Add n/a found image here later on
+	tabInstance.TabImage.Image = tabImage or "rbxassetid://11436779516"
 
 	tabInstance.MouseEnter:Connect(onMouseEnter)
 	tabInstance.MouseLeave:Connect(onMouseLeave)
@@ -2329,7 +2381,7 @@ function tabHandler:Remove()
 	self.PageToRemove:Destroy()
 end
 
-function tabHandler:Section(sectionTitle: string) -- Add option to make on left or right after
+function tabHandler:Section(sectionTitle: string)
 	local section = setmetatable({}, sectionHandler)
 	local sectionInstance = originalElements.Section:Clone()
 	local isMaximized = true
@@ -2466,7 +2518,7 @@ function elementHandler:Label(labelInputtedText: string, textSize: number, textC
 end
 
 function labelHandler:ChangeText(newText: string, playAnimation: boolean): nil
-	local textParams = Instance.new("GetTextBoundsParams") -- Add Tween here for text
+	local textParams = Instance.new("GetTextBoundsParams")
 	textParams.Text = newText or "N/A"
 	textParams.Font = self.Instance.LabelBackground.LabelText.FontFace
 	textParams.Size = 13
@@ -2500,7 +2552,7 @@ function labelHandler:ChangeText(newText: string, playAnimation: boolean): nil
 end
 
 function elementHandler:Toggle(toggleName: string, callback): table
-	local toggle = setmetatable({}, toggleHandler)
+	local toggle = setmetatable and setmetatable({}, toggleHandler)
 	local toggleInstance = originalElements.Toggle:Clone()
 	local textOffset = 4
 	
@@ -2550,8 +2602,8 @@ function elementHandler:Toggle(toggleName: string, callback): table
 	
 	return toggle
 end
- -- SET IDENTIFIER IN SELF AND ADD TOGGLES TO EACH IDENTIFIER RADIO GROUP
-function toggleHandler:Set(bool: boolean, callback): nil -- Add Callback to self?
+
+function toggleHandler:Set(bool: boolean, callback): nil
 	local tweenTime = .275
 	local cornerOnTween = TweenService:Create(self.Instance.BoxBackground.InnerBox.CenterBox.ToggleImage.ToggleImageCorner, TweenInfo.new(tweenTime, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {CornerRadius = UDim.new(0, 0)})
 	local cornerOffTween = TweenService:Create(self.Instance.BoxBackground.InnerBox.CenterBox.ToggleImage.ToggleImageCorner, TweenInfo.new(tweenTime, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {CornerRadius = UDim.new(.5, 0)})
@@ -2578,8 +2630,8 @@ function toggleHandler:Set(bool: boolean, callback): nil -- Add Callback to self
 	callback(bool)
 end
 
-function elementHandler:Button(buttonName: string, callback): table -- Add Callback to self?
-	local button = setmetatable({}, buttonHandler)
+function elementHandler:Button(buttonName: string, callback): table
+	local button = setmetatable and setmetatable({}, buttonHandler)
 	local buttonInstance = originalElements.Button:Clone()
 	local textOffset = 4
 	
@@ -2621,7 +2673,7 @@ function elementHandler:Button(buttonName: string, callback): table -- Add Callb
 end
 
 function elementHandler:Dropdown(dropdownName: string): table
-	local dropdown = setmetatable({}, dropdownHandler)
+	local dropdown = setmetatable and setmetatable({}, dropdownHandler)
 	local dropdownInstance = originalElements.Dropdown:Clone()
 	local elementHolderInnerBackground = dropdownInstance.ElementHolder.ElementHolderBackground.ElementHolderInnerBackground
 	local elementHolderInnerBackgroundPaddings = dropdownInstance.ElementHolder.ElementHolderPadding.PaddingBottom.Offset + dropdownInstance.ElementHolder.ElementHolderPadding.PaddingTop.Offset + dropdownInstance.ElementHolder.ElementHolderBackground.ElementHolderBackgroundPadding.PaddingBottom.Offset + dropdownInstance.ElementHolder.ElementHolderBackground.ElementHolderBackgroundPadding.PaddingTop.Offset + elementHolderInnerBackground.ElementHolderInnerBackgroundPadding.PaddingBottom.Offset + elementHolderInnerBackground.ElementHolderInnerBackgroundPadding.PaddingTop.Offset
@@ -2691,7 +2743,7 @@ function dropdownHandler:ChangeText(newText: string)
 end
 
 function elementHandler:Slider(sliderName: string, callback, maximumValue: number, minimumValue: number): table
-	local slider = setmetatable({}, sliderHandler) -- MAKE RIGHT CLICK AND BAR GOES TO MID
+	local slider = setmetatable and setmetatable({}, sliderHandler)
 	local sliderInstance = originalElements.Slider:Clone()
 	local isMouseDown = false
 	local sliderBar = sliderInstance.SliderBackground.SliderInnerBackground.Slider
@@ -2799,11 +2851,11 @@ function elementHandler:Slider(sliderName: string, callback, maximumValue: numbe
 end
 
 function elementHandler:SearchBar(placeholderText: string): table
-	local searchBar = setmetatable({}, searchBarHandler)
+	local searchBar = setmetatable and setmetatable({}, searchBarHandler)
 	local searchBarInstance = originalElements.SearchBar:Clone()
 	local searchBox = searchBarInstance.SearchBarFrame.ButtonBackgroundPadding.SearchBox
 	local elementHolder = searchBarInstance.ElementHolder
-    local elementHolderBackground = elementHolder.ElementHolderBackground
+   local elementHolderBackground = elementHolder.ElementHolderBackground
 	local elementHolderInnerBackground = elementHolderBackground.ElementHolderInnerBackground
 	local elementHolderInnerBackgroundPaddings = elementHolder.ElementHolderPadding.PaddingBottom.Offset + elementHolder.ElementHolderPadding.PaddingTop.Offset + elementHolderBackground.ElementHolderBackgroundPadding.PaddingBottom.Offset + elementHolderBackground.ElementHolderBackgroundPadding.PaddingTop.Offset + elementHolderInnerBackground.ElementHolderInnerBackgroundPadding.PaddingBottom.Offset + elementHolderInnerBackground.ElementHolderInnerBackgroundPadding.PaddingTop.Offset
 	local searchBarInstanceCloseTween = TweenService:Create(searchBarInstance, TweenInfo.new(.25, Enum.EasingStyle.Linear), {Size = UDim2.new(1,0,0,searchBarInstance.SearchBarFrame.Size.Y.Offset)})
@@ -2952,8 +3004,6 @@ function elementHandler:SearchBar(placeholderText: string): table
 	return searchBar
 end
 
---REWORK KEYBIND COMPLETLEY INEFFICENT !!!
--- ADD RIGHT CLICK TO REMOVE CURRENT KEYBIND TO NOTHING
 function elementHandler:Keybind(keybindName: string, callback, defaultKey: string): table
 	local keybind = setmetatable({}, keybindHandler)
 	local keybindInstance = originalElements.Keybind:Clone()
@@ -3033,9 +3083,9 @@ function elementHandler:Keybind(keybindName: string, callback, defaultKey: strin
 		end
 		inputBeingProcessed = false	
 	end
-	-- for toggle radio buttons do a fn to loop all and toggles in table given and setttoggle fn to false  by checking if self.IsToggled
+
 	requiredInputKeyTextTween.Completed:Connect(function(playbackState)
-		if playbackState == Enum.PlaybackState.Completed and not isOverriding then -- Animation runs after other override starts due to tween completed after override starts
+		if playbackState == Enum.PlaybackState.Completed and not isOverriding then
 			if textAnimation then
 				coroutine.close(textAnimation)
 			end
@@ -3141,11 +3191,9 @@ function elementHandler:TextBox(textBoxName:string, callback): table
 	return textBox
 end
 
---Fix toggle img it's imported as orange make it white
 function elementHandler:ColorWheel(colorWheelName: string, callback): table
 	local colorWheel = setmetatable({}, colorWheelHandler)
 	local colorWheelInstance = originalElements.ColorWheel:Clone()
-	
 	local heading = colorWheelInstance.Heading
 	local wheelHolder = colorWheelInstance.WheelHolder
 	local valueHolder =wheelHolder.ValueHolder
@@ -3157,7 +3205,6 @@ function elementHandler:ColorWheel(colorWheelName: string, callback): table
 	local sliderAbsSize
 	local sliderAbsPos
 	local wheelRadius
-	
 	local dropdownOpenTween = TweenService:Create(colorWheelInstance, TweenInfo.new(.25, Enum.EasingStyle.Linear), {Size = UDim2.new(1, 0, 0, heading.AbsoluteSize.Y + wheelHolder.AbsoluteSize.Y + 4)})
 	local dropdownCloseTween = TweenService:Create(colorWheelInstance, TweenInfo.new(.25, Enum.EasingStyle.Linear), {Size = UDim2.new(1, 0, 0, heading.AbsoluteSize.Y)})
 	local dropdownImageOpenTween = TweenService:Create(heading.BoxBackground.InnerBox.CenterBox.DropdownImage, TweenInfo.new(.25, Enum.EasingStyle.Linear), {Rotation = 0})
