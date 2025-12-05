@@ -190,7 +190,7 @@ end
 
 local TweenService = Service_Wrap("TweenService")
 local TextService = Service_Wrap("TextService")
-local UserInputService = gService_Wrap("UserInputService")
+local UserInputService = Service_Wrap("UserInputService")
 local GuiService = Service_Wrap("GuiService")
 local mouse = player:GetMouse()
 local viewPortSize = workspace.CurrentCamera.ViewportSize
