@@ -65,7 +65,7 @@ local function filter_table(tbl)
 						end
 					end
 					if not kept then
-						if v:GetAttribute and v:GetAttribute("jx_drawing") then
+						if v:GetAttribute("jx_drawing") then
 							new_tbl[#new_tbl + 1] = v
 						end
 					end
