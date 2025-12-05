@@ -550,7 +550,7 @@ end
 
 if not g.Flames_Hub_Dynamic_CharAdded_Checker then
    g.Flames_Hub_Dynamic_CharAdded_Checker = true
-	
+
 	g.LocalPlayer.CharacterAdded:Connect(function(char)
 		while not (char and char.Parent and (char:FindFirstChild("Humanoid") or char:FindFirstChild("HumanoidRootPart"))) do
 			task.wait()
@@ -585,7 +585,10 @@ end
 
 flames_api.SeatPart = function()
 	local character = flames_api.Character or get_char(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer)
-	local humanoid = flames_api.Humanoid or get_human(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer) or character and character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid", 15)
+	local humanoid = flames_api.Humanoid
+	or get_human(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer)
+	or (character and character:FindFirstChildWhichIsA("Humanoid"))
+	or character:WaitForChild("Humanoid", 15)
 
 	if humanoid and humanoid.SeatPart then
 		return humanoid.SeatPart
