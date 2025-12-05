@@ -214,19 +214,9 @@ end
 
 get_or_set("notify", notify_func)
 
-if not low_level_executor() then
-	flames_api.notify = function(title, content, dur)
-		local fixed_title = format_title(title)
-   	NotifyLib:External_Notification(fixed_title, tostring(content), tonumber(dur))
-	end
-else
-	flames_api.notify = function(title, content, dur)
-		flames_api.Service("StarterGui"):SetCore("SendNotification", {
-			Title = tostring(title);
-			Text = tostring(content);
-			Duration = tonumber(dur);
-		})
-	end
+flames_api.notify = function(title, content, dur)
+	local fixed_title = format_title(title)
+	NotifyLib:External_Notification(fixed_title, tostring(content), tonumber(dur))
 end
 
 -- [[ when teleporting via queueteleport : needs to update dynamically, leave these like this. ]] --
@@ -238,7 +228,7 @@ flames_api.Service = function(service)
    return SafeGet(service)
 end
 
-flames_api.ExecutorName = executordet
+flames_api.ExecutorName = executor_details()
 
 g.find_player_gui = g.find_player_gui or function()
 	return g.findplayerchild("PlayerGui")
@@ -293,7 +283,9 @@ get_or_set("randomString", RandomString)
 get_or_set("randomstring", RandomString)
 
 local Players = SafeGet("Players")
+local StarterPlayer = SafeGet("StarterPlayer")
 local LocalPlayer = Players.LocalPlayer
+get_or_set("LocalPlayer", LocalPlayer)
 flames_api.Players = Players
 flames_api.LocalPlayer = LocalPlayer
 flames_api.PlaceId = getgenv().PlaceID or game.PlaceId
@@ -304,9 +296,9 @@ flames_api.JobId = getgenv().JobID or game.JobId
 flames_api.jobid = getgenv().JobID or game.JobId
 flames_api.PlayerGui = get_player_gui(LocalPlayer)
 local FlyConnections
-local Old_WS_Value = isnumber(SafeGet("StarterPlayer").CharacterWalkSpeed)
-local Old_JP_Value = isnumber(SafeGet("StarterPlayer").CharacterJumpPower)
-local Old_JH_Value = isnumber(SafeGet("StarterPlayer").CharacterJumpHeight)
+local Old_WS_Value = isnumber(StarterPlayer.CharacterWalkSpeed)
+local Old_JP_Value = isnumber(StarterPlayer.CharacterJumpPower)
+local Old_JH_Value = isnumber(StarterPlayer.CharacterJumpHeight)
 wait(0.1)
 g.get_char = g.get_char or function(Player)
 	if not Player or not Player:IsA("Player") then return nil end
@@ -557,9 +549,13 @@ local function update_character_refs()
 end
 
 if not g.Flames_Hub_Dynamic_CharAdded_Checker then
-	g.Flames_Hub_Dynamic_CharAdded_Checker = true
+   g.Flames_Hub_Dynamic_CharAdded_Checker = true
+	
+	g.LocalPlayer.CharacterAdded:Connect(function(char)
+		while not (char and char.Parent and (char:FindFirstChild("Humanoid") or char:FindFirstChild("HumanoidRootPart"))) do
+			task.wait()
+		end
 
-	g.LocalPlayer.CharacterAdded:Connect(function()
 		task.spawn(update_character_refs)
 	end)
 end
@@ -567,9 +563,9 @@ end
 task.spawn(update_character_refs)
 
 flames_api.Vehicle = function()
-	local character = flames_api.Character
-	local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
-	local hrp = character and character:FindFirstChild("HumanoidRootPart")
+	local character = flames_api.Character or get_char(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer)
+	local humanoid = flames_api.Humanoid or get_human(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer) or character and character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid", 15)
+	local hrp = flames_api.HumanoidRootPart or get_root(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer) or character and character:FindFirstChild("HumanoidRootPart")
 
 	if humanoid and humanoid.SeatPart then
 		local seatPart = humanoid.SeatPart
@@ -582,6 +578,17 @@ flames_api.Vehicle = function()
 				end
 			end
 		end
+	end
+
+	return nil
+end
+
+flames_api.SeatPart = function()
+	local character = flames_api.Character or get_char(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer)
+	local humanoid = flames_api.Humanoid or get_human(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer) or character and character:FindFirstChildWhichIsA("Humanoid") or character:WaitForChild("Humanoid", 15)
+
+	if humanoid and humanoid.SeatPart then
+		return humanoid.SeatPart
 	end
 
 	return nil
