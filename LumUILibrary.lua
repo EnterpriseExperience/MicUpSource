@@ -1,131 +1,200 @@
+if not game:IsLoaded() then game.Loaded:Wait() end
 _G.JxereasExistingHooks = _G.JxereasExistingHooks or {}
-if not _G.JxereasExistingHooks.GuiDetectionBypass then
-    local CoreGui = game.CoreGui
-    local ContentProvider = game.ContentProvider
-    local RobloxGuis = {"RobloxGui", "TeleportGui", "RobloxPromptGui", "RobloxLoadingGui", "PlayerList", "RobloxNetworkPauseNotification", "PurchasePrompt", "HeadsetDisconnectedDialog", "ThemeProvider", "DevConsoleMaster"}
-    
-    local function FilterTable(tbl)
-        local context = syn_context_get()
-        syn_context_set(7)
-        local new = {}
-        for i,v in ipairs(tbl) do --roblox iterates the array part
-            if typeof(v) ~= "Instance" then
-                table.insert(new, v)
-            else
-                if v == CoreGui or v == game then
-                    --insert only the default roblox guis
-                    for i,v in pairs(RobloxGuis) do
-                        local gui = CoreGui:FindFirstChild(v)
-                        if gui then
-                            table.insert(new, gui)
-                        end
-                    end
-    
-                    if v == game then
-                        for i,v in pairs(game:GetChildren()) do
-                            if v ~= CoreGui then
-                                table.insert(new, v)
-                            end
-                        end
-                    end
-                else
-                    if not CoreGui:IsAncestorOf(v) then
-                        table.insert(new, v)
-                    else
-                        --don't insert it if it's a descendant of a different gui than default roblox guis
-                        for j,k in pairs(RobloxGuis) do
-                            local gui = CoreGui:FindFirstChild(k)
-                            if gui then
-                                if v == gui or gui:IsAncestorOf(v) then
-                                    table.insert(new, v)
-                                    break
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-        syn_context_set(context)
-        return new
-    end
-    
-    local old
-    old = hookfunc(ContentProvider.PreloadAsync, function(self, tbl, cb)
-        if self ~= ContentProvider or type(tbl) ~= "table" or type(cb) ~= "function" then --note: callback can be nil but in that case it's useless anyways
-            return old(self, tbl, cb)
-        end
-    
-        --check for any errors that I might've missed (such as table being {[2] = "something"} which causes "Unable to cast to Array")
-        local err
-        task.spawn(function() --TIL pcalling a C yield function inside a C yield function is a bad idea ("cannot resume non-suspended coroutine")
-            local s,e = pcall(old, self, tbl)
-            if not s and e then
-                err = e
-            end
-        end)
-       
-        if err then
-            return old(self, tbl) --don't pass the callback, just in case
-        end
-    
-        tbl = FilterTable(tbl)
-        return old(self, tbl, cb)
-    end)
-    
-    local old
-    old = hookmetamethod(game, "__namecall", function(self, ...)
-        local method = getnamecallmethod()
-        if self == ContentProvider and (method == "PreloadAsync" or method == "preloadAsync") then
-            local args = {...}
-            if type(args[1]) ~= "table" or type(args[2]) ~= "function" then
-                return old(self, ...)
-            end
-    
-            local err
-            task.spawn(function()
-                setnamecallmethod(method) --different thread, different namecall method
-                local s,e = pcall(old, self, args[1])
-                if not s and e then
-                    err = e
-                end
-            end)
-    
-            if err then
-                return old(self, args[1])
-            end
-    
-            args[1] = FilterTable(args[1])
-            setnamecallmethod(method)
-            return old(self, args[1], args[2])
-        end
-        return old(self, ...)
-    end)
-    
-    _G.JxereasExistingHooks.GuiDetectionBypass = true
+local g = getgenv()
+local CoreGui = game.CoreGui
+local ContentProvider = game.ContentProvider
+local RobloxGuis = {"RobloxGui","TeleportGui","RobloxPromptGui","RobloxLoadingGui","PlayerList","RobloxNetworkPauseNotification","PurchasePrompt","HeadsetDisconnectedDialog","ThemeProvider","DevConsoleMaster"}
+local hkf = hookfunction
+local hkm = hookmetamethod
+local setn = setnamecallmethod
+local getn = getnamecallmethod
+local ctxG = syn_context_get or get_thread_identity
+local ctxS = syn_context_set or set_thread_identity
+
+local function blankfunction(...)
+   return ...
 end
 
-local Players = game:GetService("Players")
+g.Service_Wrap = g.Service_Wrap or function(name)
+   name = tostring(name)
+
+   if setmetatable then
+      if not g._service_cache then
+         g._service_cache = setmetatable({}, {
+            __index = function(self, index)
+               local svc = game:GetService(index)
+
+               if cloneref and svc then
+                  svc = cloneref(svc)
+               end
+
+               self[index] = svc
+               return svc
+            end
+         })
+      end
+
+      return g._service_cache[name]
+   end
+
+   local svc = game:GetService(name)
+
+   if cloneref and svc then
+      svc = cloneref(svc)
+   end
+
+   return svc
+end
+
+local function FilterTable(tbl)
+	local id = ctxG and ctxG() or 2
+	if ctxS then ctxS(7) end
+	local new_tbl = {}
+	for i,v in ipairs(tbl) do
+		if typeof(v) ~= "Instance" then
+			new_tbl[#new_tbl+1] = v
+		else
+			if v == CoreGui or v == game then
+				for _,k in ipairs(RobloxGuis) do
+					local g = CoreGui:FindFirstChild(k)
+					if g then new_tbl[#new_tbl+1] = g end
+				end
+				if v == game then
+					for _,x in ipairs(game:GetChildren()) do
+						if x ~= CoreGui then new_tbl[#new_tbl+1] = x end
+					end
+				end
+			else
+				if not CoreGui:IsAncestorOf(v) then
+					new_tbl[#new_tbl+1] = v
+				else
+					for _,k in ipairs(RobloxGuis) do
+						local g = CoreGui:FindFirstChild(k)
+						if g and (v == g or g:IsAncestorOf(v)) then
+							new_tbl[#new_tbl+1] = v
+							break
+						end
+					end
+				end
+			end
+		end
+	end
+	if ctxS then ctxS(id) end
+	return new_tbl
+end
+
+if not _G.JxereasExistingHooks.GuiDetectionBypassPreload then
+	if hkf then
+		local old
+		old = hkf(ContentProvider.PreloadAsync, function(self, tbl, cb)
+			if self ~= ContentProvider or type(tbl) ~= "table" or type(cb) ~= "function" then
+				return old(self, tbl, cb)
+			end
+			local ok = pcall(old, self, tbl)
+			if not ok then
+				return old(self, tbl)
+			end
+			tbl = FilterTable(tbl)
+			return old(self, tbl, cb)
+		end)
+	end
+	_G.JxereasExistingHooks.GuiDetectionBypassPreload = true
+end
+
+if not _G.JxereasExistingHooks.GuiDetectionBypassNamecall then
+	if hkm then
+		local old
+		old = hkm(game, "__namecall", function(self, ...)
+			local m = getn and getn() or ""
+			if self == ContentProvider and m:lower() == "preloadasync" then
+				local a = {...}
+				if type(a[1]) ~= "table" or type(a[2]) ~= "function" then
+					return old(self, ...)
+				end
+				local ok = pcall(function()
+					if setn then setn(m) end
+					old(self, a[1])
+				end)
+				if not ok then
+					return old(self, a[1])
+				end
+				a[1] = FilterTable(a[1])
+				if setn then setn(m) end
+				return old(self, a[1], a[2])
+			end
+			return old(self, ...)
+		end)
+	end
+	_G.JxereasExistingHooks.GuiDetectionBypassNamecall = true
+end
+
+_G.JxereasExistingHooks.GuiDetectionBypass = true
+
+local real_Drawing = Drawing
+if not real_Drawing then
+	local jx_gui = (get_hidden_gui or gethui or function() return CoreGui end)()
+	local JxDrawing = {}
+	local objs = {}
+
+	function JxDrawing.new(t)
+		local o
+		if t == "Text" then
+			o = Instance.new("TextLabel")
+			o.BackgroundTransparency = 1
+			o.TextColor3 = Color3.new(1,1,1)
+			o.Size = UDim2.new(0,0,0,0)
+			o.Position = UDim2.new(0,0,0,0)
+		else
+			o = Instance.new("Frame")
+			o.BackgroundColor3 = Color3.new(1,1,1)
+			o.Size = UDim2.new(0,0,0,0)
+			o.Position = UDim2.new(0,0,0,0)
+			o.BorderSizePixel = 0
+		end
+		o.Parent = jx_gui
+
+		local w = {}
+		function w.SetPos(p) o.Position = UDim2.new(0,p.X,0,p.Y) end
+		function w.SetSize(s) o.Size = UDim2.new(0,s.X,0,s.Y) end
+		function w.SetVisible(v) o.Visible = v end
+		function w.SetText(x) o.Text = x end
+		function w.SetColor(c) o.BackgroundColor3 = c end
+		function w.Destroy() o:Destroy() end
+
+		objs[#objs+1] = w
+		return w
+	end
+
+	getgenv().JxDrawing = JxDrawing
+end
+
+local Players = Service_Wrap("Players")
 local player = Players.LocalPlayer
 local main_gc = getconnections or get_signal_cons
+local v_u = Service_Wrap("VirtualUser")
 
-for _, connection in pairs(main_gc(player.Idled)) do
-	if connection.Enabled then
-    	connection:Disable()
-    end
+if main_gc then
+	for _, connection in pairs(main_gc(player.Idled)) do
+		if connection["Disable"] then
+			connection["Disable"](connection)
+		elseif connection["Disconnect"] then
+			connection["Disconnect"](connection)
+		end
+	end
+else
+	player.Idled:Connect(function()
+		v_u:CaptureController()
+		v_u:ClickButton2(Vector2.new())
+	end)
 end
 
-local TweenService = game:GetService("TweenService")
-local TextService = game:GetService("TextService")
-local UserInputService = game:GetService("UserInputService")
-local GuiService = game:GetService("GuiService")
-
+local TweenService = Service_Wrap("TweenService")
+local TextService = Service_Wrap("TextService")
+local UserInputService = gService_Wrap("UserInputService")
+local GuiService = Service_Wrap("GuiService")
 local mouse = player:GetMouse()
 local viewPortSize = workspace.CurrentCamera.ViewportSize
-
 local originalElements = {}
--- Add Tween Dictonary with format Tweens.ElementType.TweenName to ignore repetitive variables
-
 local Library = {}
 local elementHandler = {}
 local windowHandler = {}
