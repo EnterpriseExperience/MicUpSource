@@ -397,6 +397,7 @@ local function create_label(target, text, color)
     b.AlwaysOnTop = true
     b.LightInfluence = 0
     b.MaxDistance = 5000
+    b.StudsOffset = Vector3.new(0, 2.5, 0)
     b.Parent = target
 
     local t = Instance.new("TextLabel")
@@ -415,8 +416,10 @@ local function clear_esp(char)
     if char:FindFirstChild("esp_highlight") then
         char.esp_highlight:Destroy()
     end
-    if char:FindFirstChild("esp_label") then
-        char.esp_label:Destroy()
+
+    local head = char:FindFirstChild("Head")
+    if head and head:FindFirstChild("esp_label") then
+        head.esp_label:Destroy()
     end
 end
 
