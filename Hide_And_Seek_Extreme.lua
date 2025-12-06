@@ -1,17 +1,24 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
+local parent_main_gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui())
+
 if not getgenv().GlobalEnvironmentFramework_Initialized then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
     wait(0.1)
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
 
-for _, v in ipairs(game.CoreGui:GetDescendants()) do
+for _, v in ipairs(game.CoreGui:GetChildren()) do
     if v.Name:lower():find("turtle") then
         v:Destroy()
     end
 end
-wait(0.5)
+for _, v in ipairs(parent_main_gui:GetChildren()) do
+    if v.Name:lower():find("turtle") then
+        v:Destroy()
+    end
+end
+wait(0.6)
 local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/Turtle_UI_Remake.lua"))()
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 local Main = lib:Window("Main")
