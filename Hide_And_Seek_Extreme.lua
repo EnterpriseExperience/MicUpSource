@@ -379,7 +379,7 @@ end
 
 local players = Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local local_plr = players.LocalPlayer
-getgenv().player_esp = false
+getgenv().player_esp = getgenv().player_esp or false
 
 local function create_highlight(target, color)
     local h = Instance.new("Highlight")
@@ -392,7 +392,12 @@ local function create_highlight(target, color)
 end
 
 local function create_label(target, text, color)
+    if target:FindFirstChild("esp_label") then
+        return target.esp_label
+    end
+
     local b = Instance.new("BillboardGui")
+    b.Name = "esp_label"
     b.Size = UDim2.new(0,150,0,50)
     b.AlwaysOnTop = true
     b.LightInfluence = 0
@@ -401,6 +406,7 @@ local function create_label(target, text, color)
     b.Parent = target
 
     local t = Instance.new("TextLabel")
+    t.Name = "TextLabel"
     t.Size = UDim2.new(1,0,1,0)
     t.BackgroundTransparency = 1
     t.Text = text
@@ -427,20 +433,35 @@ local function apply_esp(plr, it_name)
     local char = plr.Character
     if not char then return end
 
-    clear_esp(char)
+    local head = char:FindFirstChild("Head")
+    if not head then return end
 
     local is_it = tostring(plr.Name) == it_name
-
     local highlight_color = is_it and Color3.fromRGB(40,90,255) or Color3.fromRGB(255,50,50)
-    local label_text = is_it and "IT/Seeker" or ""
-    local label_color = is_it and Color3.fromRGB(40,90,255) or Color3.fromRGB(255,50,50)
 
-    local h = create_highlight(char, highlight_color)
-    h.Name = "esp_highlight"
+    local h = char:FindFirstChild("esp_highlight")
+    if not h then
+        h = create_highlight(char, highlight_color)
+        h.Name = "esp_highlight"
+    else
+        h.FillColor = highlight_color
+        h.OutlineColor = highlight_color
+    end
 
     if is_it then
-        local b = create_label(char:WaitForChild("Head"), label_text, label_color)
-        b.Name = "esp_label"
+        local b = head:FindFirstChild("esp_label")
+        if not b then
+            b = create_label(head, "IT/Seeker", highlight_color)
+        else
+            local t = b:FindFirstChild("TextLabel")
+            if t then
+                t.Text = "IT/Seeker"
+                t.TextColor3 = highlight_color
+            end
+        end
+    else
+        local b = head:FindFirstChild("esp_label")
+        if b then b:Destroy() end
     end
 end
 
