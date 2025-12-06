@@ -16,7 +16,6 @@ local g = getgenv()
 
 function close_menu()
    closeWindow()
-   getgenv().CatalogAvatarCreator_Script_Menu_Loaded = false
 end
 
 g.get_or_set = g.get_or_set or function(name, value)
