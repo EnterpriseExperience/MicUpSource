@@ -122,69 +122,80 @@ getgenv().cars_cache = getgenv().cars_cache or {}
 getgenv().owner_index = getgenv().owner_index or {}
 getgenv().car_index_inited = getgenv().car_index_inited or false
 
-local HttpService = getgenv().HttpService or cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local Players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local HttpService = getgenv().HttpService or (cloneref and cloneref(game:GetService("HttpService"))) or game:GetService("HttpService")
+local Players = getgenv().Players or (cloneref and cloneref(game:GetService("Players"))) or game:GetService("Players")
 local cars_cache = getgenv().cars_cache
 local owner_index = getgenv().owner_index
 local vehicles_folder = workspace:FindFirstChild("Vehicles")
 
-local function usernamefromdisplayname(displayname)
-   for _, p in ipairs(Players:GetPlayers()) do
-      if string.lower(p.DisplayName) == string.lower(displayname) then
-         return p.Name
-      end
+local function to_username(v)
+   for _,p in ipairs(Players:GetPlayers()) do
+      if string.lower(p.Name) == string.lower(v) then return p.Name end
+      if string.lower(p.DisplayName) == string.lower(v) then return p.Name end
    end
-   return nil
+   return v
 end
 
-local function indexcar(model)
-   local raw = model:GetAttribute("57")
+function removecar(m)
+   for o,x in pairs(owner_index) do
+      if x == m then owner_index[o] = nil end
+   end
+end
+
+local function indexcar(m)
+   local raw = m:GetAttribute("57")
    if not raw then return end
-   local ok, decoded = pcall(function() return HttpService:JSONDecode(raw) end)
-   if not ok or not decoded.Owner then return end
-   owner_index[string.lower(decoded.Owner)] = model
+   local ok, d = pcall(function() return HttpService:JSONDecode(raw) end)
+   if not ok or not d or not d.Owner then return end
+   owner_index[string.lower(d.Owner)] = m
 end
 
-local function removecar(model)
-   for owner, m in pairs(owner_index) do
-      if m == model then
-         owner_index[owner] = nil
+local function setup_model(m)
+   cars_cache[m] = true
+   indexcar(m)
+   m.AttributeChanged:Connect(function(a)
+      if a == "57" then
+         removecar(m)
+         indexcar(m)
       end
-   end
+   end)
 end
 
 if not getgenv().car_index_inited then
    getgenv().car_index_inited = true
-
    if vehicles_folder then
-      for _, v in ipairs(vehicles_folder:GetDescendants()) do
-         if v:IsA("Model") and v:GetAttribute("56") then
-            cars_cache[v] = true
-            indexcar(v)
+      for _,v in ipairs(vehicles_folder:GetDescendants()) do
+         if v:IsA("Model") then
+            if v:GetAttribute("57") then setup_model(v) end
+            v.AttributeChanged:Connect(function(a)
+               if a == "57" then setup_model(v) end
+            end)
          end
       end
 
-      vehicles_folder.DescendantAdded:Connect(function(obj)
-         if obj:IsA("Model") and obj:GetAttribute("56") then
-            cars_cache[obj] = true
-            indexcar(obj)
+      vehicles_folder.DescendantAdded:Connect(function(v)
+         if v:IsA("Model") then
+            if v:GetAttribute("57") then setup_model(v) end
+            v.AttributeChanged:Connect(function(a)
+               if a == "57" then setup_model(v) end
+            end)
          end
       end)
 
-      vehicles_folder.DescendantRemoving:Connect(function(obj)
-         if cars_cache[obj] then
-            cars_cache[obj] = nil
-            removecar(obj)
+      vehicles_folder.DescendantRemoving:Connect(function(v)
+         if cars_cache[v] then
+            cars_cache[v] = nil
+            removecar(v)
          end
       end)
    end
 end
 
-local function carbyusername(nameordisplayname)
-   local resolved = usernamefromdisplayname(nameordisplayname) or nameordisplayname
-   local m = owner_index[string.lower(resolved)]
+function carbyusername(v)
+   local r = to_username(v)
+   local m = owner_index[string.lower(r)]
    if m then return m end
-   getgenv().notify("Error", "Car not found for: "..tostring(nameordisplayname), 6)
+   getgenv().notify("Error","Car not found for: "..tostring(v),6)
    return nil
 end
 
@@ -374,7 +385,7 @@ Vehicle:Toggle("Lock Car (FE)", function(locking_car)
          while getgenv().Locked_Car and not getgenv().lockedcar_cancel do
             task.wait(0.2)
 
-            local mycar = carbyusername(tostring(LocalPlayer.DisplayName))
+            local mycar = carbyusername(LocalPlayer.DisplayName)
             if not mycar then
                getgenv().Locked_Car = false
                break
