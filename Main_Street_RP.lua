@@ -369,7 +369,7 @@ Vehicle:Toggle("Lock Car (FE)", function(locking_car)
          while getgenv().Locked_Car and not getgenv().lockedcar_cancel do
             task.wait(0.2)
 
-            local mycar = CarByUsername(tostring(LocalPlayer.DisplayName))
+            local mycar = carbyusername(tostring(LocalPlayer.DisplayName))
             if not mycar then
                getgenv().Locked_Car = false
                break
