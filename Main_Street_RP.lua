@@ -1,3 +1,9 @@
+if not game:IsLoaded() then
+   game.Loaded:Wait()
+end
+wait(0.2)
+local MarketplaceService = game:GetService("MarketplaceService")
+local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local flames_api = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua"))()
 wait(0.2)
 local Players = flames_api.Service("Players")
@@ -6,17 +12,11 @@ local LocalPlayer = flames_api.LocalPlayer
 local PlayerGui = flames_api.PlayerGui
 local ReplicatedStorage = flames_api.Service("ReplicatedStorage")
 local StarterGui = flames_api.Service("StarterGui")
+local g = getgenv()
 
-function notify(title, msg, duration)
-   StarterGui:SetCore("SendNotification", {
-      Title = tostring(title),
-      Text = tostring(msg),
-      Duration = tonumber(duration or 5),
-      Icon = "rbxassetid://0",
-   })
+getgenv().notify = getgenv().notify or function(title, msg, duration)
+   flames_api.notify(title, msg, duration)
 end
-
-getgenv().notify = notify
 
 local colors = {
    "Black",
@@ -69,11 +69,14 @@ local Ages = {
    "Adult"
 }
 
-local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/Turtle_UI_Remake.lua"))()
-local Main = lib:Window("Main")
-local Player = lib:Window("Player")
-local Vehicle = lib:Window("Vehicle")
-local Extras = lib:Window("Extras")
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LumUILibrary.lua"))()
+local Window = Library.new(tostring(game_name).." - Control Panel")
+local PlayersTab = Window:Tab("Players")
+local VehicleTab = Window:Tab("Vehicle")
+local UITab = Window:Tab("UI")
+local Player = PlayersTab:Section("Players")
+local Vehicle = VehicleTab:Section("Vehicle")
+local UI = UITab:Section("UI")
 local Network = ReplicatedStorage:FindFirstChild("Network")
 local Vehicle_Color = Network:FindFirstChild("Vehicles_SetColorRequest")
 local Vehicle_Rims = Network:FindFirstChild("Vehicles_SetRimsRequest")
@@ -98,13 +101,17 @@ local Owner_Outfit_IDs = {
    ["WaistAccessory"] = 18862883592,
 }
 
+function close_menu()
+   closeWindow()
+end
+
 local function safe_wait(...)
    local current = ReplicatedStorage
 
    for _, part in pairs({...}) do
       current = current:WaitForChild(part, 5)
       if not current then
-         return warn("Missing:", part)
+         return getgenv().notify("Error", "Missing: "..tostring(part), 6)
       end
    end
 
@@ -137,28 +144,28 @@ local function CarByUsername(nameOrDisplayName)
       end
    end
 
-   warn("Car not found for:", nameOrDisplayName)
+   getgenv().notify("Error", "Car not found for: "..tostring(nameOrDisplayName), 6)
    return nil
 end
 
 local function return_correct_age()
    local Menus_GUI = PlayerGui:FindFirstChild("Menus")
-   if not Menus_GUI then return notify("Failure:", "Menus GUI doesn't exist inside PlayerGui!", 5) end
+   if not Menus_GUI then return notify("Error", "Menus GUI doesn't exist inside PlayerGui!", 5) end
 
    local Avatar = Menus_GUI:FindFirstChild("Avatar")
-   if not Avatar then return notify("Failure:", "Avatar Frame doesn't exist inside Menus GUI!", 5) end
+   if not Avatar then return notify("Error", "Avatar Frame doesn't exist inside Menus GUI!", 5) end
 
    local Menus_Frame = Avatar:FindFirstChild("Menus")
-   if not Menus_Frame then return notify("Failure:", "Menus Frame doesn't exist inside Avatar Frame!", 5) end
+   if not Menus_Frame then return notify("Error", "Menus Frame doesn't exist inside Avatar Frame!", 5) end
 
    local Body_Frame_1 = Menus_Frame:FindFirstChild("Body")
-   if not Body_Frame_1 then return notify("Failure:", "Body_Frame_1 doesn't exist inside Menus Frame!", 5) end
+   if not Body_Frame_1 then return notify("Error", "Body_Frame_1 doesn't exist inside Menus Frame!", 5) end
 
    local Body_Frame_2 = Body_Frame_1:FindFirstChild("Body")
-   if not Body_Frame_2 then return notify("Failure:", "Body_Frame_2 doesn't exist inside Body_Frame_1!", 5) end
+   if not Body_Frame_2 then return notify("Error", "Body_Frame_2 doesn't exist inside Body_Frame_1!", 5) end
 
    local Ages_Frame = Body_Frame_2:FindFirstChild("Ages")
-   if not Ages_Frame then return notify("Failure:", "Ages Frame doesn't exist inside Body_Frame_2!", 5) end
+   if not Ages_Frame then return notify("Error", "Ages Frame doesn't exist inside Body_Frame_2!", 5) end
 
    for _, ageName in ipairs(Ages) do
       local ageButton = Ages_Frame:FindFirstChild(ageName)
@@ -173,7 +180,7 @@ local function return_correct_age()
       end
    end
 
-   return notify("Failure:", "No age selection has UIStroke enabled.", 5)
+   return notify("Error", "No age selection has UIStroke enabled.", 5)
 end
 
 local function shouldLockCar(carModel)
@@ -203,7 +210,7 @@ if rims_path then
       end
    end
 else
-   return warn("Rims not found.")
+   return notify("Error", "Rims not found.", 5)
 end
 
 local wraps_path = safe_wait("Assets", "Content", "Vehicles", "Wraps")
@@ -216,10 +223,10 @@ if wraps_path then
       end
    end
    if #AllWraps == 0 then
-      warn("No valid wraps found.")
+      getgenv().notify("Error", "No valid wraps found.", 5)
    end
 else
-   warn("Wraps not found.")
+   getgenv().notify("Error", "Wraps not found.", 5)
 end
 
 local trails_path = safe_wait("Assets", "Content", "Vehicles", "Trails")
@@ -232,15 +239,17 @@ if trails_path then
       end
    end
    if #AllTrails == 0 then
-      warn("No valid trails found.")
+      getgenv().notify("Error", "No valid trails found.", 5)
    end
 else
-   warn("Trails not found.")
+   getgenv().notify("Error", "Trails not found.", 5)
 end
 
-Vehicle:Toggle("Rainbow Car (FE)", false, function(RGBVehicle)
+Vehicle:Toggle("Rainbow Vehicle (FE)", function(RGBVehicle)
    if RGBVehicle then
       getgenv().RGB_Vehicle = true
+      getgenv().notify("Success", "Rainbow Vehicle is now enabled.", 5)
+      wait(0.1)
       while getgenv().RGB_Vehicle == true do
       task.wait()
          for _, color in ipairs(colors) do
@@ -255,12 +264,15 @@ Vehicle:Toggle("Rainbow Car (FE)", false, function(RGBVehicle)
       end
    else
       getgenv().RGB_Vehicle = false
+      getgenv().notify("Success", "Rainbow Vehicle is now disabled.", 5)
    end
 end)
 
-Vehicle:Toggle("Flash Rims (FE)", false, function(RimsFlashing)
+Vehicle:Toggle("Flash Rims (FE)", function(RimsFlashing)
    if RimsFlashing then
       getgenv().Flashing_Rims = true
+      getgenv().notify("Success", "Flashing Rims is now enabled.", 5)
+      wait(0.1)
       while getgenv().Flashing_Rims == true do
       wait()
          for _, rim in ipairs(AllRims) do
@@ -270,12 +282,15 @@ Vehicle:Toggle("Flash Rims (FE)", false, function(RimsFlashing)
       end
    else
       getgenv().Flashing_Rims = false
+      getgenv().notify("Success", "Flash Rims is now disabled.", 5)
    end
 end)
 
-Vehicle:Toggle("Flash Trail (FE)", false, function(TrailsFlashing)
+Vehicle:Toggle("Flash Trail (FE)", function(TrailsFlashing)
    if TrailsFlashing then
       getgenv().Flashing_Trails = true
+      getgenv().notify("Success", "Flashing Trail is now enabled.", 5)
+      wait(0.1)
       while getgenv().Flashing_Trails == true do
       wait()
          for _, trail in ipairs(AllTrails) do
@@ -285,12 +300,15 @@ Vehicle:Toggle("Flash Trail (FE)", false, function(TrailsFlashing)
       end
    else
       getgenv().Flashing_Trails = false
+      getgenv().notify("Success", "Flashing Trail is now disabled.", 5)
    end
 end)
 
-Vehicle:Toggle("Flash Wrap (FE)", false, function(WrapsFlashing)
+Vehicle:Toggle("Flash Wrap (FE)", function(WrapsFlashing)
    if WrapsFlashing then
       getgenv().Flashing_Wraps = true
+      getgenv().notify("Success", "Flashing Wraps is now enabled.", 5)
+      wait(0.1)
       while getgenv().Flashing_Wraps == true do
       wait()
          for _, wrap in ipairs(AllWraps) do
@@ -300,16 +318,18 @@ Vehicle:Toggle("Flash Wrap (FE)", false, function(WrapsFlashing)
       end
    else
       getgenv().Flashing_Wraps = false
+      getgenv().notify("Success", "Flashing Wraps is now disabled.", 5)
    end
 end)
 
-Vehicle:Toggle("Lock Car (FE)", false, function(locking_car)
+Vehicle:Toggle("Lock Car (FE)", function(locking_car)
    if locking_car then
       getgenv().Locked_Car = true
+      wait(0.1)
       while getgenv().Locked_Car == true do
          task.wait(0.2)
 
-         local myCar = CarByUsername("Aura")
+         local myCar = CarByUsername(tostring(LocalPlayer.DisplayName))
          if myCar then
             if shouldLockCar(myCar) then
                Lock_Car:FireServer("ToggleLock")
@@ -323,7 +343,7 @@ Vehicle:Toggle("Lock Car (FE)", false, function(locking_car)
    end
 end)
 
-Player:Toggle("Rainbow Skin (FE)", false, function(RGB_Skin)
+Player:Toggle("Rainbow Skin (FE)", function(RGB_Skin)
    if RGB_Skin then
       getgenv().Rainbow_Skin_Enabled = true
       while getgenv().Rainbow_Skin_Enabled == true do
@@ -345,7 +365,7 @@ end)
 
 local Correct_Age = return_correct_age()
 wait(0.2)
-Player:Toggle("Loop Age (FE)", false, function(Looping_Age)
+Player:Toggle("Loop Age (FE)", function(Looping_Age)
    if Looping_Age then
       getgenv().Looping_Age_Setter = true
       while getgenv().Looping_Age_Setter == true do
@@ -362,7 +382,7 @@ Player:Toggle("Loop Age (FE)", false, function(Looping_Age)
    end
 end)
 
-Extras:Button("Owner Outfit (FE)", function()
+Player:Button("Owner Outfit (FE)", function()
    for key, id in pairs(Owner_Outfit_IDs) do
       if typeof(id) == "number" then
          local args = {
@@ -379,10 +399,10 @@ Extras:Button("Owner Outfit (FE)", function()
          end)
 
          if success then
-            notify("[Success]:", tostring(key) .. tostring(id), 5)
+            notify("Success", tostring(key) .. tostring(id), 5)
          else
-            notify("Error:", tostring(key) .. ": " .. tostring(result), 5)
-            notify("Failure:", "Failed to apply owner outfit (see error above).", 5)
+            notify("Info", tostring(key)..": "..tostring(result), 10)
+            notify("Error", "Failed to apply owner outfit (see notification above).", 6)
          end
          task.wait(0.1)
       elseif typeof(id) == "string" and key == "Skintone" then
@@ -391,14 +411,14 @@ Extras:Button("Owner Outfit (FE)", function()
    end
 end)
 
-Extras:Box("Spam Request Plr:", function(target_interact_loop, focuslost)
+Player:TextBox("Spam Carry Request Player", function(target_interact_loop, focuslost)
    local target = flames_api.findplr(target_interact_loop)
    local playerName = target and target.Name
    
    if target then
       getgenv().loop_request_carry = true
       while getgenv().loop_request_carry == true do
-      wait()
+      task.wait(0)
          if playerName and playerName ~= LocalPlayer.Name then
             local emotes = {
                "Characters_Emotes_Joint_CarryBack_Invokee",
@@ -415,16 +435,14 @@ Extras:Box("Spam Request Plr:", function(target_interact_loop, focuslost)
          end
       end
    else
-      return notify("Failure:", "Player/Target was not found.", 5)
+      return notify("Error", "Player/Target was not found.", 5)
    end
 end)
 
-Extras:Button("Stop Requesting", function()
-   for i = 1, 50 do
-      getgenv().loop_request_carry = false
-   end
+Player:Button("Stop Requesting", function()
+   getgenv().loop_request_carry = false
 end)
 
-Main:Button("Destroy GUI", function()
-   lib:Destroy()
+UI:Button("Destroy GUI", function()
+   close_menu()
 end)
