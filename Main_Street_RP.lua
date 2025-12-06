@@ -392,7 +392,9 @@ Vehicle:Toggle("Lock Car (FE)", function(locking_car)
             end
 
             if shouldLockCar(mycar) then
-               Lock_Car:FireServer("ToggleLock")
+               if Lock_Car and Lock_Car:IsA("RemoteEvent") then
+                  Lock_Car:FireServer("ToggleLock")
+               end
             end
          end
       end)
@@ -401,6 +403,9 @@ Vehicle:Toggle("Lock Car (FE)", function(locking_car)
       getgenv().lockedcar_cancel = true
       if getgenv().lockedcar_thread then
          task.cancel(getgenv().lockedcar_thread)
+      end
+      if Lock_Car and Lock_Car:IsA("RemoteEvent") then
+         Lock_Car:FireServer("ToggleLock")
       end
       getgenv().lockedcar_thread = nil
    end
