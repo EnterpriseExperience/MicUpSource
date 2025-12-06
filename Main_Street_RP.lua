@@ -118,33 +118,68 @@ local function safe_wait(...)
    return current
 end
 
-local function UsernameFromDisplayName(displayName)
-   for _, player in ipairs(Players:GetPlayers()) do
-      if string.lower(player.DisplayName) == string.lower(displayName) then
-         return player.Name
+getgenv().cars_cache = getgenv().cars_cache or {}
+getgenv().owner_index = getgenv().owner_index or {}
+getgenv().car_index_inited = getgenv().car_index_inited or false
+local HttpService = getgenv().HttpService or cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+local Players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local cars_cache = getgenv().cars_cache
+local owner_index = getgenv().owner_index
+local function usernamefromdisplayname(displayname)
+   for _, p in ipairs(Players:GetPlayers()) do
+      if string.lower(p.DisplayName) == string.lower(displayname) then
+         return p.Name
       end
    end
-
    return nil
 end
 
-local function CarByUsername(nameOrDisplayName)
-   local resolvedName = UsernameFromDisplayName(nameOrDisplayName) or nameOrDisplayName
+local function indexcar(model)
+   local raw = model:GetAttribute("56")
+   if not raw then return end
+   local ok, decoded = pcall(function() return HttpService:JSONDecode(raw) end)
+   if not ok or not decoded.Owner then return end
+   owner_index[string.lower(decoded.Owner)] = model
+end
 
-   for _, model in ipairs(workspace:GetDescendants()) do
-      if model:IsA("Model") and model:GetAttribute("56") then
-         local raw = model:GetAttribute("56")
-         local success, decoded = pcall(function()
-            return HttpService:JSONDecode(raw)
-         end)
+local function removecar(model)
+   for owner, m in pairs(owner_index) do
+      if m == model then
+         owner_index[owner] = nil
+      end
+   end
+end
 
-         if success and decoded.Owner and string.lower(decoded.Owner) == string.lower(resolvedName) then
-            return model
-         end
+if not getgenv().car_index_inited then
+   getgenv().car_index_inited = true
+
+   for _, v in ipairs(workspace:GetDescendants()) do
+      if v:IsA("Model") and v:GetAttribute("56") then
+         cars_cache[v] = true
+         indexcar(v)
       end
    end
 
-   getgenv().notify("Error", "Car not found for: "..tostring(nameOrDisplayName), 6)
+   workspace.DescendantAdded:Connect(function(obj)
+      if obj:IsA("Model") and obj:GetAttribute("56") then
+         cars_cache[obj] = true
+         indexcar(obj)
+      end
+   end)
+
+   workspace.DescendantRemoving:Connect(function(obj)
+      if cars_cache[obj] then
+         cars_cache[obj] = nil
+         removecar(obj)
+      end
+   end)
+end
+
+local function carbyusername(nameordisplayname)
+   local resolved = usernamefromdisplayname(nameordisplayname) or nameordisplayname
+   local m = owner_index[string.lower(resolved)]
+   if m then return m end
+   getgenv().notify("Error", "Car not found for: "..tostring(nameordisplayname), 6)
    return nil
 end
 
@@ -324,22 +359,34 @@ end)
 
 Vehicle:Toggle("Lock Car (FE)", function(locking_car)
    if locking_car then
-      getgenv().Locked_Car = true
-      wait(0.1)
-      while getgenv().Locked_Car == true do
-         task.wait(0.2)
+      if getgenv().lockedcar_thread and task.cancel then
+         return
+      end
 
-         local myCar = CarByUsername(tostring(LocalPlayer.DisplayName))
-         if myCar then
-            if shouldLockCar(myCar) then
+      getgenv().Locked_Car = true
+      getgenv().lockedcar_cancel = false
+      getgenv().lockedcar_thread = task.spawn(function()
+         while getgenv().Locked_Car and not getgenv().lockedcar_cancel do
+            task.wait(0.2)
+
+            local mycar = CarByUsername(tostring(LocalPlayer.DisplayName))
+            if not mycar then
+               getgenv().Locked_Car = false
+               break
+            end
+
+            if shouldLockCar(mycar) then
                Lock_Car:FireServer("ToggleLock")
             end
-         else
-            getgenv().Locked_Car = false
          end
-      end
+      end)
    else
       getgenv().Locked_Car = false
+      getgenv().lockedcar_cancel = true
+      if getgenv().lockedcar_thread then
+         task.cancel(getgenv().lockedcar_thread)
+      end
+      getgenv().lockedcar_thread = nil
    end
 end)
 
