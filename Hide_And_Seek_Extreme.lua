@@ -12,12 +12,7 @@ local Main = lib:Window("Main")
 local Players_Tab = lib:Window("Players")
 local Extras = lib:Window("Extras")
 local Audio = lib:Window("Music/Audio")
-local valid_titles = {
-    success = "Success",
-    info = "Info",
-    warning = "Warning",
-    error = "Error"
-}
+local valid_titles = {success="Success",info="Info",warning="Warning",error="Error",succes="Success",sucess="Success",eror="Error",erorr="Error",warnin="Warning"}
 
 local function format_title(str)
     if typeof(str) ~= "string" then
@@ -381,7 +376,91 @@ function remove_whitelist_plr(user)
         getgenv().notify("Warning", tostring(user.Name).." is not in the whitelist.", 5)
     end
 end
-wait(0.3)
+
+local players = Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local local_plr = players.LocalPlayer
+getgenv().player_esp = false
+
+local function create_highlight(target, color)
+    local h = Instance.new("Highlight")
+    h.FillColor = color
+    h.OutlineColor = color
+    h.FillTransparency = 0.5
+    h.OutlineTransparency = 0
+    h.Parent = target
+    return h
+end
+
+local function create_label(target, text, color)
+    local b = Instance.new("BillboardGui")
+    b.Size = UDim2.new(0,150,0,50)
+    b.AlwaysOnTop = true
+    b.LightInfluence = 0
+    b.MaxDistance = 5000
+    b.Parent = target
+
+    local t = Instance.new("TextLabel")
+    t.Size = UDim2.new(1,0,1,0)
+    t.BackgroundTransparency = 1
+    t.Text = text
+    t.TextColor3 = color
+    t.TextScaled = true
+    t.Font = Enum.Font.GothamBold
+    t.Parent = b
+
+    return b
+end
+
+local function clear_esp(char)
+    if char:FindFirstChild("esp_highlight") then
+        char.esp_highlight:Destroy()
+    end
+    if char:FindFirstChild("esp_label") then
+        char.esp_label:Destroy()
+    end
+end
+
+local function apply_esp(plr, it_name)
+    local char = plr.Character
+    if not char then return end
+
+    clear_esp(char)
+
+    local is_it = tostring(plr.Name) == it_name
+
+    local highlight_color = is_it and Color3.fromRGB(40,90,255) or Color3.fromRGB(255,50,50)
+    local label_text = is_it and "IT/Seeker" or ""
+    local label_color = is_it and Color3.fromRGB(40,90,255) or Color3.fromRGB(255,50,50)
+
+    local h = create_highlight(char, highlight_color)
+    h.Name = "esp_highlight"
+
+    if is_it then
+        local b = create_label(char:WaitForChild("Head"), label_text, label_color)
+        b.Name = "esp_label"
+    end
+end
+
+task.spawn(function()
+    while true do
+    task.wait(0.2)
+        if getgenv().player_esp then
+            local it_name = tostring(It_Val.Value)
+            for _, plr in ipairs(players:GetPlayers()) do
+                if plr ~= local_plr then
+                    apply_esp(plr, it_name)
+                end
+            end
+        else
+            for _, plr in ipairs(players:GetPlayers()) do
+                if plr.Character then
+                    clear_esp(plr.Character)
+                end
+            end
+        end
+    end
+end)
+
 local Game_Objects = Workspace:FindFirstChild("GameObjects") or Workspace:WaitForChild("GameObjects", 10)
 local Player_Data = getgenv().LocalPlayer:FindFirstChild("PlayerData", true) or LocalPlayer:WaitForChild("PlayerData", 10)
 local It_LocalPlr_Value = Player_Data and Player_Data:FindFirstChild("It", true) or Player_Data:WaitForChild("It", 5)
@@ -406,24 +485,49 @@ function find_all_players_whitelist()
             local myChar = getgenv().Character or get_char(LocalPlayer or game.Players.LocalPlayer) or game.Players.LocalPlayer.Character
             if char and myChar and char:FindFirstChild("HumanoidRootPart") and myChar:FindFirstChild("HumanoidRootPart") then
                 myChar:PivotTo(char.HumanoidRootPart.CFrame + Vector3.new(0, 1.5, 0))
-                task.wait(0.2)
+                task.wait(0.1)
             end
         end
     end
 end
 
-function find_all_players_no_whitelist()
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            local char = get_char(player) or player.Character
-            local myChar = getgenv().Character or get_char(LocalPlayer or game.Players.LocalPlayer) or game.Players.LocalPlayer.Character
-            if char and myChar and char:FindFirstChild("HumanoidRootPart") and myChar:FindFirstChild("HumanoidRootPart") then
-                myChar:PivotTo(char:FindFirstChild("HumanoidRootPart").CFrame + Vector3.new(0, 1.5, 0))
-                task.wait(0.2)
-            end
+function on_char_added(player, char)
+    if player == LocalPlayer then return end
+    if WHITELIST[player.Name] then return end
+
+    local hrp = char:WaitForChild("HumanoidRootPart", 5)
+    if not hrp then return end
+
+    local myChar = getgenv().Character or get_char(LocalPlayer) or LocalPlayer.Character
+    if not myChar then return end
+
+    local myHrp = myChar:FindFirstChild("HumanoidRootPart")
+    if not myHrp then return end
+
+    myChar:PivotTo(hrp.CFrame + Vector3.new(0, 1.5, 0))
+end
+
+function connect_player(player)
+    player.CharacterAdded:Connect(function(char)
+        on_char_added(player, char)
+    end)
+end
+
+for _, plr in ipairs(Players:GetPlayers()) do
+    if plr ~= LocalPlayer then
+        if getgenv().FindingAllNonWhitelistedPlayers then
+            connect_player(plr)
         end
     end
 end
+
+Players.PlayerAdded:Connect(function(plr)
+    if plr ~= LocalPlayer then
+        if getgenv().FindingAllNonWhitelistedPlayers then
+            connect_player(plr)
+        end
+    end
+end)
 
 local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes", true) or ReplicatedStorage:WaitForChild("Remotes", 5)
 local Play_Sound_Others_RE = Remotes and Remotes:FindFirstChild("PlaySoundOthers") or Remotes:WaitForChild("PlaySoundOthers", 5)
@@ -463,7 +567,7 @@ end
 getgenv().toggle_spawn_box_visible = getgenv().toggle_spawn_box_visible or false
 
 function toggle_visible_spawn_box(state)
-    local ws = getgenv().Workspace or cloneref and cloneref(game:GetService("Workspace")) or workspace
+    local ws = getgenv().Workspace or (cloneref and cloneref(game:GetService("Workspace"))) or workspace
     local Lobby = ws:FindFirstChild("Lobby") or ws:WaitForChild("Lobby", 10)
 
     if not Lobby or not Lobby:IsA("Model") then
@@ -479,15 +583,16 @@ function toggle_visible_spawn_box(state)
         visible = getgenv().toggle_spawn_box_visible
     end
 
+    local new_trans = visible and 0 or 1
+
     for _, v in ipairs(Lobby:GetChildren()) do
-        if v:IsA("BasePart") then
-            v.Transparency = visible and 0 or 1
+        if v:IsA("BasePart") and v.Transparency ~= new_trans then
+            v.Transparency = new_trans
         end
     end
 
-    local status = visible and "VISIBLE" or "INVISIBLE"
     if getgenv().notify then
-        getgenv().notify("Success", "Lobby parts are now: "..tostring(status), 6)
+        getgenv().notify("Success", "Lobby parts are now: "..(visible and "VISIBLE" or "INVISIBLE"), 5)
     end
 end
 
@@ -496,9 +601,9 @@ function play_music_others(ID)
         if v ~= getgenv().LocalPlayer then
             local main_target_plr = v or game.Players:FindFirstChild(v.Name)
             local Target_Char = get_char(main_target_plr) or main_target_plr.Character
-            local Target_HRP = get_root(main_target_plr)
+            local Target_HRP = get_root(main_target_plr) or Target_Char:FindFirstChild("HumanoidRootPart")
             if not Target_Char then return getgenv().notify("Error", "Player's Character does not exist!", 5) end
-            if not Target_HRP then return getgenv().notify("Error", "Player's HumanoidRootPart is missing1", 5) end
+            if not Target_HRP then return getgenv().notify("Error", "Player's HumanoidRootPart is missing!", 5) end
             
             if Play_Sound_Others_RE and Play_Sound_Others_RE:IsA("RemoteEvent") then
                 local args = {
@@ -511,6 +616,20 @@ function play_music_others(ID)
                 }
 
                 Play_Sound_Others_RE:FireServer(unpack(args))
+            elseif Play_Sound_Others_RE and Play_Sound_Others_RE:IsA("RemoteFunction") then
+                local args = {
+                    tonumber(ID),
+                    {
+                        Parent = Target_HRP,
+                        Pitch = 1,
+                        Volume = 2
+                    }
+                }
+
+                Play_Sound_Others_RE:InvokeServer(unpack(args))
+                getgenv().notify("Warning", "PlaySoundOthers exists but isn't a RemoteEvent, it's a RemoteFunction, gonna try again.", 10)
+            else
+                return getgenv().notify("Error", "PlaySoundOthers either doesn't exist or isn't a RemoteEvent/RemoteFunction.", 10)
             end
         end
     end
@@ -652,7 +771,7 @@ function collect_all_coins(method)
                 wait(0.1)
                 Character:PivotTo(v:GetPivot())
                 wait(0.2)
-                getgenv().notify("Info", "Picking up Credit: "..tostring(v), 5)
+                getgenv().notify("Info", "Picking up Credit: "..tostring(v), 2)
             end
         end
     else
@@ -662,7 +781,7 @@ end
 
 local Current_ID = 0
 wait(0.2)
-Audio:Box("(FE): Music", function(text, focuslost)
+Audio:Box("Music (FE):", function(text, focuslost)
     if focuslost then
         local id = tonumber(text)
         Current_ID = id
@@ -705,23 +824,33 @@ Extras:Button("Get Coins (TP)", function()
     end
 end)
 
-Main:Box("Whitelist Plr:", function(target_whitelist, focuslost)
+Main:Box("Whitelist:", function(target_whitelist, focuslost)
+    if not focuslost then return end
+    if not target_whitelist or target_whitelist == "" then
+        return getgenv().notify("Error", "You must type a player name!", 5)
+    end
+
     local target = findplr(target_whitelist)
 
-    if focuslost and target then
+    if target then
         add_whitelist_plr(target)
-    elseif not target then
-        return getgenv().notify("Error", tostring(target).." does not exist!", 5)
+    else
+        getgenv().notify("Error", target_whitelist.." does not exist!", 5)
     end
 end)
 
-Main:Box("Remove Plr:", function(target_remove_whitelist, focuslost)
+Main:Box("Unwhitelist:", function(target_remove_whitelist, focuslost)
+    if not focuslost then return end
+    if not target_remove_whitelist or target_remove_whitelist == "" then
+        return getgenv().notify("Error", "You must type a player name!", 5)
+    end
+
     local target_unwhitelist = findplr(target_remove_whitelist)
 
-    if focuslost and target_unwhitelist then
+    if target_unwhitelist then
         remove_whitelist_plr(target_unwhitelist)
-    elseif not target_unwhitelist then
-        return getgenv().notify("Error", tostring(target_unwhitelist).." does not exist!", 5)
+    else
+        getgenv().notify("Error", target_remove_whitelist.." does not exist!", 5)
     end
 end)
 
@@ -736,6 +865,43 @@ Main:Button("Find All (No Whitelist)", function()
 
     task.wait(0.1)
     find_all_players_no_whitelist()
+end)
+
+Main:Button("Find All (Whitelist)", function()
+    if not InGame_LocalPlr_Value.Value then
+        return getgenv().notify("Error", "You are not currently in-game!", 5)
+    end
+
+    if not It_LocalPlr_Value.Value then
+        return getgenv().notify("Error", "You are not the IT/seeker!", 5)
+    end
+    task.wait(0.1)
+    find_all_players_whitelist()
+end)
+
+Main:Toggle("Find All (Loop)", false, function(state)
+    if state then
+        getgenv().FindingAllNonWhitelistedPlayers = true
+        getgenv().FindAllConnections = {}
+
+        for _, plr in ipairs(Players:GetPlayers()) do
+            connect_player_events(plr)
+        end
+
+        local joinConn = Players.PlayerAdded:Connect(function(plr)
+            connect_player_events(plr)
+        end)
+
+        table.insert(getgenv().FindAllConnections, joinConn)
+    else
+        getgenv().FindingAllNonWhitelistedPlayers = false
+        if getgenv().FindAllConnections then
+            for _, c in ipairs(getgenv().FindAllConnections) do
+                pcall(function() c:Disconnect() end)
+            end
+        end
+        getgenv().FindAllConnections = nil
+    end
 end)
 
 Main:Button("Find All (Whitelist)", function()
@@ -842,6 +1008,10 @@ Players_Tab:Button("View IT", function()
     end
 end)
 
+Players_Tab:Toggle("Player ESP", false, function(state)
+    getgenv().player_esp = state
+end)
+
 Extras:Toggle("Visible Spawn", false, function(is_spawn_visible)
     if is_spawn_visible then
         toggle_visible_spawn_box(true)
@@ -872,13 +1042,13 @@ Players_Tab:Slider("Gravity",0,300,196, function(New_Gravity)
     getgenv().Workspace.Gravity = New_Gravity
 end)
 
-Players_Tab:Slider("FOV",0,120,70, function(New_FOV)
+Players_Tab:Slider("FOV",0,120,math.floor((getgenv().Camera.FieldOfView or 70)+0.5), function(new_fov)
+    new_fov = math.floor(new_fov)
     local camera_current = getgenv().Camera or getgenv().Workspace.CurrentCamera or workspace.CurrentCamera
-
-    camera_current.FieldOfView = New_FOV
+    camera_current.FieldOfView = new_fov
 end)
 
-Players_Tab:Box("TP To Player:", function(Target)
+Players_Tab:Box("Goto Plr:", function(Target)
     local Player_To_Teleport_To = findplr(Target)
 
     if not Player_To_Teleport_To then return getgenv().notify("Error", tostring(Player_To_Teleport_To).." does not exist!", 5) end
@@ -943,54 +1113,45 @@ Extras:Toggle("Rainbow Timer", false, function(rainbow_timer_text)
 end)
 
 Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
-   if rainbow_UI_frames then
+    if rainbow_UI_frames then
         local RunService = getgenv().RunService
-
         local Main_GUI = getgenv().PlayerGui:FindFirstChild("MainGui", true)
         if not Main_GUI then return getgenv().notify("Error", "MainGui doesn't exist in PlayerGui!", 5) end
-        local Shop_Frame = Main_GUI and Main_GUI:FindFirstChild("ShopFrame", true) or Main_GUI:WaitForChild("ShopFrame", 5)
+        local Shop_Frame = Main_GUI:FindFirstChild("ShopFrame", true) or Main_GUI:WaitForChild("ShopFrame", 5)
         if not Shop_Frame then return getgenv().notify("Error", "ShopFrame doesn't exist in MainGui!", 5) end
+
         wait(0.1)
         getgenv().Rainbow_Game_UI = true
-        getgenv().OriginalColors = {}
 
-        for _, uiObject in pairs(Shop_Frame:GetDescendants()) do
-            if uiObject:IsA("Frame") or uiObject:IsA("TextLabel") or uiObject:IsA("TextButton") then
-                getgenv().OriginalColors[uiObject] = {
-                    BackgroundColor3 = uiObject.BackgroundColor3
-                }
-                if uiObject:IsA("TextLabel") or uiObject:IsA("TextButton") then
-                    getgenv().OriginalColors[uiObject].TextColor3 = uiObject.TextColor3
-                end
-            end
-        end
+        local elements = Shop_Frame:GetDescendants()
+        local hue = 0
 
         coroutine.wrap(function()
-            local hue = 0
             while getgenv().Rainbow_Game_UI do
                 local color = Color3.fromHSV(hue, 1, 1)
 
-                for _, uiObject in pairs(Shop_Frame:GetDescendants()) do
-                    if uiObject:IsA("Frame") or uiObject:IsA("TextLabel") or uiObject:IsA("TextButton") then
+                for _, uiObject in ipairs(elements) do
+                    if uiObject:IsA("Frame") then
                         uiObject.BackgroundColor3 = color
-                        if uiObject:IsA("TextLabel") or uiObject:IsA("TextButton") then
-                            uiObject.TextColor3 = color
-                        end
+                    elseif uiObject:IsA("TextLabel") or uiObject:IsA("TextButton") then
+                        uiObject.BackgroundColor3 = color
+                        uiObject.TextColor3 = color
                     end
                 end
 
-                hue = hue + 0.005
+                hue = hue + 0.01
                 if hue > 1 then hue = 0 end
 
-                RunService.Heartbeat:Wait()
+                task.wait(0.05)
             end
         end)()
-   else
+    else
         getgenv().Rainbow_Game_UI = false
         wait(0.1)
-        if not next(getgenv().OriginalColors) then
+
+        if not getgenv().OriginalColors or not next(getgenv().OriginalColors) then
             getgenv().OriginalColors = nil
-            return 
+            return
         end
 
         for uiObject, colors in pairs(getgenv().OriginalColors) do
@@ -1003,7 +1164,7 @@ Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
         end
 
         getgenv().OriginalColors = nil
-   end
+    end
 end)
 
 Extras:Button("Try To Predict IT/Seeker", function()
@@ -1021,6 +1182,6 @@ Extras:Button("IY", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 end)
 
-Audio:Box("Music Others", function(music_ID)
+Audio:Box("Play Music", function(music_ID)
     play_music_others(music_ID)
 end)
