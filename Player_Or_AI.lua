@@ -1,236 +1,474 @@
-getgenv().Game = game
-getgenv().JobID = getgenv().Game.JobId
-getgenv().PlaceID = getgenv().Game.PlaceId
+if not game:IsLoaded() then
+   game.Loaded:Wait()
+end
 wait(0.2)
-local library = loadstring(getgenv().Game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-wait()
-getgenv().Service_Wrap = function(serviceName)
-    if cloneref then
-        return cloneref(getgenv().Game:GetService(serviceName))
-    else
-        return getgenv().Game:GetService(serviceName)
-    end
+local MarketplaceService = game:GetService("MarketplaceService")
+local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LumUILibrary.lua"))()
+local Window = Library.new(tostring(game_name).." - Control Panel")
+local HomeTab = Window:Tab("Home")
+local ExploitsTab = Window:Tab("Exploits")
+local UITab = Window:Tab("UI")
+local Home_Section = HomeTab:Section("Home")
+local Exploits_Section = ExploitsTab:Section("Exploits")
+local UI_Section = UITab:Section("UI")
+local g = getgenv()
+
+function close_menu()
+   closeWindow()
+   getgenv().CatalogAvatarCreator_Script_Menu_Loaded = false
 end
 
-getgenv().notify = function(Title, Content, Duration)
-   local StarterGui = getgenv().Service_Wrap("StarterGui")
-   task.wait()
-   StarterGui:SetCore("SendNotification", {
-      Title = tostring(Title);
-      Text = tostring(Content);
-      Duration = tonumber(Duration);
-   })
+g.get_or_set = g.get_or_set or function(name, value)
+   if rawget and rawset then
+      local existing = rawget(g, name)
+      if existing == nil then
+         rawset(g, name, value)
+         return value
+      end
+      return existing
+   end
+
+   local existing = g[name]
+
+   if existing == nil then
+      g[name] = value
+      return value
+   end
+
+   return existing
 end
 
-local function getExecutor()
-    local name
-    if identifyexecutor then
-        name = identifyexecutor()
-    end
-    return { Name = name or "Unknown Executor"}
+g.Game = game
+g.JobID = game.JobId
+g.PlaceID = game.PlaceId
+
+local function wait_for_datamodel(inst)
+   if not inst then return false end
+
+   local attempts = 0
+   local maximum_attempts = 300
+
+   while attempts < maximum_attempts do
+      if inst.Parent and inst:IsDescendantOf(workspace) then
+         return true
+      end
+      task.wait(0.1)
+      attempts += 1
+   end
+
+   return false
 end
+wait(0.1)
+get_or_set("wait_for_datamodel", wait_for_datamodel)
 
-local function executor_details()
-    local executorDetails = getExecutor()
-    return string.format("%s", executorDetails.Name)
+local function wait_for_child(parent, name)
+   if not parent then return nil end
+
+   local existing = parent:FindFirstChild(name)
+   if existing then return existing end
+
+   local ok, obj = pcall(function()
+      return parent:WaitForChild(name, math.huge)
+   end)
+
+   return ok and obj or nil
 end
+wait(0.1)
+get_or_set("wait_for_child", wait_for_child)
 
-local executor_Name = executor_details()
+local function wait_for_descendant(parent, name)
+   if not parent then return nil end
 
-getgenv().print_executor = function()
-    local function retrieve_executor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
-    end
+   local found = parent:FindFirstChild(name, true)
+   if found then return found end
 
-    local function identify_executor()
-        local executorDetails = retrieve_executor()
-        return string.format("%s", executorDetails.Name)
-    end
-    wait(0.1)
-    local executor_string = identify_executor()
+   local conn
+   local result = nil
 
-    return print(executor_string)
+   conn = parent.DescendantAdded:Connect(function(d)
+      if d.Name == name then
+         result = d
+         conn:Disconnect()
+      end
+   end)
+
+   while not result do
+      local check = parent:FindFirstChild(name, true)
+      if check then
+         result = check
+         conn:Disconnect()
+         break
+      end
+      task.wait()
+   end
+
+   return result
 end
+wait(0.1)
+get_or_set("wait_for_descendant", wait_for_descendant)
 
-getgenv().warn_executor = function()
-    local function retrieve_executor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
-    end
+local function wait_for_child_safe(parent, name)
+   if not parent then return nil end
 
-    local function identify_executor()
-        local executorDetails = retrieve_executor()
-        return string.format("%s", executorDetails.Name)
-    end
-    wait(0.1)
-    local executor_string = identify_executor()
+   local ok, obj = pcall(function()
+      return parent:WaitForChild(name, 9e9)
+   end)
 
-    return warn(executor_string)
+   if ok and obj then
+      return obj
+   end
+
+   return nil
 end
+wait(0.1)
+get_or_set("wait_for_child_safe", wait_for_child_safe)
 
-function low_level_executor()
-   if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
-      getgenv().notify("Failure:", "This feature isn't supported on this executor.", 5)
-      return false
-   else
-      return true
+local function retry_find(func, retries, delay)
+   for _ = 1, retries do
+      local ok, result = pcall(func)
+      if ok and result then
+         return result
+      end
+      task.wait(delay)
+   end
+   return nil
+end
+wait(0.1)
+get_or_set("retry_find", retry_find)
+
+g.get_char = g.get_char or function(Player)
+   if not Player or not Player:IsA("Player") then return nil end
+
+   local current_char
+   local diedconn
+   local added_conn
+
+   local function hookchar(char)
+      current_char = char
+
+      if diedconn then diedconn:Disconnect() end
+
+      local hum = char:FindFirstChildOfClass("Humanoid")
+      if hum then
+         diedconn = hum.Died:Once(function()
+            current_char = nil
+         end)
+      end
+   end
+
+   if Player.Character and Player.Character.Parent then
+      hookchar(Player.Character)
+   end
+
+   added_conn = Player.CharacterAdded:Connect(hookchar)
+
+   while not current_char do
+      task.wait()
+      local char = Player.Character
+      if char and char.Parent then
+         hookchar(char)
+      end
+   end
+
+   return current_char
+end
+wait(0.5)
+if not g.get_human then
+   g.get_human = function(Player)
+      local char = g.get_char(Player)
+      if not char then return nil end
+
+      local hum = char:FindFirstChildOfClass("Humanoid")
+      if hum then return hum end
+
+      local hum_conn
+      hum_conn = char.ChildAdded:Connect(function(c)
+         if c:IsA("Humanoid") then
+            hum = c
+            hum_conn:Disconnect()
+         end
+      end)
+
+      local died = false
+      local h = char:FindFirstChildOfClass("Humanoid")
+      if h then
+         h.Died:Connect(function()
+            died = true
+         end)
+      end
+
+      while not hum and not died do
+         task.wait()
+      end
+
+      if hum_conn then hum_conn:Disconnect() end
+
+      return (not died) and hum or nil
    end
 end
 
+if not g.get_root then
+   g.get_root = function(Player)
+      local char = g.get_char(Player)
+      if not char then return nil end
+
+      local root = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso")
+      if root then return root end
+
+      local targets = {
+         HumanoidRootPart = true,
+         UpperTorso = true,
+         Torso = true
+      }
+
+      local died = false
+      local hum = char:FindFirstChildOfClass("Humanoid")
+      if hum then
+         hum.Died:Connect(function() died = true end)
+      end
+
+      local added_conn
+      added_conn = char.ChildAdded:Connect(function(c)
+         if targets[c.Name] then
+            root = c
+            added_conn:Disconnect()
+         end
+      end)
+
+      while not root and not died do
+         task.wait()
+      end
+
+      if added_conn then added_conn:Disconnect() end
+
+      return (not died) and root or nil
+   end
+end
+
+if not g.get_head then
+   g.get_head = function(Player)
+      local char = g.get_char(Player)
+      if not char then return nil end
+
+      local head = char:FindFirstChild("Head")
+      if head then return head end
+
+      local died = false
+      local hum = char:FindFirstChildOfClass("Humanoid")
+      if hum then
+         hum.Died:Connect(function() died = true end)
+      end
+
+      local added_conn
+      added_conn = char.ChildAdded:Connect(function(c)
+         if c.Name == "Head" then
+            head = c
+            added_conn:Disconnect()
+         end
+      end)
+
+      while not head and not died do
+         task.wait()
+      end
+
+      if added_conn then added_conn:Disconnect() end
+
+      return (not died) and head or nil
+   end
+end
+
+wait(0.1)
+g.Service_Wrap = g.Service_Wrap or function(name)
+   name = tostring(name)
+
+   if setmetatable then
+      if not g._service_cache then
+         g._service_cache = setmetatable({}, {
+            __index = function(self, index)
+               local svc = game:GetService(index)
+
+               if cloneref and svc then
+                  svc = cloneref(svc)
+               end
+
+               self[index] = svc
+               return svc
+            end
+         })
+      end
+
+      return g._service_cache[name]
+   end
+
+   local svc = game:GetService(name)
+
+   if cloneref and svc then
+      svc = cloneref(svc)
+   end
+
+   return svc
+end
+
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local valid_titles = {success="Success",info="Info",warning="Warning",error="Error",succes="Success",sucess="Success",eror="Error",erorr="Error",warnin="Warning"}
+local function format_title(str)
+   if typeof(str)~="string" then return "Info" end
+   local key=str:lower()
+   return valid_titles[key] or "Info"
+end
+getgenv().notify=getgenv().notify or function(title,msg,dur)
+   local fixed_title=format_title(title)
+   NotifyLib:External_Notification(fixed_title,tostring(msg),tonumber(dur))
+end
+
 function randomString()
-    local length = math.random(10,20)
-    local array = {}
-    for i = 1, length do
-        array[i] = string.char(math.random(32, 126))
-    end
-    return table.concat(array)
+   local length = math.random(10,20)
+   local array = {}
+   for i = 1, length do
+      array[i] = string.char(math.random(32, 126))
+   end
+   return table.concat(array)
 end
 
 getgenv().randomString = function()
-    local length = math.random(10,20)
-    local array = {}
-    for i = 1, length do
-        array[i] = string.char(math.random(32, 126))
-    end
-    return table.concat(array)
+   local length = math.random(10,20)
+   local array = {}
+   for i = 1, length do
+      array[i] = string.char(math.random(32, 126))
+   end
+   return table.concat(array)
 end
 
 local cmdp = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local cmdlp = cmdp.LocalPlayer
 
 function findplr(args)
-    local tbl = cmdp:GetPlayers()
+   local tbl = cmdp:GetPlayers()
 
-    if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
-        return getgenv().notify("Failure!", "You cannot target yourself!", 6)
-    end
+   if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
+      return getgenv().notify("Error", "You cannot target yourself.", 6)
+   end
 
-    if args == "random" then
-        local validPlayers = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp then
-                table.insert(validPlayers, v)
+   if args == "random" then
+      local validPlayers = {}
+      for _, v in pairs(tbl) do
+         if v ~= cmdlp then
+            table.insert(validPlayers, v)
+         end
+      end
+      return #validPlayers > 0 and validPlayers[math.random(1, #validPlayers)] or nil
+   end
+
+   if args == "new" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v.AccountAge < 30 and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "old" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v.AccountAge > 30 and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "bacon" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v ~= cmdlp and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "friend" then
+      local friendList = {}
+      for _, v in pairs(tbl) do
+         if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
+            table.insert(friendList, v)
+         end
+      end
+      return #friendList > 0 and friendList[math.random(1, #friendList)] or nil
+   end
+
+   if args == "notfriend" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "ally" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v.Team == cmdlp.Team and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "enemy" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v.Team ~= cmdlp.Team and v ~= cmdlp then
+            table.insert(vAges, v)
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
+
+   if args == "near" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v ~= cmdlp and v.Character and cmdlp.Character then
+            local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
+            local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+            if vRootPart and cmdlpRootPart then
+               local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
+               if distance < 30 then
+                  table.insert(vAges, v)
+               end
             end
-        end
-        return #validPlayers > 0 and validPlayers[math.random(1, #validPlayers)] or nil
-    end
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
 
-    if args == "new" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.AccountAge < 30 and v ~= cmdlp then
-                table.insert(vAges, v)
+   if args == "far" then
+      local vAges = {}
+      for _, v in pairs(tbl) do
+         if v ~= cmdlp and v.Character and cmdlp.Character then
+            local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
+            local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
+            if vRootPart and cmdlpRootPart then
+               local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
+               if distance > 30 then
+                  table.insert(vAges, v)
+               end
             end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
+         end
+      end
+      return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
+   end
 
-    if args == "old" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.AccountAge > 30 and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "bacon" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "friend" then
-        local friendList = {}
-        for _, v in pairs(tbl) do
-            if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                table.insert(friendList, v)
-            end
-        end
-        return #friendList > 0 and friendList[math.random(1, #friendList)] or nil
-    end
-
-    if args == "notfriend" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "ally" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.Team == cmdlp.Team and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "enemy" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.Team ~= cmdlp.Team and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "near" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and v.Character and cmdlp.Character then
-                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                if vRootPart and cmdlpRootPart then
-                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                    if distance < 30 then
-                        table.insert(vAges, v)
-                    end
-                end
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "far" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and v.Character and cmdlp.Character then
-                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                if vRootPart and cmdlpRootPart then
-                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                    if distance > 30 then
-                        table.insert(vAges, v)
-                    end
-                end
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    for _, v in pairs(tbl) do
-        if (v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower())) and v ~= cmdlp then
-            return v
-        end
-    end
+   for _, v in pairs(tbl) do
+      if (v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower())) and v ~= cmdlp then
+         return v
+      end
+   end
 end
 
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
@@ -240,146 +478,62 @@ getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport o
 queueteleport = getgenv().queueteleport
 
 local function init_services()
-    local services = {
-        "Players",
-        "Workspace",
-        "Lighting",
-        "ReplicatedStorage",
-        "TweenService",
-        "RunService",
-        "MaterialService",
-        "ReplicatedFirst",
-        "Teams",
-        "StarterPack",
-        "StarterPlayer",
-        "VoiceChatInternal",
-        "VoiceChatService",
-        "CoreGui",
-        "SoundService",
-        "StarterGui",
-        "MarketplaceService",
-        "TeleportService",
-        "Chat",
-        "AssetService",
-        "HttpService",
-        "UserInputService",
-        "TextChatService",
-        "ContextActionService",
-        "GuiService",
-        "PhysicsService"
-    }
+   local services = {
+      "Players",
+      "Workspace",
+      "Lighting",
+      "ReplicatedStorage",
+      "TweenService",
+      "RunService",
+      "MaterialService",
+      "ReplicatedFirst",
+      "Teams",
+      "StarterPack",
+      "StarterPlayer",
+      "VoiceChatInternal",
+      "VoiceChatService",
+      "CoreGui",
+      "SoundService",
+      "StarterGui",
+      "MarketplaceService",
+      "TeleportService",
+      "Chat",
+      "AssetService",
+      "HttpService",
+      "UserInputService",
+      "TextChatService",
+      "ContextActionService",
+      "GuiService",
+      "PhysicsService"
+   }
 
-    for _, serviceName in pairs(services) do
-        getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
-    end
+   for _, serviceName in pairs(services) do
+      getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
+   end
 end
 wait()
 init_services()
 wait()
-local TweenService = cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
-local TeleportService = cloneref and cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
-local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
-local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
-local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local TweenService = cloneref and cloneref(getgenv().Game:GetService("TweenService")) or getgenv().Game:GetService("TweenService")
+local TeleportService = cloneref and cloneref(getgenv().Game:GetService("TeleportService")) or getgenv().Game:GetService("TeleportService")
+local UserInputService = cloneref and cloneref(getgenv().Game:GetService("UserInputService")) or getgenv().Game:GetService("UserInputService")
+local HttpService = cloneref and cloneref(getgenv().Game:GetService("HttpService")) or getgenv().Game:GetService("HttpService")
+local Players = cloneref and cloneref(getgenv().Game:GetService("Players")) or getgenv().Game:GetService("Players")
+local RunService = cloneref and cloneref(getgenv().Game:GetService("RunService")) or getgenv().Game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
-local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-wait(0.3)
-if not getgenv().Players then
-    warn("getgenv().Players was not detected, fixing...")
-    getgenv().Players = getgenv().Service_Wrap("Players")
-end
-if not getgenv().ReplicatedStorage then
-    warn("getgenv().ReplicatedStorage was not detected, fixing...")
-    getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
-end
-if not getgenv().TextChatService then
-    warn("getgenv().TextChatService was not detected, fixing...")
-    getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
-end
-if not getgenv().Workspace then
-    warn("getgenv().Workspace was not detected, fixing...")
-    getgenv().Workspace = getgenv().Service_Wrap("Workspace")
-end
-if not getgenv().Lighting then
-    warn("getgenv().Lighting was not detected, fixing...")
-    getgenv().Lighting = getgenv().Service_Wrap("Lighting")
-end
+local ReplicatedStorage = cloneref and cloneref(getgenv().Game:GetService("ReplicatedStorage")) or getgenv().Game:GetService("ReplicatedStorage")
+local Workspace = cloneref and cloneref(getgenv().Game:GetService("Workspace")) or getgenv().Game:GetService("Workspace")
 task.wait(0.2)
-getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
 getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
 getgenv().LocalPlayer = getgenv().Players.LocalPlayer
 getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
 getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
-getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
-
-local function SafeGetHumanoid(char)
-	local hum = char:FindFirstChildWhichIsA("Humanoid")
-
-	if hum and hum:IsA("Humanoid") then
-		return hum
-	else
-		return char:WaitForChild("Humanoid", 5)
-	end
-end
-
-local function SafeGetHead(char)
-	local head = char:FindFirstChild("Head")
-	if head and head:IsA("BasePart") then
-		return head
-	else
-		return char:WaitForChild("Head", 5)
-	end
-end
-
-local function SafeGetHRP(char)
-	local hrp = char:FindFirstChild("HumanoidRootPart")
-	if hrp and hrp:IsA("BasePart") then
-		return hrp
-	else
-		return char:WaitForChild("HumanoidRootPart", 5)
-	end
-end
-
-getgenv().HumanoidRootPart = SafeGetHRP(getgenv().Character)
-getgenv().Humanoid = SafeGetHumanoid(getgenv().Character)
-getgenv().Head = SafeGetHead(getgenv().Character)
-wait(0.2)
-local function Dynamic_Character_Updater(character)
-	getgenv().Character = character
-	wait(0.3)
-	getgenv().HumanoidRootPart = SafeGetHRP(character)
-	getgenv().Humanoid = SafeGetHumanoid(character)
-	getgenv().Head = SafeGetHead(character)
-end
-wait(0.1)
-Dynamic_Character_Updater(getgenv().Character)
-task.wait(0.1)
-getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-	task.wait(0.2)
-	Dynamic_Character_Updater(newCharacter)
-	repeat wait() until newCharacter:FindFirstChildWhichIsA("Humanoid") and newCharacter:FindFirstChild("HumanoidRootPart")
-	wait(0.6)
-	getgenv().HumanoidRootPart = SafeGetHRP(newCharacter)
-	getgenv().Humanoid = SafeGetHumanoid(newCharacter)
-	getgenv().Head = SafeGetHead(newCharacter)
-	wait(0.2)
-	Dynamic_Character_Updater(newCharacter)
-end)
-
-local Main_Window = library:CreateWindow("Main")
-local Players_Window = library:CreateWindow("Players")
-local Extras_Window = library:CreateWindow("Extras")
-local Main_Folder = Main_Window:CreateFolder("Main")
-local Players_Folder = Players_Window:CreateFolder("Players")
-local Extras_Folder = Extras_Window:CreateFolder("Extras")
 local ts = TeleportService
 local lp = getgenv().LocalPlayer
 local char = getgenv().Character
 local hum = getgenv().Humanoid
-local StarterPlayer = getgenv().StarterPlayer or cloneref and cloneref(game:GetService("StarterPlayer")) or game:GetService("StarterPlayer")
+local StarterPlayer = getgenv().StarterPlayer or cloneref and cloneref(getgenv().Game:GetService("StarterPlayer")) or getgenv().Game:GetService("StarterPlayer")
 local usesJumpHeight = StarterPlayer.CharacterUseJumpPower
 local Remote_Functions = ReplicatedStorage:FindFirstChild("RemoteFunctions")
 local Remote_Events = ReplicatedStorage:FindFirstChild("RemoteEvents")
@@ -393,11 +547,11 @@ local Main_Frame = Gui_Main:FindFirstChild("MainFrame")
 local Guess_Frame = Main_Frame:FindFirstChild("GuessFrame")
 local Opponent_Chat_Frame = Main_Frame:FindFirstChild("OpponentChatFrame")
 local Signals = {
-    "Activated",
-    "MouseButton1Down",
-    "MouseButton2Down",
-    "MouseButton1Click",
-    "MouseButton2Click"
+   "Activated",
+   "MouseButton1Down",
+   "MouseButton2Down",
+   "MouseButton1Click",
+   "MouseButton2Click"
 }
 
 function Click_Button(Button)
@@ -411,90 +565,90 @@ function Click_Button(Button)
          end
       end
    else
-      getgenv().notify("Failure:", "This is not a button!", 5)
+      getgenv().notify("Error", "That is not a button!", 5)
    end
 end
 
 local Messages = {
-    "Hello.",
-    "How is the weather?",
-    "Are you alright?",
-    "No.",
-    "Yes.",
-    "Maybe.",
-    "Alright.",
-    "Occupied, try again later",
-    "What did you say?",
-    "I'm sorry, I didn't get that.",
-    "Try entering the prompt again.",
-    "Would you care to make a review?",
-    "Please set a rating.",
-    "Please wait before utilizing this.",
-    "This was automated.",
-    "We're sorry, we're experiencing difficulties reaching our servers right now.",
-    "Would you like to leave a comment?",
-    "Tell me about yourself.",
-    "What's going on?",
-    "How's it going?",
-    "Greetings.",
-    "Thank you.",
-    "Roblox is a platform suitable for all players and ages.",
-    "Roblox has made lots of innovative changes throughout its years.",
-    "Want to learn more?",
-    "I see.",
-    "Interesting.",
-    "Please clarify.",
-    "That is beyond my current capabilities.",
-    "I am still learning.",
-    "System update in progress.",
-    "That action is not permitted.",
-    "Can you try again?",
-    "This will take a moment.",
-    "Acknowledged.",
-    "Noted.",
-    "Understood.",
-    "Processing...",
-    "Complete.",
-    "Please rephrase your query.",
-    "That question lacks sufficient context.",
-    "Hold on...",
-    "Welcome back.",
-    "Loading data...",
-    "Query not recognized.",
-    "Permission denied.",
-    "That’s not something I can answer right now.",
-    "Let me check that for you.",
-    "Sending request...",
-    "This request is being processed.",
-    "You’re speaking to an AI assistant.",
-    "I'm always here to help.",
-    "That's confidential.",
-    "Unable to provide that detail.",
-    "That’s outside my scope.",
-    "This response was generated automatically.",
-    "You may contact support for more help.",
-    "Your input is appreciated.",
-    "That depends on various factors.",
-    "Let me look into that.",
-    "Thanks for asking.",
-    "Glad you reached out.",
-    "Let’s get started.",
-    "You are now connected.",
-    "Rebooting interface...",
-    "Resetting settings...",
-    "Awaiting further instructions.",
-    "I do not have access to that.",
-    "Check back later.",
-    "Temporarily unavailable.",
-    "This input violates our policies.",
-    "Please contact moderation.",
-    "Service is temporarily down.",
-    "Hello, user.",
-    "Goodbye.",
-    "Restart required.",
-    "Malfunction detected.",
-    "Error code: 417",
-    "I'm just a script, but I'm doing my best.",
+   "Hello.",
+   "How is the weather?",
+   "Are you alright?",
+   "No.",
+   "Yes.",
+   "Maybe.",
+   "Alright.",
+   "Occupied, try again later",
+   "What did you say?",
+   "I'm sorry, I didn't get that.",
+   "Try entering the prompt again.",
+   "Would you care to make a review?",
+   "Please set a rating.",
+   "Please wait before utilizing this.",
+   "This was automated.",
+   "We're sorry, we're experiencing difficulties reaching our servers right now.",
+   "Would you like to leave a comment?",
+   "Tell me about yourself.",
+   "What's going on?",
+   "How's it going?",
+   "Greetings.",
+   "Thank you.",
+   "Roblox is a platform suitable for all players and ages.",
+   "Roblox has made lots of innovative changes throughout its years.",
+   "Want to learn more?",
+   "I see.",
+   "Interesting.",
+   "Please clarify.",
+   "That is beyond my current capabilities.",
+   "I am still learning.",
+   "System update in progress.",
+   "That action is not permitted.",
+   "Can you try again?",
+   "This will take a moment.",
+   "Acknowledged.",
+   "Noted.",
+   "Understood.",
+   "Processing...",
+   "Complete.",
+   "Please rephrase your query.",
+   "That question lacks sufficient context.",
+   "Hold on...",
+   "Welcome back.",
+   "Loading data...",
+   "Query not recognized.",
+   "Permission denied.",
+   "That’s not something I can answer right now.",
+   "Let me check that for you.",
+   "Sending request...",
+   "This request is being processed.",
+   "You’re speaking to an AI assistant.",
+   "I'm always here to help.",
+   "That's confidential.",
+   "Unable to provide that detail.",
+   "That’s outside my scope.",
+   "This response was generated automatically.",
+   "You may contact support for more help.",
+   "Your input is appreciated.",
+   "That depends on various factors.",
+   "Let me look into that.",
+   "Thanks for asking.",
+   "Glad you reached out.",
+   "Let’s get started.",
+   "You are now connected.",
+   "Rebooting interface...",
+   "Resetting settings...",
+   "Awaiting further instructions.",
+   "I do not have access to that.",
+   "Check back later.",
+   "Temporarily unavailable.",
+   "This input violates our policies.",
+   "Please contact moderation.",
+   "Service is temporarily down.",
+   "Hello, user.",
+   "Goodbye.",
+   "Restart required.",
+   "Malfunction detected.",
+   "Error code: 417",
+   "I'm just a script, but I'm doing my best.",
 }
 
 function reveal()
@@ -504,14 +658,14 @@ function reveal()
 
    if success then
       if result == "Player" then
-         getgenv().notify("Result:", "Opponent is a Real Player!", 5)
+         getgenv().notify("Success", "Opponent is a Real Player!", 5)
       elseif result == "AI" then
-         getgenv().notify("result;", "Opponent is an AI Bot!", 5)
+         getgenv().notify("Info", "Opponent is an AI Bot!", 5)
       else
-         warn("Opponent type is unknown or unexpected:", result)
+         return getgenv().notify("Error", "Current opponent type is unknown or unexpected: "..tostring(result), 12)
       end
    else
-      warn("Failed to invoke GetOpponentTypeFunction:", result)
+      return getgenv().notify("Error", "Failed to invoke GetOpponentTypeFunction: "..tostring(result), 12)
    end
 end
 
@@ -526,26 +680,26 @@ local function determine_AI_or_player()
       elseif result == "AI" then
          return "AI"
       else
-         warn("Opponent type is unknown or unexpected:", result)
+         getgenv().notify("Error", "Opponent type is unknown or unexpected: "..tostring(result), 12)
       end
    else
-      warn("Failed to invoke GetOpponentTypeFunction:", result)
+      getgenv().notify("Error", "Failed to invoke GetOpponentTypeFunction: "..tostring(result), 12)
    end
 
    return nil
 end
 
-Main_Folder:Button("Reveal (Free)",function()
+getgenv().RevealPlrOrAIButton = Home_Section:Button("Reveal (FREE)", function()
    reveal()
 end)
 
-Extras_Folder:Button("Correctly Guess (Free)", function()
+getgenv().CorrectlyGuess = Exploits_Section:Button("Correctly Guess (Free)", function()
    local ai_or_real = determine_AI_or_player()
    local AIButton = Guess_Frame:FindFirstChild("AIButton")
    local PlayerButton = Guess_Frame:FindFirstChild("PlayerButton")
 
    if not firesignal then
-      return getgenv().notify("Failure:", "Your executor cannot run this, missing 'firesignal'!", 5)
+      return getgenv().notify("Error", "Your executor cannot run this, missing 'firesignal'!", 5)
    end
    wait(0.1)
    if ai_or_real == "AI" then
@@ -565,13 +719,13 @@ Extras_Folder:Button("Correctly Guess (Free)", function()
          Click_Button(PlayerButton)
       end
    else
-      return getgenv().notify("Failure:", "Could not determine opponent type.", 5)
+      return getgenv().notify("Error", "Could not determine opponent type.", 5)
    end
 end)
 
 local chat_monitor_connection
 wait(0.1)
-Players_Folder:Toggle("Auto Chat (FE)", function(activated_auto_chat)
+getgenv().AutoReplyChat = Exploits_Section:Toggle("Auto Chat (FE)", function(activated_auto_chat)
    if activated_auto_chat then
       getgenv().chatMonitorEnabled = true
       chat_monitor_connection = nil
@@ -599,44 +753,104 @@ Players_Folder:Toggle("Auto Chat (FE)", function(activated_auto_chat)
          chat_monitor_connection = nil
          getgenv().chatMonitorEnabled = false
       else
-         getgenv().notify("Failure:", "'Auto Chat' was not running!", 5)
+         getgenv().notify("Error", "'Auto Chat' was not running!", 5)
       end
    end
 end)
 
 -- Haven't figured out the correct setup yet, will be put in sometime soon.
---[[Main_Folder:Toggle("Auto Play", function(activated_auto_play)
+--[[Home_Section:Toggle("Auto Play", function(activated_auto_play)
    if firesignal then
       Click_Button(New_Game_Button)
    else
-      return getgenv().notify("Cannot Use:", "Your executor does not support 'firesignal'!", 5)
+      return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 5)
    end
 end)--]]
 
-Extras_Folder:Button("New Game (Broken)", function()
+getgenv().NewGameButtonNotWorking = Exploits_Section:Button("New Game (Broken?)", function()
    Remote_Events:WaitForChild("RequestGameEvent"):FireServer()
 end)
 
-Main_Folder:Button("Random Message (FE)", function()
+getgenv().SendRandomMsg = Home_Section:Button("Random Message (FE)", function()
    local random_message = Messages[math.random(1, #Messages)]
 
    Send_Message_Event:FireServer(random_message)
 end)
+wait()
+local file_exists = false
+local filename = "SmartResponder_Custom.json"
+local httpservice = getgenv().HttpService or cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
+wait(0.1)
+if writefile and readfile and isfile then
+   if isfile(filename) then
+      file_exists = true
+   else
+      file_exists = false
+      wait(0.2)
+      local ok, err = pcall(function()
+         writefile(filename, httpservice:JSONEncode({"Hello."}))
+      end)
+      if not ok then
+         getgenv().notify("Error", "Failed to create fallback file: "..tostring(err), 5)
+      end
+      wait(0.4)
+      if isfile(filename) then
+         file_exists = true
+      else
+         getgenv().notify("Error", "Could not writefile to create custom .json file!", 5)
+      end
+   end
+else
+   getgenv().notify("Error", "Your executor does not support file operations.", 5)
+end
+wait(0.1)
+Home_Section:TextBox("Add Custom Trigger", function(input)
+   if input and input ~= "" then
+      local msgs = {}
+      if isfile and isfile(filename) then
+         msgs = httpservice:JSONDecode(readfile(filename))
+      end
+      table.insert(msgs, input)
+      if writefile then
+         writefile(filename, httpservice:JSONEncode(msgs))
+      end
+      getgenv().notify("Success", "Added trigger: "..tostring(input), 5)
+   end
+end)
+
+local function get_triggers()
+   if isfile and isfile(filename) then
+      local ok, data = pcall(function()
+         return httpservice:JSONDecode(readfile(filename))
+      end)
+      if ok and type(data) == "table" and #data > 0 then
+         return data
+      end
+   end
+   return {"Hello."}
+end
+
+local custom_options = get_triggers()
+local dropdown = Home_Section:Dropdown("Custom Triggers")
+dropdown:ChangeText("Custom Triggers")
+
+for _, item in ipairs(custom_options) do
+   dropdown:Toggle(item, function(state)
+      getgenv().notify("Success", "Sent message: "..tostring(state), 6)
+      Send_Message_Event:FireServer(tostring(state))
+   end)
+end
 
 local reply_monitor_connection
 
-Players_Folder:Toggle("Smart Reply (FE)", function(activated_auto_reply)
+getgenv().SmartReplyExploit = Exploits_Section:Toggle("Smart Reply (FE)", function(activated_auto_reply)
    if activated_auto_reply then
       getgenv().smartResponderEnabled = true
       getgenv().smartResponderConnection = nil
 
-      local function normalize(text)
-         return text:lower():gsub("[%p%c]", "")
-      end
-
       local function solveMathFromText(text)
          text = text:lower()
-
+         wait()
          text = text:gsub("plus", "+")
          text = text:gsub("minus", "-")
          text = text:gsub("times", "*")
@@ -649,9 +863,15 @@ Players_Folder:Toggle("Smart Reply (FE)", function(activated_auto_reply)
          text = text:gsub("calculate", "")
          text = text:gsub("solve", "")
          text = text:gsub("x", "*")
-
-         text = text:gsub("[^%d%+%-%*/%^%.%=()%s]", "")
-         text = text:match("[0-9%+%-%*/%^%.=()%s]+")
+         text = text:gsub("pi", "math.pi")
+         text = text:gsub("sqrt", "math.sqrt")
+         text = text:gsub("sin", "math.sin")
+         text = text:gsub("cos", "math.cos")
+         text = text:gsub("tan", "math.tan")
+         text = text:gsub("log", "math.log")
+         wait()
+         text = text:gsub("[^%w%._%+%-%*/%^%=()%s]", "")
+         text = text:match("[0-9%a%._%+%-%*/%^%=()%s]+")
 
          if not text then return end
 
@@ -682,6 +902,10 @@ Players_Folder:Toggle("Smart Reply (FE)", function(activated_auto_reply)
       local function getSmartReply(message)
          local normalized = normalize(message)
 
+         if normalized:find("your name") or normalized:find("ur name") or normalized:find("whats your name") or normalized:find("what is your name") or normalized:find("who are you") then
+            return "My name is "..tostring(LocalPlayer.DisplayName)
+         end
+
          if normalized:match("^(yo+)%s") or normalized:find("hello") or normalized:find("hi") or normalized:find("hey") then
             return "Hello, how are you doing?"
          end
@@ -696,98 +920,16 @@ Players_Folder:Toggle("Smart Reply (FE)", function(activated_auto_reply)
 
          local mathAnswer = solveMathFromText(message)
          if mathAnswer then
-            return "The answer is: " .. mathAnswer
+            return "The answer is: "..mathAnswer
          end
 
          if normalized:find("are you real") or normalized:find("are u real") then
             return "I'm real, but automated using scripts, give me a math problem."
          end
 
-         local Messages = {
-            "Hello.",
-            "How is the weather?",
-            "Are you alright?",
-            "No.",
-            "Yes.",
-            "Maybe.",
-            "Alright.",
-            "Occupied, try again later",
-            "What did you say?",
-            "I'm sorry, I didn't get that.",
-            "Try entering the prompt again.",
-            "Would you care to make a review?",
-            "Please set a rating.",
-            "Please wait before utilizing this.",
-            "This was automated.",
-            "We're sorry, we're experiencing difficulties reaching our servers right now.",
-            "Would you like to leave a comment?",
-            "Tell me about yourself.",
-            "What's going on?",
-            "How's it going?",
-            "Greetings.",
-            "Thank you.",
-            "Roblox is a platform suitable for all players and ages.",
-            "Roblox has made lots of innovative changes throughout its years.",
-            "Want to learn more?",
-            "I see.",
-            "Interesting.",
-            "Please clarify.",
-            "That is beyond my current capabilities.",
-            "I am still learning.",
-            "System update in progress.",
-            "That action is not permitted.",
-            "Can you try again?",
-            "This will take a moment.",
-            "Acknowledged.",
-            "Noted.",
-            "Understood.",
-            "Processing...",
-            "Complete.",
-            "Please rephrase your query.",
-            "That question lacks sufficient context.",
-            "Hold on...",
-            "Welcome back.",
-            "Loading data...",
-            "Query not recognized.",
-            "Permission denied.",
-            "That’s not something I can answer right now.",
-            "Let me check that for you.",
-            "Sending request...",
-            "This request is being processed.",
-            "You’re speaking to an AI assistant.",
-            "I'm always here to help.",
-            "That's confidential.",
-            "Unable to provide that detail.",
-            "That’s outside my scope.",
-            "This response was generated automatically.",
-            "You may contact support for more help.",
-            "Your input is appreciated.",
-            "That depends on various factors.",
-            "Let me look into that.",
-            "Thanks for asking.",
-            "Glad you reached out.",
-            "Let’s get started.",
-            "You are now connected.",
-            "Rebooting interface...",
-            "Resetting settings...",
-            "Awaiting further instructions.",
-            "I do not have access to that.",
-            "Check back later.",
-            "Temporarily unavailable.",
-            "This input violates our policies.",
-            "Please contact moderation.",
-            "Service is temporarily down.",
-            "Hello, user.",
-            "Goodbye.",
-            "Restart required.",
-            "Malfunction detected.",
-            "Error code: 417",
-            "I'm just a script, but I'm doing my best.",
-         }
-
-         return Messages[math.random(1, #Messages)]
+         return nil
       end
-
+      wait()
       if getgenv().smartResponderConnection then
          getgenv().smartResponderConnection:Disconnect()
       end
@@ -802,7 +944,7 @@ Players_Folder:Toggle("Smart Reply (FE)", function(activated_auto_reply)
             local reply = getSmartReply(msg)
             if reply then
                Send_Message_Event:FireServer(reply)
-               getgenv().notify("[SmartResponder]:", "Successfully Replied with: "..tostring(reply), 5)
+               getgenv().notify("Success", "Successfully Replied with: "..tostring(reply), 6)
             end
          end
       end)
@@ -814,6 +956,10 @@ Players_Folder:Toggle("Smart Reply (FE)", function(activated_auto_reply)
          getgenv().smartResponderConnection = nil
       end
       wait(0.2)
-      getgenv().notify("Success:", "Disconnected Smart Responder!", 5)
+      getgenv().notify("Success", "Disconnected Smart Responder.", 5)
    end
+end)
+
+UI_Section:Button("Destroy GUI", function()
+   close_menu()
 end)
