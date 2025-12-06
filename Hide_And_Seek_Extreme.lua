@@ -6,6 +6,12 @@ if not getgenv().GlobalEnvironmentFramework_Initialized then
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
 
+for _, v in ipairs(game.CoreGui:GetDescendants()) do
+    if v.Name:lower():find("turtle") then
+        v:Destroy()
+    end
+end
+wait(0.5)
 local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/Turtle_UI_Remake.lua"))()
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 local Main = lib:Window("Main")
@@ -1075,7 +1081,7 @@ end)
 Players_Tab:Box("Goto Plr:", function(Target)
     local Player_To_Teleport_To = findplr(Target)
 
-    if not Player_To_Teleport_To then return getgenv().notify("Error", tostring(Player_To_Teleport_To).." does not exist!", 5) end
+    if not Player_To_Teleport_To then return end
 
     pivot_to_plr(Player_To_Teleport_To)
 end)
