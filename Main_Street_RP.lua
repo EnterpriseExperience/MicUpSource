@@ -138,7 +138,7 @@ local function usernamefromdisplayname(displayname)
 end
 
 local function indexcar(model)
-   local raw = model:GetAttribute("56")
+   local raw = model:GetAttribute("57")
    if not raw then return end
    local ok, decoded = pcall(function() return HttpService:JSONDecode(raw) end)
    if not ok or not decoded.Owner then return end
@@ -224,7 +224,7 @@ local function return_correct_age()
 end
 
 local function shouldLockCar(carModel)
-   local raw = carModel:GetAttribute("47")
+   local raw = carModel:GetAttribute("48")
    if not raw then
       return true
    end
