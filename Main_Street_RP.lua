@@ -121,10 +121,13 @@ end
 getgenv().cars_cache = getgenv().cars_cache or {}
 getgenv().owner_index = getgenv().owner_index or {}
 getgenv().car_index_inited = getgenv().car_index_inited or false
+
 local HttpService = getgenv().HttpService or cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local cars_cache = getgenv().cars_cache
 local owner_index = getgenv().owner_index
+local vehicles_folder = workspace:FindFirstChild("Vehicles")
+
 local function usernamefromdisplayname(displayname)
    for _, p in ipairs(Players:GetPlayers()) do
       if string.lower(p.DisplayName) == string.lower(displayname) then
@@ -153,26 +156,28 @@ end
 if not getgenv().car_index_inited then
    getgenv().car_index_inited = true
 
-   for _, v in ipairs(workspace:GetDescendants()) do
-      if v:IsA("Model") and v:GetAttribute("56") then
-         cars_cache[v] = true
-         indexcar(v)
+   if vehicles_folder then
+      for _, v in ipairs(vehicles_folder:GetDescendants()) do
+         if v:IsA("Model") and v:GetAttribute("56") then
+            cars_cache[v] = true
+            indexcar(v)
+         end
       end
+
+      vehicles_folder.DescendantAdded:Connect(function(obj)
+         if obj:IsA("Model") and obj:GetAttribute("56") then
+            cars_cache[obj] = true
+            indexcar(obj)
+         end
+      end)
+
+      vehicles_folder.DescendantRemoving:Connect(function(obj)
+         if cars_cache[obj] then
+            cars_cache[obj] = nil
+            removecar(obj)
+         end
+      end)
    end
-
-   workspace.DescendantAdded:Connect(function(obj)
-      if obj:IsA("Model") and obj:GetAttribute("56") then
-         cars_cache[obj] = true
-         indexcar(obj)
-      end
-   end)
-
-   workspace.DescendantRemoving:Connect(function(obj)
-      if cars_cache[obj] then
-         cars_cache[obj] = nil
-         removecar(obj)
-      end
-   end)
 end
 
 local function carbyusername(nameordisplayname)
