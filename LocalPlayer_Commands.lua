@@ -3,18 +3,18 @@ local Players = Flames_API.Service("Players")
 local TextChatService = Flames_API.Service("TextChatService")
 local Workspace = Flames_API.Service("Workspace")
 local LocalPlayer = Flames_API.LocalPlayer
-local Character = Flames_API.Character
-local Humanoid = Flames_API.Humanoid
-local HumanoidRootPart = Flames_API.HumanoidRootPart
 
+getgenv().notify = getgenv().notify or function(title, content, dur)
+    Flames_API.notify(title, content, dur)
+end
+wait(0.3)
 getgenv().Commands_Loaded = getgenv().Commands_Loaded or false
 if getgenv().Commands_Loaded then
-	return warn("[LocalPlayer_Commands DEBUG]: Already loaded.")
+	return getgenv().notify("Error", "[LocalPlayer_Commands DEBUG]: Already loaded.", 10)
 end
 getgenv().Commands_Loaded = true
 
 local Prefixes_Folder = "CommandUserPrefixs"
-
 local function safe_isfolder(path)
 	return typeof(isfolder) == "function" and isfolder(path) or false
 end
@@ -48,7 +48,7 @@ if typeof(isfolder) == "function" then
 		safe_makefolder(Prefixes_Folder)
 	end
 else
-	warn("[LocalPlayer-Commands]:", "User prefix's will not save, file system unsupported.")
+	getgenv().notify("Error", "[LocalPlayer-Commands]: User prefix's will not save, file system unsupported.", 20)
 end
 
 local function user_prefix_folder(user)
@@ -117,46 +117,43 @@ local function HandleMessage(sender, message)
 	if cmd == "prefix" and args[2] and #args[2] == 1 then
 		UserPrefixes[sender.UserId] = args[2]
 		save_user_prefix(sender, args[2])
-		return print(sender.Name .. " set their prefix to: " .. args[2])
+		return getgenv().notify("Info", tostring(sender.Name).." set their prefix to: "..tostring(args[2]), 3)
 	end
 
 	if not (cmd and target and value and Command_LocalPlayer(target)) then return end
-	if not Humanoid then return end
+	if not Flames_API.Humanoid then return end
 
 	if cmd == "speed" or cmd == "ws" then
-		Humanoid.WalkSpeed = value
+		Flames_API.Humanoid.WalkSpeed = value
 	elseif cmd == "jumppower" or cmd == "jumpheight" or cmd == "jp" then
-		if Humanoid.UseJumpPower then
-			Humanoid.JumpPower = value
+		if Flames_API.Humanoid.UseJumpPower then
+			Flames_API.Humanoid.JumpPower = value
 		else
-			Humanoid.JumpHeight = value
+			Flames_API.Humanoid.JumpHeight = value
 		end
 	elseif cmd == "hipheight" then
-		Humanoid.HipHeight = value
+		Flames_API.Humanoid.HipHeight = value
 	elseif cmd == "sit" then
-		Humanoid.Sit = (value ~= 0)
+		Flames_API.Humanoid.Sit = (value ~= 0)
 	elseif cmd == "damage" then
-		Humanoid:TakeDamage(value)
+		Flames_API.Humanoid:TakeDamage(value)
 	elseif cmd == "gr" or cmd == "gravity" then
 		Workspace.Gravity = value
 	end
-
-	print("[LocalPlayer_Commands]: Executed command '" .. cmd .. "' from " .. sender.Name)
 end
 
-print("[LocalPlayer_Commands]: Initializing command listener...")
+getgenv().notify("Info", "[LocalPlayer_Commands]: Initializing command listener...", 5)
 
-if TextChatService and TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
-	TextChatService.OnIncomingMessage = function(msg)
-		local textSource = msg.TextSource
-		if not textSource then return end
-		local userId = textSource.UserId
-		local player = Players:GetPlayerByUserId(userId)
-		if player then
-			HandleMessage(player, msg.Text)
-		end
-	end
-end
+TextChatService.MessageReceived:Connect(function(msg)
+    local textSource = msg.TextSource
+    if not textSource then return end
+
+    local userId = textSource.UserId
+    local player = Players:GetPlayerByUserId(userId)
+    if player then
+        HandleMessage(player, msg.Text)
+    end
+end)
 
 Players.PlayerAdded:Connect(function(plr)
 	local saved = load_user_prefix(plr)
@@ -178,4 +175,4 @@ for _, plr in ipairs(Players:GetPlayers()) do
 	end)
 end
 
-print("[LocalPlayer_Commands]: Ready. Waiting for chat commands...")
+getgenv().notify("Success", "[LocalPlayer_Commands]: Ready. Waiting for chat commands...", 10)
