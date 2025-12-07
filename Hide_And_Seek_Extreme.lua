@@ -574,21 +574,27 @@ function connect_player(player)
     end)
 end
 
-for _, plr in ipairs(Players:GetPlayers()) do
-    if plr ~= LocalPlayer then
-        if getgenv().FindingAllNonWhitelistedPlayers then
-            connect_player(plr)
-        end
-    end
-end
+getgenv().player_connect_init = getgenv().player_connect_init or false
 
-Players.PlayerAdded:Connect(function(plr)
-    if plr ~= LocalPlayer then
-        if getgenv().FindingAllNonWhitelistedPlayers then
-            connect_player(plr)
+if not getgenv().player_connect_init then
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            if getgenv().FindingAllNonWhitelistedPlayers then
+                connect_player(plr)
+            end
         end
     end
-end)
+
+    Players.PlayerAdded:Connect(function(plr)
+        if plr ~= LocalPlayer then
+            if getgenv().FindingAllNonWhitelistedPlayers then
+                connect_player(plr)
+            end
+        end
+    end)
+    wait(0.2)
+    getgenv().player_connect_init = true
+end
 
 local Remotes = getgenv().ReplicatedStorage:FindFirstChild("Remotes", true) or ReplicatedStorage:WaitForChild("Remotes", 5)
 local Play_Sound_Others_RE = Remotes and Remotes:FindFirstChild("PlaySoundOthers") or Remotes:WaitForChild("PlaySoundOthers", 5)
@@ -974,11 +980,11 @@ Main:Toggle("Find All (Loop)", false, function(state)
         getgenv().FindAllConnections = {}
 
         for _, plr in ipairs(Players:GetPlayers()) do
-            connect_player_events(plr)
+            connect_player(plr)
         end
 
         local joinConn = Players.PlayerAdded:Connect(function(plr)
-            connect_player_events(plr)
+            connect_player(plr)
         end)
 
         table.insert(getgenv().FindAllConnections, joinConn)
