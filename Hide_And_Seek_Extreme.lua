@@ -665,6 +665,8 @@ function toggle_visible_spawn_box(state)
     end
 end
 
+local main_volume_sound_others = 3
+wait(0.2)
 function play_music_others(ID)
     for _, v in ipairs(getgenv().Players:GetChildren()) do
         if v ~= getgenv().LocalPlayer then
@@ -680,7 +682,7 @@ function play_music_others(ID)
                     {
                         Parent = Target_HRP,
                         Pitch = 1,
-                        Volume = 2
+                        Volume = tonumber(main_volume_sound_others)
                     }
                 }
 
@@ -691,7 +693,7 @@ function play_music_others(ID)
                     {
                         Parent = Target_HRP,
                         Pitch = 1,
-                        Volume = 2
+                        Volume = tonumber(main_volume_sound_others)
                     }
                 }
 
@@ -894,33 +896,45 @@ Audio:Box("Music (FE):", function(text, focuslost)
     end
 end)
 
-local function find_boombox_sound_main(parent_here)
-    if not parent_here then
-        parent_here = getgenv().HumanoidRootPart or get_root(LocalPlayer)
-    end
+getgenv().new_boombox_main_volume = 0.5
+getgenv().boombox_sound = nil
 
-    for _, v in ipairs(parent_here:GetChildren()) do
+local function find_boombox()
+    local root = getgenv().HumanoidRootPart or get_root(LocalPlayer)
+    if not root then return end
+
+    for _, v in ipairs(root:GetChildren()) do
         if v:IsA("Sound") and v.Name:lower():find("boombox") then
             return v
         end
     end
 end
 
-local root_parent_main = getgenv().HumanoidRootPart or get_root(LocalPlayer)
-local boombox_sound = find_boombox_sound_main(root_parent_main)
-local new_boombox_main_volume = 0.5
+task.spawn(function()
+    while true do
+        task.wait(0.2)
 
-Audio:Slider("Boombox Vol",0,10,0.5, function(boombox_new_volume)
-    if boombox_sound then
-        boombox_sound.Volume = boombox_new_volume
-        new_boombox_main_volume = boombox_new_volume
+        local bb = find_boombox()
+        if bb and bb ~= getgenv().boombox_sound then
+            getgenv().boombox_sound = bb
+            bb.Volume = getgenv().new_boombox_main_volume
+        end
+    end
+end)
+
+Audio:Slider("Boombox Vol",0,10,0.5,function(newv)
+    getgenv().new_boombox_main_volume = newv
+    if getgenv().boombox_sound then
+        getgenv().boombox_sound.Volume = newv
     end
 end)
 
 Audio:Button("Play Music (FE)", function()
     Play_Sound_Boombox_RE:FireServer(Current_ID)
-    if boombox_sound then
-        boombox_sound.Volume = new_boombox_main_volume
+
+    local bb = getgenv().boombox_sound
+    if bb then
+        bb.Volume = getgenv().new_boombox_main_volume
     end
 end)
 
@@ -1379,6 +1393,8 @@ Extras:Button("IY", function()
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 end)
+
+
 
 Audio:Box("Play Music", function(music_ID)
     play_music_others(music_ID)
