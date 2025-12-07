@@ -515,6 +515,19 @@ local Place_Glue_RE = Animation_Replication and Animation_Replication:FindFirstC
 local Play_Sound_Boombox_RE = Animation_Replication and Animation_Replication:FindFirstChild("PlaySoundBoombox", true) or Animation_Replication:WaitForChild("PlaySoundBoombox", 5)
 local Stop_Sound_Boombox_FE = Animation_Replication and Animation_Replication:FindFirstChild("StopSoundBoombox", true) or Animation_Replication:WaitForChild("StopSoundBoombox", 5)
 wait(0.2)
+function find_all_players_no_whitelist()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local char = get_char(player) or player.Character
+            local myChar = getgenv().Character or get_char(LocalPlayer or game.Players.LocalPlayer) or game.Players.LocalPlayer.Character
+            if char and myChar and char:FindFirstChild("HumanoidRootPart") and myChar:FindFirstChild("HumanoidRootPart") then
+                myChar:PivotTo(char.HumanoidRootPart.CFrame + Vector3.new(0, 1.5, 0))
+                task.wait(0.1)
+            end
+        end
+    end
+end
+
 function find_all_players_whitelist()
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and not WHITELIST[player.Name] then
@@ -1173,6 +1186,8 @@ Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
                     elseif uiObject:IsA("TextLabel") or uiObject:IsA("TextButton") then
                         uiObject.BackgroundColor3 = color
                         uiObject.TextColor3 = color
+                    elseif uiObject:IsA("ImageLabel") and uiObject.Name:lower():find("characterlabel") then
+                        uiObject.BackgroundColor3 = color
                     end
                 end
 
