@@ -1394,7 +1394,7 @@ Extras:Button("IY", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 end)
 
-Audio:Slider("Sound Vol (FE)", 0,10,tonumber(main_volume_sound_others), function(New_Vol)
+Audio:Slider("Sound Vol (FE)", 0.1,10,tonumber(main_volume_sound_others), function(New_Vol)
     main_volume_sound_others = New_Vol
 end)
 
