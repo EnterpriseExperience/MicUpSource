@@ -893,34 +893,39 @@ Audio:Box("Music (FE):", function(text, focuslost)
         Current_ID = id
     end
 end)
-wait(0.1)
+
+local function find_boombox_sound_main(parent_here)
+    if not parent_here then
+        parent_here = getgenv().HumanoidRootPart or get_root(LocalPlayer)
+    end
+
+    for _, v in ipairs(parent_here:GetChildren()) do
+        if v:IsA("Sound") and v.Name:lower():find("boombox") then
+            return v
+        end
+    end
+end
+
+local root_parent_main = getgenv().HumanoidRootPart or get_root(LocalPlayer)
+local boombox_sound = find_boombox_sound_main(root_parent_main)
+local new_boombox_main_volume = 0.5
+
+Audio:Slider("Boombox Vol",0,10,0.5, function(boombox_new_volume)
+    if boombox_sound then
+        boombox_sound.Volume = boombox_new_volume
+        new_boombox_main_volume = boombox_new_volume
+    end
+end)
+
 Audio:Button("Play Music (FE)", function()
     Play_Sound_Boombox_RE:FireServer(Current_ID)
+    if boombox_sound then
+        boombox_sound.Volume = new_boombox_main_volume
+    end
 end)
 
 Audio:Button("Stop Music", function()
     Stop_Sound_Boombox_FE:FireServer()
-end)
-
-Audio:Slider("Boombox Vol",0,10,0.5, function(boombox_new_volume)
-    local function find_boombox_sound_main(parent_here)
-        if not parent_here then
-            parent_here = getgenv().HumanoidRootPart or get_root(LocalPlayer)
-        end
-
-        for _, v in ipairs(parent_here:GetChildren()) do
-            if v:IsA("Sound") and v.Name:lower():find("boombox") then
-                return v
-            end
-        end
-    end
-
-    local root_parent_main = getgenv().HumanoidRootPart or get_root(LocalPlayer)
-    local boombox_sound = find_boombox_sound_main(root_parent_main)
-
-    if boombox_sound then
-        boombox_sound.Volume = boombox_new_volume
-    end 
 end)
 
 Extras:Button("Get Coins (No TP)", function()
