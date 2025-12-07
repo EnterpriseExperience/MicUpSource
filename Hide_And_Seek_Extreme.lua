@@ -22,9 +22,11 @@ else
     end
 end
 
-for _, v in ipairs(parent_main_gui:GetChildren()) do
-    if v.Name:lower():find("turtle") then
-        v:Destroy()
+if parent_main_gui then
+    for _, v in ipairs(parent_main_gui:GetChildren()) do
+        if v.Name:lower():find("turtle") then
+            v:Destroy()
+        end
     end
 end
 wait(0.6)
