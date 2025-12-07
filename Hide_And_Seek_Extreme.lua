@@ -847,6 +847,10 @@ local function count_parts(model)
 	return partCount
 end
 
+getgenv().AutoCoin_Conn = nil
+getgenv().LastCoinTP = nil
+getgenv().AutoCoin_LastCF = nil
+
 function collect_all_coins(method)
     if method == "no_tp" then
         if not firetouchinterest then
@@ -867,12 +871,17 @@ function collect_all_coins(method)
             if v:IsA("BasePart") and v.Name:lower():find("credit") then
                 wait(0.1)
                 Character:PivotTo(v:GetPivot())
-                wait(0.2)
-                getgenv().notify("Info", "Picking up Credit: "..tostring(v), 2)
             end
         end
     else
         return getgenv().notify("Error", "Invalid argument specified when calling function.", 6)
+    end
+end
+
+local function handle_in_game_changed()
+    if InGame_LocalPlr_Value.Value == true then
+        task.wait(0.1)
+        collect_all_coins("teleport")
     end
 end
 
@@ -918,6 +927,81 @@ Extras:Button("Get Coins (TP)", function()
         collect_all_coins("teleport")
         wait(0.3)
         HumanoidRootPart.CFrame = Old_CF
+    end
+end)
+
+Extras:Toggle("Auto Coins", function(state)
+    local result_parts = count_parts(Game_Objects)
+
+    if result_parts == false then
+        return getgenv().notify("Error", "GameObjects doesn't exist, try again!", 5)
+    elseif result_parts == 0 then
+        return getgenv().notify("Error", "No Credit's found to collect!", 5)
+    elseif result_parts > 0 then
+        if state then
+            if getgenv().AutoCoin_Conn then
+                pcall(function() getgenv().AutoCoin_Conn:Disconnect() end)
+            end
+
+            getgenv().AutoCoin_Conn = InGame_LocalPlr_Value.Changed:Connect(function()
+                if InGame_LocalPlr_Value.Value == true then
+                    local hrp = Character:FindFirstChild("HumanoidRootPart")
+                    if not hrp then return end
+
+                    getgenv().AutoCoin_LastCF = hrp.CFrame
+                    task.wait(0.1)
+                    collect_all_coins("teleport")
+                    task.wait(0.15)
+                    if getgenv().AutoCoin_LastCF then
+                        hrp.CFrame = getgenv().AutoCoin_LastCF
+                    end
+
+                    getgenv().AutoCoin_LastCF = nil
+                end
+
+                if InGame_LocalPlr_Value.Value == false then
+                    local hrp = getgenv().HumanoidRootPart or get_root(LocalPlayer)
+                    task.wait(0.8)
+
+                    if getgenv().AutoCoin_Conn then
+                        pcall(function()
+                            getgenv().AutoCoin_Conn:Disconnect()
+                        end)
+                    end
+
+                    if getgenv().AutoCoin_LastCF then
+                        hrp.CFrame = getgenv().AutoCoin_LastCF
+                    end
+                    task.wait(0.2)
+                    getgenv().AutoCoin_Conn = nil
+                    getgenv().AutoCoin_LastCF = nil
+                end
+            end)
+
+            if InGame_LocalPlr_Value.Value == true then
+                local hrp = Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    getgenv().AutoCoin_LastCF = hrp.CFrame
+                    task.wait(0.1)
+
+                    collect_all_coins("teleport")
+
+                    task.wait(0.15)
+
+                    if getgenv().AutoCoin_LastCF then
+                        hrp.CFrame = getgenv().AutoCoin_LastCF
+                    end
+
+                    getgenv().AutoCoin_LastCF = nil
+                end
+            end
+        else
+            if getgenv().AutoCoin_Conn then
+                pcall(function() getgenv().AutoCoin_Conn:Disconnect() end)
+            end
+            getgenv().AutoCoin_Conn = nil
+            getgenv().AutoCoin_LastCF = nil
+        end
     end
 end)
 
