@@ -993,18 +993,6 @@ Main:Toggle("Find All (Loop)", false, function(state)
     end
 end)
 
-Main:Button("Find All (Whitelist)", function()
-    if not InGame_LocalPlr_Value.Value then
-        return getgenv().notify("Error", "You are not currently in-game!", 5)
-    end
-
-    if not It_LocalPlr_Value.Value then
-        return getgenv().notify("Error", "You are not the IT/seeker!", 5)
-    end
-    task.wait(0.1)
-    find_all_players_whitelist()
-end)
-
 Players_Tab:Toggle("Timer Flasher", false, function(flashing)
     if flashing then
         local TimerFolder = ReplicatedStorage:FindFirstChild("Timer", true) or ReplicatedStorage:WaitForChild("Timer", 5)
