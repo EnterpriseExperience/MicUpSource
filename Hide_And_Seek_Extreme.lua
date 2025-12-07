@@ -1188,6 +1188,7 @@ Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
                         uiObject.TextColor3 = color
                     elseif uiObject:IsA("ImageLabel") and uiObject.Name:lower():find("characterlabel") then
                         uiObject.BackgroundColor3 = color
+                        uiObject.ImageColor3 = color
                     end
                 end
 
