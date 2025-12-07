@@ -553,6 +553,8 @@ function find_all_players_whitelist()
 end
 
 function on_char_added(player, char)
+    if not getgenv().FindingAllNonWhitelistedPlayers then return end
+    if not (InGame_LocalPlr_Value and InGame_LocalPlr_Value.Value) then return end
     if player == LocalPlayer then return end
     if WHITELIST[player.Name] then return end
 
