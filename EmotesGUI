@@ -569,7 +569,6 @@ if not IsStudio then
 	end
 end
 
-
 local function CharacterAdded(Character)
 	for i,v in pairs(Frame:GetChildren()) do
 		if not v:IsA("UIGridLayout") then
@@ -677,7 +676,16 @@ local function CharacterAdded(Character)
 	end
 end
 
-if LocalPlayer.Character then
+getgenv().built_emoting_system_already = getgenv().built_emoting_system_already or false
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+	if not getgenv().built_emoting_system_already then
+		getgenv().built_emoting_system_already = true
+		CharacterAdded(char)
+	end
+end)
+
+if LocalPlayer.Character and not getgenv().built_emoting_system_already then
+	getgenv().built_emoting_system_already = true
 	CharacterAdded(LocalPlayer.Character)
 end
-LocalPlayer.CharacterAdded:Connect(CharacterAdded)
