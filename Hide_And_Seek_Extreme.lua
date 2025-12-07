@@ -951,7 +951,7 @@ Extras:Button("Get Coins (TP)", function()
     end
 end)
 
-Extras:Toggle("Auto Coins", function(state)
+Extras:Toggle("Auto Coins", false, function(state)
     local result_parts = count_parts(Game_Objects)
 
     if result_parts == false then
