@@ -8,11 +8,20 @@ if not getgenv().GlobalEnvironmentFramework_Initialized then
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
 
-for _, v in ipairs(game.CoreGui:GetChildren()) do
-    if v.Name:lower():find("turtle") then
-        v:Destroy()
+if getgenv().CoreGui then
+    for _, v in ipairs(getgenv().CoreGui:GetChildren()) do
+        if v.Name:lower():find("turtle") then
+            v:Destroy()
+        end
+    end
+else
+    for _, v in ipairs(game.CoreGui:GetChildren()) do
+        if v.Name:lower():find("turtle") then
+            v:Destroy()
+        end
     end
 end
+
 for _, v in ipairs(parent_main_gui:GetChildren()) do
     if v.Name:lower():find("turtle") then
         v:Destroy()
@@ -693,72 +702,100 @@ local Is_On_Cooldown = false
 local Cooldown_Time = 30
 local Cooldown_End_Time = 0
 
+function read_it_chance()
+    local t = getgenv().PlayerGui.MainGui.ItSelectionFrame.ChanceLabel.Text
+    local n = t:match("(%d+%.?%d*)%%")
+    return tonumber(n) or 0
+end
+
+function weighted_pick(plrs, my_plr)
+    local myc = read_it_chance()
+    local c = #plrs
+    local total = 100
+    local other = math.max(0, total - myc)
+    local per = c > 1 and (other / (c - 1)) or 0
+    local tbl = {}
+    for _,v in ipairs(plrs) do
+        if v == my_plr then
+            table.insert(tbl,{plr=v,w=myc})
+        else
+            table.insert(tbl,{plr=v,w=per})
+        end
+    end
+    local s = 0
+    for _,v in ipairs(tbl) do s += v.w end
+    local r = math.random() * s
+    for _,v in ipairs(tbl) do
+        r -= v.w
+        if r <= 0 then return v.plr end
+    end
+    return plrs[1]
+end
+
+function prediction_confidence(plrs, predicted, my_plr)
+    local myc = read_it_chance()
+    local c = #plrs
+    local total = 100
+    local other = math.max(0, total - myc)
+    local per = c > 1 and (other / (c - 1)) or 0
+    if predicted == my_plr then return myc end
+    return per
+end
+
 function Try_To_predict_IT_Plr()
     local LocalPlayer = getgenv().LocalPlayer
-
     if Is_On_Cooldown then
         local t = math.ceil(Cooldown_End_Time - tick())
         if t < 1 then t = 1 end
-        return getgenv().notify("Warning","You are on prediction cooldown ("..t.." seconds left).",10)
+        return getgenv().notify("Warning", "You are on prediction cooldown ("..t.." seconds left).", 10)
     end
-
     Is_On_Cooldown = true
     Cooldown_End_Time = tick() + Cooldown_Time
 
-    local function CreateDiceGui()
-        local Screen = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-        Screen.Name = "IT_Predictor_GUI"
-        Screen.ResetOnSpawn = false
-
-        local Frame = Instance.new("Frame", Screen)
-        Frame.Size = UDim2.new(0, 700, 0, 340)
-        Frame.Position = UDim2.new(0.5,0,0.5,0)
-        Frame.AnchorPoint = Vector2.new(0.5,0.5)
-        Frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
-        Frame.BackgroundTransparency = 0.05
-        Frame.BorderSizePixel = 0
-
-        local Corner = Instance.new("UICorner", Frame)
-        Corner.CornerRadius = UDim.new(0,26)
-
-        local Label = Instance.new("TextLabel", Frame)
-        Label.Size = UDim2.new(1,0,1,0)
-        Label.TextScaled = true
-        Label.BackgroundTransparency = 1
-        Label.TextColor3 = Color3.fromRGB(255,255,255)
-        Label.Font = Enum.Font.GothamBold
-        Label.Text = "Rolling Dice..."
-
-        return Screen, Label
+    local function mk_gui()
+        local s = Instance.new("ScreenGui", getgenv().PlayerGui)
+        s.Name = "IT_Predictor_GUI"
+        s.ResetOnSpawn = false
+        local f = Instance.new("Frame",s)
+        f.Size = UDim2.new(0,700,0,340)
+        f.Position = UDim2.new(0.5,0,0.5,0)
+        f.AnchorPoint = Vector2.new(0.5,0.5)
+        f.BackgroundColor3 = Color3.fromRGB(30,30,30)
+        f.BackgroundTransparency = 0.05
+        f.BorderSizePixel = 0
+        local cr = Instance.new("UICorner",f)
+        cr.CornerRadius = UDim.new(0,26)
+        local l = Instance.new("TextLabel",f)
+        l.Size = UDim2.new(1,0,1,0)
+        l.TextScaled = true
+        l.BackgroundTransparency = 1
+        l.TextColor3 = Color3.fromRGB(255,255,255)
+        l.Font = Enum.Font.GothamBold
+        l.Text = "Rolling Dice..."
+        return s,l
     end
 
-    local function GetRandomPlayer()
-        local list = Players:GetPlayers()
-        if #list == 0 then return nil end
-        return list[math.random(1,#list)]
+    local plrs = Players:GetPlayers()
+    local g,l = mk_gui()
+
+    for i=1,15 do
+        local r = plrs[math.random(1,#plrs)]
+        l.Text = "🎲 "..tostring(r.DisplayName).." 🎲"
+        wait(0.1 + i*0.01)
     end
 
-    local Gui, Label = CreateDiceGui()
+    local final = weighted_pick(plrs,LocalPlayer)
+    local conf = prediction_confidence(plrs,final,LocalPlayer)
+    local pct = string.format("%.2f",conf)
 
-    for i = 1,15 do
-        local temp = GetRandomPlayer()
-        if temp then
-            Label.Text = "🎲 "..temp.DisplayName.." 🎲"
-        else
-            Label.Text = "No players..."
-        end
-        wait(0.1 + i * 0.01)
-    end
-
-    local predicted = GetRandomPlayer()
-    if predicted and Players:FindFirstChild(predicted.Name) then
-        Label.Text = "🎯  Predicted IT: "..predicted.DisplayName.."  🎯"
+    if final then
+        l.Text = "🎯 Predicted IT: "..tostring(final.DisplayName).."  ("..pct.."%) 🎯"
     else
-        Label.Text = "⚠️ Prediction Failed (player left?). ⚠️"
+        l.Text = "⚠️ Prediction Failed ⚠️"
     end
 
     task.delay(3,function()
-        if Gui then Gui:Destroy() end
+        if g then g:Destroy() end
     end)
 
     task.delay(Cooldown_Time,function()
