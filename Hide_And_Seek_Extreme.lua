@@ -1398,6 +1398,21 @@ Audio:Slider("Sound Vol (FE)", 0.1,10,tonumber(main_volume_sound_others), functi
     main_volume_sound_others = New_Vol
 end)
 
+local play_music_others_sound_id = 0
+
 Audio:Box("Play Music", function(music_ID)
+    play_music_others_sound_id = music_ID
     play_music_others(music_ID)
+end)
+
+Audio:Toggle("Play Music Loop", false, function(toggled)
+    if toggled then
+        getgenv().playing_sound_others_FE = true
+        while getgenv().playing_sound_others_FE == true do
+        task.wait(0.1)
+            play_music_others(play_music_others_sound_id)
+        end
+    else
+        getgenv().playing_sound_others_FE = false
+    end
 end)
