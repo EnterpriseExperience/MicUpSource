@@ -35,6 +35,10 @@ local scriptstoload = {
         id = 3351674303,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"
     },
+    ["Berry Avenue"] = {
+        id = 8481844229,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Berry_Ave_Admin.lua"
+    }
 }
 
 if not getgenv().Game then
