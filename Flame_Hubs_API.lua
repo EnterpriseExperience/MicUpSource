@@ -191,13 +191,7 @@ g.isnumber = g.isnumber or function(str)
 	end
 end
 
-local valid_titles = {
-	success = "Success",
-	info = "Info",
-	warning = "Warning",
-	error = "Error"
-}
-
+local valid_titles = {success="Success",info="Info",warning="Warning",error="Error",succes="Success",sucess="Success",eror="Error",erorr="Error",warnin="Warning"}
 local function format_title(str)
 	if typeof(str) ~= "string" then
 		return "Info"
