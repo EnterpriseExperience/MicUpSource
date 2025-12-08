@@ -1432,7 +1432,7 @@ end)
 if not low_level_exec then
     local market_mod = mods and mods:FindFirstChild("MarketplaceAPI", true) or mods:WaitForChild("MarketplaceAPI", 5)
     local req_market_mod = require(market_mod)
-    g.market_api = market_mod
+    g.market_api = req_market_mod
     wait(0.3)
     local market_stuff = {
         g.market_api.GamepassIds.Yeti,
