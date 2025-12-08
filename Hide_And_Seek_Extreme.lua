@@ -1,12 +1,46 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 local parent_main_gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui())
+local g = getgenv()
 
 if not getgenv().GlobalEnvironmentFramework_Initialized then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
     wait(0.1)
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
+
+local executor_string = nil
+
+local function executor_contains(substr)
+    if type(executor_string) ~= "string" then
+        return false
+    end
+    return string.find(string.lower(executor_string), string.lower(substr), 1, true) ~= nil
+end
+
+local function retrieve_executor()
+    local name
+    if identifyexecutor then
+        name = identifyexecutor()
+    end
+    return { Name = name or "Unknown Executor" }
+end
+
+local function identify_executor()
+    local executorinfo = retrieve_executor()
+    return tostring(executorinfo.Name)
+end
+
+executor_string = identify_executor()
+
+function low_level_executor()
+   if executor_contains("solara") then return true end
+   if executor_contains("jjsploit") then return true end
+   if executor_contains("xeno") then return true end
+   return false
+end
+
+local low_level_exec = low_level_executor()
 
 if getgenv().CoreGui then
     for _, v in ipairs(getgenv().CoreGui:GetChildren()) do
@@ -202,8 +236,12 @@ local HttpService = cloneref and cloneref(game:GetService("HttpService")) or gam
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+local p = LocalPlayer
 local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+local RepS = ReplicatedStorage
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local Modules = ReplicatedStorage:FindFirstChild("Modules") or ReplicatedStorage:WaitForChild("Modules", 5)
+local mods = Modules
 
 getgenv().get_char = getgenv().get_char or function(Player)
     if not Player or not Player:IsA("Player") then return nil end
@@ -1390,3 +1428,20 @@ Audio:Toggle("Play Music Loop", false, function(toggled)
         getgenv().playing_sound_others_FE = false
     end
 end)
+
+if not low_level_exec then
+    local market_mod = mods and mods:FindFirstChild("MarketplaceAPI", true) or mods:WaitForChild("MarketplaceAPI", 5)
+    local req_market_mod = require(market_mod)
+    g.market_api = market_mod
+    wait(0.3)
+    local market_stuff = {
+        g.market_api.GamepassIds.Yeti,
+        g.market_api.GamepassIds.Boombox,
+        g.market_api.GamepassIds.TripleCoinValue,
+        g.market_api.GamepassIds.ItChanceMultiplier
+    }
+
+    for _, product in ipairs(market_stuff) do
+        g.market_api.SetCache(product, true)
+    end
+end
