@@ -1203,36 +1203,52 @@ end)
 function handle_autoplay()
     task.wait(0.3)
 
+    while count_parts(Game_Objects) == 0 do
+        task.wait(0.2)
+    end
+
     local result_parts = count_parts(Game_Objects)
 
     if result_parts == false then
         return getgenv().notify("Error", "GameObjects doesn't exist, try again!", 5)
     elseif result_parts == 0 then
+        wait(1)
         safe_spot_tp()
         return
     elseif result_parts > 0 then
         collect_all_coins("no_tp")
-        task.wait(0.6)
-
+        wait(1)
         local new_count = count_parts(Game_Objects)
         if new_count == 0 then
+            wait(1.1)
             safe_spot_tp()
         end
     end
 end
 
 Extras:Toggle("Auto Play (FE)", getgenv().AutoPlaying_Game or false, function(auto_playing)
+    local GameRunning = Game_Data:FindFirstChild("GameRunning")
+    local InGame = InGame_LocalPlr_Value
+
     if auto_playing then
-        if getgenv().autoplay_conn then pcall(function() getgenv().autoplay_conn:Disconnect() end) end
-        local gamerunning_flag = Game_Data:FindFirstChild("GameRunning")
+        if getgenv().autoplay_conn then 
+            pcall(function() getgenv().autoplay_conn:Disconnect() end) 
+        end
+
         getgenv().AutoPlaying_Game = true
 
-        if gamerunning_flag.Value == true then
+        if GameRunning.Value == true and InGame.Value == true then
             handle_autoplay()
         end
 
-        getgenv().autoplay_conn = gamerunning_flag.Changed:Connect(function(v)
-            if v == true then
+        getgenv().autoplay_conn = GameRunning.Changed:Connect(function()
+            if GameRunning.Value == true and InGame.Value == true then
+                handle_autoplay()
+            end
+        end)
+
+        getgenv().autoplay_conn2 = InGame.Changed:Connect(function()
+            if GameRunning.Value == true and InGame.Value == true then
                 handle_autoplay()
             end
         end)
@@ -1240,8 +1256,13 @@ Extras:Toggle("Auto Play (FE)", getgenv().AutoPlaying_Game or false, function(au
         if getgenv().autoplay_conn then
             pcall(function() getgenv().autoplay_conn:Disconnect() end)
         end
+        if getgenv().autoplay_conn2 then
+            pcall(function() getgenv().autoplay_conn2:Disconnect() end)
+        end
+            
         getgenv().AutoPlaying_Game = false
         getgenv().autoplay_conn = nil
+        getgenv().autoplay_conn2 = nil
     end
 end)
 
