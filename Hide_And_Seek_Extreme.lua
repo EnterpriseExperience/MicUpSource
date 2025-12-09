@@ -40,6 +40,14 @@ function low_level_executor()
    return false
 end
 
+if game.PlaceId ~= 205224386 then
+    if getgenv().notify then
+        return getgenv().notify("Error", "This is not Hide And Seek Extreme!", 10)
+    else
+        return 
+    end
+end
+
 local low_level_exec = low_level_executor()
 
 if getgenv().CoreGui then
