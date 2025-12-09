@@ -1005,12 +1005,7 @@ end
 
 local function is_playing_music()
     local root_part = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character:FindFirstChild("HumanoidRootPart")
-    local does_sound_exist = does_boombox_sound_exist()
 
-    if not does_sound_exist then
-        return getgenv().notify("Error", "Boombox Sound does not exist yet (you cannot play music yet!).", 12)
-    end
-    wait(0.1)
     for _, v in ipairs(root_part:GetChildren()) do
         if v:IsA("Sound") and v.Name:lower():find("boombox") then
             if v.Playing then
@@ -1042,11 +1037,8 @@ Audio:Slider("Boombox Vol",0,10,tonumber(getgenv().new_boombox_main_volume) or 0
 end)
 
 Audio:Button("Play Music (FE)", function()
-    local sound = does_boombox_sound_exist()
-    if not sound then
-        return getgenv().notify("Error", "Boombox Sound does not exist yet (not loaded).", 12)
-    end
-    if sound.Playing then
+    local sound = find_boombox()
+    if sound and sound.Playing then
         return getgenv().notify("Warning", "You're already playing music!", 5)
     end
 
@@ -1062,7 +1054,7 @@ Audio:Button("Play Music (FE)", function()
         local updated = does_boombox_sound_exist()
         if updated then
             updated.Volume = getgenv().new_boombox_main_volume
-            getgenv().notify("Success", "Now playing: "..Current_ID)
+            getgenv().notify("Success", "Now playing: "..tostring(Current_ID), 5)
         end
     end)
 end)
