@@ -489,13 +489,13 @@ local function create_label(target, text, color)
 end
 
 local function clear_esp(char)
-    if char:FindFirstChild("esp_highlight") then
-        char.esp_highlight:Destroy()
-    end
+    local h = char:FindFirstChild("esp_highlight")
+    if h then h:Destroy() end
 
     local head = char:FindFirstChild("Head")
-    if head and head:FindFirstChild("esp_label") then
-        head.esp_label:Destroy()
+    if head then
+        local lbl = head:FindFirstChild("esp_label")
+        if lbl then lbl:Destroy() end
     end
 end
 
@@ -507,39 +507,36 @@ local function apply_esp(plr, it_name)
     if not head then return end
 
     local is_it = tostring(plr.Name) == it_name
-    local highlight_color = is_it and Color3.fromRGB(40,90,255) or Color3.fromRGB(255,50,50)
-
+    local col = is_it and Color3.fromRGB(40,90,255) or Color3.fromRGB(255,50,50)
     local h = char:FindFirstChild("esp_highlight")
     if not h then
-        h = create_highlight(char, highlight_color)
+        h = create_highlight(char, col)
         h.Name = "esp_highlight"
     else
-        h.FillColor = highlight_color
-        h.OutlineColor = highlight_color
+        h.FillColor = col
+        h.OutlineColor = col
     end
 
-    if is_it then
-        local b = head:FindFirstChild("esp_label")
-        if not b then
-            b = create_label(head, "IT/Seeker", highlight_color)
-        else
-            local t = b:FindFirstChild("TextLabel")
-            if t then
-                t.Text = "IT/Seeker"
-                t.TextColor3 = highlight_color
-            end
-        end
+    local b = head:FindFirstChild("esp_label")
+
+    if not b then
+        b = create_label(head, is_it and "IT/Seeker" or plr.Name, col)
     else
-        local b = head:FindFirstChild("esp_label")
-        if b then b:Destroy() end
+        local t = b:FindFirstChild("TextLabel")
+        if t then
+            t.Text = is_it and "IT/Seeker" or plr.Name
+            t.TextColor3 = col
+        end
     end
 end
 
 task.spawn(function()
     while true do
-    task.wait(0.2)
+        task.wait(0.2)
+
         if getgenv().player_esp then
             local it_name = tostring(It_Val.Value)
+
             for _, plr in ipairs(players:GetPlayers()) do
                 if plr ~= local_plr then
                     apply_esp(plr, it_name)
@@ -712,6 +709,7 @@ function toggle_visible_spawn_box(state)
 end
 
 local main_volume_sound_others = 3
+getgenv().main_volume_sound_others = getgenv().main_volume_sound_others or 3
 wait(0.2)
 function play_music_others(ID)
     for _, v in ipairs(getgenv().Players:GetChildren()) do
@@ -926,14 +924,21 @@ function collect_all_coins(method)
 end
 
 local function autocoin_handle()
-    local val = InGame_LocalPlr_Value.Value
+    local val
+
+    if Game_Data and Game_Data:FindFirstChild("GameRunning") then
+        val = Game_Data:FindFirstChild("GameRunning").Value
+    else
+        val = InGame_LocalPlr_Value.Value
+    end
+
     if val == true then
-        local char = get_char(LocalPlayer) or getgenv().Character or LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local char = getgenv().Character or get_char(LocalPlayer) or LocalPlayer.Character
         local hrp = get_root(LocalPlayer) or getgenv().HumanoidRootPart or char:FindFirstChild("HumanoidRootPart")
         if not hrp then return getgenv().notify("Error", "HumanoidRootPart missing (try resetting).", 5) end
         getgenv().autocoin_lastcf = hrp.CFrame
         task.wait(0.1)
-        collect_all_coins("teleport")
+        collect_all_coins("no_tp")
         task.wait(0.15)
         if getgenv().autocoin_lastcf then
             hrp.CFrame = getgenv().autocoin_lastcf
@@ -942,7 +947,7 @@ local function autocoin_handle()
     else
         task.wait(0.7)
         if getgenv().autocoin_lastcf then
-            local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local char = getgenv().Character or get_char(LocalPlayer) or LocalPlayer.Character
             local hrp = char:FindFirstChild("HumanoidRootPart")
             if hrp then
                 hrp.CFrame = getgenv().autocoin_lastcf
@@ -953,22 +958,24 @@ local function autocoin_handle()
 end
 
 local function handle_in_game_changed()
-    if InGame_LocalPlr_Value.Value == true then
+    if Game_Data and Game_Data:FindFirstChild("GameRunning").Value == true then
         task.wait(0.1)
-        collect_all_coins("teleport")
+        collect_all_coins("no_tp")
     end
 end
 
-local Current_ID = 0
+getgenv().Current_ID = getgenv().Current_ID or 0
 wait(0.2)
-Audio:Box("Music (FE):", function(text, focuslost)
+getgenv().Main_Audio_Input = Audio:Box("Music (FE):", function(text, focuslost)
     if focuslost then
         local id = tonumber(text)
-        Current_ID = id
+        getgenv().Current_ID = id
     end
 end)
 
-getgenv().new_boombox_main_volume = 0.5
+getgenv().Main_Audio_Input:Set(getgenv().Current_ID or 0)
+
+getgenv().new_boombox_main_volume = getgenv().new_boombox_main_volume or 0.5
 getgenv().boombox_sound = nil
 
 local function find_boombox()
@@ -994,7 +1001,7 @@ task.spawn(function()
     end
 end)
 
-Audio:Slider("Boombox Vol",0,10,0.5,function(newv)
+Audio:Slider("Boombox Vol",0,10,tonumber(getgenv().new_boombox_main_volume) or 0.5,function(newv)
     getgenv().new_boombox_main_volume = newv
     if getgenv().boombox_sound then
         getgenv().boombox_sound.Volume = newv
@@ -1002,7 +1009,13 @@ Audio:Slider("Boombox Vol",0,10,0.5,function(newv)
 end)
 
 Audio:Button("Play Music (FE)", function()
-    Play_Sound_Boombox_RE:FireServer(Current_ID)
+    local ok, response = pcall(function()
+        Play_Sound_Boombox_RE:FireServer(Current_ID)
+    end)
+
+    if not ok then
+        return getgenv().notify("Error", "Error playing song: "..tostring(response), 15)
+    end
 
     local bb = getgenv().boombox_sound
     if bb then
@@ -1042,26 +1055,90 @@ Extras:Button("Get Coins (TP)", function()
     end
 end)
 
-Extras:Toggle("Auto Coins", false, function(state)
+Extras:Toggle("Auto Get Coins", getgenv().AutoCollectingCoins_Fast or false, function(state)
     if state then
         if getgenv().autocoin_conn then
             pcall(function() getgenv().autocoin_conn:Disconnect() end)
         end
+        if getgenv().autocoin_conn2 then
+            pcall(function() getgenv().autocoin_conn2:Disconnect() end)
+        end
+        getgenv().AutoCollectingCoins_Fast = true
 
-        getgenv().autocoin_conn = InGame_LocalPlr_Value:GetPropertyChangedSignal("Value"):Connect(function()
-            autocoin_handle()
-        end)
+        local gamerunning_flag = Game_Data:FindFirstChild("GameRunning")
+        local selecting_it_flag = Game_Data:FindFirstChild("SelectingIt")
+        local selecting_map_flag = Game_Data:FindFirstChild("SelectingMap")
 
-        if InGame_LocalPlr_Value.Value == true then
+        if gamerunning_flag.Value == true then
             autocoin_handle()
         end
+
+        getgenv().autocoin_conn = gamerunning_flag.Changed:Connect(function(v)
+            if v == true then
+                autocoin_handle()
+            end
+        end)
+
+        getgenv().autocoin_conn2 = selecting_it_flag.Changed:Connect(function(v)
+            if v == true and selecting_map_flag.Value == false then
+                collect_all_coins("no_tp")
+            end
+        end)
     else
         if getgenv().autocoin_conn then
             pcall(function() getgenv().autocoin_conn:Disconnect() end)
         end
+        if getgenv().autocoin_conn2 then
+            pcall(function() getgenv().autocoin_conn2:Disconnect() end)
+        end
         getgenv().autocoin_conn = nil
+        getgenv().autocoin_conn2 = nil
         getgenv().autocoin_lastcf = nil
-        return 
+    end
+end)
+
+function handle_autoplay()
+    task.wait(0.3)
+
+    local result_parts = count_parts(Game_Objects)
+
+    if result_parts == false then
+        return getgenv().notify("Error", "GameObjects doesn't exist, try again!", 5)
+    elseif result_parts == 0 then
+        safe_spot_tp()
+        return
+    elseif result_parts > 0 then
+        collect_all_coins("no_tp")
+        task.wait(0.6)
+
+        local new_count = count_parts(Game_Objects)
+        if new_count == 0 then
+            safe_spot_tp()
+        end
+    end
+end
+
+Extras:Toggle("Auto Play (FE)", getgenv().AutoPlaying_Game or false, function(auto_playing)
+    if auto_playing then
+        if getgenv().autoplay_conn then pcall(function() getgenv().autoplay_conn:Disconnect() end) end
+        local gamerunning_flag = Game_Data:FindFirstChild("GameRunning")
+        getgenv().AutoPlaying_Game = true
+
+        if gamerunning_flag.Value == true then
+            handle_autoplay()
+        end
+
+        getgenv().autoplay_conn = gamerunning_flag.Changed:Connect(function(v)
+            if v == true then
+                handle_autoplay()
+            end
+        end)
+    else
+        if getgenv().autoplay_conn then
+            pcall(function() getgenv().autoplay_conn:Disconnect() end)
+        end
+        getgenv().AutoPlaying_Game = false
+        getgenv().autoplay_conn = nil
     end
 end)
 
@@ -1099,7 +1176,6 @@ Main:Button("Find All (No Whitelist)", function()
     if not InGame_LocalPlr_Value.Value then
         return getgenv().notify("Error", "You are not currently in-game!", 5)
     end
-
     if not It_LocalPlr_Value.Value then
         return getgenv().notify("Error", "You are not the IT/seeker!", 5)
     end
@@ -1205,7 +1281,7 @@ Players_Tab:Toggle("Timer Flasher", false, function(flashing)
     end
 end)
 
-Players_Tab:Button("Whos It", function()
+Players_Tab:Button("Whos IT", function()
     local stored = tostring(It_Val.Value)
     local plr = players:FindFirstChild(stored)
 
@@ -1232,16 +1308,16 @@ Players_Tab:Button("View IT", function()
     local plr = players:FindFirstChild(stored)
     local their_char = plr.Character or get_human(plr) or get_char(plr)
 
-    if plr then
+    if plr and their_char then
         Cur_Camera.CameraSubject = their_char
     end
 end)
 
-Players_Tab:Toggle("Player ESP", false, function(state)
+Players_Tab:Toggle("Player ESP", getgenv().player_esp or false, function(state)
     getgenv().player_esp = state
 end)
 
-Extras:Toggle("Visible Spawn", false, function(is_spawn_visible)
+Extras:Toggle("Visible Spawn", getgenv().toggle_spawn_box_visible or false, function(is_spawn_visible)
     if is_spawn_visible then
         toggle_visible_spawn_box(true)
     else
@@ -1285,7 +1361,7 @@ Players_Tab:Box("Goto Plr:", function(Target)
     pivot_to_plr(Player_To_Teleport_To)
 end)
 
-Extras:Toggle("Rainbow Timer", false, function(rainbow_timer_text)
+Extras:Toggle("Rainbow Timer", getgenv().RainbowText or false, function(rainbow_timer_text)
     if rainbow_timer_text then
         local TweenService = getgenv().TweenService
         local RunService = getgenv().RunService
@@ -1341,7 +1417,7 @@ Extras:Toggle("Rainbow Timer", false, function(rainbow_timer_text)
     end
 end)
 
-Extras:Toggle("Rainbow UI", false, function(rainbow_UI_frames)
+Extras:Toggle("Rainbow UI", getgenv().Rainbow_Game_UI or false, function(rainbow_UI_frames)
     if rainbow_UI_frames then
         local RunService = getgenv().RunService
         local Main_GUI = getgenv().PlayerGui:FindFirstChild("MainGui", true)
@@ -1414,8 +1490,9 @@ Extras:Button("IY", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 end)
 
-Audio:Slider("Sound Vol (FE)", 0.1,10,tonumber(main_volume_sound_others), function(New_Vol)
+Audio:Slider("Sound Vol (FE)", 0.1,10,tonumber(getgenv().main_volume_sound_others) or 3, function(New_Vol)
     main_volume_sound_others = New_Vol
+    getgenv().main_volume_sound_others = New_Vol
 end)
 
 local play_music_others_sound_id = 0
