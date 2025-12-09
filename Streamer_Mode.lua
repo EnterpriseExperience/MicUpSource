@@ -418,7 +418,7 @@ g.enable_playerlist = function()
 end
 
 local screen=Instance.new("ScreenGui")
-screen.Name=tostring(randomString())
+screen.Name="StreamerModeActivatorGUI"
 screen.Parent=core_gui
 screen.ResetOnSpawn=false
 
