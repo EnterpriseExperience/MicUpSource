@@ -974,7 +974,6 @@ getgenv().Main_Audio_Input = Audio:Box("Music (FE):", function(text, focuslost)
 end)
 
 getgenv().Main_Audio_Input:Set(getgenv().Current_ID or 0)
-
 getgenv().new_boombox_main_volume = getgenv().new_boombox_main_volume or 0.5
 getgenv().boombox_sound = nil
 
@@ -990,15 +989,18 @@ local function find_boombox()
 end
 
 local function does_boombox_sound_exist()
-    local root_part = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character:FindFirstChild("HumanoidRootPart")
+    local root = getgenv().HumanoidRootPart or get_root(LocalPlayer)
+    if not root then
+        return false
+    end
 
-    for _, v in ipairs(root_part:GetChildren()) do
+    for _, v in ipairs(root:GetChildren()) do
         if v:IsA("Sound") and v.Name:lower():find("boombox") then
-            return true
+            return v
         end
     end
 
-    return nil
+    return false
 end
 
 local function is_playing_music()
@@ -1040,15 +1042,14 @@ Audio:Slider("Boombox Vol",0,10,tonumber(getgenv().new_boombox_main_volume) or 0
 end)
 
 Audio:Button("Play Music (FE)", function()
-    local is_already_playing_music = is_playing_music()
-    local is_sound_loaded_yet = does_boombox_sound_exist()
-    if not is_sound_loaded_yet then
-        return getgenv().notify("Error", "Boombox Sound does not exist yet (you cannot play music yet)!", 12)
+    local sound = does_boombox_sound_exist()
+    if not sound then
+        return getgenv().notify("Error", "Boombox Sound does not exist yet (not loaded).", 12)
     end
-    if is_already_playing_music == true then
+    if sound.Playing then
         return getgenv().notify("Warning", "You're already playing music!", 5)
     end
-    wait(0.2)
+
     local ok, response = pcall(function()
         Play_Sound_Boombox_RE:FireServer(Current_ID)
     end)
@@ -1057,11 +1058,13 @@ Audio:Button("Play Music (FE)", function()
         return getgenv().notify("Error", "Error playing song: "..tostring(response), 15)
     end
 
-    local bb = getgenv().boombox_sound
-    if bb then
-        bb.Volume = getgenv().new_boombox_main_volume
-        getgenv().notify("Success", "Now playing: "..tostring(Current_ID).." with Volume: "..tostring(bb.Volume or getgenv().new_boombox_main_volume))
-    end
+    task.delay(0.2, function()
+        local updated = does_boombox_sound_exist()
+        if updated then
+            updated.Volume = getgenv().new_boombox_main_volume
+            getgenv().notify("Success", "Now playing: "..Current_ID)
+        end
+    end)
 end)
 
 Audio:Button("Stop Music", function()
