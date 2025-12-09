@@ -1124,6 +1124,7 @@ getgenv().PresetMusicIDsBypasses = Audio:Dropdown("Music IDs", dropdown_items, f
     for _, entry in ipairs(table_of_ids) do
         if entry.desc == chosen_desc then
             play_music_with_id(entry.id)
+            getgenv().Current_ID = tostring(entry.id)
             break
         end
     end
