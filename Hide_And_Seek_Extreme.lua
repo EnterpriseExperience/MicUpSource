@@ -989,6 +989,20 @@ local function find_boombox()
     end
 end
 
+local function is_playing_music()
+    local root_part = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character:FindFirstChild("HumanoidRootPart")
+
+    for _, v in ipairs(root_part:GetChildren()) do
+        if v:IsA("Sound") and v.Name:lower():find("boombox") then
+            if v.Playing then
+                return true
+            end
+        end
+    end
+
+    return nil
+end
+
 task.spawn(function()
     while true do
         task.wait(0.2)
@@ -1009,6 +1023,11 @@ Audio:Slider("Boombox Vol",0,10,tonumber(getgenv().new_boombox_main_volume) or 0
 end)
 
 Audio:Button("Play Music (FE)", function()
+    local is_already_playing_music = is_playing_music()
+    if is_already_playing_music == true then
+        return getgenv().notify("Warning", "You're already playing music!", 5)
+    end
+    wait(0.2)
     local ok, response = pcall(function()
         Play_Sound_Boombox_RE:FireServer(Current_ID)
     end)
@@ -1020,6 +1039,7 @@ Audio:Button("Play Music (FE)", function()
     local bb = getgenv().boombox_sound
     if bb then
         bb.Volume = getgenv().new_boombox_main_volume
+        getgenv().notify("Success", "Now playing: "..tostring(Current_ID).." with Volume: "..tostring(bb.Volume or getgenv().new_boombox_main_volume))
     end
 end)
 
@@ -1091,6 +1111,7 @@ Extras:Toggle("Auto Get Coins", getgenv().AutoCollectingCoins_Fast or false, fun
         if getgenv().autocoin_conn2 then
             pcall(function() getgenv().autocoin_conn2:Disconnect() end)
         end
+        getgenv().AutoCollectingCoins_Fast = false
         getgenv().autocoin_conn = nil
         getgenv().autocoin_conn2 = nil
         getgenv().autocoin_lastcf = nil
