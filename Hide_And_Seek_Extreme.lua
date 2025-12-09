@@ -1036,7 +1036,30 @@ Audio:Slider("Boombox Vol",0,10,tonumber(getgenv().new_boombox_main_volume) or 0
     end
 end)
 
-Audio:Button("Play Music (FE)", function()
+function play_music_with_id(id_to_play)
+    local sound = find_boombox()
+    if sound and sound.Playing then
+        return getgenv().notify("Warning", "You're already playing music!", 5)
+    end
+
+    local ok, response = pcall(function()
+        Play_Sound_Boombox_RE:FireServer(id_to_play)
+    end)
+
+    if not ok then
+        return getgenv().notify("Error", "Error playing ID: "..tostring(response), 15)
+    end
+
+    task.delay(0.2, function()
+        local updated = does_boombox_sound_exist()
+        if updated then
+            updated.Volume = getgenv().new_boombox_main_volume
+            getgenv().notify("Success", "Now playing ID: "..tostring(id_to_play).." with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 5)
+        end
+    end)
+end
+
+function play_music_with_sound_id()
     local sound = find_boombox()
     if sound and sound.Playing then
         return getgenv().notify("Warning", "You're already playing music!", 5)
@@ -1047,20 +1070,63 @@ Audio:Button("Play Music (FE)", function()
     end)
 
     if not ok then
-        return getgenv().notify("Error", "Error playing song: "..tostring(response), 15)
+        return getgenv().notify("Error", "Error playing ID: "..tostring(response), 15)
     end
 
     task.delay(0.2, function()
         local updated = does_boombox_sound_exist()
         if updated then
             updated.Volume = getgenv().new_boombox_main_volume
-            getgenv().notify("Success", "Now playing: "..tostring(Current_ID), 5)
+            getgenv().notify("Success", "Now playing ID: "..tostring(Current_ID).." with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 5)
         end
+    end)
+end
+
+Audio:Button("Play Music (FE)", function()
+    play_music_with_sound_id()
+end)
+
+if not getgenv().AutoPlayingMusic_InGameAutomatically then
+    getgenv().AutoPlayingMusic_InGameAutomatically = InGame_LocalPlr_Value.Changed:Connect(function(v)
+        if v == true then
+            wait(1)
+            play_music_with_sound_id()
+        else
+            for i = 1, 3 do
+                Stop_Sound_Boombox_FE:FireServer()
+            end
+        end
+    end)
+end
+
+Audio:Button("Stop Music", function()
+    pcall(function()
+        Stop_Sound_Boombox_FE:FireServer()
     end)
 end)
 
-Audio:Button("Stop Music", function()
-    Stop_Sound_Boombox_FE:FireServer()
+local table_of_ids = {
+    {id = 105641396506001, desc = "met her on net"},
+    {id = 137350238118013, desc = "NUE POCOYO FUNK"},
+    {id = 103606830325471, desc = "JUJU - Falls"},
+    {id = 95183240348434,  desc = "Bloodpop"},
+    {id = 128134028500828, desc = "Juice - Moonlight"},
+    {id = 76927176566054,  desc = "ULTERIOR MOTIVES"},
+    {id = 129255676311189, desc = "Unleaked (idk)"},
+}
+
+local dropdown_items = {}
+for _, v in ipairs(table_of_ids) do
+    table.insert(dropdown_items, v.desc)
+end
+
+getgenv().PresetMusicIDsBypasses = Audio:Dropdown("Music IDs", dropdown_items, function(chosen_desc)
+    for _, entry in ipairs(table_of_ids) do
+        if entry.desc == chosen_desc then
+            play_music_with_id(entry.id)
+            break
+        end
+    end
 end)
 
 Extras:Button("Get Coins (No TP)", function()
