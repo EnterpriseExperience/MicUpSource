@@ -897,29 +897,37 @@ getgenv().autocoin_conn = nil
 getgenv().autocoin_lastcf = nil
 
 function collect_all_coins(method)
-    if method == "no_tp" then
-        if not firetouchinterest then
-            return getgenv().notify("Error", "Your exploit does not support 'firetouchinterest'!", 6)
-        end
+    local hrp = HumanoidRootPart
+    if not hrp then return end
 
-        for _, obj in Game_Objects:GetDescendants() do
-            if obj.Name == "Credit" or obj:FindFirstChildOfClass("TouchTransmitter") then
-                local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
-                if part then
-                    firetouchinterest(HumanoidRootPart, part, 0) task.wait()
-                    firetouchinterest(HumanoidRootPart, part, 1)
-                end
+    local use_touch = (method == "no_tp" and firetouchinterest ~= nil)
+
+    for _, obj in Game_Objects:GetDescendants() do
+        local isCoin = obj.Name == "Credit" or obj:FindFirstChildOfClass("TouchTransmitter")
+        if not isCoin then continue end
+
+        local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
+        if not part then continue end
+
+        if use_touch then
+            local ok = pcall(function()
+                firetouchinterest(hrp, part, 0)
+                task.wait()
+                firetouchinterest(hrp, part, 1)
+            end)
+
+            if not ok then
+                Character:PivotTo(part.CFrame)
+                task.wait()
             end
+        else
+            Character:PivotTo(part.CFrame)
+            task.wait()
         end
-    elseif method == "teleport" then
-        for _, v in pairs(Game_Objects:GetChildren()) do
-            if v:IsA("BasePart") and v.Name:lower():find("credit") then
-                wait(0.1)
-                Character:PivotTo(v:GetPivot())
-            end
-        end
-    else
-        return getgenv().notify("Error", "Invalid argument specified when calling function.", 6)
+    end
+
+    if SAFE_SPOT_CFRAME then
+        Character:PivotTo(SAFE_SPOT_CFRAME)
     end
 end
 
@@ -1109,7 +1117,6 @@ local table_of_ids = {
     {id = 105641396506001, desc = "met her on net"},
     {id = 137350238118013, desc = "NUE POCOYO FUNK"},
     {id = 103606830325471, desc = "JUJU - Falls"},
-    {id = 95183240348434,  desc = "Bloodpop"},
     {id = 128134028500828, desc = "Juice - Moonlight"},
     {id = 76927176566054,  desc = "ULTERIOR MOTIVES"},
     {id = 129255676311189, desc = "Unleaked (idk)"},
