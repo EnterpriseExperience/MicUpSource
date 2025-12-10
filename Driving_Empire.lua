@@ -1,5 +1,8 @@
+if not game:IsLoaded() then game.Loaded:Wait() end
 local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
-local Raw_Version = "V1.0.9"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+wait(0.5)
+local Raw_Version = "V2.0.7"
 local Script_Version = tostring(Raw_Version).."-DE"
 local Character = Flames_API.Character
 local Humanoid = Flames_API.Humanoid
@@ -9,6 +12,8 @@ local Players = Flames_API.Service("Players")
 local Workspace = Flames_API.Service("Workspace")
 local RunService = Flames_API.Service("RunService")
 local TweenService = Flames_API.Service("TweenService")
+local MarketplaceService = Flames_API.Service("MarketplaceService")
+local Game_Name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local Vehicles = Workspace:FindFirstChild("Vehicles") or Workspace:WaitForChild("Vehicles", 3) or nil
 local LocalPlayer = Flames_API.LocalPlayer
 local Remotes = ReplicatedStorage:FindFirstChild("Remotes") or ReplicatedStorage:WaitForChild("Remotes", 3) or nil
@@ -20,19 +25,153 @@ local RaceStart_RE = Remotes and Remotes:FindFirstChild("RaceStartTimeTrial") or
 local Teleport_RE = Remotes and Remotes:FindFirstChild("Teleport") or Remotes and Remotes:WaitForChild("Teleport", 3) or nil
 local Checkpoint_RF = Remotes and Remotes:FindFirstChild("RaceCheckpoint") or Remotes and Remotes:WaitForChild("RaceCheckpoint", 3) or nil
 
-function notify(Title, Content, Time)
-    if not Time or Time == nil then
-        Time = 5
+if not getgenv().HasSeen_Loading_Screen then
+    local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local player = Players.LocalPlayer
+    local player_name = player.DisplayName
+    local TweenService = cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
+    local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+    local parent_gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui()) or CoreGui
+    local scramble_time = 4.5
+    local scramble_speed = 0.05
+    local fade_out_text_time = 10
+    local fade_out_background_time = 10
+
+    local screen_gui = Instance.new("ScreenGui")
+    screen_gui.Name = "fullscreenscramblegui"
+    screen_gui.Parent = parent_gui
+    screen_gui.IgnoreGuiInset = true
+    screen_gui.ResetOnSpawn = false
+
+    local background_frame = Instance.new("Frame")
+    background_frame.Size = UDim2.new(1, 0, 1, 0)
+    background_frame.Position = UDim2.new(0, 0, 0, 0)
+    background_frame.BackgroundTransparency = 1
+    background_frame.Parent = screen_gui
+
+    local ui_gradient = Instance.new("UIGradient")
+    ui_gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 50)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 0, 100)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 200))
+    }
+    ui_gradient.Rotation = 45
+    ui_gradient.Parent = background_frame
+
+    local fadein_info = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+    TweenService:Create(background_frame, fadein_info, {BackgroundTransparency = 0}):Play()
+
+    local welcome_label = Instance.new("TextLabel")
+    welcome_label.Size = UDim2.new(1, 0, 0.1, 0)
+    welcome_label.Position = UDim2.new(0, 0, 0.35, 0)
+    welcome_label.BackgroundTransparency = 1
+    welcome_label.TextColor3 = Color3.fromRGB(0, 0, 0)
+    welcome_label.Font = Enum.Font.Garamond
+    welcome_label.TextScaled = true
+    welcome_label.Text = "Welcome, " .. tostring(player_name)
+    welcome_label.Parent = screen_gui
+
+    local text_label = Instance.new("TextLabel")
+    text_label.Size = UDim2.new(1, 0, 0.2, 0)
+    text_label.Position = UDim2.new(0, 0, 0.5, 0)
+    text_label.BackgroundTransparency = 1
+    text_label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    text_label.Font = Enum.Font.SourceSansBold
+    text_label.TextScaled = true
+    text_label.TextTransparency = 1
+    text_label.Parent = screen_gui
+
+    local copyright_label = Instance.new("TextLabel")
+    copyright_label.Size = UDim2.new(1, 0, 0.1, 0)
+    if getgenv().UserInputService.TouchEnabled then
+        copyright_label.Position = UDim2.new(0, 0, 0.7, 0)
+    else
+        copyright_label.Position = UDim2.new(0, 0, 0.8, 0)
+    end
+    copyright_label.BackgroundTransparency = 1
+    copyright_label.TextColor3 = Color3.fromRGB(50, 50, 50)
+    copyright_label.Font = Enum.Font.SourceSans
+    copyright_label.TextScaled = true
+    copyright_label.Text = "© Flames Hub | 2025 | Powerful Services | Enjoyable utilities | ©"
+    copyright_label.Parent = screen_gui
+
+    local function scramble_text(t)
+        local s = ""
+        for i = 1, #t do
+            local c = string.char(math.random(48, 122))
+            while not (c:match("%a") or c:match("%d")) do
+                c = string.char(math.random(48, 122))
+            end
+            s = s .. c
+        end
+        return s
     end
 
-    if not Title then
-        Title = "Alert:"
+    local function reveal_text(scramble_time, main_text, label)
+        local time = 0
+        while time < scramble_time do
+            label.Text = scramble_text(main_text)
+            label.TextTransparency = 0
+            time = time + scramble_speed
+            task.wait(scramble_speed)
+        end
+        label.Text = main_text
     end
 
-    Flames_API.notify(tostring(Title), tostring(Content), tonumber(Time))
+    local function fade_out_text(label)
+        TweenService:Create(label, TweenInfo.new(fade_out_text_time, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
+    end
+
+    local function move_out_text()
+        TweenService:Create(text_label, TweenInfo.new(fade_out_text_time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0, 0)}):Play()
+    end
+
+    local function rgb_cycle(label)
+        local t = 0.7
+        local list = {
+            Color3.fromRGB(255, 0, 0),
+            Color3.fromRGB(255, 165, 0),
+            Color3.fromRGB(255, 255, 0),
+            Color3.fromRGB(0, 255, 0),
+            Color3.fromRGB(0, 255, 255),
+            Color3.fromRGB(0, 0, 255),
+            Color3.fromRGB(255, 0, 255)
+        }
+
+        getgenv().rgb_running_background_fading_tween = true
+        while getgenv().rgb_running_background_fading_tween do
+            for _, col in ipairs(list) do
+                TweenService:Create(label, TweenInfo.new(t, Enum.EasingStyle.Linear), {TextColor3 = col}):Play()
+                task.wait(t)
+            end
+        end
+    end
+
+    task.spawn(function()
+        reveal_text(scramble_time, welcome_label.Text, welcome_label)
+        rgb_cycle(welcome_label)
+    end)
+
+    task.spawn(function()
+        reveal_text(scramble_time, "You are now tuning into 'Flames Hub | Services', Enjoy!", text_label)
+        rgb_cycle(text_label)
+    end)
+
+    task.wait(scramble_time + 1)
+
+    getgenv().rgb_running_background_fading_tween = false
+
+    fade_out_text(welcome_label)
+    fade_out_text(text_label)
+    fade_out_text(copyright_label)
+    move_out_text()
+
+    TweenService:Create(background_frame, TweenInfo.new(fade_out_background_time, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
+
+    task.wait(fade_out_background_time + 1)
+    screen_gui:Destroy()
+    getgenv().HasSeen_Loading_Screen = true
 end
-
-getgenv().notify = notify
 
 getgenv().convert_color3 = function(r, g, b)
     return Color3.new(r/255, g/255, b/255)
@@ -84,20 +223,22 @@ local function Get_Vehicle_Model()
 end
 
 function Fire_F(RemoteF, Args)
-    if not RemoteF then return notify("Failure:", "RemoteFunction not provided!") end
+    if not RemoteF then return notify("Error", "RemoteFunction not provided!") end
 
     RemoteF:InvokeServer(unpack(Args))
 end
 
 function Fire_E(RemoteE, Args)
-    if not RemoteE then return notify("Failure:", "RemoteEvent not provided!") end
+    if not RemoteE then return notify("Error", "RemoteEvent not provided!") end
 
     RemoteE:FireServer(unpack(Args))
 end
 
 function change_car_color(color)
     local Vehicle = Get_Vehicle()
-    if not Vehicle then return end
+    if not Vehicle then
+        return 
+    end
 
     local args = {
         "Paint",
@@ -283,7 +424,6 @@ local function load_rayfield()
         end)
 
         if not success or not result then
-            warn("[Rayfield] Load failed (attempt " .. attempts .. "):", result)
             task.wait(1)
         end
     until (success and result) or attempts >= maxAttempts
@@ -299,7 +439,7 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🏎️Driving Empire🏎️ | "..tostring(Script_Version).." | "..tostring(executor_Name),
+        Name = tostring(Game_Name).." | "..tostring(Script_Version).." | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(LocalPlayer),
         LoadingSubtitle = "Driving Empire | Hub.",
         ConfigurationSaving = {
@@ -323,25 +463,12 @@ if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
             Key = {""}
         }
     })
-else
-   warn("[CRITICAL_ERROR]: Rayfield failed to load or is not valid. Returned:", Rayfield)
 end
 wait(1)
 function R_Notify(title, content, duration)
-    Rayfield:Notify({
-        Title = tostring(title),
-        Content = tostring(content),
-        Duration = tonumber(duration),
-        Image = 0,
-        Actions = {
-            Ignore = {
-                Name = "Okay.",
-                Callback = function()
-                print("...")
-                end
-            },
-        },
-    })
+    if getgenv().notify then
+        getgenv().notify(tostring(title), tostring(content), tonumber(duration))
+    end
 end
 wait(0.2)
 local Tab1 = Window:CreateTab("🏡 Main 🏡", 0)
@@ -712,18 +839,18 @@ Callback = function(auto_farm_1)
         StopAutoFarm()
         getgenv().Auto_Farm_Enabled = false
         getgenv().AutoFarm_VehicleMethod:Set(false)
-        return R_Notify("Failure:", "Spawn a Vehicle before using this!", 5)
+        return R_Notify("Error", "Spawn a Vehicle before using this!", 5)
     end
 
     if not car then
         StopAutoFarm()
         getgenv().Auto_Farm_Enabled = false
         getgenv().AutoFarm_VehicleMethod:Set(false)
-        return R_Notify("Failure:", "Spawn a Vehicle before using this!", 5)
+        return R_Notify("Error", "Spawn a Vehicle before using this!", 5)
     end
 
-    R_Notify("Heads Up:", "This even works in Private Servers!", 5)
-    R_Notify("Alert:", "If it seems like you're not earning anymore, just wait!", 5)
+    R_Notify("Info", "This even works in Private Servers!", 5)
+    R_Notify("Warning", "If it seems like you're not earning anymore, just wait!", 5)
 
     if auto_farm_1 then
         getgenv().Auto_Farm_Enabled = true
@@ -735,6 +862,10 @@ Callback = function(auto_farm_1)
 end,})
 
 function enable_anti_afk()
+    if getgenv().Loaded_AntiAFK_Already then
+        return getgenv().notify("Warning", "You already loaded Anti-AFK!", 5)
+    end
+
     local GC = getconnections or get_signal_cons
 
     if GC then
@@ -746,10 +877,12 @@ function enable_anti_afk()
             end
         end
         task.wait(0.2)
+        getgenv().Loaded_AntiAFK_Already = true
         getgenv().Anti_AFK_1 = true
     else
         local VirtualUser = cloneref and cloneref(game:GetService("VirtualUser")) or game:GetService("VirtualUser")
         getgenv().Anti_AFK_2 = true
+        getgenv().Loaded_AntiAFK_Already = true
         LocalPlayer.Idled:Connect(function()
             VirtualUser:CaptureController()
             VirtualUser:ClickButton2(Vector2.new())
@@ -757,7 +890,7 @@ function enable_anti_afk()
     end
 end
 
--- I have something else planned with this, not yet though.
+-- I have something else planned with this, not yet though --
 function enable_anti_afk_alt2()
     getgenv().Anti_AFK_Toggled = true
     while getgenv().Anti_AFK_Toggled == true do
@@ -768,157 +901,154 @@ function enable_anti_afk_alt2()
     end
 end
 
--- To be continued...
-local function TweenCarTo(cframe, time)
-    local car = Get_Vehicle_Model()
-    if not car or not car.PrimaryPart then return end
+getgenv().Drag_Race_Farm_Enabled = getgenv().Drag_Race_Farm_Enabled or false
 
-    local weight = car:FindFirstChild("Weight")
-    if weight then weight.Anchored = true end
-
-    local tweenInfo = TweenInfo.new(time or 2, Enum.EasingStyle.Linear)
-    local tween = TweenService:Create(car.PrimaryPart, tweenInfo, {CFrame = cframe})
-    tween:Play()
-    tween.Completed:Wait()
-
-    if weight then weight.Anchored = false end
+local function get_dragsession()
+    local races = workspace:WaitForChild("Game"):WaitForChild("Races")
+    local sess = races:FindFirstChild("LocalSession")
+    if not sess then return nil end
+    local drag = sess:FindFirstChild("Drag")
+    return drag
 end
 
-local function MoveCarThrough(target, speed)
-    local car = Get_Vehicle_Model()
-    if not car or not car.PrimaryPart then return end
-    local weight = car:FindFirstChild("Weight")
-    if not weight then return end
+local function wait_for_drag_reset()
+    while workspace.Game.Races:FindFirstChild("LocalSession") do
+        if not getgenv().Drag_Race_Farm_Enabled then return end
+        task.wait(0.2)
+    end
 
-    weight.Anchored = false
+    while not workspace.Game.Races:FindFirstChild("LocalSession") do
+        if not getgenv().Drag_Race_Farm_Enabled then return end
+        task.wait(0.2)
+    end
 
-    local direction = (target.Position - car.PrimaryPart.Position).Unit
-    weight.AssemblyLinearVelocity = direction * (speed or 250)
+    task.wait(1)
+end
 
+local function get_dragparts_block()
+    local sess = nil
     repeat
+        sess = get_dragsession()
         task.wait()
-    until (car.PrimaryPart.Position - target.Position).Magnitude < 15
+    until sess or not getgenv().Drag_Race_Farm_Enabled
+    if not sess then return end
 
-    weight.AssemblyLinearVelocity = Vector3.new(0,0,0)
+    local spawns = sess:WaitForChild("Spawns")
+    local cps = sess:WaitForChild("Checkpoints")
+    local start = spawns:WaitForChild("1")
+    local cp1 = cps:WaitForChild("1")
+    local fin = sess:WaitForChild("Finish")
+    return start, cp1, fin
 end
+
+local function TP(cframe)
+    local car = Get_Vehicle_Model()
+    if car and car.PrimaryPart then
+        car:SetPrimaryPartCFrame(cframe)
+    end
+end
+
+local function DriveForward(duration, speed)
+    local car = Get_Vehicle_Model()
+    if not car then return end
+    local w = car:FindFirstChild("Weight")
+    if not w then return end
+    w.Anchored = false
+    w.AssemblyLinearVelocity = car.PrimaryPart.CFrame.LookVector * speed
+    task.wait(duration)
+    w.AssemblyLinearVelocity = Vector3.new(0,0,0)
+end
+
+local function start_dragremotes()
+    local tp = game.ReplicatedStorage.Remotes.Teleport
+    local st = game.ReplicatedStorage.Remotes.RaceStartTimeTrial
+    Fire_E(tp, {"drag", [5]=false, [6]="Drag Race Teleport Button"})
+    task.wait(0.2)
+    task.wait(13)
+    Fire_E(st, {"Drag","RaceGoal"})
+end
+
+local function do_dragrace_cycle()
+    local start, cp1, fin = get_dragparts_block()
+    if not start then return end
+
+    task.wait(0.4)
+
+    TP(start.CFrame + Vector3.new(0,3,0))
+    task.wait(0.4)
+    DriveForward(1, math.random(250,600))
+
+    local cp_dir = (start.Position - cp1.Position).Unit
+    local cp_back = cp_dir * 10
+    TP(cp1.CFrame + cp_back + Vector3.new(0,3,0))
+
+    task.wait(0.25)
+    DriveForward(0.6, math.random(60,120))
+    local dir = (cp1.Position - fin.Position).Unit
+    local backwards = dir * 15
+    TP(fin.CFrame + backwards + Vector3.new(0,2,0))
+    task.wait(.1)
+    DriveForward(0.3, math.random(30,100))
+end
+
+getgenv().rundragrace_stable = function()
+    do_dragrace_cycle()
+end
+
+getgenv().Drag_Race_Farm = Tab2:CreateToggle({
+Name = "Drag Race Farm (WORKING DECEMBER 2025!)",
+CurrentValue = false,
+Flag = "DragRaceFarmStable",
+Callback = function(v)
+    getgenv().Drag_Race_Farm_Enabled = v
+    if not v then
+        R_Notify("Success", "Stopped Drag Race Farm", 5)
+        return
+    end
+
+    if not Get_Vehicle() then
+        getgenv().Drag_Race_Farm_Enabled = false
+        getgenv().Drag_Race_Farm:Set(false)
+        return R_Notify("Error", "Spawn a vehicle first!", 5)
+    end
+
+    task.spawn(function()
+        while getgenv().Drag_Race_Farm_Enabled == true do
+            if not Get_Vehicle() then
+                R_Notify("Error", "Vehicle despawned!", 5)
+                getgenv().Drag_Race_Farm_Enabled = false
+                getgenv().Drag_Race_Farm:Set(false)
+                return
+            end
+
+            Fire_E(game.ReplicatedStorage.Remotes.Teleport, {
+                "drag",
+                [5] = false,
+                [6] = "Drag Race Teleport Button"
+            })
+
+            task.wait(1)
+
+            Fire_E(game.ReplicatedStorage.Remotes.RaceStartTimeTrial, {
+                "Drag",
+                "RaceGoal"
+            })
+
+            task.wait(20)
+
+            rundragrace_stable()
+            task.wait(0.3)
+            wait_for_drag_reset()
+        end
+    end)
+
+    R_Notify("Success", "Drag Race Farm Enabled (Safe Version)", 5)
+end,})
 
 getgenv().Anti_AFK_1 = Tab2:CreateButton({
 Name = "Anti AFK",
 Callback = function()
     enable_anti_afk()
-    wait(0.5)
-    if getgenv().Anti_AFK_1 or getgenv().Anti_AFK_1 == true then
-        R_Notify("Success:", "Enabled AntiAFK Bypass 1 (Best Method)", 5)
-    elseif getgenv().Anti_AFK_2 or getgenv().Anti_AFK_2 == true then
-        R_Notify("Success:", "Enabled AntiAFK Bypass 2 (Clicking Method)", 5)
-    else
-        return R_Notify("Failure:", "No AntiAFK scripts we're enabled!", 5)
-    end
-end,})
-
--- [[ I have something planned with this soon, you'll see... ]] --
---[[getgenv().Anti_AFK_2 = Tab1:CreateButton({
-Name = "Anti AFK (Method 2)",
-Callback = function()
-    enable_anti_afk_alt2()
-end,})--]]
-
-getgenv().Drag_Race_Farm = Tab2:CreateToggle({
-Name = "Drag Race Farm (EZ MONEY!)",
-CurrentValue = false,
-Flag = "DragRacingFarm",
-Callback = function(drag_race_auto_farm)
-    if drag_race_auto_farm then
-        getgenv().Drag_Race_Farm_Enabled = true
-
-        if getgenv().Rainbow_Vehicle_Toggle or getgenv().Rainbow_Vehicle_Toggle == true then
-            getgenv().Rainbow_Vehicle_Toggle = false
-            wait(0.2)
-            getgenv().RainbowVehicleToggle:Set(false)
-        end
-
-        if getgenv().Rainbow_Rims_Toggle or getgenv().Rainbow_Rims_Toggle == true then
-            getgenv().Rainbow_Rims_Toggle = false
-            wait(0.2)
-            getgenv().RainbowRimsToggle:Set(false)
-        end
-
-        if getgenv().Rainbow_Calipers_Toggle or getgenv().Rainbow_Calipers_Toggle == true then
-            getgenv().Rainbow_Calipers_Toggle = false
-            wait(0.2)
-            getgenv().RainbowCalipersToggle:Set(false)
-        end
-
-        if getgenv().Highway_Farm_Enabled or getgenv().Highway_Farm_Enabled == true then
-            getgenv().Highway_Farm_Enabled = false
-            wait(0.2)
-            getgenv().Highway_Race_Farm:Set(false)
-        end
-
-        if not Get_Vehicle() then
-            getgenv().Drag_Race_Farm_Enabled = false
-            getgenv().Drag_Race_Farm:Set(false)
-            return R_Notify("Failure:", "Spawn a Vehicle before using this!", 5)
-        end
-
-        local car = Get_Vehicle_Model()
-        if not car then
-            getgenv().Drag_Race_Farm_Enabled = false
-            getgenv().Drag_Race_Farm:Set(false)
-            return R_Notify("Failure:", "Spawn a Vehicle before using this!", 5)
-        end
-
-        local Weight = car:FindFirstChild("Weight") or car:WaitForChild("Weight", 3)
-        if not Weight then
-            getgenv().Drag_Race_Farm_Enabled = false
-            getgenv().Drag_Race_Farm:Set(false)
-            return R_Notify("Error:", "Weight not found inside of Vehicle!", 5)
-        end
-
-        while getgenv().Drag_Race_Farm_Enabled == true do
-            local Drag_Race = LocalSession:FindFirstChild("Drag")
-
-            if not Get_Vehicle() then
-                getgenv().Drag_Race_Farm_Enabled = false
-                getgenv().Drag_Race_Farm:Set(false)
-                return R_Notify("Failure:", "Spawn a Vehicle before using this!", 5)
-            end
-
-            if not Drag_Race then
-                local args1 = {
-                    "drag",
-                    [5] = false,
-                    [6] = "Drag Race Teleport Button"
-                }
-                Fire_E(Teleport_RE, args1)
-                task.wait(5)
-                local args2 = {
-                    "Drag",
-                    "RaceGoal"
-                }
-                Fire_E(RaceStart_RE, args2)
-                wait(0.1)
-                local DragRace = LocalSession:FindFirstChild("Drag")
-                if DragRace then
-                    local Checkpoints = DragRace:FindFirstChild("Checkpoints")
-                    if Checkpoints then
-                        local Checkpoint_1 = Checkpoints:FindFirstChild("1")
-                        local Finish_Part = DragRace:FindFirstChild("Finish")
-                        if Checkpoint_1 and Finish_Part and Get_Vehicle_Model() then
-                            wait(16)
-                            MoveCarThrough(Checkpoint_1, 800)
-                            task.wait(0.5)
-                            MoveCarThrough(Finish_Part, 800)
-                        end
-                    end
-                end
-            else
-                wait(5)
-            end
-        end
-    else
-        getgenv().Drag_Race_Farm_Enabled = false
-    end
 end,})
 
 getgenv().Highway_Race_Farm = Tab2:CreateToggle({
