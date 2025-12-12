@@ -15,9 +15,7 @@ local function load_script_from_url(url)
     end
 
     pcall(func)
-    print("Script loaded successfully from: "..tostring(url))
     return true
 end
 
 load_script_from_url("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_Admin_Obf.lua")
-
