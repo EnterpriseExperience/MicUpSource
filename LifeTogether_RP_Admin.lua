@@ -1,14 +1,22 @@
-local function load_script(code)
-    if code and type(code) == "string" then
-        local f, err = loadstring(code)
-        if f then
-            f()
-            return true
-        else
-            warn("Loadstring failed: "..tostring(err))
-        end
+local function load_script_from_url(url)
+    local success, code = pcall(function()
+        return game:HttpGet(url, true)
+    end)
+
+    if not success or not code or code == "" then
+        warn("Failed to fetch script from: " .. url)
+        return false
     end
-    return false
+
+    local func, err = loadstring(code)
+    if not func then
+        warn("Loadstring failed: " .. tostring(err))
+        return false
+    end
+
+    pcall(func)
+    print("Script loaded successfully from: "..tostring(url))
+    return true
 end
 
-load_script("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_Admin_Obf.lua")
+load_script_from_url("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_Admin_Obf.lua")
