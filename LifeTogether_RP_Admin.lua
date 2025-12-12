@@ -12,11 +12,11 @@ local httpget =
 local function load_script(code)
     if code and type(code) == "string" then
         local f, err = loadstring(code)
-        if f then 
+        if f then
             f()
             return true
         else
-            warn("Loadstring failed: " .. tostring(err))
+            warn("Loadstring failed: "..tostring(err))
         end
     end
     return false
