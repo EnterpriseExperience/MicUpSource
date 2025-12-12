@@ -1,40 +1,70 @@
-local function blankfunction(...)
-    return ...
+if not game:IsLoaded() then game.Loaded:Wait() end
+
+if not getgenv().GlobalEnvironmentFramework_Initialized then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
+    wait(0.1)
+    getgenv().GlobalEnvironmentFramework_Initialized = true
 end
-
-local cloneref = cloneref or blankfunction
-
-local Raw_Version = "1.5.4"
-local Script_Version = tostring(Raw_Version.."-TOM")
-
-getgenv().Game = cloneref and cloneref(game) or game
-getgenv().cloneref = cloneref
-wait()
-if not getgenv().Game:IsLoaded() then
-   getgenv().Game.Loaded:Wait()
-end
-getgenv().JobID = getgenv().Game.JobId
-getgenv().PlaceID = getgenv().Game.PlaceId
-
-local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
-local set_fps = setfpscap or setfps
-getgenv().SetFPSCap = set_fps
-
-function notify(notif_type, msg, duration)
-   NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
-end
-wait(0.1)
-getgenv().notify = notify
-
-local function Service_Wrap(serviceName)
-    if cloneref then
-        return cloneref(getgenv().Game:GetService(serviceName))
-    else
-        return getgenv().Game:GetService(serviceName)
+wait(0.5)
+if not getgenv().blankfunction then
+    local function blankfunction(...)
+        return ...
     end
 end
-wait(0.1)
-getgenv().Service_Wrap = Service_Wrap
+local cloneref = cloneref or blankfunction
+local Raw_Version = "2.0.6"
+local Script_Version = tostring(Raw_Version.."-TOM")
+local g = getgenv()
+getgenv().Game = cloneref and cloneref(game) or game
+getgenv().cloneref = cloneref or blankfunction
+getgenv().JobID = game.JobId
+getgenv().PlaceID = game.PlaceId
+
+local valid_titles = {success="Success",info="Info",warning="Warning",error="Error",succes="Success",sucess="Success",eror="Error",erorr="Error",warnin="Warning"}
+local function format_title(str)
+	if typeof(str) ~= "string" then
+		return "Info"
+	end
+
+	local key = str:lower()
+	return valid_titles[key] or "Info"
+end
+
+getgenv().notify = getgenv().notify or function(title, msg, dur)
+   local fixed_title = format_title(title)
+   NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
+end
+
+g.Service_Wrap = g.Service_Wrap or function(name)
+    name = tostring(name)
+
+    if setmetatable then
+        if not g._service_cache then
+            g._service_cache = setmetatable({}, {
+                __index = function(self, index)
+                    local svc = game:GetService(index)
+
+                    if cloneref and svc then
+                        svc = cloneref(svc)
+                    end
+
+                    self[index] = svc
+                    return svc
+                end
+            })
+        end
+
+        return g._service_cache[name]
+    end
+
+    local svc = game:GetService(name)
+
+    if cloneref and svc then
+        svc = cloneref(svc)
+    end
+
+    return svc
+end
 
 local function getExecutor()
     local name
@@ -51,54 +81,7 @@ end
 
 local executor_Name = executor_details()
 
-getgenv().print_executor = function()
-    local function retrieve_executor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
-    end
-
-    local function identify_executor()
-        local executorDetails = retrieve_executor()
-        return string.format("%s", executorDetails.Name)
-    end
-    wait(0.1)
-    local executor_string = identify_executor()
-
-    return print(executor_string)
-end
-
-getgenv().warn_executor = function()
-    local function retrieve_executor()
-        local name
-        if identifyexecutor then
-            name = identifyexecutor()
-        end
-        return { Name = name or "Unknown Executor"}
-    end
-
-    local function identify_executor()
-        local executorDetails = retrieve_executor()
-        return string.format("%s", executorDetails.Name)
-    end
-    wait(0.1)
-    local executor_string = identify_executor()
-
-    return warn(executor_string)
-end
-
-function randomString()
-    local length = math.random(10,20)
-    local array = {}
-    for i = 1, length do
-        array[i] = string.char(math.random(32, 126))
-    end
-    return table.concat(array)
-end
-
-getgenv().randomString = function()
+getgenv().randomString = getgenv().randomString or function()
     local length = math.random(10,20)
     local array = {}
     for i = 1, length do
@@ -109,135 +92,6 @@ end
 
 local cmdp = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local cmdlp = cmdp.LocalPlayer
-
-function findplr(args)
-    local tbl = cmdp:GetPlayers()
-
-    if args == "me" or args == cmdlp.Name or args == cmdlp.DisplayName then
-        return getgenv().notify("Error", "You cannot target yourself!", 6)
-    end
-
-    if args == "random" then
-        local validPlayers = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp then
-                table.insert(validPlayers, v)
-            end
-        end
-        return #validPlayers > 0 and validPlayers[math.random(1, #validPlayers)] or nil
-    end
-
-    if args == "new" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.AccountAge < 30 and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "old" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.AccountAge > 30 and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "bacon" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and (v.Character:FindFirstChild("Pal Hair") or v.Character:FindFirstChild("Kate Hair")) then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "friend" then
-        local friendList = {}
-        for _, v in pairs(tbl) do
-            if v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                table.insert(friendList, v)
-            end
-        end
-        return #friendList > 0 and friendList[math.random(1, #friendList)] or nil
-    end
-
-    if args == "notfriend" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if not v:IsFriendsWith(cmdlp.UserId) and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "ally" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.Team == cmdlp.Team and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "enemy" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v.Team ~= cmdlp.Team and v ~= cmdlp then
-                table.insert(vAges, v)
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "near" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and v.Character and cmdlp.Character then
-                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                if vRootPart and cmdlpRootPart then
-                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                    if distance < 30 then
-                        table.insert(vAges, v)
-                    end
-                end
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    if args == "far" then
-        local vAges = {}
-        for _, v in pairs(tbl) do
-            if v ~= cmdlp and v.Character and cmdlp.Character then
-                local vRootPart = v.Character:FindFirstChild("HumanoidRootPart")
-                local cmdlpRootPart = cmdlp.Character:FindFirstChild("HumanoidRootPart")
-                if vRootPart and cmdlpRootPart then
-                    local distance = (vRootPart.Position - cmdlpRootPart.Position).magnitude
-                    if distance > 30 then
-                        table.insert(vAges, v)
-                    end
-                end
-            end
-        end
-        return #vAges > 0 and vAges[math.random(1, #vAges)] or nil
-    end
-
-    for _, v in pairs(tbl) do
-        if (v.Name:lower():find(args:lower()) or v.DisplayName:lower():find(args:lower())) and v ~= cmdlp then
-            return v
-        end
-    end
-end
-
 getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
@@ -287,86 +141,72 @@ local RunService = cloneref and cloneref(game:GetService("RunService")) or game:
 local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-
-wait(0.3)
-if not getgenv().Players then
-    warn("getgenv().Players was not detected, fixing...")
-    getgenv().Players = getgenv().Service_Wrap("Players")
-end
-if not getgenv().ReplicatedStorage then
-    warn("getgenv().ReplicatedStorage was not detected, fixing...")
-    getgenv().ReplicatedStorage = getgenv().Service_Wrap("ReplicatedStorage")
-end
-if not getgenv().TextChatService then
-    warn("getgenv().TextChatService was not detected, fixing...")
-    getgenv().TextChatService = getgenv().Service_Wrap("TextChatService")
-end
-if not getgenv().Workspace then
-    warn("getgenv().Workspace was not detected, fixing...")
-    getgenv().Workspace = getgenv().Service_Wrap("Workspace")
-end
-if not getgenv().Lighting then
-    warn("getgenv().Lighting was not detected, fixing...")
-    getgenv().Lighting = getgenv().Service_Wrap("Lighting")
-end
-
 task.wait(0.2)
-getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
-getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
-getgenv().LocalPlayer = getgenv().Players.LocalPlayer
-getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
-getgenv().PlayerGui = getgenv().LocalPlayer:WaitForChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
-getgenv().Character = getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait()
-getgenv().HumanoidRootPart = getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().Character:FindFirstChild("HumanoidRootPart", true)
-getgenv().Humanoid = getgenv().Character:WaitForChild("Humanoid") or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or getgenv().Character:FindFirstChild("Humanoid")
-getgenv().Head = getgenv().Character:WaitForChild("Head") or getgenv().Character:FindFirstChild("Head")
+getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain") or getgenv().Workspace:FindFirstChildOfClass("Terrain")
+getgenv().Camera = getgenv().Workspace.CurrentCamera or workspace.CurrentCamera or getgenv().Workspace:FindFirstChild("Camera")
+getgenv().LocalPlayer = getgenv().Players.LocalPlayer or cloneref and cloneref(game:GetService("Players")).LocalPlayer or game:GetService("Players").LocalPlayer
+getgenv().Backpack = getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack") or getgenv().LocalPlayer:WaitForChild("Backpack", 5)
+getgenv().PlayerGui = getgenv().LocalPlayer:FindFirstChild("PlayerGui") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or getgenv().LocalPlayer:WaitForChild("PlayerGui", 5)
+getgenv().PlayerScripts = getgenv().LocalPlayer:FindFirstChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts") or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerScripts") or getgenv().LocalPlayer:WaitForChild("PlayerScripts", 5)
 local Anti_Ragdoll_Active = false
 local Inf_Stamina_Active = false
 
 wait(0.2)
 -- This is here to automatically fix the warning messages in the console, so you don't have to respawn to apply it.
 -- Your welcome.
-if getgenv().Character:FindFirstChild("Character Initializer") then
-    getgenv().Character:FindFirstChild("Character Initializer").Disabled = true
-end
-local function Dynamic_Character_Updater(character)
-	getgenv().Character = character or getgenv().LocalPlayer.Character
-	task.wait(0.3)
-	local hrp = character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart", 5)
-	getgenv().HumanoidRootPart = (hrp and hrp:IsA("BasePart")) and hrp
+local function find_char_init_localscript_main()
+    for _, v in ipairs(getgenv().Character:GetDescendants()) do
+        if v:IsA("LocalScript") and v.Name:lower():find("char") and v.Name:lower():find("init") then
+            return v
+        end
+    end
+    for _, v in ipairs(getgenv().PlayerScripts:GetDescendants()) do
 
-	local hum = character:FindFirstChildOfClass("Humanoid")
-	getgenv().Humanoid = (hum and hum:IsA("Humanoid")) and hum
-
-	local head = character:FindFirstChild("Head")
-	getgenv().Head = (head and head:IsA("BasePart")) and head
-
-    if getgenv().Character:FindFirstChild("Character Initializer") then
-        getgenv().Character:FindFirstChild("Character Initializer").Disabled = true
     end
 end
 
-Dynamic_Character_Updater(getgenv().Character)
-task.wait(0.2)
-getgenv().LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-	task.wait(1)
-	Dynamic_Character_Updater(newCharacter)
-	getgenv().LocalPlayer.CharacterAdded:Wait()
-	task.wait(0.5)
-	getgenv().Character = newCharacter
-    local HumanoidRootPart = newCharacter:FindFirstChild("HumanoidRootPart") or newCharacter:WaitForChild("HumanoidRootPart", 5)
-    local Humanoid = newCharacter:FindFirstChildWhichIsA("Humanoid") or newCharacter:FindFirstChildOfClass("Humanoid") or newCharacter:WaitForChild("Humanoid", 5)
-	getgenv().HumanoidRootPart = newCharacter:FindFirstChild("HumanoidRootPart") or newCharacter:WaitForChild("HumanoidRootPart", 5) or HumanoidRootPart
-	getgenv().Humanoid = newCharacter:FindFirstChild("Humanoid") or newCharacter:FindFirstChildWhichIsA("Humanoid") or newCharacter:WaitForChild("Humanoid", 5) or Humanoid
-	getgenv().Head = newCharacter:FindFirstChild("Head") or newCharacter:WaitForChild("Head", 5)
-    wait(0.2)
-    -- Here to fix warning messages being rapidly spammed in the console.
-    if newCharacter:FindFirstChild("Character Initializer", true) then
-        getgenv().notify("Info", "Re-disabling Character Initializer LocalScript.", 5)
-        newCharacter:FindFirstChild("Character Initializer", true).Disabled = true
+if getgenv().Character and getgenv().Character:FindFirstChild("Character Initializer", true) then
+    getgenv().Character:FindFirstChild("Character Initializer", true).Disabled = true
+end
+
+if not getgenv().CharInitializerUpdaterConns then
+    getgenv().CharInitializerUpdaterConns = true
+
+    local function chr_updater(char)
+        if not char or not char.Parent then return end
+        local init = char:FindFirstChild("Character Initializer", true)
+        if init and init:IsA("LocalScript") and init.Enabled ~= false then
+            init.Enabled = false
+        end
     end
-end)
+
+    do
+        local c = g.Character or g.LocalPlayer.Character
+        if c and c.Parent then
+            task.spawn(function()
+                chr_updater(c)
+            end)
+        else
+            task.spawn(function()
+                repeat task.wait() until g.LocalPlayer.Character and g.LocalPlayer.Character.Parent
+                local ch = g.LocalPlayer.Character
+                repeat task.wait() until ch:FindFirstChild("Humanoid")
+                chr_updater(ch)
+            end)
+        end
+    end
+
+    g.LocalPlayer.CharacterAdded:Connect(function(char)
+        if not char or not char.Parent then
+            repeat task.wait() until char and char.Parent
+        end
+        repeat task.wait() until char:FindFirstChild("Humanoid")
+
+        task.spawn(function()
+            chr_updater(char)
+        end)
+    end)
+end
 
 local Remote_Events = getgenv().ReplicatedStorage:FindFirstChild("Remote_Events", true)
 local General_Folder = getgenv().LocalPlayer:FindFirstChild("General", true)
@@ -377,89 +217,154 @@ local Crate_System_Remote_Events = Crate_System_V2:FindFirstChild("Remote_Events
 local Open_Crate_RE = Crate_System_Remote_Events:FindFirstChild("Open_Crate", true)
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer or getgenv().LocalPlayer
-
--- This is here to prevent spam errors in the console, you're welcome.
-for _, v in ipairs(Players:GetDescendants()) do
-	if v:IsA("ScreenGui") and string.find(v.Name, "Height_Meter_V2") then
-		for _, k in ipairs(v:GetDescendants()) do
-			if k:IsA("LocalScript") and k.Name == "LocalScript" then
-				k:Destroy()
-			end
-		end
-	end
-end
-
--- Fixes the other errors in the console.
-if getgenv().PlayerGui:FindFirstChild("Client_Side_GUI", true) then
-    local Client_Side_GUI = getgenv().PlayerGui:FindFirstChild("Client_Side_GUI", true)
-	local Temporary_LocalScript = Client_Side_GUI:FindFirstChild("Temporary", true)
-
-    if Temporary_LocalScript then
-	    Temporary_LocalScript.Disabled = true
-    end
-else
-    getgenv().notify("Info", "Skipping Temporary logging, Client_Side_GUI not found inside of PlayerGui.", 6)
-end
-
--- Fixes the "Fling Glove" error in the console.
-if getgenv().PlayerGui:FindFirstChild("Player Scripts") then
-   for _, v in ipairs(getgenv().PlayerGui:FindFirstChild("Player Scripts"):GetChildren()) do
-        if v:IsA("Frame") and v.Name == "General" then
-            local Main_Frame = v
-            local Fling_Glove_UI_LocalScript = v:FindFirstChild("Fling Glove UI", true)
-
-            if Fling_Glove_UI_LocalScript and Fling_Glove_UI_LocalScript:IsA("LocalScript") and Fling_Glove_UI_LocalScript.Disabled then
-                v.Disabled = true
-            end
-        end
-    end
-end
-
-local function bypass_anticheat()
-    if not getfunctionhash then return getgenv().notify("Error", "This will not work for you (missing 'getfunctionhash')!", 6) end
-    if not getgc then return getgenv().notify("Error", "This will not work for you (missing 'getgc')!", 5) end
-    if not hookfunction then return getgenv().notify("Error", "This will not work for you (missing 'hookfunction')!", 6) end
-
-    if getgenv().AntiCheat_Bypass_Loaded then
-        return getgenv().notify("Warning", "You've already bypassed Tower Of Misery's AntiCheat!", 6)
-    end
-
-    local hashes = {
-        "1e7e28314dd929a6e08f04468ca62e5233c69c41630acfe7c8e46b6c1b4e8436664fdecb8f0e9c498b1b5a0ac5c6c5d9",
-        "b89fe06efd2c09de9e141f9a0b3cb705d228c400296d3ee6f9372de82ee7ee7333a9ebc9210cee6c56e7edf619026a74",
-        "27a914826949e4e0f1a20310729181ad6c96dc0f769f299ed4eab08bcde94f69216e4c158bd5c3f12a8276211453b4eb",
-        "933c9e33b1d8175e9956604a20192cd2926af60bde4acd9ca0679ea6a700fc13572fcc99410c0b0596cfd86927f9fb04",
-        "81879f26ee87ac81c2c681a0f791d3668dc31b18e7a9de2a6212745f6de5d36fc60e3f6c2ffaf79442b0839b3a321913",
-        "63bb13cebccb96400062b0ece63b541f74533f326aa2be1e466ccfefd94b0264cc859ec99b38576eb99d54598e180c98",
-        "38bf0dab847b4c154c0d8e69bc915d845cae003049941b0b0c755bdd903d9bdaddde4c0eaf36da8c8323e7e430ef32f5",
-    }
-
-    for i, v in next, getgc() do
-        if typeof(v) == "function" and islclosure(v) then
-            local hash = getfunctionhash(v)
-            for _, h in next, hashes do
-                if hash == h then
-                    hookfunction(v, function() end)
-                    getgenv().notify("Success", "Successfully bypassed Anti-Cheat.", 7)
-                    getgenv().AntiCheat_Bypass_Loaded = true
+-- [[ You're welcome once more, more correctly detects the Height Meter V2 GUI and it's spammy errors. ]] --
+function remove_height_meter()
+    for _, v in ipairs(Players:GetDescendants()) do
+        local n = v.Name:lower()
+        if v:IsA("ScreenGui") and n:find("height") and n:find("meter") then
+            for _, k in ipairs(v:GetDescendants()) do
+                if k:IsA("LocalScript") and k.Name == "LocalScript" then
+                    k:Destroy()
                 end
             end
         end
     end
 end
 
-local function tp_place(place)
-    local TweenService = getgenv().TweenService
+-- [[ Disables the annoying other errors that come from the Client Side GUI Temporary LocalScript. ]] --
+function disable_client_side()
+    for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
+        local n = v.Name:lower()
+        if v:IsA("ScreenGui") and n:find("client") and n:find("side") and n:find("gui") then
+            local ls = v:FindFirstChild("Temporary", true)
+            if ls and ls:IsA("LocalScript") then
+                ls.Disabled = true
+            end
+        end
+    end
+end
 
-    for i,v in pairs(getgenv().Workspace:GetDescendants()) do
+-- [[ I called them down here. ]] --
+remove_height_meter()
+disable_client_side()
+
+-- [[ Shuts the "Fling Glove" error up in the console. -- ]]
+for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
+    local n = v.Name:lower()
+    if v:IsA("Frame") and n:find("general") then
+        local ls = v:FindFirstChild("fling") or v:FindFirstChild("Fling Glove UI", true)
+        if not ls then
+            for _, k in ipairs(v:GetDescendants()) do
+                local kn = k.Name:lower()
+                if k:IsA("LocalScript") and kn:find("fling") and kn:find("glove") and kn:find("ui") then
+                    ls = k
+                    break
+                end
+            end
+        end
+        
+        if ls and ls:IsA("LocalScript") then
+            ls.Disabled = true
+        end
+    end
+end
+
+function bypass_anticheat()
+    if not hookmetamethod then
+        if getgenv().notify then
+            return getgenv().notify("Error", "Your executor does not support the Tower Of Misery script hub! (cannot bypass anti-cheat)", 30)
+        else
+            return warn("Your executor does not support the Tower Of Misery script hub!")
+        end
+    end
+    if getgenv().ac_bypass_already_loaded then
+        return getgenv().notify("error", "Anti-Cheat bypass already loaded.", 7)
+    end
+
+    getgenv().ac_bypass_already_loaded = true
+    local g_r_s = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+    local g_remote_f = g_r_s.Remote_Functions.General.Exploit_Check
+    local g_game_flag = g_r_s:WaitForChild("GAME_IN_PROGRESS")
+    local exploit_defense = g_r_s.Game_Assets.ModuleScripts.Exploit_Defense
+    local spoof_keys = {
+        Activity = true,
+        Gravity = true,
+        WalkSpeed = true,
+        JumpPower = true,
+        Record_Kick_Reason = true,
+        Teleport = true,
+        BodyVelocity = true,
+        Exploit_Defense_Loaded = true
+    }
+
+    local lp = game:GetService("Players").LocalPlayer
+    local earned = lp.General.CoinsEarned
+
+    getgenv().ac_bypass_enabled = true
+    getgenv().ac_hook_enabled = true
+
+    local old_namecall
+    old_namecall = hookmetamethod(game, "__namecall", function(self, ...)
+        if not getgenv().ac_hook_enabled then
+            return old_namecall(self, ...)
+        end
+        if not getgenv().ac_bypass_enabled then
+            return old_namecall(self, ...)
+        end
+
+        local m = getnamecallmethod()
+        if m == "InvokeServer" and self == g_remote_f then
+            if getfenv(2).script == exploit_defense then
+                local a1 = ...
+                if spoof_keys[a1] then
+                    return true
+                end
+            end
+        end
+
+        return old_namecall(self, ...)
+    end)
+
+    getgenv().game_changing_flag = getgenv().game_changing_flag or g_game_flag.Changed:Connect(function()
+        if g_game_flag.Value == true then
+            print("set to: true.")
+            getgenv().ac_bypass_enabled = true
+        else
+            print("set to: false.")
+            getgenv().ac_bypass_enabled = false
+        end
+    end)
+
+    getgenv().coins_changing_flag = getgenv().coins_changing_flag or earned.Changed:Connect(function()
+        if g_game_flag.Value == false and (earned.Value == 0 or earned.Value <= 1) then
+            wait(0.3)
+            print("ac bypass enabled again.")
+            getgenv().ac_bypass_enabled = true
+        end
+    end)
+end
+
+local function tp_place(place)
+    local tw = getgenv().TweenService
+    local root = getgenv().HumanoidRootPart
+
+    for _, v in pairs(getgenv().Workspace:GetDescendants()) do
         if v.Name == place and v:IsA("BasePart") then
+
             if getgenv().Humanoid and getgenv().Humanoid.SeatPart then
                 getgenv().Humanoid.Sit = false
                 getgenv().Humanoid:ChangeState(3)
                 wait(.1)
             end
-            wait(0.1)
-            getgenv().HumanoidRootPart.CFrame = v.CFrame
+
+            if place == "RewardDoor" then
+                if game.PlaceId == 4954752502 then
+                    root:PivotTo(v.CFrame)
+                elseif game.PlaceId == 11829856654 then
+                    local info = TweenInfo.new(2, Enum.EasingStyle.Linear)
+                    tw:Create(root, info, {CFrame = v.CFrame}):Play()
+                end
+            end
         end
     end
 end
@@ -592,6 +497,40 @@ local function delete_other_fake_tower()
     if Pass then
         Pass:Destroy()
     end
+end
+
+local function find_top_section()
+    for _, v in ipairs(getgenv().Workspace:GetChildren()) do
+        if v:IsA("Model") and v.Name:lower():find("top") and v.Name:lower():find("section") then
+            return v
+        end
+    end
+
+    return nil
+end
+
+local function find_tower_model()
+    for _, v in ipairs(getgenv().Workspace:GetChildren()) do
+        if v:IsA("Model") and v.Name:lower():find("tower") then
+            return v
+        end
+    end
+
+    return nil
+end
+
+local function find_top_hallway_model()
+    local top_section_main = find_top_section()
+
+    if top_section_main then
+        for _, v in ipairs(top_section_main:GetDescendants()) do
+            if v:IsA("Model") and v.Name:lower():find("hallway") then
+                return v
+            end
+        end
+    end
+    
+    return nil
 end
 
 local function GodMode(toggle)
@@ -840,55 +779,7 @@ wait(0.2)
 getgenv().AntiCheat_Bypass = Tab1:CreateButton({
 Name = "Anti Cheat Bypass",
 Callback = function()
-    if not AC_Bypass_Loaded or AC_Bypass_Loaded == false then
-        getgenv().notify("Info", "Bypassing anti-cheat...", 5)
-        bypass_anticheat()
-        wait(0.3)
-        AC_Bypass_Loaded = true
-        getgenv().notify("Success", "Bypassed anticheat, do what ever you want!", 5)
-    elseif AC_Bypass_Loaded then
-        return getgenv().notify("Warning", "You've already loaded anti-cheat bypass!", 5)
-    end
-    task.wait()
-    if not getgenv().loaded_custom_tp_bypass then
-        getgenv().notify("Hang On:", "Loading Custom TP Bypass...", 5)
-        wait(0.1)
-        local StarterGui = getgenv().StarterGui
-        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
-
-        local ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Name = "TopBar_Label"
-        ScreenGui.ResetOnSpawn = false
-        ScreenGui.IgnoreGuiInset = true
-        ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-        if syn and syn.protect_gui then
-            syn.protect_gui(ScreenGui)
-        end
-
-        ScreenGui.Parent = getgenv().CoreGui or getgenv().PlayerGui
-
-        local TextLabel = Instance.new("TextLabel")
-        TextLabel.Name = "FlexLabel"
-        TextLabel.Parent = ScreenGui
-        TextLabel.AnchorPoint = Vector2.new(0.5, 0)
-        TextLabel.Position = UDim2.new(0.5, 0, 0, 2)
-        TextLabel.Size = UDim2.new(0.9, 0, 0, 30)
-        TextLabel.BackgroundTransparency = 1
-        TextLabel.Text = "Custom TP Bypass was made by: computerbinaries on Discord."
-        TextLabel.Font = Enum.Font.GothamBold
-        TextLabel.TextColor3 = Color3.fromRGB(0, 170, 255)
-        TextLabel.TextScaled = true
-        TextLabel.TextWrapped = true
-
-        local UIStroke = Instance.new("UIStroke", TextLabel)
-        UIStroke.Color = Color3.new(0, 0, 0)
-        UIStroke.Thickness = 1.3
-        task.wait(0.1)
-        getgenv().loaded_custom_tp_bypass = true
-    else
-        return getgenv().notify("Heads Up:", "You already loaded Custom TP Bypass.", 5)
-    end
+    bypass_anticheat()
 end,})
 
 getgenv().DisableLogging_AndMetricsData = Tab1:CreateToggle({
@@ -924,23 +815,76 @@ wait(0.1)
 getgenv().Auto_Win = Tab1:CreateButton({
 Name = "Auto Win",
 Callback = function()
-    repeat wait() until getgenv().Workspace:FindFirstChild("Tower") and getgenv().Workspace:FindFirstChild("Top_Section")
+    local find_top_model = find_top_section()
+    local find_top_main = find_top_hallway_model()
+    local find_tower_main_model = find_tower_model()
+    local General_Folder_Main = General_Folder
+    local Coins_Earned_Value_Main
 
-    wait(0.1)
-    if General_Folder:FindFirstChild("CoinsEarned", true).Value <= 70 then
+    if not General_Folder_Main then
+        for _, v in ipairs(LocalPlayer:GetDescendants()) do
+            if v:IsA("Folder") and v.Name:lower():find("general") then
+                General_Folder_Main = v
+                break
+            end
+        end
+    end
+
+    if not General_Folder_Main then
+        return getgenv().notify("Error", "Could not find CoinsEarned value anywhere!", 7)
+    end
+
+    for _, v in ipairs(General_Folder_Main:GetDescendants()) do
+        if (v:IsA("IntValue") or v:IsA("NumberValue")) and v.Name:lower():find("coins") and v.Name:lower():find("earn") then
+            Coins_Earned_Value_Main = v
+            break
+        end
+    end
+
+    repeat task.wait() until Workspace:FindFirstChild("Tower") and Workspace:FindFirstChild("Top_Section")
+    task.wait(0.1)
+
+    local coins_value = Coins_Earned_Value_Main and Coins_Earned_Value_Main.Value or 0
+
+    if coins_value <= 70 then
         if getgenv().God_ModeLocalPlr then
             getgenv().God_ModeLocalPlr:Set(true)
         end
         GodMode(true)
-        wait(0.1)
+        task.wait(0.1)
+        collect_all()
+        task.wait(3.5)
+    else
         collect_all()
         wait(3.5)
-        touch_door()
-    else
         GodMode(true)
-        wait(0.2)
-        touch_door()
+        task.wait(0.2)
     end
+
+    local function find_reward_door()
+        for _, v in ipairs(find_top_main:GetDescendants()) do
+            if v:IsA("BasePart") and v.Name:lower():find("reward") and v.Name:lower():find("door") then
+                return v
+            end
+        end
+    end
+
+    local door = find_reward_door() or find_top_main:FindFirstChild("RewardDoor")
+    if not door then return end
+
+    local root = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character and getgenv().Character:WaitForChild("HumanoidRootPart", 5)
+    if not root then return end
+
+    if game.PlaceId == 4954752502 then
+        root:PivotTo(door.CFrame)
+    elseif game.PlaceId == 11829856654 then
+        local tween_s = getgenv().TweenService or cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
+        local tween_i = TweenInfo.new(2, Enum.EasingStyle.Linear)
+        tween_s:Create(root, tween_i, {CFrame = door.CFrame}):Play()
+    end
+
+    task.wait(0.5)
+    touch_door()
 end,})
 
 getgenv().God_ModeLocalPlr = Tab2:CreateToggle({
@@ -956,7 +900,7 @@ Callback = function(real_godmode)
 end,})
 wait(0.2)
 if getgenv().LocalPlayer:FindFirstChild("General"):FindFirstChild("Temporary_Immunity").Value == true then
-   getgenv().God_ModeLocalPlr:Set(true)
+    getgenv().God_ModeLocalPlr:Set(true)
 else
     getgenv().God_ModeLocalPlr:Set(false)
 end
@@ -1014,7 +958,7 @@ Callback = function(inf_coins_regen)
     if not Viewing_Billboard or not Free_Spin_Alert then
         getgenv().redeem_all_spins = false
         getgenv().Inf_Coins:Set(false)
-        return getgenv().notify("Error:", "Viewing_Billboard or FreeSpin GUI not found.", 5)
+        return getgenv().notify("Error", "Viewing_Billboard or FreeSpin GUI not found.", 5)
     end
 
     if inf_coins_regen then
@@ -1038,9 +982,41 @@ Callback = function(inf_coins_regen)
     end
 end,})--]]
 
-local bodyColors = getgenv().Character:FindFirstChild("Body Colors", true)
+local function find_body_colors_ez()
+    for _, v in ipairs(getgenv().Character:GetDescendants()) do
+        if v:IsA("BodyColors") then
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.3)
+local bodyColors = find_body_colors_ez()
 if not bodyColors then
     getgenv().notify("Success", "no BodyColors on Character.", 5)
+end
+
+local function save_current_skintone()
+    local body_colors = find_body_colors_ez()
+    if not body_colors then
+        return getgenv().notify("Error", "Could not find BodyColors!", 5)
+    end
+
+    getgenv().Saved_BodyColors = {
+        HeadColor = body_colors.HeadColor.Color,
+        LeftArmColor = body_colors.LeftArmColor.Color,
+        RightArmColor = body_colors.RightArmColor.Color,
+        LeftLegColor = body_colors.LeftLegColor.Color,
+        RightLegColor = body_colors.RightLegColor.Color,
+        TorsoColor = body_colors.TorsoColor.Color
+    }
+
+    return getgenv().notify("Success", "Saved current BodyColors!", 5)
+end
+
+if bodyColors then
+    save_current_skintone()
 end
 
 local Old_Body_Colors = {
@@ -1055,16 +1031,37 @@ local Old_Body_Colors = {
 getgenv().PurchaseAll_Mutators = Tab1:CreateButton({
 Name = "Purchase All Mutators",
 Callback = function()
-    local Remote_F = getgenv().ReplicatedStorage:FindFirstChild("Remote_Functions", true)
-    if not Remote_F then return getgenv().notify("Error", "Remote_Functions doesn't exist in ReplicatedStorage!", 5) end
-    local Shop_Folder = Remote_F:FindFirstChild("Shop", true)
-    if not Shop_Folder then return getgenv().notify("Error", "Shop Folder doesn't exist in Remote_Functions!", 5) end
+    local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 
-    local function Purchase_Mutator(Mutator)
+    local function deep_find_folder(root, target)
+        local function scan(obj)
+            for _, v in ipairs(obj:GetChildren()) do
+                if v:IsA("Folder") and v.Name:lower():find(target) then
+                    return v
+                end
+                local f = scan(v)
+                if f then
+                    return f
+                end
+            end
+        end
+        return scan(root)
+    end
+
+    local function find_shop_folder()
+        local remote_root = ReplicatedStorage:FindFirstChild("Remote_Functions")
+        if not remote_root then return nil end
+        return deep_find_folder(remote_root, "shop")
+    end
+
+    local Shop_Folder = find_shop_folder()
+
+    local function purchase_mutator(name)
         if not Shop_Folder then return end
-
-        if Shop_Folder:FindFirstChild("Purchase: "..tostring(Mutator)) then
-            Shop_Folder:FindFirstChild("Purchase: "..tostring(Mutator)):InvokeServer()
+        for _, v in ipairs(Shop_Folder:GetDescendants()) do
+            if v:IsA("RemoteFunction") and v.Name == "Purchase: " .. tostring(name) then
+                v:InvokeServer()
+            end
         end
     end
 
@@ -1078,7 +1075,7 @@ Callback = function()
     }
 
     for _, mutator in ipairs(Mutators) do
-        Purchase_Mutator(mutator)
+        purchase_mutator(mutator)
     end
 end,})
 
@@ -1142,89 +1139,111 @@ Callback = function()
     Give_Arcade_Points(1000)
 end,})
 
+local function find_bloxbiz_folder()
+    for _, v in ipairs(getgenv().ReplicatedStorage:GetChildren()) do
+        if v:IsA("Folder") and v.Name:lower():find("bloxbiz") and v.Name:lower():find("remotes") then
+            return v
+        end
+    end
+    
+    return nil
+end
+
+local function find_catalog_apply_hum_RE()
+    local blox_biz_folder = find_bloxbiz_folder()
+    
+    if blox_biz_folder then
+        for _, v in ipairs(blox_biz_folder:GetDescendants()) do
+            if v:IsA("RemoteEvent") and v.Name:lower():find("catalog") and v.Name:lower():find("apply") and v.Name:lower():find("humanoid") then
+                return v
+            end
+        end
+    end
+    
+    return nil
+end
+
 getgenv().Rainbow_FE_Skin = Tab2:CreateToggle({
 Name = "Rainbow Skin (FE)",
 CurrentValue = false,
 Flag = "FERainbowSkinScript",
 Callback = function(rainbow_loop)
-    local Old_Main_Color = getgenv().Character:FindFirstChild("Body Colors", true).TorsoColor
-    local Bloxbiz_Remotes = getgenv().ReplicatedStorage:FindFirstChild("BloxbizRemotes", true)
-    if not Bloxbiz_Remotes then
+    local bc = find_body_colors_ez()
+    if not bc then
         getgenv().Rainbow_FE_Skin:Set(false)
         getgenv().skin_rainbow_loop = false
-        return getgenv().notify("Error", "BloxbizRemotes Folder was not found in ReplicatedStorage!", 5)
-    end
-    local remote = Bloxbiz_Remotes:FindFirstChild("CatalogOnApplyToRealHumanoid", true)
-    if not remote then
-        getgenv().Rainbow_FE_Skin:Set(false)
-        getgenv().skin_rainbow_loop = false
-        return getgenv().notify("Error", "SkinTone Changer Remote was not found in BloxbizRemotes Folder!", 6)
-    end
-    if not Old_Main_Color then
-        getgenv().skin_rainbow_loop = false
-        getgenv().Rainbow_FE_Skin:Set(false)
-        return getgenv().notify("Error", "We we're not able to find your TorsoColor!", 5)
+        return getgenv().notify("Error", "Could not find your BodyColors", 5)
     end
 
-    wait()
     if rainbow_loop then
-        getgenv().skin_rainbow_loop = true
-        while getgenv().skin_rainbow_loop == true do
-        wait()
-            local colorCycle = {
-                Color3.fromRGB(17, 17, 17),
-                Color3.fromRGB(101, 67, 33),
-                Color3.fromRGB(0, 102, 204),
-                Color3.fromRGB(0, 153, 0),
-                Color3.fromRGB(255, 255, 255),
-                Color3.fromRGB(128, 128, 128),
-                Color3.fromRGB(255, 255, 0),
-                Color3.fromRGB(255, 165, 0),
-                Color3.fromRGB(255, 0, 0),
-                Color3.fromRGB(128, 0, 128),
-                Color3.fromRGB(255, 105, 180),
-                Color3.fromRGB(0, 255, 255)
-            }
+        getgenv().Saved_BodyColors = {
+            bc.HeadColor.Color,
+            bc.LeftArmColor.Color,
+            bc.RightArmColor.Color,
+            bc.LeftLegColor.Color,
+            bc.RightLegColor.Color,
+            bc.TorsoColor.Color
+        }
 
-            for _, color in ipairs(colorCycle) do
-                task.wait(.3)
-                local payload = {
-                    { BodyColor = color }
-                }
-
-                remote:FireServer(unpack(payload))
-            end
-        end
-    else
-        local Bloxbiz_Remotes = getgenv().ReplicatedStorage:FindFirstChild("BloxbizRemotes", true)
-        if not Bloxbiz_Remotes then
+        local bloxbiz = find_bloxbiz_folder()
+        if not bloxbiz then
             getgenv().Rainbow_FE_Skin:Set(false)
             getgenv().skin_rainbow_loop = false
-            return getgenv().notify("Error", "BloxbizRemotes Folder was not found in ReplicatedStorage!", 5)
+            return getgenv().notify("Error", "BloxbizRemotes Folder not found", 5)
         end
-        local remote = Bloxbiz_Remotes:FindFirstChild("CatalogOnApplyToRealHumanoid", true)
+
+        local remote = find_catalog_apply_hum_RE()
         if not remote then
             getgenv().Rainbow_FE_Skin:Set(false)
             getgenv().skin_rainbow_loop = false
-            return getgenv().notify("Error", "SkinTone Changer Remote was not found in BloxbizRemotes Folder!", 6)
+            return getgenv().notify("Error", "SkinTone Changer Remote not found", 6)
         end
-        
+        wait(0.2)
+        getgenv().skin_rainbow_loop = true
+
+        local cycle = {
+            Color3.fromRGB(17,17,17),
+            Color3.fromRGB(101,67,33),
+            Color3.fromRGB(0,102,204),
+            Color3.fromRGB(0,153,0),
+            Color3.fromRGB(255,255,255),
+            Color3.fromRGB(128,128,128),
+            Color3.fromRGB(255,255,0),
+            Color3.fromRGB(255,165,0),
+            Color3.fromRGB(255,0,0),
+            Color3.fromRGB(128,0,128),
+            Color3.fromRGB(255,105,180),
+            Color3.fromRGB(0,255,255)
+        }
+
+        task.spawn(function()
+            while getgenv().skin_rainbow_loop == true do
+                task.wait(0)
+                for _, c in ipairs(cycle) do
+                    if not getgenv().skin_rainbow_loop then break end
+                    task.wait(.2)
+                    remote:FireServer({ BodyColor = c })
+                end
+            end
+        end)
+    else
         getgenv().skin_rainbow_loop = false
-        wait(0.3)
-        if getgenv().Character:FindFirstChild("Body Colors", true) then
-            getgenv().notify("Info", "Resetting Body Colors...", 5)
-            wait(1.2)
-            local args = {
-                {
-                    BodyColor = Old_Main_Color
-                }
-            }
-            remote:FireServer(unpack(args))
-            wait(2.5)
-            if getgenv().Character:FindFirstChild("Body Colors", true).TorsoColor == Old_Main_Color then
-                return getgenv().notify("Success", "Reset fully body colors back to default.", 5)
-            else
-                return getgenv().notify("Warning", "Could not determine if Body Colors we're reset properly.", 5)
+        task.wait(0.5)
+
+        local bc_main = find_body_colors_ez()
+        local old_colors = getgenv().Saved_BodyColors
+        if bc_main and old_colors then
+            local bloxbiz = find_bloxbiz_folder()
+            local remote = find_catalog_apply_hum_RE()
+            if bloxbiz and remote then
+                getgenv().notify("Info", "Resetting Body Colors...", 5)
+                task.wait(1)
+                for _, col in ipairs(old_colors) do
+                    remote:FireServer({ BodyColor = col })
+                    task.wait(0.1)
+                end
+                task.wait(2)
+                return getgenv().notify("Success", "Restored original Body Colors.", 5)
             end
         end
     end
@@ -1233,60 +1252,28 @@ end,})
 getgenv().ResetBody_Colors = Tab2:CreateButton({
 Name = "Reset Body Colors (FE)",
 Callback = function()
-    local Bloxbiz_Remotes = getgenv().ReplicatedStorage:FindFirstChild("BloxbizRemotes", true)
-    if not Bloxbiz_Remotes then
-        getgenv().Rainbow_FE_Skin:Set(false)
-        getgenv().skin_rainbow_loop = false
-        return getgenv().notify("Error", "BloxbizRemotes Folder was not found in ReplicatedStorage!", 5)
-    end
-    local remote = Bloxbiz_Remotes:FindFirstChild("CatalogOnApplyToRealHumanoid", true)
-    if not remote then
-        getgenv().Rainbow_FE_Skin:Set(false)
-        getgenv().skin_rainbow_loop = false
-        return getgenv().notify("Error", "SkinTone Changer Remote was not found in BloxbizRemotes Folder!", 6)
+    local old_colors = getgenv().Saved_BodyColors
+    if not old_colors then
+        return getgenv().notify("Error", "No saved BodyColors found. Enable Rainbow Skin first!", 5)
     end
 
-    local args = {
-        {
-            BodyColor = Old_Body_Colors.TorsoColor3
-        }
-    }
-    remote:FireServer(unpack(args))
-    wait(0.1)
-    args = {
-        {
-            BodyColor = Old_Body_Colors.HeadColor3
-        }
-    }
-    remote:FireServer(unpack(args))
-    wait(0.1)
-    args = {
-        {
-            BodyColor = Old_Body_Colors.LeftArmColor3
-        }
-    }
-    remote:FireServer(unpack(args))
-    wait(0.1)
-    args = {
-        {
-            BodyColor = Old_Body_Colors.RightArmColor3
-        }
-    }
-    remote:FireServer(unpack(args))
-    wait(0.1)
-    args = {
-        {
-            BodyColor = Old_Body_Colors.LeftLegColor3
-        }
-    }
-    remote:FireServer(unpack(args))
-    wait(0.1)
-    args = {
-        {
-            BodyColor = Old_Body_Colors.RightLegColor3
-        }
-    }
-    remote:FireServer(unpack(args))
+    local bc = find_body_colors_ez()
+    if not bc then
+        return getgenv().notify("Error", "Could not find your BodyColors", 5)
+    end
+
+    local bloxbiz = find_bloxbiz_folder()
+    local remote = find_catalog_apply_hum_RE()
+    if not bloxbiz or not remote then
+        return getgenv().notify("Error", "BloxbizRemotes or SkinTone Remote not found", 6)
+    end
+
+    for _, col in ipairs(old_colors) do
+        remote:FireServer({ BodyColor = col })
+        task.wait(0.1)
+    end
+
+    getgenv().notify("Success", "Restored original Body Colors", 5)
 end,})
 
 getgenv().GiveArcade_Points_Other = Tab2:CreateInput({
@@ -1297,10 +1284,10 @@ Callback = function(Number_Points)
     local Number_Of_Points_Input = tonumber(Number_Points)
 
     if Number_Of_Points_Input then
-        getgenv().notify("Hang On:", "Giving you "..tostring(Number_Points).." points.", 5)
+        getgenv().notify("Info", "Giving you "..tostring(Number_Points).." points.", 5)
         Give_Arcade_Points(Number_Points)
     else
-        return getgenv().notify("Failure:", tostring(Number_Points).." isn't a number!", 5)
+        return getgenv().notify("Error", tostring(Number_Points).." is invalid or isn't a number!", 5)
     end
 end,})
 
@@ -1363,26 +1350,32 @@ Callback = function(anypoints_i_want)
             return getgenv().notify("Error", "Add_Arcade_Points Folder was not found inside of Remote_Events Folder!", 7)
         end
 
-        getgenv().unlimited_number_of_points = true
-        while getgenv().unlimited_number_of_points == true do
-        wait(0.3)
-            local args = {
-                "Zombie_Slayer"
-            }
+        if Add_Arcade_Points and Add_Arcade_Points:IsA("RemoteEvent") then
+            getgenv().unlimited_number_of_points = true
+            while getgenv().unlimited_number_of_points == true do
+            wait(0.3)
+                local args = {
+                    "Zombie_Slayer"
+                }
 
-            Add_Arcade_Points:FireServer(unpack(args))
-            task.wait(0.2)
-            local args = {
-                "Layer_Painting"
-            }
+                Add_Arcade_Points:FireServer(unpack(args))
+                task.wait(0.2)
+                local args = {
+                    "Layer_Painting"
+                }
 
-            Add_Arcade_Points:FireServer(unpack(args))
-            task.wait(0.2)
-            local args = {
-                "Rocket_Blocks"
-            }
+                Add_Arcade_Points:FireServer(unpack(args))
+                task.wait(0.2)
+                local args = {
+                    "Rocket_Blocks"
+                }
 
-            Add_Arcade_Points:FireServer(unpack(args))
+                Add_Arcade_Points:FireServer(unpack(args))
+            end
+        else
+            getgenv().UnlimitedPoints_ReGen:Set(false)
+            wait(0.3)
+            getgenv().unlimited_number_of_points = false
         end
     else
         getgenv().unlimited_number_of_points = false
@@ -1394,11 +1387,11 @@ Name = "Spectate",
 CurrentValue = false,
 Flag = "SpectatingValChange",
 Callback = function(spectating_plrs)
-   if spectating_plrs then
-      Spectate(true)
-   else
-      Spectate(false)
-   end
+    if spectating_plrs then
+        Spectate(true)
+    else
+        Spectate(false)
+    end
 end,})
 wait(0.2)
 if General_Folder then
@@ -1412,7 +1405,7 @@ if General_Folder then
 end
 wait(0.5)
 if getgenv().anti_fog_and_the_color_swap == true then
-    getgenv().notify("Hang On:", "Enabling AntiFog, it was enabled before initialization.", 5)
+    getgenv().notify("Info", "Enabling AntiFog, it was enabled before initialization.", 5)
     getgenv().Anti_Fog_AndColor_Swap:Set(true)
 else
     getgenv().anti_fog_and_the_color_swap = false
@@ -1420,7 +1413,7 @@ else
 end
 task.wait()
 if getgenv().skin_rainbow_loop == true then
-    getgenv().notify("Hang On:", "Enabling RainbowSkinFE, it was enabled before initialization.", 5)
+    getgenv().notify("Info", "Enabling RainbowSkinFE, it was enabled before initialization.", 5)
     getgenv().Rainbow_FE_Skin:Set(true)
 else
     getgenv().skin_rainbow_loop = false
@@ -1428,7 +1421,7 @@ else
 end
 wait(0.1)
 if getgenv().unlimited_number_of_points == true then
-    getgenv().notify("Hang On:", "Enabling UnlimitedArcadePoints, it was enabled before load.", 5)
+    getgenv().notify("Info", "Enabling UnlimitedArcadePoints, it was enabled before load.", 5)
     getgenv().UnlimitedPoints_ReGen:Set(true)
 else
     getgenv().UnlimitedPoints_ReGen:Set(false)
