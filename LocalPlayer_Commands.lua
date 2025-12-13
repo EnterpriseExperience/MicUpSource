@@ -1,3 +1,10 @@
+if not game:IsLoaded() then game.Loaded:Wait() end
+if not getgenv().GlobalEnvironmentFramework_Initialized then
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+   wait(0.1)
+   getgenv().GlobalEnvironmentFramework_Initialized = true
+end
+
 local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
 local Players = Flames_API.Service("Players")
 local TextChatService = Flames_API.Service("TextChatService")
