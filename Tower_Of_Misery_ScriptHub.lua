@@ -330,6 +330,7 @@ function bypass_anticheat()
             print("set to: true.")
             getgenv().ac_bypass_enabled = true
         else
+            wait(0.5)
             print("set to: false.")
             getgenv().ac_bypass_enabled = false
         end
@@ -337,7 +338,7 @@ function bypass_anticheat()
 
     getgenv().coins_changing_flag = getgenv().coins_changing_flag or earned.Changed:Connect(function()
         if g_game_flag.Value == false and (earned.Value == 0 or earned.Value <= 1) then
-            wait(0.3)
+            wait(0.8)
             print("ac bypass enabled again.")
             getgenv().ac_bypass_enabled = true
         end
