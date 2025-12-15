@@ -889,9 +889,9 @@ Callback = function()
 	wait(1.2)
 	workspace.CurrentCamera.CameraSubject = getgenv().Humanoid or getgenv().Character or get_human(LocalPlayer) or get_char(LocalPlayer)
 	workspace.CurrentCamera.CameraType = "Custom"
-	speaker.CameraMinZoomDistance = 0.5
-	speaker.CameraMaxZoomDistance = 400
-	speaker.CameraMode = "Classic"
+	getgenv().LocalPlayer.CameraMinZoomDistance = 0.5
+	getgenv().LocalPlayer.CameraMaxZoomDistance = 400
+	getgenv().LocalPlayer.CameraMode = "Classic"
     if getgenv().Head then
 	    getgenv().Head.Anchored = false
     elseif not getgenv().Head then
