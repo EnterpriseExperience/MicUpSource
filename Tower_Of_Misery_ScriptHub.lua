@@ -217,6 +217,7 @@ local Crate_System_Remote_Events = Crate_System_V2:FindFirstChild("Remote_Events
 local Open_Crate_RE = Crate_System_Remote_Events:FindFirstChild("Open_Crate", true)
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer or getgenv().LocalPlayer
+local game_in_progress_flag = getgenv().ReplicatedStorage:FindFirstChild("GAME_IN_PROGRESS", true)
 -- [[ You're welcome once more, more correctly detects the Height Meter V2 GUI and it's spammy errors. ]] --
 function remove_height_meter()
     for _, v in ipairs(Players:GetDescendants()) do
@@ -393,7 +394,7 @@ end
 
 local function disable_logging_metrics(toggle)
 	if toggle == true then
-		local Send_Ads_Analytics = Remote_Events:FindFirstChild("Send_Ads_Analytics")
+		local Send_Ads_Analytics = Remote_Events and Remote_Events:FindFirstChild("Send_Ads_Analytics")
 		local Postie = getgenv().ReplicatedStorage:FindFirstChild("Postie")
 		local AdMonitorEvents = getgenv().ReplicatedStorage:FindFirstChild("AdMonitorEvents")
 		local Bloxbiz_Remotes = getgenv().ReplicatedStorage:FindFirstChild("BloxbizRemotes")
@@ -402,13 +403,17 @@ local function disable_logging_metrics(toggle)
 		if Send_Ads_Analytics then
 			Send_Ads_Analytics.Parent = getgenv().AssetService
 		end
-		if Postie:FindFirstChild("Sent") then
-			Postie:FindFirstChild("Sent"):Destroy()
+		if Postie and Postie:FindFirstChild("Sent") then
+            pcall(function()
+			    Postie:FindFirstChild("Sent"):Destroy()
+            end)
 		end
-		if AdMonitorEvents:FindFirstChild("LogImpression") then
-			AdMonitorEvents:FindFirstChild("LogImpression"):Destroy()
+		if AdMonitorEvents and AdMonitorEvents:FindFirstChild("LogImpression") then
+            pcall(function()
+			    AdMonitorEvents:FindFirstChild("LogImpression"):Destroy()
+            end)
 		end
-		if UserIdling_RE then
+		if UserIdling_RE and UserIdling_RE.Parent == getgenv().SoundService then
 			UserIdling_RE.Parent = getgenv().SoundService
 		end
         getgenv().notify("Success", "In-Game metrics logging data has been disabled.", 5)
@@ -811,8 +816,8 @@ local function NoclipLoop()
 end
 
 wait(0.1)
-getgenv().Auto_Win = Tab1:CreateButton({
-Name = "Auto Win",
+getgenv().EzBeatTower = Tab1:CreateButton({
+Name = "Beat/Win/Finish Current Tower",
 Callback = function()
     local find_top_model = find_top_section()
     local find_top_main = find_top_hallway_model()
@@ -885,7 +890,6 @@ Callback = function()
     task.wait(0.5)
     touch_door()
 	workspace.CurrentCamera:Remove()
-	wait(1.2)
 	workspace.CurrentCamera.CameraSubject = getgenv().Humanoid or getgenv().Character or get_human(LocalPlayer) or get_char(LocalPlayer)
 	workspace.CurrentCamera.CameraType = "Custom"
 	getgenv().LocalPlayer.CameraMinZoomDistance = 0.5
@@ -897,6 +901,120 @@ Callback = function()
         local new_head = get_head and get_head(LocalPlayer) or getgenv().Character:WaitForChild("Head", 3)
 
         new_head.Anchored = false
+    end
+end,})
+
+getgenv().AutomaticallyWinTowerToggle = Tab1:CreateToggle({
+Name = "Automatically Win/Auto Farm",
+CurrentValue = false,
+Flag = "AutomaticallyWinningEveryGame",
+Callback = function(winning_towers_auto_farm)
+    if winning_towers_auto_farm then
+        getgenv().automatically_ez_win = true
+        getgenv().ez_takeover_win_task = task.spawn(function()
+            while getgenv().automatically_ez_win == true and game_in_progress_flag.Value == true and getgenv().Workspace:FindFirstChild("Top_Section") do
+                task.wait(1)
+                repeat task.wait() until game_in_progress_flag.Value == true and getgenv().Workspace:FindFirstChild("Top_Section") and getgenv().Workspace:FindFirstChild("Tower")
+
+                if game_in_progress_flag.Value and getgenv().Workspace:FindFirstChild("Top_Section") and getgenv().Workspace:FindFirstChild("Tower") then
+                    wait(0.2)
+                    local find_top_model = find_top_section()
+                    local find_top_main = find_top_hallway_model()
+                    local find_tower_main_model = find_tower_model()
+                    local General_Folder_Main = General_Folder
+                    local Coins_Earned_Value_Main
+
+                    if not General_Folder_Main then
+                        for _, v in ipairs(LocalPlayer:GetDescendants()) do
+                            if v:IsA("Folder") and v.Name:lower():find("general") then
+                                General_Folder_Main = v
+                                break
+                            end
+                        end
+                    end
+
+                    if not General_Folder_Main then
+                        getgenv().automatically_ez_win = false
+                        return getgenv().notify("Error", "Could not find CoinsEarned value anywhere!", 7)
+                    end
+
+                    for _, v in ipairs(General_Folder_Main:GetDescendants()) do
+                        if (v:IsA("IntValue") or v:IsA("NumberValue")) and v.Name:lower():find("coins") and v.Name:lower():find("earn") then
+                            Coins_Earned_Value_Main = v
+                            break
+                        end
+                    end
+
+                    repeat task.wait() until Workspace:FindFirstChild("Tower") and Workspace:FindFirstChild("Top_Section")
+                    task.wait(0.1)
+
+                    local coins_value = Coins_Earned_Value_Main and Coins_Earned_Value_Main.Value or 0
+
+                    if coins_value <= 70 then
+                        if getgenv().God_ModeLocalPlr then
+                            getgenv().God_ModeLocalPlr:Set(true)
+                        end
+                        GodMode(true)
+                        task.wait(0.1)
+                        collect_all()
+                        task.wait(3.5)
+                    else
+                        collect_all()
+                        wait(3.5)
+                        GodMode(true)
+                        task.wait(0.2)
+                    end
+
+                    local function find_reward_door()
+                        for _, v in ipairs(find_top_main:GetDescendants()) do
+                            if v:IsA("BasePart") and v.Name:lower():find("reward") and v.Name:lower():find("door") then
+                                return v
+                            end
+                        end
+                    end
+
+                    local door = find_reward_door() or find_top_main:FindFirstChild("RewardDoor")
+                    if not door then return end
+
+                    local root = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character and getgenv().Character:WaitForChild("HumanoidRootPart", 5)
+                    if not root then return end
+
+                    if game.PlaceId == 4954752502 then
+                        root:PivotTo(door.CFrame)
+                    elseif game.PlaceId == 11829856654 then
+                        local tween_s = getgenv().TweenService or cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
+                        local tween_i = TweenInfo.new(2, Enum.EasingStyle.Linear)
+                        tween_s:Create(root, tween_i, {CFrame = door.CFrame}):Play()
+                    end
+
+                    task.wait(0.5)
+                    touch_door()
+                    wait(0.1)
+                    pcall(function()
+                        workspace.CurrentCamera:Remove()
+                        workspace.CurrentCamera.CameraSubject = getgenv().Humanoid or getgenv().Character or get_human(LocalPlayer) or get_char(LocalPlayer)
+                        workspace.CurrentCamera.CameraType = "Custom"
+                    end)
+                    getgenv().LocalPlayer.CameraMinZoomDistance = 0.5
+                    getgenv().LocalPlayer.CameraMaxZoomDistance = 800
+                    getgenv().LocalPlayer.CameraMode = "Classic"
+                    if getgenv().Head then
+                        getgenv().Head.Anchored = false
+                    elseif not getgenv().Head then
+                        local new_head = get_head and get_head(LocalPlayer) or getgenv().Character:WaitForChild("Head", 3)
+
+                        new_head.Anchored = false
+                    end
+                end
+            end
+        end)
+    else
+        getgenv().automatically_ez_win = false
+        wait(0.2)
+        if getgenv().ez_takeover_win_task then
+            task.cancel(getgenv().ez_takeover_win_task)
+            getgenv().ez_takeover_win_task = nil
+        end
     end
 end,})
 
