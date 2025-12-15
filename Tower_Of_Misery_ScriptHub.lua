@@ -12,7 +12,7 @@ if not getgenv().blankfunction then
     end
 end
 local cloneref = cloneref or blankfunction
-local Raw_Version = "2.0.6"
+local Raw_Version = "2.0.7"
 local Script_Version = tostring(Raw_Version.."-TOM")
 local g = getgenv()
 getgenv().Game = cloneref and cloneref(game) or game
@@ -396,7 +396,7 @@ local function disable_logging_metrics(toggle)
 		local Postie = getgenv().ReplicatedStorage:FindFirstChild("Postie")
 		local AdMonitorEvents = getgenv().ReplicatedStorage:FindFirstChild("AdMonitorEvents")
 		local Bloxbiz_Remotes = getgenv().ReplicatedStorage:FindFirstChild("BloxbizRemotes")
-		local UserIdling_RE = Bloxbiz_Remotes:FindFirstChild("UserIdlingEvent")
+		local UserIdling_RE = Bloxbiz_Remotes and Bloxbiz_Remotes:FindFirstChild("UserIdlingEvent")
 
 		if Send_Ads_Analytics then
 			Send_Ads_Analytics.Parent = getgenv().AssetService
@@ -885,6 +885,20 @@ Callback = function()
 
     task.wait(0.5)
     touch_door()
+	workspace.CurrentCamera:Remove()
+	wait(1.2)
+	workspace.CurrentCamera.CameraSubject = getgenv().Humanoid or getgenv().Character or get_human(LocalPlayer) or get_char(LocalPlayer)
+	workspace.CurrentCamera.CameraType = "Custom"
+	speaker.CameraMinZoomDistance = 0.5
+	speaker.CameraMaxZoomDistance = 400
+	speaker.CameraMode = "Classic"
+    if getgenv().Head then
+	    getgenv().Head.Anchored = false
+    elseif not getgenv().Head then
+        local new_head = get_head and get_head(LocalPlayer) or getgenv().Character:WaitForChild("Head", 3)
+
+        new_head.Anchored = false
+    end
 end,})
 
 getgenv().God_ModeLocalPlr = Tab2:CreateToggle({
