@@ -880,7 +880,9 @@ Callback = function()
     if not root then return end
 
     if game.PlaceId == 4954752502 then
-        root:PivotTo(door.CFrame)
+        local tween_s = getgenv().TweenService or cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
+        local tween_i = TweenInfo.new(2, Enum.EasingStyle.Linear)
+        tween_s:Create(root, tween_i, {CFrame = door.CFrame}):Play()
     elseif game.PlaceId == 11829856654 then
         local tween_s = getgenv().TweenService or cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
         local tween_i = TweenInfo.new(2, Enum.EasingStyle.Linear)
