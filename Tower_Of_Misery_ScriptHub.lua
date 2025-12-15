@@ -919,24 +919,37 @@ else
     getgenv().God_ModeLocalPlr:Set(false)
 end
 
-getgenv().InGame_Catalog = Tab2:CreateToggle({
-Name = "In-Game Catalog (FE, Free Items)",
-CurrentValue = false,
-Flag = "InGameCatalogItems",
-Callback = function(avatar_items_catalog)
-    if avatar_items_catalog then
-        enable_in_game_catalog(true)
-    else
-        enable_in_game_catalog(false)
+local function find_in_game_catalog()
+    for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
+        if v:IsA("ScreenGui") and v.Name:lower():find("catalog") then
+            return v
+        end
     end
-end,})
-wait(0.2)
-if getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled == true then
-    getgenv().InGame_Catalog:Set(true)
-    getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled = true
-else
-    getgenv().InGame_Catalog:Set(false)
-    getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled = false
+
+    return nil
+end
+
+local catalog_gui = find_in_game_catalog()
+
+if catalog_gui then
+    getgenv().InGame_Catalog = Tab2:CreateToggle({
+    Name = "In-Game Catalog (FE, Free Items)",
+    CurrentValue = false,
+    Flag = "InGameCatalogItems",
+    Callback = function(avatar_items_catalog)
+        if avatar_items_catalog then
+            enable_in_game_catalog(true)
+        else
+            enable_in_game_catalog(false)
+        end
+    end,})
+    wait(0.2)
+    if getgenv().PlayerGui:FindFirstChild("IngameCatalog") and getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled == true and getgenv().PlayerGui:FindFirstChild("IngameCatalog"):IsA("ScreenGui") then
+        getgenv().InGame_Catalog:Set(true)
+        getgenv().PlayerGui:FindFirstChild("IngameCatalog").Enabled = true
+    elseif not getgenv().PlayerGui:FindFirstChild("IngameCatalog") then
+        getgenv().InGame_Catalog:Set(false)
+    end
 end
 
 local Old_GUIs_States = {}
