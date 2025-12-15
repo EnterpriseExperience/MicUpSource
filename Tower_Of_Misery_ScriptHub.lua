@@ -361,7 +361,8 @@ local function tp_place(place)
 
             if place == "RewardDoor" then
                 if game.PlaceId == 4954752502 then
-                    root:PivotTo(v.CFrame)
+                    local info = TweenInfo.new(2, Enum.EasingStyle.Linear)
+                    tw:Create(root, info, {CFrame = v.CFrame}):Play()
                 elseif game.PlaceId == 11829856654 then
                     local info = TweenInfo.new(2, Enum.EasingStyle.Linear)
                     tw:Create(root, info, {CFrame = v.CFrame}):Play()
@@ -982,7 +983,9 @@ Callback = function(winning_towers_auto_farm)
                     if not root then return end
 
                     if game.PlaceId == 4954752502 then
-                        root:PivotTo(door.CFrame)
+                        local tween_s = getgenv().TweenService or cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
+                        local tween_i = TweenInfo.new(2, Enum.EasingStyle.Linear)
+                        tween_s:Create(root, tween_i, {CFrame = door.CFrame}):Play()
                     elseif game.PlaceId == 11829856654 then
                         local tween_s = getgenv().TweenService or cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
                         local tween_i = TweenInfo.new(2, Enum.EasingStyle.Linear)
