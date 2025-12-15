@@ -541,10 +541,8 @@ local function GodMode(toggle)
 	if toggle == true then
         Update_Setting_RE:FireServer(30, false)
 		Temporary_Immunity.Value = true
-        getgenv().notify("Success", "Godmode has been enabled.", 3)
 	elseif toggle == false then
 		Temporary_Immunity.Value = false
-        getgenv().notify("Success", "Godmode has been disabled.", 3)
 	else
 		return 
 	end
@@ -909,8 +907,10 @@ Flag = "GodmodeValue",
 Callback = function(real_godmode)
     if real_godmode then
         GodMode(true)
+        getgenv().notify("Success", "Godmode has been enabled.", 3)
     else
         GodMode(false)
+        getgenv().notify("Success", "Godmode has been disabled.", 3)
     end
 end,})
 wait(0.2)
