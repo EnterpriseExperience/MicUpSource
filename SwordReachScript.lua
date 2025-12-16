@@ -1,7 +1,7 @@
 local Library = loadstring(Game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
 local PhantomForcesWindow = Library:NewWindow("Universal sword reach")
 local KillingCheats = PhantomForcesWindow:NewSection("Kill Options")
-local hitboxSize = 30
+local hitboxSize = 45
 local hitboxActive = false
 local colors = {Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 255), Color3.fromRGB(255, 255, 0)}
 
@@ -76,14 +76,14 @@ local function ModifyHitbox(size)
 end
 
 KillingCheats:CreateButton("Increase Hitbox", function()
-    hitboxSize = hitboxSize + 5
+    hitboxSize = hitboxSize + 3
     ModifyHitbox(hitboxSize)
     getgenv().notify("Info", "New Hitbox size: "..tostring(hitboxSize), 5)
 end)
 
 KillingCheats:CreateButton("Decrease Hitbox", function()
-    if hitboxSize > 5 then
-        hitboxSize = hitboxSize - 5
+    if hitboxSize > 3 then
+        hitboxSize = hitboxSize - 3
         ModifyHitbox(hitboxSize)
     end
     getgenv().notify("Info", "New Hitbox size: "..tostring(hitboxSize), 5)
