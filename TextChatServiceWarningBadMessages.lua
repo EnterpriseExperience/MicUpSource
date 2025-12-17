@@ -106,7 +106,7 @@ if not getgenv().setup_chat_connection_hashtags_stuff then
                 if fr and fr:IsA("Frame") then
                     pcall(function()
                         fr.Visible = true
-                        wait(5)
+                        wait(10)
                         fr.Visible = false
                     end)
                 end
