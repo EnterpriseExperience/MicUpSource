@@ -1,6 +1,8 @@
 local uis = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
 local tcs = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
 local core = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
 local scr = Instance.new("ScreenGui")
 scr.Name = "ExecutorInterface"
 scr.ResetOnSpawn = false
@@ -99,17 +101,21 @@ local flagged = {
 if not getgenv().setup_chat_connection_hashtags_stuff then
     tcs.MessageReceived:Connect(function(m)
         if not m.Text then return end
+        local sender = Players:GetPlayerByUserId(m.UserId)
+        if sender ~= Players.LocalPlayer then return end
         local txt = m.Text:lower()
         if txt:find("#") then return end
-        for _,w in ipairs(flagged) do
+
+        for _, w in ipairs(flagged) do
             if txt:find(w) then
                 if fr and fr:IsA("Frame") then
-                    pcall(function()
+                    task.spawn(function()
                         fr.Visible = true
-                        wait(10)
+                        task.wait(10)
                         fr.Visible = false
                     end)
                 end
+                break
             end
         end
     end)
