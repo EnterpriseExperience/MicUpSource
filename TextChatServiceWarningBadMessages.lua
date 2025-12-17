@@ -101,7 +101,8 @@ local flagged = {
 if not getgenv().setup_chat_connection_hashtags_stuff then
     tcs.MessageReceived:Connect(function(m)
         if not m.Text then return end
-        local sender = Players:GetPlayerByUserId(m.UserId)
+        if not m.TextSource then return end
+		local sender = Players:GetPlayerByUserId(m.TextSource.UserId)
         if sender ~= Players.LocalPlayer then return end
         local txt = m.Text:lower()
         if txt:find("#") then return end
