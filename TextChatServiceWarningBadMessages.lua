@@ -95,7 +95,7 @@ cls.MouseButton1Click:Connect(function()
 end)
 
 local flagged = {
-    "fuck","wtf","tf","wdf","stfu","sdfu","sybau","fuh","ng","nga","nka","nker"
+    "fuck","wtf","tf","wdf","stfu","sdfu","sybau","fuh"
 }
 
 if not getgenv().setup_chat_connection_hashtags_stuff then
