@@ -12,7 +12,7 @@ if not getgenv().blankfunction then
     end
 end
 local cloneref = cloneref or blankfunction
-local Raw_Version = "2.0.7"
+local Raw_Version = "2.1.0"
 local Script_Version = tostring(Raw_Version.."-TOM")
 local g = getgenv()
 getgenv().Game = cloneref and cloneref(game) or game
@@ -160,52 +160,10 @@ local function find_char_init_localscript_main()
             return v
         end
     end
-    for _, v in ipairs(getgenv().PlayerScripts:GetDescendants()) do
-
-    end
 end
 
 if getgenv().Character and getgenv().Character:FindFirstChild("Character Initializer", true) then
     getgenv().Character:FindFirstChild("Character Initializer", true).Disabled = true
-end
-
-if not getgenv().CharInitializerUpdaterConns then
-    getgenv().CharInitializerUpdaterConns = true
-
-    local function chr_updater(char)
-        if not char or not char.Parent then return end
-        local init = char:FindFirstChild("Character Initializer", true)
-        if init and init:IsA("LocalScript") and init.Enabled ~= false then
-            init.Enabled = false
-        end
-    end
-
-    do
-        local c = g.Character or g.LocalPlayer.Character
-        if c and c.Parent then
-            task.spawn(function()
-                chr_updater(c)
-            end)
-        else
-            task.spawn(function()
-                repeat task.wait() until g.LocalPlayer.Character and g.LocalPlayer.Character.Parent
-                local ch = g.LocalPlayer.Character
-                repeat task.wait() until ch:FindFirstChild("Humanoid")
-                chr_updater(ch)
-            end)
-        end
-    end
-
-    g.LocalPlayer.CharacterAdded:Connect(function(char)
-        if not char or not char.Parent then
-            repeat task.wait() until char and char.Parent
-        end
-        repeat task.wait() until char:FindFirstChild("Humanoid")
-
-        task.spawn(function()
-            chr_updater(char)
-        end)
-    end)
 end
 
 local Remote_Events = getgenv().ReplicatedStorage:FindFirstChild("Remote_Events", true)
@@ -271,79 +229,177 @@ for _, v in ipairs(getgenv().PlayerGui:GetDescendants()) do
 end
 
 function bypass_anticheat()
-    if not hookmetamethod then
-        if getgenv().notify then
-            return getgenv().notify("Error", "Your executor does not support the Tower Of Misery script hub! (cannot bypass anti-cheat)", 30)
-        else
-            return warn("Your executor does not support the Tower Of Misery script hub!")
-        end
-    end
     if getgenv().ac_bypass_already_loaded then
         return getgenv().notify("error", "Anti-Cheat bypass already loaded.", 7)
     end
 
-    getgenv().ac_bypass_already_loaded = true
-    local g_r_s = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
-    local g_remote_f = g_r_s.Remote_Functions.General.Exploit_Check
-    local g_game_flag = g_r_s:WaitForChild("GAME_IN_PROGRESS")
-    local exploit_defense = g_r_s.Game_Assets.ModuleScripts.Exploit_Defense
-    local spoof_keys = {
-        Activity = true,
-        Gravity = true,
-        WalkSpeed = true,
-        JumpPower = true,
-        Record_Kick_Reason = true,
-        Teleport = true,
-        BodyVelocity = true,
-        Exploit_Defense_Loaded = true
-    }
+    local dbg = debug
+    local up_values = getupvalues
+    local get_gc = getgc
+    local hook_func = hookfunction
 
-    local lp = game:GetService("Players").LocalPlayer
-    local earned = lp.General.CoinsEarned
+    if not (dbg and dbg.info and up_values and get_gc and hook_func) then
+        return getgenv().notify("Error", "This script cannot run on this executor! Missing function(s).", 45)
+    end
 
-    getgenv().ac_bypass_enabled = true
-    getgenv().ac_hook_enabled = true
-
-    local old_namecall
-    old_namecall = hookmetamethod(game, "__namecall", function(self, ...)
-        if not getgenv().ac_hook_enabled then
-            return old_namecall(self, ...)
+    local hook = function() return end
+    for _, func in getgc(false) do
+        if typeof(func) == "function" then
+            local source, name = debug.info(func, "sn")
+            if source:find("Exploit_Defense") then
+                local upvals = getupvalues(func)
+                if next(upvals) then
+                    hookfunction(func, hook)
+                end
+            end
         end
-        if not getgenv().ac_bypass_enabled then
-            return old_namecall(self, ...)
-        end
+    end
+    wait(0.1)
+    --[[if getconnections or get_signal_cons then
+        local gc = getconnections or get_signal_cons
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
 
-        local m = getnamecallmethod()
-        if m == "InvokeServer" and self == g_remote_f then
-            if getfenv(2).script == exploit_defense then
-                local a1 = ...
-                if spoof_keys[a1] then
-                    return true
+        getgenv().disabled_connections = getgenv().disabled_connections or setmetatable({}, { __mode = "k" })
+        getgenv().ac_bypass_already_loaded = true
+
+        local function disable_signal(sig)
+            if not sig then return end
+            for _, conn in ipairs(gc(sig) or {}) do
+                if not getgenv().disabled_connections[conn] then
+                    if conn.Disable then
+                        pcall(function() conn:Disable() end)
+                        print("Disabled connection: "..tostring(conn))
+                    elseif conn.Disconnect then
+                        pcall(function() conn:Disconnect() end)
+                        print("Disconnected connection: "..tostring(conn))
+                    end
+                    getgenv().disabled_connections[conn] = true
                 end
             end
         end
 
-        return old_namecall(self, ...)
-    end)
-
-    getgenv().game_changing_flag = getgenv().game_changing_flag or g_game_flag.Changed:Connect(function()
-        if g_game_flag.Value == true then
-            print("set to: true.")
-            getgenv().ac_bypass_enabled = true
-        else
-            wait(0.5)
-            print("set to: false.")
-            getgenv().ac_bypass_enabled = false
+        local function disconnect_signal(sig)
+            if not sig then return end
+            for _, conn in ipairs(gc(sig) or {}) do
+                if not getgenv().disabled_connections[conn] then
+                    pcall(function() conn:Disconnect() end)
+                    print("Disconnected connection: "..tostring(conn))
+                    getgenv().disabled_connections[conn] = true
+                end
+            end
         end
-    end)
 
-    getgenv().coins_changing_flag = getgenv().coins_changing_flag or earned.Changed:Connect(function()
-        if g_game_flag.Value == false and (earned.Value == 0 or earned.Value <= 1) then
-            wait(0.8)
-            print("ac bypass enabled again.")
-            getgenv().ac_bypass_enabled = true
+        local function run_process()
+            local char = LocalPlayer.Character
+            if not char then return warn("character doesn't exist.") end
+
+            local hum = char:FindFirstChildOfClass("Humanoid") or char:WaitForChild("Humanoid") or char:WaitForChild("Humanoid", 1)
+            if not hum then return warn("humanoid doesn't exist.") end
+
+            disable_signal(hum.StateChanged)
+            disable_signal(hum:GetPropertyChangedSignal("WalkSpeed"))
+            disable_signal(hum:GetPropertyChangedSignal("JumpPower"))
+            disable_signal(hum:GetPropertyChangedSignal("UseJumpPower"))
+
+            for _, part in ipairs(char:GetChildren()) do
+                if part:IsA("BasePart") then
+                    disable_signal(part:GetPropertyChangedSignal("Velocity"))
+                    disable_signal(part:GetPropertyChangedSignal("Position"))
+                end
+            end
+
+            local hitbox = char:FindFirstChild("Hitbox")
+            if hitbox then
+                for _, d in ipairs(hitbox:GetDescendants()) do
+                    if d:IsA("BasePart") then
+                        disable_signal(d:GetPropertyChangedSignal("Size"))
+                        disable_signal(d:GetPropertyChangedSignal("CanTouch"))
+                    end
+                end
+            end
+
+            disable_signal(char.DescendantAdded)
+            disable_signal(workspace:GetPropertyChangedSignal("Gravity"))
         end
-    end)
+
+        getgenv().Local_Char_Added_Main_Check_Connection = getgenv().Local_Char_Added_Main_Check_Connection or LocalPlayer.CharacterAdded:Connect(function(char)
+            if not char then
+                repeat task.wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
+            end
+            if char and char:FindFirstChild("Humanoid") then
+                run_process()
+            end
+        end)
+
+        if LocalPlayer.Character then
+            run_process()
+        end
+    elseif hookmetamethod then
+        local g_r_s = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+        local g_remote_f = g_r_s.Remote_Functions.General.Exploit_Check
+        local g_game_flag = g_r_s:WaitForChild("GAME_IN_PROGRESS")
+        local exploit_defense = g_r_s.Game_Assets.ModuleScripts.Exploit_Defense
+        local spoof_keys = {
+            Activity = true,
+            Gravity = true,
+            WalkSpeed = true,
+            JumpPower = true,
+            Record_Kick_Reason = true,
+            Teleport = true,
+            BodyVelocity = true,
+            Exploit_Defense_Loaded = true
+        }
+
+        local lp = game:GetService("Players").LocalPlayer
+        local earned = lp.General.CoinsEarned
+
+        getgenv().ac_bypass_enabled = true
+        getgenv().ac_hook_enabled = true
+
+        local old_namecall
+        old_namecall = hookmetamethod(game, "__namecall", function(self, ...)
+            if not getgenv().ac_hook_enabled then
+                return old_namecall(self, ...)
+            end
+            if not getgenv().ac_bypass_enabled then
+                return old_namecall(self, ...)
+            end
+
+            local m = getnamecallmethod()
+            if m == "InvokeServer" and self == g_remote_f then
+                if getfenv(2).script == exploit_defense then
+                    local a1 = ...
+                    if spoof_keys[a1] then
+                        return true
+                    end
+                end
+            end
+
+            return old_namecall(self, ...)
+        end)
+
+        getgenv().game_changing_flag = getgenv().game_changing_flag or g_game_flag.Changed:Connect(function()
+            if g_game_flag.Value == true then
+                print("set to: true.")
+                getgenv().ac_bypass_enabled = true
+            else
+                wait(0.5)
+                print("set to: false.")
+                getgenv().ac_bypass_enabled = false
+            end
+        end)
+
+        getgenv().coins_changing_flag = getgenv().coins_changing_flag or earned.Changed:Connect(function()
+            if g_game_flag.Value == false and (earned.Value == 0 or earned.Value <= 1) then
+                wait(0.8)
+                print("ac bypass enabled again.")
+                getgenv().ac_bypass_enabled = true
+            end
+        end)
+    else
+        return getgenv().notify("Error", "You cannot use this script (bypass unavailable)!", 30)
+    end--]]
 end
 
 local function tp_place(place)
@@ -696,16 +752,16 @@ container.ChildAdded:Connect(function(child)
 end)
 
 local function LocalPlayer_loaded()
-   local player = Players.LocalPlayer
-   if not player then
-      repeat task.wait() until Players.LocalPlayer
-      player = Players.LocalPlayer
-   end
+    local player = Players.LocalPlayer
+    if not player then
+        repeat task.wait() until Players.LocalPlayer
+        player = Players.LocalPlayer
+    end
 
-   if not player.Character or not player.Character:FindFirstChild("Humanoid") then
-      player.CharacterAdded:Wait()
-      repeat task.wait() until player.Character:FindFirstChild("Humanoid")
-   end
+    if not player.Character or not player.Character:FindFirstChild("Humanoid") then
+        player.CharacterAdded:Wait()
+        repeat task.wait() until player.Character:FindFirstChild("Humanoid")
+    end
 end
 
 local function render_safe()
