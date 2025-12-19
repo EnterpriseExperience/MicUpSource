@@ -980,6 +980,11 @@ getgenv().Main_Audio_Input = Audio:Box("Music (FE):", function(text, focuslost)
         getgenv().Current_ID = id
     end
 end)
+wait(0.1)
+getgenv().ClearInputBoxAbove = Audio:Button("Clear Box", function()
+    getgenv().Main_Audio_Input:Set("")
+    getgenv().Current_ID = 0
+end)
 
 getgenv().Main_Audio_Input:Set(getgenv().Current_ID or 0)
 getgenv().new_boombox_main_volume = getgenv().new_boombox_main_volume or 0.5
@@ -1114,12 +1119,12 @@ Audio:Button("Stop Music", function()
 end)
 
 local table_of_ids = {
-    {id = 105641396506001, desc = "met her on net"},
+    {id = 84257907631377, desc = "unleaked (idk)"},
     {id = 137350238118013, desc = "NUE POCOYO FUNK"},
     {id = 103606830325471, desc = "JUJU - Falls"},
     {id = 128134028500828, desc = "Juice - Moonlight"},
     {id = 76927176566054,  desc = "ULTERIOR MOTIVES"},
-    {id = 129255676311189, desc = "Unleaked (idk)"},
+    {id = 129255676311189, desc = "unleaked (idk)"},
 }
 
 local dropdown_items = {}
@@ -1208,69 +1213,126 @@ Extras:Toggle("Auto Get Coins", getgenv().AutoCollectingCoins_Fast or false, fun
     end
 end)
 
-function handle_autoplay()
-    task.wait(0.3)
+local plrs = cloneref(game:GetService("Players"))
+local runService = cloneref(game:GetService("RunService"))
 
-    while count_parts(Game_Objects) == 0 do
-        task.wait(0.2)
+g.autoplay_looping = g.autoplay_looping or false
+
+function get_char_fast(p)
+    local c = g.Character or (p and p.Character) or nil
+    if not c then
+        local lp = plrs.LocalPlayer
+        c = lp and lp.Character or nil
+    end
+    return c
+end
+
+function wait_for_zero(tbl)
+    local tries = 0
+    while tries < 40 do
+        local ok, cnt = pcall(function() return count_parts(tbl) end)
+        if ok and cnt == 0 then
+            return true
+        end
+        task.wait(0.15)
+        tries += 1
+    end
+    return false
+end
+
+function wait_icecube_clear()
+    local lp = getgenv().LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+    local ch = get_char_fast(lp)
+    local tries = 0
+    while tries < 120 do
+        ch = get_char_fast(lp)
+        if ch and not ch:FindFirstChild("IceCube") then
+            return true
+        end
+        task.wait(0.1)
+        tries += 1
+    end
+    return false
+end
+wait(0.2)
+function handle_autoplay()
+    task.wait(0.6)
+
+    getgenv().notify("Info", "Waiting for coin count.", 3)
+
+    local ok, initial = pcall(function()
+        return count_parts(Game_Objects)
+    end)
+
+    if not ok or initial == false then
+        return getgenv().notify("Error", "GameObjects Folder doesn't exist, try again!", 5)
     end
 
-    local result_parts = count_parts(Game_Objects)
+    if is_LocalPlayer_It() then
+        local ready = wait_icecube_clear()
+        if ready then
+            task.wait(0.5)
+            collect_all_coins("no_tp")
+            task.wait(0.5)
+            if wait_for_zero(Game_Objects) then
+                task.wait(0.3)
+                find_all_players_no_whitelist()
+            end
+        end
+        return
+    end
 
-    if result_parts == false then
-        return getgenv().notify("Error", "GameObjects doesn't exist, try again!", 5)
-    elseif result_parts == 0 then
-        wait(1)
+    getgenv().notify("Success", "We're ready.", 1.5)
+
+    if initial == 0 then
         safe_spot_tp()
         return
-    elseif result_parts > 0 then
-        collect_all_coins("no_tp")
-        wait(1)
-        local new_count = count_parts(Game_Objects)
-        if new_count == 0 then
-            wait(1.1)
-            safe_spot_tp()
-        end
+    end
+
+    collect_all_coins("no_tp")
+    task.wait(1)
+    getgenv().notify("Info", "Collected all coins.", 5)
+
+    if wait_for_zero(Game_Objects) then
+        wait(3)
+        safe_spot_tp()
+        getgenv().notify("Success", "Teleported to safe spot.", 3)
     end
 end
 
-Extras:Toggle("Auto Play (FE)", getgenv().AutoPlaying_Game or false, function(auto_playing)
+Extras:Toggle("Auto Play (FE)", g.AutoPlaying_Game or false, function(active)
     local GameRunning = Game_Data:FindFirstChild("GameRunning")
     local InGame = InGame_LocalPlr_Value
 
-    if auto_playing then
-        if getgenv().autoplay_conn then 
-            pcall(function() getgenv().autoplay_conn:Disconnect() end) 
-        end
-
-        getgenv().AutoPlaying_Game = true
-
-        if GameRunning.Value == true and InGame.Value == true then
+    if active then
+        if g.autoplay_conn then pcall(function() g.autoplay_conn:Disconnect() end) end
+        if g.autoplay_conn2 then pcall(function() g.autoplay_conn2:Disconnect() end) end
+        g.AutoPlaying_Game = true
+        if GameRunning.Value and InGame.Value then
             handle_autoplay()
         end
 
-        getgenv().autoplay_conn = GameRunning.Changed:Connect(function()
-            if GameRunning.Value == true and InGame.Value == true then
+        g.autoplay_conn = GameRunning.Changed:Connect(function()
+            local ok1 = GameRunning.Value
+            local ok2 = InGame.Value
+            if ok1 and ok2 then
                 handle_autoplay()
             end
         end)
 
-        getgenv().autoplay_conn2 = InGame.Changed:Connect(function()
-            if GameRunning.Value == true and InGame.Value == true then
+        g.autoplay_conn2 = InGame.Changed:Connect(function()
+            local ok1 = GameRunning.Value
+            local ok2 = InGame.Value
+            if ok1 and ok2 then
                 handle_autoplay()
             end
         end)
     else
-        if getgenv().autoplay_conn then
-            pcall(function() getgenv().autoplay_conn:Disconnect() end)
-        end
-        if getgenv().autoplay_conn2 then
-            pcall(function() getgenv().autoplay_conn2:Disconnect() end)
-        end
-            
-        getgenv().AutoPlaying_Game = false
-        getgenv().autoplay_conn = nil
-        getgenv().autoplay_conn2 = nil
+        if g.autoplay_conn then pcall(function() g.autoplay_conn:Disconnect() end) end
+        if g.autoplay_conn2 then pcall(function() g.autoplay_conn2:Disconnect() end) end
+        g.autoplay_conn = nil
+        g.autoplay_conn2 = nil
+        g.AutoPlaying_Game = false
     end
 end)
 
