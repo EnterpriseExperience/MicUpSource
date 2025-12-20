@@ -1090,7 +1090,13 @@ function play_music_with_sound_id()
         local updated = does_boombox_sound_exist()
         if updated then
             updated.Volume = getgenv().new_boombox_main_volume
-            getgenv().notify("Success", "Now playing ID: "..tostring(Current_ID).." with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 5)
+            if InGame_LocalPlr_Value.Value == true then
+                getgenv().notify("Success", "Now playing ID: "..tostring(Current_ID).." with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 5)
+            elseif InGame_LocalPlr_Value == false then
+                getgenv().notify("Success", "Will play ID: "..tostring(Current_ID).." next round, with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 5)
+            else
+                getgenv().notify("Error", "Couldn't determine current game running status.", 5)
+            end
         end
     end)
 end
@@ -1124,7 +1130,7 @@ local table_of_ids = {
     {id = 103606830325471, desc = "JUJU - Falls"},
     {id = 128134028500828, desc = "Juice - Moonlight"},
     {id = 76927176566054,  desc = "ULTERIOR MOTIVES"},
-    {id = 129255676311189, desc = "unleaked (idk)"},
+    {id = 129255676311189, desc = "unleaked lol"},
 }
 
 local dropdown_items = {}
