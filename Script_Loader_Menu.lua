@@ -35,24 +35,21 @@ local scriptstoload = {
         id = 3351674303,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Driving_Empire.lua"
     },
-    ["Berry Avenue"] = {
+    ["Berry Avenue RP"] = {
         id = 8481844229,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Berry_Ave_Admin.lua"
+    },
+    ["Mega Fun Obby"] = {
+        id = 12996397,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/MegaFunObby.lua"
     }
 }
 
-if not getgenv().Game then
-    getgenv().Game = cloneref and cloneref(game) or game
-end
-wait()
+getgenv().Game = cloneref and cloneref(game) or game
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
 wait(0.2)
-function notify(notif_type, msg, duration)
+getgenv().notify = getgenv().notify or function(notif_type, msg, duration)
     NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
-end
-wait(0.1)
-if not getgenv().notify then
-    getgenv().notify = notify
 end
 
 local function matcheswhat(tpplaces, togo)
@@ -93,7 +90,7 @@ end
 local rf = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary"))()
 wait(0.1)
 local window = rf:CreateWindow({
-    Name = "🏠 Script Hub Loader 🏠",
+    Name = "Flames Hub | 🏠 Script Hub Loader 🏠",
     LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
     LoadingSubtitle = "...",
     ConfigurationSaving = {
@@ -111,7 +108,7 @@ local window = rf:CreateWindow({
         Title = "cmon mane...",
         Subtitle = "nah, no key system.",
         Note = "ok?",
-        FileName = "Key",
+        FileName = "hey",
         SaveKey = false,
         GrabKeyFromSite = false,
         Key = {""}
