@@ -30,12 +30,35 @@ local place = g.get_placeid()
 g.JobID = id
 g.PlaceID = place
 
-g.Service_Wrap = g.Service_Wrap or function(service)
-    if cloneref then
-        return cloneref(game:GetService(service))
-    else
-        return game:GetService(service)
+g.Service_Wrap = g.Service_Wrap or function(name)
+    name = tostring(name)
+
+    if setmetatable then
+        if not g._service_cache then
+            g._service_cache = setmetatable({}, {
+                __index = function(self, index)
+                    local svc = game:GetService(index)
+
+                    if cloneref and svc then
+                        svc = cloneref(svc)
+                    end
+
+                    self[index] = svc
+                    return svc
+                end
+            })
+        end
+
+        return g._service_cache[name]
     end
+
+    local svc = game:GetService(name)
+
+    if cloneref and svc then
+        svc = cloneref(svc)
+    end
+
+    return svc
 end
 wait(0.5)
 local function init_services()
@@ -81,12 +104,7 @@ local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ent
 local Main = lib:Window("Main")
 local Parkour_Tab = lib:Window("Parkour")
 local Extras = lib:Window("Extras")
-local valid_titles = {
-    success = "Success",
-    info = "Info",
-    warning = "Warning",
-    error = "Error"
-}
+local valid_titles = {success="Success",info="Info",warning="Warning",error="Error",succes="Success",sucess="Success",eror="Error",erorr="Error",warnin="Warning"}
 
 local function format_title(str)
     if typeof(str) ~= "string" then
@@ -279,7 +297,7 @@ end
 function hide_annoying_GUIs(state)
     if state == true then
         getgenv().hiding_annoying_guis = true
-        task.spawn(function()
+        getgenv().always_hiding_annoying_uis_task = getgenv().always_hiding_annoying_uis_task or task.spawn(function()
             while getgenv().hiding_annoying_guis == true do
             task.wait(0.1)
                 if Groundbar_Frame and Groundbar_Frame:IsA("ImageLabel") then
@@ -292,6 +310,10 @@ function hide_annoying_GUIs(state)
         end)
     elseif state == false then
         getgenv().hiding_annoying_guis = false
+        if getgenv().always_hiding_annoying_uis_task then
+            task.cancel(getgenv().always_hiding_annoying_uis_task)
+            getgenv().always_hiding_annoying_uis_task = nil
+        end
         wait(1)
         if not getgenv().hiding_annoying_guis then
             if Groundbar_Frame and Groundbar_Frame:IsA("ImageLabel") then
@@ -340,7 +362,7 @@ getgenv().start_stageupdate = function()
         getgenv().stage_connection = nil
     end
 
-    getgenv().stage_connection = stage_obj.Changed:Connect(function()
+    getgenv().stage_connection = getgenv().stage_connection or stage_obj.Changed:Connect(function()
         getgenv().CurrentStageValue = tonumber(stage_obj.Value) or 0
         if getgenv().stage_label then
             getgenv().stage_label:Set("Current Stage: "..tostring(getgenv().CurrentStageValue), Color3.fromRGB(255,255,255))
@@ -433,7 +455,7 @@ if stage_obj then
         pcall(function() getgenv().stage_connection:Disconnect() end)
     end
 
-    getgenv().stage_connection = stage_obj.Changed:Connect(function()
+    getgenv().stage_connection = getgenv().stage_connection or stage_obj.Changed:Connect(function()
         getgenv().CurrentStageValue = tonumber(stage_obj.Value) or 0
         getgenv().stage_label:Set("Current Stage: "..tostring(getgenv().CurrentStageValue), Color3.fromRGB(255,255,255))
     end)
