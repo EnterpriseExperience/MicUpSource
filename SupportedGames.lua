@@ -1,16 +1,16 @@
--- [[
-Tower Of Misery
-Ultimate Driving
-LifeTogether RP
-Hide And Seek Extreme
-Player or AI
-Main Street RP
-Southwest Florida Beta
-Driving Empire
-Berry Avenue RP
-Mega Fun Obby
-Catalog Avatar Creator
--- ]]
+--[[
+    Tower Of Misery
+    Ultimate Driving
+    LifeTogether RP
+    Hide And Seek Extreme
+    Player or AI
+    Main Street RP
+    Southwest Florida Beta
+    Driving Empire
+    Berry Avenue RP
+    Mega Fun Obby
+    Catalog Avatar Creator
+--]]
 
 getgenv().current_supported_flames_hub_experiences = {
     ["Tower Of Misery"] = {
