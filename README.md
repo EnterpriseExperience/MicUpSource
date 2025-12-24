@@ -10,6 +10,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/
 
 [All my other script hubs (11 games)](https://github.com/EnterpriseExperience/MicUpSource/wiki/My-script-hubs-for-other-games.)
 
+[All supported Flames Hub experiences.](https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/SupportedGames.lua)
 
 ```lua
 -- 🌟 Star this repo and save it for later 🌟 --
