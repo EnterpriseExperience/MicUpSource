@@ -1,3 +1,4 @@
+-- Supported experiences. --
 --[[
     Tower Of Misery
     Ultimate Driving
