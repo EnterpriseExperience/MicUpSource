@@ -1,17 +1,19 @@
-    -- This project was to much to handle and I don't want to have my life interrupted by thousands of users looking for support all day everyday, interrupts my real life ultimately.
+    -- This project was too much to handle and I don't want to have my life interrupted by thousands of users looking for support all day everyday, interrupts my real life ultimately.
     -- This project/script hub was originally supposed to only be for MIC UP, as you could probably tell by old comments in this script, but I had plans to branch out more to universal games, when ultimately, I got tired of everything and everyone, and dropped it entirely, to go outside btw (you should try it twin).
-    -- If you think for 5 seconds that this script is an IP grabber of some sort, there is literally 0 protection in this script hub, everything is open sourced, put it in ChatGPT, he'll tell you the same damn thing, I don't give a shit about logging, I only still have this up as a learning tool, I don't even fucking use it anymore.
+    -- If you think for 5 seconds that this script is an IP grabber of some sort, there is literally 0 protection in this script hub, everything is open sourced, put it in ChatGPT, he'll tell you the same damn thing, I don't give a shit about logging, I only still have this up as a learning tool, I don't even fucking use it anymore (I never did).
     -- People claim this was wrote with ChatGPT, if you believe it was wrote with ChatGPT go test it, but it's 16K lines of code, why would any of this junk be wrote with ChatGPT? this mother-fucker can't even handle 800 lines of code.
     -- This code is VERY unorganized and garbage unfortunately, I don't know what the FUCK I was doing with this code, but I must have been high when writing it, but I am NOT re-writing any of this code, fuck that shit, I'll just slowly patch up everything that looks or acts broken.
-    -- Enjoy it anyway, I never actually cared for this script hub, but I did write it so, and it's sort of stable, barely has any issues, and supports every executor, so I still keep up as like a learning tool for people who don't know how to code, they can check out this script hub and go over it and see what they can do.
-    -- I might fix the code up more as time goes on, but I haven't worked on this shit in a quite some time, check the updates, we'll see what actually starts working again.
-    -- Also, any other script hub with my features, are just skids, this script came out before ANY of the other MIC UP scripts, this script actually REALISTICALLY released way, like all the fuck back in like March of 2024.
-    -- Because I see a lot of scripts and script hubs that have my features, and sure enough, they are obfuscated, and seem to work JUST how mine work, that's fucking suspicious, don't you think?
-    -- I wrote this script myself, and I don't plan on utilizing ChatGPT, why would I? scripting in Roblox is fairly easy, and doesn't take much skill, unlike languages like C# that might take a bit more time to learn or JavaScript, or even Java.
-    -- API has been successfully released and is no longer in BETA (I believe).
-    -- Stay tuned, even though I generally quit and don't really (actively) maintain this script hub, also because it has everything and I cannot think of anything more to add to it, I've literally got everything.
-    
-    -- Do you even fuckin need this? no you don't, this isn't updated bro.
+    -- Enjoy it anyway, I never actually cared for this script hub, but I did write it so, and it's sort of stable, barely has issues, and supports every executor, so I still keep up as like a learning tool for people who don't know how to code, they can check out this script hub and go over it and see what they can do.
+    -- I might fix the code up more as time goes on, but I haven't worked on this shit in quite some time, check the updates, we'll see what actually starts working again.
+    -- Also, any other script hub with my features, are just skids, this script came out before ANY of the other MIC UP scripts did, this script actually, REALISTICALLY, was supposed to be released all the way the fuck back in like March of 2024, but I had plans for other scripts for other games at that time.
+    -- But I see a lot of scripts that have my features, and sure enough, they are obfuscated, and seem to work JUST how mine work, that's fucking suspicious, don't you think?
+    -- I wrote this script myself, don't believe me? cry about it, stop hating and try and replicate this script hub, see what ChatGPT or AI tells you, only retards use AI, but the reason why it would even test positive is due to the amount of comments I left in the script for beginners, not written by AI, but I have to admit, scripting in Roblox is fairly easy, and doesn't take much skill, unlike languages like C# that might take a bit more time to learn or JavaScript, or even Java.
+    -- But despite all this, our Flames Hub - API has been successfully and OFFICIALLY released and is no longer in BETA.
+    -- Stay tuned, even though I genuinely quit and don't really (actively) maintain project anymore, also because it has everything and I cannot think of anything more to add to it, I've literally got everything, plus, I don't want to add more, I can't open this file without it wiping my memory.
+    -- I only have 16GB of memory, not 64GB for fucking crying out loud, give me a fucking break.
+    -- And don't think for 5 seconds that I'm gonna change the notification system, because there is TOO many notifications on here that I'd have to go around and correct, and I am NOT doing that.
+
+    -- This isn't updated twin, trust me, it doesn't even have any of the recent good ones.
     --[[
         Animation Packages: Zombie, Catwalk Glam, Elder, Cartoony, Adidas,
         Adidas Community Package, Werewolf, Vampire, Astronaut,
@@ -21,9 +23,10 @@
         Wicked Popular, Bold, Stylish,
         Rthro [default Roblox Animation package]
     --]]
+    -- stop sign --
     wait(1) -- Believe it or not, this actually helps when loading the script, stops people from spamming it, so it can load correctly and smoothly (you're the dumbass, not me).
     print("1")
-    local function getExecutor()
+    local function getExecutor() -- down below where you see "return { Name = name or "Unknown Executor"}" you can also get the version too, if you want.
         local name
         if identifyexecutor then
             name = identifyexecutor()
@@ -33,23 +36,25 @@
 
     local function detectExecutor() -- Really cool function, does the hard work for us, erases the version part of the executors name so we can ACTUALLY match the name correctly, and not any extra details that the executor's function includes.
         local executorDetails = getExecutor()
-        return string.format("%s", executorDetails.Name)
+        return string.format("%s", executorDetails.Name) -- edit it down here too, for the version, if you want both.
     end
     wait()
+    -- say hello to Flames Hub API --
     local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
+    -- requirements loading here --
     local Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))() -- old module, still use it though to patch updates, destroy the GUI, etc, basic stuff.
     local Notifications_Module_Flames_Hub = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Internal_Notification_System.lua'))()
     local Version = Module:Get_Current_Version() -- Keeps track of our version, dipshit.
-    getgenv().Game = game
-    
+    getgenv().Game = cloneref and cloneref(game) or game
+    -- chat has 'cloneref' made us UD? (ultra detected). --
     wait(0.1)
     local Script_Version = Version
-    local executor_Name = detectExecutor()
+    local executor_Name = detectExecutor() -- ooo, I wonder what we're using...
     wait(0.1)
-    print("2") -- And throughout the beginning of the script there might be these random print statements, don't mind them, it's just my way of debugging, like if something doesn't load, then I'll count my steps back and see where it stopped loading at or what not.
-    wait(0.2)
+    print("2") -- And throughout the beginning of the script there might be these random print statements, don't mind them, it's just my way of debugging, like if something doesn't load, then I'll count my steps back and see where it stopped loading at or errored at or what ever.
+    wait(0.2) -- file is too big, so the print statements help a lot when figuring out issues.
     -- Because I mean, sometimes the errors don't exactly show where the issue is, so print statements everywhere helps identify where the issue is located at or around what area.
-    local CoreGui = Flames_API.Service("CoreGui")
+    local CoreGui = Flames_API.Service("CoreGui") -- ooo, I like this service!
     local vc_service = Flames_API.Service("VoiceChatService") -- This wasn't exactly necessary, but I decided to leave it in to keep our undetection via 'cloneref'.
     local Players = Flames_API.Service("Players")
     local LocalPlayer = Players.LocalPlayer
@@ -63,17 +68,17 @@
         Url = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Library.lua",
         Method = "GET"
     })
-    -- Before you ask, yes, this works for every executor, and it is really good for when you don't want to use Loadstring, plus it's fully internal, and I guarantee it bypasses most anticheats to, no way that it doesn't.
-    -- Definitely doesn't bypass Football Fusion or popular anticheats or anything, that'd be wrong of me to publicly release a bypass for loading UI libraries and scripts fully internally and bypassed.
-    -- You get what I'm saying, now go fuck off and skid it.
+    -- Before you ask, fuh naw, this dont work for every executor, and no it is really shit for when you wanna use Loadstring, plus it's fully UD (ultra detected), and I guarantee it bypasses no anti-cheats too, no way that it does.
+    -- Doesn't bypass Football Fusion or popular anticheats or anything, because it's shit and old.
+    -- You get what I'm saying, now fuck off, nerdy ass manchild.
 
-    getgenv().SCRIPT_EXECUTED = getgenv().SCRIPT_EXECUTED or false
-    getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE or false
+    getgenv().SCRIPT_EXECUTED = getgenv().SCRIPT_EXECUTED or false -- are we fucking running or not dumb ass?
+    getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE or false -- is it FINALLY loaded all the way after 2 decades?
     -- Where we store our loaded data value(s), I say that in vein as this is re-branded from Infinite Yield, though made to work better, as it is recursive and can re-execute if it finds something wrong with the script (like if the script you ran errored, and didn't load fully) --
     -- So that if you re-ran this script hub, it'll automatically try again to see where and what went wrong and re-execute it's self until it works. --
     if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
         if not getgenv().notify then
-            getgenv().StarterGui_Notify = function(title, content, duration)
+            getgenv().StarterGui_Notify = function(title, content, duration) -- what the fuck was I thinking doing this dumb ass shit, this notification sucks, and so does Roblox.
                 local StarterGui = Flames_API.Service("StarterGui")
                 StarterGui:SetCore("SendNotification", {
                     Title = tostring(title),
@@ -89,6 +94,7 @@
             task.wait(0.2)
             getgenv().StarterGui_Notify("Alert:", "If Flames Hub does not fix itself, it's probably down!", 5)
         else
+            -- Reinitialize the function if somehow not already initialized/created above, or if the users internet is shit and didn't get a chance to create it's self. --
             getgenv().StarterGui_Notify = function(title, content, duration)
                 local StarterGui = Flames_API.Service("StarterGui") -- Is a bit slower, but still gets the job done in what we're trying to do.
                 StarterGui:SetCore("SendNotification", {
@@ -152,7 +158,7 @@
     -- And these are necessary since we haven't even loaded the "getgenv()" services yet, so keep these as cloneref, because believe it or not, some shitty sploits don't support "cloneref", it's retarded.
     print("4")
     local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"}
-    local specialPlayer = "alt_acc9996"
+    local specialPlayer = "nobody"
     local all_beta_testers = {"Chick7nn", "LIL_RT228", "CrimGameHolder"}
     -- Only whitelisted people allowed here, and if you want to I guess you can put your own names, I mean go ahead, it's open sourced for a reason.
 
@@ -167,7 +173,7 @@
     print("5")
 
     function low_level_executor()
-        -- this function is to prevent users from basically accessing scripts that they obviously cannot run, so you can hide it in your hub as well, if you make your own using this code, you can detect if they're using one of these and prevent that certain button, toggle, dropdown, etc from loading for the user, if you know it's not supported on they're executor.
+        -- this function is to prevent users from basically accessing scripts that they obviously cannot run, so you can hide it in your hub as well, if you make your own hub using this code, you can detect if they're using one of these and prevent that certain button, toggle, dropdown, etc from loading for the user, if you know it's not supported on they're executor.
         if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
             warn("Failure:", "This feature isn't supported on this executor.")
             return false -- not that it isn't a low level executor, it's generally supposed to represent that the feature isn't supported on the 3 executors above, just don't want to change the function name.
@@ -292,7 +298,7 @@
         if isWatchedPlayer(player.Name) then
             make_title(player, "👑 Flames Hub | KING 👑", Color3.fromRGB(196, 40, 28), 0)
         elseif beta_tester(player.Name) then
-            make_title(player, "✨ Flames Hub | BETA-PLAYER ✨", Color3.fromRGB(0, 0, 0), 0.1)
+            make_title(player, "✨ Flames Hub | USER ✨", Color3.fromRGB(0, 0, 0), 0.1)
         end
     end
 
@@ -310,17 +316,22 @@
     print("9")
     wait(0.3)
     -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
-    getgenv().Game = game
+    if not getgenv().Game then
+        getgenv().Game = cloneref and cloneref(game) or game
+    end
+    if not game:IsLoaded() then game.Loaded:Wait() end
     getgenv().JobID = getgenv().Game.JobId
     getgenv().PlaceID = getgenv().Game.PlaceId
 
     -- And you can also use this anywhere, even outside of the script, while having the script running, you can do like "getgenv().Service_Wrap("Workspace")", and it should work.
     -- You can do like: "local Workspace = getgenv().Service_Wrap("Workspace")" and it should work normally.
-    getgenv().Service_Wrap = function(serviceName)
-        if cloneref then
-            return cloneref(getgenv().Game:GetService(serviceName))
-        else
-            return getgenv().Game:GetService(serviceName)
+    if not getgenv().Service_Wrap then
+        getgenv().Service_Wrap = function(serviceName)
+            if cloneref then
+                return cloneref(getgenv().Game:GetService(serviceName))
+            else
+                return getgenv().Game:GetService(serviceName)
+            end
         end
     end
 
@@ -343,23 +354,25 @@
     wait()
     local executor_Name = executor_details()
 
-    getgenv().print_executor = function()
-        local function retrieve_executor()
-            local name
-            if identifyexecutor then
-                name = identifyexecutor()
+    if not getgenv().print_executor then
+        getgenv().print_executor = function()
+            local function retrieve_executor()
+                local name
+                if identifyexecutor then
+                    name = identifyexecutor()
+                end
+                return { Name = name or "Unknown Executor"}
             end
-            return { Name = name or "Unknown Executor"}
-        end
-    
-        local function identify_executor()
-            local executorDetails = retrieve_executor()
-            return string.format("%s", executorDetails.Name)
-        end
-        wait(0.1)
-        local executor_string = identify_executor()
+        
+            local function identify_executor()
+                local executorDetails = retrieve_executor()
+                return string.format("%s", executorDetails.Name)
+            end
+            wait(0.1)
+            local executor_string = identify_executor()
 
-        return print(executor_string)
+            return print(executor_string)
+        end
     end
 
     print("12")
@@ -373,26 +386,32 @@
         return table.concat(array)
     end
 
-    getgenv().randomString = function()
-        local length = math.random(10,20)
-        local array = {}
-        for i = 1, length do
-            array[i] = string.char(math.random(32, 126))
+    if not getgenv().randomString then
+        getgenv().randomString = function()
+            local length = math.random(10,20)
+            local array = {}
+            for i = 1, length do
+                array[i] = string.char(math.random(32, 126))
+            end
+            return table.concat(array)
         end
-        return table.concat(array)
     end
 
     print("13")
 
     -- These below this line are being wrapped in the function above (as you can see), essentially making them useful anywhere in the script, local variables but quite more advanced.
-    getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-    getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+    if not getgenv().AllClipboards then
+        getgenv().AllClipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+    end
+    if not getgenv().httprequest_Init then
+        getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+    end
     -- Don't mind this, I don't actually use this, but it's to make sure 'getgenv().httprequest_Init' can be defined outside and inside the script, since I'm not exactly sure about these types of local variables (non-service local variables).
     get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-    getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+    if not getgenv().queueteleport then
+        getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+    end
     queueteleport = getgenv().queueteleport
-
-    local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
     wait(0.1)
     print("14")
 
@@ -464,9 +483,15 @@
     local Use_Jump_Power = false
 
     task.wait(0.2)
-    getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
-    getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
-    getgenv().LocalPlayer = Flames_API.LocalPlayer
+    if not getgenv().Terrain then
+        getgenv().Terrain = getgenv().Workspace.Terrain or getgenv().Workspace:FindFirstChild("Terrain")
+    end
+    if not getgenv().Camera then
+        getgenv().Camera = getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
+    end
+    if not getgenv().LocalPlayer then
+        getgenv().LocalPlayer = Flames_API.LocalPlayer
+    end
     getgenv().Backpack = getgenv().LocalPlayer:WaitForChild("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack")
     getgenv().PlayerGui = Flames_API.PlayerGui
     getgenv().PlayerScripts = getgenv().LocalPlayer:WaitForChild("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
@@ -503,14 +528,12 @@
     end)
 
     if getgenv().advanced_workaround_method == false and getmetatable and setmetatable and hookmetamethod and hookfunction then
-        print("Advanced exploit detected, using bypass method.")
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua'))()
         wait(0.1)
         getgenv().advanced_workaround_method = true
     elseif not (getmetatable or setmetatable or hookmetamethod or hookfunction) then
         wait(0.1)
         getgenv().advanced_workaround_method = true
-        warn("No advanced level exploit detected, skipping..")
     elseif getgenv().advanced_workaround_method == true then
         wait(0.1)
         warn("Advanced level exploit already reviewed and secured.")
@@ -722,6 +745,9 @@
         warn("Emotes are already bypassed.")
     else
         print("Bypassing emotes...")
+        if getgenv().notify then
+            getgenv().notify("Info", "Currently bypassing emotes...", 10)
+        end
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Emote_Bypass_Script.lua'))()
         getgenv().emotes_bypassed = true
         task.wait(1)
