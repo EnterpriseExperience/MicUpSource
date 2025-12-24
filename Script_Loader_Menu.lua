@@ -1,3 +1,4 @@
+if not game:IsLoaded() then game.Loaded:Wait() end
 local scriptstoload = {
     ["Tower Of Misery"] = {
         id = 4954752502,
@@ -42,6 +43,10 @@ local scriptstoload = {
     ["Mega Fun Obby"] = {
         id = 12996397,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/MegaFunObby.lua"
+    },
+    ["Catalog Avatar Creator"] = {
+        id = 7041939546,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/CatalogAvatarCreator.lua"
     }
 }
 
