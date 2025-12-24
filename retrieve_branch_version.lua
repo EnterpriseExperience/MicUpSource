@@ -801,7 +801,7 @@
         else
             local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
 
-            NotifyLib:Rayfield_Notify(tostring(title), tostring(content), tonumber(duration))
+            NotifyLib:External_Notification(tostring(title), tostring(content), tonumber(duration))
         end
     end
     task.wait(0.2)
