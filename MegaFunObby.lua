@@ -357,25 +357,18 @@ getgenv().start_stageupdate = function()
     getgenv().stage_value_object = stage_obj
     getgenv().CurrentStageValue = tonumber(stage_obj.Value) or 0
 
-    if getgenv().stage_connection then
-        pcall(function() getgenv().stage_connection:Disconnect() end)
-        getgenv().stage_connection = nil
-    end
-
-    getgenv().stage_connection = getgenv().stage_connection or stage_obj.Changed:Connect(function()
-        getgenv().CurrentStageValue = tonumber(stage_obj.Value) or 0
-        if getgenv().stage_label then
-            getgenv().stage_label:Set("Current Stage: "..tostring(getgenv().CurrentStageValue), Color3.fromRGB(255,255,255))
-        end
-    end)
-end
-
-getgenv().stop_stageupdate = getgenv().stop_stageupdate or function()
-    if getgenv().stage_connection then
-        pcall(function()
-            getgenv().stage_connection:Disconnect()
+    if not getgenv().stage_connection_init then
+        stage_obj:GetPropertyChangedSignal("Value"):Connect(function()
+            getgenv().CurrentStageValue = tonumber(stage_obj.Value) or 0
+            if getgenv().stage_label then
+                getgenv().stage_label:Set(
+                    "Current Stage: " .. tostring(getgenv().CurrentStageValue),
+                    Color3.fromRGB(255,255,255)
+                )
+            end
         end)
-        getgenv().stage_connection = nil
+        wait()
+        getgenv().stage_connection_init = true
     end
 end
 
@@ -417,11 +410,66 @@ if Prompt_Skip_Annoyance and Prompt_Skip_Annoyance:IsA("ImageLabel") then
 end
 
 function skip_stage()
-    local current_stage_num = tonumber(getgenv().CurrentStageValue)
-    local Next_Stage_Part = current_stage_num and all_stages:FindFirstChild(tostring(current_stage_num + 1))
+    local stage_num = tonumber(getgenv().CurrentStageValue)
+    if not stage_num then
+        return
+    end
 
-    if current_stage_num and Next_Stage_Part then
-        getgenv().HumanoidRootPart.CFrame = Next_Stage_Part.CFrame + Vector3.new(0, 2, 0)
+    local nextPart = all_stages and all_stages:FindFirstChild(tostring(stage_num + 1))
+    if nextPart and getgenv().HumanoidRootPart then
+        getgenv().HumanoidRootPart.CFrame = nextPart.CFrame + Vector3.new(0, 2, 0)
+        return
+    end
+
+    if stage_num == 228 then
+        local tp = getgenv().Workspace and getgenv().Workspace:FindFirstChild("Stage Teleport")
+        local enter = tp and tp:FindFirstChild("enter")
+        if enter and getgenv().Character then
+            getgenv().Character:PivotTo(enter:GetPivot())
+        end
+        return
+    end
+
+    local function start_stage_teleporter(target_stage, thread_key)
+        if getgenv()[thread_key] then
+            return
+        end
+
+        getgenv()[thread_key] = task.spawn(function()
+            while true do
+                local liveStage = tonumber(getgenv().CurrentStageValue)
+                if liveStage and liveStage >= target_stage then
+                    task.cancel(getgenv()[thread_key])
+                    getgenv()[thread_key] = nil
+                    break
+                end
+
+                local char = getgenv().Character
+                local ws = getgenv().Workspace
+                if char and ws then
+                    for _, mdl in ipairs(ws:GetChildren()) do
+                        if mdl:IsA("Model") and mdl.Name:lower():find("stage teleport") then
+                            local enter = mdl:FindFirstChild("enter")
+                            if enter and enter:IsA("BasePart") and enter.Color == Color3.fromRGB(0, 255, 0) then
+                                char:PivotTo(enter.CFrame)
+                                break
+                            end
+                        end
+                    end
+                end
+                task.wait(0.2)
+            end
+        end)
+    end
+
+    if stage_num == 362 then
+        start_stage_teleporter(363, "stage_363_teleporter")
+        return
+    end
+
+    if stage_num == 488 then
+        start_stage_teleporter(489, "stage_488_teleporter")
+        return
     end
 end
 
