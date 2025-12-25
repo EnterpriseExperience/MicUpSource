@@ -2,6 +2,12 @@ if not game:IsLoaded() then
    game.Loaded:Wait()
 end
 wait(0.2)
+if not getgenv().GlobalEnvironmentFramework_Initialized then
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+   wait(0.1)
+   getgenv().GlobalEnvironmentFramework_Initialized = true
+end
+
 local MarketplaceService = game:GetService("MarketplaceService")
 local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local flames_api = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua"))()
@@ -195,7 +201,6 @@ function carbyusername(v)
    local r = to_username(v)
    local m = owner_index[string.lower(r)]
    if m then return m end
-   getgenv().notify("Error","Car not found for: "..tostring(v),6)
    return nil
 end
 
