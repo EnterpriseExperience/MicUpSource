@@ -1,7 +1,7 @@
 local function getExecutor()
 	local name
 	if identifyexecutor then
-		 name = identifyexecutor()
+		name = identifyexecutor()
 	end
 	return { Name = name or "Unknown Executor"}
 end
@@ -2168,9 +2168,9 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Keybind.Visible = true
 			Keybind.Parent = TabPage
 			if Keybind.BackgroundColor3 then
-				Keybind.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+				Keybind.BackgroundColor3 = Color3.fromRGB(85, 0, 127)
 			elseif Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 then
-				Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+				Keybind:FindFirstChild("KeybindFrame").BackgroundColor3 = Color3.fromRGB(85, 0, 127)
 			end
 
 			Keybind.BackgroundTransparency = 1
