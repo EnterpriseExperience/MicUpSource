@@ -149,7 +149,7 @@
     elseif enabled_vc == false and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         Notification:Notify("ALERT:", "You do not have VC, you may be kicked!", 5) -- Alerting that since the user does not have Voice Chat, MIC UP may remove them from the game (since it's literally a VC game lmao).
     else
-        Notification:Notify("Passed.", "Unknown error occurred: ???.", 5) -- I actually have no idea when or why I added this, but I guess I kept it, so it might be necessary, I don't know man.
+        Notification:Notify("Passed.", "You do not have VC and you're not in MIC UP, it's alright.", 5) -- I actually have no idea when or why I added this, but I guess I kept it, so it might be necessary, I don't know man.
     end
     wait()
     -- Don't really need these services below because of the new Flames Hub API (see above), but might as well keep it, since the API is still quite heavy and in BETA.
