@@ -794,14 +794,25 @@
     wait(0.5)
     getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = false
     getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub = getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub or false
+    local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+    local valid_titles = {success="Success",info="Info",warning="Warning",error="Error",succes="Success",sucess="Success",eror="Error",erorr="Error",warnin="Warning"}
+    local function format_title(str)
+        if typeof(str) ~= "string" then
+            return "Info"
+        end
+
+        local key = str:lower()
+
+        return valid_titles[key] or "Info"
+    end
     -- This can be used anytime while using the script by executing the following: getgenv().notify("Welcome", "Your content here.", 6)
     function notify(title, content, duration)
         if getgenv().Is_ActivelyIgnoring_NotAllowing_Notifications_Flames_Hub then
             print("The user has chosen to ignore notifications (has turned them off).")
         else
-            local NotifyLib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
-
-            NotifyLib:External_Notification(tostring(title), tostring(content), tonumber(duration))
+            local fixed_title = format_title(title)
+            
+            NotifyLib:External_Notification(fixed_title, tostring(msg), tonumber(dur))
         end
     end
     task.wait(0.2)
@@ -1954,10 +1965,10 @@
     Callback = function()
         if getgenv().AllClipboards then
             getgenv().AllClipboards("https://github.com/EnterpriseExperience/MicUpSource/releases")
-            getgenv().notify("Success:", "Paste the link copied onto your browser to view all recent updates!", 5)
+            getgenv().notify("Success", "Paste the link copied onto your browser to view all recent updates!", 5)
         else
             warn("https://github.com/EnterpriseExperience/MicUpSource/releases")
-            getgenv().notify("Failure:", "Posted the link in Developer Console, couldn't copy.", 6)
+            getgenv().notify("Failure", "Posted the link in Developer Console, couldn't copy.", 6)
         end
     end,})
 
