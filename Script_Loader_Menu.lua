@@ -20,10 +20,10 @@ local scriptstoload = {
         id = 205224386,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
     },
-    ["Player or AI"] = {
+    --[[["Player or AI"] = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
-    },
+    },--]]
     ["Main Street RP"] = {
         id = 18753889337,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua"
