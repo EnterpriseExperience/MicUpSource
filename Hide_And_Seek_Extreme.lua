@@ -1125,6 +1125,9 @@ Audio:Button("Stop Music", function()
 end)
 
 local table_of_ids = {
+    {id = 130978049854081, desc = "met her on the net"},
+    {id = 136498380707179, desc = "Tre$o - Stars"},
+    {id = 82860499713146, desc = "Try Me (Remix)"},
     {id = 84257907631377, desc = "unleaked (idk)"},
     {id = 137350238118013, desc = "NUE POCOYO FUNK"},
     {id = 103606830325471, desc = "JUJU - Falls"},
