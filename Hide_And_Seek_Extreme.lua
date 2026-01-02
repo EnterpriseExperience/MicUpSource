@@ -1125,6 +1125,8 @@ Audio:Button("Stop Music", function()
 end)
 
 local table_of_ids = {
+    {id = 120784692155389, desc = "bubonic tiktok song"},
+    {id = 138150862722180, desc = "AntBeale - Sunshine"},
     {id = 130978049854081, desc = "met her on the net"},
     {id = 136498380707179, desc = "Tre$o - Stars"},
     {id = 82860499713146, desc = "Try Me (Remix)"},
