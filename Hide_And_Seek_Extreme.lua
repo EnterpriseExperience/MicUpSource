@@ -591,21 +591,38 @@ if not getgenv().player_esp_loop then
     end)
 end
 
-local function find_fuzzy_cached(key, root, class, patterns)
-    if getgenv()[key] and getgenv()[key].Parent then
-        return getgenv()[key]
+local function find_fuzzy_cached(key, root, class, must, must_not)
+    local cached = getgenv()[key]
+    if cached and cached.Parent then
+        return cached
     end
 
     if not root then return nil end
 
     for _, d in ipairs(root:GetDescendants()) do
-        if (not class or d:IsA(class)) then
+        if not class or d:IsA(class) then
             local n = d.Name:lower()
-            for _, p in ipairs(patterns) do
-                if n:find(p) then
-                    getgenv()[key] = d
-                    return d
+            local ok = true
+
+            for _, p in ipairs(must) do
+                if not n:find(p) then
+                    ok = false
+                    break
                 end
+            end
+
+            if ok and must_not then
+                for _, p in ipairs(must_not) do
+                    if n:find(p) then
+                        ok = false
+                        break
+                    end
+                end
+            end
+
+            if ok then
+                getgenv()[key] = d
+                return d
             end
         end
     end
@@ -613,22 +630,43 @@ local function find_fuzzy_cached(key, root, class, patterns)
     return nil
 end
 
-local Game_Objects = find_fuzzy_cached("Game_Objects", Workspace, "Folder", {"game","object"})
-local Player_Data = find_fuzzy_cached("Player_Data", LocalPlayer, "Folder", {"player","data"})
-local It_LocalPlr_Value = find_fuzzy_cached("It_LocalPlr_Value", Player_Data, nil, {"it"})
-local InGame_LocalPlr_Value = find_fuzzy_cached("InGame_LocalPlr_Value", Player_Data, nil, {"ingame","in_game"})
-local Is_Seeking = find_fuzzy_cached("Is_Seeking", Game_Data, nil, {"seek"})
-local Selecting_Map = find_fuzzy_cached("Selecting_Map", Game_Data, nil, {"select","map"})
-local Selecting_It = find_fuzzy_cached("Selecting_It", Game_Data, nil, {"select","it"})
-local Showing_EndGame_GUI = find_fuzzy_cached("Showing_EndGame_GUI", Game_Data, nil, {"end","gui"})
-local Total_Hiders = find_fuzzy_cached("Total_Hiders", Game_Data, nil, {"hider","amount","total"})
-local Stopping_Game = find_fuzzy_cached("Stopping_Game", Game_Data, nil, {"stop","game"})
-local Map_Selection = find_fuzzy_cached("Map_Selection", Game_Data, "Folder", {"map","select"})
-local Chosen_Map = find_fuzzy_cached("Chosen_Map", Map_Selection, nil, {"name","label","value"})
-local Animation_Replication = find_fuzzy_cached("Animation_Replication", ReplicatedStorage, "Folder", {"animation","replicat"})
-local Place_Glue_RE = find_fuzzy_cached("Place_Glue_RE", Animation_Replication, "RemoteEvent", {"glue","place"})
-local Play_Sound_Boombox_RE = find_fuzzy_cached("Play_Sound_Boombox_RE", Animation_Replication, "RemoteEvent", {"play","sound","boombox"})
-local Stop_Sound_Boombox_FE = find_fuzzy_cached("Stop_Sound_Boombox_FE", Animation_Replication, "RemoteEvent", {"stop","sound","boombox"})
+local Game_Objects =
+    find_fuzzy_cached("Game_Objects", Workspace, "Model", {"game","object"})
+local Player_Data =
+    find_fuzzy_cached("Player_Data", LocalPlayer, "Folder", {"player","data"})
+local It_LocalPlr_Value =
+    find_fuzzy_cached("It_LocalPlr_Value", Player_Data, "BoolValue", {"it"}, {"select","seek"})
+local InGame_LocalPlr_Value =
+    find_fuzzy_cached("InGame_LocalPlr_Value", Player_Data, "BoolValue", {"ingame"})
+local Is_Seeking =
+    find_fuzzy_cached("Is_Seeking", Game_Data, "BoolValue", {"seeking"}, {"select"})
+local Selecting_Map =
+    find_fuzzy_cached("Selecting_Map", Game_Data, "BoolValue", {"select","map"})
+local Selecting_It =
+    find_fuzzy_cached("Selecting_It", Game_Data, "BoolValue", {"select","it"})
+local Showing_EndGame_GUI =
+    find_fuzzy_cached("Showing_EndGame_GUI", Game_Data, "BoolValue", {"end","gui"})
+local Total_Hiders =
+    find_fuzzy_cached("Total_Hiders", Game_Data, "IntValue", {"hider"})
+local Stopping_Game =
+    find_fuzzy_cached("Stopping_Game", Game_Data, "BoolValue", {"stop","game"})
+local Map_Selection =
+    find_fuzzy_cached("Map_Selection", Game_Data, "Folder", {"map","select"})
+local Chosen_Map =
+    find_fuzzy_cached("Chosen_Map", Map_Selection, "StringValue", {"name"}, {"label"})
+local Animation_Replication =
+    find_fuzzy_cached("Animation_Replication", ReplicatedStorage, "Folder", {"animation","replicat"})
+local Place_Glue_RE =
+    find_fuzzy_cached("Place_Glue_RE", Animation_Replication, "RemoteEvent", {"glue","place"})
+local Play_Sound_Boombox_RE =
+    find_fuzzy_cached("Play_Sound_Boombox_RE", Animation_Replication, "RemoteEvent",
+        {"play","sound"}, {"stop"})
+local Stop_Sound_Boombox_FE =
+    find_fuzzy_cached("Stop_Sound_Boombox_FE", Animation_Replication, "RemoteEvent",
+        {"stop","sound"}, {"play"})
+assert(Play_Sound_Boombox_RE ~= Stop_Sound_Boombox_FE, "Play/Stop Sound remotes collided")
+assert(Play_Sound_Boombox_RE == nil or Play_Sound_Boombox_RE:IsA("RemoteEvent"))
+assert(Stop_Sound_Boombox_FE == nil or Stop_Sound_Boombox_FE:IsA("RemoteEvent"))
 wait(0.2)
 function find_all_players_no_whitelist()
     for _, player in ipairs(Players:GetPlayers()) do
@@ -735,6 +773,16 @@ function safe_spot_tp()
     end
     wait(0.3)
     HumanoidRootPart.CFrame = CFrame.new(Base_Plate.Position + Vector3.new(0, 3, 0))
+end
+
+function toggle_last_match_stats_GUI(toggle)
+    if toggle == true then
+
+    elseif toggle == false then
+
+    else
+        return 
+    end
 end
 
 getgenv().toggle_spawn_box_visible = getgenv().toggle_spawn_box_visible or false
@@ -960,6 +1008,9 @@ getgenv().autocoin_lastcf = nil
 function collect_all_coins(method)
     local hrp = HumanoidRootPart
     if not hrp then return end
+    if not Game_Objects then
+        return getgenv().notify("Error", "Game Objects doesn't exist (patched?).", 5)
+    end
 
     local use_touch = (method == "no_tp" and firetouchinterest ~= nil)
 
@@ -1158,7 +1209,7 @@ function play_music_with_sound_id()
             updated.Volume = getgenv().new_boombox_main_volume
             if InGame_LocalPlr_Value.Value == true then
                 getgenv().notify("Success", "Now playing ID: "..tostring(Current_ID).." with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 5)
-            elseif InGame_LocalPlr_Value == false then
+            elseif InGame_LocalPlr_Value.Value == false then
                 getgenv().notify("Success", "Will play ID: "..tostring(Current_ID).." next round, with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 5)
             else
                 getgenv().notify("Error", "Couldn't determine current game running status.", 5)
@@ -1172,8 +1223,10 @@ Audio:Button("Play Music (FE)", function()
         return getgenv().notify("Warning", "You are not in-game, this will not work right now, wait until you're in-game.", 8)
     end
 
-    if Stop_Sound_Boombox_FE and Stop_Sound_Boombox_FE:IsA("RemoteEvent") then
+    local sound = find_boombox()
+    if sound and sound.Playing then
         Stop_Sound_Boombox_FE:FireServer()
+        return getgenv().notify("Warning", "You we're already playing music, we stopped it, try again.", 7)
     end
     wait(0.2)
     play_music_with_sound_id()
