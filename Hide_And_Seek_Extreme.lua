@@ -1168,6 +1168,10 @@ function play_music_with_sound_id()
 end
 
 Audio:Button("Play Music (FE)", function()
+    if not (InGame_LocalPlr_Value and InGame_LocalPlr_Value.Value) then
+        return getgenv().notify("Warning", "You are not in-game, this will not work right now, wait until you're in-game.", 8)
+    end
+
     if Stop_Sound_Boombox_FE and Stop_Sound_Boombox_FE:IsA("RemoteEvent") then
         Stop_Sound_Boombox_FE:FireServer()
     end
