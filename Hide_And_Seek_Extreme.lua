@@ -239,7 +239,6 @@ getgenv().httprequest_Init = getgenv().httprequest_Init or (syn and syn.request)
 get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 getgenv().queueteleport = getgenv().queueteleport or (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 queueteleport = getgenv().queueteleport
-
 local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
@@ -405,8 +404,45 @@ local Workspace = getgenv().Workspace
 local LocalPlayer = getgenv().LocalPlayer or getgenv().Players.LocalPlayer
 local ReplicatedStorage = getgenv().ReplicatedStorage
 local ws = getgenv().Workspace
-local Game_Data = ReplicatedStorage:FindFirstChild("GameData")
-local It_Val = Game_Data:FindFirstChild("It")
+
+local function find_game_data_folder_rs()
+    if getgenv().Replic_Storage_Game_Data_HideAndSeek_Folder and getgenv().Replic_Storage_Game_Data_HideAndSeek_Folder:IsA("Folder") then
+        return getgenv().Replic_Storage_Game_Data_HideAndSeek_Folder
+    end
+    wait(0.1)
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("Folder") and v.Name:lower():find("game") and v.Name:lower():find("data") then
+            getgenv().Replic_Storage_Game_Data_HideAndSeek_Folder = v
+            return v
+        end
+    end
+    return nil
+end
+
+local function find_it_value(game_data)
+    if getgenv().Game_Data_It_Value and getgenv().Game_Data_It_Value:IsDescendantOf(game_data) then
+        return getgenv().Game_Data_It_Value
+    end
+
+    for _, v in ipairs(game_data:GetDescendants()) do
+        if v.Name == "It" then
+            getgenv().Game_Data_It_Value = v
+            return v
+        end
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v.Name == "It" then
+            getgenv().Game_Data_It_Value = v
+            return v
+        end
+    end
+
+    return nil
+end
+
+local Game_Data = ReplicatedStorage:FindFirstChild("GameData") or find_game_data_folder_rs()
+local It_Val = Game_Data:FindFirstChild("It") or find_it_value(Game_Data)
 wait(0.2)
 local function is_LocalPlayer_It()
     if It_Val.Value == getgenv().LocalPlayer or It_Val.Value == getgenv().LocalPlayer.Name then
@@ -418,8 +454,7 @@ local function is_LocalPlayer_It()
     return nil
 end
 wait(0.2)
-local WHITELIST = {}
-getgenv().WHITELIST = WHITELIST
+getgenv().WHITELIST = getgenv().WHITELIST or {}
 wait(0.2)
 function add_whitelist_plr(user)
     if not user or not user.Name then
@@ -530,44 +565,70 @@ local function apply_esp(plr, it_name)
     end
 end
 
-task.spawn(function()
-    while true do
-        task.wait(0.2)
+if not getgenv().player_esp_loop then
+    getgenv().player_esp_loop = true
+    wait(0.1)
+    task.spawn(function()
+        while true do
+            task.wait(0.2)
 
-        if getgenv().player_esp then
-            local it_name = tostring(It_Val.Value)
+            if getgenv().player_esp then
+                local it_name = tostring(It_Val.Value)
 
-            for _, plr in ipairs(players:GetPlayers()) do
-                if plr ~= local_plr then
-                    apply_esp(plr, it_name)
+                for _, plr in ipairs(players:GetPlayers()) do
+                    if plr ~= local_plr then
+                        apply_esp(plr, it_name)
+                    end
+                end
+            else
+                for _, plr in ipairs(players:GetPlayers()) do
+                    if plr.Character then
+                        clear_esp(plr.Character)
+                    end
                 end
             end
-        else
-            for _, plr in ipairs(players:GetPlayers()) do
-                if plr.Character then
-                    clear_esp(plr.Character)
+        end
+    end)
+end
+
+local function find_fuzzy_cached(key, root, class, patterns)
+    if getgenv()[key] and getgenv()[key].Parent then
+        return getgenv()[key]
+    end
+
+    if not root then return nil end
+
+    for _, d in ipairs(root:GetDescendants()) do
+        if (not class or d:IsA(class)) then
+            local n = d.Name:lower()
+            for _, p in ipairs(patterns) do
+                if n:find(p) then
+                    getgenv()[key] = d
+                    return d
                 end
             end
         end
     end
-end)
 
-local Game_Objects = Workspace:FindFirstChild("GameObjects") or Workspace:WaitForChild("GameObjects", 10)
-local Player_Data = getgenv().LocalPlayer:FindFirstChild("PlayerData", true) or LocalPlayer:WaitForChild("PlayerData", 10)
-local It_LocalPlr_Value = Player_Data and Player_Data:FindFirstChild("It", true) or Player_Data:WaitForChild("It", 5)
-local InGame_LocalPlr_Value = Player_Data and Player_Data:FindFirstChild("InGame", true) or Player_Data:WaitForChild("InGame", 5)
-local Is_Seeking = Game_Data and Game_Data:FindFirstChild("ItSeeking", true) or Game_Data:WaitForChild("ItSeeking", 5)
-local Selecting_Map = Game_Data and Game_Data:FindFirstChild("SelectingMap", true) or Game_Data:WaitForChild("SelectingMap", 5)
-local Selecting_It = Game_Data and Game_Data:FindFirstChild("SelectingIt", true) or Game_Data:WaitForChild("SelectingIt", 5)
-local Showing_EndGame_GUI = Game_Data and Game_Data:FindFirstChild("ShowingEndGameGui", true) or Game_Data:WaitForChild("ShowingEndGameGui", 5)
-local Total_Hiders = Game_Data and Game_Data:FindFirstChild("StartingAmountOfHiders", true) or Game_Data:WaitForChild("StartingAmountOfHiders", 5)
-local Stopping_Game = Game_Data and Game_Data:FindFirstChild("StoppingGame", true) or Game_Data:WaitForChild("StoppingGame", 5)
-local Map_Selection = Game_Data and Game_Data:FindFirstChild("MapSelection", true) or Game_Data:WaitForChild("MapSelection", 5)
-local Chosen_Map = Map_Selection and Map_Selection:FindFirstChild("NameLabelValue", true) or Map_Selection:WaitForChild("NameLabelValue", 5)
-local Animation_Replication = ReplicatedStorage:FindFirstChild("AnimationReplication", true) or ReplicatedStorage:WaitForChild("AnimationReplication", 5)
-local Place_Glue_RE = Animation_Replication and Animation_Replication:FindFirstChild("PlaceGlue", true) or Animation_Replication:WaitForChild("PlaceGlue", 5)
-local Play_Sound_Boombox_RE = Animation_Replication and Animation_Replication:FindFirstChild("PlaySoundBoombox", true) or Animation_Replication:WaitForChild("PlaySoundBoombox", 5)
-local Stop_Sound_Boombox_FE = Animation_Replication and Animation_Replication:FindFirstChild("StopSoundBoombox", true) or Animation_Replication:WaitForChild("StopSoundBoombox", 5)
+    return nil
+end
+
+local Game_Objects = find_fuzzy_cached("Game_Objects", Workspace, "Folder", {"game","object"})
+local Player_Data = find_fuzzy_cached("Player_Data", LocalPlayer, "Folder", {"player","data"})
+local It_LocalPlr_Value = find_fuzzy_cached("It_LocalPlr_Value", Player_Data, nil, {"it"})
+local InGame_LocalPlr_Value = find_fuzzy_cached("InGame_LocalPlr_Value", Player_Data, nil, {"ingame","in_game"})
+local Is_Seeking = find_fuzzy_cached("Is_Seeking", Game_Data, nil, {"seek"})
+local Selecting_Map = find_fuzzy_cached("Selecting_Map", Game_Data, nil, {"select","map"})
+local Selecting_It = find_fuzzy_cached("Selecting_It", Game_Data, nil, {"select","it"})
+local Showing_EndGame_GUI = find_fuzzy_cached("Showing_EndGame_GUI", Game_Data, nil, {"end","gui"})
+local Total_Hiders = find_fuzzy_cached("Total_Hiders", Game_Data, nil, {"hider","amount","total"})
+local Stopping_Game = find_fuzzy_cached("Stopping_Game", Game_Data, nil, {"stop","game"})
+local Map_Selection = find_fuzzy_cached("Map_Selection", Game_Data, "Folder", {"map","select"})
+local Chosen_Map = find_fuzzy_cached("Chosen_Map", Map_Selection, nil, {"name","label","value"})
+local Animation_Replication = find_fuzzy_cached("Animation_Replication", ReplicatedStorage, "Folder", {"animation","replicat"})
+local Place_Glue_RE = find_fuzzy_cached("Place_Glue_RE", Animation_Replication, "RemoteEvent", {"glue","place"})
+local Play_Sound_Boombox_RE = find_fuzzy_cached("Play_Sound_Boombox_RE", Animation_Replication, "RemoteEvent", {"play","sound","boombox"})
+local Stop_Sound_Boombox_FE = find_fuzzy_cached("Stop_Sound_Boombox_FE", Animation_Replication, "RemoteEvent", {"stop","sound","boombox"})
 wait(0.2)
 function find_all_players_no_whitelist()
     for _, player in ipairs(Players:GetPlayers()) do
@@ -1050,9 +1111,14 @@ Audio:Slider("Boombox Vol",0,10,tonumber(getgenv().new_boombox_main_volume) or 0
 end)
 
 function play_music_with_id(id_to_play)
+    wait(0.1)
     local sound = find_boombox()
-    if sound and sound.Playing then
-        return getgenv().notify("Warning", "You're already playing music!", 5)
+    if typeof(sound) == "Instance" and sound:IsA("Sound") and sound.Parent then
+        local id = tostring(sound.SoundId)
+
+        if id ~= "" and id ~= "rbxassetid://0" and sound.TimePosition > 0 then
+            return getgenv().notify("Warning", "You're already playing music!", 5)
+        end
     end
 
     local ok, response = pcall(function()
@@ -1102,6 +1168,10 @@ function play_music_with_sound_id()
 end
 
 Audio:Button("Play Music (FE)", function()
+    if Stop_Sound_Boombox_FE and Stop_Sound_Boombox_FE:IsA("RemoteEvent") then
+        Stop_Sound_Boombox_FE:FireServer()
+    end
+    wait(0.2)
     play_music_with_sound_id()
 end)
 
@@ -1112,13 +1182,18 @@ if not getgenv().AutoPlayingMusic_InGameAutomatically then
             play_music_with_sound_id()
         else
             for i = 1, 3 do
-                Stop_Sound_Boombox_FE:FireServer()
+                if Stop_Sound_Boombox_FE and Stop_Sound_Boombox_FE:IsA("RemoteEvent") then
+                    Stop_Sound_Boombox_FE:FireServer()
+                end
             end
         end
     end)
 end
 
 Audio:Button("Stop Music", function()
+    if not Stop_Sound_Boombox_FE then return getgenv().notify("Error", "Stop Sound Boombox RemoteEvent does not exist.", 6) end
+    if not Stop_Sound_Boombox_FE:IsA("RemoteEvent") then return getgenv().notify("Error", "Stop Sound Boombox is not a RemoteEvent.", 6) end
+
     pcall(function()
         Stop_Sound_Boombox_FE:FireServer()
     end)
@@ -1144,6 +1219,10 @@ for _, v in ipairs(table_of_ids) do
 end
 
 getgenv().PresetMusicIDsBypasses = Audio:Dropdown("Music IDs", dropdown_items, function(chosen_desc)
+    if not InGame_LocalPlr_Value.Value then
+        return getgenv().notify("Error", "You are not currently in-game, you cannot play music right now (because it won't work when you're not in-game).", 11)
+    end
+    wait(0.1)
     for _, entry in ipairs(table_of_ids) do
         if entry.desc == chosen_desc then
             play_music_with_id(entry.id)
@@ -1402,27 +1481,61 @@ Main:Button("Find All (Whitelist)", function()
 end)
 
 Main:Toggle("Find All (Loop)", false, function(state)
-    if state then
-        getgenv().FindingAllNonWhitelistedPlayers = true
-        getgenv().FindAllConnections = {}
+    getgenv().FindingAllNonWhitelistedPlayers = state
+    getgenv().FindAllConnections = getgenv().FindAllConnections or {}
 
+    if not (InGame_LocalPlr_Value and InGame_LocalPlr_Value.Value) then
+        getgenv().notify("Warning", "You are no longer in-game, stopping Find All loop.", 7)
+        getgenv().FindingAllNonWhitelistedPlayers = false
+        return 
+    end
+    wait(0.1)
+    if state and not getgenv().FindAllLoop then
+        getgenv().FindAllLoop = true
+
+        task.spawn(function()
+            while getgenv().FindingAllNonWhitelistedPlayers == true do
+                if not (InGame_LocalPlr_Value and InGame_LocalPlr_Value.Value) then
+                    getgenv().notify("Warning", "You are no longer in-game, stopping Find All loop.", 7)
+                    getgenv().FindingAllNonWhitelistedPlayers = false
+                    break
+                end
+
+                find_all_players_whitelist()
+                task.wait(0.2)
+            end
+
+            if getgenv().FindAllConnections then
+                for _, c in ipairs(getgenv().FindAllConnections) do
+                    pcall(function() c:Disconnect() end)
+                end
+            end
+            getgenv().FindAllConnections = nil
+            getgenv().FindAllLoop = nil
+        end)
+    end
+
+    if state then
         for _, plr in ipairs(Players:GetPlayers()) do
-            connect_player(plr)
+            if plr ~= LocalPlayer then
+                local conn = plr.CharacterAdded:Connect(function(char)
+                    on_char_added(plr, char)
+                end)
+                table.insert(getgenv().FindAllConnections, conn)
+            end
         end
 
         local joinConn = Players.PlayerAdded:Connect(function(plr)
-            connect_player(plr)
+            if plr ~= LocalPlayer then
+                local conn = plr.CharacterAdded:Connect(function(char)
+                    on_char_added(plr, char)
+                end)
+                table.insert(getgenv().FindAllConnections, conn)
+            end
         end)
-
         table.insert(getgenv().FindAllConnections, joinConn)
     else
         getgenv().FindingAllNonWhitelistedPlayers = false
-        if getgenv().FindAllConnections then
-            for _, c in ipairs(getgenv().FindAllConnections) do
-                pcall(function() c:Disconnect() end)
-            end
-        end
-        getgenv().FindAllConnections = nil
     end
 end)
 
