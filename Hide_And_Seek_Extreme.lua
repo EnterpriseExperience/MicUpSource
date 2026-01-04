@@ -1279,6 +1279,12 @@ getgenv().PresetMusicIDsBypasses = Audio:Dropdown("Music IDs", dropdown_items, f
     if not InGame_LocalPlr_Value.Value then
         return getgenv().notify("Error", "You are not currently in-game, you cannot play music right now (because it won't work when you're not in-game).", 11)
     end
+    local sound = find_boombox()
+    if sound and sound.Playing then
+        Stop_Sound_Boombox_FE:FireServer()
+        return getgenv().notify("Warning", "You we're already playing music, we stopped it, try again.", 7)
+    end
+
     wait(0.1)
     for _, entry in ipairs(table_of_ids) do
         if entry.desc == chosen_desc then
