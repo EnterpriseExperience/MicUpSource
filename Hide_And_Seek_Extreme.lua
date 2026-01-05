@@ -1192,7 +1192,7 @@ end
 function play_music_with_sound_id()
     local sound = find_boombox()
     if sound and sound.Playing then
-        return getgenv().notify("Warning", "You're already playing music!", 5)
+        getgenv().notify("Warning", "You we're already playing music, so we stopped it automatically.", 7)
     end
 
     local ok, response = pcall(function()
@@ -1226,7 +1226,6 @@ Audio:Button("Play Music (FE)", function()
     local sound = find_boombox()
     if sound and sound.Playing then
         Stop_Sound_Boombox_FE:FireServer()
-        return getgenv().notify("Warning", "You we're already playing music, we stopped it, try again.", 7)
     end
     wait(0.2)
     play_music_with_sound_id()
@@ -1282,10 +1281,8 @@ getgenv().PresetMusicIDsBypasses = Audio:Dropdown("Music IDs", dropdown_items, f
     local sound = find_boombox()
     if sound and sound.Playing then
         Stop_Sound_Boombox_FE:FireServer()
-        return getgenv().notify("Warning", "You we're already playing music, we stopped it, try again.", 7)
     end
-
-    wait(0.1)
+    wait(0.2)
     for _, entry in ipairs(table_of_ids) do
         if entry.desc == chosen_desc then
             play_music_with_id(entry.id)
