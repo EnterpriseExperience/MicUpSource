@@ -15,7 +15,7 @@ local Screen = setmetatable({}, {
         end
     end
 })
-
+local g = getgenv() or _G or {}
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 getgenv().workspace = Workspace
 local Screen = workspace.CurrentCamera.ViewportSize
@@ -39,22 +39,70 @@ getgenv().missing = getgenv().missing or function(t, f, fallback)
 end
 
 cloneref = missing("function", cloneref, function(...) return ... end)
+wait(0.2)
+getgenv().get_or_set = getgenv().get_or_set or function(name, value)
+    if rawget and rawset then
+        local existing = rawget(getgenv(), name)
+        if existing == nil then
+            rawset(getgenv(), name, value)
+            return value
+        end
+        return existing
+    end
 
-local Services = setmetatable({}, {
-	__index = function(self, name)
-		local success, cache = pcall(function()
-			return cloneref(game:GetService(name))
-		end)
-		if success then
-            if rawset then
-                rawset(self, name, cache)
-                return cache
+    local existing = getgenv()[name]
+
+    if existing == nil then
+        getgenv()[name] = value
+        return value
+    end
+
+    return existing
+end
+
+local function safe_wrapper()
+    return getgenv().get_or_set("_service_proxy", setmetatable({}, {
+        __index = function(_, name)
+            local existing = getgenv()[name]
+            if existing ~= nil then
+                return existing
             end
-		else
-			return warn("Invalid service: "..tostring(name))
-		end
+
+            local svc = game:GetService(name)
+            if cloneref then
+                svc = cloneref(svc)
+            end
+
+            return getgenv().get_or_set(name, svc)
+        end
+    }))
+end
+
+repeat task.wait() until type(safe_wrapper) == "function"
+
+local Services = getgenv().get_or_set("Services", setmetatable({}, {
+    __index = function(_, name)
+        local existing = getgenv()[name]
+        if existing ~= nil then
+            return existing
+        end
+
+        local svc = game:GetService(name)
+        if cloneref then
+            svc = cloneref(svc)
+        end
+
+        return getgenv().get_or_set(name, svc)
+    end
+}))
+
+function getRoot(char)
+	if char and char:FindFirstChildOfClass("Humanoid") then
+		return char:FindFirstChildOfClass("Humanoid").RootPart
+   elseif not char then
+		return nil
 	end
-})
+end
 
 local Players = Services.Players
 local RunService = Services.RunService
@@ -63,8 +111,9 @@ local TweenService = Services.TweenService
 local AvatarEditorService = Services.AvatarEditorService
 local HttpService = Services.HttpService
 local player = Players.LocalPlayer
+local LocalPlayer = player
 local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
+local humanoid = character:FindFirstChild("Humanoid") or character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid", 50)
 local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
 
 if not getgenv().character_added_conn_watcher then
@@ -72,7 +121,7 @@ if not getgenv().character_added_conn_watcher then
     wait(0.1)
     player.CharacterAdded:Connect(function(newCharacter)
         character = newCharacter
-        humanoid = newCharacter:WaitForChild("Humanoid")
+        humanoid = newnewCharacter:WaitForChild("Humanoid")
         lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
     end)
 end
@@ -231,7 +280,7 @@ g.Parent=mainContainer
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, scale("Y", 36))
 title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-title.Text = "Flames Emotes"
+title.Text = "🔥 Flames Emotes 🔥"
 title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
 title.TextScaled = true
@@ -1320,7 +1369,9 @@ screonGui.Parent = CoreGui
 screonGui.Enabled = true
 local btn = Instance.new("TextButton")
 btn.Parent = screonGui
-btn.Text = "G"
+btn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+btn.Text = "F"
+btn.TextColor3 = Color3.fromRGB(0, 0, 0)
 btn.Font = Enum.Font.GothamSemibold
 btn.TextScaled = true
 btn.Size = UDim2.new(0, 50, 0, 50)
