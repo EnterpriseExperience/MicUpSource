@@ -647,14 +647,14 @@ end
 
 --// UNIFIED EDIT FUNCTIONS
 -- only ChatGPT uses words like "unified" 🙏.
-function Settings:EditSlider(targetName, newValue)
+getgenv().EditSlider = function(targetName, newValue)
     local apply = self._sliders[targetName]
     if apply then
         apply(newValue)
     end
 end
 
-function Settings:EditToggle(targetName, newValue)
+getgenv().EditToggle = function(targetName, newValue)
     local apply = self._toggles[targetName]
     if apply then
         getgenv().Settings[targetName] = newValue
@@ -701,16 +701,16 @@ createToggle("Allow Invisible   ")
 createToggle("Stop Other Animations On Play")
 
 resetButton.MouseButton1Click:Connect(function()
-    Settings:EditToggle("Stop Emote When Moving", true)
-    Settings:EditToggle("Stop Other Animations On Play", true)
-    Settings:EditSlider("Fade In", 0.1)
-    Settings:EditSlider("Fade Out", 0.1)
-    Settings:EditSlider("Weight", 1)
-    Settings:EditSlider("Speed", 1)
-    Settings:EditToggle("Allow Invisible  ", true)
-    Settings:EditSlider("Time Position", 0)
-    Settings:EditToggle("Freeze On Finish", false)
-    Settings:EditToggle("Looped", true)
+    EditToggle("Stop Emote When Moving", true)
+    EditToggle("Stop Other Animations On Play", true)
+    EditSlider("Fade In", 0.1)
+    EditSlider("Fade Out", 0.1)
+    EditSlider("Weight", 1)
+    EditSlider("Speed", 1)
+    EditToggle("Allow Invisible  ", true)
+    EditSlider("Time Position", 0)
+    EditToggle("Freeze On Finish", false)
+    EditToggle("Looped", true)
 end)
 
 local originalCollisionStates = {}
