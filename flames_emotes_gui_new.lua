@@ -128,16 +128,16 @@ end
 
 getgenv().Settings = getgenv().Settings or {}
 wait(0.1)
-Settings["Stop Emote When Moving"] = true
-Settings["Fade In"]     = 0.1
-Settings["Fade Out"]    = 0.1
-Settings["Weight"]      = 1
-Settings["Speed"]       = 1
-Settings["Allow Invisible  "]    = true
-Settings["Time Position"] = 0
-Settings["Freeze On Finish"] = false
-Settings["Looped"] = true
-Settings["Stop Other Animations On Play"] = true
+getgenv().Settings["Stop Emote When Moving"] = true
+getgenv().Settings["Fade In"]     = 0.1
+getgenv().Settings["Fade Out"]    = 0.1
+getgenv().Settings["Weight"]      = 1
+getgenv().Settings["Speed"]       = 1
+getgenv().Settings["Allow Invisible  "]    = true
+getgenv().Settings["Time Position"] = 0
+getgenv().Settings["Freeze On Finish"] = false
+getgenv().Settings["Looped"] = true
+getgenv().Settings["Stop Other Animations On Play"] = true
 
 local savedEmotes = {}
 local SAVE_FILE = "FlamesEmotes_NewNEWN3WSaved.json"
@@ -181,7 +181,7 @@ local CurrentTrack = nil
 
 local function LoadTrack(id)
     if CurrentTrack then 
-        CurrentTrack:Stop(Settings["Fade Out"]) 
+        CurrentTrack:Stop(getgenv().Settings["Fade Out"]) 
     end
     local animId
     local ok, result = pcall(function() 
@@ -201,20 +201,20 @@ local function LoadTrack(id)
     newAnim.AnimationId = animId
     local newTrack = humanoid:LoadAnimation(newAnim)
     newTrack.Priority = Enum.AnimationPriority.Action4
-    local weight = Settings["Weight"]
+    local weight = getgenv().Settings["Weight"]
     if weight == 0 then weight = 0.001 end
-    if Settings["Stop Other Animations On Play"] then
+    if getgenv().Settings["Stop Other Animations On Play"] then
         for _,t in pairs(humanoid.Animator:GetPlayingAnimationTracks())do
             if t.Priority ~= Enum.AnimationPriority.Action4 then
                 t:Stop()
             end
         end
     end
-    newTrack:Play(Settings["Fade In"], weight, Settings["Speed"])
+    newTrack:Play(getgenv().Settings["Fade In"], weight, getgenv().Settings["Speed"])
     CurrentTrack = newTrack 
-    CurrentTrack.TimePosition = math.clamp(Settings["Time Position"], 0, 1) * (CurrentTrack.Length or 1)
+    CurrentTrack.TimePosition = math.clamp(getgenv().Settings["Time Position"], 0, 1) * (CurrentTrack.Length or 1)
     CurrentTrack.Priority = Enum.AnimationPriority.Action4
-    CurrentTrack.Looped = Settings["Looped"]
+    CurrentTrack.Looped = getgenv().Settings["Looped"]
     return newTrack
 end
 
@@ -222,17 +222,17 @@ if not getgenv().run_service_gaze_emotes_check then -- added for protection, bec
     getgenv().run_service_gaze_emotes_check = true
     wait()
     RunService.RenderStepped:Connect(function() -- can break client execution, halt execution, or lag the user if executed more than once.
-        if Settings["Looped"] and CurrentTrack and CurrentTrack.IsPlaying then
-            CurrentTrack.Looped = Settings["Looped"]
+        if getgenv().Settings["Looped"] and CurrentTrack and CurrentTrack.IsPlaying then
+            CurrentTrack.Looped = getgenv().Settings["Looped"]
         end
 
         if character:FindFirstChild("HumanoidRootPart") then
             local root = character.HumanoidRootPart
-            if Settings["Stop Emote When Moving"] and CurrentTrack and CurrentTrack.IsPlaying then
+            if getgenv().Settings["Stop Emote When Moving"] and CurrentTrack and CurrentTrack.IsPlaying then
                 local moved = (root.Position - lastPosition).Magnitude > 0.1
                 local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
                 if moved or jumped then
-                    CurrentTrack:Stop(Settings["Fade Out"])
+                    CurrentTrack:Stop(getgenv().Settings["Fade Out"])
                     CurrentTrack = nil
                 end
             end
@@ -461,13 +461,13 @@ function GetReal(id)
     end
 end
 
-Settings._sliders = {}
-Settings._toggles = {}
+getgenv().Settings._sliders = {}
+getgenv().Settings._toggles = {}
 
 --// SLIDER CREATOR
 -- dead ass?
 local function createSlider(name, min, max, default)
-    Settings[name] = default or min
+    getgenv().Settings[name] = default or min
 
     local container = Instance.new("Frame")
     container.Size = UDim2.new(1, 0, 0, scale("Y", 65))
@@ -484,7 +484,7 @@ local function createSlider(name, min, max, default)
     label.Size = UDim2.new(0.5, -scale("X", 10), 0, scale("Y", 20))
     label.Position = UDim2.new(0, 10, 0, 5)
     label.BackgroundTransparency = 1
-    label.Text = string.format("%s: %.2f", name, Settings[name])
+    label.Text = string.format("%s: %.2f", name, getgenv().Settings[name])
     label.TextColor3 = Color3.new(1, 1, 1)
     label.Font = Enum.Font.Gotham
     label.TextScaled = true
@@ -495,7 +495,7 @@ local function createSlider(name, min, max, default)
     textBox.Size = UDim2.new(0.5, -scale("X", 20), 0, scale("Y", 20))
     textBox.Position = UDim2.new(0.5, scale("X", 10), 0, scale("Y", 5))
     textBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    textBox.Text = tostring(Settings[name])
+    textBox.Text = tostring(getgenv().Settings[name])
     textBox.TextColor3 = Color3.new(1, 1, 1)
     textBox.Font = Enum.Font.Gotham
     textBox.TextScaled = true
@@ -531,17 +531,17 @@ local function createSlider(name, min, max, default)
     end
 
     local function applyValue(value)
-        Settings[name] = math.clamp(value, min, max)
-        label.Text = string.format("%s: %.2f", name, Settings[name])
-        textBox.Text = tostring(Settings[name])
-        local rel = (Settings[name] - min) / (max - min)
+        getgenv().Settings[name] = math.clamp(value, min, max)
+        label.Text = string.format("%s: %.2f", name, getgenv().Settings[name])
+        textBox.Text = tostring(getgenv().Settings[name])
+        local rel = (getgenv().Settings[name] - min) / (max - min)
         tweenVisual(rel)
 
         if CurrentTrack and CurrentTrack.IsPlaying then
             if name == "Speed" then
-                CurrentTrack:AdjustSpeed(Settings["Speed"])
+                CurrentTrack:AdjustSpeed(getgenv().Settings["Speed"])
             elseif name == "Weight" then
-                local weight = Settings["Weight"]
+                local weight = getgenv().Settings["Weight"]
                 if weight == 0 then weight = 0.001 end
                 CurrentTrack:AdjustWeight(weight)
             elseif name == "Time Position" then
@@ -591,19 +591,19 @@ local function createSlider(name, min, max, default)
             if num then
                 applyValue(num)
             else
-                textBox.Text = tostring(Settings[name])
+                textBox.Text = tostring(getgenv().Settings[name])
             end
         end
     end)
 
-    Settings._sliders[name] = applyValue
-    applyValue(Settings[name])
+    getgenv().Settings._sliders[name] = applyValue
+    applyValue(getgenv().Settings[name])
 end
 
 --// TOGGLE CREATOR
 -- he used ChatGPT.
 local function createToggle(name)
-    Settings[name] = Settings[name] or false
+    getgenv().Settings[name] = getgenv().Settings[name] or false
 
     local container = Instance.new("Frame")
     container.Size = UDim2.new(1, 0, 0, scale("Y", 40))
@@ -637,12 +637,12 @@ local function createToggle(name)
     end
 
     toggleBtn.MouseButton1Click:Connect(function()
-        Settings[name] = not Settings[name]
-        applyVisual(Settings[name])
+        getgenv().Settings[name] = not getgenv().Settings[name]
+        applyVisual(getgenv().Settings[name])
     end)
 
-    applyVisual(Settings[name])
-    Settings._toggles[name] = applyVisual
+    applyVisual(getgenv().Settings[name])
+    getgenv().Settings._toggles[name] = applyVisual
 end
 
 --// UNIFIED EDIT FUNCTIONS
@@ -657,7 +657,7 @@ end
 function Settings:EditToggle(targetName, newValue)
     local apply = self._toggles[targetName]
     if apply then
-        Settings[targetName] = newValue
+        getgenv().Settings[targetName] = newValue
         apply(newValue)
     end
 end
@@ -692,11 +692,11 @@ end
 local resetButton = createButton("Reset Settings", function() end)
 createToggle("Stop Emote When Moving")
 createToggle("Looped")
-createSlider("Speed", 0, 5, Settings["Speed"])
-createSlider("Time Position", 0, 1, Settings["Time Position"])
-createSlider("Weight", 0, 1, Settings["Weight"])
-createSlider("Fade In", 0, 2, Settings["Fade In"])
-createSlider("Fade Out", 0, 2, Settings["Fade Out"])
+createSlider("Speed", 0, 5, getgenv().Settings["Speed"])
+createSlider("Time Position", 0, 1, getgenv().Settings["Time Position"])
+createSlider("Weight", 0, 1, getgenv().Settings["Weight"])
+createSlider("Fade In", 0, 2, getgenv().Settings["Fade In"])
+createSlider("Fade Out", 0, 2, getgenv().Settings["Fade Out"])
 createToggle("Allow Invisible   ")
 createToggle("Stop Other Animations On Play")
 
@@ -714,7 +714,7 @@ resetButton.MouseButton1Click:Connect(function()
 end)
 
 local originalCollisionStates = {}
-local lastFixClipState = Settings["Allow Invisible  "]
+local lastFixClipState = getgenv().Settings["Allow Invisible  "]
 
 local function saveCollisionStates()
     for _, part in ipairs(character:GetDescendants()) do
@@ -725,7 +725,7 @@ local function saveCollisionStates()
 end
 
 local function disableCollisionsExceptRootPart()
-    if not Settings["Allow Invisible  "] then
+    if not getgenv().Settings["Allow Invisible  "] then
         return
     end
     for _, part in ipairs(character:GetDescendants()) do
@@ -751,7 +751,7 @@ if not getgenv().local_heartbeat_allow_invis_connection_watcher then
 
     connection = RunService.Stepped:Connect(function() -- what the hell even is this 😭😭🙏
         if character and character.Parent then
-            local currentFixClip = Settings["Allow Invisible  "]
+            local currentFixClip = getgenv().Settings["Allow Invisible  "]
             if lastFixClipState ~= currentFixClip then
                 if currentFixClip then
                     saveCollisionStates()
@@ -780,13 +780,13 @@ if not getgenv().allow_invis_local_connection_char_added_watcher then
         character = newCharacter
         humanoid = newCharacter:WaitForChild("Humanoid")
         saveCollisionStates()
-        lastFixClipState = Settings["Allow Invisible  "]
+        lastFixClipState = getgenv().Settings["Allow Invisible  "]
         if connection then
             connection:Disconnect()
         end
         connection = RunService.Stepped:Connect(function()
             if character and character.Parent then
-                local currentFixClip = Settings["Allow Invisible  "]
+                local currentFixClip = getgenv().Settings["Allow Invisible  "]
                 if lastFixClipState ~= currentFixClip then
                     if currentFixClip then
                         saveCollisionStates()
