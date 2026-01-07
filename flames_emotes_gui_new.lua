@@ -1389,7 +1389,7 @@ btn.MouseButton1Click:Connect(toggleGui)
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed) -- definitely ChatGPT, the dumb ass who made this was retarded enough to keep it in.
     if gameProcessed then return end
-    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.G then
+    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.F then
         toggleGui()
     end
 end)
