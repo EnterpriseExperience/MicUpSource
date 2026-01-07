@@ -121,7 +121,7 @@ if not getgenv().character_added_conn_watcher then
     wait(0.1)
     player.CharacterAdded:Connect(function(newCharacter)
         character = newCharacter
-        humanoid = newnewCharacter:WaitForChild("Humanoid")
+        humanoid = newCharacter:WaitForChild("Humanoid")
         lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
     end)
 end
