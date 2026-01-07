@@ -1,4 +1,3 @@
--- [[ Nameless Admin but without the annoying other admin users which can mess with other clients of Nameless Admin. ]] --
 if getgenv().RealNamelessLoaded~=nil then return end
 pcall(function() getgenv().RealNamelessLoaded=true; getgenv().NATestingVer=false; getgenv().NAverify="ArysIsASkidFUCKYOU"; end)
 
@@ -54476,13 +54475,6 @@ function setupPlayer(plr,bruh)
 
 	if not bruh and plr.Character then
 		originalIO.binderSetupCharacter(plr, plr.Character)
-	end
-
-	if NAmanage.jlCfg.JoinLog and not bruh then
-		local joinMsg = nameChecker(plr).." has joined the game."
-		local categoryRT = ('<font color="%s">Join</font>/'..'<font color="%s">Leave</font>'):format(logClrs.GREEN, logClrs.WHITE)
-		DoNotif(joinMsg, 1, categoryRT)
-		NAmanage.LogJoinLeave(joinMsg)
 	end
 end
 
