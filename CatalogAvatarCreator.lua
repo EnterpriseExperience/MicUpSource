@@ -500,9 +500,14 @@ function copy_avatar(player)
         task.wait(0.05)
     end
 
-    for _,acc in ipairs(targetDesc:GetAccessories(false)) do
-        if acc.AccessoryType == Enum.AccessoryType.LayeredClothing then
-            Wear(acc.AssetId,"LayeredClothingAccessory")
+    for _,acc in ipairs(targetDesc:GetAccessories(true)) do
+        local accType = acc.AccessoryType
+        local prop = accType and accType.Name and accType.Name.."Accessory"
+        if acc.IsLayered then
+            prop = "LayeredClothingAccessory"
+        end
+        if prop then
+            Wear(acc.AssetId, prop)
             task.wait(0.05)
         end
     end
