@@ -983,8 +983,7 @@ getgenv().owner_of_scripts_items = {
     {17276993677, "NeckAccessory"},
     {9284648371, "Pants"},
     {8878985472, "Shirt"},
-    {238983378, "Face"},
-    {139607718, "RightLeg"}
+    {238983378, "Face"}
 }
 
 getgenv().remove_bundle_heads = function()
@@ -1068,11 +1067,22 @@ getgenv().owner_of_scripts_body_type_scales = {
     }
 }
 
+getgenv().korblox_right_leg_equip_tble = {
+	["Id"] = 139607718,
+	["Action"] = "TryItem",
+	["PropertyName"] = "RightLeg"
+}
+
 getgenv().reset_humanoid_desc = function()
     Catalog_Remote:InvokeServer({
         Action = "UpdateHumanDescProperties",
         Properties = {
             Head = 0,
+            Torso = 0,
+            LeftArm = 0,
+            RightArm = 0,
+            LeftLeg = 0,
+            RightLeg = 0,
             Face = 0,
             Shirt = 0,
             Pants = 0,
@@ -1108,6 +1118,10 @@ getgenv().reset_humanoid_desc = function()
 end
 
 AvatarSection:Button("Char Into Owner Of Script.", function()
+    if not getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+        return ingame_notify("error", "you need to be r15 to do this.", "green", 10)
+    end
+
     getgenv().reset_humanoid_desc()
     task.wait(0.6)
 
@@ -1149,6 +1163,8 @@ AvatarSection:Button("Char Into Owner Of Script.", function()
     getgenv().set_animation_fuzzy("jump", 619542888)
     wait(0.1)
     getgenv().set_animation_fuzzy("fall", 619541867)
+    wait(0.1)
+    Catalog_Remote:InvokeServer(getgenv().korblox_right_leg_equip_tble)
 
     ingame_notify("success", "Applied all accessories.", "green", 5)
 end)
