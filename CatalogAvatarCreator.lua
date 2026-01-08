@@ -1139,7 +1139,7 @@ getgenv().reset_humanoid_desc = function()
 end
 
 AvatarSection:Button("Char Into Owner Of Script.", function()
-    if not if getgenv().Humanoid.RigType ~= Enum.HumanoidRigType.R15 then
+    if not getgenv().Humanoid.RigType ~= Enum.HumanoidRigType.R15 then
         return ingame_notify("error", "you need to be r15 to do this.", "green", 10)
     end
 
