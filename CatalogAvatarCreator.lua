@@ -337,6 +337,9 @@ local function retry_find(func, retries, delay)
     return nil
 end
 
+local maximum_retries_for_char = 500 -- basically has to always exist, there's no way.
+local maximum_retries = 350 -- for everything else.
+
 g.get_char = g.get_char or function(Player)
     if not Player or not Player:IsA("Player") then
         ingame_notify("error", "player don't exist: "..tostring(player), "red", 5)
@@ -344,7 +347,7 @@ g.get_char = g.get_char or function(Player)
     end
     local char = Player.Character
     local attempts = 0
-    while (not char or not char.Parent) and attempts < 200 do
+    while (not char or not char.Parent) and attempts < maximum_retries_for_char do
         char = Player.Character
         task.wait(0.05)
         attempts += 1
@@ -357,7 +360,7 @@ g.get_human = g.get_human or function(Player)
     if not char then return nil end
     local hum = char:FindFirstChildOfClass("Humanoid")
     local attempts = 0
-    while not hum and attempts < 200 do
+    while not hum and attempts < maximum_retries do
         hum = char:FindFirstChildOfClass("Humanoid")
         task.wait(0.05)
         attempts += 1
@@ -372,7 +375,7 @@ g.get_root = g.get_root or function(Player)
         or char:FindFirstChild("Torso") 
         or char:FindFirstChild("UpperTorso")
     local attempts = 0
-    while not root and attempts < 200 do
+    while not root and attempts < maximum_retries do
         root = char:FindFirstChild("HumanoidRootPart") 
             or char:FindFirstChild("Torso") 
             or char:FindFirstChild("UpperTorso")
@@ -387,7 +390,7 @@ g.get_head = g.get_head or function(Player)
     if not char then return nil end
     local head = char:FindFirstChild("Head")
     local attempts = 0
-    while not head and attempts < 200 do
+    while not head and attempts < maximum_retries do
         head = char:FindFirstChild("Head")
         task.wait(0.05)
         attempts += 1
@@ -396,8 +399,9 @@ g.get_head = g.get_head or function(Player)
 end
 wait(0.2)
 function copy_avatar(player)
-    local char = get_char(player)
-    local hum = get_human(player)
+    if not player then return end
+    local char = player.Character or get_char(player)
+    local hum = char:FindFirstChildWhichIsA("Humanoid") or get_human(player)
 
     if not getgenv().AnimSlots then
         getgenv().AnimSlots = {
@@ -411,9 +415,9 @@ function copy_avatar(player)
         }
     end
 
-    ingame_notify("success", "copying: "..tostring(player).."'s avatar.", "green", 5)
+    ingame_notify("success","copying: "..tostring(player).."'s avatar.","green",5)
 
-    local function Wear(id, prop)
+    local function Wear(id,prop)
         Remote:InvokeServer({Action="TryItem",Id=id,PropertyName=prop})
     end
 
@@ -431,33 +435,29 @@ function copy_avatar(player)
 
     local function ApplySkin(bc)
         Remote:InvokeServer({
-            Action = "UpdateHumanDescProperties",
-            Properties = {
-                HeadColor = bc.HeadColor3,
-                TorsoColor = bc.TorsoColor3,
-                LeftArmColor = bc.LeftArmColor3,
-                RightArmColor = bc.RightArmColor3,
-                LeftLegColor = bc.LeftLegColor3,
-                RightLegColor = bc.RightLegColor3,
+            Action="UpdateHumanDescProperties",
+            Properties={
+                HeadColor=bc.HeadColor3,
+                TorsoColor=bc.TorsoColor3,
+                LeftArmColor=bc.LeftArmColor3,
+                RightArmColor=bc.RightArmColor3,
+                LeftLegColor=bc.LeftLegColor3,
+                RightLegColor=bc.RightLegColor3
             }
         })
     end
 
     local function Clear(desc)
-        for _,acc in ipairs(desc:GetAccessories(true)) do
+        for _,acc in ipairs(desc:GetAccessories(false)) do
             TakeOff(acc.AssetId)
-            task.wait(0.1)
+            task.wait(0.05)
         end
         for _,part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg","Face","Shirt","Pants","GraphicTShirt"}) do
             local id = desc[part]
             if typeof(id)=="number" and id>0 then
                 TakeOff(id)
-                task.wait(0.1)
+                task.wait(0.05)
             end
-        end
-        for _,slot in pairs(getgenv().AnimSlots) do
-            TakeOff(0)
-            task.wait(0.1)
         end
         ApplyScales({
             BodyTypeScale=1,
@@ -469,56 +469,64 @@ function copy_avatar(player)
         })
     end
 
-    local targetHum = hum
-    if not targetHum then return end
-    local targetDesc = targetHum:GetAppliedDescription()
+    if not hum then return end
+    local targetDesc = hum:GetAppliedDescription()
     if not targetDesc then return end
 
     local myHum = get_human(Players.LocalPlayer)
     if not myHum then return end
     local myDesc = myHum:GetAppliedDescription()
 
-    if targetHum.RigType == Enum.HumanoidRigType.R6 then
+    if hum.RigType == Enum.HumanoidRigType.R6 then
         ApplyRig(Enum.HumanoidRigType.R6)
     else
         ApplyRig(Enum.HumanoidRigType.R15)
     end
-    task.wait(0.2)
+
+    task.wait(0.25)
     Clear(myDesc)
-    task.wait(1)
+    task.wait(0.8)
+
     for _,part in ipairs({"Head","Torso","LeftArm","RightArm","LeftLeg","RightLeg","Face","Shirt","Pants","GraphicTShirt"}) do
         local id = targetDesc[part]
         if typeof(id)=="number" and id>0 then
             Wear(id,part)
-            task.wait(0.1)
+            task.wait(0.05)
         end
     end
 
     for _,acc in ipairs(targetDesc:GetAccessories(true)) do
         Wear(acc.AssetId,acc.AccessoryType.Name.."Accessory")
-        task.wait(0.1)
+        task.wait(0.05)
     end
 
-    if targetHum.RigType == Enum.HumanoidRigType.R15 then
+    for _,acc in ipairs(targetDesc:GetAccessories(false)) do
+        if acc.AccessoryType == Enum.AccessoryType.LayeredClothing then
+            Wear(acc.AssetId,"LayeredClothingAccessory")
+            task.wait(0.05)
+        end
+    end
+
+    if hum.RigType == Enum.HumanoidRigType.R15 then
         for _,slot in pairs(getgenv().AnimSlots) do
             local id = targetDesc[slot]
-            if id and id>0 then
+            if typeof(id)=="number" and id>0 then
                 Wear(id,slot)
-                task.wait(0.1)
+                task.wait(0.05)
             end
         end
     end
 
     ApplyScales({
-        BodyTypeScale = targetDesc.BodyTypeScale or 1,
-        DepthScale = targetDesc.DepthScale or 1,
-        HeadScale = targetDesc.HeadScale or 1,
-        HeightScale = targetDesc.HeightScale or 1,
-        WidthScale = targetDesc.WidthScale or 1,
-        ProportionScale = targetDesc.ProportionScale or 1
+        BodyTypeScale=targetDesc.BodyTypeScale or 1,
+        DepthScale=targetDesc.DepthScale or 1,
+        HeadScale=targetDesc.HeadScale or 1,
+        HeightScale=targetDesc.HeightScale or 1,
+        WidthScale=targetDesc.WidthScale or 1,
+        ProportionScale=targetDesc.ProportionScale or 1
     })
 
-    local bc = char:FindFirstChildOfClass("BodyColors")
+    local bc = char and char:FindFirstChildOfClass("BodyColors")
     if bc then
         ApplySkin(bc)
     end
@@ -529,10 +537,10 @@ function disable_reanimation()
 
     ApplyPose_RE:FireServer(ohTable1)
     wait(0.3)
-    local okhum = get_human(LocalPlayer)
-    local okchar = get_char(LocalPlayer)
+    local okhum = getgenv().Humanoid or get_human(LocalPlayer)
+    local okchar = getgenv().Character or get_char(LocalPlayer)
 
-    if okhum then
+    if okchar and okhum then
         okhum:ChangeState(Enum.HumanoidStateType.Dead)
     else
         okchar:BreakJoints()
@@ -749,21 +757,6 @@ function float_idle(toggle)
         if not getgenv().float_idle then
             disable_reanimation()
         end
-    end
-end
-
-function reset_reanimation()
-    local ohTable1 = {}
-
-    ApplyPose_RE:FireServer(ohTable1)
-    wait(0.3)
-    local okhum = get_human(LocalPlayer)
-    local okchar = get_char(LocalPlayer)
-
-    if okhum then
-        okhum:ChangeState(Enum.HumanoidStateType.Dead)
-    else
-        okchar:BreakJoints()
     end
 end
 
@@ -1146,7 +1139,7 @@ getgenv().reset_humanoid_desc = function()
 end
 
 AvatarSection:Button("Char Into Owner Of Script.", function()
-    if not getgenv().Humanoid.RigType == Enum.HumanoidRigType.R15 then
+    if not if getgenv().Humanoid.RigType ~= Enum.HumanoidRigType.R15 then
         return ingame_notify("error", "you need to be r15 to do this.", "green", 10)
     end
 
@@ -1192,7 +1185,7 @@ AvatarSection:Button("Char Into Owner Of Script.", function()
     wait(0.1)
     getgenv().set_animation_fuzzy("fall", 619541867)
     wait(0.1)
-    Catalog_Remote:InvokeServer(getgenv().korblox_right_leg_equip_tble)
+    Catalog_Remote:InvokeServer(getgenv().korblox_equip_tables.right_leg)
 
     ingame_notify("success", "Applied all accessories.", "green", 5)
 end)
@@ -1244,6 +1237,8 @@ PlayersSection:TextBox("Copy Avatar (FE)", function(player_user)
     local copy_target_hum = copy_target_char:FindFirstChildWhichIsA("Humanoid") or copy_target_char:WaitForChild("Humanoid", 3) or get_human(copy_target)
 
     ingame_notify("success", "copying: "..tostring(copy_target), "green", 5)
+    getgenv().reset_humanoid_desc()
+    task.wait(0.5)
     copy_avatar(copy_target)
 end)
 
