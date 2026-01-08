@@ -14,6 +14,10 @@ if not getgenv().GlobalEnvironmentFramework_Initialized then
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
 
+getgenv().type_checker_function = function(what, what_type)
+    return typeof(what) == "Instance" and what:IsA(what_type) or false
+end
+
 local function service_wrap(s)
     if cloneref then
         return cloneref(game:GetService(s))
@@ -29,8 +33,8 @@ local Window = Library.new(tostring(game_name).." - Control Panel")
 local HomeTab = Window:Tab("Home")
 local ReanimationTab = Window:Tab("Reanimation")
 local UITab = Window:Tab("UI")
-local AvatarSection = HomeTab:Section("Character")
-local PlayersSection = HomeTab:Section("Players")
+local AvatarSection = HomeTab:Section("Avatar/Character")
+local PlayersSection = HomeTab:Section("LocalPlayer/Players")
 local PrivServerSection = HomeTab:Section("Private Server")
 local R6AnimationsSection = ReanimationTab:Section("R6 Animations")
 local UISection = UITab:Section("UI")
@@ -62,7 +66,9 @@ getgenv().toggle_logging = function(state)
     end
 end
 wait(0.2)
-getgenv().toggle_logging(true)
+if getconnections or get_signal_cons then
+    getgenv().toggle_logging(true)
+end
 -- saving for later --
 -- local title = section:Title("Character") --
 -- title:ChangeText("Title") --
@@ -251,7 +257,7 @@ local ApplyPose_RE = Events_Folder and Events_Folder:FindFirstChild("ApplyPose",
 local g = getgenv()
 wait(0.3)
 function ingame_notify(title, message, colorName, dur)
-    if Popup_Message:IsA("BindableEvent") then
+    if type_checker_function(Popup_Message, "BindableEvent") then
         colorName = tostring(colorName or "green"):lower()
         local colors = {
             green  = "#00ff00",
@@ -280,12 +286,14 @@ function ingame_notify(title, message, colorName, dur)
 end
 
 function change_displayname(setting, new_val)
-    local ohTable1 = {
-        ["Action"] = setting,
-        ["DisplayName"] = new_val
-    }
+    if type_checker_function(Settings_RF, "RemoteFunction") then
+        local ohTable1 = {
+            ["Action"] = setting,
+            ["DisplayName"] = new_val
+        }
 
-    Settings_RF:InvokeServer(ohTable1)
+        Settings_RF:InvokeServer(ohTable1)
+    end
 end
 
 local function wait_for_datamodel(inst)
@@ -877,34 +885,37 @@ function flash_name_title(toggle)
 end
 
 function vip_server_notif_spam(toggle)
-    local ohTable1 = {
-        ["Action"] = "ToggleGearsEnabled",
-        ["Enabled"] = true
-    }
-    local ohTable2 = {
-        ["Action"] = "ToggleGearsEnabled",
-        ["Enabled"] = false
-    }
-    local is_priv_server = is_vip_owner()
+	local ohTable = {
+		Action = "ToggleGearsEnabled",
+		Enabled = true
+	}
 
-    if not is_priv_server then
-        getgenv().settings_spam = false
-        return ingame_notify("error", "you don't own this private server, or it is a public server.", "red", 15)
-    end
+	if not is_vip_owner() then
+		getgenv().settings_spam = false
+		return ingame_notify("error", "you don't own this private server, or it is a public server.", "red", 15)
+	end
 
-    if toggle == true then
-        getgenv().settings_spam = true
-        while getgenv().settings_spam == true do
-        task.wait()
-            Settings_RF:InvokeServer(ohTable1)
-            task.wait(0)
-            Settings_RF:InvokeServer(ohTable2)
-        end
-    elseif toggle == false then
-        getgenv().settings_spam = false
+	if toggle == true then
+		getgenv().settings_spam = true
+		getgenv().settings_spam_task = task.spawn(function()
+			while getgenv().settings_spam do
+				ohTable.Enabled = not ohTable.Enabled
+				Settings_RF:InvokeServer(ohTable)
+				task.wait(0)
+			end
+		end)
+	elseif toggle == false then
+		getgenv().settings_spam = false
+
+		if getgenv().settings_spam_task then
+			pcall(function()
+				task.cancel(getgenv().settings_spam_task)
+			end)
+			getgenv().settings_spam_task = nil
+		end
     else
         return 
-    end
+	end
 end
 
 getgenv().saved_colors = getgenv().saved_colors or {}
@@ -1067,10 +1078,27 @@ getgenv().owner_of_scripts_body_type_scales = {
     }
 }
 
-getgenv().korblox_right_leg_equip_tble = {
-	["Id"] = 139607718,
-	["Action"] = "TryItem",
-	["PropertyName"] = "RightLeg"
+getgenv().korblox_equip_tables = {
+	right_leg = {
+		Id = 139607718,
+		Action = "TryItem",
+		PropertyName = "RightLeg"
+	},
+	left_leg = {
+		Id = 139607673,
+		Action = "TryItem",
+		PropertyName = "LeftLeg"
+	},
+	right_arm = {
+		Id = 139607625,
+		Action = "TryItem",
+		PropertyName = "RightArm"
+	},
+	left_arm = {
+		Id = 139607570,
+		Action = "TryItem",
+		PropertyName = "LeftArm"
+	}
 }
 
 getgenv().reset_humanoid_desc = function()
@@ -1217,7 +1245,141 @@ PlayersSection:TextBox("Copy Avatar (FE)", function(player_user)
 
     ingame_notify("success", "copying: "..tostring(copy_target), "green", 5)
     copy_avatar(copy_target)
-    --make_avatar(copy_target, rig_to_string(copy_target_hum))
+end)
+
+PlayersSection:TextBox("Get Plrs Avatar", function(player_entered)
+    local copy_target = findplr(player_entered)
+    if not copy_target then
+        return ingame_notify("error", "that player don't exist bro.", "red", 10)
+    end
+    local copy_target_char = copy_target.Character or get_char(copy_target)
+    if not copy_target_char then return ingame_notify("error", "players character doesn't exist anymore.", "red", 6) end
+    local copy_target_hum = copy_target_char:FindFirstChildWhichIsA("Humanoid") or copy_target_char:WaitForChild("Humanoid", 3) or get_human(copy_target)
+
+    ingame_notify("success", "becoming: "..tostring(copy_target), "green", 5)
+    make_avatar(copy_target, rig_to_string(copy_target_hum))
+end)
+
+AvatarSection:Toggle("Korblox Loop (Legs)", function(state)
+	if state then
+		getgenv().korblox_flasher_toggle = true
+
+		if not getgenv().korblox_saved_legs then
+			local char = game.Players.LocalPlayer.Character
+			local hum = char and char:FindFirstChildOfClass("Humanoid")
+			if hum then
+				local d = hum:GetAppliedDescription()
+				getgenv().korblox_saved_legs = {
+					RightLeg = d.RightLeg,
+					LeftLeg = d.LeftLeg
+				}
+			end
+		end
+
+		getgenv().korblox_toggling_task_spawned_loop = task.spawn(function()
+			while getgenv().korblox_flasher_toggle == true do
+				for _, key in ipairs({"right_leg","left_leg"}) do
+					if not getgenv().korblox_flasher_toggle then break end
+					local t = getgenv().korblox_equip_tables[key]
+					if t then
+						Catalog_Remote:InvokeServer({
+							Action = t.Action,
+							Id = t.Id,
+							PropertyName = t.PropertyName
+						})
+						Catalog_Remote:InvokeServer({
+							Action = "TakeOffItem",
+							Id = t.Id
+						})
+					end
+				end
+			end
+		end)
+	else
+		getgenv().korblox_flasher_toggle = false
+		task.wait(0.05)
+
+		if getgenv().korblox_toggling_task_spawned_loop then
+			pcall(function()
+				task.cancel(getgenv().korblox_toggling_task_spawned_loop)
+			end)
+			getgenv().korblox_toggling_task_spawned_loop = nil
+		end
+
+		if getgenv().korblox_saved_legs then
+			for prop, id in pairs(getgenv().korblox_saved_legs) do
+				if id and id ~= 0 then
+					Catalog_Remote:InvokeServer({
+						Action = "TryItem",
+						Id = id,
+						PropertyName = prop
+					})
+				end
+			end
+			getgenv().korblox_saved_legs = nil
+		end
+	end
+end)
+
+AvatarSection:Toggle("Korblox Loop (Arms)", function(state)
+	if state then
+		getgenv().korblox_arms_loop = true
+
+		if not getgenv().korblox_saved_arms then
+			local char = game.Players.LocalPlayer.Character
+			local hum = char and char:FindFirstChildOfClass("Humanoid")
+			if hum then
+				local d = hum:GetAppliedDescription()
+				getgenv().korblox_saved_arms = {
+					RightArm = d.RightArm,
+					LeftArm = d.LeftArm
+				}
+			end
+		end
+
+		getgenv().korblox_arms_toggling_spawned_loop = task.spawn(function()
+			while getgenv().korblox_arms_loop == true do
+				for _, key in ipairs({"right_arm","left_arm"}) do
+					if not getgenv().korblox_arms_loop then break end
+					local t = getgenv().korblox_equip_tables[key]
+					if t then
+						Catalog_Remote:InvokeServer({
+							Action = t.Action,
+							Id = t.Id,
+							PropertyName = t.PropertyName
+						})
+						Catalog_Remote:InvokeServer({
+							Action = "TakeOffItem",
+							Id = t.Id
+						})
+					end
+				end
+			end
+		end)
+	else
+		getgenv().korblox_arms_loop = false
+		task.wait(0.05)
+
+		if getgenv().korblox_arms_toggling_spawned_loop then
+			pcall(function()
+				task.cancel(getgenv().korblox_arms_toggling_spawned_loop)
+			end)
+			getgenv().korblox_arms_toggling_spawned_loop = nil
+		end
+
+		if getgenv().korblox_saved_arms then
+			for prop, id in pairs(getgenv().korblox_saved_arms) do
+				if id and id ~= 0 then
+					Catalog_Remote:InvokeServer({
+						Action = "TryItem",
+						Id = id,
+						PropertyName = prop
+					})
+				end
+			end
+			getgenv().korblox_saved_arms = nil
+		end
+	end
 end)
 
 AvatarSection:Button("Refresh Character (FE)", function()
