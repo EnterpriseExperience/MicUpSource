@@ -6,6 +6,14 @@ end
 
 getgenv().CatalogAvatarCreator_Script_Menu_Loaded = true
 
+local g = getgenv()
+
+if not getgenv().GlobalEnvironmentFramework_Initialized then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
+    wait(0.1)
+    getgenv().GlobalEnvironmentFramework_Initialized = true
+end
+
 local function service_wrap(s)
     if cloneref then
         return cloneref(game:GetService(s))
@@ -848,13 +856,16 @@ function flash_name_title(toggle)
     if toggle == true then
         local titles = {
             "[AFK]",
+            "[Viewing Settings]",
+            "[Viewing Catalog]",
+            "[Viewing Outfits]"
         }
 
         getgenv().updating_status_title = true
         while getgenv().updating_status_title == true do
-        task.wait()
+        task.wait(1.8)
             for _, status in ipairs(titles) do
-                task.wait(0)
+                task.wait(0.2)
                 Upd_Plr_Status:FireServer(status)
             end
         end
@@ -960,9 +971,185 @@ end
 wait(0.1)
 ingame_notify("wsg bro", "Welcome to: Flames Hub | Catalog Avatar Creator.", "orange", 10)
 
-getgenv().MakeYourselfOwnerOfScript = AvatarSection:Button("Char Into Owner Of Script.", function()
-    make_avatar(7712000520, "r6")
-    ingame_notify("success", "made you look like me, no glazin shit.", "green", 5)
+getgenv().owner_of_scripts_items = {
+    {87582777827738, "HatAccessory"},
+    {92081878279907, "FaceAccessory"},
+    {108535717397134, "HairAccessory"},
+    {18862883592, "WaistAccessory"},
+    {77319962406803, "BackAccessory"},
+    {75283135885755, "NeckAccessory"},
+    {139970077070888, "NeckAccessory"},
+    {133181754969412, "NeckAccessory"},
+    {17276993677, "NeckAccessory"},
+    {9284648371, "Pants"},
+    {8878985472, "Shirt"},
+    {238983378, "Face"}
+}
+
+getgenv().remove_bundle_heads = function()
+    Catalog_Remote:InvokeServer({
+        Action = "UpdateHumanDescProperties",
+        Properties = {
+            Head = 0
+        }
+    })
+end
+
+getgenv().remove_bundle_animations = function()
+    Catalog_Remote:InvokeServer({
+        Action = "UpdateHumanDescProperties",
+        Properties = {
+            IdleAnimation = 0,
+            WalkAnimation = 0,
+            RunAnimation = 0,
+            JumpAnimation = 0,
+            FallAnimation = 0,
+            ClimbAnimation = 0,
+            SwimAnimation = 0
+        }
+    })
+end
+
+getgenv().set_animation_fuzzy = function(name, value)
+    if typeof(name) ~= "string" then return end
+    if typeof(value) ~= "number" then return end
+
+    local n = name:lower()
+    local prop
+
+    if n:find("idle") or n:find("mood") then
+        prop = "IdleAnimation"
+    elseif n:find("walk") then
+        prop = "WalkAnimation"
+    elseif n:find("run") then
+        prop = "RunAnimation"
+    elseif n:find("jump") then
+        prop = "JumpAnimation"
+    elseif n:find("fall") then
+        prop = "FallAnimation"
+    elseif n:find("climb") then
+        prop = "ClimbAnimation"
+    elseif n:find("swim") then
+        prop = "SwimAnimation"
+    end
+
+    if not prop then return end
+
+    Catalog_Remote:InvokeServer({
+        Action = "UpdateHumanDescProperties",
+        Properties = {
+            [prop] = value
+        }
+    })
+end
+
+getgenv().owner_of_scripts_body_colors = {
+    Action = "UpdateHumanDescProperties",
+    Properties = {
+        HeadColor = Color3.new(0.411765, 0.25098, 0.156863),
+        TorsoColor = Color3.new(0.411765, 0.25098, 0.156863),
+        LeftArmColor = Color3.new(0.411765, 0.25098, 0.156863),
+        RightArmColor = Color3.new(0.411765, 0.25098, 0.156863),
+        LeftLegColor = Color3.new(0.411765, 0.25098, 0.156863),
+        RightLegColor = Color3.new(0.411765, 0.25098, 0.156863)
+    }
+}
+
+getgenv().owner_of_scripts_body_type_scales = {
+    Action = "UpdateHumanDescProperties",
+    Properties = {
+        BodyTypeScale = 0.95,
+        DepthScale = 0.85,
+        HeadScale = 1,
+        HeightScale = 0.8,
+        WidthScale = 0.7,
+        ProportionScale = 0.4
+    }
+}
+
+getgenv().reset_humanoid_desc = function()
+    Catalog_Remote:InvokeServer({
+        Action = "UpdateHumanDescProperties",
+        Properties = {
+            Head = 0,
+            Face = 0,
+            Shirt = 0,
+            Pants = 0,
+            GraphicTShirt = 0,
+            HeadColor = Color3.new(1,1,1),
+            TorsoColor = Color3.new(1,1,1),
+            LeftArmColor = Color3.new(1,1,1),
+            RightArmColor = Color3.new(1,1,1),
+            LeftLegColor = Color3.new(1,1,1),
+            RightLegColor = Color3.new(1,1,1),
+            BodyTypeScale = 0,
+            DepthScale = 0,
+            HeadScale = 0,
+            HeightScale = 0,
+            WidthScale = 0,
+            ProportionScale = 0,
+            IdleAnimation = 0,
+            WalkAnimation = 0,
+            RunAnimation = 0,
+            JumpAnimation = 0,
+            FallAnimation = 0,
+            ClimbAnimation = 0,
+            SwimAnimation = 0,
+            HatAccessory = 0,
+            HairAccessory = 0,
+            FaceAccessory = 0,
+            NeckAccessory = 0,
+            WaistAccessory = 0,
+            BackAccessory = 0,
+            FrontAccessory = 0
+        }
+    })
+end
+
+AvatarSection:Button("Char Into Owner Of Script.", function()
+    getgenv().reset_humanoid_desc()
+    task.wait(0.6)
+
+    for _, item in ipairs(getgenv().owner_of_scripts_items) do
+        Catalog_Remote:InvokeServer({
+            Action = "TryItem",
+            Id = item[1],
+            PropertyName = item[2]
+        })
+        task.wait(0.15)
+    end
+
+    task.wait(0.25)
+    Catalog_Remote:InvokeServer(getgenv().owner_of_scripts_body_colors)
+    task.wait(0.25)
+    Catalog_Remote:InvokeServer({
+        Action = "TryBundle",
+        BundleId = 808195
+    })
+
+    task.wait(0.4)
+    Catalog_Remote:InvokeServer(getgenv().owner_of_scripts_body_type_scales)
+    wait(0.3)
+    task.wait(0.3)
+    getgenv().remove_bundle_animations()
+    task.wait(0.2)
+    getgenv().remove_bundle_heads()
+    wait(0.3)
+    ingame_notify("success", "applying animations...", "green", 5)
+    wait()
+    getgenv().set_animation_fuzzy("walk", 0)
+    wait(0.2)
+    getgenv().set_animation_fuzzy("walk", 619537468)
+    wait(0.1)
+    getgenv().set_animation_fuzzy("run", 619536621)
+    wait(0.1)
+    getgenv().set_animation_fuzzy("idle", 734327140)
+    wait(0.1)
+    getgenv().set_animation_fuzzy("jump", 619542888)
+    wait(0.1)
+    getgenv().set_animation_fuzzy("fall", 619541867)
+
+    ingame_notify("success", "Applied all accessories.", "green", 5)
 end)
 
 getgenv().RainbowSkin_ToggleUI = AvatarSection:Toggle("Rainbow Skin (FE)", function(state)
@@ -993,6 +1180,7 @@ getgenv().RainbowSkin_ToggleUI = AvatarSection:Toggle("Rainbow Skin (FE)", funct
         wait(2)
         ingame_notify("success", "disabled RGB skintone.", "green", 5)
         if not getgenv().Rainbow_Skin_Enabled then
+            wait(1)
             ingame_notify("info", "resetting skintone...", "white", 5)
             apply_skin()
             wait(0.5)
@@ -1006,10 +1194,13 @@ PlayersSection:TextBox("Copy Avatar (FE)", function(player_user)
     if not copy_target then
         return ingame_notify("error", "that player don't exist bro.", "red", 10)
     end
-    local copy_target_hum = get_human(copy_target)
+    local copy_target_char = copy_target.Character or get_char(copy_target)
+    if not copy_target_char then return ingame_notify("error", "players character doesn't exist anymore.", "red", 6) end
+    local copy_target_hum = copy_target_char:FindFirstChildWhichIsA("Humanoid") or copy_target_char:WaitForChild("Humanoid", 3) or get_human(copy_target)
 
     ingame_notify("success", "copying: "..tostring(copy_target), "green", 5)
-    make_avatar(copy_target, rig_to_string(copy_target_hum))
+    copy_avatar(copy_target)
+    --make_avatar(copy_target, rig_to_string(copy_target_hum))
 end)
 
 AvatarSection:Button("Refresh Character (FE)", function()
