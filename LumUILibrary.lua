@@ -2097,13 +2097,17 @@ function Library.new(windowName: string, constrainToScreen: boolean?, width: num
 	end
 
 	local function closeWindow()
-		local closeWindowTween = TweenService:Create(windowInstance.Background, TweenInfo.new(.15, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)})
-		closeWindowTween.Completed:Connect(function()
-			task.wait()
-		windowInstance:Destroy()
-			window = nil
-		end)
-		closeWindowTween:Play()
+		if windowInstance and windowInstance.Background then
+			local closeWindowTween = TweenService:Create(windowInstance.Background, TweenInfo.new(.15, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)})
+			closeWindowTween.Completed:Connect(function()
+				task.wait()
+			windowInstance:Destroy()
+				window = nil
+			end)
+			closeWindowTween:Play()
+		else
+			return 
+		end
 	end
 	wait(0.2)
 	getgenv().closeWindow = closeWindow
