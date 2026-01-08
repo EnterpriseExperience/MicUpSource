@@ -983,7 +983,8 @@ getgenv().owner_of_scripts_items = {
     {17276993677, "NeckAccessory"},
     {9284648371, "Pants"},
     {8878985472, "Shirt"},
-    {238983378, "Face"}
+    {238983378, "Face"},
+    {139607718, "RightLeg"}
 }
 
 getgenv().remove_bundle_heads = function()
