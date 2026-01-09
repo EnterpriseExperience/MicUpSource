@@ -312,15 +312,17 @@ local function wait_for_datamodel(inst)
 end
 
 function save_current_avatar(name)
-    local args = {
-        [1] = {
-            ["OutfitName"] = tostring(name);
-            ["Configs"] = {};
-            ["Action"] = "CreateNewOutfit";
-        };
-    }
+    if type_checker_function(Save_Fit_RE, "RemoteFunction") then
+        local args = {
+            [1] = {
+                ["OutfitName"] = tostring(name);
+                ["Configs"] = {};
+                ["Action"] = "CreateNewOutfit";
+            };
+        }
 
-    Save_Fit_RE:InvokeServer(unpack(args))
+        Save_Fit_RE:InvokeServer(unpack(args))
+    end
 end
 
 local function wait_for_child_safe(parent, name)
@@ -822,6 +824,7 @@ end
 
 function name_changer_premium(toggle)
     local words = {
+        -- won't get hashtagged, since they're all different in their own way --
         "root_access",
         "packet_inject",
         "xor_key",
@@ -960,6 +963,83 @@ local function save_skin()
     return true, rig
 end
 
+getgenv().save_certain_body_parts_skintone = function(bodyPart)
+    local LP = Players.LocalPlayer
+
+    local hum = get_human(LP)
+    if not hum then
+        return false, nil
+    end
+
+    local char = get_char(LP)
+    if not char then
+        return false, hum.RigType
+    end
+
+    local bc = char:FindFirstChildOfClass("BodyColors")
+    if not bc then
+        return false, hum.RigType
+    end
+
+    getgenv().partial_saved_colors = getgenv().partial_saved_colors or {}
+
+    local input = type(bodyPart) == "string" and bodyPart:lower() or ""
+
+    local function saveProp(prop)
+        local val = bc[prop .. "3"]
+        if val then
+            getgenv().partial_saved_colors[prop .. "3"] = val
+        end
+    end
+
+    if input == "" or input == "all" then
+        saveProp("HeadColor")
+        saveProp("TorsoColor")
+        saveProp("LeftArmColor")
+        saveProp("RightArmColor")
+        saveProp("LeftLegColor")
+        saveProp("RightLegColor")
+    else
+        if input:find("head") then
+            saveProp("HeadColor")
+        end
+
+        if input:find("torso") or input:find("body") or input:find("upper") then
+            saveProp("TorsoColor")
+        end
+
+        if input:find("arm") then
+            if input:find("left") or input:find("larm") then
+                saveProp("LeftArmColor")
+            elseif input:find("right") or input:find("rarm") then
+                saveProp("RightArmColor")
+            else
+                saveProp("LeftArmColor")
+                saveProp("RightArmColor")
+            end
+        end
+
+        if input:find("leg") then
+            if input:find("left") or input:find("lleg") then
+                saveProp("LeftLegColor")
+            elseif input:find("right") or input:find("rleg") then
+                saveProp("RightLegColor")
+            else
+                saveProp("LeftLegColor")
+                saveProp("RightLegColor")
+            end
+        end
+    end
+
+    if next(getgenv().partial_saved_colors) == nil then
+        return false, hum.RigType
+    end
+
+    ingame_notify("info", "saved body color(s).", "white", 5)
+
+    return true, hum.RigType
+end
+
 local function apply_skin()
     if next(getgenv().saved_colors) == nil then return false end
 
@@ -976,6 +1056,81 @@ local function apply_skin()
     })
 
     return true
+end
+
+getgenv().apply_default_skin_tone_on_body_part = function(bodyPart)
+    local partialStore = getgenv().partial_saved_colors
+    local defaultStore = getgenv().saved_colors
+
+    if type(partialStore) ~= "table" and type(defaultStore) ~= "table" then
+        return false
+    end
+
+    local input = type(bodyPart) == "string" and bodyPart:lower() or ""
+    local props = {}
+
+    local function resolveProp(prop)
+        local key = prop .. "3"
+        local val = partialStore and partialStore[key] or nil
+        if not val and defaultStore then
+            val = defaultStore[key]
+        end
+        if val then
+            props[prop] = val
+        end
+    end
+
+    if input == "" or input == "all" then
+        resolveProp("HeadColor")
+        resolveProp("TorsoColor")
+        resolveProp("LeftArmColor")
+        resolveProp("RightArmColor")
+        resolveProp("LeftLegColor")
+        resolveProp("RightLegColor")
+    else
+        if input:find("head") then
+            resolveProp("HeadColor")
+        end
+
+        if input:find("torso") or input:find("body") or input:find("upper") then
+            resolveProp("TorsoColor")
+        end
+
+        if input:find("arm") then
+            if input:find("left") or input:find("larm") then
+                resolveProp("LeftArmColor")
+            elseif input:find("right") or input:find("rarm") then
+                resolveProp("RightArmColor")
+            else
+                resolveProp("LeftArmColor")
+                resolveProp("RightArmColor")
+            end
+        end
+
+        if input:find("leg") then
+            if input:find("left") or input:find("lleg") then
+                resolveProp("LeftLegColor")
+            elseif input:find("right") or input:find("rleg") then
+                resolveProp("RightLegColor")
+            else
+                resolveProp("LeftLegColor")
+                resolveProp("RightLegColor")
+            end
+        end
+    end
+
+    if next(props) == nil then
+        return false
+    end
+
+    local ok = pcall(function()
+        Remote:InvokeServer({
+            Action = "UpdateHumanDescProperties",
+            Properties = props
+        })
+    end)
+
+    return ok
 end
 wait(0.1)
 ingame_notify("wsg bro", "Welcome to: Flames Hub | Catalog Avatar Creator.", "orange", 10)
@@ -1228,6 +1383,104 @@ getgenv().RainbowSkin_ToggleUI = AvatarSection:Toggle("Rainbow Skin (FE)", funct
             apply_skin()
             wait(0.5)
             ingame_notify("success", "reset skintone.", "green", 5)
+        end
+    end
+end)
+
+getgenv().RainbowArms_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Legs (FE)", function(state)
+    if state then
+        getgenv().save_certain_body_parts_skintone("legs")
+        ingame_notify("info", "saved current skintone and enabled rgb legs.", "white", 5)
+        getgenv().Rainbow_Legs_Enabled = true
+            while getgenv().Rainbow_Legs_Enabled == true do
+            task.wait()
+            for name, color in pairs(colors) do
+                task.wait(0)
+                local ohTable = {
+                    ["Action"] = "UpdateHumanDescProperties",
+                    ["Properties"] = {
+                        ["LeftLegColor"] = color,
+                        ["RightLegColor"] = color
+                    }
+                }
+                Catalog_Remote:InvokeServer(ohTable)
+            end
+        end
+    else
+        getgenv().Rainbow_Legs_Enabled = false
+        wait(2)
+        ingame_notify("success", "disabled RGB legs skintone.", "green", 5)
+        if not getgenv().Rainbow_Legs_Enabled then
+            wait(1)
+            ingame_notify("info", "resetting legs skintone...", "white", 5)
+            getgenv().apply_default_skin_tone_on_body_part("legs")
+            wait(0.5)
+            ingame_notify("success", "reset legs skintone.", "green", 5)
+        end
+    end
+end)
+
+getgenv().Rainbow_Arms_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Arms (FE)", function(state)
+    if state then
+        getgenv().save_certain_body_parts_skintone("arms")
+        ingame_notify("info", "saved current skintone and enabled rgb arms.", "white", 5)
+        getgenv().Rainbow_Arms_Enabled = true
+            while getgenv().Rainbow_Arms_Enabled == true do
+            task.wait()
+            for name, color in pairs(colors) do
+                task.wait(0)
+                local ohTable = {
+                    ["Action"] = "UpdateHumanDescProperties",
+                    ["Properties"] = {
+                        ["LeftArmColor"] = color,
+                        ["RightArmColor"] = color
+                    }
+                }
+                Catalog_Remote:InvokeServer(ohTable)
+            end
+        end
+    else
+        getgenv().Rainbow_Arms_Enabled = false
+        wait(2)
+        ingame_notify("success", "disabled RGB arms skintone.", "green", 5)
+        if not getgenv().Rainbow_Arms_Enabled then
+            wait(1)
+            ingame_notify("info", "resetting arms skintone...", "white", 5)
+            getgenv().apply_default_skin_tone_on_body_part("arms")
+            wait(0.5)
+            ingame_notify("success", "reset arms skintone.", "green", 5)
+        end
+    end
+end)
+
+getgenv().Rainbow_Head_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Head (FE)", function(state)
+    if state then
+        getgenv().save_certain_body_parts_skintone("head")
+        ingame_notify("info", "saved current skintone and enabled rgb head.", "white", 5)
+        getgenv().Rainbow_Head_Enabled = true
+        while getgenv().Rainbow_Head_Enabled == true do
+            task.wait()
+            for name, color in pairs(colors) do
+                task.wait(0)
+                local ohTable = {
+                    ["Action"] = "UpdateHumanDescProperties",
+                    ["Properties"] = {
+                        ["HeadColor"] = color
+                    }
+                }
+                Catalog_Remote:InvokeServer(ohTable)
+            end
+        end
+    else
+        getgenv().Rainbow_Head_Enabled = false
+        wait(2)
+        ingame_notify("success", "disabled RGB head skintone.", "green", 5)
+        if not getgenv().Rainbow_Head_Enabled then
+            wait(1)
+            ingame_notify("info", "resetting head skintone...", "white", 5)
+            getgenv().apply_default_skin_tone_on_body_part("head")
+            wait(0.5)
+            ingame_notify("success", "reset head skintone.", "green", 5)
         end
     end
 end)
