@@ -1513,6 +1513,22 @@ PlayersSection:TextBox("Get Plrs Avatar", function(player_entered)
     make_avatar(copy_target, rig_to_string(copy_target_hum))
 end)
 
+PlayersSection:TextBox("Become Anyone On Roblox", function(player_entered)
+    local userId
+
+    local success, result = pcall(function()
+        return Players:GetUserIdFromNameAsync(player_entered)
+    end)
+
+    if not success or not result then
+        return ingame_notify("error", "invalid username provided.", "red", 5)
+    end
+
+    userId = result
+    ingame_notify("success", "becoming: "..player_entered.." ("..userId..")", "green", 5)
+    make_avatar(userId, "r15")
+end)
+
 AvatarSection:Toggle("Korblox Loop (Legs)", function(state)
 	if state then
 		getgenv().korblox_flasher_toggle = true
