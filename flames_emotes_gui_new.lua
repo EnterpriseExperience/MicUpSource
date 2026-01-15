@@ -99,7 +99,9 @@ local Services = getgenv().get_or_set("Services", setmetatable({}, {
 function getRoot(char)
 	if char and char:FindFirstChildOfClass("Humanoid") then
 		return char:FindFirstChildOfClass("Humanoid").RootPart
-   elseif not char then
+    elseif char and char:FindFirstChild("HumanoidRootPart") then
+        return char:WaitForChild("HumanoidRootPart")
+    elseif not char then
 		return nil
 	end
 end
@@ -138,7 +140,6 @@ getgenv().Settings["Time Position"] = 0
 getgenv().Settings["Freeze On Finish"] = false
 getgenv().Settings["Looped"] = true
 getgenv().Settings["Stop Other Animations On Play"] = true
-
 local savedEmotes = {}
 local SAVE_FILE = "FlamesEmotes_NewNEWN3WSaved.json"
 local function loadSavedEmotes()
@@ -168,7 +169,7 @@ local function loadSavedEmotes()
     end
 end
 
-local function saveEmotesToData()
+getgenv().saveEmotesToData = function()
     pcall(function()
         if writefile then -- no need for an 'if' check retard, you already have it in a pcall function, it's safe regardless.
             writefile(SAVE_FILE, HttpService:JSONEncode(savedEmotes)) -- ChatGPT made this shit bro.
@@ -177,15 +178,16 @@ local function saveEmotesToData()
 end
 
 loadSavedEmotes()
+wait(0.5)
+getgenv().currently_saved_emotes_list = savedEmotes
 local CurrentTrack = nil
-
 local function LoadTrack(id)
     if CurrentTrack then 
         CurrentTrack:Stop(getgenv().Settings["Fade Out"]) 
     end
     local animId
     local ok, result = pcall(function() 
-        return game:GetObjects("rbxassetid://" .. tostring(id)) -- not safe.
+        return game:GetObjects("rbxassetid://" .. tostring(id)) -- not safe but what ever.
     end)
     if ok and result and #result > 0 then
         local anim = result[1]
