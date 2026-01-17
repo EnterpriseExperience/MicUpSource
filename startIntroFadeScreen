@@ -4,10 +4,10 @@ local player = Players.LocalPlayer
 local player_name = player.DisplayName
 local TweenService = cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
 local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-local scramble_time = 3
+local scramble_time = 3.5
 local scramble_speed = 0.01
-local fade_out_text_time = 2
-local fade_out_background_time = 2
+local fade_out_text_time = 1
+local fade_out_background_time = 1
 local intro_phrases = {
     "Welcome",
     "Wsp",
