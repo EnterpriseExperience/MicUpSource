@@ -210,6 +210,7 @@ get_or_set("notify", notify_func)
 
 flames_api.notify = function(title, content, dur)
 	local fixed_title = format_title(title)
+	
 	NotifyLib:External_Notification(fixed_title, tostring(content), tonumber(dur))
 end
 
@@ -490,71 +491,70 @@ else
 end
 
 local updating = false
+local char_updating = false
 
 local function hook_updates()
 	if updating then return end
 	updating = true
 
-	task.spawn(function()
-		while g.Character == nil do task.wait() end
-		sync_api()
+	task.defer(function()
+		if g.Character then
+			sync_api()
+		end
 		updating = false
 	end)
 end
 
 local function update_character_refs()
-	local lp = g.LocalPlayer
-	local char
+	if char_updating then return end
+	char_updating = true
 
-	while true do
-		char = g.get_char(lp)
-		if char then break end
-		task.wait()
+	local lp = g.LocalPlayer
+	if not lp then
+		char_updating = false
+		return
 	end
 
+	local char = lp.Character or lp.CharacterAdded:Wait()
 	g.Character = char
 
-	while true do
-		local hum = g.get_human(lp)
-		if hum then
-			g.Humanoid = hum
-			break
-		end
-		task.wait()
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if not hum then
+		hum = char.ChildAdded:Wait()
+	end
+	if hum and hum:IsA("Humanoid") then
+		g.Humanoid = hum
 	end
 
-	while true do
-		local root = g.get_root(lp)
-		if root then
-			g.HumanoidRootPart = root
-			break
-		end
-		task.wait()
-	end
+	local root =
+		char:FindFirstChild("HumanoidRootPart")
+		or char:FindFirstChild("UpperTorso")
+		or char:FindFirstChild("Torso")
 
-	while true do
-		local head = g.get_head(lp)
-		if head then
-			g.Head = head
-			break
-		end
-		task.wait()
+	if not root then
+		root = char.ChildAdded:Wait()
 	end
+	g.HumanoidRootPart = root
+
+	local head = char:FindFirstChild("Head")
+	if not head then
+		head = char.ChildAdded:Wait()
+	end
+	g.Head = head
+
+	char_updating = false
+	hook_updates()
 end
 
 if not g.Flames_Hub_Dynamic_CharAdded_Checker then
-   g.Flames_Hub_Dynamic_CharAdded_Checker = true
+	g.Flames_Hub_Dynamic_CharAdded_Checker = true
 
-	g.LocalPlayer.CharacterAdded:Connect(function(char)
-		while not (char and char.Parent and (char:FindFirstChild("Humanoid") or char:FindFirstChild("HumanoidRootPart"))) do
-			task.wait()
-		end
-
-		task.spawn(update_character_refs)
+	g.LocalPlayer.CharacterAdded:Connect(function()
+		task.defer(update_character_refs)
 	end)
 end
 
-task.spawn(update_character_refs)
+task.defer(update_character_refs)
 
 flames_api.Vehicle = function()
 	local character = flames_api.Character or get_char(flames_api.LocalPlayer or g.LocalPlayer or game.Players.LocalPlayer)
