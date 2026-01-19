@@ -12,7 +12,7 @@ end
 local executor_string = nil
 
 local function executor_contains(substr)
-    if type(executor_string) ~= "string" then
+    if typeof(executor_string) ~= "string" then
         return false
     end
     return string.find(string.lower(executor_string), string.lower(substr), 1, true) ~= nil
@@ -888,10 +888,10 @@ function weighted_pick(plrs, my_plr)
         end
     end
     local s = 0
-    for _,v in ipairs(tbl) do s += v.w end
+    for _,v  in ipairs(tbl) do s = s + v.w end
     local r = math.random() * s
-    for _,v in ipairs(tbl) do
-        r -= v.w
+    for _, v in ipairs(tbl) do
+        r = r - v.w
         if r <= 0 then return v.plr end
     end
     return plrs[1]
@@ -949,12 +949,12 @@ function Try_To_predict_IT_Plr()
         wait(0.1 + i*0.01)
     end
 
-    local final = weighted_pick(plrs,LocalPlayer)
-    local conf = prediction_confidence(plrs,final,LocalPlayer)
+    local main_picked = weighted_pick(plrs,LocalPlayer)
+    local conf = prediction_confidence(plrs,main_picked,LocalPlayer)
     local pct = string.format("%.2f",conf)
 
-    if final then
-        l.Text = "🎯 Predicted IT: "..tostring(final.DisplayName).."  ("..pct.."%) 🎯"
+    if main_picked then
+        l.Text = "🎯 Predicted IT: "..tostring(main_picked.DisplayName).."  ("..pct.."%) 🎯"
     else
         l.Text = "⚠️ Prediction Failed ⚠️"
     end
@@ -995,7 +995,7 @@ local function count_parts(model)
 
 	for _, v in ipairs(model:GetDescendants()) do
 		if v:IsA("BasePart") then
-			partCount += 1
+			partCount = partCount + 1
 		end
 	end
 
@@ -1016,10 +1016,10 @@ function collect_all_coins(method)
 
     for _, obj in Game_Objects:GetDescendants() do
         local isCoin = obj.Name == "Credit" or obj:FindFirstChildOfClass("TouchTransmitter")
-        if not isCoin then continue end
+        if not isCoin then print("") end
 
         local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
-        if not part then continue end
+        if not part then print("") end
 
         if use_touch then
             local ok = pcall(function()
@@ -1029,17 +1029,23 @@ function collect_all_coins(method)
             end)
 
             if not ok then
-                Character:PivotTo(part.CFrame)
+                if part and part:IsA("BasePart") then
+                    pcall(function() Character:PivotTo(part.CFrame) end)
+                end
                 task.wait()
             end
         else
-            Character:PivotTo(part.CFrame)
+            if part ~= nil then
+                if part and part:IsA("BasePart") then
+                    pcall(function() Character:PivotTo(part.CFrame) end)
+                end
+            end
             task.wait()
         end
     end
 
     if SAFE_SPOT_CFRAME then
-        Character:PivotTo(SAFE_SPOT_CFRAME)
+        pcall(function() Character:PivotTo(SAFE_SPOT_CFRAME) end)
     end
 end
 
@@ -1218,6 +1224,12 @@ function play_music_with_sound_id()
     end)
 end
 
+function play_boombox_sound_id_multiple_times()
+    for i = 1, 175 do
+        play_music_with_sound_id() 
+    end
+end
+
 Audio:Button("Play Music (FE)", function()
     if not (InGame_LocalPlr_Value and InGame_LocalPlr_Value.Value) then
         return getgenv().notify("Warning", "You are not in-game, this will not work right now, wait until you're in-game.", 8)
@@ -1229,6 +1241,19 @@ Audio:Button("Play Music (FE)", function()
     end
     wait(0.2)
     play_music_with_sound_id()
+end)
+
+Audio:Button("Play Music (Loud, FE)", function()
+    if not (InGame_LocalPlr_Value and InGame_LocalPlr_Value.Value) then
+        return getgenv().notify("Warning", "You are not in-game, this will not work right now, wait until you're in-game.", 8)
+    end
+
+    local sound = find_boombox()
+    if sound and sound.Playing then
+        Stop_Sound_Boombox_FE:FireServer()
+    end
+    wait(0.2)
+    play_boombox_sound_id_multiple_times()
 end)
 
 if not getgenv().AutoPlayingMusic_InGameAutomatically then
@@ -1385,7 +1410,7 @@ function wait_for_zero(tbl)
             return true
         end
         task.wait(0.15)
-        tries += 1
+        tries = tries + 1
     end
     return false
 end
@@ -1400,7 +1425,7 @@ function wait_icecube_clear()
             return true
         end
         task.wait(0.1)
-        tries += 1
+        tries = tries + 1
     end
     return false
 end
@@ -1865,7 +1890,7 @@ Extras:Button("IY", function()
         return getgenv().notify("Error", "You've already loaded Infinite Premium.", 5)
     end
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua"))()
 end)
 
 Audio:Slider("Sound Vol (FE)", 0.1,10,tonumber(getgenv().main_volume_sound_others) or 3, function(New_Vol)
