@@ -178,7 +178,7 @@ local function rgb_cycle(label)
     end
 end
 
-reveal_text(scramble_time, "Flames Hub = number fucking one, fucking enjoy bro!", text_label)
+reveal_text(scramble_time, "Recommend us to all your connections, peers, friends, associated, who ever, but, enjoy!", text_label)
 
 task.wait(scramble_time + 1)
 
