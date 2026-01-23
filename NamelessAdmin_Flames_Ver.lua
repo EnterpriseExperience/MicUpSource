@@ -167,6 +167,7 @@ local Players=SafeGetService("Players");
 local UserInputService=SafeGetService("UserInputService");
 local TweenService=SafeGetService("TweenService");
 local RunService=SafeGetService("RunService");
+local ContextActionService=SafeGetService("ContextActionService");
 local TeleportService=SafeGetService("TeleportService");
 local Lighting=SafeGetService("Lighting");
 local ReplicatedStorage=SafeGetService("ReplicatedStorage");
@@ -242,221 +243,237 @@ end)()
 
 --[[ Character helpers ]]--
 NA_GRAB_BODY = (function()
-	local T = {}
-	local _cache = _rp_cache or setmetatable({}, { __mode = "k" })
-
-	local overrideModel = nil
-	local overrideConn = nil
-	local selectingOverride = false
-
-	local setOverrideModel
-	local pickOverrideModel
-
+	local T = {};
+	local _cache = _rp_cache or setmetatable({}, {
+		__mode = "k"
+	});
+	local overrideModel = nil;
+	local overrideConn = nil;
+	local selectingOverride = false;
+	local setOverrideModel;
+	local pickOverrideModel;
 	local function asChar(obj)
-		if not obj or typeof(obj) ~= "Instance" then return nil end
-		if obj:IsA("Player") then return obj.Character end
-		if obj:IsA("Model") then return obj end
-		return nil
-	end
-
+		if not obj or typeof(obj) ~= "Instance" then
+			return nil;
+		end;
+		if obj:IsA("Player") then
+			return obj.Character;
+		end;
+		if obj:IsA("Model") then
+			return obj;
+		end;
+		return nil;
+	end;
 	local function firstPart(model)
-		for _,d in ipairs(model:GetDescendants()) do
-			if d:IsA("BasePart") then return d end
-		end
-		return nil
-	end
-
+		for _, d in ipairs(model:GetDescendants()) do
+			if d:IsA("BasePart") then
+				return d;
+			end;
+		end;
+		return nil;
+	end;
 	setOverrideModel = function(model)
 		if overrideConn then
-			overrideConn:Disconnect()
-			overrideConn = nil
-		end
-		overrideModel = model
+			overrideConn:Disconnect();
+			overrideConn = nil;
+		end;
+		overrideModel = model;
 		if model then
 			overrideConn = model.AncestryChanged:Connect(function(_, parent)
 				if not parent then
 					if overrideConn then
-						overrideConn:Disconnect()
-						overrideConn = nil
-					end
-					overrideModel = nil
-					selectingOverride = false
+						overrideConn:Disconnect();
+						overrideConn = nil;
+					end;
+					overrideModel = nil;
+					selectingOverride = false;
 					if Players and Players.LocalPlayer and workspace then
-						local lp = Players.LocalPlayer
-						local cur = lp.Character
-						if cur and cur.Parent and not cur:IsDescendantOf(workspace) then
+						local lp = Players.LocalPlayer;
+						local cur = lp.Character;
+						if cur and cur.Parent and (not cur:IsDescendantOf(workspace)) then
 							Spawn(function()
-								pickOverrideModel()
-							end)
-						end
-					end
-				end
-			end)
-		end
-	end
-
+								pickOverrideModel();
+							end);
+						end;
+					end;
+				end;
+			end);
+		end;
+	end;
 	pickOverrideModel = function(force)
 		if selectingOverride then
-			return overrideModel
-		end
-
+			return overrideModel;
+		end;
 		if not (Window and Players and Players.LocalPlayer and workspace) then
-			return overrideModel
-		end
-
-		local lp = Players.LocalPlayer
-		local cur = lp.Character
-
+			return overrideModel;
+		end;
+		local lp = Players.LocalPlayer;
+		local cur = lp.Character;
 		if not cur then
-			return overrideModel
-		end
-
+			return overrideModel;
+		end;
 		if not force and cur:IsDescendantOf(workspace) then
-			return overrideModel
-		end
-
-		selectingOverride = true
-
-		local btns = {}
-		local cands = {}
-		local seen = {}
-
+			return overrideModel;
+		end;
+		selectingOverride = true;
+		local btns = {};
+		local cands = {};
+		local seen = {};
 		for _, plr in ipairs(Players:GetPlayers()) do
-			local ch = plr.Character
-			if ch and ch:IsDescendantOf(workspace) and not seen[ch] then
-				seen[ch] = true
-				Insert(cands, ch)
-			end
-		end
-
+			local ch = plr.Character;
+			if ch and ch:IsDescendantOf(workspace) and (not seen[ch]) then
+				seen[ch] = true;
+				Insert(cands, ch);
+			end;
+		end;
 		for _, inst in ipairs(workspace:GetDescendants()) do
-			if inst:IsA("Model") and CheckIfNPC and CheckIfNPC(inst) and not seen[inst] then
-				seen[inst] = true
-				Insert(cands, inst)
-			end
-		end
-
-		local nCnt = {}
+			if inst:IsA("Model") and CheckIfNPC and CheckIfNPC(inst) and (not seen[inst]) then
+				seen[inst] = true;
+				Insert(cands, inst);
+			end;
+		end;
+		local nCnt = {};
 		for i = 1, #cands do
-			local m = cands[i]
-			local n = m.Name
-			nCnt[n] = (nCnt[n] or 0) + 1
-		end
-		local nUse = {}
-
-		local done = false
+			local m = cands[i];
+			local n = m.Name;
+			nCnt[n] = (nCnt[n] or 0) + 1;
+		end;
+		local nUse = {};
+		local done = false;
 		local function fin()
-			if done then return end
-			done = true
-			selectingOverride = false
-		end
-
+			if done then
+				return;
+			end;
+			done = true;
+			selectingOverride = false;
+		end;
 		if #cands == 0 then
 			Insert(btns, {
 				Text = "No characters found",
 				Callback = function()
-					setOverrideModel(nil)
-					fin()
+					setOverrideModel(nil);
+					fin();
 				end
-			})
+			});
 		else
 			for i = 1, #cands do
-				local m = cands[i]
-				local n = m.Name
-				local suffix = ""
+				local m = cands[i];
+				local n = m.Name;
+				local suffix = "";
 				if nCnt[n] and nCnt[n] > 1 then
-					nUse[n] = (nUse[n] or 0) + 1
-					suffix = " ("..nUse[n]..")"
-				end
-
+					nUse[n] = (nUse[n] or 0) + 1;
+					suffix = " (" .. nUse[n] .. ")";
+				end;
 				Insert(btns, {
-					Text = n..suffix,
+					Text = n .. suffix,
 					Callback = function()
-						setOverrideModel(m)
-						fin()
-					end,
-				})
-			end
-		end
-
+						setOverrideModel(m);
+						fin();
+					end
+				});
+			end;
+		end;
 		Insert(btns, {
 			Text = "Cancel",
 			Callback = function()
-				setOverrideModel(nil)
-				fin()
-			end,
-		})
-
+				setOverrideModel(nil);
+				fin();
+			end
+		});
 		Window({
 			WindowTitle = "Select Character",
 			Duration = nil,
 			Text = "Choose a character or NPC model",
-			Buttons = btns,
-		})
-
-		return overrideModel
-	end
-
+			Buttons = btns
+		});
+		return overrideModel;
+	end;
 	local function rebuild(model, rec)
-		rec.head = nil
-		rec.root = nil
-		rec.torso = nil
-		rec.humanoid = nil
+		rec.head = nil;
+		rec.root = nil;
+		rec.torso = nil;
+		rec.humanoid = nil;
 		if not model then
-			rec.dirty = false
-			return rec
-		end
-
+			rec.dirty = false;
+			return rec;
+		end;
 		for _, inst in ipairs(model:GetDescendants()) do
 			if inst:IsA("Humanoid") or inst:IsA("AnimationController") then
-				rec.humanoid = rec.humanoid or inst
+				rec.humanoid = rec.humanoid or inst;
 			elseif inst:IsA("BasePart") then
-				local name = inst.Name:lower()
+				local name = inst.Name:lower();
 				if name:find("root") then
-					rec.root = rec.root or inst
+					rec.root = rec.root or inst;
 				elseif name:find("torso") then
-					rec.torso = rec.torso or inst
+					rec.torso = rec.torso or inst;
 				elseif name:find("head") then
-					rec.head = rec.head or inst
-				end
-			end
-		end
-		rec.dirty = false
-	end
-
+					rec.head = rec.head or inst;
+				end;
+			end;
+		end;
+		rec.dirty = false;
+	end;
 	local function ensure(obj)
-		local model = asChar(obj) or overrideModel or pickOverrideModel()
-		if not model then return nil end
+		local model = asChar(obj);
 
-		local rec = _cache[model]
+		if obj == Players.LocalPlayer then
+			if overrideModel then
+				model = overrideModel;
+			elseif model and (not model:IsDescendantOf(workspace)) then
+				model = pickOverrideModel(true) or model;
+			end;
+		elseif not model then
+			model = overrideModel;
+		end;
+
+		if not model and obj ~= Players.LocalPlayer then
+			model = pickOverrideModel();
+		end;
+		if not model then
+			return nil;
+		end;
+		local rec = _cache[model];
 		if not rec then
-			rec = { dirty = true }
-			_cache[model] = rec
-			rec.a = model.DescendantAdded:Connect(function() rec.dirty = true end)
-			rec.r = model.DescendantRemoving:Connect(function() rec.dirty = true end)
+			rec = {
+				dirty = true
+			};
+			_cache[model] = rec;
+			rec.a = model.DescendantAdded:Connect(function()
+				rec.dirty = true;
+			end);
+			rec.r = model.DescendantRemoving:Connect(function()
+				rec.dirty = true;
+			end);
 			rec.c = model.AncestryChanged:Connect(function(_, parent)
 				if not parent then
-					if rec.a then rec.a:Disconnect() end
-					if rec.r then rec.r:Disconnect() end
-					if rec.c then rec.c:Disconnect() end
-					_cache[model] = nil
-				end
-			end)
-		end
-		if rec.dirty or (rec.humanoid and rec.humanoid.Parent == nil) then rebuild(model, rec) end
-		return rec, model
-	end
-
-	T.ensure = ensure
-	T.firstPart = firstPart
-	T.asChar = asChar
+					if rec.a then
+						rec.a:Disconnect();
+					end;
+					if rec.r then
+						rec.r:Disconnect();
+					end;
+					if rec.c then
+						rec.c:Disconnect();
+					end;
+					_cache[model] = nil;
+				end;
+			end);
+		end;
+		if rec.dirty or rec.humanoid and rec.humanoid.Parent == nil then
+			rebuild(model, rec);
+		end;
+		return rec, model;
+	end;
+	T.ensure = ensure;
+	T.firstPart = firstPart;
+	T.asChar = asChar;
 	T.pickOverride = function()
-		selectingOverride = false
-		setOverrideModel(nil)
-		return pickOverrideModel(true)
-	 end
-	return T
-end)()
+		selectingOverride = false;
+		setOverrideModel(nil);
+		return pickOverrideModel(true);
+	end;
+	return T;
+end)();
 
 function getRoot(char)
 	local rec, model = NA_GRAB_BODY.ensure(char)
@@ -493,43 +510,47 @@ function getBp()
 end
 
 function getHum(char, waitSeconds)
-	local timeout = math.max(0, tonumber(waitSeconds) or 1.5)
-	local target = char or getChar()
-	local function resolveTarget()
-		if target then return target end
+	local target
+
+	if char then
+		target = NA_GRAB_BODY.asChar(char) or char
+	else
 		local plr = Players.LocalPlayer
-		if not plr then return nil end
-		target = plr.Character
-		if target then return target end
-		local deadline = os.clock() + timeout
-		local conn
-		conn = plr.CharacterAdded:Connect(function(chr)
-			target = chr
-		end)
-		while not target and os.clock() < deadline do
-			Wait(0.05)
+		if plr then
+			target = plr.Character
 		end
-		if conn then
-			conn:Disconnect()
-		end
-		target = target or plr.Character
-		return target
 	end
 
-	resolveTarget()
-	if not target then return nil end
+	if not target then
+		return nil
+	end
+
+	local hum = target:FindFirstChildOfClass("Humanoid") or target:FindFirstChildOfClass("AnimationController")
+	if hum then
+		return hum
+	end
+
+	local timeout = tonumber(waitSeconds)
+	if not timeout or timeout <= 0 then
+		local rec = NA_GRAB_BODY.ensure(target)
+		return rec and rec.humanoid or nil
+	end
+
+	timeout = math.max(0, timeout)
+	local deadline = os.clock() + timeout
 
 	local function findHumanoid()
 		return target:FindFirstChildOfClass("Humanoid") or target:FindFirstChildOfClass("AnimationController")
 	end
 
-	local hum = findHumanoid()
-	local start = os.clock()
-	while not hum and (os.clock() - start) < timeout do
+	while not hum and os.clock() < deadline do
 		Wait(0.05)
 		hum = findHumanoid()
 	end
-	if hum then return hum end
+
+	if hum then
+		return hum
+	end
 
 	local rec = NA_GRAB_BODY.ensure(target)
 	return rec and rec.humanoid or nil
@@ -575,14 +596,57 @@ CheckIfNPC = function(character)
 	if not (character and character:IsA("Model")) then
 		return false
 	end
+	local function isPlayerModel(model)
+		if not Players then
+			return false
+		end
+		local okPlr, plr = pcall(function()
+			return Players:GetPlayerFromCharacter(model)
+		end)
+		if okPlr and plr then
+			return true
+		end
+		for _, p in ipairs(Players:GetPlayers()) do
+			local ch = p.Character
+			if ch and (model == ch or model:IsDescendantOf(ch) or ch:IsDescendantOf(model)) then
+				return true
+			end
+		end
+		return false
+	end
+
 	local humanoid = character:FindFirstChildOfClass("Humanoid")
 	if not humanoid then
 		return false
 	end
-	if Players:GetPlayerFromCharacter(character) then
+	if isPlayerModel(character) then
 		return false
 	end
 	return true
+end
+
+NAmanage.IsValidESPModel = function(model, allowNPC)
+	if not (model and model:IsA("Model")) then
+		return false
+	end
+	if not model.Parent or not workspace or not model:IsDescendantOf(workspace) then
+		return false
+	end
+	local hum = model:FindFirstChildOfClass("Humanoid")
+	if not hum or hum.Health <= 0 or hum.Parent == nil then
+		return false
+	end
+	local root = getRoot(model)
+	if not root or root.Parent == nil then
+		return false
+	end
+	if allowNPC then
+		return true
+	end
+	local okPlr, plr = pcall(function()
+		return Players:GetPlayerFromCharacter(model)
+	end)
+	return okPlr and plr ~= nil
 end
 
 FindInTable = function(tbl,val)
@@ -603,13 +667,12 @@ NAmanage.CreateNAFreecam=function()
 	local sqrt = math.sqrt
 	local tan = math.tan
 
-	local Workspace = workspace
-	local Camera = Workspace.CurrentCamera
+	local Camera = workspace.CurrentCamera
 	local ContextActionService = SafeGetService("ContextActionService")
 
-	Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-		if Workspace.CurrentCamera then
-			Camera = Workspace.CurrentCamera
+	workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+		if workspace.CurrentCamera then
+			Camera = workspace.CurrentCamera
 		end
 	end)
 
@@ -1481,6 +1544,8 @@ local NAStuff = {
 	ESP_FolderMode = "parts";
 	NPC_ESP_MaxDist = 400;
 	NPC_ESP_MaxCount = 200;
+	NPC_ESP_ShowLabels = true;
+	NPC_ESP_LabelMaxDistance = 600;
 	partESPColors = setmetatable({}, { __mode = "k" });
 	partESPGlassOriginal = setmetatable({}, { __mode = "k" });
 	partESPGlassCount = setmetatable({}, { __mode = "k" });
@@ -1491,6 +1556,28 @@ local NAStuff = {
 	TopbarStrokeTransparency = 0.15;
 	SideSwipeWidth = 80;
 	SideSwipeHandleTransparency = 0.72;
+	Integrations = {
+		webhook = {
+			url = "";
+			urls = { main = "" };
+			enableJoinLeave = false;
+			enableChat = false;
+			enableCommands = false;
+			minInterval = 2;
+			lastSent = 0;
+		};
+		health = {
+			endpoints = {};
+		};
+		notes = {
+			last = "";
+		};
+		rpc = {
+			useCustom = false;
+			details = "";
+			state = "";
+		};
+	};
 	NIL_SENTINEL = {};
 	RemoteBlockMode = "fakeok";
 	RemoteFakeReturn = true;
@@ -1523,6 +1610,7 @@ local NAStuff = {
 			textColor = {235,235,235};
 			strokeColor = {0,0,0};
 			strokeTransparency = 0.5;
+			textTransparency = 0;
 			backgroundColor = {25,27,29};
 			backgroundTransparency = 0.2;
 		};
@@ -1530,7 +1618,9 @@ local NAStuff = {
 			enabled = false;
 			font = "rbxasset://fonts/families/BuilderSans.json";
 			textSize = 18;
+			backgroundColor = {25,27,29};
 			backgroundTransparency = 0;
+			textTransparency = 0;
 			textColor = {255,255,255};
 			selectedTextColor = {170,255,170};
 			unselectedTextColor = {200,200,200};
@@ -1542,7 +1632,9 @@ local NAStuff = {
 			keyCode = "Slash";
 			textSize = 16;
 			textColor = {255,255,255};
+			strokeColor = {0,0,0};
 			strokeTransparency = 0.5;
+			backgroundColor = {25,27,29};
 			backgroundTransparency = 0.2;
 			targetGeneral = false;
 		};
@@ -1551,8 +1643,13 @@ local NAStuff = {
 			maxDistance = 100;
 			minimizeDistance = 20;
 			textSize = 14;
+			textColor = {255,255,255};
+			textTransparency = 0;
 			spacing = 4;
+			backgroundColor = {25,27,29};
 			backgroundTransparency = 0.1;
+			maxBubbles = 3;
+			bubbleDuration = 15;
 			tailVisible = true;
 		};
 	};
@@ -1670,6 +1767,101 @@ NAmanage.btSetEnabled=function(value)
 	end
 end
 
+NAmanage.InitializeIntegration=function()
+	local integ = NAStuff.Integrations or {}
+	integ.webhook = integ.webhook or {}
+	integ.webhook.urls = integ.webhook.urls or {}
+	integ.webhook.urls.main = integ.webhook.urls.main or integ.webhook.url or integ.webhook.urls.all or ""
+	integ.webhook.urls.all = integ.webhook.urls.all or integ.webhook.url or ""
+	integ.webhook.urls.joinleave = integ.webhook.urls.joinleave or ""
+	integ.webhook.urls.chat = integ.webhook.urls.chat or ""
+	integ.webhook.urls.commands = integ.webhook.urls.commands or ""
+	integ.webhook.useAll = integ.webhook.useAll == true
+	integ.webhook.url = integ.webhook.urls.all
+	integ.webhook.enableJoinLeave = integ.webhook.enableJoinLeave == true
+	integ.webhook.enableChat = integ.webhook.enableChat == true
+	integ.webhook.enableCommands = integ.webhook.enableCommands == true
+	integ.webhook.minInterval = tonumber(integ.webhook.minInterval) or 2
+	integ.webhook.lastSent = type(integ.webhook.lastSent) == "number" and integ.webhook.lastSent or 0
+	integ.health = integ.health or { endpoints = {} }
+	integ.health.endpoints = integ.health.endpoints or {}
+	integ.notes = integ.notes or { last = "" }
+	integ.notes.last = integ.notes.last or ""
+	integ.rpc = integ.rpc or {}
+	integ.rpc.useCustom = integ.rpc.useCustom == true
+	integ.rpc.details = integ.rpc.details or ""
+	integ.rpc.state = integ.rpc.state or ""
+
+	if NAmanage.NASettingsGet then
+		local clampNum = NAmanage.clampNumber or function(v, lo, hi, fallback)
+			local n = tonumber(v)
+			if not n then return fallback end
+			if lo and n < lo then n = lo end
+			if hi and n > hi then n = hi end
+			return n
+		end
+		local function asBool(v) return v == true end
+		local function asString(v) return type(v) == "string" and v or "" end
+
+		local function readUrl(key, fallback)
+			local value = asString(NAmanage.NASettingsGet(key))
+			if value ~= "" then
+				return value
+			end
+			return fallback
+		end
+
+		integ.webhook.urls.main = readUrl("integrationWebhookUrlMain", integ.webhook.urls.main)
+		integ.webhook.urls.all = readUrl("integrationWebhookUrlAll", integ.webhook.urls.all)
+		integ.webhook.urls.joinleave = readUrl("integrationWebhookUrlJoinLeave", integ.webhook.urls.joinleave)
+		integ.webhook.urls.chat = readUrl("integrationWebhookUrlChat", integ.webhook.urls.chat)
+		integ.webhook.urls.commands = readUrl("integrationWebhookUrlCommands", integ.webhook.urls.commands)
+		if integ.webhook.urls.all == "" then
+			local legacy = asString(NAmanage.NASettingsGet("integrationWebhookUrl"))
+			if legacy ~= "" then
+				integ.webhook.urls.all = legacy
+			end
+		end
+		integ.webhook.url = integ.webhook.urls.all
+
+		local useAllSaved = NAmanage.NASettingsGet("integrationWebhookUseAll")
+		if type(useAllSaved) == "boolean" then
+			integ.webhook.useAll = useAllSaved
+		end
+
+		integ.webhook.enableJoinLeave = NAmanage.NASettingsGet("integrationWebhookJoinLeave") == true or integ.webhook.enableJoinLeave
+		integ.webhook.enableChat = NAmanage.NASettingsGet("integrationWebhookChat") == true or integ.webhook.enableChat
+		integ.webhook.enableCommands = NAmanage.NASettingsGet("integrationWebhookCommands") == true or integ.webhook.enableCommands
+		integ.webhook.minInterval = clampNum(NAmanage.NASettingsGet("integrationWebhookInterval"), 0, 120, integ.webhook.minInterval)
+
+		local storedEndpoints = NAmanage.NASettingsGet("integrationHealthEndpoints")
+		if type(storedEndpoints) == "table" then
+			integ.health.endpoints = {}
+			for i = 1, math.min(#storedEndpoints, 3) do
+				if type(storedEndpoints[i]) == "string" and storedEndpoints[i] ~= "" then
+					integ.health.endpoints[i] = storedEndpoints[i]
+				end
+			end
+		elseif type(storedEndpoints) == "string" and storedEndpoints ~= "" then
+			integ.health.endpoints = { storedEndpoints }
+		end
+
+		local noteVal = NAmanage.NASettingsGet("integrationNotesLast")
+		if type(noteVal) == "string" then
+			integ.notes.last = noteVal
+		end
+
+		integ.rpc.useCustom = NAmanage.NASettingsGet("integrationRpcUseCustom") == true or integ.rpc.useCustom
+		local rpcDetails = NAmanage.NASettingsGet("integrationRpcDetails")
+		local rpcState = NAmanage.NASettingsGet("integrationRpcState")
+		if type(rpcDetails) == "string" then integ.rpc.details = rpcDetails end
+		if type(rpcState) == "string" then integ.rpc.state = rpcState end
+	end
+
+	NAStuff.Integrations = integ
+end
+NAmanage.InitializeIntegration()
+
 NAmanage.btSend=function(command, data)
 	if not NAmanage.btEnabled() then
 		return
@@ -1703,7 +1895,21 @@ NAmanage.btUpdate=function(details, state)
 
 	local versionHover = (NAStuff and NAStuff.NAjson and NAStuff.NAjson.ver) or "Nameless Admin"
 	local count = NAmanage.btCount or 0
+	local cfgRPC = (NAStuff.Integrations and NAStuff.Integrations.rpc) or {}
+	local placeLabel = placeName and placeName() or "Game"
+	local function applyTemplate(text, fallback)
+		local src = (text ~= nil and text ~= "") and text or fallback
+		if type(src) ~= "string" then
+			src = tostring(src)
+		end
+		return (src or ""):gsub("{cmds}", tostring(count))
+			:gsub("{game}", tostring(placeLabel))
+	end
+
 	local displayDetails = details or adminName or "Nameless Admin"
+	if cfgRPC.useCustom and cfgRPC.details and cfgRPC.details ~= "" then
+		displayDetails = applyTemplate(cfgRPC.details, displayDetails)
+	end
 	if type(displayDetails) ~= "string" then
 		displayDetails = tostring(displayDetails)
 	end
@@ -1715,6 +1921,9 @@ NAmanage.btUpdate=function(details, state)
 		else
 			baseState = "Idle"
 		end
+	end
+	if cfgRPC.useCustom and cfgRPC.state and cfgRPC.state ~= "" then
+		baseState = applyTemplate(cfgRPC.state, baseState)
 	end
 	if type(baseState) ~= "string" then
 		baseState = tostring(baseState)
@@ -2158,8 +2367,8 @@ function NAmanage.runLoader(label, callback, opts)
 		return false
 	end
 
-	local lastErr
-	for attempt = 1, attempts do
+local lastErr
+for attempt = 1, attempts do
 		local ok, result = pcall(callback)
 		if ok and (result ~= false or not retryOnFalse) then
 			NAmanage._loaderStatus[label] = true
@@ -2192,6 +2401,202 @@ function NAmanage.runLoader(label, callback, opts)
 	end
 	NAmanage._loaderStatus[label] = false
 	return false
+end
+
+NAmanage.clampNumber=function(value, minValue, maxValue, fallback)
+	local n = tonumber(value)
+	if n == nil then return fallback end
+	if minValue and n < minValue then n = minValue end
+	if maxValue and n > maxValue then n = maxValue end
+	return n
+end
+
+NAmanage.SendIntegrationWebhook=function(kind, content)
+	local cfg = NAStuff.Integrations and NAStuff.Integrations.webhook
+	if not (cfg and content and content ~= "") then
+		return false, "missing config"
+	end
+	local urlsCfg = cfg.urls or {}
+	local dedupe = {}
+	local targets = {}
+	local function addUrl(url)
+		if type(url) ~= "string" then
+			return
+		end
+		local trimmed = url:match("^%s*(.-)%s*$")
+		if trimmed ~= "" and not dedupe[trimmed] then
+			dedupe[trimmed] = true
+			Insert(targets, trimmed)
+		end
+	end
+	local kindKey = nil
+	local fallbackUrl = urlsCfg.all or cfg.url
+	if kind == "joinleave" then
+		kindKey = "joinleave"
+	elseif kind == "chat" then
+		kindKey = "chat"
+	elseif kind == "command" or kind == "commands" then
+		kindKey = "commands"
+	elseif kind == "main" or kind == "message" or kind == "msg" then
+		kindKey = "main"
+		fallbackUrl = urlsCfg.main or fallbackUrl
+	elseif urlsCfg.main and kind == nil then
+		fallbackUrl = urlsCfg.main
+	end
+	if kindKey and urlsCfg[kindKey] then
+		addUrl(urlsCfg[kindKey])
+	end
+	if kind == "test" then
+		addUrl(urlsCfg.joinleave)
+		addUrl(urlsCfg.chat)
+		addUrl(urlsCfg.commands)
+		addUrl(urlsCfg.main)
+	end
+	if cfg.useAll or #targets == 0 or kind == "test" then
+		addUrl(fallbackUrl)
+	end
+	if #targets == 0 then
+		return false, "missing config"
+	end
+	local now = tick()
+	local minInt = NAmanage.clampNumber(cfg.minInterval, 0, 60, 2) or 2
+	if cfg.lastSent and (now - cfg.lastSent) < minInt then
+		return false, "rate-limited"
+	end
+	local payloadData
+	if type(content) == "table" then
+		payloadData = content
+	else
+		payloadData = { content = content }
+	end
+	local payload = HttpService:JSONEncode(payloadData)
+	local sentCount = 0
+	local lastErr = nil
+	for _, url in ipairs(targets) do
+		local ok, res = pcall(function()
+			if opt and type(opt.NAREQUEST) == "function" then
+				return opt.NAREQUEST({
+					Url = url;
+					Method = "POST";
+					Headers = { ["Content-Type"] = "application/json" };
+					Body = payload;
+				})
+			else
+				return HttpService:PostAsync(url, payload, Enum.HttpContentType.ApplicationJson, false)
+			end
+		end)
+		if ok then
+			sentCount = sentCount + 1
+		else
+			lastErr = res
+		end
+	end
+	if sentCount > 0 then
+		cfg.lastSent = now
+		return true
+	end
+	return false, lastErr
+end
+
+NAmanage.WebhookJoinLeave=function(plr, action)
+	local cfg = NAStuff.Integrations and NAStuff.Integrations.webhook
+	if not (cfg and cfg.enableJoinLeave) then return end
+	local username = nameChecker and nameChecker(plr) or (plr and plr.Name) or "Player"
+	local actLabel = action == "leave" and "left" or "joined"
+	local jobId = tostring(game.JobId or "")
+	local placeId = tostring(game.PlaceId or "")
+	local color = action == "leave" and 16711680 or 65280
+	local payload = {
+		content = "",
+		embeds = {
+			{
+				title = "Join/Leave Log",
+				description = Format("%s has %s.", username, actLabel),
+				color = color,
+				fields = {
+					{
+						name = "Place / Job",
+						value = Format("PlaceId: ```%s``` | JobId: ```%s```", placeId, jobId),
+						inline = false,
+					},
+				},
+			},
+		},
+	}
+	NAmanage.SendIntegrationWebhook("joinleave", payload)
+end
+
+NAmanage.WebhookChat=function(plr, msg)
+	local cfg = NAStuff.Integrations and NAStuff.Integrations.webhook
+	if not (cfg and cfg.enableChat) then return end
+	local username = nameChecker and nameChecker(plr) or (plr and plr.Name) or "Player"
+	local text = Format("[Chat] %s: %s", username, tostring(msg or ""))
+	NAmanage.SendIntegrationWebhook("chat", text)
+end
+
+NAmanage.WebhookCommand=function(rawArgs)
+	local cfg = NAStuff.Integrations and NAStuff.Integrations.webhook
+	if not (cfg and cfg.enableCommands) then return end
+	if type(rawArgs) ~= "table" or #rawArgs == 0 then return end
+	local playerName = nameChecker and nameChecker(Players and Players.LocalPlayer) or (Players and Players.LocalPlayer and Players.LocalPlayer.Name) or "LocalPlayer"
+	local line = Concat(rawArgs, " ")
+	local text = Format("[Command] ran: %s", line)
+	NAmanage.SendIntegrationWebhook("command", text)
+end
+
+NAmanage.HealthPing=function(url)
+	if type(url) ~= "string" or url == "" then
+		return false, "missing url"
+	end
+	local start = os.clock()
+	local ok, res = pcall(function()
+		if opt and type(opt.NAREQUEST) == "function" then
+			return opt.NAREQUEST({ Url = url, Method = "GET", Timeout = 5, FollowRedirects = true })
+		else
+			return HttpService:GetAsync(url)
+		end
+	end)
+	local elapsed = os.clock() - start
+	if ok then
+		return true, elapsed
+	end
+	return false, res or "error", elapsed
+end
+
+NAmanage.HealthPingAll=function()
+	local eps = (NAStuff.Integrations and NAStuff.Integrations.health and NAStuff.Integrations.health.endpoints) or {}
+	local results = {}
+	for idx, url in ipairs(eps) do
+		if url and url ~= "" then
+			local ok, info, elapsed = NAmanage.HealthPing(url)
+			if ok then
+				Insert(results, Format("#%d OK (%.2fs)", idx, tonumber(info) or elapsed or 0))
+			else
+				local errText = tostring(info or "error")
+				Insert(results, Format("#%d FAIL: %s", idx, errText))
+			end
+		end
+	end
+	return results
+end
+
+NAmanage.ComposeServerNote=function(note)
+	local parts = {}
+	local jobId = tostring(game.JobId or "")
+	local placeId = tostring(game.PlaceId or "")
+	Insert(parts, "PlaceId: "..placeId)
+	if jobId and jobId ~= "" then
+		Insert(parts, "JobId: "..jobId)
+	end
+	local serverCount = Players and Players.NumPlayers or nil
+	if serverCount then
+		local max = Players.MaxPlayers or "?"
+		Insert(parts, Format("Players: %s/%s", serverCount, max))
+	end
+	if note and note ~= "" then
+		Insert(parts, "Note: "..note)
+	end
+	return Concat(parts, " | ")
 end
 
 function NAmanage.scheduleLoader(label, callback, opts)
@@ -2255,6 +2660,124 @@ local NAImageAssets = {
 	ResizeDiagonal1 = "Diagonal116x16.png";
 	ResizeDiagonal2 = "Diagonal216x16.png";
 }
+NAStuff._rf = NAStuff._rf or readfile
+NAStuff._wf = NAStuff._wf or writefile
+NAStuff._iff = NAStuff._iff or isfile
+NAStuff._df = NAStuff._df or delfile
+NAStuff.dotBad = NAStuff.dotBad or false
+NAmanage.stripExt=function(p)
+	if type(p) ~= "string" then
+		return p
+	end
+	return (p:gsub("([^/]+)%.[^/]+$", "%1"))
+end
+NAmanage.isInvalidPathErr=function(e)
+	return type(e) == "string" and e:find("Invalid path", 1, true) ~= nil
+end
+if type(NAStuff._wf) == "function" then
+	writefile = function(p, data, ...)
+		if type(p) ~= "string" then
+			return NAStuff._wf(p, data, ...)
+		end
+
+		local pNoExt = NAmanage.stripExt(p)
+		if NAStuff.dotBad and pNoExt ~= p then
+			return NAStuff._wf(pNoExt, data, ...)
+		end
+
+		local ok, err = pcall(NAStuff._wf, p, data, ...)
+		if ok then
+			return
+		end
+
+		if pNoExt ~= p and NAmanage.isInvalidPathErr(err) then
+			NAStuff.dotBad = true
+			return NAStuff._wf(pNoExt, data, ...)
+		end
+
+		error(err)
+	end
+end
+if type(NAStuff._rf) == "function" then
+	readfile = function(p, ...)
+		if type(p) ~= "string" then
+			return NAStuff._rf(p, ...)
+		end
+
+		local pNoExt = NAmanage.stripExt(p)
+
+		if NAStuff.dotBad and pNoExt ~= p then
+			local ok2, res2 = pcall(NAStuff._rf, pNoExt, ...)
+			if ok2 then
+				return res2
+			end
+		end
+
+		local ok, res = pcall(NAStuff._rf, p, ...)
+		if ok and res ~= nil then
+			return res
+		end
+
+		if pNoExt ~= p then
+			local ok2, res2 = pcall(NAStuff._rf, pNoExt, ...)
+			if ok2 then
+				return res2
+			end
+		end
+
+		return nil
+	end
+end
+if type(NAStuff._iff) == "function" then
+	isfile = function(p, ...)
+		if type(p) ~= "string" then
+			local ok, res = pcall(NAStuff._iff, p, ...)
+			return ok and res or false
+		end
+
+		local pNoExt = NAmanage.stripExt(p)
+
+		local ok, res = pcall(NAStuff._iff, p, ...)
+		if ok and res then
+			return true
+		end
+
+		if pNoExt ~= p then
+			local ok2, res2 = pcall(NAStuff._iff, pNoExt, ...)
+			if ok2 and res2 then
+				NAStuff.dotBad = true
+				return true
+			end
+		end
+
+		return false
+	end
+end
+if type(NAStuff._df) == "function" then
+	delfile = function(p, ...)
+		if type(p) ~= "string" then
+			return NAStuff._df(p, ...)
+		end
+
+		local pNoExt = NAmanage.stripExt(p)
+
+		if NAStuff.dotBad and pNoExt ~= p then
+			return NAStuff._df(pNoExt, ...)
+		end
+
+		local ok, err = pcall(NAStuff._df, p, ...)
+		if ok then
+			return
+		end
+
+		if pNoExt ~= p and NAmanage.isInvalidPathErr(err) then
+			NAStuff.dotBad = true
+			return NAStuff._df(pNoExt, ...)
+		end
+
+		error(err)
+	end
+end
 local NAfiles = {
 	NAFILEPATH = "Nameless-Admin";
 	NAWAYPOINTFILEPATH = "Nameless-Admin/Waypoints";
@@ -7731,12 +8254,148 @@ NAmanage.NASettingsGetSchema=function()
 				return coerceBoolean(value, false)
 			end;
 		};
-		bloxtrapRPC = {
-			default = false;
-			coerce = function(value)
-				return coerceBoolean(value, false)
-			end;
-		};
+	bloxtrapRPC = {
+		default = false;
+		coerce = function(value)
+			return coerceBoolean(value, false)
+		end;
+	};
+	integrationWebhookUrl = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
+	integrationWebhookUrlMain = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
+	integrationWebhookUrlAll = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
+	integrationWebhookUrlJoinLeave = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
+	integrationWebhookUrlChat = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
+	integrationWebhookUrlCommands = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
+	integrationWebhookUseAll = {
+		default = false;
+		coerce = function(value)
+			return coerceBoolean(value, false)
+		end;
+	};
+	integrationWebhookJoinLeave = {
+		default = false;
+		coerce = function(value)
+			return coerceBoolean(value, false)
+		end;
+	};
+	integrationWebhookChat = {
+		default = false;
+		coerce = function(value)
+			return coerceBoolean(value, false)
+		end;
+	};
+	integrationWebhookCommands = {
+		default = false;
+		coerce = function(value)
+			return coerceBoolean(value, false)
+		end;
+	};
+	integrationWebhookInterval = {
+		default = 2;
+		coerce = function(value)
+			local n = tonumber(value)
+			if not n then return 2 end
+			if n < 0 then n = 0 elseif n > 30 then n = 30 end
+			return n
+		end;
+	};
+	integrationHealthEndpoints = {
+		default = {};
+		coerce = function(value)
+			if type(value) ~= "table" then
+				return {}
+			end
+			local out = {}
+			for i = 1, math.min(3, #value) do
+				local v = value[i]
+				if type(v) == "string" and v ~= "" then
+					out[#out + 1] = v
+				end
+			end
+			return out
+		end;
+	};
+	integrationNotesLast = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
+	integrationRpcUseCustom = {
+		default = false;
+		coerce = function(value)
+			return coerceBoolean(value, false)
+		end;
+	};
+	integrationRpcDetails = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
+	integrationRpcState = {
+		default = "";
+		coerce = function(value)
+			if type(value) ~= "string" then
+				value = tostring(value or "")
+			end
+			return value
+		end;
+	};
 		cmdIntegrationAutoRun = {
 			default = false;
 			coerce = function(value)
@@ -8336,7 +8995,7 @@ NAmanage.getPlrCursor = function()
 	local found = nil
 	local ClosestDistance = math.huge
 	for _,v in pairs(Players:GetPlayers()) do
-		if v ~= Players.LocalPlayer and v.Character and v.Character:FindFirstChildOfClass("Humanoid") then
+		if v ~= Players.LocalPlayer and v.Character and getPlrHum(v.Character) then
 			for k, x in pairs(v.Character:GetChildren()) do
 				if Find(x.Name, "Torso") then
 					local Distance = (NAmanage.worlScreen(x) - NAmanage.mPosVector()).Magnitude
@@ -8953,6 +9612,81 @@ NAStuff.CmdBar2AutoRun = NAmanage.NASettingsGet("cmdbar2AutoRun")
 NAStuff.NetworkPauseDisabled = NAmanage.NASettingsGet("networkPauseDisabled")
 NAStuff.PurchasePromptsDisabled = NAmanage.NASettingsGet("purchasePromptsDisabled")
 NAStuff.CmdIntegrationAutoRun = NAmanage.NASettingsGet("cmdIntegrationAutoRun")
+
+NAmanage.loadIntegration=function()
+	local integ = NAStuff.Integrations or {}
+	integ.webhook = integ.webhook or {}
+	integ.webhook.urls = integ.webhook.urls or {}
+	local function asString(v)
+		return type(v) == "string" and v or ""
+	end
+	integ.webhook.urls.main = integ.webhook.urls.main or integ.webhook.url or integ.webhook.urls.all or ""
+	local function readUrl(key, fallback)
+		local value = asString(NAmanage.NASettingsGet(key))
+		if value ~= "" then
+			return value
+		end
+		return fallback
+	end
+	integ.webhook.urls.main = readUrl("integrationWebhookUrlMain", integ.webhook.urls.main or "")
+	integ.webhook.urls.all = readUrl("integrationWebhookUrlAll", integ.webhook.urls.all or "")
+	if integ.webhook.urls.all == "" then
+		local legacy = asString(NAmanage.NASettingsGet("integrationWebhookUrl"))
+		if legacy ~= "" then
+			integ.webhook.urls.all = legacy
+		end
+	end
+	integ.webhook.urls.joinleave = readUrl("integrationWebhookUrlJoinLeave", integ.webhook.urls.joinleave or "")
+	integ.webhook.urls.chat = readUrl("integrationWebhookUrlChat", integ.webhook.urls.chat or "")
+	integ.webhook.urls.commands = readUrl("integrationWebhookUrlCommands", integ.webhook.urls.commands or "")
+	integ.webhook.url = integ.webhook.urls.all
+	local useAllSaved = NAmanage.NASettingsGet("integrationWebhookUseAll")
+	if type(useAllSaved) == "boolean" then
+		integ.webhook.useAll = useAllSaved
+	end
+	integ.webhook.useAll = integ.webhook.useAll == true
+	integ.webhook.enableJoinLeave = NAmanage.NASettingsGet("integrationWebhookJoinLeave") == true or integ.webhook.enableJoinLeave == true
+	integ.webhook.enableChat = NAmanage.NASettingsGet("integrationWebhookChat") == true or integ.webhook.enableChat == true
+	integ.webhook.enableCommands = NAmanage.NASettingsGet("integrationWebhookCommands") == true or integ.webhook.enableCommands == true
+	local clampNum = (NAmanage and NAmanage.clampNumber) or function(v, lo, hi, fallback)
+		local n = tonumber(v)
+		if not n then return fallback end
+		if lo and n < lo then n = lo end
+		if hi and n > hi then n = hi end
+		return n
+	end
+	integ.webhook.minInterval = clampNum(NAmanage.NASettingsGet("integrationWebhookInterval"), 0, 120, integ.webhook.minInterval or 2)
+
+	local eps = NAmanage.NASettingsGet("integrationHealthEndpoints")
+	if type(eps) == "table" then
+		integ.health = integ.health or { endpoints = {} }
+		integ.health.endpoints = {}
+		for i = 1, math.min(#eps, 3) do
+			if type(eps[i]) == "string" and eps[i] ~= "" then
+				integ.health.endpoints[i] = eps[i]
+			end
+		end
+	elseif type(eps) == "string" and eps ~= "" then
+		integ.health = integ.health or { endpoints = {} }
+		integ.health.endpoints = { eps }
+	end
+
+	integ.notes = integ.notes or {}
+	local noteSaved = NAmanage.NASettingsGet("integrationNotesLast")
+	if type(noteSaved) == "string" then
+		integ.notes.last = noteSaved
+	end
+
+	integ.rpc = integ.rpc or {}
+	integ.rpc.useCustom = NAmanage.NASettingsGet("integrationRpcUseCustom") == true or integ.rpc.useCustom == true
+	local rd = NAmanage.NASettingsGet("integrationRpcDetails")
+	local rs = NAmanage.NASettingsGet("integrationRpcState")
+	if type(rd) == "string" then integ.rpc.details = rd end
+	if type(rs) == "string" then integ.rpc.state = rs end
+	NAStuff.Integrations = integ
+end
+NAmanage.loadIntegration()
+
 NAStuff.CmdBar2Width = NAmanage.CmdBar2ClampValue(NAmanage.NASettingsGet("cmdbar2Width"), NAStuff.CmdBar2.minWidth, NAStuff.CmdBar2.maxWidth, NAStuff.CmdBar2.defaultWidth)
 NAStuff.CmdBar2Height = NAmanage.CmdBar2ClampValue(NAmanage.NASettingsGet("cmdbar2Height"), NAStuff.CmdBar2.minHeight, NAStuff.CmdBar2.maxHeight, NAStuff.CmdBar2.defaultHeight)
 _G.NAFreecamKeybindEnabled = NAmanage.NASettingsGet("freecamKeybind")
@@ -9120,6 +9854,52 @@ if FileSupport then
 	local function c3ToTbl(c)
 		return { math.floor(c.R * 255 + 0.5), math.floor(c.G * 255 + 0.5), math.floor(c.B * 255 + 0.5) }
 	end
+	local function clampAlpha(v)
+		return math.clamp(tonumber(v) or 0, 0, 1)
+	end
+	local function blendColorAlpha(base, bg, alpha)
+		bg = bg or Color3.new(0, 0, 0)
+		alpha = clampAlpha(alpha)
+		if alpha <= 0 then
+			return base
+		end
+		return Color3.new(
+			base.R + (bg.R - base.R) * alpha,
+			base.G + (bg.G - base.G) * alpha,
+			base.B + (bg.B - base.B) * alpha
+		)
+	end
+
+	NAStuff.ChatSettings = NAStuff.ChatSettings or {}
+	NAStuff.ChatSettings.input = NAStuff.ChatSettings.input or {}
+	NAStuff.ChatSettings.input.textTransparency = nil
+
+	local chatKeyBlockAction = "NA_BlockSlashChatKey"
+	NAmanage.ApplyChatKeyBlock = function(enumKey)
+		if not ContextActionService then
+			return
+		end
+		pcall(function()
+			ContextActionService:UnbindAction(chatKeyBlockAction)
+		end)
+		if IsOnMobile then
+			return
+		end
+		if enumKey == Enum.KeyCode.Slash then
+			return
+		end
+		local ok, err = pcall(function()
+			ContextActionService:BindActionAtPriority(chatKeyBlockAction, function(_, state)
+				if state == Enum.UserInputState.Begin then
+					return Enum.ContextActionResult.Sink
+				end
+				return Enum.ContextActionResult.Pass
+			end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.Slash)
+		end)
+		if not ok then
+			warn("[NA] Chat key block failed:", err)
+		end
+	end
 	local function deepMerge(dst, src)
 		for k, v in pairs(src) do
 			if type(v) == "table" and type(dst[k]) == "table" then
@@ -9137,6 +9917,12 @@ if FileSupport then
 		if isfile(ChatConfigPath) then
 			local ok3, d = pcall(function() return HttpService:JSONDecode(readfile(ChatConfigPath)) end)
 			if ok3 and type(d)=="table" then deepMerge(cfg, d) end
+		end
+		if cfg and cfg.bubbles then
+			local mb = tonumber(cfg.bubbles.maxBubbles)
+			if mb then
+				cfg.bubbles.maxBubbles = math.max(1, math.min(5, mb))
+			end
 		end
 		return cfg
 	end
@@ -9240,9 +10026,11 @@ if FileSupport then
 		setToggle("Tail Visible", bubbles.tailVisible)
 
 		setSlider("Text Size (Window)", window.textSize)
+		setSlider("Text Transparency (Window)", window.textTransparency)
 		setSlider("Text Stroke Transparency", window.strokeTransparency)
 		setSlider("Window Background Transparency", window.backgroundTransparency)
 		setSlider("Text Size (Tabs)", tabs.textSize)
+		setSlider("Text Transparency (Tabs)", tabs.textTransparency)
 		setSlider("Background Transparency (Tabs)", tabs.backgroundTransparency)
 		setSlider("Text Size (Input)", input.textSize)
 		setSlider("Text Stroke Transparency (Input)", input.strokeTransparency)
@@ -9251,15 +10039,23 @@ if FileSupport then
 		setSlider("Minimize Distance", bubbles.minimizeDistance)
 		setSlider("Text Size (Bubble)", bubbles.textSize)
 		setSlider("Bubble Spacing", bubbles.spacing)
+		setSlider("Text Transparency (Bubble)", bubbles.textTransparency)
 		setSlider("Background Transparency (Bubble)", bubbles.backgroundTransparency)
+		setSlider("Bubble Duration", bubbles.bubbleDuration)
+		setSlider("Max Bubbles", bubbles.maxBubbles)
 
 		setColor("Text Color", window.textColor)
 		setColor("Text Stroke Color", window.strokeColor)
 		setColor("Window Background", window.backgroundColor)
+		setColor("Tab Background", tabs.backgroundColor)
 		setColor("Text Color (Tabs)", tabs.textColor)
 		setColor("Selected Text Color", tabs.selectedTextColor)
 		setColor("Unselected Text Color", tabs.unselectedTextColor)
 		setColor("Text Color (Input)", input.textColor)
+		setColor("Input Background", input.backgroundColor)
+		setColor("Input Stroke Color", input.strokeColor)
+		setColor("Bubble Text Color", bubbles.textColor)
+		setColor("Bubble Background", bubbles.backgroundColor)
 	end
 
 	local function hasProp(inst, prop)
@@ -9312,10 +10108,10 @@ if FileSupport then
 		end
 
 		originalIO.getChatDefaults()
-		captureGroup("window", Window, { "Enabled", "FontFace", "TextSize", "TextColor3", "TextStrokeColor3", "TextStrokeTransparency", "BackgroundColor3", "BackgroundTransparency" })
-		captureGroup("tabs", Tabs, { "Enabled", "FontFace", "TextSize", "BackgroundTransparency", "TextColor3", "SelectedTabTextColor3", "UnselectedTabTextColor3" })
-		captureGroup("input", InputBar, { "Enabled", "AutocompleteEnabled", "FontFace", "TargetTextChannel", "KeyboardKeyCode", "TextSize", "TextColor3", "TextStrokeTransparency", "BackgroundTransparency" })
-		captureGroup("bubbles", Bubbles, { "Enabled", "MaxDistance", "MinimizeDistance", "TextSize", "BubblesSpacing", "BackgroundTransparency", "TailVisible" })
+		captureGroup("window", Window, { "Enabled", "FontFace", "TextSize", "TextColor3", "TextTransparency", "TextStrokeColor3", "TextStrokeTransparency", "BackgroundColor3", "BackgroundTransparency" })
+		captureGroup("tabs", Tabs, { "Enabled", "FontFace", "TextSize", "BackgroundColor3", "BackgroundTransparency", "TextColor3", "TextTransparency", "SelectedTabTextColor3", "UnselectedTabTextColor3" })
+		captureGroup("input", InputBar, { "Enabled", "AutocompleteEnabled", "FontFace", "TargetTextChannel", "KeyboardKeyCode", "TextSize", "TextColor3", "TextStrokeColor3", "TextStrokeTransparency", "BackgroundColor3", "BackgroundTransparency" })
+		captureGroup("bubbles", Bubbles, { "Enabled", "MaxDistance", "MinimizeDistance", "TextSize", "TextColor3", "TextTransparency", "BubblesSpacing", "BackgroundColor3", "BackgroundTransparency", "BubbleDuration", "MaxBubbles", "TailVisible" })
 	end
 
 	originalIO.applyChatDefaultGroup=function(group, inst)
@@ -9336,6 +10132,10 @@ if FileSupport then
 		originalIO.applyChatDefaultGroup("input", InputBar)
 		originalIO.applyChatDefaultGroup("bubbles", Bubbles)
 	end
+
+	NAStuff.ChatSettings = NAStuff.ChatSettings or {}
+	NAStuff.ChatSettings.input = NAStuff.ChatSettings.input or {}
+	NAStuff.ChatSettings.input.textTransparency = nil
 
 	NAmanage.ApplyTextChatSettings = function()
 		pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, NAStuff.ChatSettings.coreGuiChat) end)
@@ -9358,10 +10158,18 @@ if FileSupport then
 		NAStuff.ChatCustomizationActive = true
 
 		if Window then
+			local windowText = tblToC3(NAStuff.ChatSettings.window.textColor)
+			local windowBg = tblToC3(NAStuff.ChatSettings.window.backgroundColor)
+			local windowAlpha = clampAlpha(NAStuff.ChatSettings.window.textTransparency)
+			local windowHasAlpha = hasProp(Window, "TextTransparency")
+			local windowColor = windowHasAlpha and windowText or blendColorAlpha(windowText, windowBg, windowAlpha)
 			safeSet(Window, "Enabled", NAStuff.ChatSettings.window.enabled)
 			if hasProp(Window, "FontFace") and NAStuff.ChatSettings.window.font then pcall(function() Window.FontFace = Font.new(NAStuff.ChatSettings.window.font) end) end
 			safeSet(Window, "TextSize", NAStuff.ChatSettings.window.textSize)
-			safeSet(Window, "TextColor3", tblToC3(NAStuff.ChatSettings.window.textColor))
+			safeSet(Window, "TextColor3", windowColor)
+			if windowHasAlpha then
+				safeSet(Window, "TextTransparency", windowAlpha)
+			end
 			safeSet(Window, "TextStrokeColor3", tblToC3(NAStuff.ChatSettings.window.strokeColor))
 			safeSet(Window, "TextStrokeTransparency", NAStuff.ChatSettings.window.strokeTransparency)
 			safeSet(Window, "BackgroundColor3", tblToC3(NAStuff.ChatSettings.window.backgroundColor))
@@ -9369,16 +10177,28 @@ if FileSupport then
 		end
 
 		if Tabs then
+			local tabsBg = tblToC3(NAStuff.ChatSettings.tabs.backgroundColor)
+			local tabsAlpha = clampAlpha(NAStuff.ChatSettings.tabs.textTransparency)
+			local tabsText = tblToC3(NAStuff.ChatSettings.tabs.textColor)
+			local tabsSelected = tblToC3(NAStuff.ChatSettings.tabs.selectedTextColor)
+			local tabsUnselected = tblToC3(NAStuff.ChatSettings.tabs.unselectedTextColor)
+			local tabsHasAlpha = hasProp(Tabs, "TextTransparency")
 			safeSet(Tabs, "Enabled", NAStuff.ChatSettings.tabs.enabled)
 			if hasProp(Tabs, "FontFace") and NAStuff.ChatSettings.tabs.font then pcall(function() Tabs.FontFace = Font.new(NAStuff.ChatSettings.tabs.font) end) end
 			safeSet(Tabs, "TextSize", NAStuff.ChatSettings.tabs.textSize)
+			safeSet(Tabs, "BackgroundColor3", tblToC3(NAStuff.ChatSettings.tabs.backgroundColor))
 			safeSet(Tabs, "BackgroundTransparency", NAStuff.ChatSettings.tabs.backgroundTransparency)
-			safeSet(Tabs, "TextColor3", tblToC3(NAStuff.ChatSettings.tabs.textColor))
-			safeSet(Tabs, "SelectedTabTextColor3", tblToC3(NAStuff.ChatSettings.tabs.selectedTextColor))
-			safeSet(Tabs, "UnselectedTabTextColor3", tblToC3(NAStuff.ChatSettings.tabs.unselectedTextColor))
+			safeSet(Tabs, "TextColor3", tabsHasAlpha and tabsText or blendColorAlpha(tabsText, tabsBg, tabsAlpha))
+			if tabsHasAlpha then
+				safeSet(Tabs, "TextTransparency", tabsAlpha)
+			end
+			safeSet(Tabs, "SelectedTabTextColor3", tabsHasAlpha and tabsSelected or blendColorAlpha(tabsSelected, tabsBg, tabsAlpha))
+			safeSet(Tabs, "UnselectedTabTextColor3", tabsHasAlpha and tabsUnselected or blendColorAlpha(tabsUnselected, tabsBg, tabsAlpha))
 		end
 
 		if InputBar then
+			local inputBg = tblToC3(NAStuff.ChatSettings.input.backgroundColor)
+			local inputText = tblToC3(NAStuff.ChatSettings.input.textColor)
 			safeSet(InputBar, "Enabled", NAStuff.ChatSettings.input.enabled)
 			safeSet(InputBar, "AutocompleteEnabled", NAStuff.ChatSettings.input.autocomplete)
 			if hasProp(InputBar, "FontFace") and NAStuff.ChatSettings.input.font then pcall(function() InputBar.FontFace = Font.new(NAStuff.ChatSettings.input.font) end) end
@@ -9390,20 +10210,36 @@ if FileSupport then
 				local keyName = tostring(NAStuff.ChatSettings.input.keyCode or "Slash")
 				local enumKey = Enum.KeyCode[keyName] or Enum.KeyCode.Slash
 				safeSet(InputBar, "KeyboardKeyCode", enumKey)
+				if NAmanage.ApplyChatKeyBlock then
+					NAmanage.ApplyChatKeyBlock(enumKey)
+				end
 			end
 			safeSet(InputBar, "TextSize", NAStuff.ChatSettings.input.textSize)
-			safeSet(InputBar, "TextColor3", tblToC3(NAStuff.ChatSettings.input.textColor))
+			safeSet(InputBar, "TextColor3", inputText)
+			safeSet(InputBar, "TextStrokeColor3", tblToC3(NAStuff.ChatSettings.input.strokeColor))
 			safeSet(InputBar, "TextStrokeTransparency", NAStuff.ChatSettings.input.strokeTransparency)
+			safeSet(InputBar, "BackgroundColor3", tblToC3(NAStuff.ChatSettings.input.backgroundColor))
 			safeSet(InputBar, "BackgroundTransparency", NAStuff.ChatSettings.input.backgroundTransparency)
 		end
 
 		if Bubbles then
+			local bubbleBg = tblToC3(NAStuff.ChatSettings.bubbles.backgroundColor)
+			local bubbleAlpha = clampAlpha(NAStuff.ChatSettings.bubbles.textTransparency)
+			local bubbleText = tblToC3(NAStuff.ChatSettings.bubbles.textColor)
+			local bubbleHasAlpha = hasProp(Bubbles, "TextTransparency")
 			safeSet(Bubbles, "Enabled", NAStuff.ChatSettings.bubbles.enabled)
 			if hasProp(Bubbles, "MaxDistance") then safeSet(Bubbles, "MaxDistance", math.max(NAStuff.ChatSettings.bubbles.maxDistance, 0)) end
 			if hasProp(Bubbles, "MinimizeDistance") then safeSet(Bubbles, "MinimizeDistance", math.max(NAStuff.ChatSettings.bubbles.minimizeDistance, 0)) end
 			if hasProp(Bubbles, "TextSize") then safeSet(Bubbles, "TextSize", math.max(NAStuff.ChatSettings.bubbles.textSize, 1)) end
+			if hasProp(Bubbles, "TextColor3") then safeSet(Bubbles, "TextColor3", bubbleHasAlpha and bubbleText or blendColorAlpha(bubbleText, bubbleBg, bubbleAlpha)) end
+			if bubbleHasAlpha then
+				safeSet(Bubbles, "TextTransparency", bubbleAlpha)
+			end
 			if hasProp(Bubbles, "BubblesSpacing") then safeSet(Bubbles, "BubblesSpacing", math.max(NAStuff.ChatSettings.bubbles.spacing, 0)) end
+			if hasProp(Bubbles, "BackgroundColor3") then safeSet(Bubbles, "BackgroundColor3", bubbleBg) end
 			safeSet(Bubbles, "BackgroundTransparency", math.clamp(NAStuff.ChatSettings.bubbles.backgroundTransparency, 0, 1))
+			if hasProp(Bubbles, "BubbleDuration") then safeSet(Bubbles, "BubbleDuration", math.max(1, tonumber(NAStuff.ChatSettings.bubbles.bubbleDuration) or 0)) end
+			if hasProp(Bubbles, "MaxBubbles") then safeSet(Bubbles, "MaxBubbles", math.max(1, math.min(5, tonumber(NAStuff.ChatSettings.bubbles.maxBubbles) or 1))) end
 			safeSet(Bubbles, "TailVisible", NAStuff.ChatSettings.bubbles.tailVisible)
 		end
 	end
@@ -10424,8 +11260,54 @@ NAmanage.makeUniqueAlias=function(aliasName, seen)
 	end
 end
 Loops = {}
-cmd.add = function(aliases, info, func, requiresArguments)
+NAmanage.ensurePatchedInfo=function(info)
+	local title = ""
+	local desc = ""
+	if type(info) == "table" then
+		title = tostring(info[1] or "")
+		desc = tostring(info[2] or "")
+	elseif info ~= nil then
+		title = tostring(info)
+	end
+
+	local lowerTitle = Lower(title)
+	local lowerDesc = Lower(desc)
+
+	if title == "" then
+		title = "[PATCHED]"
+	elseif not lowerTitle:find("patched", 1, true) then
+		title = "[PATCHED] "..title
+	end
+
+	if desc == "" then
+		desc = "Patched / may not work"
+	elseif not lowerDesc:find("patched", 1, true) then
+		desc = desc.." (patched)"
+	end
+
+	return {title, desc}
+end
+
+NAmanage.wrapPatchedFunc=function(func)
+	if type(func) ~= "function" then
+		return function()
+			DoNotif("This command is patched and may not work", 3)
+		end
+	end
+	return function(...)
+		DoNotif("This command is patched and may not work", 3)
+		return func(...)
+	end
+end
+
+cmd.add = function(aliases, info, func, requiresArguments, meta)
+	if type(requiresArguments) == "table" and meta == nil then
+		meta = requiresArguments
+		requiresArguments = false
+	end
+
 	requiresArguments = requiresArguments or false
+	meta = type(meta) == "table" and meta or {}
 
 	if type(aliases) ~= "table" or #aliases == 0 then
 		return
@@ -10471,7 +11353,10 @@ cmd.add = function(aliases, info, func, requiresArguments)
 			tostring(info[2] or "")
 		}
 	end
-	local data = {func, infoTable, requiresArguments}
+	if meta.patched then
+		infoTable = NAmanage.ensurePatchedInfo(infoTable)
+	end
+	local data = {func, infoTable, requiresArguments, meta}
 	if primaryLower then
 		if not cmds.Commands[primaryLower] then
 			commandcount += 1
@@ -10485,6 +11370,10 @@ cmd.add = function(aliases, info, func, requiresArguments)
 			cmds.Aliases[Lower(aliasName)] = data
 		end
 	end
+end
+
+cmd.addPatched = function(aliases, info, func, requiresArguments)
+	return cmd.add(aliases, NAmanage.ensurePatchedInfo(info), NAmanage.wrapPatchedFunc(func), requiresArguments, { patched = true })
 end
 
 cmd.run = function(args)
@@ -10507,10 +11396,16 @@ cmd.run = function(args)
 			if shouldRecord then
 				NAmanage.updateLastCommand(rawArgs)
 			end
+			if NAmanage.WebhookCommand then
+				NAmanage.WebhookCommand(rawArgs)
+			end
 		else
 			if NAmanage.tryCmdIntegration(rawArgs) then
 				if shouldRecord then
 					NAmanage.updateLastCommand(rawArgs)
+				end
+				if NAmanage.WebhookCommand then
+					NAmanage.WebhookCommand(rawArgs)
 				end
 				return
 			end
@@ -11290,7 +12185,13 @@ end)
 local ESPenabled=false
 local chamsEnabled=false
 local ESPAutoTrackAll=false
+local ESPPlayersEnabled=false
+local NPCESPenabled=false
 espCONS = espCONS or {}
+
+NAmanage.ESP_RecomputeEnabled=function()
+	ESPenabled = ESPPlayersEnabled or NPCESPenabled
+end
 
 
 NAgui.espUsesHighlight=function()
@@ -11914,7 +12815,7 @@ end
 
 NAmanage.ESP_AddBoxForPart = function(model, part)
 	local data = espCONS[model]
-	if not data or not part or not part:IsA("BasePart") then return end
+	if not data or data.isNPC or not part or not part:IsA("BasePart") then return end
 	if data.boxTable[part] then return end
 	if NAgui.espUsesHighlight() then return end
 	local box = InstanceNew("BoxHandleAdornment")
@@ -11931,40 +12832,95 @@ end
 NAmanage.ESP_AddBoxes = function(model)
 	local data = espCONS[model]
 	if not data then return end
-	if NAgui.espUsesHighlight() then
+
+	if data.isNPC then
+		for part, box in pairs(data.boxTable) do
+			if box then box:Destroy() end
+			data.boxTable[part] = nil
+		end
+
 		local highlight = data.highlight
 		if highlight and not highlight.Parent then
 			highlight = nil
 		end
+
 		if not highlight then
 			local hl = InstanceNew("Highlight")
 			hl.Name = "NAESP_Highlight"
 			hl.Adornee = model
 			hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-			local baseColor = (NAStuff.ESP_UseCustomColor == true and typeof(NAStuff.ESP_CustomColor) == "Color3") and NAStuff.ESP_CustomColor or Color3.new(1, 1, 1)
+
+			local baseColor = (NAStuff.ESP_UseCustomColor == true and typeof(NAStuff.ESP_CustomColor) == "Color3")
+				and NAStuff.ESP_CustomColor
+				or Color3.new(1, 1, 1)
+
 			local outline = NAgui.sanitizeTransparency(NAStuff.ESP_OutlineTransparency or 0)
+
 			hl.FillColor = baseColor
 			hl.OutlineColor = baseColor
 			hl.FillTransparency = NAgui.sanitizeTransparency(NAStuff.ESP_Transparency or 0.7)
 			hl.OutlineTransparency = outline
 			hl.Parent = model
+
 			data.highlight = hl
 			NAmanage.ESP_AdjustHighlightMaterial(model, true)
 		else
 			data.highlight = highlight
 		end
+
+		if data.highlight then
+			data.highlight.Enabled = true
+		end
+
+		data.boxEnabled = true
+		return
+	end
+
+	if NAgui.espUsesHighlight() then
+		local highlight = data.highlight
+		if highlight and not highlight.Parent then
+			highlight = nil
+		end
+
+		if not highlight then
+			local hl = InstanceNew("Highlight")
+			hl.Name = "NAESP_Highlight"
+			hl.Adornee = model
+			hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+
+			local baseColor = (NAStuff.ESP_UseCustomColor == true and typeof(NAStuff.ESP_CustomColor) == "Color3")
+				and NAStuff.ESP_CustomColor
+				or Color3.new(1, 1, 1)
+
+			local outline = NAgui.sanitizeTransparency(NAStuff.ESP_OutlineTransparency or 0)
+
+			hl.FillColor = baseColor
+			hl.OutlineColor = baseColor
+			hl.FillTransparency = NAgui.sanitizeTransparency(NAStuff.ESP_Transparency or 0.7)
+			hl.OutlineTransparency = outline
+			hl.Parent = model
+
+			data.highlight = hl
+			NAmanage.ESP_AdjustHighlightMaterial(model, true)
+		else
+			data.highlight = highlight
+		end
+
 		if data.highlight then
 			data.highlight.Enabled = true
 			data.highlight.OutlineTransparency = NAgui.sanitizeTransparency(NAStuff.ESP_OutlineTransparency or 0)
 		end
+
 		data.boxEnabled = true
 		return
 	end
+
 	for _, part in ipairs(model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			NAmanage.ESP_AddBoxForPart(model, part)
 		end
 	end
+
 	data.boxEnabled = true
 end
 
@@ -11988,6 +12944,7 @@ NAmanage.ESP_ClearModel = function(model)
 	local key = NAmanage.ESP_Key(model)
 	NAlib.disconnect(key.."_descAdded")
 	NAlib.disconnect(key.."_descRemoved")
+	NAlib.disconnect(key.."_ancestry")
 	NAlib.disconnect(key.."_charAdded")
 	NAmanage.ESP_UnregisterModel(model)
 	NAmanage.ESP_RemoveBoxes(model)
@@ -12004,6 +12961,20 @@ NAmanage.ESP_ClearAll = function()
 	end
 	NAStuff.ESP_ModelList = {}
 	NAlib.disconnect("esp_update_global")
+	ESPPlayersEnabled = false
+	NPCESPenabled = false
+	NAmanage.ESP_RecomputeEnabled()
+end
+
+NAmanage.ESP_ClearPlayers = function()
+	for model, data in pairs(espCONS) do
+		if not (data and data.isNPC) then
+			NAmanage.ESP_ClearModel(model)
+		end
+	end
+	for _, plr in ipairs(Players:GetPlayers()) do
+		NAlib.disconnect("esp_charAdded_plr_"..tostring(plr.UserId))
+	end
 end
 
 NAmanage.ESP_Disconnect = function(target)
@@ -12017,11 +12988,15 @@ end
 NAmanage.ESP_UpdateOne = function(model, now, localRoot)
 	local data = espCONS[model]
 	if not data then return end
+
 	local owner = Players:GetPlayerFromCharacter(model)
-	if not model.Parent then
-		if data.persistent and owner and owner.Character == model then
-			NAmanage.ESP_RemoveBoxes(model)
-			NAmanage.ESP_DestroyLabel(model)
+	if not NAmanage.IsValidESPModel(model, data.isNPC) then
+		if data.persistent and owner then
+			Spawn(function()
+				if owner.Character and NAmanage.IsValidESPModel(owner.Character, false) then
+					NAmanage.ESP_Add(owner, true, false)
+				end
+			end)
 		else
 			NAmanage.ESP_ClearModel(model)
 		end
@@ -12034,18 +13009,27 @@ NAmanage.ESP_UpdateOne = function(model, now, localRoot)
 	local teamColor = team and team.TeamColor and team.TeamColor.Color or nil
 
 	local dist = (localRoot and rootPart) and math.floor((localRoot.Position - rootPart.Position).Magnitude) or nil
-	local budget = dist and ((dist<=50 and 0.05) or (dist<=150 and 0.15) or (dist<=400 and 0.3) or 0.6) or 0.2
+	local budget = dist and ((dist <= 50 and 0.05) or (dist <= 150 and 0.15) or (dist <= 400 and 0.3) or 0.6) or 0.2
+
+	if data.isNPC then
+		budget = budget * (NAStuff.NPC_ESP_Throttle or 2)
+	end
+
 	if data.next and now < data.next then return end
 	data.next = now + budget
 
-	local distColor = dist and ((dist>100 and Color3.fromRGB(0,255,0)) or (dist>50 and Color3.fromRGB(255,165,0)) or Color3.fromRGB(255,0,0)) or Color3.new(1,1,1)
+	local distColor = dist and ((dist > 100 and Color3.fromRGB(0, 255, 0)) or (dist > 50 and Color3.fromRGB(255, 165, 0)) or Color3.fromRGB(255, 0, 0)) or Color3.new(1, 1, 1)
 	local customColor = (NAStuff.ESP_UseCustomColor == true) and NAStuff.ESP_CustomColor or nil
 	local finalColor = (typeof(customColor) == "Color3" and customColor)
 		or ((NAStuff.ESP_ColorByTeam ~= false and teamColor) and teamColor)
 		or distColor
 
-	local wantBoxes = ESPenabled and (dist == nil or dist <= (NAStuff.ESP_BoxMaxDistance or 120))
-	local wantLabel = ESPenabled and not chamsEnabled and (dist == nil or dist <= (NAStuff.ESP_LabelMaxDistance or 1000))
+	local isNPC = data.isNPC == true
+	local boxDist = isNPC and (NAStuff.NPC_ESP_BoxMaxDistance or NAStuff.ESP_BoxMaxDistance or 120) or (NAStuff.ESP_BoxMaxDistance or 120)
+	local wantBoxes = ESPenabled and (dist == nil or dist <= boxDist)
+	local labelDist = isNPC and (NAStuff.NPC_ESP_LabelMaxDistance or NAStuff.ESP_LabelMaxDistance or 600) or (NAStuff.ESP_LabelMaxDistance or 1000)
+	local allowLabel = (not isNPC) or (NAStuff.NPC_ESP_ShowLabels ~= false)
+	local wantLabel = ESPenabled and not chamsEnabled and allowLabel and (dist == nil or dist <= labelDist)
 
 	if wantBoxes and not data.boxEnabled then
 		NAmanage.ESP_AddBoxes(model)
@@ -12054,7 +13038,25 @@ NAmanage.ESP_UpdateOne = function(model, now, localRoot)
 	end
 
 	if data.boxEnabled then
-		if NAgui.espUsesHighlight() then
+		if isNPC then
+			local highlight = data.highlight
+			if not highlight or not highlight.Parent then
+				data.highlight = nil
+				if wantBoxes then
+					NAmanage.ESP_AddBoxes(model)
+					highlight = data.highlight
+				end
+			end
+			if highlight then
+				local tr = NAgui.sanitizeTransparency(NAStuff.ESP_Transparency or 0.7)
+				if highlight.FillTransparency ~= tr then highlight.FillTransparency = tr end
+				local outline = NAgui.sanitizeTransparency(NAStuff.ESP_OutlineTransparency or 0)
+				if highlight.OutlineTransparency ~= outline then highlight.OutlineTransparency = outline end
+				local color = finalColor or Color3.new(1, 1, 1)
+				if highlight.FillColor ~= color then highlight.FillColor = color end
+				if highlight.OutlineColor ~= color then highlight.OutlineColor = color end
+			end
+		elseif NAgui.espUsesHighlight() then
 			if next(data.boxTable) ~= nil then
 				for part, box in pairs(data.boxTable) do
 					if box then box:Destroy() end
@@ -12074,7 +13076,7 @@ NAmanage.ESP_UpdateOne = function(model, now, localRoot)
 				if highlight.FillTransparency ~= tr then highlight.FillTransparency = tr end
 				local outline = NAgui.sanitizeTransparency(NAStuff.ESP_OutlineTransparency or 0)
 				if highlight.OutlineTransparency ~= outline then highlight.OutlineTransparency = outline end
-				local color = finalColor or Color3.new(1,1,1)
+				local color = finalColor or Color3.new(1, 1, 1)
 				if highlight.FillColor ~= color then highlight.FillColor = color end
 				if highlight.OutlineColor ~= color then highlight.OutlineColor = color end
 			end
@@ -12100,32 +13102,35 @@ NAmanage.ESP_UpdateOne = function(model, now, localRoot)
 		end
 	end
 
-	local pieces = {}
-	if NAStuff.ESP_ShowName ~= false then
-		local nm = owner and nameChecker(owner) or model.Name
-		if nm and nm ~= "" then pieces[#pieces+1] = nm end
-	end
-	if NAStuff.ESP_ShowHealth ~= false then
-		local hum = getPlrHum(model)
-		local h = hum and math.floor(hum.Health) or nil
-		local m = hum and math.floor(hum.MaxHealth) or nil
-		if h and m then pieces[#pieces+1] = tostring(h).."/"..tostring(m).." HP" end
-	end
-	if (NAStuff.ESP_ShowTeamText ~= false) and teamName and teamName ~= "None" then
-		pieces[#pieces+1] = teamName
-	end
-	if (NAStuff.ESP_ShowDistance ~= false) and dist then
-		pieces[#pieces+1] = tostring(dist).." studs"
+	local pieces
+	if wantLabel then
+		pieces = {}
+		if NAStuff.ESP_ShowName ~= false then
+			local nm = owner and nameChecker(owner) or model.Name
+			if nm and nm ~= "" then pieces[#pieces + 1] = nm end
+		end
+		if NAStuff.ESP_ShowHealth ~= false then
+			local hum = getPlrHum(model)
+			local h = hum and math.floor(hum.Health) or nil
+			local m = hum and math.floor(hum.MaxHealth) or nil
+			if h and m then pieces[#pieces + 1] = tostring(h) .. "/" .. tostring(m) .. " HP" end
+		end
+		if (NAStuff.ESP_ShowTeamText ~= false) and teamName and teamName ~= "None" then
+			pieces[#pieces + 1] = teamName
+		end
+		if (NAStuff.ESP_ShowDistance ~= false) and dist then
+			pieces[#pieces + 1] = tostring(dist) .. " studs"
+		end
 	end
 
-	if wantLabel and #pieces > 0 then
+	if wantLabel and pieces and #pieces > 0 then
 		NAmanage.ESP_EnsureLabel(model)
 		local label = data.textLabel
 		if label then
 			NAgui.applyLabelStyle(label)
 			local txt = Concat(pieces, " | ")
 			if label.Text ~= txt then label.Text = txt end
-			local txtColor = finalColor or Color3.new(1,1,1)
+			local txtColor = finalColor or Color3.new(1, 1, 1)
 			if label.TextColor3 ~= txtColor then label.TextColor3 = txtColor end
 		end
 	else
@@ -12158,8 +13163,10 @@ NAmanage.ESP_UnregisterModel=function(m)
 	end
 end
 
-NAmanage.ESP_Add = function(target, persistent)
+NAmanage.ESP_Add = function(target, persistent, isNPC)
 	persistent = persistent or false
+	local npcFlag = isNPC == true
+
 	if not (ESPenabled or chamsEnabled) then return end
 	if typeof(target) ~= "Instance" then return end
 
@@ -12169,7 +13176,7 @@ NAmanage.ESP_Add = function(target, persistent)
 			NAlib.connect("esp_charAdded_plr_"..tostring(target.UserId), target.CharacterAdded:Connect(function()
 				Wait(0.25)
 				if (ESPenabled or chamsEnabled) then
-					NAmanage.ESP_Add(target, true)
+					NAmanage.ESP_Add(target, true, false)
 				end
 			end))
 		end
@@ -12179,15 +13186,24 @@ NAmanage.ESP_Add = function(target, persistent)
 	local model = target:IsA("Player") and target.Character or target
 	NAmanage.ESP_ClearModel(model)
 	if not (model and model:IsA("Model")) then return end
+	if not NAmanage.IsValidESPModel(model, npcFlag) then return end
 
-	espCONS[model] = { boxTable = {}, persistent = persistent, boxEnabled = false, highlight = nil }
+	espCONS[model] = {
+		boxTable = {},
+		persistent = persistent,
+		boxEnabled = false,
+		highlight = nil,
+		isNPC = npcFlag
+	}
+
 	NAmanage.ESP_RegisterModel(model)
 	local key = NAmanage.ESP_Key(model)
 
 	NAlib.connect(key.."_descAdded", model.DescendantAdded:Connect(function(desc)
 		if not (ESPenabled or chamsEnabled) then return end
-		if not espCONS[model] then return end
-		if desc:IsA("BasePart") and espCONS[model].boxEnabled then
+		local data = espCONS[model]
+		if not data or data.isNPC then return end
+		if desc:IsA("BasePart") and data.boxEnabled then
 			NAmanage.ESP_AddBoxForPart(model, desc)
 		end
 	end))
@@ -12196,7 +13212,31 @@ NAmanage.ESP_Add = function(target, persistent)
 		local data = espCONS[model]
 		if not data then return end
 		local box = data.boxTable[desc]
-		if box then box:Destroy(); data.boxTable[desc] = nil end
+		if box then
+			box:Destroy()
+			data.boxTable[desc] = nil
+		end
+	end))
+
+	NAlib.connect(key.."_ancestry", model.AncestryChanged:Connect(function(_, parent)
+		local data = espCONS[model]
+		if not data then return end
+		if data.persistent then
+			local owner = Players:GetPlayerFromCharacter(model)
+			if parent and workspace and model:IsDescendantOf(workspace) then
+				Spawn(function()
+					if owner then
+						NAmanage.ESP_Add(owner, true, false)
+					elseif NAmanage.IsValidESPModel(model, data.isNPC) then
+						NAmanage.ESP_Add(model, true, data.isNPC)
+					end
+				end)
+			end
+		else
+			if parent == nil or not (workspace and model:IsDescendantOf(workspace)) then
+				NAmanage.ESP_ClearModel(model)
+			end
+		end
 	end))
 
 	NAmanage.ESP_AddBoxes(model)
@@ -14349,7 +15389,7 @@ end
 				if not target and Players then
 					target = Players.LocalPlayer
 				end
-				local hum = target and target.Character and target.Character:FindFirstChildOfClass("Humanoid")
+				local hum = target and target.Character and getPlrHum(target.Character)
 				return hum and hum.RigType == Enum.HumanoidRigType.R15
 			end
 			proxyEnv.Services = proxyEnv.Services or iyServices
@@ -14485,7 +15525,7 @@ end
 					for i = 1, b.len do
 						out[i] = string.char(b.data[i] or 0)
 					end
-					return table.concat(out)
+					return Concat(out)
 				end
 				proxyEnv.buffer = bufShim
 			end
@@ -17558,10 +18598,10 @@ cmd.add({"scripthub","hub"},{"scripthub (hub)","Thanks to scriptblox/rscripts AP
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/ScriptHubNA.lua"))()
 end)
 
---[[cmd.add({"resizechat","rc"},{"resizechat (rc)","Makes chat resizable and draggable"},function()
+cmd.addPatched({"resizechat","rc"},{"resizechat (rc)","Makes chat resizable and draggable"},function()
 	require(SafeGetService("Chat").ClientChatModules.ChatSettings).WindowResizable=true
 	require(SafeGetService("Chat").ClientChatModules.ChatSettings).WindowDraggable=true
-end)]]
+end)
 
 
 local scaleFrame = nil
@@ -17987,6 +19027,151 @@ cmd.add({"unclickfling","unmousefling"},{"unclickfling (unmousefling)","disables
 	clickflingEnabled = false
 	if clickflingUI then clickflingUI:Destroy() end
 	NAlib.disconnect("clickfling_mouse")
+end)
+
+NAStuff.NAundergroundState = NAStuff.NAundergroundState or {}
+NAStuff.NA_UNDERGROUND_BIND_NAME = NAStuff.NA_UNDERGROUND_BIND_NAME or "NAundergroundBind"
+NAStuff.NA_UNDERGROUND_OFFSET = NAStuff.NA_UNDERGROUND_OFFSET or Vector3.new(0, 15, 0)
+
+if RunService and RunService.UnbindFromRenderStep then
+	pcall(RunService.UnbindFromRenderStep, RunService, NAStuff.NA_UNDERGROUND_BIND_NAME)
+end
+do
+	local st = NAStuff.NAundergroundState
+	if st.heartbeatConnection then
+		pcall(function() st.heartbeatConnection:Disconnect() end)
+	end
+	if st.highlight and st.highlight.Parent then
+		pcall(function() st.highlight:Destroy() end)
+	end
+	st.Underground = false
+	st.UndergroundBind = false
+	st.UndergroundCurrent = nil
+	st.heartbeatConnection = nil
+	st.highlight = nil
+end
+
+cmd.add({"underground","ug"},{"underground [offset] (ug)","Makes your character underground on the server"},function(offset)
+	local state = NAStuff.NAundergroundState
+
+	local function UG_Get(key)
+		return state[key]
+	end
+	local function UG_Set(key, val)
+		state[key] = val
+		return val
+	end
+
+	local function fetchCharPieces()
+		local chr = getChar()
+		if not chr then
+			return nil, nil, nil
+		end
+		local hum = getHum()
+		local root = getRoot(chr)
+		if not root then
+			for _, part in ipairs(chr:GetChildren()) do
+				if part:IsA("BasePart") then
+					root = part
+					break
+				end
+			end
+		end
+		return chr, root, hum
+	end
+
+	local character, rootPart, humanoid = fetchCharPieces()
+	if not (character and rootPart and humanoid) then
+		if type(DoNotif) == "function" then
+			DoNotif("Character is not ready yet", 2)
+		end
+		return "Underground", "Character is not ready yet"
+	end
+
+	local defaultOffset = NAStuff.NA_UNDERGROUND_OFFSET or Vector3.new(0, 15, 0)
+	local offsetNum = tonumber(offset)
+	if not offsetNum then
+		offsetNum = defaultOffset.Y
+	end
+	local offsetVec = Vector3.new(0, offsetNum, 0)
+
+	local Underground = UG_Get("Underground")
+	UG_Set("Underground", not Underground)
+
+	if not Underground then
+		UG_Set("UndergroundCurrent", rootPart.CFrame)
+		UG_Set("UndergroundOffset", offsetVec)
+
+		local prevHB = UG_Get("heartbeatConnection")
+		if prevHB then
+			pcall(function() prevHB:Disconnect() end)
+		end
+
+		UG_Set("heartbeatConnection", RunService.Heartbeat:Connect(function()
+			if not UG_Get("Underground") then
+				return
+			end
+
+			local _, currentRoot, hum = fetchCharPieces()
+			if not currentRoot then
+				return
+			end
+
+			UG_Set("UndergroundCurrent", currentRoot.CFrame)
+			if hum then
+				hum.Sit = false
+			end
+
+			currentRoot.CFrame = currentRoot.CFrame - (UG_Get("UndergroundOffset") or defaultOffset)
+		end))
+
+		if RunService and RunService.UnbindFromRenderStep then
+			pcall(RunService.UnbindFromRenderStep, RunService, NAStuff.NA_UNDERGROUND_BIND_NAME)
+		end
+		UG_Set("UndergroundBind", true)
+		RunService:BindToRenderStep(NAStuff.NA_UNDERGROUND_BIND_NAME, Enum.RenderPriority.First.Value, function()
+			local current = UG_Get("UndergroundCurrent")
+			if UG_Get("Underground") and current then
+				local _, r = fetchCharPieces()
+				if r then
+					r.CFrame = current
+				end
+			end
+		end)
+
+		if type(DoNotif) == "function" then
+			DoNotif("Underground enabled, hiding you from others", 2)
+		end
+		return "Underground", "Your character is now underground for everyone else"
+	end
+
+	for _ = 1, 10 do
+		local _, r = fetchCharPieces()
+		if r then
+			r.CFrame = UG_Get("UndergroundCurrent") or r.CFrame
+		end
+		Wait()
+	end
+
+	UG_Set("UndergroundCurrent", nil)
+
+	local hb = UG_Get("heartbeatConnection")
+	if hb then
+		hb:Disconnect()
+		UG_Set("heartbeatConnection", nil)
+	end
+	UG_Set("UndergroundOffset", nil)
+	if UG_Get("UndergroundBind") then
+		UG_Set("UndergroundBind", false)
+		if RunService and RunService.UnbindFromRenderStep then
+			pcall(RunService.UnbindFromRenderStep, RunService, NAStuff.NA_UNDERGROUND_BIND_NAME)
+		end
+	end
+
+	if type(DoNotif) == "function" then
+		DoNotif("Underground disabled, you're back to normal", 2)
+	end
+	return "Underground", "Disabled, you're back to normal"
 end)
 
 clickscareUI = nil
@@ -18898,7 +20083,7 @@ cmd.add({"chardebug","cdebug"},{"chardebug (cdebug)","debug your character"},fun
 		return v
 	end
 	local function char() return LocalPlayer.Character end
-	local function hum() local c=char() return c and c:FindFirstChildOfClass("Humanoid") or nil end
+	local function hum() local c=char() return c and getHum() or nil end
 	local function root(c)
 		c = c or char()
 		return c and (c:FindFirstChild("HumanoidRootPart") or c:FindFirstChild("Torso") or c:FindFirstChild("UpperTorso")) or nil
@@ -20555,7 +21740,7 @@ end)
 cmd.add({"invisfling"}, {"invisfling", "Enables invisible fling (the invis part is patched, try using the god command before using this)"}, function()
 	local player = Players.LocalPlayer
 	local character = getChar()
-	local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+	local humanoid = getHum()
 	if not (player and character and humanoid) then
 		DebugNotif("Invisfling failed: missing character", 2)
 		return
@@ -20595,7 +21780,7 @@ cmd.add({"invisfling"}, {"invisfling", "Enables invisible fling (the invis part 
 		return
 	end
 
-	local activeHumanoid = character:FindFirstChildOfClass("Humanoid")
+	local activeHumanoid = getHum()
 	if not activeHumanoid then
 		activeHumanoid = InstanceNew("Humanoid")
 		activeHumanoid.Name = "Humanoid"
@@ -20878,7 +22063,7 @@ cmd.add({"notools"},{"notools","Remove your tools"},function()
 end)
 
 -- leg resize sureeee
---[[cmd.add({"breaklayeredclothing","blc"},{"breaklayeredclothing (blc)","Streches your layered clothing"},function()
+cmd.addPatched({"breaklayeredclothing","blc"},{"breaklayeredclothing (blc)","Streches your layered clothing"},function()
 	Wait();
 
 	DoNotif("Break layered clothing executed,if you havent already equip shirt,jacket,pants and shoes (Layered Clothing ones)")
@@ -20917,7 +22102,7 @@ end)
 	end
 	Noclipping=RunService.Stepped:Connect(NoclipLoop)
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/leg%20resize'))()
-end)]]
+end)
 
 cmd.add({"fpsbooster","lowgraphics","boostfps","lowg"},{"fpsbooster","Enables maximum-performance low graphics mode, run again to restore"},function()
 	local g=getgenv and getgenv() or _G
@@ -21792,7 +22977,6 @@ cmd.add({"timestamp", "epoch"}, {"timestamp (epoch)", "Shows current Unix timest
 end)
 cmd.add({"cartornado", "ctornado"}, {"cartornado (ctornado)", "Tornados a car just sit in the car"}, function()
 	local Player = Players.LocalPlayer
-	local Workspace = workspace
 
 	repeat RunService.RenderStepped:Wait() until Player.Character
 	local Character = Player.Character
@@ -21802,7 +22986,7 @@ cmd.add({"cartornado", "ctornado"}, {"cartornado (ctornado)", "Tornados a car ju
 	SPart.CanCollide = true
 	SPart.Size = Vector3.new(1, 100, 1)
 	SPart.Transparency = 0.4
-	SPart.Parent = Workspace
+	SPart.Parent = workspace
 
 	RunService.Stepped:Connect(function()
 		local hum = Character and getHum()
@@ -21810,7 +22994,7 @@ cmd.add({"cartornado", "ctornado"}, {"cartornado (ctornado)", "Tornados a car ju
 			local rayOrigin = Character.PrimaryPart.Position + Character.PrimaryPart.CFrame.LookVector * 6
 			local rayDir = Vector3.new(0, -4, 0)
 			local ray = Ray.new(rayOrigin, rayDir)
-			local part = Workspace:FindPartOnRayWithIgnoreList(ray, {Character})
+			local part = workspace:FindPartOnRayWithIgnoreList(ray, {Character})
 			if part then
 				SPart.CFrame = Character.PrimaryPart.CFrame + Character.PrimaryPart.CFrame.LookVector * 6
 			end
@@ -21908,16 +23092,6 @@ end)
 cmd.add({"UNCTest","UNC"},{"UNCTest (UNC)","Test how many functions your executor supports"},function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/uuuuuuu/main/UNC%20test"))()
 end)
-
--- game based so bye bye api
---[[cmd.add({"sUNCtest","sUNC"},{"sUNCtest (sUNC)","uses sUNC test that test the functions if they're working"},function()
-	getgenv().sUNCDebug = {
-		["printcheckpoints"] = false,
-		["delaybetweentests"] = 0
-	}
-
-	loadstring(game:HttpGet("https://script.sunc.su/"))()
-end)]]
 
 cmd.add({"vulnerabilitytest","vulntest"},{"vulnerabilitytest (vulntest)","Test if your executor is Vulnerable"},function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/uuuuuuu/main/VulnTest.lua"))()
@@ -22279,7 +23453,7 @@ NAStuff.ATPC._hookChar = function(char)
 
 		allowed[p] = false
 		old[p] = p.CFrame
-		table.insert(parts, p)
+		Insert(parts, p)
 
 		local sig = p:GetPropertyChangedSignal("CFrame")
 		local con = sig:Connect(function()
@@ -22315,7 +23489,7 @@ NAStuff.ATPC._hookChar = function(char)
 	end)
 	NAlib.connect("AntiCFrame", addCon)
 
-	task.spawn(function()
+	Spawn(function()
 		while NAStuff.ATPC.state and NAlib.isConnected("AntiCFrame") and char and char.Parent do
 			for _, p in ipairs(parts) do
 				if p and p.Parent and not allowed[p] then
@@ -23673,23 +24847,33 @@ cmd.add({"antifling"},{"antifling","makes other players non-collidable with you"
 		if not t then
 			return
 		end
+
 		local quota = quotaPerStep
+
 		local k = lastKey
+		if k ~= nil and t[k] == nil then
+			k = nil
+		end
+
 		while quota > 0 do
 			k = next(t, k)
 			if not k then
 				lastKey = nil
 				break
 			end
+
 			local p = k
+
 			if typeof(p) == "Instance" and p:IsA("BasePart") and p.Parent then
 				if NAlib.isProperty(p, "CanCollide") ~= false then
 					NAlib.setProperty(p, "CanCollide", false)
 				end
+				lastKey = p
 			else
 				clearPart(p)
+				lastKey = nil
 			end
-			lastKey = p
+
 			quota = quota - 1
 		end
 	end))
@@ -24339,7 +25523,8 @@ cmd.add({"disablealignmentkeys","disablealignkeys","dak"},{"disablealignmentkeys
 end)
 
 cmd.add({"esp"}, {"esp","locate where the players are"}, function()
-	ESPenabled = true
+	ESPPlayersEnabled = true
+	NAmanage.ESP_RecomputeEnabled()
 	chamsEnabled = false
 	ESPAutoTrackAll = true
 	for _, player in pairs(Players:GetPlayers()) do
@@ -24350,7 +25535,8 @@ cmd.add({"esp"}, {"esp","locate where the players are"}, function()
 end)
 
 cmd.add({"chams"}, {"chams","ESP but without the text :shock:"}, function()
-	ESPenabled = true
+	ESPPlayersEnabled = true
+	NAmanage.ESP_RecomputeEnabled()
 	chamsEnabled = true
 	ESPAutoTrackAll = true
 	for _, player in pairs(Players:GetPlayers()) do
@@ -24361,7 +25547,8 @@ cmd.add({"chams"}, {"chams","ESP but without the text :shock:"}, function()
 end)
 
 cmd.add({"locate"}, {"locate <username1> <username2> etc (optional)", "locate where the specified player(s) are"}, function(...)
-	ESPenabled = true
+	ESPPlayersEnabled = true
+	NAmanage.ESP_RecomputeEnabled()
 	chamsEnabled = false
 	local tokens = {...}
 	local providedArgCount = select("#", ...)
@@ -24386,20 +25573,62 @@ cmd.add({"locate"}, {"locate <username1> <username2> etc (optional)", "locate wh
 	end
 end, true)
 
-NPC_SCAN_KEY = "npc_esp_scan"
-getgenv().npcESPList = {}
+NAStuff.NPC_SCAN_KEY = NAStuff.NPC_SCAN_KEY or "npc_esp_scan"
+NAStuff.npcESPList = NAStuff.npcESPList or getgenv().npcESPList or {}
+getgenv().npcESPList = NAStuff.npcESPList
+NAStuff.npcCandidates = NAStuff.npcCandidates or {}
+
+NAmanage.ClearNpcTables = function()
+	for inst in pairs(NAStuff.npcCandidates) do
+		NAStuff.npcCandidates[inst] = nil
+	end
+	for inst in pairs(NAStuff.npcESPList) do
+		NAStuff.npcESPList[inst] = nil
+		NAmanage.ESP_Disconnect(inst)
+	end
+end
+
+NAmanage.AddNpcCandidate = function(inst)
+	if inst and inst:IsA("Model") and CheckIfNPC(inst) then
+		NAStuff.npcCandidates[inst] = true
+	end
+end
+
+NAmanage.RemoveNpcCandidate = function(inst)
+	if not inst then
+		return
+	end
+	if inst:IsA("Model") then
+		NAStuff.npcCandidates[inst] = nil
+	end
+	if NAStuff.npcESPList[inst] then
+		NAStuff.npcESPList[inst] = nil
+		NAmanage.ESP_Disconnect(inst)
+	end
+end
+
+NAmanage.SeedNpcCandidates = function()
+	for inst in pairs(NAStuff.npcCandidates) do
+		NAStuff.npcCandidates[inst] = nil
+	end
+	for _, inst in ipairs(workspace:GetDescendants()) do
+		NAmanage.AddNpcCandidate(inst)
+	end
+end
 
 cmd.add({"npcesp","espnpc"},{"npcesp (espnpc)","locate where the npcs are"},function()
-	ESPenabled = true
+	NPCESPenabled = true
+	NAmanage.ESP_RecomputeEnabled()
 	chamsEnabled = false
 	ESPAutoTrackAll = false
-	getgenv().npcESPList = {}
-	if not NAlib.isConnected(NPC_SCAN_KEY) then
+	NAmanage.ClearNpcTables()
+	NAmanage.SeedNpcCandidates()
+	if not NAlib.isConnected(NAStuff.NPC_SCAN_KEY) then
 		local acc = 0
-		NAlib.connect(NPC_SCAN_KEY, RunService.Heartbeat:Connect(function(dt)
-			if not ESPenabled then return end
+		NAlib.connect(NAStuff.NPC_SCAN_KEY, RunService.Heartbeat:Connect(function(dt)
+			if not NPCESPenabled then return end
 			acc = acc + dt
-			if acc < 0.6 then return end
+			if acc < (NAStuff.NPC_ESP_ScanInterval or 0.6) then return end
 			acc = 0
 
 			local plr = Players.LocalPlayer
@@ -24412,16 +25641,22 @@ cmd.add({"npcesp","espnpc"},{"npcesp (espnpc)","locate where the npcs are"},func
 			local maxCnt = NAStuff.NPC_ESP_MaxCount or 200
 			local maxDist = NAStuff.NPC_ESP_MaxDist or 400
 
-			for _, inst in ipairs(workspace:GetDescendants()) do
-				if inst:IsA("Model") and CheckIfNPC(inst) then
+			for inst in pairs(NAStuff.npcCandidates) do
+				if inst and inst.Parent then
+					if not (CheckIfNPC(inst) and NAmanage.IsValidESPModel(inst, true)) then
+						NAStuff.npcCandidates[inst] = nil
+						NAStuff.npcESPList[inst] = nil
+						NAmanage.ESP_Disconnect(inst)
+						continue
+					end
 					local rp = getRoot(inst)
 					if rp then
 						local d = (rp.Position - root.Position).Magnitude
 						if d <= maxDist then
 							found[inst] = true
-							if not getgenv().npcESPList[inst] then
-								getgenv().npcESPList[inst] = true
-								NAmanage.ESP_Add(inst, false)
+							if not NAStuff.npcESPList[inst] then
+								NAStuff.npcESPList[inst] = true
+								NAmanage.ESP_Add(inst, false, true)
 							end
 							cnt += 1
 							if cnt >= maxCnt then
@@ -24429,13 +25664,35 @@ cmd.add({"npcesp","espnpc"},{"npcesp (espnpc)","locate where the npcs are"},func
 							end
 						end
 					end
+				else
+					NAStuff.npcCandidates[inst] = nil
 				end
 			end
 
-			for inst in pairs(getgenv().npcESPList) do
+			for inst in pairs(NAStuff.npcESPList) do
 				if not found[inst] then
-					getgenv().npcESPList[inst] = nil
+					NAStuff.npcESPList[inst] = nil
 					NAmanage.ESP_Disconnect(inst)
+				end
+			end
+		end))
+		NAlib.connect(NAStuff.NPC_SCAN_KEY, workspace.DescendantAdded:Connect(function(inst)
+			if inst:IsA("Model") then
+				NAmanage.AddNpcCandidate(inst)
+			elseif inst:IsA("Humanoid") then
+				local parent = inst.Parent
+				if parent and parent:IsA("Model") then
+					NAmanage.AddNpcCandidate(parent)
+				end
+			end
+		end))
+		NAlib.connect(NAStuff.NPC_SCAN_KEY, workspace.DescendantRemoving:Connect(function(inst)
+			if inst:IsA("Model") then
+				NAmanage.RemoveNpcCandidate(inst)
+			elseif inst:IsA("Humanoid") then
+				local parent = inst.Parent
+				if parent and parent:IsA("Model") then
+					NAmanage.RemoveNpcCandidate(parent)
 				end
 			end
 		end))
@@ -24444,30 +25701,28 @@ cmd.add({"npcesp","espnpc"},{"npcesp (espnpc)","locate where the npcs are"},func
 end)
 
 cmd.add({"unnpcesp","unespnpc"},{"unnpcesp (unespnpc)","stop locating npcs"},function()
-	ESPenabled = false
-	chamsEnabled = false
-	ESPAutoTrackAll = false
-	if NAlib.isConnected(NPC_SCAN_KEY) then
-		NAlib.disconnect(NPC_SCAN_KEY)
+	NPCESPenabled = false
+	NAmanage.ESP_RecomputeEnabled()
+	if NAlib.isConnected(NAStuff.NPC_SCAN_KEY) then
+		NAlib.disconnect(NAStuff.NPC_SCAN_KEY)
 	end
-	for inst in pairs(getgenv().npcESPList) do
-		NAmanage.ESP_Disconnect(inst)
+	NAmanage.ClearNpcTables()
+	NAStuff.npcESPList = {}
+	getgenv().npcESPList = NAStuff.npcESPList
+	if not (ESPPlayersEnabled or chamsEnabled or NPCESPenabled) then
+		NAmanage.ESP_StopGlobal()
 	end
-	getgenv().npcESPList = {}
 end)
 
 cmd.add({"unesp","unchams"},{"unesp (unchams)","Disables esp/chams"},function()
-	ESPenabled = false
+	ESPPlayersEnabled = false
+	NAmanage.ESP_RecomputeEnabled()
 	chamsEnabled = false
 	ESPAutoTrackAll = false
-	if NAlib.isConnected(NPC_SCAN_KEY) then
-		NAlib.disconnect(NPC_SCAN_KEY)
+	NAmanage.ESP_ClearPlayers()
+	if not (NPCESPenabled or chamsEnabled) then
+		NAmanage.ESP_StopGlobal()
 	end
-	for _, plr in ipairs(Players:GetPlayers()) do
-		NAlib.disconnect("esp_charAdded_plr_"..tostring(plr.UserId))
-	end
-	NAmanage.ESP_ClearAll()
-	NAmanage.ESP_StopGlobal()
 end)
 
 cmd.add({"unlocate"},{"unlocate <username1> <username2>"},function(...)
@@ -24647,9 +25902,11 @@ cmd.add({"reset","die"},{"reset (die)","Makes your health be 0"},function()
 	getHum().Health=0
 end)
 
+
+-- ts got patched gg
 NAStuff.desyncOn = NAStuff.desyncOn or false
 
-cmd.add({"desync", "ngrep"},{"desync (ngrep)","Toggle NextGenReplicator desync / sync (run again to disable)"},function()
+cmd.addPatched({"desync", "ngrep"},{"desync (ngrep)","Toggle NextGenReplicator desync / sync (run again to disable)"},function()
 	if type(setfflag) ~= "function" then
 		DoNotif("Your executor does not support setfflag. Cannot toggle desync", 3)
 		return
@@ -25722,11 +26979,6 @@ cmd.add({"partname","partpath","partgrabber"},{"partname (partpath,partgrabber)"
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/PartGrabber.lua"))()
 end)
 
--- patched (womp)
---[[cmd.add({"backdoor","backdoorscan"},{"backdoor (backdoorscan)","Scans for any backdoors using FraktureSS"},function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/uuuuuuu/main/Frakture"))()
-end)]]
-
 cmd.add({"jobid"},{"jobid","Copies your job id"},function()
 	if setclipboard then
 		setclipboard(tostring(JobId))
@@ -25746,6 +26998,8 @@ end,true)
 
 NAStuff.srv = NAStuff.srv or {}
 
+NAStuff.srvWorker = NAStuff.srvWorker or "https://solaraserverhop.ltseverydayyou.workers.dev"
+
 NAStuff.srv.b = NAStuff.srv.b or {
 	"https://games.roblox.com",
 	"https://games.roproxy.com",
@@ -25753,7 +27007,16 @@ NAStuff.srv.b = NAStuff.srv.b or {
 }
 
 NAStuff.srv.j = NAStuff.srv.j or function(self, s)
-	return HttpService:JSONDecode(s)
+	if type(s) ~= "string" or #s == 0 then
+		return nil
+	end
+	local ok, js = pcall(function()
+		return HttpService:JSONDecode(s)
+	end)
+	if ok and type(js) == "table" then
+		return js
+	end
+	return nil
 end
 
 NAStuff.srv.pg = NAStuff.srv.pg or function(self, cid)
@@ -25767,12 +27030,29 @@ NAStuff.srv.pg = NAStuff.srv.pg or function(self, cid)
 		local ok, body = pcall(function()
 			return game:HttpGetAsync(url)
 		end)
-
 		if ok and type(body) == "string" and #body > 0 then
-			local ok2, js = pcall(self.j, self, body)
-			if ok2 and type(js) == "table" and type(js.data) == "table" then
+			local js = self:j(body)
+			if type(js) == "table" and type(js.data) == "table" then
 				return js.data, js.nextPageCursor
 			end
+		end
+	end
+
+	local wq = "placeId="..tostring(PlaceId)
+	if cid and cid ~= "" then
+		wq = wq.."&cursor="..HttpService:UrlEncode(cid)
+	end
+
+	local wurl = NAStuff.srvWorker.."/servers?"..wq
+	local wok, wbody = pcall(function()
+		return game:HttpGetAsync(wurl)
+	end)
+	if wok and type(wbody) == "string" and #wbody > 0 then
+		local ok2, js = pcall(function()
+			return HttpService:JSONDecode(wbody)
+		end)
+		if ok2 and type(js) == "table" and type(js.data) == "table" then
+			return js.data, js.nextPageCursor
 		end
 	end
 
@@ -25786,7 +27066,9 @@ NAStuff.srv.scan = NAStuff.srv.scan or function(self, mode)
 	while pgc < 8 do
 		pgc += 1
 		local dat, nxt = self:pg(cid)
-		if type(dat) ~= "table" then break end
+		if type(dat) ~= "table" then
+			break
+		end
 
 		for _, s in ipairs(dat) do
 			if type(s) == "table" and s.id and s.id ~= JobId then
@@ -25812,7 +27094,9 @@ NAStuff.srv.scan = NAStuff.srv.scan or function(self, mode)
 			end
 		end
 
-		if not nxt or nxt == "" then break end
+		if not nxt or nxt == "" then
+			break
+		end
 		cid = nxt
 	end
 
@@ -26721,41 +28005,6 @@ cmd.add({"unorbit"}, {"unorbit", "Stop orbiting"}, function()
 	NAlib.disconnect("orbit")
 end)
 
--- unavailable and under maintance
---[[cmd.add({"serverfreeze", "freezewalk"}, {"serverfreeze (freezewalk)", "Freezes your character on the server while keeping your client moving"}, function()
-	local character = getChar()
-	local humanoid = character and getHum(character)
-	if not character or not humanoid then
-		return DebugNotif("Character or humanoid unavailable", 3)
-	end
-
-	local root = getRoot(character)
-	if not root then
-		return DebugNotif("Root part not found", 3)
-	end
-
-	if humanoid.RigType == Enum.HumanoidRigType.R6 then
-		local clone = root:Clone()
-		clone.CFrame = root.CFrame
-		clone.Name = root.Name
-		clone.Anchored = root.Anchored
-		clone.Parent = character
-		root:Destroy()
-	else
-		local lowerTorso = character:FindFirstChild("LowerTorso")
-		if not lowerTorso then
-			return DebugNotif("LowerTorso missing; unable to server freeze", 3)
-		end
-		lowerTorso.Anchored = true
-		local rootJoint = lowerTorso:FindFirstChild("Root")
-		if rootJoint and rootJoint:IsA("Motor6D") then
-			rootJoint:Destroy()
-		end
-	end
-
-	DebugNotif("Server freeze enabled. Reset to stop it.")
-end)]]
-
 fcBTNTOGGLE = nil
 
 cmd.add({"freecam","fc","fcam"},{"freecam [speed] (fc,fcam)","Enable free camera"},function(...)
@@ -27564,117 +28813,6 @@ cmd.add({"undance"},{"undance","Stops the dance command"},function()
 	theanim:Stop()
 	theanim:Destroy()
 end)
-
--- still worked on (i think)
-
---[[cmd.add({"antichatlogs","antichatlogger"},{"antichatlogs (antichatlogger)","Prevents you from getting banning when typing unspeakable messages (requires the new chat service)"},function()
-	local CoreGui=SafeGetService("CoreGui")
-	local LocalPlayer=Players.LocalPlayer
-	local glyphs={
-		b={"β","в","բ"},
-		c={"ծ"},
-		d={"δ","д","դ"},
-		e={"ε","է"},
-		f={"φ","ф","ֆ"},
-		h={"η","н"},
-		i={"ի"},
-		j={"ջ"},
-		k={"κ","к","կ"},
-		l={"λ","л","լ"},
-		m={"μ","м","մ"},
-		n={"η","н","ն"},
-		p={"պ"},
-		r={"ր"},
-		t={"τ","т","տ"},
-		u={"մ"},
-		v={"в"},
-		w={"ω","ш","վ"},
-		x={"χ","խ"},
-		y={"յ"},
-		z={"ζ","з"},
-		["1"]={"१"},
-		["2"]={"२","٢"},
-		["3"]={"३","٣"},
-		["4"]={"४","٤"},
-		["5"]={"५"},
-		["6"]={"६","٦"},
-		["7"]={"७"},
-		["8"]={"८","٨"},
-		["9"]={"९","٩"}
-	}
-	local function obfuscateMessage(msg)
-		local out={}
-		for _,code in utf8.codes(msg) do
-			local ch=utf8.char(code)
-			local lower=Lower(ch)
-			if glyphs[lower] then
-				local g=glyphs[lower][math.random(#glyphs[lower])]
-				if ch:match("%u") then g=g:upper() end
-				ch=g
-			end
-			Insert(out,ch)
-		end
-		return Concat(out)
-	end
-	local CachedChannels={}
-	NAlib.BypassChatMessage=function(message,recipient)
-		Spawn(function()
-			local text=obfuscateMessage(message)
-			local channel
-			if recipient and recipient~="All" then
-				channel=CachedChannels[recipient]
-				if not channel or not channel:IsDescendantOf(TextChatService) or not channel:FindFirstChild(recipient) then
-					channel=nil
-					for _,c in ipairs(TextChatService.TextChannels:GetChildren()) do
-						if Find(c.Name,"^RBXWhisper:") and c:FindFirstChild(recipient) then
-							channel=c
-							CachedChannels[recipient]=c
-							break
-						end
-					end
-				end
-			end
-			if not channel then channel=TextChatService.TextChannels:FindFirstChild("RBXGeneral") or TextChatService.TextChannels:FindFirstChild("General") end
-			if channel then NACaller(function() channel:SendAsync(text) end) end
-		end)
-	end
-	local function resolveRecipient(chip)
-		if chip and chip:IsA("TextButton") then
-			local txt=chip.Text or ""
-			local d=Match(txt,"^%[To%s+(.+)%]$")
-			if d and d~="" then
-				d=Lower(d)
-				for _,plr in ipairs(Players:GetPlayers()) do
-					if Lower(plr.DisplayName)==d then return plr.Name end
-				end
-			end
-		end
-		return "All"
-	end
-	Spawn(function()
-		repeat Wait() until CoreGui:FindFirstChild("ExperienceChat")
-		local ec=CoreGui:WaitForChild("ExperienceChat")
-		local al=ec:WaitForChild("appLayout")
-		local cb=al:WaitForChild("chatInputBar")
-		local bg=cb:WaitForChild("Background")
-		local ct=bg:WaitForChild("Container")
-		local tc=ct:WaitForChild("TextContainer")
-		local bc=tc:WaitForChild("TextBoxContainer")
-		local box=bc:WaitForChild("TextBox")
-		local btn=ct:WaitForChild("SendButton")
-		local chip=tc:FindFirstChild("TargetChannelChip")
-		local function hook()
-			local m=box.Text
-			if m~="" then
-				box.Text=""
-				NAlib.BypassChatMessage(m,resolveRecipient(chip))
-			end
-		end
-		box.FocusLost:Connect(function(e) if e then hook() end end)
-		MouseButtonFix(btn, hook)
-	end)
-	DoNotif("antichatlogs activated (W.I.P)")
-end)]]
 
 cmd.add({"animspoofer","animationspoofer","spoofanim","animspoof"},{"animspoofer (animationspoofer, spoofanim, animspoof)","Loads up an animation spoofer,spoofs animations that use rbxassetid"},function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Animation%20Spoofer"))()
@@ -28728,8 +29866,12 @@ cmd.add({"bodytransparency","btransparency","bodyt"}, {"bodytransparency <number
 	local function start()
 		st.vv = vv
 		NAlib.disconnect("body_transparency")
+
 		apply()
-		NAlib.connect("body_transparency", RunService.RenderStepped:Connect(apply))
+
+		NAlib.connect("body_transparency", RunService.RenderStepped:Connect(function()
+			Defer(apply)
+		end))
 	end
 
 	local function setSel(list, all)
@@ -28848,7 +29990,7 @@ cmd.add({"animationspeed", "animspeed", "aspeed"}, {"animationspeed <speed> (ani
 
 	NAlib.connect("animation_speed", RunService.Stepped:Connect(function()
 		local character = getChar()
-		local humanoid = getHum() or character:FindFirstChildOfClass("AnimationController")
+		local humanoid = getHum()
 		if humanoid then
 			for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
 				if track and track:IsA("AnimationTrack") then
@@ -30330,53 +31472,134 @@ end)
 specUI = nil
 connStep, connAdd, connRemove = nil, nil, nil
 
-function cleanup(preserveSpecUI)
+local spectateTarget, spectateSubject = nil, nil
+local spectateConns = {
+	char = nil,
+	leave = nil,
+	loop = nil,
+	cam = nil,
+	camW = nil
+}
+
+originalIO.disconnectSpectateConns=function()
+	for k, c in pairs(spectateConns) do
+		if c then
+			c:Disconnect()
+			spectateConns[k] = nil
+		end
+	end
 	NAlib.disconnect("spectate_char")
 	NAlib.disconnect("spectate_loop")
 	NAlib.disconnect("spectate_leave")
+	NAlib.disconnect("spectate_cam")
+	NAlib.disconnect("spectate_camW")
+end
+
+originalIO.ensureCam=function()
+	if not spectateTarget or not spectateSubject then return end
+	if not workspace then return end
+	local cam = workspace.CurrentCamera
+	if not cam then return end
+	if NAlib.isProperty(cam, "CameraSubject") == nil then return end
+	if cam.CameraSubject ~= spectateSubject then
+		NAlib.setProperty(cam, "CameraSubject", spectateSubject)
+	end
+end
+
+originalIO.hookCameraGuard=function()
+	if not workspace then return end
+	local cam = workspace.CurrentCamera
+	if not cam then return end
+
+	if spectateConns.cam then
+		spectateConns.cam:Disconnect()
+		spectateConns.cam = nil
+	end
+
+	if NAlib.isProperty(cam, "CameraSubject") ~= nil then
+		spectateConns.cam = NAlib.connect("spectate_cam", cam:GetPropertyChangedSignal("CameraSubject"):Connect(function()
+			if not spectateTarget or not spectateSubject then return end
+			originalIO.ensureCam()
+		end))
+	end
+
+	if not spectateConns.camW and NAlib.isProperty(workspace, "CurrentCamera") ~= nil then
+		spectateConns.camW = NAlib.connect("spectate_camW", workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+			if not spectateTarget or not spectateSubject then return end
+			originalIO.hookCameraGuard()
+			originalIO.ensureCam()
+		end))
+	end
+end
+
+function cleanup(preserveSpecUI)
+	spectateTarget = nil
+	spectateSubject = nil
+
+	originalIO.disconnectSpectateConns()
+
 	if connStep then connStep:Disconnect() connStep = nil end
 	if connAdd then connAdd:Disconnect() connAdd = nil end
 	if connRemove then connRemove:Disconnect() connRemove = nil end
+
 	if specUI and not preserveSpecUI then
 		specUI:Destroy()
 		specUI = nil
 	end
+
 	local hum = getHum()
-	local cam = workspace.CurrentCamera
-	if hum then cam.CameraSubject = hum end
+	if workspace then
+		local cam = workspace.CurrentCamera
+		if hum and cam and NAlib.isProperty(cam, "CameraSubject") ~= nil then
+			NAlib.setProperty(cam, "CameraSubject", hum)
+		end
+	end
 end
 
 function spectatePlayer(targetPlayer)
 	if not targetPlayer then return end
-	NAlib.disconnect("spectate_char")
-	NAlib.disconnect("spectate_loop")
-	NAlib.disconnect("spectate_leave")
+
+	spectateTarget = targetPlayer
+	spectateSubject = nil
+	originalIO.disconnectSpectateConns()
+
 	local function setCamToCharacter(character)
-		if not character then return end
-		local hum = character:FindFirstChildOfClass("Humanoid") or character:FindFirstChildOfClass("AnimationController")
-		if hum then
-			workspace.CurrentCamera.CameraSubject = hum
-			return
-		end
-		local root = getRoot(character)
-		if root then
-			workspace.CurrentCamera.CameraSubject = root
-		end
+		if spectateTarget ~= targetPlayer or not character then return end
+
+		local hum = getPlrHum(character)
+		local subj = hum or getRoot(character)
+		if not subj then return end
+
+		spectateSubject = subj
+		originalIO.ensureCam()
+		originalIO.hookCameraGuard()
 	end
 
 	setCamToCharacter(targetPlayer.Character)
 
-	NAlib.connect("spectate_char", targetPlayer.CharacterAdded:Connect(function(character)
+	spectateConns.char = NAlib.connect("spectate_char", targetPlayer.CharacterAdded:Connect(function(character)
+		if spectateTarget ~= targetPlayer then return end
 		setCamToCharacter(character)
 	end))
-	NAlib.connect("spectate_leave", Players.PlayerRemoving:Connect(function(player)
-		if player == targetPlayer then
+
+	spectateConns.leave = NAlib.connect("spectate_leave", Players.PlayerRemoving:Connect(function(player)
+		if player == targetPlayer and spectateTarget == targetPlayer then
 			cleanup(true)
 			DebugNotif("Player left - camera reset")
 		end
 	end))
-	NAlib.connect("spectate_loop", RunService.RenderStepped:Connect(function()
-		setCamToCharacter(targetPlayer.Character)
+
+	spectateConns.loop = NAlib.connect("spectate_loop", RunService.RenderStepped:Connect(function()
+		if spectateTarget ~= targetPlayer then return end
+
+		local char = targetPlayer.Character
+		if not char or not char.Parent then return end
+
+		if not spectateSubject or spectateSubject.Parent ~= char then
+			setCamToCharacter(char)
+		else
+			originalIO.ensureCam()
+		end
 	end))
 end
 
@@ -32568,6 +33791,10 @@ cmd.add({"unwallhop"},{"unwallhop","disable wallhop helper"},function()
 	NAlib.disconnect("wallhop_loop")
 end)
 
+cmd.add({"joinvoice", "joinvc"},{"joinvoice","let's you use vc if you were suspended"},function()
+	SafeGetService("VoiceChatService"):joinVoice()
+end)
+
 cmd.add({"jump"},{"jump","jump."},function()
 	getHum():ChangeState(Enum.HumanoidStateType.Jumping)
 end)
@@ -32799,7 +34026,7 @@ end)
 
 cmd.add({"stopanimations", "stopanims", "stopanim", "noanim"}, {"stopanimations (stopanims,stopanim,noanim)", "Stops running animations"}, function()
 	local char = Players.LocalPlayer and Players.LocalPlayer.Character
-	local hum = getHum() or (char and char:FindFirstChildOfClass("AnimationController"))
+	local hum = getHum()
 	if not hum then return end
 
 	for _, track in ipairs(hum:GetPlayingAnimationTracks()) do
@@ -32813,7 +34040,7 @@ cmd.add({"refreshanimations", "refreshanimation", "refreshanims", "refreshanim"}
 		DoNotif("Character unavailable",2)
 		return
 	end
-	local humanoid=char:FindFirstChildOfClass("Humanoid") or char:FindFirstChildOfClass("AnimationController")
+	local humanoid=getPlrHum(char)
 	local animate=char:FindFirstChild("Animate")
 	if not humanoid or not animate then
 		DoNotif("Failed to locate Animate or Humanoid",3)
@@ -33493,9 +34720,12 @@ bang, bangAnim, bangLoop, bangDied, bangParts = nil, nil, nil, nil, {}
 cmd.add({"headbang", "mouthbang", "headfuck", "mouthfuck", "facebang", "facefuck", "hb", "mb"}, {"headbang <player> (mouthbang,headfuck,mouthfuck,facebang,facefuck,hb,mb)", "Bang them in the mouth because you are gay"}, function(h, d)
 	local speed = d or 10
 	local username = h
-	local players = getPlr(username)
-	if #players == 0 then return end
+	local hasQuery = username and username ~= ""
+	local players = hasQuery and getPlr(username) or {}
 	local plr = players[1]
+	if hasQuery and not plr then
+		DoNotif("No targets found", 2)
+	end
 	bangAnim = InstanceNew("Animation")
 	if not IsR15(Players.LocalPlayer) then
 		bangAnim.AnimationId = "rbxassetid://148840371"
@@ -33507,7 +34737,7 @@ cmd.add({"headbang", "mouthbang", "headfuck", "mouthfuck", "facebang", "facefuck
 	bang = humanoid:LoadAnimation(bangAnim)
 	bang:Play(0.1, 1, 1)
 	bang:AdjustSpeed(speed)
-	local bangplr = plr.Name
+	local bangplr = plr and plr.Name or nil
 	bangDied = humanoid.Died:Connect(function()
 		if bangLoop then
 			bangLoop:Disconnect()
@@ -33524,49 +34754,35 @@ cmd.add({"headbang", "mouthbang", "headfuck", "mouthfuck", "facebang", "facefuck
 		part:Destroy()
 	end
 	bangParts = {}
-	local thick = 0.2
-	local halfWidth = 2
-	local halfDepth = 2
-	local halfHeight = 3
-	local walls = {
-		{offset = CFrame.new(0, 0, halfDepth + thick/500), size = Vector3.new(4, 6, thick)},
-		{offset = CFrame.new(0, 0, -(halfDepth + thick/500)), size = Vector3.new(4, 6, thick)},
-		{offset = CFrame.new(halfWidth + thick/500, 0, 0), size = Vector3.new(thick, 6, 4)},
-		{offset = CFrame.new(-(halfWidth + thick/500), 0, 0), size = Vector3.new(thick, 6, 4)},
-		{offset = CFrame.new(0, halfHeight + thick/500, 0), size = Vector3.new(4, thick, 4)},
-		{offset = CFrame.new(0, -(halfHeight + thick/500), 0), size = Vector3.new(4, thick, 4)}
-	}
-	for i, wall in ipairs(walls) do
-		local part = InstanceNew("Part")
-		part.Size = wall.size
-		part.Anchored = true
-		part.CanCollide = true
-		part.Transparency = 1
-		part.Parent = workspace
-		Insert(bangParts, part)
-	end
 	local bangOffset = CFrame.new(0, 1, -1.1)
-	bangLoop = RunService.Stepped:Connect(function()
-		NACaller(function()
-			local targetPlayer = Players:FindFirstChild(bangplr)
-			if not targetPlayer or not targetPlayer.Character then return end
-			local targetCharacter = targetPlayer.Character
-			local otherHead = getHead(targetCharacter)
-			local localRoot = getRoot(getChar())
-			if otherHead and localRoot then
-				localRoot.CFrame = otherHead.CFrame * bangOffset
-			end
-			local charPos = getChar().PrimaryPart.Position
-			local targetRoot = getRoot(targetCharacter)
-			if targetRoot then
-				local newCFrame = CFrame.new(charPos, Vector3.new(targetRoot.Position.X, charPos.Y, targetRoot.Position.Z))
-				Players.LocalPlayer.Character:SetPrimaryPartCFrame(newCFrame)
-			end
-			for i, wall in ipairs(walls) do
-				bangParts[i].CFrame = localRoot.CFrame * wall.offset
-			end
+	if bangplr then
+		bangLoop = RunService.Stepped:Connect(function()
+			NACaller(function()
+				local targetPlayer = Players:FindFirstChild(bangplr)
+				if not targetPlayer or not targetPlayer.Character then
+					if bangLoop then bangLoop:Disconnect() bangLoop = nil end
+					return
+				end
+				local targetCharacter = targetPlayer.Character
+				local localCharacter = getChar()
+				local localRoot = localCharacter and getRoot(localCharacter)
+				if not (localCharacter and localRoot) then return end
+				local otherHead = getHead(targetCharacter)
+				if otherHead then
+					localRoot.CFrame = otherHead.CFrame * bangOffset
+				end
+				local targetRoot = getRoot(targetCharacter)
+				local localPrimary = localCharacter.PrimaryPart
+				if targetRoot and localPrimary then
+					local charPos = localPrimary.Position
+					local newCFrame = CFrame.new(charPos, Vector3.new(targetRoot.Position.X, charPos.Y, targetRoot.Position.Z))
+					localCharacter:SetPrimaryPartCFrame(newCFrame)
+				end
+				localRoot.AssemblyLinearVelocity = Vector3.new()
+				localRoot.AssemblyAngularVelocity = Vector3.new()
+			end)
 		end)
-	end)
+	end
 end, true)
 
 cmd.add({"unheadbang", "unmouthbang", "unhb", "unmb"}, {"unheadbang (unmouthbang,unhb,unmb)", "Stops headbang"}, function()
@@ -33808,7 +35024,7 @@ cmd.add({"backpack"},{"backpack","provides a custom backpack gui"},function()
 end)
 
 -- patched
---[[cmd.add({"reserveserver","privateserver","ps","rs"},{"reserveserver [code]","Teleports to a reserved server or creates one if code is missing"},function(code)
+cmd.addPatched({"reserveserver","privateserver","ps","rs"},{"reserveserver [code]","Teleports to a reserved server or creates one if code is missing"},function(code)
 	local md5={}
 	local hmac={}
 	local base64={}
@@ -34034,7 +35250,7 @@ end)
 	end
 	buttons[#buttons+1]={Text="Cancel",Callback=function() DoNotif("Cancelled reserved server request") end}
 	Popup({Title="Select Place",Description=providedRaw and "Choose the place for the reserved server code." or "Choose a place to create a reserved server.",Buttons=buttons})
-end)]]
+end)
 
 HumanModCons = {}
 
@@ -34457,9 +35673,12 @@ cmd.add({"bang", "fuck"}, {"bang <player> <number> (fuck)", "fucks the player by
 
 	local speed = d or 10
 	local username = h
-	local targets = getPlr(username)
-	if #targets == 0 then return end
+	local hasQuery = username and username ~= ""
+	local targets = hasQuery and getPlr(username) or {}
 	local plr = targets[1]
+	if hasQuery and not plr then
+		DoNotif("No targets found", 2)
+	end
 
 	bangAnim = InstanceNew("Animation")
 	if not IsR15(Players.LocalPlayer) then
@@ -34472,7 +35691,7 @@ cmd.add({"bang", "fuck"}, {"bang <player> <number> (fuck)", "fucks the player by
 	doBang:Play(0.1, 1, 1)
 	doBang:AdjustSpeed(speed)
 
-	local bangplr = plr.Name
+	local bangplr = plr and plr.Name or nil
 	bangDied = hum.Died:Connect(function()
 		if bangLoop then
 			bangLoop:Disconnect()
@@ -34488,43 +35707,25 @@ cmd.add({"bang", "fuck"}, {"bang <player> <number> (fuck)", "fucks the player by
 		BANGPARTS = {}
 	end)
 
-	local thick = 0.2
-	local halfWidth = 2
-	local halfDepth = 2
-	local halfHeight = 3
-	local walls = {
-		{offset = CFrame.new(0, 0, halfDepth + thick/500), size = Vector3.new(4, 6, thick)},
-		{offset = CFrame.new(0, 0, -(halfDepth + thick/500)), size = Vector3.new(4, 6, thick)},
-		{offset = CFrame.new(halfWidth + thick/500, 0, 0), size = Vector3.new(thick, 6, 4)},
-		{offset = CFrame.new(-(halfWidth + thick/500), 0, 0), size = Vector3.new(thick, 6, 4)},
-		{offset = CFrame.new(0, halfHeight + thick/500, 0), size = Vector3.new(4, thick, 4)},
-		{offset = CFrame.new(0, -(halfHeight + thick/500), 0), size = Vector3.new(4, thick, 4)}
-	}
-	for i, wall in ipairs(walls) do
-		local part = InstanceNew("Part")
-		part.Size = wall.size
-		part.Anchored = true
-		part.CanCollide = true
-		part.Transparency = 1
-		part.Parent = workspace
-		Insert(BANGPARTS, part)
-	end
-
 	local bangOffset = CFrame.new(0, 0, 1.1)
-	bangLoop = RunService.Stepped:Connect(function()
-		NACaller(function()
-			local targetPlayer = Players:FindFirstChild(bangplr)
-			if not targetPlayer or not targetPlayer.Character then return end
-			local targetRoot = getRoot(targetPlayer.Character)
-			local localRoot = getRoot(getChar())
-			if targetRoot and localRoot then
-				localRoot.CFrame = targetRoot.CFrame * bangOffset
-				for i, wall in ipairs(walls) do
-					BANGPARTS[i].CFrame = localRoot.CFrame * wall.offset
+	if bangplr then
+		bangLoop = RunService.Stepped:Connect(function()
+			NACaller(function()
+				local targetPlayer = Players:FindFirstChild(bangplr)
+				if not targetPlayer or not targetPlayer.Character then
+					if bangLoop then bangLoop:Disconnect() bangLoop = nil end
+					return
 				end
-			end
+				local targetRoot = getRoot(targetPlayer.Character)
+				local localChar = getChar()
+				local localRoot = localChar and getRoot(localChar)
+				if not (targetRoot and localRoot) then return end
+				localRoot.CFrame = targetRoot.CFrame * bangOffset
+				localRoot.AssemblyLinearVelocity = Vector3.new()
+				localRoot.AssemblyAngularVelocity = Vector3.new()
+			end)
 		end)
-	end)
+	end
 end, true)
 
 cmd.add({"unbang", "unfuck"}, {"unbang (unfuck)", "Unbangs the player"}, function()
@@ -34572,6 +35773,17 @@ originalIO.stopCarpet=function()
 		part:Destroy()
 	end
 	CARPETPARTS = {}
+	local char = getChar()
+	local root = char and getRoot(char)
+	if root then
+		root.AssemblyLinearVelocity = Vector3.new()
+		root.AssemblyAngularVelocity = Vector3.new()
+	end
+	local hum = getHum(char)
+	if hum then
+		hum.Sit = false
+		hum.PlatformStand = false
+	end
 end
 
 cmd.add({"carpet"}, {"carpet <player>", "Be someone's carpet"}, function(username)
@@ -34582,10 +35794,10 @@ cmd.add({"carpet"}, {"carpet <player>", "Be someone's carpet"}, function(usernam
 
 	originalIO.stopCarpet()
 
-	local targets = getPlr(username)
-	if #targets == 0 then
+	local hasQuery = username and username ~= ""
+	local targets = hasQuery and getPlr(username) or {}
+	if hasQuery and #targets == 0 then
 		DoNotif("No targets found", 2)
-		return
 	end
 
 	local character = getChar()
@@ -34596,8 +35808,8 @@ cmd.add({"carpet"}, {"carpet <player>", "Be someone's carpet"}, function(usernam
 	end
 
 	local targetPlayer = targets[1]
-	local targetRoot = targetPlayer.Character and getRoot(targetPlayer.Character)
-	if not targetRoot then
+	local targetRoot = targetPlayer and targetPlayer.Character and getRoot(targetPlayer.Character)
+	if hasQuery and targetPlayer and not targetRoot then
 		return DoNotif("Target has no character or root.", 3)
 	end
 
@@ -34606,45 +35818,28 @@ cmd.add({"carpet"}, {"carpet <player>", "Be someone's carpet"}, function(usernam
 	carpetTrack = humanoid:LoadAnimation(carpetAnim)
 	carpetTrack:Play(0.1, 1, 1)
 
-	local thick, halfWidth, halfDepth, halfHeight = 0.2, 2, 2, 3
-	local walls = {
-		{offset = CFrame.new(0, 0, halfDepth + thick/500),     size = Vector3.new(4, 6, thick)},
-		{offset = CFrame.new(0, 0, -(halfDepth + thick/500)),  size = Vector3.new(4, 6, thick)},
-		{offset = CFrame.new(halfWidth + thick/500, 0, 0),     size = Vector3.new(thick, 6, 4)},
-		{offset = CFrame.new(-(halfWidth + thick/500), 0, 0),  size = Vector3.new(thick, 6, 4)},
-		{offset = CFrame.new(0, halfHeight + thick/500, 0),    size = Vector3.new(4, thick, 4)},
-		{offset = CFrame.new(0, -(halfHeight + thick/500), 0), size = Vector3.new(4, thick, 4)},
-	}
-	for _, wall in ipairs(walls) do
-		local part = InstanceNew("Part")
-		part.Size = wall.size
-		part.Anchored = true
-		part.CanCollide = true
-		part.Transparency = 1
-		part.Parent = workspace
-		Insert(CARPETPARTS, part)
-	end
-
-	local targetName = targetPlayer.Name
 	carpetDied = humanoid.Died:Connect(originalIO.stopCarpet)
-	carpetLoop = RunService.Heartbeat:Connect(function()
-		NACaller(function()
-			local tgt = Players:FindFirstChild(targetName)
-			local tgtChar = tgt and tgt.Character
-			if not tgtChar then
-				return
-			end
-			local tgtRoot = getRoot(tgtChar)
-			local localChar = getChar()
-			local localRoot = localChar and getRoot(localChar)
-			if tgtRoot and localRoot then
-				localRoot.CFrame = tgtRoot.CFrame
-				for i, wall in ipairs(walls) do
-					CARPETPARTS[i].CFrame = localRoot.CFrame * wall.offset
+	if targetPlayer and targetRoot then
+		local targetName = targetPlayer.Name
+		carpetLoop = RunService.Heartbeat:Connect(function()
+			NACaller(function()
+				local tgt = Players:FindFirstChild(targetName)
+				local tgtChar = tgt and tgt.Character
+				if not tgtChar then
+					originalIO.stopCarpet()
+					return
 				end
-			end
+				local tgtRoot = getRoot(tgtChar)
+				local localChar = getChar()
+				local localRoot = localChar and getRoot(localChar)
+				if tgtRoot and localRoot then
+					localRoot.CFrame = tgtRoot.CFrame
+					localRoot.AssemblyLinearVelocity = Vector3.new()
+					localRoot.AssemblyAngularVelocity = Vector3.new()
+				end
+			end)
 		end)
-	end)
+	end
 end, true)
 
 cmd.add({"uncarpet", "nocarpet"}, {"uncarpet (nocarpet)", "Undoes carpet"}, function()
@@ -34708,20 +35903,48 @@ doInversebang = nil
 doInversebang2 = nil
 INVERSEBANGPARTS = {}
 
-cmd.add({"inversebang","ibang","inverseb"},{"inversebang <player> <number>","you're the one getting fucked today ;)"},function(h,d)
-	if inversebangLoop then inversebangLoop = nil end
-	if doInversebang then doInversebang:Stop() end
-	if inversebangAnim then inversebangAnim:Destroy() end
-	if inversebangAnim2 then inversebangAnim2:Destroy() end
-	if inversebangDied then inversebangDied:Disconnect() end
-	for _,p in pairs(INVERSEBANGPARTS) do p:Destroy() end
+function stopInversebang()
+	if inversebangLoop then
+		inversebangLoop:Disconnect()
+		inversebangLoop = nil
+	end
+	if inversebangDied then
+		inversebangDied:Disconnect()
+		inversebangDied = nil
+	end
+	if doInversebang then
+		doInversebang:Stop()
+		doInversebang = nil
+	end
+	if doInversebang2 then
+		doInversebang2:Stop()
+		doInversebang2 = nil
+	end
+	if inversebangAnim then
+		inversebangAnim:Destroy()
+		inversebangAnim = nil
+	end
+	if inversebangAnim2 then
+		inversebangAnim2:Destroy()
+		inversebangAnim2 = nil
+	end
+	for _,p in pairs(INVERSEBANGPARTS) do
+		p:Destroy()
+	end
 	INVERSEBANGPARTS = {}
+end
+
+cmd.add({"inversebang","ibang","inverseb"},{"inversebang <player> <number>","you're the one getting fucked today ;)"},function(h,d)
+	stopInversebang()
 
 	local speed = d or 10
-	local targets = getPlr(h)
-	if #targets == 0 then return end
+	local hasQuery = h and h ~= ""
+	local targets = hasQuery and getPlr(h) or {}
 	local plr = targets[1]
-	local bangplr = plr.Name
+	if hasQuery and not plr then
+		DoNotif("No targets found", 2)
+	end
+	local bangplr = plr and plr.Name or nil
 
 	inversebangAnim = InstanceNew("Animation")
 	local isR15 = IsR15(Players.LocalPlayer)
@@ -34744,43 +35967,26 @@ cmd.add({"inversebang","ibang","inverseb"},{"inversebang <player> <number>","you
 		doInversebang2:AdjustSpeed(speed)
 	end
 
-	inversebangDied = hum.Died:Connect(function()
-		if inversebangLoop then inversebangLoop = nil end
-		doInversebang:Stop()
-		if doInversebang2 then doInversebang2:Stop() end
-		inversebangAnim:Destroy()
-		inversebangDied:Disconnect()
-		for _,part in pairs(INVERSEBANGPARTS) do part:Destroy() end
-		INVERSEBANGPARTS = {}
-	end)
+	inversebangDied = hum.Died:Connect(stopInversebang)
 
-	local thick,halfWidth,halfDepth,halfHeight = 0.2,2,2,3
-	local walls = {
-		{offset=CFrame.new(0,0,halfDepth+thick/500),    size=Vector3.new(4,6,thick)},
-		{offset=CFrame.new(0,0,-(halfDepth+thick/500)), size=Vector3.new(4,6,thick)},
-		{offset=CFrame.new(halfWidth+thick/500,0,0),    size=Vector3.new(thick,6,4)},
-		{offset=CFrame.new(-(halfWidth+thick/500),0,0), size=Vector3.new(thick,6,4)},
-		{offset=CFrame.new(0,halfHeight+thick/500,0),   size=Vector3.new(4,thick,4)},
-		{offset=CFrame.new(0,-(halfHeight+thick/500),0),size=Vector3.new(4,thick,4)},
-	}
-	for i,wall in ipairs(walls) do
-		local part = InstanceNew("Part")
-		part.Size = wall.size
-		part.Anchored = true
-		part.CanCollide = true
-		part.Transparency = 1
-		part.Parent = workspace
-		Insert(INVERSEBANGPARTS,part)
-	end
+	if bangplr then
+		local lastStep = 0
+		inversebangLoop = RunService.Heartbeat:Connect(function()
+			if tick() - lastStep < 0.1 then return end
+			lastStep = tick()
+			NACaller(function()
+				local targetPlayer = Players:FindFirstChild(bangplr)
+				local targetCharacter = targetPlayer and targetPlayer.Character
+				local localCharacter = getChar()
+				if not targetCharacter or not localCharacter then
+					stopInversebang()
+					return
+				end
 
-	inversebangLoop = coroutine.wrap(function()
-		while true do
-			local targetPlayer = Players:FindFirstChild(bangplr)
-			local targetCharacter = targetPlayer and targetPlayer.Character
-			local localCharacter = getChar()
-			if targetCharacter and getRoot(targetCharacter) and localCharacter and getRoot(localCharacter) then
 				local targetHRP = getRoot(targetCharacter)
 				local localHRP = getRoot(localCharacter)
+				if not (targetHRP and localHRP) then return end
+
 				local forwardCFrame = targetHRP.CFrame * CFrame.new(0,0,-2.5)
 				local backwardCFrame = targetHRP.CFrame * CFrame.new(0,0,-1.3)
 				local tweenForward = TweenService:Create(localHRP,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out),{CFrame=forwardCFrame})
@@ -34789,24 +35995,15 @@ cmd.add({"inversebang","ibang","inverseb"},{"inversebang <player> <number>","you
 				local tweenBackward = TweenService:Create(localHRP,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out),{CFrame=backwardCFrame})
 				tweenBackward:Play()
 				tweenBackward.Completed:Wait()
-				for i,wall in ipairs(walls) do
-					INVERSEBANGPARTS[i].CFrame = localHRP.CFrame * wall.offset
-				end
-			end
-			Wait(0.1)
-		end
-	end)
-	inversebangLoop()
+				localHRP.AssemblyLinearVelocity = Vector3.new()
+				localHRP.AssemblyAngularVelocity = Vector3.new()
+			end)
+		end)
+	end
 end,true)
 
 cmd.add({"uninversebang","unibang","uninverseb"},{"uninversebang","no more fun"},function()
-	if inversebangLoop then inversebangLoop = nil end
-	if doInversebang then doInversebang:Stop() end
-	if doInversebang2 then doInversebang2:Stop() end
-	if inversebangAnim then inversebangAnim:Destroy() end
-	if inversebangDied then inversebangDied:Disconnect() end
-	for _,p in pairs(INVERSEBANGPARTS) do p:Destroy() end
-	INVERSEBANGPARTS = {}
+	stopInversebang()
 end)
 
 sussyID = "rbxassetid://106772613"
@@ -35285,7 +36482,7 @@ cmd.add({"airwalk", "float", "aw"}, {"airwalk (float, aw)", "Press space to go u
 	end
 
 	awPart = InstanceNew("Part", workspace)
-	awPart.Size = Vector3.new(7, 2, 3)
+	awPart.Size = Vector3.new(10, 2, 10)
 	awPart.Transparency = 1
 	awPart.Anchored = true
 	awPart.CanCollide = true
@@ -36394,9 +37591,9 @@ end
 
 NAindex.init = function()
 	if NAindex._init then return end
-	for _, obj in ipairs(workspace:GetDescendants()) do NAindex.add(obj) end
-	NAlib.connect("NAindex_added", workspace.DescendantAdded:Connect(NAindex.add))
-	NAlib.connect("NAindex_removed", workspace.DescendantRemoving:Connect(NAindex.remove))
+	NAindex.prompt = NAindex.prompt or {}
+	NAindex.click = NAindex.click or {}
+	NAindex.touch = NAindex.touch or {}
 	NAindex._init = true
 end
 
@@ -36427,9 +37624,9 @@ end
 
 NAsuppress.collectAndAcquire = function(centerPos, radius, allowSet)
 	local list = {}
-	if NAindex.prompt then
-		for p in pairs(NAindex.prompt) do
-			if p.Parent and p.Enabled and not allowSet[p] then
+	if interactTbl and type(interactTbl.proxy) == "table" then
+		for _, p in ipairs(interactTbl.proxy) do
+			if p and p.Parent and p.Enabled and not (allowSet and allowSet[p]) then
 				local _, pos = NAindex.promptTarget(p)
 				if pos and (pos - centerPos).Magnitude <= radius then
 					NAsuppress._acquire(p)
@@ -36520,134 +37717,211 @@ NAjobs._nextIdForKind = function(kind)
 end
 
 NAjobs.start = function(kind, interval, target, useFind)
-	NAindex.init()
-	local tgt = target and Lower(target) or nil
-	local ivl = interval or 0.1
-	local ivlClamped = math.max(0, ivl)
-	local stagger = (ivlClamped > 0) and math.min(0.02, ivlClamped / 8) or 0
-	local matcher = useFind and NAindex.matchAnyFind or NAindex.matchAny
-	local existingId, existingJob = NAjobs._findExisting(kind, tgt, useFind)
+	NAindex.init();
+	local tgt = target and Lower(target) or nil;
+	local ivl = interval or 0.1;
+	local ivlClamped = math.max(0, ivl);
+	local stagger = ivlClamped > 0 and math.min(0.02, ivlClamped / 8) or 0;
+	local matcher = useFind and NAindex.matchAnyFind or NAindex.matchAny;
+	local existingId, existingJob = NAjobs._findExisting(kind, tgt, useFind);
 	if existingJob then
-		existingJob.interval = ivlClamped
-		existingJob.target = tgt
-		existingJob.m = matcher
-		existingJob.useFind = useFind and true or false
-		existingJob.stagger = stagger
-		existingJob.next = time()
-		return existingId, true
-	end
-
-	local id = NAjobs._nextIdForKind(kind)
-	local job = { id = id, kind = kind, interval = ivlClamped, target = tgt, next = time(), stagger = stagger, m = matcher, useFind = useFind and true or false }
-
+		existingJob.interval = ivlClamped;
+		existingJob.target = tgt;
+		existingJob.m = matcher;
+		existingJob.useFind = useFind and true or false;
+		existingJob.stagger = stagger;
+		existingJob.next = time();
+		return existingId, true;
+	end;
+	local id = NAjobs._nextIdForKind(kind);
+	local job = {
+		id = id,
+		kind = kind,
+		interval = ivlClamped,
+		target = tgt,
+		next = time(),
+		stagger = stagger,
+		m = matcher,
+		useFind = useFind and true or false
+	};
 	if kind == "prompt" then
 		job.tick = function(self)
-			if not NAindex.prompt then return end
-			local char = getChar()
-			local root = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
-			if not root then return end
-			local rootPos = root.Position
-			local list = {}
-			for inst, rec in pairs(NAindex.prompt) do
-				if inst.Parent and inst.Enabled and self.m(rec.names, self.target) then
-					local ok, dist, part = NAindex.inRangePrompt(inst, rootPos, 5)
-					if ok then Insert(list, {inst = inst, dist = dist, part = part}) end
-				end
-			end
-			table.sort(list, function(a, b) return a.dist < b.dist end)
-			local step = (self.interval > 0) and self.stagger or 0
-			local i = 0
+			if not interactTbl or type(interactTbl.proxy) ~= "table" then
+				return;
+			end;
+			local char = getChar();
+			local root = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"));
+			if not root then
+				return;
+			end;
+			local rootPos = root.Position;
+			local list = {};
+			for _, inst in ipairs(interactTbl.proxy) do
+				if inst and inst.Parent and inst.Enabled then
+					local rec = NAindex.prompt and NAindex.prompt[inst];
+					if not rec then
+						rec = {
+							inst = inst,
+							names = NAindex.namesForPrompt(inst)
+						};
+						NAindex.prompt[inst] = rec;
+					end;
+					if self.m(rec.names, self.target) then
+						local ok, dist, part = NAindex.inRangePrompt(inst, rootPos, 5);
+						if ok then
+							Insert(list, {
+								inst = inst,
+								dist = dist,
+								part = part
+							});
+						end;
+					end;
+				end;
+			end;
+			table.sort(list, function(a, b)
+				return a.dist < b.dist;
+			end);
+			local step = self.interval > 0 and self.stagger or 0;
+			local i = 0;
 			for _, it in ipairs(list) do
 				if NAjobs._claim(it.inst) then
-					i += 1
+					i += 1;
 					Delay(step * (i - 1), function()
-						local range = (it.inst.MaxActivationDistance or 0) + 5
-						local allow = {[it.inst]=true}
-						local suppressed = NAsuppress.collectAndAcquire(it.part and it.part.Position or rootPos, 10, allow)
-						pcall(fireproximityprompt, it.inst, { hold = 0.03, distance = range, stagger = 0 })
-						Delay(0.06, function() NAsuppress.releaseList(suppressed) end)
-					end)
-				end
-			end
-		end
+						local range = (it.inst.MaxActivationDistance or 0) + 5;
+						local allow = {
+							[it.inst] = true
+						};
+						local suppressed = NAsuppress.collectAndAcquire(it.part and it.part.Position or rootPos, 10, allow);
+						pcall(fireproximityprompt, it.inst, {
+							hold = 0.03,
+							distance = range,
+							stagger = 0
+						});
+						Delay(0.06, function()
+							NAsuppress.releaseList(suppressed);
+						end);
+					end);
+				end;
+			end;
+		end;
 	elseif kind == "click" then
 		job.tick = function(self)
-			if not NAindex.click then return end
-			local char = getChar()
-			local root = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
-			if not root then return end
-			local rootPos = root.Position
-			local list = {}
-			for inst, rec in pairs(NAindex.click) do
-				if inst.Parent and self.m(rec.names, self.target) then
-					local ok, dist, part = NAindex.inRangeClick(inst, rootPos, 5)
-					if ok then Insert(list, {inst = inst, dist = dist, part = part}) end
-				end
-			end
-			table.sort(list, function(a, b) return a.dist < b.dist end)
-			local step = (self.interval > 0) and self.stagger or 0
-			local i = 0
+			if not interactTbl or type(interactTbl.click) ~= "table" then
+				return;
+			end;
+			local char = getChar();
+			local root = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"));
+			if not root then
+				return;
+			end;
+			local rootPos = root.Position;
+			local list = {};
+			for _, inst in ipairs(interactTbl.click) do
+				if inst and inst.Parent then
+					local rec = NAindex.click and NAindex.click[inst];
+					if not rec then
+						rec = {
+							inst = inst,
+							names = NAindex.namesForClick(inst)
+						};
+						NAindex.click[inst] = rec;
+					end;
+					if self.m(rec.names, self.target) then
+						local ok, dist, part = NAindex.inRangeClick(inst, rootPos, 5);
+						if ok then
+							Insert(list, {
+								inst = inst,
+								dist = dist,
+								part = part
+							});
+						end;
+					end;
+				end;
+			end;
+			table.sort(list, function(a, b)
+				return a.dist < b.dist;
+			end);
+			local step = self.interval > 0 and self.stagger or 0;
+			local i = 0;
 			for _, it in ipairs(list) do
 				if NAjobs._claim(it.part) then
-					i += 1
+					i += 1;
 					Delay(step * (i - 1), function()
-						pcall(fireclickdetector, it.inst)
-					end)
-				end
-			end
-		end
+						pcall(fireclickdetector, it.inst);
+					end);
+				end;
+			end;
+		end;
 	elseif kind == "touch" then
 		job.tick = function(self)
-			if not NAindex.touch then return end
-			local char = getChar()
-			local root = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
-			if not root or not root:IsDescendantOf(workspace) then return end
-			local list = {}
-			for ti in pairs(NAindex.touch) do
-				local container = ti.Parent
-				if container and container.Parent then
-					local part = NAindex.carPart(container)
-					if part then
-						local names = { NAindex.lc(part.Name) }
-						local m = part:FindFirstAncestorWhichIsA("Model")
-						while m do Insert(names, NAindex.lc(m.Name)); m = m:FindFirstAncestorWhichIsA("Model") end
-						if self.m(names, self.target) then
-							local asm = part.AssemblyRootPart or part
-							if asm then Insert(list, {part = asm}) end
-						end
-					end
-				end
-			end
+			if not interactTbl or type(interactTbl.touch) ~= "table" then
+				return;
+			end;
+			local char = getChar();
+			local root = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"));
+			if not root or (not root:IsDescendantOf(workspace)) then
+				return;
+			end;
+			local list = {};
+			for _, ti in ipairs(interactTbl.touch) do
+				if ti then
+					local container = ti.Parent;
+					if container and container.Parent then
+						local part = NAindex.carPart(container);
+						if part then
+							local names = {
+								NAindex.lc(part.Name)
+							};
+							local m = part:FindFirstAncestorWhichIsA("Model");
+							while m do
+								Insert(names, NAindex.lc(m.Name));
+								m = m:FindFirstAncestorWhichIsA("Model");
+							end;
+							if self.m(names, self.target) then
+								local asm = part.AssemblyRootPart or part;
+								if asm then
+									Insert(list, {
+										part = asm
+									});
+								end;
+							end;
+						end;
+					end;
+				end;
+			end;
 			for _, it in ipairs(list) do
 				if NAjobs._claim(it.part) then
 					Spawn(function()
-						local asm = it.part
-						if not asm or not asm.Parent or not asm:IsDescendantOf(workspace) then return end
-						local st = NAjobs._touchState[asm]
-						if not st or not st.moved then
-							st = st or {}
-							st.orig = asm.CFrame
-							st.moved = true
-							NAjobs._touchState[asm] = st
-						end
-						local char2 = getChar()
-						local root2 = char2 and (getRoot(char2) or char2:FindFirstChildWhichIsA("BasePart"))
-						if not root2 or not root2:IsDescendantOf(workspace) then return end
-						asm:PivotTo(root2.CFrame)
-						pcall(firetouchinterest, asm, root2, 1)
-						Wait()
-						pcall(firetouchinterest, asm, root2, 0)
-						st.restoreAt = time() + 0.05
-					end)
-				end
-			end
-		end
-	end
-
-	NAjobs.jobs[id] = job
-	NAjobs._schedule()
-	return id
-end
+						local asm = it.part;
+						if not asm or (not asm.Parent) or (not asm:IsDescendantOf(workspace)) then
+							return;
+						end;
+						local st = NAjobs._touchState[asm];
+						if not st or (not st.moved) then
+							st = st or {};
+							st.orig = asm.CFrame;
+							st.moved = true;
+							NAjobs._touchState[asm] = st;
+						end;
+						local char2 = getChar();
+						local root2 = char2 and (getRoot(char2) or char2:FindFirstChildWhichIsA("BasePart"));
+						if not root2 or (not root2:IsDescendantOf(workspace)) then
+							return;
+						end;
+						asm:PivotTo(root2.CFrame);
+						pcall(firetouchinterest, asm, root2, 1);
+						Wait();
+						pcall(firetouchinterest, asm, root2, 0);
+						st.restoreAt = time() + 0.05;
+					end);
+				end;
+			end;
+		end;
+	end;
+	NAjobs.jobs[id] = job;
+	NAjobs._schedule();
+	return id;
+end;
 
 NAjobs._restoreAllTouch = function()
 	for part, st in pairs(NAjobs._touchState) do
@@ -37306,11 +38580,19 @@ cmd.add({"lighting","lightingcontrol"},{"lighting (lightingcontrol)","Manage lig
 	local args = {...}
 	local target = args[1]
 	local buttons = {}
+	local function applyLightingTechnology(tech)
+		if not Lighting or not tech then
+			return
+		end
+		Lighting.Technology = tech
+		local style = tech == Enum.Technology.Future and Enum.LightingStyle.Realistic or Enum.LightingStyle.Soft
+		NAlib.setProperty(Lighting, "LightingStyle", style)
+	end
 	for _, lt in ipairs(Enum.Technology:GetEnumItems()) do
 		Insert(buttons, {
 			Text = lt.Name,
 			Callback = function()
-				Lighting.Technology = lt
+				applyLightingTechnology(lt)
 			end
 		})
 	end
@@ -37415,50 +38697,155 @@ cmd.add({"unfriend"}, {"unfriend <player>", "Prompts to unfriend your target"}, 
 	end
 end, true)
 
-cmd.add({"tweengotocampos","tweentocampos","tweentcp"},{"tweengotocampos (tweentcp)","Another version of goto camera position but bypassing more anti-cheats"},function()
-	local player=Players.LocalPlayer
-	local TweenService=TweenService
+NAmanage.NAgetFriendCircles=function()
+	local players = Players:GetPlayers()
+	local graph, seen, groups = {}, {}, {}
+	local friendSets = {}
 
-	function teleportPlayer()
-		local character=player.Character or player.CharacterAdded:wait(1)
-		local camera=workspace.CurrentCamera
-		local cameraPosition=camera.CFrame.Position
-
-		local tween=TweenService:Create(character.PrimaryPart,TweenInfo.new(NAmanage.resolveTweenDuration(2)),{
-			CFrame=CFrame.new(cameraPosition)
-		})
-
-		tween:Play()
+	for _, plr in ipairs(players) do
+		graph[plr] = {}
 	end
 
+	local function getFriendSet(plr)
+		if friendSets[plr] then
+			return friendSets[plr]
+		end
+		local set = {}
+		local ok, pages = pcall(Players.GetFriendsAsync, Players, plr.UserId)
+		if ok and pages then
+			local function addPage(page)
+				for _, item in ipairs(page) do
+					if item and item.Id then
+						set[item.Id] = true
+					end
+				end
+			end
+			addPage(pages:GetCurrentPage())
+			while pages.IsFinished ~= nil and pages.IsFinished == false do
+				local okN, nextPage = pcall(pages.AdvanceToNextPageAsync, pages)
+				if not okN or not nextPage then
+					break
+				end
+				addPage(nextPage)
+			end
+		end
+		friendSets[plr] = set
+		return set
+	end
 
-	local camera=workspace.CurrentCamera
-	repeat Wait() until camera.CFrame~=CFrame.new()
-
-	teleportPlayer()
-
-end)
-
-cmd.add({"delete", "remove", "del"}, {"delete {partname} (remove, del)", "Removes any part with a certain name from the workspace"}, function(...)
-	local deleteCount = 0
-	local args = {...}
-	local targetName = Concat(args, " ")
-
-	for _, d in pairs(workspace:GetDescendants()) do
-		if d.Name:lower() == targetName:lower() then
-			d:Destroy()
-			deleteCount = deleteCount + 1
+	for i = 1, #players do
+		local p1 = players[i]
+		local set1 = getFriendSet(p1)
+		for j = i + 1, #players do
+			local p2 = players[j]
+			if set1[p2.UserId] then
+				Insert(graph[p1], p2)
+				Insert(graph[p2], p1)
+			end
 		end
 	end
 
-	Wait()
-
-	if deleteCount > 0 then
-		DebugNotif("Deleted "..deleteCount.." instance(s) of '"..targetName.."'", 2.5)
-	else
-		DebugNotif("'"..targetName.."' not found to delete", 2.5)
+	local function dfs(plr, group)
+		seen[plr] = true
+		Insert(group, plr)
+		for _, other in ipairs(graph[plr]) do
+			if not seen[other] then
+				dfs(other, group)
+			end
+		end
 	end
-end, true)
+
+	for _, plr in ipairs(players) do
+		if not seen[plr] then
+			local group = {}
+			dfs(plr, group)
+			Insert(groups, group)
+		end
+	end
+
+	table.sort(groups, function(a, b)
+		return #a > #b
+	end)
+
+	return groups, graph
+end
+
+cmd.add({"friendweb","fweb"},{"friendweb (fweb)","Finds friend circles in the current server"},function()
+	DoNotif("Looking for friend circles... I'll let you know what I find.", 4)
+
+	local groups, graph = NAmanage.NAgetFriendCircles()
+	local useDisplayNames = false
+	local ok, enabled = pcall(function()
+		return StarterGui and StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
+	end)
+	if ok and enabled then
+		useDisplayNames = true
+	end
+
+	local lines = {}
+	local index = 1
+	for _, group in ipairs(groups) do
+		if #group > 1 then
+			table.sort(group, function(a, b)
+				return (useDisplayNames and a.DisplayName or a.Name) < (useDisplayNames and b.DisplayName or b.Name)
+			end)
+			local edgeCount = 0
+			local parts = {}
+			for _, plr in ipairs(group) do
+				local deg = graph[plr] and #graph[plr] or 0
+				edgeCount += deg
+				parts[#parts + 1] = Format("%s [%d]", useDisplayNames and plr.DisplayName or plr.Name, deg)
+			end
+			edgeCount = math.floor(edgeCount / 2)
+			Insert(lines, Format("%d) %s (links: %d)", index, Concat(parts, ", "), edgeCount))
+			index = index + 1
+		end
+	end
+
+	local groupsFound = #lines
+	local body = (groupsFound == 0) and "No friend circles found in this server." or ("Here are the circles I found:\n"..Concat(lines, "\n"))
+	DoNotif(Format("Friend scan finished: %d circle%s found.", groupsFound, groupsFound == 1 and "" or "s"), 4, "Friend Web")
+	DoPopup({ Title = "Friend Circles", Description = body })
+end)
+
+cmd.add({"tweengotocampos","tweentocampos","tweentcp"}, {"tweengotocampos (tweentcp)","Another version of goto camera position but bypassing more anti-cheats"}, function()
+	local player = Players.LocalPlayer;
+	local TweenService = TweenService;
+	function teleportPlayer()
+		local character = player.Character or player.CharacterAdded:wait(1);
+		local camera = workspace.CurrentCamera;
+		local cameraPosition = camera.CFrame.Position;
+		local tween = TweenService:Create(character.PrimaryPart, TweenInfo.new(NAmanage.resolveTweenDuration(2)), {
+			CFrame = CFrame.new(cameraPosition)
+		});
+		tween:Play();
+	end;
+	local camera = workspace.CurrentCamera;
+	repeat
+		Wait();
+	until camera.CFrame ~= CFrame.new();
+	teleportPlayer();
+end);
+
+cmd.add({"delete","remove","del"}, {"delete {partname} (remove, del)","Removes any part with a certain name from the workspace"}, function(...)
+	local deleteCount = 0;
+	local args = {
+		...
+	};
+	local targetName = Concat(args, " ");
+	for _, d in pairs(workspace:GetDescendants()) do
+		if d.Name:lower() == targetName:lower() then
+			d:Destroy();
+			deleteCount = deleteCount + 1;
+		end;
+	end;
+	Wait();
+	if deleteCount > 0 then
+		DebugNotif("Deleted " .. deleteCount .. " instance(s) of '" .. targetName .. "'", 2.5);
+	else
+		DebugNotif("'" .. targetName .. "' not found to delete", 2.5);
+	end;
+end, true);
 
 cmd.add({"deletefind", "removefind", "delfind"}, {"deletefind {partname} (removefind, delfind)", "Removes any part with a name containing the given text from the workspace"}, function(...)
 	local deFind = 0
@@ -42214,35 +43601,6 @@ cmd.add({"unloopgamma", "unlgamma", "unloopexposure", "unlexposure"},{"unloopgam
 	NAlib.disconnect("loopgamma")
 end)
 
---[[cmd.add({"iy"},{"iy {command}","Executes infinite yield scripts"},function(...)
-	if IYLOADED==false then
-		function copytable(tbl) local copy={} for i,v in pairs(tbl) do copy[i]=v end return copy end
-		local sandbox_env=copytable(getfenv())
-		setmetatable(sandbox_env,{
-			__index=function(self,i)
-				if rawget(sandbox_env,i) then
-					return rawget(sandbox_env,i)
-				elseif getfenv()[i] then
-					return getfenv()[i]
-				end
-			end
-		})
-		sandbox_env.game=nil
-		iy,_=game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"):gsub("local Main","Main"):gsub("Players.LocalPlayer.Chatted","Funny=Players.LocalPlayer.Chatted"):gsub("local lastMessage","notify=getgenv().notify\nlocal lastMessage")
-		setfenv(loadstring(iy),sandbox_env)()
-		iy_cmds_table=sandbox_env.CMDs
-		iy_gui=sandbox_env.Main
-		iy_chathandler=sandbox_env.Funny
-		execCmd=sandbox_env.execCmd
-		iy_gui:Destroy()
-		NACaller(function()
-			iy_chathandler:Disconnect()
-		end)
-		IYLOADED=true
-	end
-	execCmd((...))
-end,true)]]
-
 cmd.add({"firstp","1stp","firstperson","fp"},{"firstperson (1stp,firstp,fp)","Makes you go in first person mode"},function()
 	Player.CameraMode="LockFirstPerson"
 end)
@@ -44585,7 +45943,7 @@ cmd.add({"actnpc"}, {"actnpc", "Start acting like an NPC"}, function()
 		local rayParams = RaycastParams.new()
 		rayParams.FilterType = Enum.RaycastFilterType.Blacklist
 		rayParams.FilterDescendantsInstances = {char}
-		local result = Workspace:Raycast(origin, forward * 3 + Vector3.new(0, -2, 0), rayParams)
+		local result = workspace:Raycast(origin, forward * 3 + Vector3.new(0, -2, 0), rayParams)
 
 		if result and NPCControl._jumpCooldown <= 0 then
 			local part = result.Instance
@@ -44910,17 +46268,26 @@ end
 
 repeat
 	local NASUC, resexy = pcall(function()
-		local src, err = originalIO.NAfetchUILoaderSource()
+		local src = originalIO.NAfetchUILoaderSource()
 		if not src then
-			error(tostring(err or "no UI loader source"))
+			return nil
 		end
 		return loadstring(src)()
 	end)
 
-	if NASUC and resexy then
-		NAStuff.NASCREENGUI = resexy
-	else
-		warn(Format("%d | Failed to load UI module: %s | retrying...", math.random(1, 999999), tostring(resexy)))
+	if NASUC then
+		if resexy then
+			NAStuff.NASCREENGUI = resexy
+		else
+			local rootGui = gethui and gethui() or CoreGui
+			local found = rootGui:FindFirstChild("AdminUI", true)
+			if found then
+				NAStuff.NASCREENGUI = found
+			end
+		end
+	end
+
+	if not NAStuff.NASCREENGUI then
 		Wait(0.3)
 	end
 until NAStuff.NASCREENGUI
@@ -45939,8 +47306,18 @@ cmd.add({"unname"}, {"unname", "Resets the admin UI placeholder name to default"
 end)
 
 --[[ GUI FUNCTIONS ]]--
+local patchedCommandColor = Color3.fromRGB(255, 115, 115)
 local pluginCommandColor = Color3.fromRGB(255, 196, 125)
 local cmdIntegrationColor = Color3.fromRGB(120, 180, 255)
+
+local function addPatchedLabel(text)
+	if not text then return text end
+	if Lower(text):find("patched", 1, true) then
+		return text
+	end
+	return "[PATCHED] "..text
+end
+
 NAgui.txtSize=function(ui,x,y)
 	local textService=TextService
 	return textService:GetTextSize(ui.Text,ui.TextSize,ui.Font,Vector2.new(x,y))
@@ -45965,6 +47342,8 @@ NAmanage.buildCommandEntries=function()
 		for _, alias in ipairs(extraAliases or {}) do
 			Insert(aliasList, alias:lower())
 		end
+		local commandMeta = (type(data[4]) == "table") and data[4] or {}
+		local isPatched = commandMeta.patched == true
 		local isPluginCmd, pluginType = NAmanage.IsPluginCommand and NAmanage.IsPluginCommand(name)
 		local pluginTag = nil
 		if isPluginCmd then
@@ -45974,6 +47353,9 @@ NAmanage.buildCommandEntries=function()
 		if isPluginCmd then
 			finalText = finalText.." ["..(pluginType and (pluginType.." plugin") or "plugin").."]"
 		end
+		if isPatched then
+			finalText = addPatchedLabel(finalText)
+		end
 		if isAprilFools() then
 			finalText = maybeMock(finalText)
 		end
@@ -45981,14 +47363,26 @@ NAmanage.buildCommandEntries=function()
 		if type(data[2]) == "table" then
 			desc = data[2][2] or ""
 		end
+		if isPatched then
+			if desc == "" then
+				desc = "Patched / may not work"
+			elseif not Lower(desc):find("patched", 1, true) then
+				desc = desc.." (patched)"
+			end
+		end
 		used[Lower(name)] = true
+		local searchable = NAmanage.stripMarkup(Lower(finalText or displayText or name))
+		if isPatched then
+			searchable = searchable.." patched"
+		end
 		metaByName[name] = {
 			origin = "na";
 			displayText = finalText;
-			searchable = NAmanage.stripMarkup(Lower(displayText));
+			searchable = searchable;
 			aliases = aliasList;
 			pluginType = pluginTag;
 			desc = desc;
+			patched = isPatched;
 		}
 		entries[#entries + 1] = {
 			name = name;
@@ -46117,21 +47511,34 @@ NAgui.commands = function()
 		Cmd.Parent = cList
 		Cmd.Name = cmdName
 		local finalText = meta.displayText or entry.display or cmdName
+		local isPatched = meta.patched == true
 		local isCmdIntegration = meta.origin == "cmd"
 		local pluginType = meta.pluginType
 		local isPluginCmd = pluginType ~= nil
 		if not isPluginCmd and NAmanage.IsPluginCommand then
 			isPluginCmd = NAmanage.IsPluginCommand(cmdName)
 		end
-		if isCmdIntegration then
+		if isPatched then
+			Cmd.TextColor3 = patchedCommandColor
+			if Cmd.SetAttribute then
+				Cmd:SetAttribute("IsPatchedCommand", true)
+				Cmd:SetAttribute("IsPluginCommand", false)
+				Cmd:SetAttribute("IsCmdIntegration", false)
+			end
+			finalText = addPatchedLabel(finalText)
+		elseif isCmdIntegration then
 			Cmd.TextColor3 = cmdIntegrationColor
 			if Cmd.SetAttribute then
 				Cmd:SetAttribute("IsCmdIntegration", true)
+				Cmd:SetAttribute("IsPatchedCommand", false)
+				Cmd:SetAttribute("IsPluginCommand", false)
 			end
 		elseif isPluginCmd then
 			Cmd.TextColor3 = pluginCommandColor
 			if Cmd.SetAttribute then
 				Cmd:SetAttribute("IsPluginCommand", true)
+				Cmd:SetAttribute("IsPatchedCommand", false)
+				Cmd:SetAttribute("IsCmdIntegration", false)
 			end
 		else
 			if defaultCmdColor then
@@ -46139,6 +47546,8 @@ NAgui.commands = function()
 			end
 			if Cmd.SetAttribute then
 				Cmd:SetAttribute("IsPluginCommand", false)
+				Cmd:SetAttribute("IsPatchedCommand", false)
+				Cmd:SetAttribute("IsCmdIntegration", false)
 			end
 		end
 		Cmd.Text = " "..finalText
@@ -46560,11 +47969,14 @@ end
 
 NAgui.addInfo = function(label, value)
 	if not NAUIMANAGER.SettingsList then return nil end
+
 	local info = templates.Input:Clone()
+	info.Name = "Info"
 	info.Title.Text = label
 	NAmanage.SetSearch.tag(info, label)
-	info.Parent = NAUIMANAGER.SettingsList
+
 	info.LayoutOrder = NAgui._nextLayoutOrder()
+	info.Parent = NAUIMANAGER.SettingsList
 	NAmanage.registerElementForCurrentTab(info)
 	if NAgui.RegisterStrokesFrom then
 		NAgui.RegisterStrokesFrom(info)
@@ -46580,8 +47992,6 @@ NAgui.addInfo = function(label, value)
 		return nil
 	end
 
-	local baseSize = frame.Size
-
 	box.Text = value or ""
 	box.PlaceholderText = ""
 	box.ClearTextOnFocus = false
@@ -46589,36 +47999,49 @@ NAgui.addInfo = function(label, value)
 	box.Active = false
 	box.Selectable = false
 	box.CursorPosition = -1
+	box.TextXAlignment = Enum.TextXAlignment.Center
+	box.TextWrapped = false
+	box.TextTruncate = Enum.TextTruncate.None
+	box.ClipsDescendants = true
+	frame.ClipsDescendants = true
 
 	box.Focused:Connect(function()
 		box:ReleaseFocus()
 	end)
 
-	local updateSize = function()
-		if frame:GetAttribute("NASkipAutoSize") then
-			frame.Size = baseSize
-			return
+	local lastW
+
+	local function resize()
+		local textW = box.TextBounds.X + 24
+		local minW = math.max(32, tonumber(frame:GetAttribute("NAMinWidth")) or 0)
+		local maxW
+
+		local cw = info.AbsoluteSize.X
+		if cw and cw > 0 then
+			local tw = (info.Title and info.Title.TextBounds.X or 0)
+			local gap = 32
+			maxW = cw - tw - gap
 		end
 
-		local width = box.TextBounds.X + 24
-		if width <= 24 then
-			local prev = frame:GetAttribute("NALastWidth")
-			if typeof(prev) == "number" and prev > 0 then
-				width = prev
-			end
-		end
-		local minWidth = frame:GetAttribute("NAMinWidth")
-		if typeof(minWidth) == "number" then
-			width = math.max(width, minWidth)
+		local w = math.max(textW, minW)
+		local hit = false
+		if maxW then
+			local clamped = math.max(minW, math.min(w, maxW))
+			hit = clamped >= (maxW - 0.5)
+			w = clamped
 		end
 
-		frame.Size = UDim2.new(0, width, 0, 30)
-		frame:SetAttribute("NALastWidth", width)
+		box.TextXAlignment = hit and Enum.TextXAlignment.Left or Enum.TextXAlignment.Center
+
+		if not lastW or math.abs(lastW - w) > 0.5 then
+			lastW = w
+			frame.Size = UDim2.new(0, w, 0, 30)
+		end
 	end
 
-	box:GetPropertyChangedSignal("Text"):Connect(updateSize)
-	frame:SetAttribute("NALastWidth", frame.AbsoluteSize.X > 0 and frame.AbsoluteSize.X or nil)
-	updateSize()
+	box:GetPropertyChangedSignal("Text"):Connect(resize)
+	info:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
+	resize()
 
 	local interact = frame:FindFirstChild("Interact")
 	if interact then
@@ -47145,45 +48568,69 @@ end
 
 NAgui.addInput = function(label, placeholder, defaultText, callback)
 	if not NAUIMANAGER.SettingsList then return end
+
 	local input = templates.Input:Clone()
 	local frame = input.InputFrame
-	local inputBox = frame.InputBox
+	local box = frame.InputBox
 
 	input.Title.Text = label
 	NAmanage.SetSearch.tag(input, label)
-	inputBox.Text = defaultText or ""
-	inputBox.PlaceholderText = placeholder or ""
+	box.Text = defaultText or ""
+	box.PlaceholderText = placeholder or ""
+	box.TextXAlignment = Enum.TextXAlignment.Center
+	box.TextTruncate = Enum.TextTruncate.None
 
 	input.LayoutOrder = NAgui._nextLayoutOrder()
 	input.Parent = NAUIMANAGER.SettingsList
 	NAmanage.registerElementForCurrentTab(input)
 
+	local lastW
+
 	local function resize()
-		frame:TweenSize(
-			UDim2.new(0, inputBox.TextBounds.X + 24, 0, 30),
-			Enum.EasingDirection.Out,
-			Enum.EasingStyle.Exponential,
-			0.2,
-			true
-		)
+		local textW = box.TextBounds.X + 24
+		local minW = math.max(32, tonumber(frame:GetAttribute("NAMinWidth")) or 0)
+		local maxW
+
+		local cw = input.AbsoluteSize.X
+		if cw and cw > 0 then
+			local tw = (input.Title and input.Title.TextBounds.X or 0)
+			local gap = 32
+			maxW = cw - tw - gap
+		end
+
+		local w = math.max(textW, minW)
+		local hit = false
+		if maxW then
+			local clamped = math.max(minW, math.min(w, maxW))
+			hit = clamped >= (maxW - 0.5)
+			w = clamped
+		end
+
+		box.TextXAlignment = hit and Enum.TextXAlignment.Left or Enum.TextXAlignment.Center
+
+		if not lastW or math.abs(lastW - w) > 0.5 then
+			lastW = w
+			frame.Size = UDim2.new(0, w, 0, 30)
+		end
 	end
 
-	inputBox.FocusLost:Connect(function()
-		pcall(callback, inputBox.Text)
+	box.FocusLost:Connect(function()
+		pcall(callback, box.Text)
 	end)
 
-	inputBox:GetPropertyChangedSignal("Text"):Connect(resize)
+	box:GetPropertyChangedSignal("Text"):Connect(resize)
+	input:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
 
 	local function setText(newValue, opts)
 		opts = opts or {}
 		local text = tostring(newValue or "")
-		if not opts.force and inputBox.Text == text then
+		if not opts.force and box.Text == text then
 			if opts.fire then
 				pcall(callback, text)
 			end
 			return
 		end
-		inputBox.Text = text
+		box.Text = text
 		if opts.fire then
 			pcall(callback, text)
 		end
@@ -47192,10 +48639,10 @@ NAgui.addInput = function(label, placeholder, defaultText, callback)
 	local entry = {
 		input = input;
 		get = function()
-			return inputBox.Text
+			return box.Text
 		end;
-		set = function(value, opts)
-			setText(value, opts)
+		set = function(v, opts)
+			setText(v, opts)
 		end;
 	}
 
@@ -48642,6 +50089,7 @@ NAgui.loadCMDS = function()
 		btn.Parent = NAUIMANAGER.cmdAutofill
 		btn.Name = name
 		local finalDisplay = meta.displayText or entry.display or name
+		local isPatched = meta.patched == true
 		local isCmdIntegration = meta.origin == "cmd"
 		local pluginType = meta.pluginType
 		local isPluginCmd = pluginType ~= nil
@@ -48649,7 +50097,10 @@ NAgui.loadCMDS = function()
 			isPluginCmd = NAmanage.IsPluginCommand(name)
 		end
 		if btn.Input then
-			if isCmdIntegration then
+			if isPatched then
+				btn.Input.TextColor3 = patchedCommandColor
+				finalDisplay = addPatchedLabel(finalDisplay)
+			elseif isCmdIntegration then
 				btn.Input.TextColor3 = cmdIntegrationColor
 			elseif isPluginCmd then
 				btn.Input.TextColor3 = pluginCommandColor
@@ -48663,6 +50114,7 @@ NAgui.loadCMDS = function()
 		if btn.SetAttribute then
 			btn:SetAttribute("IsCmdIntegration", isCmdIntegration)
 			btn:SetAttribute("IsPluginCommand", isPluginCmd)
+			btn:SetAttribute("IsPatchedCommand", isPatched)
 		end
 		i += 1
 		btn.LayoutOrder = i
@@ -49274,16 +50726,30 @@ NAgui.filterCommandList = function(rawText)
 					isPluginCmd, pluginType = NAmanage.IsPluginCommand(cmdName)
 				end
 
+				local isPatched = meta and meta.patched == true
+
 				local finalText = (meta and meta.displayText) or displayText
-				if isCmdIntegration then
+				if isPatched then
+					label.TextColor3 = patchedCommandColor
+					if label.SetAttribute then
+						label:SetAttribute("IsPatchedCommand", true)
+						label:SetAttribute("IsCmdIntegration", false)
+						label:SetAttribute("IsPluginCommand", false)
+					end
+					finalText = addPatchedLabel(finalText)
+				elseif isCmdIntegration then
 					label.TextColor3 = cmdIntegrationColor
 					if label.SetAttribute then
 						label:SetAttribute("IsCmdIntegration", true)
+						label:SetAttribute("IsPatchedCommand", false)
+						label:SetAttribute("IsPluginCommand", false)
 					end
 				elseif isPluginCmd then
 					label.TextColor3 = pluginCommandColor
 					if label.SetAttribute then
 						label:SetAttribute("IsPluginCommand", true)
+						label:SetAttribute("IsPatchedCommand", false)
+						label:SetAttribute("IsCmdIntegration", false)
 					end
 				else
 					if templateColor then
@@ -49291,6 +50757,7 @@ NAgui.filterCommandList = function(rawText)
 					end
 					if label.SetAttribute then
 						label:SetAttribute("IsPluginCommand", false)
+						label:SetAttribute("IsPatchedCommand", false)
 						label:SetAttribute("IsCmdIntegration", false)
 					end
 				end
@@ -49319,7 +50786,7 @@ originalIO.naTransLatooor=function()
 	end
 
 	local languages = {
-		auto="Automatic",af="Afrikaans",sq="Albanian",am="Amharic",ar="Arabic",hy="Armenian",az="Azerbaijani",eu="Basque",be="Belarusian",bn="Bengali",bs="Bosnian",bg="Bulgarian",ca="Catalan",ceb="Cebuano",ny="Chichewa",
+		auto="Automatic",morse="Morse Code",af="Afrikaans",sq="Albanian",am="Amharic",ar="Arabic",hy="Armenian",az="Azerbaijani",eu="Basque",be="Belarusian",bn="Bengali",bs="Bosnian",bg="Bulgarian",ca="Catalan",ceb="Cebuano",ny="Chichewa",
 		["zh-cn"]="Chinese Simplified",["zh-tw"]="Chinese Traditional",co="Corsican",hr="Croatian",cs="Czech",da="Danish",nl="Dutch",en="English",eo="Esperanto",et="Estonian",tl="Filipino",fi="Finnish",fr="French",fy="Frisian",
 		gl="Galician",ka="Georgian",de="German",el="Greek",gu="Gujarati",ht="Haitian Creole",ha="Hausa",haw="Hawaiian",iw="Hebrew",he="Hebrew",hi="Hindi",hmn="Hmong",hu="Hungarian",is="Icelandic",ig="Igbo",id="Indonesian",ga="Irish",it="Italian",
 		ja="Japanese",jw="Javanese",kn="Kannada",kk="Kazakh",km="Khmer",ko="Korean",ku="Kurdish (Kurmanji)",ky="Kyrgyz",lo="Lao",la="Latin",lv="Latvian",lt="Lithuanian",lb="Luxembourgish",mk="Macedonian",mg="Malagasy",ms="Malay",
@@ -49346,6 +50813,57 @@ originalIO.naTransLatooor=function()
 
 	originalIO.languageName=function(code)
 		return languages[code] or code
+	end
+
+	local MORSE_MAP = {
+		["A"]=".-",["B"]="-...",["C"]="-.-.",["D"]="-..",["E"]=".",["F"]="..-.",["G"]="--.",["H"]="....",
+		["I"]="..",["J"]=".---",["K"]="-.-",["L"]=".-..",["M"]="--",["N"]="-.",["O"]="---",["P"]=".--.",
+		["Q"]="--.-",["R"]=".-.",["S"]="...",["T"]="-",["U"]="..-",["V"]="...-",["W"]=".--",["X"]="-..-",
+		["Y"]="-.--",["Z"]="--..",
+		["1"]=".----",["2"]="..---",["3"]="...--",["4"]="....-",["5"]=".....",["6"]="-....",["7"]="--...",["8"]="---..",["9"]="----.",["0"]="-----",
+		["."]=".-.-.-",[","]="--..--",["?"]="..--..",["'"]=".----.",["!"]="-.-.--",["/"]="-..-.",["("]="-.--.",[")"]="-.--.-",
+		["&"]=".-...",[":"]="---...",[";"]="-.-.-.",["="]="-...-",["+"]=".-.-.",["-"]="-....-",["_"]="..--.-",["\""]=".-..-.",["$"]="...-..-",["@"]=".--.-."
+	}
+	local MORSE_REVERSE = {}
+	for k,v in pairs(MORSE_MAP) do
+		MORSE_REVERSE[v] = k
+	end
+
+	local function isLikelyMorse(text)
+		if not text or text == "" then return false end
+		return not not text:match("^[%s%./%-]+$")
+	end
+
+	local function encodeMorse(text)
+		text = tostring(text or "")
+		if text == "" then return text end
+		local words = {}
+		for word in text:gmatch("%S+") do
+			local letters = {}
+			for i = 1, #word do
+				local c = word:sub(i, i):upper()
+				letters[#letters+1] = MORSE_MAP[c] or c
+			end
+			words[#words+1] = Concat(letters, " ")
+		end
+		return Concat(words, " / ")
+	end
+
+	local function decodeMorse(text)
+		text = tostring(text or "")
+		if text == "" then return text end
+		local words = {}
+		for word in text:gmatch("[^/]+") do
+			local trimmed = word:match("^%s*(.-)%s*$") or ""
+			if trimmed ~= "" then
+				local letters = {}
+				for token in trimmed:gmatch("%S+") do
+					letters[#letters+1] = MORSE_REVERSE[token] or "?"
+				end
+				words[#words+1] = Concat(letters)
+			end
+		end
+		return Concat(words, " ")
 	end
 
 	translator.target = NAmanage.iso2(opt.chatTranslateTarget) or translator.target or "en"
@@ -49491,7 +51009,28 @@ originalIO.naTransLatooor=function()
 		if not text or text == "" then
 			return nil
 		end
-		local translated, detected = translateSimple(text, target, source)
+
+		local targetCode = NAmanage.iso2(target) or "en"
+		local sourceCode = NAmanage.iso2(source) or "auto"
+
+		if targetCode == "morse" then
+			return encodeMorse(text), "morse"
+		end
+
+		local isMorseMsg = isLikelyMorse(text)
+		if sourceCode == "morse" or isMorseMsg then
+			local decoded = decodeMorse(text)
+			if not decoded or decoded == "" then
+				return nil
+			end
+			if targetCode == "auto" or targetCode == nil or targetCode == "en" then
+				return decoded, "morse"
+			end
+			text = decoded
+			sourceCode = "auto"
+		end
+
+		local translated, detected = translateSimple(text, targetCode, sourceCode)
 		if translated and translated ~= "" then
 			return translated, detected
 		end
@@ -49499,9 +51038,7 @@ originalIO.naTransLatooor=function()
 			return translated, detected
 		end
 		state.rid += 10000
-		target = NAmanage.iso2(target) or "en"
-		source = NAmanage.iso2(source) or "auto"
-		local data = { { text, source, target, true }, { nil } }
+		local data = { { text, sourceCode, targetCode, true }, { nil } }
 		local freq = { { { rpc, jsonEncode(data), nil, "generic" } } }
 		local url = exec.."?"..encodeQuery({
 			rpcids = rpc;
@@ -51103,23 +52640,41 @@ originalIO.binderSetupCharacter=function(plr, char)
 	end
 end
 
+originalIO.waitForCharacterReady=function(plr)
+	if not plr then
+		return nil
+	end
+	while plr.Parent do
+		local char = plr.Character
+		if char and NAmanage.IsValidESPModel(char, false) then
+			return char
+		end
+		Wait(0.25)
+	end
+	return nil
+end
+
 function setupPlayer(plr,bruh)
 	NAmanage.ExecuteBindings("OnJoin", plr)
 
 	plr.Chatted:Connect(function(msg)
 		bindToChat(plr, msg)
 		NAmanage.ExecuteBindings("OnChatted", plr, msg)
+		if NAmanage.WebhookChat then
+			NAmanage.WebhookChat(plr, msg)
+		end
 	end)
 
 	if plr ~= LocalPlayer then
 		SpawnCall(function() CheckPermissions(plr) end)
 	end
 
-	if ESPenabled and ESPAutoTrackAll then
+	if ESPPlayersEnabled and ESPAutoTrackAll then
 		SpawnCall(function()
-			repeat Wait(.5) until plr.Character
-			Wait(.5)
-			NAmanage.ESP_Add(plr,true)
+			local char = originalIO.waitForCharacterReady(plr)
+			if char then
+				NAmanage.ESP_Add(plr,true)
+			end
 		end)
 	end
 
@@ -51137,6 +52692,9 @@ function setupPlayer(plr,bruh)
 		local categoryRT = ('<font color="%s">Join</font>/'..'<font color="%s">Leave</font>'):format(logClrs.GREEN, logClrs.WHITE)
 		DoNotif(joinMsg, 1, categoryRT)
 		NAmanage.LogJoinLeave(joinMsg)
+	end
+	if NAmanage.WebhookJoinLeave then
+		NAmanage.WebhookJoinLeave(plr, "join")
 	end
 end
 
@@ -51158,64 +52716,127 @@ Players.PlayerRemoving:Connect(function(plr)
 		DoNotif(leaveMsg, 1, categoryRT)
 		NAmanage.LogJoinLeave(leaveMsg)
 	end
+	if NAmanage.WebhookJoinLeave then
+		NAmanage.WebhookJoinLeave(plr, "leave")
+	end
 end)
 
 SpawnCall(function()
-	NAmanage.UIrenamerFRIEND=function(o)
-		if type(o.Text) == "string" then
-			o.Text = o.Text:gsub("Connections","Friends"):gsub("Connection","Friend")
+	local HUI = (typeof(gethui) == "function" and gethui()) or nil
+
+	local function hookFriendLabel(o)
+		if not o or typeof(o) ~= "Instance" then return end
+		if HUI and o:IsDescendantOf(HUI) then return end
+		if not (o:IsA("TextLabel") or o:IsA("TextButton") or o:IsA("TextBox")) then return end
+		if o:GetAttribute("NAFriendHooked") then return end
+		o:SetAttribute("NAFriendHooked", true)
+
+		local applying = false
+		local function apply()
+			if applying then return end
+			applying = true
+			local ok, t = pcall(function()
+				return o.Text
+			end)
+			if ok and type(t) == "string" and t ~= "" and t:find("Connection") then
+				local new = t:gsub("Connections", "Friends"):gsub("Connection", "Friend")
+				if new ~= t then
+					pcall(function()
+						o.Text = new
+					end)
+				end
+			end
+			applying = false
+		end
+
+		Defer(apply)
+		o:GetPropertyChangedSignal("Text"):Connect(function()
+			Defer(apply)
+		end)
+	end
+
+	local function registerInteract(inst)
+		if HUI and inst:IsDescendantOf(HUI) then return end
+		if inst:IsA("ClickDetector") then
+			Insert(interactTbl.click, inst)
+		elseif inst:IsA("ProximityPrompt") then
+			Insert(interactTbl.proxy, inst)
+		elseif inst:IsA("TouchTransmitter") then
+			Insert(interactTbl.touch, inst)
 		end
 	end
 
-	for _, internet in ipairs(workspace:GetDescendants()) do
-		if internet:IsA("ClickDetector") then
-			Insert(interactTbl.click, internet)
-		elseif internet:IsA("ProximityPrompt") then
-			Insert(interactTbl.proxy, internet)
-		elseif internet:IsA("TouchTransmitter") then
-			Insert(interactTbl.touch, internet)
+	local function batchedScan(root, fn, batchSize, timeBudget)
+		if not root then return end
+		batchSize = batchSize or 125
+		timeBudget = timeBudget or 0.006
+		local n, start = 0, os.clock()
+		for _, inst in ipairs(root:GetDescendants()) do
+			fn(inst)
+			n += 1
+			if n % batchSize == 0 and (os.clock() - start) >= timeBudget then
+				start = os.clock()
+				Wait()
+			end
 		end
 	end
 
 	if CoreGui then
-		for _, o in ipairs(CoreGui:GetDescendants()) do
-			if o:IsA("TextLabel") or o:IsA("TextButton") or o:IsA("TextBox") then
-				NAmanage.UIrenamerFRIEND(o)
-			end
-		end
+		Spawn(function()
+			batchedScan(CoreGui, hookFriendLabel, 100, 0.004)
+		end)
 		CoreGui.DescendantAdded:Connect(function(o)
-			if o:IsA("TextLabel") or o:IsA("TextButton") or o:IsA("TextBox") then
-				NAmanage.UIrenamerFRIEND(o)
-			end
-			for _, c in ipairs(o:GetDescendants()) do
-				if c:IsA("TextLabel") or c:IsA("TextButton") or c:IsA("TextBox") then
-					NAmanage.UIrenamerFRIEND(c)
+			if HUI and o:IsDescendantOf(HUI) then return end
+			Defer(function()
+				hookFriendLabel(o)
+				for _, c in ipairs(o:GetDescendants()) do
+					hookFriendLabel(c)
 				end
-			end
+			end)
 		end)
 	end
 
-	workspace.DescendantAdded:Connect(function(internet)
-		if internet:IsA("ClickDetector") then
-			Insert(interactTbl.click, internet)
-		elseif internet:IsA("ProximityPrompt") then
-			Insert(interactTbl.proxy, internet)
-		elseif internet:IsA("TouchTransmitter") then
-			Insert(interactTbl.touch, internet)
-		end
+	if PlrGui then
+		Spawn(function()
+			batchedScan(PlrGui, hookFriendLabel, 100, 0.004)
+		end)
+		PlrGui.DescendantAdded:Connect(function(o)
+			if HUI and o:IsDescendantOf(HUI) then return end
+			Defer(function()
+				hookFriendLabel(o)
+			end)
+		end)
+	end
+
+	Spawn(function()
+		batchedScan(workspace, registerInteract, 200, 0.006)
 	end)
 
-	workspace.DescendantRemoving:Connect(function(internet)
-		if internet:IsA("ClickDetector") then
-			local i = Discover(interactTbl.click, internet)
-			if i then table.remove(interactTbl.click, i) end
-		elseif internet:IsA("ProximityPrompt") then
-			local i = Discover(interactTbl.proxy, internet)
-			if i then table.remove(interactTbl.proxy, i) end
-		elseif internet:IsA("TouchTransmitter") then
-			local i = Discover(interactTbl.touch, internet)
-			if i then table.remove(interactTbl.touch, i) end
-		end
+	workspace.DescendantAdded:Connect(function(inst)
+		Defer(function()
+			registerInteract(inst)
+		end)
+	end)
+
+	workspace.DescendantRemoving:Connect(function(inst)
+		Defer(function()
+			if inst:IsA("ClickDetector") then
+				local i = Discover(interactTbl.click, inst)
+				if i then
+					table.remove(interactTbl.click, i)
+				end
+			elseif inst:IsA("ProximityPrompt") then
+				local i = Discover(interactTbl.proxy, inst)
+				if i then
+					table.remove(interactTbl.proxy, i)
+				end
+			elseif inst:IsA("TouchTransmitter") then
+				local i = Discover(interactTbl.touch, inst)
+				if i then
+					table.remove(interactTbl.touch, i)
+				end
+			end
+		end)
 	end)
 end)
 
@@ -53524,11 +55145,11 @@ NAStuff.PRELOAD_INSTANCE_CLASSES = NAStuff.PRELOAD_INSTANCE_CLASSES or {
 };
 
 NAStuff.ASSET_LOAD_MODE_DEFS = NAStuff.ASSET_LOAD_MODE_DEFS or {
-	Medium = { chunk = 200, delay = 0.025 };
-	Fast = { chunk = 360, delay = 0.016 };
-	Aggressive = { chunk = 640, delay = 0.008 };
-};
-NAStuff.ASSET_LOAD_MODE_ORDER = NAStuff.ASSET_LOAD_MODE_ORDER or { "Medium", "Fast", "Aggressive" };
+	Medium = { chunk = 256, delay = 0.02 };
+	Fast = { chunk = 512, delay = 0.01 };
+	Aggressive = { chunk = 768, delay = 0.005 };
+}
+NAStuff.ASSET_LOAD_MODE_ORDER = NAStuff.ASSET_LOAD_MODE_ORDER or { "Medium", "Fast", "Aggressive" }
 NAStuff.AssetLoadMode = NAStuff.AssetLoadMode or "Fast"
 
 NAmanage.ClampNumber = NAmanage.ClampNumber or function(value, minValue, maxValue)
@@ -53605,18 +55226,19 @@ NAmanage.UpdateAssetLoadStatus = NAmanage.UpdateAssetLoadStatus or function(done
 	end)
 end
 
-originalIO.AssetsPreloadNA=function()
+originalIO.AssetsPreloadNA = function()
 	local entries = {}
 	local seenString = {}
 	local seenInstance = {}
+
 	local function addResource(value)
-		local valueType = typeof(value)
-		if valueType == "Instance" then
+		local t = typeof(value)
+		if t == "Instance" then
 			if not seenInstance[value] then
 				seenInstance[value] = true
 				entries[#entries + 1] = value
 			end
-		elseif valueType == "string" and value ~= "" and not value:match("^rbxassetid://0+$") then
+		elseif t == "string" and value ~= "" and not value:match("^rbxassetid://0+$") then
 			if not seenString[value] then
 				seenString[value] = true
 				entries[#entries + 1] = value
@@ -53624,19 +55246,35 @@ originalIO.AssetsPreloadNA=function()
 		end
 	end
 
-	for _, inst in ipairs(game:GetDescendants()) do
-		if NAStuff.PRELOAD_INSTANCE_CLASSES[inst.ClassName] then
-			addResource(inst)
-		end
+	local roots = {
+		game:GetService("Workspace"),
+		game:GetService("ReplicatedStorage"),
+		game:GetService("ReplicatedFirst"),
+		game:GetService("Lighting"),
+		game:GetService("StarterGui"),
+		game:GetService("StarterPack"),
+		game:GetService("StarterPlayer"),
+		game:GetService("SoundService"),
+		game:GetService("Chat"),
+		game:GetService("TextChatService"),
+	}
 
-		local props = NAStuff.PRELOAD_ASSET_CLASS_PROPS[inst.ClassName]
-		if props then
-			for _, prop in ipairs(props) do
-				local ok, value = pcall(function()
-					return inst[prop]
-				end)
-				if ok and value then
-					addResource(value)
+	for i = 1, #roots do
+		local root = roots[i]
+		for _, inst in ipairs(root:GetDescendants()) do
+			if NAStuff.PRELOAD_INSTANCE_CLASSES[inst.ClassName] then
+				addResource(inst)
+			end
+			local props = NAStuff.PRELOAD_ASSET_CLASS_PROPS[inst.ClassName]
+			if props then
+				for j = 1, #props do
+					local prop = props[j]
+					local ok, value = pcall(function()
+						return inst[prop]
+					end)
+					if ok and value then
+						addResource(value)
+					end
 				end
 			end
 		end
@@ -53796,30 +55434,36 @@ NAFFlags.whitelist = NAFFlags.whitelist or {
 	{ name = "SimWorldTaskQueueParallelTasks", default = 16, valueType = "number" };
 	{ name = "ReplicationDataCacheNumParallelTasks", default = 16, valueType = "number" };
 	{ name = "NetworkClusterPacketCacheNumParallelTasks", default = 16, valueType = "number" };
-	{ name = "FixParticleEmissionBias2", default = false, valueType = "boolean" };
+	{ name = "FixParticleEmissionBias2", default = true, valueType = "boolean" };
 	{ name = "InterpolationNumParallelTasks", default = 16, valueType = "number" };
 	{ name = "MegaReplicatorNumParallelTasks", default = 16, valueType = "number" };
 	{ name = "LuaGcParallelMinMultiTasks", default = 16, valueType = "number" };
-	{ name = "FixParticleAttachmentCulling", default = false, valueType = "boolean" };
+	{ name = "FixParticleAttachmentCulling", default = true, valueType = "boolean" };
 	{ name = "DebugRenderingSetDeterministic", default = true, valueType = "boolean" };
 	{ name = "TaskSchedulerAutoThreadLimit", default = 15, valueType = "number" };
+	{ name = "TeleportReconnect", default = true, valueType = "boolean" };
 	{ name = "TeleportReconnect3", default = true, valueType = "boolean" };
+	{ name = "AddJoinAttemptId", default = true, valueType = "boolean" };
+	{ name = "ChatTranslationSettingEnabled3", default = true, valueType = "boolean" };
+	{ name = "EnableQuickGameLaunch", default = false, valueType = "boolean" };
 	{ name = "TaskSchedulerAsyncTasksMinimumThreadCount", default = 15, valueType = "number" };
 	{ name = "SmoothClusterTaskQueueMaxParallelTasks", default = 16, valueType = "number" };
 	{ name = "LCCageDeformLimit", default = -1, valueType = "number" };
 	{ name = "FullscreenTitleBarTriggerDelayMillis", default = 3600000, valueType = "number" };
-	{ name = "DebugPauseVoxelizer", default = true, valueType = "boolean" };
+	{ name = "DebugPauseVoxelizer", default = false, valueType = "boolean" };
 	{ name = "RobloxGuiBlurIntensity", default = 0, valueType = "number" };
 	{ name = "DebugDisplayFPS", default = true, valueType = "boolean" };
 	{ name = "RenderShadowmapBias", default = -1, valueType = "number" };
+	{ name = "MaxFrameBufferSize", default = 4, valueType = "number" };
 	{ name = "DebugPerfMode", default = true, valueType = "boolean" };
+	{ name = "Order66", default = true, valueType = "boolean" };
 	{ name = "AdServiceEnabled", default = false, valueType = "boolean" };
 	{ name = "HandleAltEnterFullscreenManually", default = false, valueType = "boolean" };
 	{ name = "DebugGraphicsPreferD3D11", default = false, valueType = "boolean" };
 	{ name = "DebugGraphicsPreferD3D11FL10", default = false, valueType = "boolean" };
-	{ name = "DebugGraphicsPreferVulkan", default = false, valueType = "boolean" };
+	{ name = "DebugGraphicsPreferVulkan", default = true, valueType = "boolean" };
 	{ name = "DebugGraphicsPreferOpenGL", default = false, valueType = "boolean" };
-	{ name = "DebugGraphicsDisableDirect3D11", default = false, valueType = "boolean" };
+	{ name = "DebugGraphicsDisableDirect3D11", default = true, valueType = "boolean" };
 }
 
 for _, entry in ipairs(NAFFlags.whitelist) do
@@ -54047,7 +55691,8 @@ NAFFlags.apply = function(flagName, flagValue, opts)
 		if not opts.silent then
 			DoNotif(Format("Failed to set %s: %s", tostring(flagName), tostring(err)), 4)
 		end
-		warn("[NA] FastFlag apply failed for "..tostring(flagName)..": "..tostring(err))
+		-- disabled due to spam if the default ones fail
+		--warn("[NA] FastFlag apply failed for "..tostring(flagName)..": "..tostring(err))
 		return false, err
 	end
 	if not opts.silent then
@@ -54328,24 +55973,9 @@ end
 NAgui.addSection("Whitelisted FastFlags")
 
 NAStuff.supportText = NAStuff.supportText or NAFFlags.hasSupport() and "Available" or "Unavailable (setfflag missing)"
-NAmanage.styleFFlagInfo = function(box)
-	if not box then
-		return
-	end
-	box.TextWrapped = false
-	box.TextScaled = true
-	box.Selectable = true
-	box.Active = true
-	local frame = box.Parent
-	if frame and frame:IsA("Frame") then
-		frame:SetAttribute("NAMinWidth", 220)
-	end
-end
 
-NAStuff.supportInfo = NAStuff.supportInfo or  NAgui.addInfo("FastFlag Support", NAStuff.supportText)
-NAStuff.sessionWarningBox = NAStuff.sessionWarningBox or NAgui.addInfo("Session Warning", "FastFlags reset after you close Roblox")
-NAmanage.styleFFlagInfo(NAStuff.supportInfo)
-NAmanage.styleFFlagInfo(NAStuff.sessionWarningBox)
+NAgui.addInfo("FastFlag Support", NAStuff.supportText)
+NAgui.addInfo("Session Warning", "FastFlags reset after you close Roblox")
 
 NAgui.addToggle("Use FastFlags", NAFFlags.config.useFFlags == true, function(state)
 	NAFFlags.config.useFFlags = state == true
@@ -54569,6 +56199,180 @@ NAgui.addToggle("Bloxtrap RPC Presence", NAmanage.btEnabled(), function(v)
 end)
 NAmanage.RegisterToggleAutoSync("Bloxtrap RPC Presence", function()
 	return NAmanage.btEnabled()
+end)
+
+NAgui.addSection("Discord Webhook")
+NAStuff.Integrations = NAStuff.Integrations or {}
+local webhookCfg = NAStuff.Integrations.webhook or {}
+NAStuff.Integrations.webhook = webhookCfg
+webhookCfg.urls = webhookCfg.urls or {}
+webhookCfg.urls.main = webhookCfg.urls.main or webhookCfg.url or webhookCfg.urls.all or ""
+webhookCfg.urls.all = webhookCfg.urls.all or webhookCfg.url or ""
+webhookCfg.urls.joinleave = webhookCfg.urls.joinleave or ""
+webhookCfg.urls.chat = webhookCfg.urls.chat or ""
+webhookCfg.urls.commands = webhookCfg.urls.commands or ""
+webhookCfg.mainMessage = webhookCfg.mainMessage or ""
+
+NAgui.addInput("All Events Webhook", "https://discord.com/api/webhooks/...", webhookCfg.urls.all, function(text)
+	webhookCfg.urls.all = text or ""
+	webhookCfg.url = webhookCfg.urls.all
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookUrlAll", webhookCfg.urls.all)
+		NAmanage.NASettingsSet("integrationWebhookUrl", webhookCfg.urls.all)
+	end
+end)
+NAgui.addInput("Join/Leave Webhook", "https://discord.com/api/webhooks/...", webhookCfg.urls.joinleave, function(text)
+	webhookCfg.urls.joinleave = text or ""
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookUrlJoinLeave", webhookCfg.urls.joinleave)
+	end
+end)
+NAgui.addInput("Chat Webhook", "https://discord.com/api/webhooks/...", webhookCfg.urls.chat, function(text)
+	webhookCfg.urls.chat = text or ""
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookUrlChat", webhookCfg.urls.chat)
+	end
+end)
+NAgui.addInput("Command Webhook", "https://discord.com/api/webhooks/...", webhookCfg.urls.commands, function(text)
+	webhookCfg.urls.commands = text or ""
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookUrlCommands", webhookCfg.urls.commands)
+	end
+end)
+NAgui.addToggle("Send To All Webhooks", webhookCfg.useAll == true, function(v)
+	webhookCfg.useAll = v and true or false
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookUseAll", webhookCfg.useAll)
+	end
+end)
+NAgui.addSlider("Min Interval (sec)", 0, 30, NAmanage.clampNumber(webhookCfg.minInterval, 0, 30, 2), 1, " s", function(v)
+	webhookCfg.minInterval = NAmanage.clampNumber(v, 0, 30, 2)
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookInterval", webhookCfg.minInterval)
+	end
+end)
+NAgui.addToggle("Send Join/Leave", webhookCfg.enableJoinLeave, function(v)
+	webhookCfg.enableJoinLeave = v and true or false
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookJoinLeave", webhookCfg.enableJoinLeave)
+	end
+end)
+NAgui.addToggle("Send Chat Messages", webhookCfg.enableChat, function(v)
+	webhookCfg.enableChat = v and true or false
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookChat", webhookCfg.enableChat)
+	end
+end)
+NAgui.addToggle("Send Command Logs", webhookCfg.enableCommands, function(v)
+	webhookCfg.enableCommands = v and true or false
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookCommands", webhookCfg.enableCommands)
+	end
+end)
+NAgui.addButton("Test Webhook Ping", function()
+	local ok, err = NAmanage.SendIntegrationWebhook("test", Format("[Test] %s ping", adminName or "NA"))
+	if ok then
+		DoNotif("Webhook ping sent.", 2)
+	else
+		DoNotif("Webhook failed: "..tostring(err), 3)
+	end
+end)
+
+NAgui.addSection("Main Webhook Sender")
+NAgui.addInput("Main Webhook", "https://discord.com/api/webhooks/...", webhookCfg.urls.main, function(text)
+	webhookCfg.urls.main = text or ""
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationWebhookUrlMain", webhookCfg.urls.main)
+	end
+end)
+NAgui.addInput("Message", "Enter message to send", webhookCfg.mainMessage, function(text)
+	webhookCfg.mainMessage = text or ""
+end)
+NAgui.addButton("Send Main Webhook Message", function()
+	local msg = webhookCfg.mainMessage or ""
+	if msg == "" then
+		DoNotif("Please enter a message to send.", 3)
+		return
+	end
+	local ok, err = NAmanage.SendIntegrationWebhook("main", msg)
+	if ok then
+		DoNotif("Main webhook message sent.", 2)
+	else
+		DoNotif("Main webhook failed: "..tostring(err), 3)
+	end
+end)
+
+NAgui.addSection("API Health Checks")
+local function setHealthEndpoint(i, val)
+	NAStuff.Integrations.health.endpoints[i] = val or ""
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationHealthEndpoints", NAStuff.Integrations.health.endpoints)
+	end
+end
+local healthDefaults = NAStuff.Integrations.health.endpoints
+for i = 1, 3 do
+	NAgui.addInput("Endpoint #"..i, "https://example.com/health", healthDefaults[i] or "", function(text)
+		setHealthEndpoint(i, text)
+	end)
+end
+NAgui.addButton("Ping Endpoints", function()
+	local results = NAmanage.HealthPingAll()
+	if #results == 0 then
+		DoNotif("No endpoints configured.", 3)
+	else
+		DoNotif(Concat(results, " | "), 4)
+	end
+end)
+
+NAgui.addSection("Notes / Clipboard")
+NAgui.addInput("Note Text", "Optional note to save/copy", NAStuff.Integrations.notes.last, function(text)
+	NAStuff.Integrations.notes.last = text or ""
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationNotesLast", NAStuff.Integrations.notes.last)
+	end
+end)
+NAgui.addButton("Copy Server Info + Note", function()
+	local note = NAStuff.Integrations.notes.last or ""
+	local payload = NAmanage.ComposeServerNote(note)
+	if setclipboard then
+		setclipboard(payload)
+		DoNotif("Server info copied to clipboard.", 2)
+	else
+		DoNotif(payload, 3)
+	end
+end)
+
+NAgui.addSection("Bloxstrap RPC Settings")
+NAgui.addToggle("Custom RPC Text", NAStuff.Integrations.rpc.useCustom, function(v)
+	NAStuff.Integrations.rpc.useCustom = v and true or false
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationRpcUseCustom", NAStuff.Integrations.rpc.useCustom)
+	end
+	if NAmanage.btEnabled() then
+		NAmanage.btUpdate()
+	end
+end)
+NAgui.addInput("RPC Details Text", "Supports {cmds} {game}", NAStuff.Integrations.rpc.details, function(text)
+	NAStuff.Integrations.rpc.details = text or ""
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationRpcDetails", NAStuff.Integrations.rpc.details)
+	end
+	if NAmanage.btEnabled() and NAStuff.Integrations.rpc.useCustom then
+		NAmanage.btUpdate()
+	end
+end)
+NAgui.addInput("RPC State Text", "Supports {cmds} {game}", NAStuff.Integrations.rpc.state, function(text)
+	NAStuff.Integrations.rpc.state = text or ""
+	if NAmanage.NASettingsSet then
+		NAmanage.NASettingsSet("integrationRpcState", NAStuff.Integrations.rpc.state)
+	end
+	if NAmanage.btEnabled() and NAStuff.Integrations.rpc.useCustom then
+		NAmanage.btUpdate()
+	end
+end)
+NAgui.addButton("Refresh RPC Presence", function()
+	NAmanage.btUpdate()
+	DoNotif("Bloxstrap RPC refreshed.", 2)
 end)
 
 NAgui.addTab(TAB_INTERFACE, { order = 3, textIcon = "two-makeup-brushes" })
@@ -56280,6 +58084,9 @@ do
 	NAgui.addColorPicker("Text Color", tblToC3(NAStuff.ChatSettings.window.textColor), function(c)
 		NAStuff.ChatSettings.window.textColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
+	NAgui.addSlider("Text Transparency (Window)", 0, 1, NAStuff.ChatSettings.window.textTransparency, 0.05, "", function(v)
+		NAStuff.ChatSettings.window.textTransparency = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
 	NAgui.addColorPicker("Text Stroke Color", tblToC3(NAStuff.ChatSettings.window.strokeColor), function(c)
 		NAStuff.ChatSettings.window.strokeColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
@@ -56300,8 +58107,14 @@ do
 	NAgui.addSlider("Text Size (Tabs)", 5, 50, NAStuff.ChatSettings.tabs.textSize, 1, " px", function(v)
 		NAStuff.ChatSettings.tabs.textSize = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
+	NAgui.addColorPicker("Tab Background", tblToC3(NAStuff.ChatSettings.tabs.backgroundColor), function(c)
+		NAStuff.ChatSettings.tabs.backgroundColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
 	NAgui.addSlider("Background Transparency (Tabs)", 0, 1, NAStuff.ChatSettings.tabs.backgroundTransparency, 0.05, "", function(v)
 		NAStuff.ChatSettings.tabs.backgroundTransparency = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
+	NAgui.addSlider("Text Transparency (Tabs)", 0, 1, NAStuff.ChatSettings.tabs.textTransparency, 0.05, "", function(v)
+		NAStuff.ChatSettings.tabs.textTransparency = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
 	NAgui.addColorPicker("Text Color (Tabs)", tblToC3(NAStuff.ChatSettings.tabs.textColor), function(c)
 		NAStuff.ChatSettings.tabs.textColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
@@ -56329,8 +58142,14 @@ do
 	NAgui.addColorPicker("Text Color (Input)", tblToC3(NAStuff.ChatSettings.input.textColor), function(c)
 		NAStuff.ChatSettings.input.textColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
+	NAgui.addColorPicker("Input Stroke Color", tblToC3(NAStuff.ChatSettings.input.strokeColor), function(c)
+		NAStuff.ChatSettings.input.strokeColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
 	NAgui.addSlider("Text Stroke Transparency (Input)", 0, 1, NAStuff.ChatSettings.input.strokeTransparency, 0.05, "", function(v)
 		NAStuff.ChatSettings.input.strokeTransparency = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
+	NAgui.addColorPicker("Input Background", tblToC3(NAStuff.ChatSettings.input.backgroundColor), function(c)
+		NAStuff.ChatSettings.input.backgroundColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
 	NAgui.addSlider("Background Transparency (Input)", 0, 1, NAStuff.ChatSettings.input.backgroundTransparency, 0.05, "", function(v)
 		NAStuff.ChatSettings.input.backgroundTransparency = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
@@ -56354,11 +58173,26 @@ do
 	NAgui.addSlider("Text Size (Bubble)", 5, 30, NAStuff.ChatSettings.bubbles.textSize, 1, " px", function(v)
 		NAStuff.ChatSettings.bubbles.textSize = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
+	NAgui.addColorPicker("Bubble Text Color", tblToC3(NAStuff.ChatSettings.bubbles.textColor), function(c)
+		NAStuff.ChatSettings.bubbles.textColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
+	NAgui.addSlider("Text Transparency (Bubble)", 0, 1, NAStuff.ChatSettings.bubbles.textTransparency, 0.05, "", function(v)
+		NAStuff.ChatSettings.bubbles.textTransparency = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
 	NAgui.addSlider("Bubble Spacing", 0, 12, NAStuff.ChatSettings.bubbles.spacing, 1, " px", function(v)
 		NAStuff.ChatSettings.bubbles.spacing = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
+	NAgui.addColorPicker("Bubble Background", tblToC3(NAStuff.ChatSettings.bubbles.backgroundColor), function(c)
+		NAStuff.ChatSettings.bubbles.backgroundColor = c3ToTbl(c); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
 	NAgui.addSlider("Background Transparency (Bubble)", 0, 1, NAStuff.ChatSettings.bubbles.backgroundTransparency, 0.05, "", function(v)
 		NAStuff.ChatSettings.bubbles.backgroundTransparency = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
+	NAgui.addSlider("Bubble Duration", 3, 30, NAStuff.ChatSettings.bubbles.bubbleDuration, 1, " s", function(v)
+		NAStuff.ChatSettings.bubbles.bubbleDuration = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
+	end)
+	NAgui.addSlider("Max Bubbles", 1, 5, math.min(5, NAStuff.ChatSettings.bubbles.maxBubbles or 1), 1, "", function(v)
+		NAStuff.ChatSettings.bubbles.maxBubbles = math.min(5, v); NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
 	end)
 	NAgui.addToggle("Tail Visible", NAStuff.ChatSettings.bubbles.tailVisible, function(v)
 		NAStuff.ChatSettings.bubbles.tailVisible = v; NAmanage.SaveTextChatSettings(); NAmanage.ApplyTextChatSettings()
@@ -56690,9 +58524,6 @@ NAmanage.SetupBasicInfoTab = function()
 				box.Selectable = true
 				box.Active = true
 				local frame = box.Parent
-				if frame and frame:IsA("Frame") then
-					frame:SetAttribute("NAMinWidth", 180)
-				end
 			end
 			basicInfoBoxes[field.id] = box
 		end
@@ -57263,21 +59094,3 @@ pcall(function()
 		NAAssetsLoading.completed.Value = true
 	end
 end)
-
---[[print(
-	
-███╗░░██╗░█████╗░███╗░░░███╗███████╗██╗░░░░░███████╗░██████╗░██████╗
-████╗░██║██╔══██╗████╗░████║██╔════╝██║░░░░░██╔════╝██╔════╝██╔════╝
-██╔██╗██║███████║██╔████╔██║█████╗░░██║░░░░░█████╗░░╚█████╗░╚█████╗░
-██║╚████║██╔══██║██║╚██╔╝██║██╔══╝░░██║░░░░░██╔══╝░░░╚═══██╗░╚═══██╗
-██║░╚███║██║░░██║██║░╚═╝░██║███████╗███████╗███████╗██████╔╝██████╔╝
-╚═╝░░╚══╝╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝╚══════╝╚══════╝╚═════╝░╚═════╝░
-
-░█████╗░██████╗░███╗░░░███╗██╗███╗░░██╗
-██╔══██╗██╔══██╗████╗░████║██║████╗░██║
-███████║██║░░██║██╔████╔██║██║██╔██╗██║
-██╔══██║██║░░██║██║╚██╔╝██║██║██║╚████║
-██║░░██║██████╔╝██║░╚═╝░██║██║██║░╚███║
-╚═╝░░╚═╝╚═════╝░╚═╝░░░░░╚═╝╚═╝╚═╝░░╚══╝
-
-)]]
