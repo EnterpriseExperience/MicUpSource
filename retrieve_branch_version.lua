@@ -1154,7 +1154,7 @@
     local Asset_Service_Duplicate = getgenv().AssetService
 
     if getgenv().Game.PlaceId == 6884319169 or getgenv().Game.PlaceId == 15546218972 then
-        GameFolder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Game")
+        GameFolder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Game") --Latest update
         GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
     else
         warn("Not In MIC UP!")
