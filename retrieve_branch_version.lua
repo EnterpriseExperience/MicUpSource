@@ -2957,11 +2957,11 @@
             end
         end,})
         wait()
-        for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
+        --[[ for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
             if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
                 v.CanCollide = true
             end
-        end
+        end ]]--
         wait()
         getgenv().BoothTransparency = Tab11:CreateSlider({
         Name = "Booth Transparency",
