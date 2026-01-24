@@ -2012,7 +2012,7 @@
             if claimAnyBooth then
                 getgenv().isToggled = true
 
-                local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
+                local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("booth")
 
                 local stalls = {
                     Folder:FindFirstChild("Booth01"),
@@ -7599,31 +7599,20 @@
             end
             task.wait(.1)
             local Map_Folder = Workspace:FindFirstChild("map")
-            local GameFolder = Map_Folder:FindFirstChild("Game")
-            local Important_Folder = Map_Folder:FindFirstChild("Important")
-            local Baseplate_Folder = Important_Folder:FindFirstChild("Baseplate")
-            local Baseplate_Part = Baseplate_Folder:FindFirstChild("Baseplate")
-            if GameFolder and Baseplate_Folder then
-                local BasePlate_1 = Baseplate_Part
-                if BasePlate_1 then
-                    BasePlate_1.Transparency = BasePlateMICUPTransparency
-                else
-                    warn("Baseplate not found inside Game.")
-                end
+            local Baseplate_Part = Map_Folder:FindFirstChild("Baseplate")
+            local BasePlate_1 = Baseplate_Part
+            if BasePlate_1 then
+                BasePlate_1.Transparency = BasePlateMICUPTransparency
             else
-                warn("Neither Baseplate Folder nor the Game Folder exist in the Map Folder in Workspace.")
+                warn("Baseplate not found inside Game.")
             end
         end,})
         wait(0.2)
         if getgenv().Workspace:FindFirstChild("map") then
             local Map_Folder = getgenv().Workspace:FindFirstChild("map")
-            local Important_Folder = Map_Folder:FindFirstChild("Important")
-            local Baseplate_Folder = Important_Folder:FindFirstChild("Baseplate")
-            local Baseplate_Part = Baseplate_Folder:FindFirstChild("Baseplate")
-            local BasePlate = Baseplate_Part
-
-            if BasePlate then
-                BasePlate.Transparency = 1
+            local Baseplate_Part = Map_Folder:FindFirstChild("Baseplate")
+            if Baseplate_Part then
+                Baseplate_Part.Transparency = 1
             else
                 warn("BasePlate does not exist!")
             end
