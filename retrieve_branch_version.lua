@@ -714,6 +714,7 @@
         getgenv().passed_baseplate_check = true
     end
     wait(0.2)
+    getgenv().emotes_bypassed = true --Temporary
     if getgenv().emotes_bypassed then
         warn("Emotes are already bypassed.")
     else
