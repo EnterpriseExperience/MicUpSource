@@ -162,16 +162,16 @@ NAlib.setProperty = function(inst, prop, v)
 	return s
 end
 
-local HttpService=SafeGetService('HttpService');
-local Players=SafeGetService("Players");
-local UserInputService=SafeGetService("UserInputService");
-local TweenService=SafeGetService("TweenService");
-local RunService=SafeGetService("RunService");
-local ContextActionService=SafeGetService("ContextActionService");
-local TeleportService=SafeGetService("TeleportService");
-local Lighting=SafeGetService("Lighting");
-local ReplicatedStorage=SafeGetService("ReplicatedStorage");
-local COREGUI=SafeGetService("CoreGui");
+local HttpService = SafeGetService('HttpService');
+local Players = SafeGetService("Players");
+local UserInputService = SafeGetService("UserInputService");
+local TweenService = SafeGetService("TweenService");
+local RunService = SafeGetService("RunService");
+local ContextActionService = SafeGetService("ContextActionService");
+local TeleportService = SafeGetService("TeleportService");
+local Lighting = SafeGetService("Lighting");
+local ReplicatedStorage = SafeGetService("ReplicatedStorage");
+local COREGUI = SafeGetService("CoreGui");
 local SoundService = SafeGetService("SoundService");
 local TextChatService = SafeGetService("TextChatService");
 local TextService = SafeGetService("TextService");
@@ -179,6 +179,7 @@ local StarterGui = SafeGetService("StarterGui");
 local ContentProvider = SafeGetService("ContentProvider");
 local LocalizationService = SafeGetService("LocalizationService");
 local MarketplaceService = SafeGetService("MarketplaceService");
+local GuiService = SafeGetService("GuiService");
 
 NAStuff = NAStuff or {}
 NAStuff.CmdBar2 = NAStuff.CmdBar2 or {
@@ -415,19 +416,14 @@ NA_GRAB_BODY = (function()
 	end;
 	local function ensure(obj)
 		local model = asChar(obj);
-
 		if obj == Players.LocalPlayer then
 			if overrideModel then
 				model = overrideModel;
-			elseif model and (not model:IsDescendantOf(workspace)) then
+			elseif model and model.Parent and (not model:IsDescendantOf(workspace)) then
 				model = pickOverrideModel(true) or model;
 			end;
 		elseif not model then
 			model = overrideModel;
-		end;
-
-		if not model and obj ~= Players.LocalPlayer then
-			model = pickOverrideModel();
 		end;
 		if not model then
 			return nil;
@@ -6071,6 +6067,7 @@ NATopbarDock = "top"
 NALoadingStartMinimized = false
 NASideSwipeSide = "left"
 NASideSwipeEnabled = false
+NADisableLastInput = false
 
 do
 	if FileSupport then
@@ -8690,6 +8687,12 @@ NAmanage.NASettingsGetSchema=function()
 				return "top"
 			end;
 		};
+		disableLastInput = {
+			default = false;
+			coerce = function(value)
+				return coerceBoolean(value, false)
+			end;
+		};
 	}
 
 	return NAStuff.NASettingsSchema
@@ -9718,6 +9721,7 @@ if FileSupport then
 	NATopbarDock = NAmanage.topbar_readDock()
 	NASideSwipeSide = NAmanage.NASettingsGet("sideSwipeSide") or NASideSwipeSide
 	NASideSwipeEnabled = NAmanage.NASettingsGet("sideSwipeEnabled") or NASideSwipeEnabled
+	NADisableLastInput = NAmanage.NASettingsGet("disableLastInput")
 	local function clamp01(v, fallback)
 		local n = tonumber(v)
 		if not n then return fallback end
@@ -27155,8 +27159,7 @@ cmd.add({"autorejoin", "autorj"}, {"autorejoin (autorj)", "Rejoins the server if
 		end
 	end
 
-	local guiService = SafeGetService("GuiService")
-	NAlib.connect("autorejoin", guiService.ErrorMessageChanged:Connect(handleRejoin))
+	NAlib.connect("autorejoin", GuiService.ErrorMessageChanged:Connect(handleRejoin))
 
 	DebugNotif("Auto Rejoin is now enabled!")
 end)
@@ -36793,8 +36796,8 @@ cmd.add({"inspect"}, {"inspect", "checks a user's items"}, function(args)
 	local targetPlayers = getPlr(args)
 
 	for _, plr in next, targetPlayers do
-		SafeGetService("GuiService"):CloseInspectMenu()
-		SafeGetService("GuiService"):InspectPlayerFromUserId(plr.UserId)
+		GuiService:CloseInspectMenu()
+		GuiService:InspectPlayerFromUserId(plr.UserId)
 	end
 end, true)
 
@@ -44793,13 +44796,13 @@ cmd.add({"errorchat"},{"errorchat","Makes the chat error appear when roblox chat
 end)
 
 cmd.add({"clearerror", "noerror"}, {"clearerror", "Clears any current error or disconnected UI immediately"}, function()
-	SafeGetService("GuiService"):ClearError()
+	GuiService:ClearError()
 end)
 
 cmd.add({"antierror"}, {"antierror", "Continuously blocks and clears any future error or disconnected UI"}, function()
 	NAlib.disconnect("antierror")
-	NAlib.connect("antierror", SafeGetService("GuiService").ErrorMessageChanged:Connect(function()
-		SafeGetService("GuiService"):ClearError()
+	NAlib.connect("antierror", GuiService.ErrorMessageChanged:Connect(function()
+		GuiService:ClearError()
 	end))
 	DebugNotif("Anti Error is now enabled!", 2)
 end)
@@ -46254,52 +46257,56 @@ end]]
 --[[ GUI VARIABLES ]]--
 originalIO.NAfetchUILoaderSource=function()
 	if NAmanage and NAmanage.getPrefetchedRemote and opt and opt.NAUILOADER then
-		local cached = NAmanage.getPrefetchedRemote(opt.NAUILOADER)
-		if type(cached) == "string" and cached ~= "" then
+		local cached=NAmanage.getPrefetchedRemote(opt.NAUILOADER)
+		if type(cached)=="string" and cached~="" then
 			return cached
 		end
 	end
-	local ok, body = pcall(game.HttpGet, game, opt.NAUILOADER)
-	if ok and type(body) == "string" and body ~= "" then
+	local ok,body=pcall(game.HttpGet,game,opt.NAUILOADER)
+	if ok and type(body)=="string" and body~="" then
 		return body
 	end
-	return nil, body
+	return nil
 end
 
-repeat
-	local NASUC, resexy = pcall(function()
-		local src = originalIO.NAfetchUILoaderSource()
-		if not src then
-			return nil
-		end
-		return loadstring(src)()
-	end)
+local roots={}
+roots[1]=(gethui and gethui()) or CoreGui
+roots[2]=CoreGui
 
-	if NASUC then
-		if resexy then
-			NAStuff.NASCREENGUI = resexy
-		else
-			local rootGui = gethui and gethui() or CoreGui
-			local found = rootGui:FindFirstChild("AdminUI", true)
-			if found then
-				NAStuff.NASCREENGUI = found
-			end
+local function findui()
+	for i=1,#roots do
+		local g=roots[i]:FindFirstChild("AdminUI",true)
+		if g then
+			return g
 		end
 	end
+end
 
-	if not NAStuff.NASCREENGUI then
-		Wait(0.3)
+do
+	local src=originalIO.NAfetchUILoaderSource()
+	if src then
+		pcall(function()
+			loadstring(src)()
+		end)
 	end
-until NAStuff.NASCREENGUI
+end
+
+local t=os.clock()
+while not NAStuff.NASCREENGUI and os.clock()-t<10 do
+	local found=findui()
+	if found then
+		NAStuff.NASCREENGUI=found
+		break
+	end
+	Wait()
+end
+
+if not NAStuff.NASCREENGUI then
+	warning("UI failed to load for Flames Hub - Nameless Admin version.")
+end
+
 rPlayer=Players:FindFirstChildWhichIsA("Player")
 coreGuiProtection={}
-if not RunService:IsStudio() then
-else
-	repeat Wait() until player:FindFirstChild("AdminUI",true)
-	NAStuff.NASCREENGUI=player:FindFirstChild("AdminUI",true)
-end
---repeat Wait() until ScreenGui~=nil -- if it loads late then I'll just add this here
-
 NaProtectUI(NAStuff.NASCREENGUI)
 
 NAUIMANAGER = {
@@ -47304,6 +47311,70 @@ cmd.add({"unname"}, {"unname", "Resets the admin UI placeholder name to default"
 		NAmanage.UpdateAdminInfoTabDisplayName()
 	end
 end)
+
+NAStuff.LastInputConns = NAStuff.LastInputConns or {}
+NAStuff.LastInputPatched = NAStuff.LastInputPatched or false
+
+originalIO.ApplyLastInputPatch = function()
+	if not IsOnMobile then
+		return
+	end
+
+	if getconnections and not NAStuff.LastInputPatched then
+		table.clear(NAStuff.LastInputConns)
+		for _, c in ipairs(getconnections(UserInputService.LastInputTypeChanged)) do
+			table.insert(NAStuff.LastInputConns, c)
+			pcall(function()
+				if c.Disable then
+					c:Disable()
+				end
+			end)
+		end
+	end
+
+	pcall(function()
+		GS.TouchControlsEnabled = true
+	end)
+
+	if NAlib and NAlib.connect and NAlib.disconnect then
+		NAlib.disconnect("NA_LastInputTouch")
+		NAlib.connect("NA_LastInputTouch", GuiService:GetPropertyChangedSignal("TouchControlsEnabled"):Connect(function()
+			if IsOnMobile then
+				pcall(function()
+					GuiService.TouchControlsEnabled = true
+				end)
+			end
+		end))
+	else
+		GuiService:GetPropertyChangedSignal("TouchControlsEnabled"):Connect(function()
+			if IsOnMobile then
+				pcall(function()
+					GuiService.TouchControlsEnabled = true
+				end)
+			end
+		end)
+	end
+
+	NAStuff.LastInputPatched = true
+end
+
+originalIO.RevertLastInputPatch = function()
+	if NAlib and NAlib.disconnect then
+		NAlib.disconnect("NA_LastInputTouch")
+	end
+
+	if getconnections and NAStuff.LastInputConns and #NAStuff.LastInputConns > 0 then
+		for _, c in ipairs(NAStuff.LastInputConns) do
+			pcall(function()
+				if c.Enable then
+					c:Enable()
+				end
+			end)
+		end
+	end
+
+	NAStuff.LastInputPatched = false
+end
 
 --[[ GUI FUNCTIONS ]]--
 local patchedCommandColor = Color3.fromRGB(255, 115, 115)
@@ -54169,6 +54240,12 @@ SpawnCall(function() -- init
 	if not PlrGui then PlrGui=Player:WaitForChild("PlayerGui",math.huge) end
 end)
 
+SpawnCall(function()
+	if NADisableLastInput then
+		task.spawn(originalIO.ApplyLastInputPatch)
+	end
+end)
+
 NAmanage.scheduleLoader('BindDevConsole', NAmanage.bindToDevConsole)
 NAmanage.scheduleLoader('NAConsole', NAmanage.injectNAConsole)
 NAmanage.scheduleLoader('Aliases', NAmanage.loadAliases)
@@ -55404,6 +55481,21 @@ end)
 NAStuff.AssetLoadButton = NAStuff.loadGameAssetsButton
 NAmanage.setAssetLoadButtonState(false)
 NAmanage.SetAssetLoadMode(NAStuff.AssetLoadMode)
+
+NAgui.addSection("Roblox Input Settings")
+
+NAgui.addToggle("Disable LastInputTypeChanged", NADisableLastInput, function(v)
+	NADisableLastInput = v
+	NAmanage.NASettingsSet("disableLastInput", v)
+
+	if v then
+		originalIO.ApplyLastInputPatch()
+		DoNotif("LastInputTypeChanged Disabled\nPrevents forcing your input to change to Keyboard when using VirtualInputManager on mobile", 3)
+	else
+		originalIO.RevertLastInputPatch()
+		DoNotif("LastInputTypeChanged Enabled", 2)
+	end
+end)
 
 NAgui.addSection("Support")
 NAgui.addButton("Join Discord", function()
