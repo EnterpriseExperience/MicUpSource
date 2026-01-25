@@ -46302,7 +46302,7 @@ while not NAStuff.NASCREENGUI and os.clock()-t<10 do
 end
 
 if not NAStuff.NASCREENGUI then
-	warning("UI failed to load for Flames Hub - Nameless Admin version.")
+	warn("UI failed to load for Flames Hub - Nameless Admin version.")
 end
 
 rPlayer=Players:FindFirstChildWhichIsA("Player")
