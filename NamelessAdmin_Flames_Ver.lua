@@ -46268,12 +46268,12 @@ originalIO.NAfetchUILoaderSource=function()
 	if ok and type(body)=="string" and body~="" then
 		return body
 	end
-	return nil
 end
 
-local roots={}
-roots[1]=(gethui and gethui()) or CoreGui
-roots[2]=CoreGui
+local roots={
+	(gethui and gethui()) or CoreGui,
+	CoreGui
+}
 
 local function findui()
 	for i=1,#roots do
@@ -46284,28 +46284,28 @@ local function findui()
 	end
 end
 
-do
-	local src=originalIO.NAfetchUILoaderSource()
-	if src then
-		pcall(function()
-			loadstring(src)()
-		end)
-	end
-end
+repeat
+	local ok,res=pcall(function()
+		local src=originalIO.NAfetchUILoaderSource()
+		if not src then
+			error("no ui source")
+		end
+		return loadstring(src)()
+	end)
 
-local t=os.clock()
-while not NAStuff.NASCREENGUI and os.clock()-t<10 do
-	local found=findui()
-	if found then
-		NAStuff.NASCREENGUI=found
-		break
+	if ok and typeof(res)=="Instance" then
+		NAStuff.NASCREENGUI=res
+	else
+		local found=findui()
+		if found then
+			NAStuff.NASCREENGUI=found
+		end
 	end
-	Wait()
-end
 
-if not NAStuff.NASCREENGUI then
-	warn("UI failed to load for Flames Hub - Nameless Admin version.")
-end
+	if not NAStuff.NASCREENGUI then
+		Wait(0.25)
+	end
+until NAStuff.NASCREENGUI
 
 rPlayer=Players:FindFirstChildWhichIsA("Player")
 coreGuiProtection={}
