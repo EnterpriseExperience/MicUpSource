@@ -1154,7 +1154,7 @@
     local Asset_Service_Duplicate = getgenv().AssetService
 
     if getgenv().Game.PlaceId == 6884319169 or getgenv().Game.PlaceId == 15546218972 then
-        GameFolder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Game")
+        GameFolder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Game")
         GetTeleportPart = GameFolder and GameFolder:FindFirstChild("Teleport")
     else
         warn("Not In MIC UP!")
@@ -2011,7 +2011,7 @@
             if claimAnyBooth then
                 getgenv().isToggled = true
 
-                local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
 
                 local stalls = {
                     Folder:FindFirstChild("Booth01"),
@@ -2062,7 +2062,7 @@
             else
                 getgenv().isToggled = false
 
-                local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 
                 local stalls = {
                     Folder:FindFirstChild("Booth01"),
@@ -2117,7 +2117,7 @@
         getgenv().claimRandomBooth = Tab11:CreateButton({
         Name = "Claim Random Booth",
         Callback = function()
-            local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+            local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
             local Character = getgenv().Character
             
             local function getStall()
@@ -2663,7 +2663,7 @@
                     "SourceSans",
                 }
 
-                local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
 
                 local function getStall()
                     for _, v in pairs(Folder:GetChildren()) do
@@ -2768,7 +2768,7 @@
             local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
             
             local function findPlrBooth(player)
-                for _, booth in pairs(Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                for _, booth in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                     local usernameLabel = booth:FindFirstChild("Username") and booth.Username:FindFirstChild("BillboardGui") and booth.Username.BillboardGui:FindFirstChild("TextLabel")
                     if usernameLabel and usernameLabel.Text == "Owned by: "..tostring(player) then
                         return booth
@@ -2843,7 +2843,7 @@
         PlaceholderText = "User Here",
         RemoveTextAfterFocusLost = true,
         Callback = function(unclaimTheirBooth)
-            local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+            local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
             local find_plr_func_booth = findplr(unclaimTheirBooth)
 
             if getgenv().boothWhitelistingPlayer and getgenv().boothWhitelistingPlayer[find_plr_func_booth] then
@@ -2863,7 +2863,7 @@
             end
 
             local function getStall()
-                for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                for i,v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                     if v ~= getgenv().LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
                         return v
                     end
@@ -2877,7 +2877,7 @@
                 return getgenv().notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5, 3)
             end
 
-            local Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+            local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
 
             local OldCF = getgenv().Character:FindFirstChildWhichIsA("Humanoid").CFrame
 
@@ -2943,13 +2943,13 @@
         Flag = "NoClippingBooths",
         Callback = function(noclip_the_booths)
             if noclip_the_booths then
-                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
                         v.CanCollide = true
                     end
                 end
             else
-                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
                         v.CanCollide = false
                     end
@@ -2957,7 +2957,7 @@
             end
         end,})
         wait()
-        for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+        for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
             if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
                 v.CanCollide = true
             end
@@ -2971,26 +2971,26 @@
         CurrentValue = 0,
         Flag = "booth_transparency_values",
         Callback = function(transparency_value_booths)
-            for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+            for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
                 if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" and v.Name ~= "Edit" then
                     v.Transparency = transparency_value_booths
                 end
             end
             task.wait()
-            for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+            for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
                 if v:IsA("TextLabel") then
                     v.TextTransparency = transparency_value_booths
                 end
             end
             task.wait()
             if transparency_value_booths == 1 then
-                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("Model") and v:FindFirstChild("Activate") then
                         v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = false
                     end
                 end
             else
-                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("Model") and v:FindFirstChild("Activate") then
                         v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
                     end
@@ -2998,9 +2998,9 @@
             end
         end,})
         wait(0.1)
-        if getgenv().Workspace:FindFirstChild("Map") then
-            if getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth") then
-                for _, v in ipairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetDescendants()) do
+        if getgenv().Workspace:FindFirstChild("map") then
+            if getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth") then
+                for _, v in ipairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetDescendants()) do
                     if v:IsA("Model") and v:FindFirstChild("Activate") then
                         v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
                     end
@@ -4779,7 +4779,7 @@
                 while getgenv().Cuss == true do
                 wait(0.5)
                     local function getStall()
-                        for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                        for i,v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                             if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                                 return v
                             end
@@ -6509,7 +6509,7 @@
                 end
             
                 local function getStall()
-                    for _, v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                    for _, v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                         if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
                             return v
                         end
@@ -6628,7 +6628,7 @@
         Callback = function(booth_rainbow_not_fe)
             if booth_rainbow_not_fe then
                 local function retrieve_booth()
-                    for _, v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                    for _, v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                         if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
                             return v
                         end
@@ -6679,7 +6679,7 @@
                 end
             else
                 local function retrieve_booth()
-                    for _, v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                    for _, v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                         if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
                             return v
                         end
@@ -6733,8 +6733,7 @@
                 local Character = getgenv().Character
                 local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
                 local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
-                local GetWorkspace = game:GetService("Workspace")
-                local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
+                local Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth") or getgenv().Workspace:FindFirstChild("map"):WaitForChild("Booth") 
                 
                 local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
                 local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
@@ -6817,8 +6816,7 @@
             local Character = getgenv().Character
             local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
-            local GetWorkspace = getgenv().Workspace
-            local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
+            local Folder = Workspace:FindFirstChild("map"):FindFirstChild("Booth") or Workspace:FindFirstChild("map"):WaitForChild("Booth") 
             local Rep_Storage = getgenv().ReplicatedStorage
             local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
             local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
@@ -6877,7 +6875,7 @@
             local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
             local GetWorkspace = getgenv().Workspace
-            local Folder = GetWorkspace:FindFirstChild("Map"):FindFirstChild("Booth") or GetWorkspace:FindFirstChild("Map"):WaitForChild("Booth") 
+            local Folder = Workspace:FindFirstChild("map"):FindFirstChild("Booth") or Workspace:FindFirstChild("map"):WaitForChild("Booth") 
             
             local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
             local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
@@ -7570,7 +7568,7 @@
         Flag = "MICUPTransparency",
         Callback = function(BasePlateMICUPTransparency)
             local Workspace = getgenv().Workspace
-            local Map = Workspace:FindFirstChild("Map")
+            local Map = Workspace:FindFirstChild("map")
             if Map then
                 local Important = Map:FindFirstChild("Important")
                 wait(0.1)
@@ -7597,7 +7595,7 @@
                 warn("Map Folder not found inside of Workspace.")
             end
             task.wait(.1)
-            local Map_Folder = Workspace:FindFirstChild("Map")
+            local Map_Folder = getgenv().Workspace:FindFirstChild("map")
             local GameFolder = Map_Folder:FindFirstChild("Game")
             local Important_Folder = Map_Folder:FindFirstChild("Important")
             local Baseplate_Folder = Important_Folder:FindFirstChild("Baseplate")
@@ -7614,8 +7612,8 @@
             end
         end,})
         wait(0.2)
-        if getgenv().Workspace:FindFirstChild("Map") then
-            local Map_Folder = getgenv().Workspace:FindFirstChild("Map")
+        if getgenv().Workspace:FindFirstChild("map") then
+            local Map_Folder = getgenv().Workspace:FindFirstChild("map")
             local Important_Folder = Map_Folder:FindFirstChild("Important")
             local Baseplate_Folder = Important_Folder:FindFirstChild("Baseplate")
             local Baseplate_Part = Baseplate_Folder:FindFirstChild("Baseplate")
@@ -7705,7 +7703,7 @@
 
     local function find_mic_up_baseplate()
         local Workspace = getgenv().Workspace
-        local Map = Workspace:FindFirstChild("Map")
+        local Map = getgenv().Workspace:FindFirstChild("map")
         if not Map then return end
 
         if Map then
@@ -7938,7 +7936,7 @@
         Color = Color3.fromRGB(255, 0, 0),
         Flag = "PickingColorForMap",
         Callback = function(Base_Color)
-            local Map = getgenv().Workspace:FindFirstChild("Map")
+            local Map = getgenv().Workspace:FindFirstChild("map")
             if Map then
                 local Lobby_Folder = Map:FindFirstChild("Lobby")
 
@@ -7960,7 +7958,7 @@
         CurrentValue = 400,
         Flag = "ChangingBasePlateSized",
         Callback = function(Size_New)
-            local Map = getgenv().Workspace:FindFirstChild("Map")
+            local Map = getgenv().Workspace:FindFirstChild("map")
             if Map then
                 local Lobby_Folder = Map:FindFirstChild("Lobby")
 
@@ -7982,7 +7980,7 @@
         CurrentValue = 400,
         Flag = "ChangingBaseSize",
         Callback = function(Sized_Z)
-            local Map = getgenv().Workspace:FindFirstChild("Map")
+            local Map = getgenv().Workspace:FindFirstChild("map")
             if Map then
                 local Lobby_Folder = Map:FindFirstChild("Lobby")
 
@@ -9617,7 +9615,7 @@
         Flag = "theBoothView",
         Callback = function(specBooth)
             local function get_booth()
-                for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                for i,v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                     if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                         return v
                     end
@@ -9651,7 +9649,7 @@
         Name = "Teleport To Booth",
         Callback = function()
             local function get_booth()
-                for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                for i,v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                     if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                         return v
                     end
@@ -9699,7 +9697,7 @@
         getgenv().tpToAvatarUI = Tab1:CreateButton({
         Name = "Teleport To Avatar-UI",
         Callback = function()
-            local Map = getgenv().Workspace:FindFirstChild("Map")
+            local Map = getgenv().Workspace:FindFirstChild("map")
             if not Map then return getgenv().notify("Failure:", "Map doesn't exist in Workspace.", 5) end
             local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
             if not Avatar_Folder then return getgenv().notify("Failure:", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
@@ -9716,7 +9714,7 @@
         CurrentValue = false,
         Flag = "likingPlayerAuto",
         Callback = function(likeLol)
-            local Map = getgenv().Workspace:FindFirstChild("Map")
+            local Map = getgenv().Workspace:FindFirstChild("map")
             if not Map then return getgenv().notify("Failure:", "Map doesn't exist in Workspace.", 5) end
             local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
             if not Avatar_Folder then return getgenv().notify("Failure:", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
@@ -9756,7 +9754,7 @@
         Flag = "dislikingEverybody",
         Callback = function(dislikeButton)
             if dislikeButton then
-                local Map = getgenv().Workspace:FindFirstChild("Map")
+                local Map = getgenv().Workspace:FindFirstChild("map")
                 if not Map then return getgenv().notify("Failure:", "Map doesn't exist in Workspace.", 5) end
                 local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
                 if not Avatar_Folder then return getgenv().notify("Failure:", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
@@ -9945,7 +9943,7 @@
             Flag = "LikingOnlyFriends",
             Callback = function(myFriendsLiked)
                 if myFriendsLiked then
-                    local Map = getgenv().Workspace:FindFirstChild("Map")
+                    local Map = getgenv().Workspace:FindFirstChild("map")
                     if not Map then return getgenv().notify("Failure:", "Map doesn't exist in Workspace.", 5) end
                     local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
                     if not Avatar_Folder then return getgenv().notify("Failure:", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
@@ -10146,7 +10144,7 @@
                 getgenv().other_mute_keybind_enum_saved = Enum.KeyCode[theNewKeybindToSet]
                 getgenv().defaulting_keybind_for_muting_microphone = theNewKeybindToSet
             else
-                return getgenv().notify("Error:", "Invalid keybind selection.", 5)
+                return getgenv().notify("Error", "Invalid keybind selection.", 5)
             end
         end,})
         wait(0.2)
@@ -11274,7 +11272,7 @@
             wait(.2)
             local function send_bypass_config(msg)
                 local function getStall()
-                    for i,v in pairs(getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth"):GetChildren()) do
+                    for i,v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
                         if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
                             return v
                         end
@@ -11881,11 +11879,11 @@
             if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth01")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth01")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
@@ -11898,11 +11896,11 @@
             if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth02")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth02")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
@@ -11915,11 +11913,11 @@
             if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth03")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth03")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
@@ -11932,11 +11930,11 @@
             if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth04")
                 Character:PivotTo(Booth:GetPivot())
             else
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth04")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             end
@@ -11949,7 +11947,7 @@
             if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
                 getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
                 task.wait(.2)
-                local Booth_Folder = getgenv().Workspace:FindFirstChild("Map"):FindFirstChild("Booth")
+                local Booth_Folder = getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth")
                 local Booth = Booth_Folder:FindFirstChild("Booth05")
                 getgenv().Character:PivotTo(Booth:GetPivot())
             else
