@@ -6302,14 +6302,16 @@ function NAProtection(inst,var)
 end
 
 function NaProtectUI(gui)
+	if not gui then return end
+
 	local INV = "\0"
 	local MAX_DO = 0x7FFFFFFF
 	local target = NAmanage.guiCHECKINGAHHHHH()
 	if not target then return end
 	pcall(function() gui.Archivable = false end)
-	gui.Name   = INV
-	gui.Parent = target
-	if gui:IsA("ScreenGui") then
+	pcall(function() gui.Name = INV end)
+	pcall(function() gui.Parent = target end)
+	if gui and gui:IsA("ScreenGui") then
 		gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 		gui.DisplayOrder   = MAX_DO
 		gui.ResetOnSpawn   = false
