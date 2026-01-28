@@ -64,16 +64,32 @@ main.Size = UDim2.fromScale(0.35, 0.45)
 main.Position = UDim2.fromScale(0.02, 0.25)
 main.BackgroundColor3 = Color3.fromRGB(25,25,25)
 main.BorderSizePixel = 0
+main.ClipsDescendants = true
 Instance.new("UICorner", main).CornerRadius = UDim.new(0,12)
 
 local originalSize = main.Size
+local expandedSize = originalSize
+local minimizedSize = UDim2.new(
+   originalSize.X.Scale,
+   originalSize.X.Offset,
+   0,
+   48
+)
+local minimized = false
 if getgenv().dragify then dragify(main) end
 
 local topbar = Instance.new("Frame", main)
-topbar.Size = UDim2.fromScale(1, 0.12)
+topbar.Size = UDim2.new(1, 0, 0, 48)
 topbar.BackgroundColor3 = Color3.fromRGB(20,20,20)
 topbar.BorderSizePixel = 0
 Instance.new("UICorner", topbar).CornerRadius = UDim.new(0,12)
+
+local minimized = false
+local topbarHeight = nil
+
+task.defer(function()
+   topbarHeight = topbar.AbsoluteSize.Y
+end)
 
 local title = Instance.new("TextLabel", topbar)
 title.Size = UDim2.fromScale(0.7, 1)
@@ -108,8 +124,8 @@ minimizebtn.BorderSizePixel = 0
 Instance.new("UICorner", minimizebtn)
 
 local body = Instance.new("Frame", main)
-body.Position = UDim2.fromScale(0, 0.12)
-body.Size = UDim2.fromScale(1, 0.88)
+body.Position = UDim2.new(0, 0, 0, 48)
+body.Size = UDim2.new(1, 0, 1, -48)
 body.BackgroundTransparency = 1
 
 local search = Instance.new("TextBox", body)
@@ -317,9 +333,17 @@ makebutton("Toggle ESP for ALL Parts", 0.92, function()
 end)
 
 minimizebtn.MouseButton1Click:Connect(function()
-   body.Visible = not body.Visible
-   main.Size = body.Visible and originalSize or UDim2.fromScale(originalSize.X.Scale, 0.12)
-   minimizebtn.Text = body.Visible and "-" or "+"
+   minimized = not minimized
+
+   if minimized then
+      body.Visible = false
+      main.Size = minimizedSize
+      minimizebtn.Text = "+"
+   else
+      body.Visible = true
+      main.Size = expandedSize
+      minimizebtn.Text = "-"
+   end
 end)
 
 closebtn.MouseButton1Click:Connect(function()
