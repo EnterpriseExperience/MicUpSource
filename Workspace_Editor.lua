@@ -18,6 +18,8 @@ local selectedColor = Color3.fromRGB(60,120,255)
 getgenv().selected_objects_currently = getgenv().selected_objects_currently or {}
 getgenv().selectedButtons = getgenv().selectedButtons or {}
 getgenv().workspaceeditor_xray_cache = getgenv().workspaceeditor_xray_cache or {}
+getgenv().ws_safe_cache = getgenv().ws_safe_cache or {}
+getgenv().ws_xray_active = getgenv().ws_xray_active or {}
 
 if coregui:FindFirstChild("Workspace_Editor_GUI_Flames_Hub") and coregui:FindFirstChild("Workspace_Editor_GUI_Flames_Hub"):IsA("ScreenGui") then
    coregui:FindFirstChild("Workspace_Editor_GUI_Flames_Hub").Enabled = true
@@ -25,6 +27,31 @@ if coregui:FindFirstChild("Workspace_Editor_GUI_Flames_Hub") and coregui:FindFir
 end
 
 task.wait(0.2)
+
+local function snapshot(part)
+   if ws_safe_cache[part] then return end
+   ws_safe_cache[part] = {
+      t = part.Transparency,
+      c = part.CanCollide
+   }
+end
+
+local function restore(part)
+   local data = ws_safe_cache[part]
+   if not data then return end
+   part.Transparency = data.t
+   part.CanCollide = data.c
+end
+
+local function hide_part(part)
+   snapshot(part)
+   part.Transparency = 1
+   part.CanCollide = false
+end
+
+local function unhide_part(part)
+   restore(part)
+end
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "Workspace_Editor_GUI_Flames_Hub"
@@ -112,6 +139,17 @@ local panel = Instance.new("Frame", body)
 panel.Position = UDim2.fromScale(0.47, 0.05)
 panel.Size = UDim2.fromScale(0.5, 0.9)
 panel.BackgroundTransparency = 1
+
+local function xray_on(part)
+   snapshot(part)
+   part.Transparency = math.clamp(ws_safe_cache[part].t + 0.5, 0, 0.9)
+   ws_xray_active[part] = true
+end
+
+local function xray_off(part)
+   ws_xray_active[part] = nil
+   restore(part)
+end
 
 local function addesp(obj)
    if espmap[obj] then return end
@@ -202,19 +240,9 @@ makebutton("Hide / UnHide", 0.06, function()
       for _,v in ipairs(obj:IsA("Model") and obj:GetDescendants() or {obj}) do
          if v:IsA("BasePart") then
             if v.Transparency < 1 then
-               transparency_cache[v] = {
-                  transparency = v.Transparency,
-                  collide = v.CanCollide
-               }
-               v.Transparency = 1
-               v.CanCollide = false
+               hide_part(v)
             else
-               local cached = transparency_cache[v]
-               if cached then
-                  v.Transparency = cached.transparency
-                  v.CanCollide = cached.collide
-                  transparency_cache[v] = nil
-               end
+               unhide_part(v)
             end
          end
       end
@@ -222,16 +250,13 @@ makebutton("Hide / UnHide", 0.06, function()
 end)
 
 makebutton("X-Ray / Un-Xray (Selected)", 0.20, function()
-   local cache = getgenv().workspaceeditor_xray_cache
    for obj in pairs(getgenv().selected_objects_currently) do
       for _,v in ipairs(obj:IsA("Model") and obj:GetDescendants() or {obj}) do
          if v:IsA("BasePart") then
-            if not cache[v] then
-               cache[v] = v.Transparency
-               v.Transparency = 0.7
+            if not ws_xray_active[v] then
+               xray_on(v)
             else
-               v.Transparency = cache[v]
-               cache[v] = nil
+               xray_off(v)
             end
          end
       end
@@ -250,20 +275,17 @@ makebutton("Toggle Collision (Selected)", 0.34, function()
 end)
 
 makebutton("X-Ray ALL Parts", 0.50, function()
-   local cache = getgenv().workspaceeditor_xray_cache
    getgenv().WorkspaceEditor_XrayAllPartsEnabled = not getgenv().WorkspaceEditor_XrayAllPartsEnabled
 
    for _,v in ipairs(workspace:GetDescendants()) do
       if v:IsA("BasePart") then
          if getgenv().WorkspaceEditor_XrayAllPartsEnabled then
-            if not cache[v] then
-               cache[v] = v.Transparency
-               v.Transparency = 0.7
+            if not ws_xray_active[v] then
+               xray_on(v)
             end
          else
-            if cache[v] then
-               v.Transparency = cache[v]
-               cache[v] = nil
+            if ws_xray_active[v] then
+               xray_off(v)
             end
          end
       end
@@ -313,6 +335,11 @@ if not getgenv().flameshub_workspace_descendant_hooked then
          cache[obj] = true
          addobject(obj)
       end
+   end)
+
+   workspace.DescendantRemoving:Connect(function(obj)
+      ws_safe_cache[obj] = nil
+      ws_xray_active[obj] = nil
    end)
 end
 
