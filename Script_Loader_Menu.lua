@@ -20,6 +20,7 @@ local scriptstoload = {
         id = 205224386,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
     },
+    -- they took the game down? --
     --[[["Player or AI"] = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
@@ -132,6 +133,12 @@ getgenv().FlamesHubUniversal = Tab1:CreateButton({
 Name = "Flames Hub (Universal)",
 Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/retrieve_branch_version.lua"))()
+end,})
+
+getgenv().FlamesHubUniversal = Tab1:CreateButton({
+Name = "Condo Games Destroyer",
+Callback = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/CondoGamesRuiner.lua"))()
 end,})
 
 for name, dude in pairs(scriptstoload) do
