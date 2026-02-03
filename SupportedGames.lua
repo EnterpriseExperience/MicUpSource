@@ -23,7 +23,7 @@ getgenv().current_supported_flames_hub_experiences = {
         id = 54865335,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"
     },
-    ["LifeTogether RP"] = {
+    ["LifeTogether RP"] = { -- ion update ts no more
         id = {13967668166, 99644611200703, 99154507657228},
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
     },
@@ -35,10 +35,15 @@ getgenv().current_supported_flames_hub_experiences = {
         id = 205224386,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
     },
-    ["Player or AI"] = {
+    ["Apartment Hangout Spot"] = {
+        id = 108873247414429,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Apartment_Hangout_Script_Hub.lua"
+    },
+    -- they took the game down? --
+    --[[["Player or AI"] = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
-    },
+    },--]]
     ["Main Street RP"] = {
         id = 18753889337,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua"
