@@ -9,8 +9,9 @@
     Southwest Florida Beta
     Driving Empire
     Berry Avenue RP
-    Mega Fun Obby
+    Mega Fun Obby (2k+ stages)
     Catalog Avatar Creator
+    Apartment Hangout Spot!
 --]]
 
 getgenv().current_supported_flames_hub_experiences = {
