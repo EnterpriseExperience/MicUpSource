@@ -20,6 +20,10 @@ local scriptstoload = {
         id = 205224386,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
     },
+    ["Apartment Hangout Spot"] = {
+        id = 108873247414429,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Apartment_Hangout_Script_Hub.lua"
+    },
     -- they took the game down? --
     --[[["Player or AI"] = {
         id = 95217169945642,
