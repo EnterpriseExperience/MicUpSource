@@ -1100,7 +1100,7 @@ if res_remote then
             end
         end
 
-        for _, plr in ipairs(Players:GetPlayers()) do
+        for _, plr in ipairs(game.Players:GetPlayers()) do
             check_player(plr)
         end
 
