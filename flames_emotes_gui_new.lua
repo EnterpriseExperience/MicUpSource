@@ -1,6 +1,3 @@
--- [[ let me help you out here 'Gaze' ]] --
--- [[ ChatGPT is lame, just like the code you made my boy ]] --
-
 local Screen = setmetatable({}, {
     __index= function(_, key)
         local cam= workspace.CurrentCamera
@@ -15,9 +12,11 @@ local Screen = setmetatable({}, {
         end
     end
 })
-local g = getgenv() or _G or {}
+local g = getgenv() or _G
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-getgenv().workspace = Workspace
+if not getgenv().Workspace then
+    getgenv().Workspace = Workspace
+end
 local Screen = workspace.CurrentCamera.ViewportSize
 local all_clipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 
@@ -34,22 +33,13 @@ function scale(axis, value)
 end
 
 getgenv().missing = getgenv().missing or function(t, f, fallback)
-    if type(f) == t then return f end
+    if typeof(f) == t then return f end
     return fallback 
 end
 
 cloneref = missing("function", cloneref, function(...) return ... end)
 wait(0.2)
 getgenv().get_or_set = getgenv().get_or_set or function(name, value)
-    if rawget and rawset then
-        local existing = rawget(getgenv(), name)
-        if existing == nil then
-            rawset(getgenv(), name, value)
-            return value
-        end
-        return existing
-    end
-
     local existing = getgenv()[name]
 
     if existing == nil then
@@ -78,7 +68,7 @@ local function safe_wrapper()
     }))
 end
 
-repeat task.wait() until type(safe_wrapper) == "function"
+repeat task.wait() until typeof(safe_wrapper) == "function"
 
 local Services = getgenv().get_or_set("Services", setmetatable({}, {
     __index = function(_, name)
@@ -149,7 +139,7 @@ local function loadSavedEmotes()
         end
         return {}
     end)
-    if success and type(data) == "table" then
+    if success and typeof(data) == "table" then
         savedEmotes = data
     else
         savedEmotes = {}
@@ -1127,7 +1117,7 @@ local function goNextPage()
 		currentPages:AdvanceToNextPageAsync()
 	end)
 	if ok then
-		currentPageNumber += 1
+		currentPageNumber = currentPageNumber + 1
 		showPage(currentPages)
 	else
 		local targetPage = currentPageNumber + 1
