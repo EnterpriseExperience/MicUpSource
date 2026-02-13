@@ -801,7 +801,7 @@ local function safe_get(serviceName)
     return svc
 end
 
-repeat task.wait() until typeof(safe_wrapper) == "function"
+repeat task.wait() until typeof(safe_get) == "function"
 task.wait(0.2)
 local Players = getgenv().Players or safe_get("Players")
 local Workspace = getgenv().Workspace or safe_get("Workspace")
