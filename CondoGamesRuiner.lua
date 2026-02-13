@@ -131,6 +131,10 @@ getgenv().notify = function(notif_type, msg, duration)
    NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
 end
 
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+if not getgenv().Players then
+    getgenv().Players = Players 
+end
 local Char_User_RE = find_char_remote()
 getgenv().Char_User_RE = Char_User_RE
 getgenv().User_Selected_Char_G = getgenv().User_Selected_Char_G or "N/A"
