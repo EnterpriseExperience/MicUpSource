@@ -12,6 +12,7 @@ getgenv().condo_destroyer_loaded = true
 local Script_Version = "V1.9.6"
 local executor_string = nil
 local queueteleport = queueteleport or queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport)
+local g = getgenv() or _G or {}
 local function executor_contains(substr)
     if typeof(executor_string) ~= "string" then
         return false
@@ -764,6 +765,8 @@ local colors = {
     Color3.fromRGB(128, 0, 128),
 }
 
+g._service_cache = g._service_cache or {}
+wait(0.1)
 local function safe_get(serviceName)
     name = tostring(serviceName)
 
