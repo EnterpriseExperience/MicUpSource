@@ -52,12 +52,6 @@ if not low_level_executor() then
         end
     end)
 end
-wait(0.3)
-if not getgenv().GlobalEnvironmentFramework_Initialized then
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
-   wait(0.1)
-   getgenv().GlobalEnvironmentFramework_Initialized = true
-end
 wait(0.5)
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
 local LocalPlayer = game.Players.LocalPlayer
