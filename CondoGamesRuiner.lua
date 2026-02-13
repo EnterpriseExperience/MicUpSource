@@ -1,6 +1,10 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 if getgenv().condo_destroyer_loaded then
-    return warn("Condo Destroyer is already loaded.")
+    if getgenv().notify then
+        return getgenv().notify("Warning", "Condo Destroyer is already loaded.", 6)
+    else
+        return warn("Condo Destroyer is already loaded.")
+    end
 end
 wait()
 getgenv().condo_destroyer_loaded = true
