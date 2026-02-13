@@ -1,6 +1,6 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 if getgenv().condo_destroyer_loaded then
-    return 
+    return warn("Condo Destroyer is already loaded.")
 end
 wait()
 getgenv().condo_destroyer_loaded = true
@@ -55,41 +55,40 @@ if not getgenv().GlobalEnvironmentFramework_Initialized then
    getgenv().GlobalEnvironmentFramework_Initialized = true
 end
 wait(0.5)
-local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
 local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
-local LocalPlayer = Flames_API.LocalPlayer or game.Players.LocalPlayer
+local LocalPlayer = game.Players.LocalPlayer
 if not getgenv().LocalPlayer then
     getgenv().LocalPlayer = LocalPlayer
 end
-local Character = Flames_API.Character or LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 if not getgenv().Character then
     getgenv().Character = Character
 end
-local Humanoid = Flames_API.Humanoid
+local Humanoid = Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 1)
 if not getgenv().Humanoid then
     getgenv().Humanoid = Humanoid or Character:FindFirstChildWhichIsA("Humanoid") or Character:WaitForChild("Humanoid", 10)
 end
-local HumanoidRootPart = Flames_API.HumanoidRootPart or Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart", 5)
+local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart", 5)
 if not getgenv().HumanoidRootPart then
     getgenv().HumanoidRootPart = HumanoidRootPart
 end
-local PlayerGui = Flames_API.PlayerGui
+local PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 5)
 if not getgenv().PlayerGui then
-    getgenv().PlayerGui = PlayerGui or LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 5)
+    getgenv().PlayerGui = PlayerGui
 end
-local Lighting = Flames_API.Service("Lighting")
+local Lighting = cloneref and cloneref(game:GetService("Lighting")) or game:GetService("Lighting")
 if not getgenv().Lighting then
     getgenv().Lighting = Lighting
 end
-local Workspace = Flames_API.Service("Workspace")
+local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 if not getgenv().Workspace then
     getgenv().Workspace = Workspace
 end
-local ReplicatedStorage = Flames_API.Service("ReplicatedStorage")
+local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 if not getgenv().ReplicatedStorage then
     getgenv().ReplicatedStorage = ReplicatedStorage
 end
-local RunService = Flames_API.Service("RunService")
+local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 if not getgenv().RunService then
     getgenv().RunService = RunService
 end
@@ -97,7 +96,7 @@ local Camera = Workspace.CurrentCamera
 if not getgenv().CurrentCamera then
     getgenv().CurrentCamera = Camera
 end
-local StarterGui = Flames_API.Service("StarterGui")
+local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
 if not getgenv().StarterGui then
     getgenv().StarterGui = StarterGui
 end
