@@ -152,63 +152,72 @@ if Char_User_RE and Char_User_RE:IsA("RemoteEvent") then
 end
 
 if not getgenv().IY_LOADED and not getgenv().GET_LOADED_IY then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua'))()
+    task.spawn(function()
+        local ok, err = pcall(function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua'))()
+        end)
+        if not ok then
+            warn("IY Load failed: " .. tostring(err))
+        end
+    end)
 end
 task.wait(0.2)
 if not getgenv().performance_stats then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
-end
-
-if not getgenv().NewChar_Added_Conn then
-    getgenv().notify("Info", "Establishing CharacterAdded connection...", 5)
-
-    getgenv().NewChar_Added_Conn = getgenv().LocalPlayer.CharacterAdded:Connect(function(char)
-        while not char or not char.Parent do
-            task.wait()
-        end
-
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        while not hum do
-            hum = char:FindFirstChildOfClass("Humanoid")
-            task.wait()
-        end
-
-        if getgenv().Chosen_To_Keep_Char_User then
-            local re = getgenv().Char_User_RE or find_char_remote()
-            if re then
-                task.defer(function()
-                    re:FireServer(tostring(getgenv().User_Selected_Char_G))
-                end)
-            else
-                getgenv().notify("Error", "Could not find Char RemoteEvent!", 5)
-            end
+    task.spawn(function()
+        local ok, err = pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/OrionLibraryReWrittenCelery/refs/heads/main/grab_file_performance"))()
+        end)
+        if not ok then
+            warn("Performance stats load failed: " .. tostring(err))
         end
     end)
+end
 
-    if getgenv().LocalPlayer.Character then
-        task.spawn(function()
-            local char = getgenv().LocalPlayer.Character
-
-            while not char or not char.Parent do
-                task.wait()
-            end
-
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            while not hum do
-                hum = char:FindFirstChildOfClass("Humanoid")
-                task.wait()
-            end
-
-            if getgenv().Chosen_To_Keep_Char_User then
-                local re = getgenv().Char_User_RE or find_char_remote()
-                if re then
-                    re:FireServer(tostring(getgenv().User_Selected_Char_G))
-                end
-            end
-        end)
+local function handle_character(char)
+    if not char or not char.Parent then
+        return
     end
 
-    getgenv().notify("Success", "Successfully created CharacterAdded connection.", 5)
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then
+        hum = char:WaitForChild("Humanoid")
+    end
+
+    if getgenv().Chosen_To_Keep_Char_User then
+        local re = getgenv().Char_User_RE or find_char_remote()
+        if re then
+            task.defer(function()
+                re:FireServer(tostring(getgenv().User_Selected_Char_G))
+            end)
+        else
+            getgenv().notify("Error", "Could not find Char RemoteEvent!", 5)
+        end
+    end
+end
+
+if not getgenv().NewChar_Added_Conn or not getgenv().NewChar_Added_Conn.Connected then
+    task.spawn(function()
+        getgenv().notify("Info", "Establishing CharacterAdded connection...", 5)
+
+        local ok, err = pcall(function()
+            getgenv().NewChar_Added_Conn = getgenv().LocalPlayer.CharacterAdded:Connect(function(char)
+                handle_character(char)
+            end)
+
+            local current = getgenv().LocalPlayer.Character
+            if current and current.Parent then
+                task.defer(function()
+                    handle_character(current)
+                end)
+            end
+        end)
+
+        if ok then
+            getgenv().notify("Success", "Successfully created CharacterAdded connection.", 5)
+        else
+            warn("CharacterAdded connection failed: " .. tostring(err))
+        end
+    end)
 end
 
 for attempt = 1, MAX_ATTEMPTS do
@@ -3330,21 +3339,46 @@ if find_bring_target_remote_E and find_bring_target_remote_E:IsA("RemoteEvent") 
 
     function remove_from_bring_plr_whitelist(player)
         if typeof(player) == "Instance" and player:IsA("Player") then
+            if not player or not player.Name then
+                return getgenv().notify("Error", "Player instance is invalid or has no name.", 5)
+            end
             player = player.Name
         elseif typeof(player) ~= "string" then
             return getgenv().notify("Error", "Invalid player argument.", 5)
+        end
+
+        if not player or player == "" then
+            return getgenv().notify("Error", "Player name is empty.", 5)
         end
 
         if not whitelist_has_players() then
             return getgenv().notify("Warning", "Whitelist is empty.", 5)
         end
 
-        local index = table.find(getgenv().bring_plr_main_tbl_whitelist, player)
-        if index then
-            table.remove(getgenv().bring_plr_main_tbl_whitelist, index)
-            getgenv().RefreshBringSingleDropdown()
-            getgenv().notify("Success", player .. " removed from whitelist.", 5)
+        local bring_whitelist = getgenv().bring_plr_main_tbl_whitelist
+        if not bring_whitelist then
+            return getgenv().notify("Error", "Whitelist table doesn't exist.", 5)
         end
+
+        local index = table.find(bring_whitelist, player)
+        if not index then
+            return getgenv().notify("Warning", player .. " is not in the whitelist.", 5)
+        end
+
+        table.remove(bring_whitelist, index)
+        
+        local success, err = pcall(function()
+            if getgenv().RefreshBringSingleDropdown then
+                getgenv().RefreshBringSingleDropdown()
+            end
+        end)
+        
+        if not success then
+            getgenv().notify("Warning", "Removed player but UI refresh failed: " .. tostring(err), 6)
+            return
+        end
+        
+        getgenv().notify("Success", player .. " removed from whitelist.", 5)
     end
 
     getgenv().RefreshBringSingleDropdown = function()
