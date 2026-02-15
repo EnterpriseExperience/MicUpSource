@@ -9,7 +9,7 @@ end
 wait()
 getgenv().condo_destroyer_loaded = true
 
-local Script_Version = "V1.9.9"
+local Script_Version = "V2.0.0"
 local executor_string = nil
 local queueteleport = queueteleport or queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport)
 local g = getgenv() or _G or {}
@@ -2259,25 +2259,46 @@ getgenv().kick_player_firing_func = function()
 end
 
 getgenv().kick_firing_function_toggle = function()
+    local toggle = getgenv().BringAll_ToYou_FE_Toggle
+
     if getgenv().bring_cycle_active then
         getgenv().bring_cycle_active = false
-        return getgenv().notify("Info", "Bring cycle stopped", 5)
+        if toggle and toggle.Set then
+            toggle:Set(false)
+        end
+        return getgenv().notify("Info", "Bring cycle has been stopped.", 5)
     end
 
-    if not next(getgenv().bring_plr_main_tbl_whitelist) then
-        return getgenv().notify("Warning", "Whitelist is empty", 5)
+    if not getgenv().bring_plr_main_tbl_whitelist or not next(getgenv().bring_plr_main_tbl_whitelist) then
+        if toggle and toggle.Set then
+            getgenv().bring_cycle_active = false
+            toggle:Set(false)
+        end
+        return getgenv().notify("Warning", "Whitelist is empty.", 5)
+    end
+
+    local bring_plr_re = getgenv().Bring_Player_Original_RE_Found or getgenv().find_bring_plr_event()
+    if not bring_plr_re then
+        if toggle and toggle.Set then
+            getgenv().bring_cycle_active = false
+            toggle:Set(false)
+        end
+        return getgenv().notify("Error", "Could not find BringPlayerEvent (patched?).", 6)
     end
 
     getgenv().bring_cycle_active = true
 
-    local bring_plr_RE = getgenv().Bring_Player_Original_RE_Found or getgenv().find_bring_plr_event()
-    if not bring_plr_RE then
-        getgenv().bring_cycle_active = false
-        return getgenv().notify("Error", "Could not find BringPlayerEvent (patched?).", 6)
-    end
-
     task.spawn(function()
         while getgenv().bring_cycle_active == true do
+            if not getgenv().bring_plr_main_tbl_whitelist or not next(getgenv().bring_plr_main_tbl_whitelist) then
+                getgenv().bring_cycle_active = false
+                if toggle and toggle.Set then
+                    toggle:Set(false)
+                end
+                getgenv().notify("Warning", "Whitelist became empty. Cycle stopped.", 5)
+                break
+            end
+
             for _, plr_name in ipairs(getgenv().bring_plr_main_tbl_whitelist) do
                 if not getgenv().bring_cycle_active then
                     break
@@ -2286,7 +2307,7 @@ getgenv().kick_firing_function_toggle = function()
                 local plr = getgenv().Players:FindFirstChild(plr_name)
                 if plr then
                     pcall(function()
-                        bring_plr_RE:FireServer(plr)
+                        bring_plr_re:FireServer(plr)
                     end)
                 end
 
@@ -2295,7 +2316,7 @@ getgenv().kick_firing_function_toggle = function()
         end
     end)
 
-    getgenv().notify("Success", "Bring cycle started (no teleport)", 5)
+    getgenv().notify("Success", "Bring cycle started (no teleport).", 5)
 end
 
 getgenv().single_bring_cycle_running = false
