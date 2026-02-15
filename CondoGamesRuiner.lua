@@ -4049,7 +4049,7 @@ if Stop_Anim and Stop_Anim:IsA("RemoteEvent") then
 
         task.spawn(function()
             while getgenv().Stopping_Everyones_Anim == true do
-                task.wait(3)
+                task.wait(1.8)
                 for _, plr in ipairs(Players:GetPlayers()) do
                     if not getgenv().Stopping_Everyones_Anim then
                         break
