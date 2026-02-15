@@ -9,7 +9,7 @@ end
 wait()
 getgenv().condo_destroyer_loaded = true
 
-local Script_Version = "V2.0.1"
+local Script_Version = "V2.0.3"
 local executor_string = nil
 local queueteleport = queueteleport or queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport)
 local g = getgenv() or _G or {}
@@ -1117,7 +1117,8 @@ if res_remote then
         "Labubu_zz1",
         "ZukyChan786",
         "antonis12356",
-        "FentLover4L"
+        "FentLover4L",
+        "ChillArrow26" -- literally the game owner.
     }
 
     if not getgenv().adminwatcher_players_added_conn_checker then
@@ -1136,6 +1137,9 @@ if res_remote then
         local function check_player(plr)
             if plr and plr.Name and is_admin(plr.Name) then
                 getgenv().notify("Warning", "We've detected an Admin who has kicked/killed exploiters/hackers in the past, we're crashing the server for you to get rid of them.", 30)
+                crash_server()
+            elseif plr and plr.Name == "ChillArrow26" then
+                getgenv().notify("Warning", "The game owner has joined, we're crashing the server for you to get rid of them.", 30)
                 crash_server()
             end
         end
@@ -2135,19 +2139,17 @@ function crash_server_overpowered()
 end
 
 getgenv().key_code_to_end_server = getgenv().key_code_to_end_server or Enum.KeyCode.F
-wait(0.2)
-if not getgenv().Already_Set_Flames_Hub_Keybind_Active_State then
-    getgenv().Already_Set_Flames_Hub_Keybind_Active_State = true
-
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == getgenv().key_code_to_end_server then
-            if getgenv().flames_hub_crasher_keybind_active == true then
-                if typeof(crash_server) == "function" then crash_server() end
+if getgenv().flames_hub_keybind_connection then pcall(function() getgenv().flames_hub_keybind_connection:Disconnect() end) end
+getgenv().flames_hub_keybind_connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == getgenv().key_code_to_end_server then
+        if getgenv().flames_hub_crasher_keybind_active then
+            if typeof(getgenv().crash_server) == "function" then
+                getgenv().crash_server()
             end
         end
-    end)
-end
+    end
+end)
 wait(0.1)
 function force_sync_plr(Player)
     if Sync_Player_RE and Sync_Player_RE:IsA("RemoteEvent") then
@@ -2269,7 +2271,47 @@ getgenv().kick_player_firing_func = function()
     getgenv().notify("Success", "Bring cycle started", 5)
 end
 
-getgenv().kick_firing_function_toggle = function()
+getgenv().start_bring_cycle = function()
+    if getgenv().bring_cycle_active then return end
+
+    if not getgenv().bring_plr_main_tbl_whitelist or not next(getgenv().bring_plr_main_tbl_whitelist) then
+        return getgenv().notify("Warning", "Whitelist is empty.", 5)
+    end
+
+    local bring_plr_re = getgenv().Bring_Player_Original_RE_Found or getgenv().find_bring_plr_event()
+    if not bring_plr_re then
+        return getgenv().notify("Error", "Could not find BringPlayerEvent.", 6)
+    end
+
+    getgenv().bring_cycle_active = true
+
+    task.spawn(function()
+        while getgenv().bring_cycle_active == true do
+            for _, plr_name in ipairs(getgenv().bring_plr_main_tbl_whitelist) do
+                if not getgenv().bring_cycle_active then break end
+
+                local plr = getgenv().Players:FindFirstChild(plr_name)
+                if plr then
+                    pcall(function()
+                        bring_plr_re:FireServer(plr)
+                    end)
+                end
+
+                task.wait(0.1)
+            end
+        end
+    end)
+
+    getgenv().notify("Success", "Bring cycle started.", 5)
+end
+
+getgenv().stop_bring_cycle = function()
+    if not getgenv().bring_cycle_active then return end
+    getgenv().bring_cycle_active = false
+    getgenv().notify("Info", "Bring cycle stopped.", 5)
+end
+
+--[[getgenv().kick_firing_function_toggle = function()
     local toggle = getgenv().BringAll_ToYou_FE_Toggle
 
     if getgenv().bring_cycle_active then
@@ -2328,7 +2370,7 @@ getgenv().kick_firing_function_toggle = function()
     end)
 
     getgenv().notify("Success", "Bring cycle started (no teleport).", 5)
-end
+end--]]
 
 getgenv().single_bring_cycle_running = false
 getgenv().single_bring_target = nil
@@ -3419,11 +3461,11 @@ if find_bring_target_remote_E and find_bring_target_remote_E:IsA("RemoteEvent") 
     Name = "Bring all To You (FE)",
     Currentvalue = false,
     Flag = "BringingAllPlrsToYouLiterally",
-    Callback = function(bringing_all_to_myself)
-        if bringing_all_to_myself then
-            getgenv().kick_firing_function_toggle()
+    Callback = function(state)
+        if state then
+            getgenv().start_bring_cycle()
         else
-            getgenv().kick_firing_function_toggle()
+            getgenv().stop_bring_cycle()
         end
     end,})
 
