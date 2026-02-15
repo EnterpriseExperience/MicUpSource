@@ -3445,7 +3445,9 @@ if find_bring_target_remote_E and find_bring_target_remote_E:IsA("RemoteEvent") 
                 task.wait(0.2)
                 for _, v in ipairs(game.Players:GetPlayers()) do
                     task.wait(0.1)
-                    bring_plr_RE:FireServer(v)
+                    if v ~= getgenv().LocalPlayer then
+                        bring_plr_RE:FireServer(v)
+                    end
                 end
             end
         else
