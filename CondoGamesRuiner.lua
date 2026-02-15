@@ -3742,7 +3742,7 @@ if Play_Anim and Play_Anim:IsA("RemoteFunction") then
     end,})
 
     getgenv().ForcePlayAnims_OnBot_Toggle = Tab3:CreateToggle({
-    Name = "Force Play Anims On Bot",
+    Name = "Force Play Anims On All Bots (FE)",
     CurrentValue = false,
     Flag = "ForcePlayAnimsOnBotToggle",
     Callback = function(force_anims_on_bot)
