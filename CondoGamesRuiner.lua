@@ -9,7 +9,7 @@ end
 wait()
 getgenv().condo_destroyer_loaded = true
 
-local Script_Version = "V2.0.0"
+local Script_Version = "V2.0.1"
 local executor_string = nil
 local queueteleport = queueteleport or queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport)
 local g = getgenv() or _G or {}
@@ -707,8 +707,15 @@ if not getgenv().Flames_Hub_Conditional_Error_Detection then
                 end)
 
                 if success and req then
-                    local body = HttpService:JSONDecode(req)
+                    local body
+                    local decode_success, decode_result = pcall(function()
+                        return HttpService:JSONDecode(req)
+                    end)
 
+                    if decode_success then
+                        body = decode_result
+                    end
+                    wait(0.1)
                     if body and body.data then
                         for _, v in next, body.data do
                             if typeof(v) == "table"
