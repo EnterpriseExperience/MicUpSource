@@ -99,6 +99,10 @@ local StarterGui = cloneref and cloneref(game:GetService("StarterGui")) or game:
 if not getgenv().StarterGui then
     getgenv().StarterGui = StarterGui
 end
+local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+if not getgenv().UserInputService then
+    getgenv().UserInputService = UserInputService
+end
 local Rayfield = nil
 local MAX_ATTEMPTS = 10
 local WAIT_BETWEEN_ATTEMPTS = 1
