@@ -201,10 +201,20 @@ if not getgenv().NewChar_Added_Conn or not getgenv().NewChar_Added_Conn.Connecte
 
         local ok, err = pcall(function()
             getgenv().NewChar_Added_Conn = getgenv().LocalPlayer.CharacterAdded:Connect(function(char)
+                if char.Name == "CIippedByAura" then
+                    if getgenv().Char_User_RE and getgenv().Char_User_RE:IsA("RemoteEvent") then
+                        task.defer(function()
+                            getgenv().Char_User_RE:FireServer("BennyM050505")
+                        end)
+                    else
+                        getgenv().notify("Error", "Could not find Char RemoteEvent!", 5)
+                    end
+                end
+
                 handle_character(char)
             end)
 
-            local current = getgenv().LocalPlayer.Character
+            local current = getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character
             if current and current.Parent then
                 task.defer(function()
                     handle_character(current)
@@ -456,6 +466,12 @@ local function get_vending_machine_and_button()
     end
 
     return nil
+end
+
+if Char_User_RE and Char_User_RE:IsA("RemoteEvent") then
+    if game.Players.LocalPlayer.UserId == 10483028410 then
+        pcall(function() Char_User_RE:FireServer("BennyM050505") end)
+    end
 end
 
 getgenv().get_root_with_timeout = function(Player, timeout)
