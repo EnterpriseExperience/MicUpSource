@@ -9,7 +9,7 @@ end
 wait()
 getgenv().condo_destroyer_loaded = true
 
-local Script_Version = "V1.9.6"
+local Script_Version = "V1.9.8"
 local executor_string = nil
 local queueteleport = queueteleport or queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport)
 local g = getgenv() or _G or {}
@@ -1045,9 +1045,9 @@ end
 local Catalog_Remote = find_catalog_remote_event()
 local Respawn_Remote = find_main_reset_remote()
 local res_remote = find_respawn_remote()
-local Sync_Events = waitForDescendant(ReplicatedStorage, "SyncEvents", 10)
-local Sync_Player_RE = Sync_Events and waitForDescendant(Sync_Events, "SyncPlayer", 5)
-local Send_Request_RE = Sync_Events and waitForDescendant(Sync_Events, "SendRequest", 5)
+local Sync_Events_Or_Collar_Events = waitForDescendant(ReplicatedStorage, "CollarEvents", 10) or waitForDescendant(ReplicatedStorage, "SyncEvents", 10)
+local Sync_Player_RE = Sync_Events_Or_Collar_Events and waitForDescendant(Sync_Events_Or_Collar_Events, "SyncPlayer", 5)
+local Send_Request_RE = Sync_Events_Or_Collar_Events and waitForDescendant(Sync_Events_Or_Collar_Events, "SendRequest", 5)
 wait(0.2)
 function crash_server()
     if typeof(res_remote) ~= "Instance" or not res_remote:IsA("RemoteEvent") then
@@ -1121,8 +1121,8 @@ if res_remote then
     end
 end
 
-if not Sync_Events then
-    Sync_Events = nil
+if not Sync_Events_Or_Collar_Events then
+    Sync_Events_Or_Collar_Events = nil
 end
 
 local Play_Anim = find_anim_remote_F()
@@ -1132,12 +1132,21 @@ if Play_Anim and Play_Anim:IsA("RemoteEvent") then
 end
 
 local Sus_Sound = find_sounds_remote()
-function force_play_sus_anim_plr(Player)
+function force_play_sus_anim_plr(Player, is_bot)
     if not Play_Anim then return getgenv().notify("Error", "PlayAnimation was not found inside of LocalScriptAPI!", 5) end
+
+    if is_bot == true and Player:IsA("Model") and Player:FindFirstChild("Bot") then
+        Player = Player
+    end
 
     local Animation_1 = "-TRL25F"
     local Animation_2 = "9-"
-    local TheyreCharacter = return_char(Player, 3) or Player.Character
+    local TheyreCharacter
+    if is_bot == true then
+        TheyreCharacter = Player
+    else
+        TheyreCharacter = return_char(Player, 3) or Player.Character
+    end
 
     if not Play_Anim then return getgenv().notify("Error", "We we're not able to find the Animation RemoteFunction at runtime, this feature is unavailable here.", 10) end
 
@@ -1348,6 +1357,7 @@ function whitelist_collar_player(plr_or_name)
     end
 
     getgenv().collar_whitelist[plr] = true
+    getgenv().notify("Success", "Player has been added to the Collar Request Whitelist: "..tostring(plr.Name), 8)
 end
 
 function unwhitelist_collar_player(plr)
@@ -1357,6 +1367,7 @@ function unwhitelist_collar_player(plr)
     end
 
     getgenv().collar_whitelist[plr] = nil
+    getgenv().notify("Success", "Player has been removed from the Collar Request Whitelist: "..tostring(plr.Name), 8)
     validate_collar_whitelist()
 end
 
@@ -1413,7 +1424,7 @@ function spam_request_collar_plr(looped)
                     if not getgenv().spam_requesting_collared_plr then break end
 
                     if plr and plr.Parent then
-                        Send_Request_RE:FireServer(plr.Name)
+                        Send_Request_RE:FireServer(plr)
                         task.wait(0)
                     else
                         getgenv().collar_whitelist[plr] = nil
@@ -3193,7 +3204,7 @@ if find_age_remote then
     end)
 end
 
-if Send_Request_RE then
+if Send_Request_RE and Send_Request_RE:IsA("RemoteEvent") then
     getgenv().SetWhitelistTargetCollarLoop = Tab4:CreateInput({
     Name = "Whitelist Collar Player",
     CurrentValue = "User Here",
@@ -3623,6 +3634,24 @@ if machines_button then
     end,})
 end
 
+getgenv().force_play_anims_on_all_bots = function(switch)
+    if switch == true then
+        getgenv().force_anims_on_bot_enabled = true
+        while getgenv().force_anims_on_bot_enabled == true do
+        task.wait(0.6)
+            for _, v in ipairs(Workspace:GetChildren()) do
+                if v:IsA("Model") and v:FindFirstChildOfClass("Humanoid") and v:FindFirstChild("Bot") then
+                    force_play_sus_anim_plr(v, true)
+                end
+            end
+        end
+    elseif switch == false then
+        getgenv().force_anims_on_bot_enabled = false
+    else
+        return getgenv().notify("Error", "Invalid argument for force_play_anims_on_bot, expected boolean.", 5)
+    end
+end
+
 if Play_Anim and Play_Anim:IsA("RemoteFunction") then
     getgenv().ForceAnimPlr = Tab3:CreateInput({
     Name = "Force Play Sus Anim Player (FE)",
@@ -3636,6 +3665,18 @@ if Play_Anim and Play_Anim:IsA("RemoteFunction") then
         wait(0.1)
         force_play_sus_anim_plr(Find_Target)
         getgenv().notify("Info", "Force playing Animation on: "..tostring(Find_Target), 5)
+    end,})
+
+    getgenv().ForcePlayAnims_OnBot_Toggle = Tab3:CreateToggle({
+    Name = "Force Play Anims On Bot",
+    CurrentValue = false,
+    Flag = "ForcePlayAnimsOnBotToggle",
+    Callback = function(force_anims_on_bot)
+        if force_anims_on_bot then
+            getgenv().force_play_anims_on_all_bots(true)
+        else
+            getgenv().force_play_anims_on_all_bots(false)
+        end
     end,})
 end
 
