@@ -1090,7 +1090,8 @@ if res_remote then
         "Linavow",
         "Labubu_zz1",
         "ZukyChan786",
-        "antonis12356"
+        "antonis12356",
+        "FentLover4L"
     }
 
     if not getgenv().adminwatcher_players_added_conn_checker then
