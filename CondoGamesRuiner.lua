@@ -901,8 +901,7 @@ local function find_stop_anim_RE()
     if not reps then return nil end
 
     local possible_names = {
-        "StopAnim", "StopAnimationOnHumanoid", "StopAnimation",
-        "SAH", "SAOH", "StopAnimations", "StopAnims"
+        "StopAnimationOnHumanoid", "StopAnim", "SAH", "SAOH", "StopAnimations", "StopAnims"
     }
 
     for _, descendant in ipairs(reps:GetDescendants()) do
@@ -4057,7 +4056,7 @@ if Stop_Anim and Stop_Anim:IsA("RemoteEvent") then
                     end
 
                     if plr ~= Players.LocalPlayer then
-                        local hum = return_human(plr, 3)
+                        local hum = return_human(plr, 1)
                         if hum and hum.Parent then
                             pcall(function()
                                 Stop_Anim:FireServer(hum)
