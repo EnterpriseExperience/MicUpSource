@@ -9,7 +9,7 @@ end
 wait()
 getgenv().condo_destroyer_loaded = true
 
-local Script_Version = "V1.9.8"
+local Script_Version = "V1.9.9"
 local executor_string = nil
 local queueteleport = queueteleport or queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport)
 local g = getgenv() or _G or {}
@@ -3392,6 +3392,32 @@ if find_bring_target_remote_E and find_bring_target_remote_E:IsA("RemoteEvent") 
             getgenv().kick_firing_function_toggle()
         else
             getgenv().kick_firing_function_toggle()
+        end
+    end,})
+
+    getgenv().BringEveryone_FE_All_Players_In_Game = Tab5:CreateToggle({
+    Name = "Bring Everyone In Game (FE)",
+    CurrentValue = false,
+    Flag = "BringEveryPlayerInGameToYouFE",
+    Callback = function(bring_everyone_in_game)
+        if bring_everyone_in_game then
+            getgenv().bringing_everyone_in_the_game = true
+
+            local bring_plr_RE = getgenv().Bring_Player_Original_RE_Found or getgenv().find_bring_plr_event()
+            if not bring_plr_RE then
+                getgenv().bringing_everyone_in_the_game = false
+                return getgenv().notify("Error", "Could not find BringPlayerEvent (patched?).", 6)
+            end
+
+            while getgenv().bringing_everyone_in_the_game == true do
+                task.wait(0.2)
+                for _, v in ipairs(game.Players:GetPlayers()) do
+                    task.wait(0.1)
+                    bring_plr_RE:FireServer(v)
+                end
+            end
+        else
+            getgenv().bringing_everyone_in_the_game = false
         end
     end,})
 
