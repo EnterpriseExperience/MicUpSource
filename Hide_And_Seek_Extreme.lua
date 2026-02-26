@@ -10,7 +10,6 @@ if not getgenv().GlobalEnvironmentFramework_Initialized then
 end
 
 local executor_string = nil
-
 local function executor_contains(substr)
     if typeof(executor_string) ~= "string" then
         return false
@@ -1090,6 +1089,29 @@ local function handle_in_game_changed()
     end
 end
 
+local req = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
+
+local function check_audio(id)
+    local res = req({
+        Url = "https://assetdelivery.roblox.com/v1/asset/?id="..id,
+        Method = "GET"
+    })
+
+    if not res then
+        return false, "no response"
+    end
+
+    if res.StatusCode == 200 then
+        return true, "working"
+    end
+
+    if res.Body and res.Body:lower():find("not authorized") then
+        return false, "blocked or private"
+    end
+
+    return false, "invalid or moderated / banned"
+end
+
 getgenv().Current_ID = getgenv().Current_ID or 0
 wait(0.2)
 getgenv().Main_Audio_Input = Audio:Box("Music (FE):", function(text, focuslost)
@@ -1109,7 +1131,7 @@ getgenv().new_boombox_main_volume = getgenv().new_boombox_main_volume or 0.5
 getgenv().boombox_sound = nil
 
 local function find_boombox()
-    local root = getgenv().HumanoidRootPart or get_root(LocalPlayer)
+    local root = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character:WaitForChild("HumanoidRootPart", 5)
     if not root then return end
 
     for _, v in ipairs(root:GetChildren()) do
@@ -1120,7 +1142,7 @@ local function find_boombox()
 end
 
 local function does_boombox_sound_exist()
-    local root = getgenv().HumanoidRootPart or get_root(LocalPlayer)
+    local root = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character:WaitForChild("HumanoidRootPart", 5)
     if not root then
         return false
     end
@@ -1135,7 +1157,7 @@ local function does_boombox_sound_exist()
 end
 
 local function is_playing_music()
-    local root_part = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character:FindFirstChild("HumanoidRootPart")
+    local root_part = getgenv().HumanoidRootPart or get_root(LocalPlayer) or getgenv().Character:WaitForChild("HumanoidRootPart", 5)
 
     for _, v in ipairs(root_part:GetChildren()) do
         if v:IsA("Sound") and v.Name:lower():find("boombox") then
@@ -1178,6 +1200,12 @@ function play_music_with_id(id_to_play)
         end
     end
 
+    local valid, status = check_audio(tonumber(id_to_play))
+    if not valid and status == "invalid or moderated / banned" then
+        getgenv().Current_ID = 0
+        return getgenv().notify("Error", "Audio has been banned or you cannot access it.", 10)
+    end
+
     local ok, response = pcall(function()
         Play_Sound_Boombox_RE:FireServer(id_to_play)
     end)
@@ -1190,12 +1218,18 @@ function play_music_with_id(id_to_play)
         local updated = does_boombox_sound_exist()
         if updated then
             updated.Volume = getgenv().new_boombox_main_volume
-            getgenv().notify("Success", "Now playing ID: "..tostring(id_to_play).." with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 5)
+            getgenv().notify("Success", "Now playing ID: "..tostring(id_to_play).." with Volume: "..tostring(getgenv().new_boombox_main_volume or 1), 6)
         end
     end)
 end
 
 function play_music_with_sound_id()
+    local valid, status = check_audio(tonumber(getgenv().Current_ID))
+    if not valid and status == "invalid or moderated / banned" then
+        getgenv().Current_ID = 0
+        return getgenv().notify("Error", "Audio has been banned or you cannot access it.", 10)
+    end
+    wait(0.1)
     local sound = find_boombox()
     local ok, response = pcall(function()
         Play_Sound_Boombox_RE:FireServer(Current_ID)
