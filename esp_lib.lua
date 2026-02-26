@@ -1,10 +1,10 @@
 if getgenv().playeresp_singleton and getgenv().playeresp_singleton.active then
 	return getgenv().playeresp_singleton
 end
-local players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
-local workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-local runservice = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-local localplayer = players.LocalPlayer
+local players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local workspace = getgenv().Workspace or cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local runservice = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local localplayer = getgenv().LocalPlayer or players.LocalPlayer
 local esp = getgenv().playeresp_singleton or {}
 getgenv().playeresp_singleton = esp
 esp.active = true
@@ -14,6 +14,8 @@ esp.arrow_enabled = esp.arrow_enabled or false
 esp.tracked = esp.tracked or {}
 esp.connections = esp.connections or {}
 esp.render_connection = esp.render_connection or nil
+esp.parts = esp.parts or {}
+esp.part_enabled = esp.part_enabled or false
 
 local function getcamera()
 	return workspace.CurrentCamera
@@ -67,101 +69,175 @@ local function track_player(p)
 end
 
 local function untrack_player(p)
-   clear_player(p)
+    clear_player(p)
 end
 
 if not esp.connections.playeradded then
-   esp.connections.playeradded = players.PlayerAdded:Connect(track_player)
+    esp.connections.playeradded = players.PlayerAdded:Connect(track_player)
 end
 
 if not esp.connections.playerremoving then
-   esp.connections.playerremoving = players.PlayerRemoving:Connect(untrack_player)
+    esp.connections.playerremoving = players.PlayerRemoving:Connect(untrack_player)
 end
 
 if not esp.render_connection then
 	esp.render_connection = runservice.RenderStepped:Connect(function()
-		if not esp.enabled then return end
+
+		if not esp.enabled and not esp.part_enabled then
+			return
+		end
 
 		local camera = getcamera()
 		if not camera then return end
 
 		local center = camera.ViewportSize / 2
 
-		for p, d in pairs(esp.tracked) do
-			local char = p.Character
-			local root = char and char:FindFirstChild("HumanoidRootPart")
-			local hum = char and char:FindFirstChildOfClass("Humanoid")
+		if esp.enabled then
+			for p, d in pairs(esp.tracked) do
+				local char = p.Character
+				local root = char and char:FindFirstChild("HumanoidRootPart")
+				local hum = char and char:FindFirstChildOfClass("Humanoid")
 
-			if not char or not root or not hum or hum.Health <= 0 then
-				d.name.Visible = false
-				d.arrow.Visible = false
-				continue
-			end
+				if not char or not root or not hum or hum.Health <= 0 then
+					d.name.Visible = false
+					d.arrow.Visible = false
+					continue
+				end
 
-			local pos, onscreen = camera:WorldToViewportPoint(root.Position)
+				local pos, onscreen = camera:WorldToViewportPoint(root.Position)
 
-			if esp.name_enabled and onscreen then
-				local dist = (camera.CFrame.Position - root.Position).Magnitude
-				local size = math.clamp(1000 / dist, 10, 30)
-				d.name.Text = p.Name
-				d.name.Size = size
-				d.name.Position = Vector2.new(pos.X, pos.Y)
-				d.name.Visible = true
-			else
-				d.name.Visible = false
-			end
+				if esp.name_enabled and onscreen then
+					local dist = (camera.CFrame.Position - root.Position).Magnitude
+					local size = math.clamp(1000 / dist, 10, 30)
+					d.name.Text = p.Name
+					d.name.Size = size
+					d.name.Position = Vector2.new(pos.X, pos.Y)
+					d.name.Visible = true
+				else
+					d.name.Visible = false
+				end
 
-			if esp.arrow_enabled and not onscreen then
-				local rel = Vector2.new(root.Position.X - camera.CFrame.Position.X, root.Position.Z - camera.CFrame.Position.Z)
-				if rel.Magnitude > 0 then
-					local dir = rel.Unit
-					local dist = 80
-					local height = 16
-					local width = 16
-					local base = dir * dist
-					local tip = dir * (dist + height)
-					local side = Vector2.new(-dir.Y, dir.X) * (width / 2)
+				if esp.arrow_enabled and not onscreen then
+					local rel = Vector2.new(root.Position.X - camera.CFrame.Position.X, root.Position.Z - camera.CFrame.Position.Z)
+					if rel.Magnitude > 0 then
+						local dir = rel.Unit
+						local dist = 80
+						local height = 16
+						local width = 16
+						local base = dir * dist
+						local tip = dir * (dist + height)
+						local side = Vector2.new(-dir.Y, dir.X) * (width / 2)
 
-					d.arrow.PointA = center - (base + side)
-					d.arrow.PointB = center - (base - side)
-					d.arrow.PointC = center - tip
-					d.arrow.Visible = true
+						d.arrow.PointA = center - (base + side)
+						d.arrow.PointB = center - (base - side)
+						d.arrow.PointC = center - tip
+						d.arrow.Visible = true
+					else
+						d.arrow.Visible = false
+					end
 				else
 					d.arrow.Visible = false
 				end
-			else
-				d.arrow.Visible = false
 			end
 		end
+
+		if esp.part_enabled then
+			for part, data in pairs(esp.parts) do
+				if not part or not part.Parent then
+					data.name.Visible = false
+					continue
+				end
+
+				local pos, onscreen = camera:WorldToViewportPoint(part.Position)
+
+				if onscreen then
+					local dist = (camera.CFrame.Position - part.Position).Magnitude
+					local size = math.clamp(1000 / dist, 10, 30)
+
+					data.name.Text = part.Name
+					data.name.Size = size
+					data.name.Position = Vector2.new(pos.X, pos.Y)
+					data.name.Visible = true
+				else
+					data.name.Visible = false
+				end
+			end
+		else
+			for _, data in pairs(esp.parts) do
+				data.name.Visible = false
+			end
+		end
+
 	end)
 end
 
 for _, p in ipairs(players:GetPlayers()) do
-   track_player(p)
+    track_player(p)
+end
+
+function esp.part_esp(part)
+	if typeof(part) ~= "Instance" or not part:IsA("BasePart") then
+		return
+	end
+
+	if esp.parts[part] then
+		return
+	end
+
+	esp.parts[part] = {
+		part = part,
+		name = new_text()
+	}
+
+	part.AncestryChanged:Connect(function(_, parent)
+		if not parent then
+			esp.remove_part_esp(part)
+		end
+	end)
+end
+
+function esp.remove_part_esp(part)
+	local data = esp.parts[part]
+	if not data then return end
+
+	safe_remove(data.name)
+	esp.parts[part] = nil
+end
+
+function esp.enable_part_esp()
+	esp.part_enabled = true
+end
+
+function esp.disable_part_esp()
+	esp.part_enabled = false
+
+	for _, data in pairs(esp.parts) do
+		data.name.Visible = false
+	end
 end
 
 function esp.enable()
-   esp.enabled = true
+    esp.enabled = true
 end
 
 function esp.disable()
-   esp.enabled = false
+    esp.enabled = false
 end
 
 function esp.enable_name()
-   esp.name_enabled = true
+    esp.name_enabled = true
 end
 
 function esp.disable_name()
-   esp.name_enabled = false
+    esp.name_enabled = false
 end
 
 function esp.enable_arrow()
-   esp.arrow_enabled = true
+    esp.arrow_enabled = true
 end
 
 function esp.disable_arrow()
-   esp.arrow_enabled = false
+    esp.arrow_enabled = false
 end
 
 return esp
