@@ -24,7 +24,11 @@ local scriptstoload = {
         id = 108873247414429,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Apartment_Hangout_Script_Hub.lua"
     },
-    -- they took the game down? --
+    ["The Lanes"] = {
+        id = 1333478699,
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/The_Lanes_Loader.lua"
+    }
+    -- they took the game down? lmao --
     --[[["Player or AI"] = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
