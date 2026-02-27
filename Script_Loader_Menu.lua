@@ -26,7 +26,7 @@ local scriptstoload = {
     },
     ["The Lanes"] = {
         id = 1333478699,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/The_Lanes_Loader.lua"
+        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/The_Lanes.lua"
     }
     -- they took the game down? lmao --
     --[[["Player or AI"] = {
