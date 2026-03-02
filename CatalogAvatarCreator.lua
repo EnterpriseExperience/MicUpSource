@@ -1,5 +1,4 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
-
 if getgenv().CatalogAvatarCreator_Script_Menu_Loaded then
     return 
 end
@@ -402,9 +401,13 @@ end
 wait(0.2)
 function copy_avatar(player)
     if not player then return end
+    if getgenv().avatar_copier_current_busy then return ingame_notify("Wait!","You're currently copying someone's avatar, wait until it's done.","yellow",6) end
+
     local char = player.Character or get_char(player)
     local hum = char:FindFirstChildWhichIsA("Humanoid") or get_human(player)
 
+    getgenv().avatar_copier_current_busy = true
+    wait(0.2)
     if not getgenv().AnimSlots then
         getgenv().AnimSlots = {
             Idle = "IdleAnimation",
@@ -417,7 +420,7 @@ function copy_avatar(player)
         }
     end
 
-    ingame_notify("success","copying: "..tostring(player).."'s avatar.","green",5)
+    --ingame_notify("success","copying: "..tostring(player).."'s avatar.","green",5)
 
     local function Wear(id,prop)
         Remote:InvokeServer({Action="TryItem",Id=id,PropertyName=prop})
@@ -537,6 +540,9 @@ function copy_avatar(player)
     if bc then
         ApplySkin(bc)
     end
+    getgenv().avatar_copier_current_busy = false
+    wait(0.1)
+    ingame_notify("success","Copied: "..tostring(player).."'s avatar successfully.","green",5)
 end
 
 function disable_reanimation()
@@ -1432,7 +1438,14 @@ getgenv().Rainbow_Arms_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Arms (FE)",
                 local ohTable = {
                     ["Action"] = "UpdateHumanDescProperties",
                     ["Properties"] = {
-                        ["LeftArmColor"] = color,
+                        ["LeftArmColor"] = color
+                    }
+                }
+                Catalog_Remote:InvokeServer(ohTable)
+                task.wait(0)
+                local ohTable = {
+                    ["Action"] = "UpdateHumanDescProperties",
+                    ["Properties"] = {
                         ["RightArmColor"] = color
                     }
                 }
@@ -1508,6 +1521,9 @@ PlayersSection:TextBox("Get Plrs Avatar", function(player_entered)
     local copy_target_char = copy_target.Character or get_char(copy_target)
     if not copy_target_char then return ingame_notify("error", "players character doesn't exist anymore.", "red", 6) end
     local copy_target_hum = copy_target_char:FindFirstChildWhichIsA("Humanoid") or copy_target_char:WaitForChild("Humanoid", 3) or get_human(copy_target)
+    if not copy_target_hum then
+        return 
+    end
 
     ingame_notify("success", "becoming: "..tostring(copy_target), "green", 5)
     make_avatar(copy_target, rig_to_string(copy_target_hum))
