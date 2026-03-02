@@ -304,7 +304,7 @@ local function wait_for_datamodel(inst)
             return true
         end
         task.wait(0.05)
-        attempts += 1
+        attempts = attempts + 1
     end
 
     return false
@@ -351,7 +351,7 @@ g.get_char = g.get_char or function(Player)
     while (not char or not char.Parent) and attempts < maximum_retries_for_char do
         char = Player.Character
         task.wait(0.05)
-        attempts += 1
+        attempts = attempts + 1
     end
     return char
 end
@@ -364,7 +364,7 @@ g.get_human = g.get_human or function(Player)
     while not hum and attempts < maximum_retries do
         hum = char:FindFirstChildOfClass("Humanoid")
         task.wait(0.05)
-        attempts += 1
+        attempts = attempts + 1
     end
     return hum
 end
@@ -381,7 +381,7 @@ g.get_root = g.get_root or function(Player)
             or char:FindFirstChild("Torso") 
             or char:FindFirstChild("UpperTorso")
         task.wait(0.05)
-        attempts += 1
+        attempts = attempts + 1
     end
     return root
 end
@@ -394,7 +394,7 @@ g.get_head = g.get_head or function(Player)
     while not head and attempts < maximum_retries do
         head = char:FindFirstChild("Head")
         task.wait(0.05)
-        attempts += 1
+        attempts = attempts + 1
     end
     return head
 end
@@ -453,7 +453,7 @@ function copy_avatar(player)
     end
 
     local function Clear(desc)
-        for _,acc in ipairs(desc:GetAccessories(false)) do
+        for _,acc in ipairs(desc:GetAccessories(true)) do
             TakeOff(acc.AssetId)
             task.wait(0.05)
         end
@@ -568,7 +568,7 @@ function self_walking_reanimation_legs(toggle)
         task.spawn(function()
             local t = 0
             while getgenv().self_walking_legs == true do
-                t += 0.07
+                t = t + 0.07
 
                 local pose = {
                     ["Right Hip"] = {
@@ -602,7 +602,7 @@ function gun_idle_cool_anim(toggle)
         task.spawn(function()
             local t = 0
             while getgenv().gun_animation_idle_animation do
-                t += 0.045
+                t = t + 0.045
 
                 local pose = {
                     ["RootJoint"] = {
@@ -696,7 +696,7 @@ function float_idle(toggle)
         task.spawn(function()
             local t = 0
             while getgenv().float_idle == true do
-                t += 0.05
+                t = t + 0.05
 
                 local hover = math.sin(t/4) * 3
                 local tilt  = math.sin(t/6) * 0.05
@@ -856,7 +856,7 @@ function name_changer_premium(toggle)
                 task.wait(0)
                 change_displayname("SetDisplayName", words[index])
 
-                index += 1
+                index = index + 1
                 if index > wordCount then
                     index = 1
                 end
@@ -989,7 +989,7 @@ getgenv().save_certain_body_parts_skintone = function(bodyPart)
 
     getgenv().partial_saved_colors = getgenv().partial_saved_colors or {}
 
-    local input = type(bodyPart) == "string" and bodyPart:lower() or ""
+    local input = typeof(bodyPart) == "string" and bodyPart:lower() or ""
 
     local function saveProp(prop)
         local val = bc[prop .. "3"]
@@ -1068,11 +1068,11 @@ getgenv().apply_default_skin_tone_on_body_part = function(bodyPart)
     local partialStore = getgenv().partial_saved_colors
     local defaultStore = getgenv().saved_colors
 
-    if type(partialStore) ~= "table" and type(defaultStore) ~= "table" then
+    if typeof(partialStore) ~= "table" and typeof(defaultStore) ~= "table" then
         return false
     end
 
-    local input = type(bodyPart) == "string" and bodyPart:lower() or ""
+    local input = typeof(bodyPart) == "string" and bodyPart:lower() or ""
     local props = {}
 
     local function resolveProp(prop)
@@ -1733,5 +1733,5 @@ getgenv().WearAllPlrsOutfits = PlayersSection:Toggle("Wear Everyones Outfits (Lo
 end)
 
 UISection:Button("Destroy GUI", function()
-    close_menu()
+    pcall(function() close_menu() end)
 end)
