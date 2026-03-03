@@ -1,7 +1,48 @@
-if getgenv().hidden_loaded then return end
+if not game:IsLoaded() then game.Loaded:Wait() end
+wait(0.3)
+if not getgenv().GlobalEnvironmentFramework_Initialized then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+    wait(0.1)
+    getgenv().GlobalEnvironmentFramework_Initialized = true
+end
+
+if getgenv().hidden_loaded then
+    if getgenv().notify then
+        return getgenv().notify("Warning", "Streamer-Mode V1.5 is already loaded.", 5)
+    else
+        return warn("Streamer-Mode V1.5 is already loaded.")
+    end
+end
 getgenv().hidden_loaded = true
 
 local g = getgenv()
+
+getgenv().flowrgb = getgenv().flowrgb or function(connname,speed,obj,toggle)
+    local ts=game:GetService("TweenService")
+    local rs=game:GetService("RunService")
+    if toggle==false then
+        if getgenv()[connname] then
+            pcall(function() getgenv()[connname]:Disconnect() end)
+            getgenv()[connname]=nil
+        end
+    else
+        if getgenv()[connname] then
+            pcall(function() getgenv()[connname]:Disconnect() end)
+            getgenv()[connname]=nil
+        end
+        local hue=0
+        getgenv()[connname]=rs.RenderStepped:Connect(function(dt)
+            hue=(hue+(dt*speed))%1
+            local col=Color3.fromHSV(hue,1,1)
+            ts:Create(obj,TweenInfo.new(0.10,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{BackgroundColor3=col}):Play()
+        end)
+    end
+end
+
+getgenv().flowrgb_exists = function(connname)
+    local c = getgenv()[connname]
+    return typeof(c) == "RBXScriptConnection" and c.Connected
+end
 
 function randomString()
     local length = math.random(10,20)
@@ -66,9 +107,9 @@ function dragify(Frame)
     end)
 end
 
-local core_gui = game:GetService("CoreGui")
+local core_gui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local cg = core_gui
-local players_srv = game:GetService("Players")
+local players_srv = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local fake_name = "@Hidden"
 local fake_image = "rbxthumb://type=AvatarHeadShot&id=1&w=420&h=420"
 
@@ -79,6 +120,13 @@ g.hidden_person = hidden_person
 hidden_person.conns = hidden_person.conns or {}
 local fakeName_fallback = fake_name
 local fakeImg_fallback = fake_image
+
+if not getgenv().seen_update_notify_already then
+    if getgenv().notify then
+        getgenv().notify("Success", "Updated to the latest version of Roblox's UI system.", 7)
+    end
+    getgenv().seen_update_notify_already = true
+end
 
 local function find_settings_root()
     for _,v in ipairs(core_gui:GetDescendants()) do
@@ -239,6 +287,69 @@ local function card_root()
     return nil
 end
 
+local function apply_navigation_avatar_inspector_wrapper()
+    local r = cg:FindFirstChild("RobloxGui")
+    if not r then return nil end
+
+    for _, v in ipairs(r:GetDescendants()) do
+        if v:IsA("Frame") and v.Name:lower():find("thumbnail") then
+            local s = v.Parent
+            local u = s.Name:lower()
+            
+            if s and s.Parent and s:IsA("Frame") and u:find("innerview") then
+                for _, k in ipairs(s:GetDescendants()) do
+                    if k:IsA("Frame") and k.Name:lower():find("thumbnail") then
+                        return k
+                    end
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+local function apply_navigation_inspector_wrapper_string_username()
+    local r = cg:FindFirstChild("RobloxGui")
+    if not r then return nil end
+
+    for _, v in ipairs(r:GetDescendants()) do
+        if v:IsA("TextLabel") and v.Name:lower():find("header") and v.Name:lower():find("text") then
+            local y = v.Parent
+            local o = y.Name:lower()
+
+            -- current Frame locator: HeaderTextAndSubheader --
+            if y and y:IsA("Frame") and o:find("header") and o:find("text") and o:find("and") and o:find("subhead") then
+                if y:FindFirstChild(v.Name) then
+                    return y:FindFirstChild("HeaderText") or y:FindFirstChild(v.Name)
+                end
+            end
+        end
+    end
+end
+
+local function fix_avatar_showing_context()
+    local k = apply_navigation_avatar_inspector_wrapper()
+    if not k then return end
+    local img = k:FindFirstChildWhichIsA("ImageLabel", true)
+    if not img then return end
+    local base = "rbxthumb://type=Avatar&id=1&w=420&h=420"
+
+    hidden_person.conns = hidden_person.conns or {}
+
+    if not hidden_person.conns[img] then
+        hidden_person.conns[img] = img:GetPropertyChangedSignal("Image"):Connect(function()
+            if hidden.enabled and img.Image ~= base then
+                img.Image = base
+            end
+        end)
+    end
+
+    if hidden.enabled then
+        img.Image = base
+    end
+end
+
 local function fix_card(c)
     for _,v in ipairs(c:GetDescendants()) do
         local n = v.Name:lower()
@@ -246,14 +357,19 @@ local function fix_card(c)
             v.Text = fakeName_fallback
             if not hidden_person.conns[v] then
                 hidden_person.conns[v] = v:GetPropertyChangedSignal("Text"):Connect(function()
-                    if hidden.enabled then v.Text = fakeName_fallback end
+                    if hidden.enabled and v.Text ~= fakeName_fallback then
+                        v.Text = fakeName_fallback
+                    end
                 end)
             end
         elseif v:IsA("ImageLabel") and (n:find("avatar") or n:find("thumb") or n:find("image")) then
-            v.Image = fakeImg_fallback
+            local base = "rbxthumb://type=Avatar&id=1&w=420&h=420"
+            v.Image = base
             if not hidden_person.conns[v] then
                 hidden_person.conns[v] = v:GetPropertyChangedSignal("Image"):Connect(function()
-                    if hidden.enabled then v.Image = fakeImg_fallback end
+                    if hidden.enabled and v.Image ~= base then
+                        v.Image = base
+                    end
                 end)
             end
         end
@@ -262,9 +378,26 @@ end
 
 g.apply_personcard_fallback = g.apply_personcard_fallback or function()
     if not hidden.enabled then return end
+
     local root = card_root()
     if root then
         fix_card(root)
+    end
+
+    local k = apply_navigation_avatar_inspector_wrapper()
+    if k then
+        local img = k:FindFirstChildWhichIsA("ImageLabel", true)
+        if img then
+            local base = "rbxthumb://type=Avatar&id=1&w=420&h=420"
+            img.Image = base
+            if not hidden_person.conns[img] then
+                hidden_person.conns[img] = img:GetPropertyChangedSignal("Image"):Connect(function()
+                    if hidden.enabled and img.Image ~= base then
+                        img.Image = base
+                    end
+                end)
+            end
+        end
     end
 end
 
@@ -272,7 +405,7 @@ if not hidden_person.conns["dyn"] then
     hidden_person.conns["dyn"] = cg.DescendantAdded:Connect(function(d)
         if not hidden.enabled then return end
         local n = d.Name:lower()
-        if n:find("personcard") or n:find("cardcontent") or n:find("avatar") or n:find("name") then
+        if n:find("personcard") or n:find("cardcontent") or n:find("avatar") or n:find("name") or n:find("thumbnail") or n:find("innerview") then
             task.defer(function()
                 g.apply_personcard_fallback()
             end)
@@ -358,19 +491,56 @@ local function reapply_all()
     apply_hidden_to_dropdown()
     apply_hidden_to_topframe()
     g.apply_personcard_fallback()
+
+    local k = apply_navigation_avatar_inspector_wrapper()
+    if k then
+        local img = k:FindFirstChildWhichIsA("ImageLabel", true)
+        if img then
+            local base = "rbxthumb://type=Avatar&id=1&w=420&h=420"
+            img.Image = base
+            hidden_person.conns = hidden_person.conns or {}
+            if not hidden_person.conns[img] then
+                hidden_person.conns[img] = img:GetPropertyChangedSignal("Image"):Connect(function()
+                    if hidden.enabled and img.Image ~= base then
+                        img.Image = base
+                    end
+                end)
+            end
+        end
+    end
+
+    local header = apply_navigation_inspector_wrapper_string_username()
+    if header then
+        header.Text = fakeName_fallback
+        hidden_person.conns = hidden_person.conns or {}
+        if not hidden_person.conns[header] then
+            hidden_person.conns[header] = header:GetPropertyChangedSignal("Text"):Connect(function()
+                if hidden.enabled and header.Text ~= fakeName_fallback then
+                    header.Text = fakeName_fallback
+                end
+            end)
+        end
+    end
 end
 
 local function disconnect_all()
     for _,c in pairs(hidden.conns) do
         pcall(function() c:Disconnect() end)
     end
-    hidden.conns={}
+    hidden.conns = {}
+
+    if hidden_person and hidden_person.conns then
+        for _,c in pairs(hidden_person.conns) do
+            pcall(function() c:Disconnect() end)
+        end
+        hidden_person.conns = {}
+    end
 end
 
 hidden.toggle = function()
     if not hidden.enabled then
         hidden.enabled=true
-        getgenv().notify("success", "Streamer Mode (V1.3) is now enabled.", 3)
+        getgenv().notify("success", "Streamer Mode (V1.5) is now enabled.", 3)
         reapply_all()
         if hidden.conns["join"] then hidden.conns["join"]:Disconnect() end
         hidden.conns["join"] = players_srv.PlayerAdded:Connect(function()
@@ -388,7 +558,8 @@ hidden.toggle = function()
             local n = desc.Name:lower()
             if n:find("player") or n:find("head") or n:find("label") or n:find("settings")
                 or n:find("container") or n:find("initial") or n:find("top") or n:find("avatar")
-                or n:find("playernamelabel") or n:find("avatarhead") then
+                or n:find("playernamelabel") or n:find("avatarhead")
+                or n:find("thumbnail") or n:find("innerview") then
                 task.wait(0.05)
                 reapply_all()
                 apply_hidden_to_teamlist()
@@ -396,7 +567,7 @@ hidden.toggle = function()
         end)
     else
         hidden.enabled=false
-        getgenv().notify("success", "Streamer Mode (V1.3) is now disabled.", 3)
+        getgenv().notify("success", "Streamer Mode (V1.5) is now disabled.", 3)
         disconnect_all()
     end
 end
@@ -418,7 +589,7 @@ g.enable_playerlist = function()
 end
 
 local screen=Instance.new("ScreenGui")
-screen.Name="StreamerModeActivatorGUI"
+screen.Name=tostring(randomString())
 screen.Parent=core_gui
 screen.ResetOnSpawn=false
 
@@ -428,6 +599,10 @@ main.Size=UDim2.new(0,260,0,150)
 main.Position=UDim2.new(0.5,-130,0.35,-75)
 main.BackgroundColor3=Color3.fromRGB(25,25,25)
 main.BorderSizePixel=0
+
+if not getgenv().flowrgb_exists("streamermodeflowrgbconn") then
+    getgenv().flowrgb("streamermodeflowrgbconn", 1, main, true)
+end
 
 local corner=Instance.new("UICorner")
 corner.CornerRadius=UDim.new(0,12)
@@ -440,7 +615,7 @@ title.Parent=main
 title.Size=UDim2.new(0.75999999, 0, 0, 30)
 title.Position=UDim2.new(0,0,0,0)
 title.BackgroundTransparency=1
-title.Text="Streamer Mode - V1.3."
+title.Text="Streamer Mode - V1.5."
 title.TextColor3=Color3.fromRGB(255,255,255)
 title.TextScaled=true
 title.Font=Enum.Font.GothamMedium
@@ -473,7 +648,7 @@ local toggle_btn = Instance.new("TextButton")
 toggle_btn.Parent = main
 toggle_btn.Size = UDim2.new(0.8,0,0,40)
 toggle_btn.Position = UDim2.new(0.1,0,0.45,0)
-toggle_btn.Text = "Enable NameHider-V1.3."
+toggle_btn.Text = "Enable NameHider-V1.5."
 toggle_btn.TextScaled = true
 toggle_btn.TextColor3 = Color3.fromRGB(255,255,255)
 toggle_btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
@@ -502,7 +677,7 @@ local function set_minimized(state)
 end
 
 local minimized = false
-local tween = game:GetService("TweenService")
+local tween = getgenv().TweenService or cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
 
 g.vim_clone = g.vim_clone or nil
 g.esc_open = g.esc_open or false
@@ -578,9 +753,9 @@ end)
 toggle_btn.MouseButton1Click:Connect(function()
     hidden.toggle()
     if hidden.enabled then
-        toggle_btn.Text = "Disable NameHider-V1.3."
+        toggle_btn.Text = "Disable NameHider-V1.5."
     else
-        toggle_btn.Text = "Enable NameHider-V1.3."
+        toggle_btn.Text = "Enable NameHider-V1.5."
     end
     g.toggle_playerlist(false)
     wait(0.3)
@@ -594,4 +769,4 @@ end)
 
 main.Visible = false
 
-toggle_btn.Text = (hidden.enabled and "Disable NameHider-V1.3." or "Enable NameHider-V1.3.")
+toggle_btn.Text = (hidden.enabled and "Disable NameHider-V1.5." or "Enable NameHider-V1.5.")
