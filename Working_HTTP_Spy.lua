@@ -664,7 +664,6 @@ local success, err = pcall(function()
         blocked[url] = false
     end
 
-    -- Enhanced GUI control to API
     function API:ToggleGui(visible)
         HttpSpyGui.Enabled = visible
         options.GuiEnabled = visible
