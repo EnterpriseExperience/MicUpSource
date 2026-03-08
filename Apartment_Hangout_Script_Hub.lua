@@ -159,7 +159,7 @@ end
 getgenv().find_sign_remote_F = function()
    local sign_tool = getgenv().find_sign_tool()
 
-   if sign_tool and sign_tool:IsA("Tool") then
+   if sign_tool and sign_tool:IsA("Tool") and sign_tool.Parent and sign_tool:IsDescendantOf(game) then
       for _, v in ipairs(sign_tool:GetDescendants()) do
          if v:IsA("RemoteFunction") then
             return v
