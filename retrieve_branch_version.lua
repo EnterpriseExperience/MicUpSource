@@ -9431,7 +9431,8 @@
 
             getgenv().FlamesLibrary.connect(
                 "teleport_effect",
-                runService.RenderStepped:Connect(function()
+                RunService.RenderStepped:Connect(function()
+                    local humanoidRootPart = getgenv().HumanoidRootPart or getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
                     local direction = math.random(1,2) == 1 and -1 or 1
                     local rightvector = humanoidRootPart.CFrame.RightVector
                     local offset = rightvector * (direction * tp_distance)
