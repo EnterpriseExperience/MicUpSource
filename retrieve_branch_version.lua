@@ -1741,7 +1741,7 @@
         warn("Scripts we're already modified.")
     else
         if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-            getgenv().notify("Hang On...", "We are removing Kill-Parts for Private Room.", 5)
+            getgenv().notify("Info", "We are removing the Kill-Parts for Private Room.", 5)
             wait(0.2)
             for _, descendant in pairs(getgenv().Workspace:GetDescendants()) do
                 if descendant:IsA("Script") and descendant.Name == "Kill" then
@@ -1760,8 +1760,10 @@
             getgenv().scripts_init = true
         end
         wait(0.2)
-        if getgenv().scripts_init or getgenv().scripts_init == true then
-            getgenv().notify("Success", "We have removed the Kill-Parts for Private Room", 5)
+        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+            if getgenv().scripts_init or getgenv().scripts_init == true then
+                pcall(function() getgenv().notify("Success", "We have removed the Kill-Parts for Private Room", 5) end)
+            end
         end
     end
     wait()
