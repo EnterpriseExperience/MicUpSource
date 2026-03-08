@@ -146,6 +146,7 @@ local function rejoinserver()
 		teleportservice:TeleportToPlaceInstance(game.PlaceId, game.JobId, localplayer)
 	end
 end
+
 local function start_watchers()
     getgenv().FlamesLibrary.disconnect("jailcell_watch")
     getgenv().FlamesLibrary.disconnect("iceblock_watch")
