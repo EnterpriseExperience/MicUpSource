@@ -801,7 +801,7 @@
 
     local reconnecting = false
     local retry_dur = 5
-    local function unsuspend()
+    getgenv().unsuspend = function()
         if reconnecting then
             if getgenv().notify then
                 return getgenv().notify("Warning", "Hold on, We are still trying to re-connect to VoiceChat.", 6)
@@ -4004,9 +4004,9 @@
                 anti_fling_toggle_saved = true
                 if getgenv().AntiFlingToggle then
                     getgenv().AntiFlingToggle:Set(false)
-                    getgenv().notify("Alert:", "Turned off Anti Fling for 'Fly' to work properly.", 6)
+                    getgenv().notify("Warning", "Turned off Anti Fling for 'Fly' to work properly.", 6)
                 else
-                    return getgenv().notify("Error:", "Please disable 'Anti Fling' for 'Fly' to work properly", 6)
+                    return getgenv().notify("Error", "Please disable 'Anti Fling' for 'Fly' to work properly", 6)
                 end
             else
                 anti_fling_toggle_saved = false
@@ -4016,9 +4016,9 @@
                 anti_teleport_toggle_saved = true
                 if getgenv().AntiTeleport_Univ then
                     getgenv().AntiTeleport_Univ:Set(false)
-                    getgenv().notify("Alert:", "Turned off Anti Teleport for 'Fly' to work properly.", 6)
+                    getgenv().notify("Warning", "Turned off Anti Teleport for 'Fly' to work properly.", 6)
                 else
-                    return getgenv().notify("Error:", "Please disable 'Anti Teleport' for 'Fly' to work properly.", 6)
+                    return getgenv().notify("Error", "Please disable 'Anti Teleport' for 'Fly' to work properly.", 6)
                 end
             else
                 anti_fling_toggle_saved = false
@@ -4027,17 +4027,15 @@
             local xeno_level_executor = low_level_executor()
 
             if HDAdmin_Found == false and xeno_level_executor == true then
-                getgenv().notify("Note:", "E = Fly Up | Q = Fly Down.", 10)
+                getgenv().notify("Info", "E = Fly Up | Q = Fly Down.", 10)
                 getgenv().HD_FlyEnabled = true
 
                 local Players = getgenv().Players
                 local RunService = getgenv().RunService
                 local UserInputService = getgenv().UserInputService
                 local Workspace = getgenv().Workspace
-
                 local LocalPlayer = getgenv().LocalPlayer
                 repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-
                 local Character = getgenv().Character
                 local HRP = getgenv().getRoot(getgenv().Character)
                 local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
@@ -4137,7 +4135,7 @@
                 wait()
                 toggleFly()
             elseif HDAdmin_Found == false then
-                getgenv().notify("Note:", "E = Fly Up | Q = Fly Down.", 10)
+                getgenv().notify("Info", "E = Fly Up | Q = Fly Down.", 10)
                 getgenv().HD_FlyEnabled = true
                 speed = 75
 
@@ -5933,7 +5931,17 @@
             "Stadium",
             "Stray Kids Walkin On Water"
         }
-        wait()
+        
+        getgenv().get_animate_localscript = function(character)
+            if not character then return getgenv().notify("Error", "Your Character does not exist yet, please wait (or respawn) and try again.", 10) end
+
+            for _, v in ipairs(character:GetDescendants()) do
+                if v:IsA("LocalScript") and v.Name:lower():find("animate") then -- locked in.
+                    return v
+                end
+            end
+        end
+        
         getgenv().walkingEmoteLoop = Tab2:CreateDropdown({
         Name = "Walk While Emoting",
         Options = Emotes,
@@ -5941,145 +5949,185 @@
         MultipleOptions = false,
         Flag = "GetEmoteOption",
         Callback = function(selectedEmote)
-            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
-                return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+            local humanoid = getgenv().Humanoid
+            local character = getgenv().Character
+            if humanoid and humanoid.RigType ~= Enum.HumanoidRigType.R15 then
+                return getgenv().notify("Error", "You have to be in R15 to use this!", 5)
             end
-
-            local ToWalkWhileEmoting = type(selectedEmote) == "table" and selectedEmote[1] or tostring(selectedEmote)
-
-            if getgenv().Character:FindFirstChild("Animate") then
-                if getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == true then
-                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-                    for _, v in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks(getgenv().Humanoid)) do
-                        v.Looped = true
-                    end
-                    wait(1)
-                    reset_walk_while_emoting()
-                    wait(1.2)
-                    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(ToWalkWhileEmoting)
-                    wait(2)
-                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
-                else
-                    warn("Proceed with walk while emoting.")
-                end
-            else
+            if not humanoid or not humanoid.Parent then
+                return getgenv().notify("Error", "Humanoid does not exist yet, try resetting.", 7)
+            end
+            local emote = type(selectedEmote) == "table" and selectedEmote[1] or tostring(selectedEmote)
+            local animate = getgenv().get_animate_localscript()
+            if not animate or not animate:IsA("LocalScript") or not animate:IsDescendantOf(game) then
                 reset_walk_while_emoting()
-                return getgenv().notify("Failure!", "'Animate' LocalScript not found!", 5)
+                return getgenv().notify("Error","'Animate' LocalScript not found inside Character.",6)
             end
-            wait()
-            if getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == true then
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-                wait(0.8)
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(ToWalkWhileEmoting)
-                wait()
-                for _, v in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks(getgenv().Humanoid)) do
-                    v.Looped = true
+            if animate.Disabled then
+                pcall(function()
+                    humanoid.WalkSpeed = 0
+                end)
+
+                for _,track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                    if track and not track.Looped then
+                        track.Looped = true
+                    end
                 end
-            elseif not getgenv().Character:FindFirstChild("Animate").Disabled or getgenv().Character:FindFirstChild("Animate").Disabled == false then
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-                wait(1)
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmote(ToWalkWhileEmoting)
-                wait()
-                for _, v in ipairs(getgenv().Humanoid:GetPlayingAnimationTracks(getgenv().Humanoid)) do
-                    v.Looped = true
+                task.wait(1)
+                reset_walk_while_emoting()
+                task.wait(1.2)
+                pcall(function()
+                    humanoid:PlayEmote(emote)
+                end)
+                task.wait(2)
+                humanoid.WalkSpeed = 16
+            end
+
+            if animate.Disabled then
+                humanoid.WalkSpeed = 0
+                task.wait(0.8)
+                humanoid:PlayEmote(emote)
+                task.wait()
+                for _,track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                    if track then
+                        track.Looped = true
+                    end
                 end
-                wait(0.1)
-                getgenv().getRoot(getgenv().Character).Anchored = true
-                wait()
-                getgenv().Character:FindFirstChild("Animate").Disabled = true
-                wait(0.3)
-                getgenv().getRoot(getgenv().Character).Anchored = false
+            elseif animate and not animate.Disabled then
+                humanoid.WalkSpeed = 0
+                task.wait(1)
+                humanoid:PlayEmote(emote)
+
+                for _,track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                    if track then
+                        track.Looped = true
+                    end
+                end
+
+                task.wait(0.1)
+                local root = getgenv().HumanoidRootPart or get_root(LocalPlayer, 10)
+
+                if root and root.Parent and root:IsDescendantOf(game) then
+                    root.Anchored = true
+                end
+                task.wait()
+                animate.Disabled = true
+                task.wait(0.3)
+                if root and root.Parent and root:IsDescendantOf(game) then
+                    root.Anchored = false
+                end
             end
         end,})
 
         getgenv().StopWalkingPlaceEmote = Tab2:CreateButton({
         Name = "Stop Walking While Emoting",
         Callback = function()
-            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
-                return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+            local character = getgenv().Character
+            local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+            local animate = getgenv().get_animate_localscript()
+            if not humanoid then
+                return
             end
-
+            if humanoid.RigType ~= Enum.HumanoidRigType.R15 then
+                return getgenv().notify("Error","You have to be in R15 to use this!",5)
+            end
             if getgenv().AnthonyShuffle == true then
                 getgenv().AnthonyShuffle:Set(false)
-            else
-                warn("Option turned off.")
             end
-            wait()
-            getgenv().Character:FindFirstChild("Animate").Disabled = false
-            wait(0.2)
-            for _, animTrack in pairs(getgenv().Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
-                animTrack:Stop()
+            task.wait()
+            if animate and animate.Disabled and animate:IsA("LocalScript") and animate:IsDescendantOf(game) then
+                animate.Disabled = false
             end
-            wait(0.2)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 0
-            wait(0.2)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
-            wait(0.9)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+            task.wait(0.2)
+            for _,track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+            task.wait(0.2)
+            humanoid.WalkSpeed = 0
+            task.wait(0.2)
+            humanoid:ChangeState(3)
+            task.wait(0.9)
+            humanoid.WalkSpeed = 16
         end,})
     end
 
-    local MichaelJackson_Speed = 120
-    local michaelJacksonActive = false
-
+    getgenv().MichaelJackson_Speed = getgenv().MichaelJackson_Speed or 120
+    getgenv().michaelJacksonActive = getgenv().michaelJacksonActive or false
     getgenv().SetWalkSpeedShuffle = Tab2:CreateSlider({
     Name = "Michael Jackson Walk-Speed",
     Range = {10, 500},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 100,
+    CurrentValue = tonumber(getgenv().MichaelJackson_Speed) or 100,
     Flag = "MichaelJacksonSpeed",
     Callback = function(get_michael_shuffle_speed)
         MichaelJackson_Speed = get_michael_shuffle_speed
-        if michaelJacksonActive then
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = MichaelJackson_Speed
+        if getgenv().michaelJacksonActive then
+            getgenv().Humanoid.WalkSpeed = MichaelJackson_Speed
         end
     end,})
 
     getgenv().AnthonyShuffle = Tab2:CreateToggle({
     Name = "Michael Jackson Walk",
-    CurrentValue = false,
+    CurrentValue = getgenv().michaelJacksonActive or false,
     Flag = "DoTheMichael",
     Callback = function(michaelJackson)
-        michaelJacksonActive = michaelJackson
+        getgenv().michaelJacksonActive = michaelJackson
+        local character = getgenv().Character
+        local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+        local animate = getgenv().get_animate_localscript()
+        local root = character and getgenv().getRoot(character)
+
         if michaelJackson then
-            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then 
-                michaelJacksonActive = false
+            if humanoid and humanoid.RigType == Enum.HumanoidRigType.R6 then
+                getgenv().michaelJacksonActive = false
                 if getgenv().AnthonyShuffle then
                     getgenv().AnthonyShuffle:Set(false)
                 end
-                return getgenv().notify("Failure:", "You must be R15 to use this!", 5)
+                return getgenv().notify("Error", "You must be R15 to use this!", 5)
             end
 
-            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+            if humanoid and humanoid.Sit then
+                humanoid:ChangeState(3)
+                humanoid:ChangeState(3)
             end
-            wait()
-            getgenv().getRoot(getgenv().Character).Anchored = true
-            wait(0.2)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = MichaelJackson_Speed
-            wait(0.1)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById(4391208058)
-            wait(0.2)
-            getgenv().Character:FindFirstChild("Animate").Disabled = true
-            wait(0.1)
-            getgenv().getRoot(getgenv().Character).Anchored = false
+            task.wait()
+            if root then root.Anchored = true end
+            task.wait(0.2)
+            if humanoid then
+                humanoid.WalkSpeed = MichaelJackson_Speed
+            end
+            task.wait(0.1)
+            if humanoid then
+                humanoid:PlayEmoteAndGetAnimTrackById(4391208058)
+            end
+            task.wait(0.2)
+            if animate and animate:IsA("LocalScript") and animate:IsDescendantOf(game) then
+                animate.Disabled = true
+            end
+            task.wait(0.1)
+            if root then root.Anchored = false end
         else
-            if getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit or getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit == true then
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+            if humanoid and humanoid.Sit then
+                humanoid:ChangeState(3)
+                humanoid:ChangeState(3)
             end
-            wait()
-            getgenv().getRoot(getgenv().Character).Anchored = true
-            wait()
-            getgenv().Character:FindFirstChild("Animate").Disabled = false
-            task.wait(.2)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
-            wait(0.2)
-            getgenv().Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
-            wait(0.2)
-            getgenv().getRoot(getgenv().Character).Anchored = false
+            task.wait()
+            if root then root.Anchored = true end
+            task.wait()
+            if animate and animate:IsA("LocalScript") and animate:IsDescendantOf(game) then
+                animate.Disabled = false
+            end
+            task.wait(0.2)
+            if humanoid then
+                humanoid:ChangeState(3)
+            end
+            task.wait(0.2)
+            if humanoid then
+                humanoid.WalkSpeed = 16
+            end
+            task.wait(0.2)
+            if root then root.Anchored = false end
         end
     end,})
 
@@ -6094,7 +6142,7 @@
                     if getgenv().Owner_Animations then
                         getgenv().Owner_Animations:Set(false)
                     end
-                    return getgenv().notify("Failure:", "You must be R15 to use this!", 5)
+                    return getgenv().notify("Error", "You must be R15 to use this!", 5)
                 end
                 getgenv().ownerAnimsEnabled = true
                 local LocalPlayer = getgenv().LocalPlayer
@@ -7317,16 +7365,6 @@
                     copiedAnim:Stop()
                     copiedAnim:Destroy()
                 end)
-            end
-        end
-    end
-
-    getgenv().get_animate_localscript = function(character)
-        if not character then return getgenv().notify("Error", "Your Character does not exist yet, please wait (or respawn) and try again.", 10) end
-
-        for _, v in ipairs(character:GetDescendants()) do
-            if v:IsA("LocalScript") and v.Name:lower():find("animate") then -- locked in.
-                return v
             end
         end
     end
@@ -8845,21 +8883,8 @@
     getgenv().BreakVCToFix = Tab21:CreateButton({
     Name = "Fix Voice Chat (Break Method)",
     Callback = function()
-        for i = 1, 4 do
-            getgenv().VoiceChatInternal:Leave()
-            getgenv().VoiceChatService:rejoinVoice()
-            getgenv().VoiceChatService:rejoinVoice()
-            getgenv().VoiceChatService:joinVoice()
-            getgenv().VoiceChatInternal:Leave()
-            getgenv().VoiceChatService:rejoinVoice()
-            getgenv().VoiceChatInternal:Leave()
-            task.wait()
-            getgenv().VoiceChatService:joinVoice()
-            getgenv().VoiceChatService:rejoinVoice()
-        end
+        unsuspend()
     end,})
-    wait()
-    local UserInputService = getgenv().UserInputService
 
     local running = false
     local fKey = Enum.KeyCode.Z
@@ -8867,8 +8892,6 @@
     local distSlider = 3
     local conn
     local heartConn
-    wait()
-
     local function stop()
         getgenv().loaded_face_bang = false
         if conn then
@@ -8962,7 +8985,6 @@
         end)
     end
 
-    wait()
     if heartConn then
         heartConn:Disconnect()
     end
@@ -9118,8 +9140,8 @@
     end,})
     wait()
     if game.PlaceId == 135275461271957 or game.PlaceId == 78589782053833 then
-        if getgenv().PlayerGui:FindFirstChild("Notification") then
-            getgenv().PlayerGui:FindFirstChild("Notification"):Destroy()
+        if getgenv().PlayerGui:FindFirstChild("Notification") and getgenv().PlayerGui:FindFirstChild("Notification"):IsA("ScreenGui") then
+            pcall(function() getgenv().PlayerGui:FindFirstChild("Notification"):Destroy() end)
         end
     end
     wait()
@@ -9131,7 +9153,7 @@
         if noclipToggleFly then
             if getgenv().Noclip_Enabled then
                 getgenv().FlyNoclip:Set(false)
-                return getgenv().notify("Failure:", "Noclip is already enabled.", 5)
+                return getgenv().notify("Error", "Noclip is already enabled.", 5)
             else
                 getgenv().noclipToggle:Set(true)
             end
@@ -9192,9 +9214,9 @@
             anti_fling_toggle_saved = true
             if getgenv().AntiFlingToggle then
                 getgenv().AntiFlingToggle:Set(false)
-                getgenv().notify("Alert:", "Turned off Anti Fling for 'Fly' to work properly.", 6)
+                getgenv().notify("Warning", "Turned off Anti Fling for 'Fly' to work properly.", 6)
             else
-                return getgenv().notify("Error:", "Please disable 'Anti Fling' for 'Fly' to work properly", 6)
+                return getgenv().notify("Error", "Please disable 'Anti Fling' for 'Fly' to work properly", 6)
             end
         end
         wait()
@@ -9202,18 +9224,15 @@
             anti_teleport_toggle_saved = true
             if getgenv().AntiTeleport_Univ then
                 getgenv().AntiTeleport_Univ:Set(false)
-                getgenv().notify("Alert:", "Turned off Anti Teleport for 'Fly' to work properly.", 6)
+                getgenv().notify("Warning", "Turned off Anti Teleport for 'Fly' to work properly.", 6)
             else
-                return getgenv().notify("Error:", "Please disable 'Anti Teleport' for 'Fly' to work properly.", 6)
+                return getgenv().notify("Error", "Please disable 'Anti Teleport' for 'Fly' to work properly.", 6)
             end
         end
 
         getgenv().FLYING = false
         getgenv().QEfly = true
         wait(0.1)
-        local Players = game:GetService("Players")
-        local UserInputService = game:GetService("UserInputService")
-        local RunService = game:GetService("RunService")
         if toggleTheFly then
             getgenv().FLYING = true
             getgenv().QEfly = true
@@ -9222,12 +9241,10 @@
             getgenv().flyKeyUpConnection = nil
 
             local function sFLY(vfly)
-                local RunService = game:GetService("RunService")
-                local Players = game:GetService("Players")
-                local player = Players.LocalPlayer
-                local character = getgenv().Character
-                local rootPart = getRoot(character)
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                local player = getgenv().LocalPlayer or Players.LocalPlayer
+                local character = getgenv().Character or player.Character or get_char(LocalPlayer, 10)
+                local rootPart = getgenv().HumanoidRootPart or get_root(LocalPlayer, 10)
+                local humanoid = getgenv().Humanoid or character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer, 10)
 
                 if not rootPart or not humanoid then
                     return 
@@ -9320,43 +9337,58 @@
 
             sFLY(false)
         else
-            local player = getgenv().LocalPlayer
-            local character = getgenv().Character
-            local rootPart = getgenv().HumanoidRootPart
-            local humanoid = getgenv().Humanoid
+            local player = getgenv().LocalPlayer or Players.LocalPlayer
+            local character = getgenv().Character or get_char(LocalPlayer, 10)
+            local rootPart = getgenv().HumanoidRootPart or get_root(LocalPlayer, 10)
+            local humanoid = getgenv().Humanoid or get_human(LocalPlayer, 10)
+            if not humanoid or not rootPart then
+                getgenv().FLYING = false
+                getgenv().QEfly = false
+
+                if getgenv().flyConnectionRender then
+                    getgenv().flyConnectionRender:Disconnect()
+                    getgenv().flyConnectionRender = nil
+                end
+
+                if getgenv().flyKeyDownConnection then
+                    getgenv().flyKeyDownConnection:Disconnect()
+                    getgenv().flyKeyDownConnection = nil
+                end
+
+                if getgenv().flyKeyUpConnection then
+                    getgenv().flyKeyUpConnection:Disconnect()
+                    getgenv().flyKeyUpConnection = nil
+                end
+                return getgenv().notify("Error", "Humanoid not found, disabled.", 6) 
+            end
 
             if anti_teleport_toggle_saved == true then
-                if getgenv().AntiFlingToggle then
-                    getgenv().notify("Alert:", "Turning 'Anti Teleport' back on, it was enabled before.", 5)
-                    getgenv().AntiFlingToggle:Set(true)
-                    anti_fling_toggle_saved = false
+                if getgenv().AntiTeleport_Univ then
+                    getgenv().notify("Warning", "Turning 'Anti Teleport' back on, it was enabled before.", 5)
+                    getgenv().AntiTeleport_Univ:Set(true)
+                    anti_teleport_toggle_saved = false
                 end
             end
 
             if anti_fling_toggle_saved == true then
                 if getgenv().AntiFlingToggle then
-                    getgenv().notify("Alert:", "Turning 'Anti Fling' back on, it was enabled before.", 5)
+                    getgenv().notify("Warning", "Turning 'Anti Fling' back on, it was enabled before.", 5)
                     getgenv().AntiFlingToggle:Set(true)
                     anti_fling_toggle_saved = false
                 end
             end
 
-            if getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Gyro-Fly") then
-                getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Gyro-Fly"):Destroy()
-            else
-                warn("nil - BodyGyro")
+            if getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly") then
+                pcall(function() getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly"):Destroy() end)
             end
             wait(0.1)
-            if getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Velocity-Fly") then
-                getgenv().Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Velocity-Fly"):Destroy()
-            else
-                warn("nil - BodyVelocity")
+            if getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly") then
+                pcall(function() getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly"):Destroy() end)
             end
             wait(0.2)
             rootPart.Velocity = Vector3.zero
             rootPart.AssemblyLinearVelocity = Vector3.zero
             rootPart.AssemblyAngularVelocity = Vector3.zero
-
             rootPart.CFrame = CFrame.new(rootPart.Position - Vector3.new(0, 10, 0))
 
             if humanoid then
@@ -9389,22 +9421,40 @@
         end
     end,})
 
-    local default_distance = 20
-    local teleportDistance = 20
-    local default_speed = 0.1
-    local tp_speed = 0.1
+    getgenv().teleport_effect_toggle_func = function()
+        if getgenv().glitching_script_bool_active then
+            getgenv().FlamesLibrary.disconnect("teleport_effect")
+
+            getgenv().FlamesLibrary.connect(
+                "teleport_effect",
+                runService.RenderStepped:Connect(function()
+                    local direction = math.random(1,2) == 1 and -1 or 1
+                    local rightvector = humanoidRootPart.CFrame.RightVector
+                    local offset = rightvector * (direction * tp_distance)
+                    humanoidRootPart.CFrame = humanoidRootPart.CFrame + offset
+                    task.wait(teleportSpeed)
+                    humanoidRootPart.CFrame = humanoidRootPart.CFrame - offset
+                end)
+            )
+        end
+    end
+
+    getgenv().default_distance = getgenv().default_distance or 20
+    getgenv().teleportDistance = getgenv().teleportDistance or 20
+    getgenv().default_speed = getgenv().default_speed or 0.1
+    getgenv().tp_speed = getgenv().tp_speed or 0.1
     wait(0.1)
     getgenv().glitchSideToSideSpeed = Tab16:CreateSlider({
     Name = "Glitch Speed (Less = Faster)",
     Range = {0.1, 3},
     Increment = 0.1,
     Suffix = "",
-    CurrentValue = 0.1,
+    CurrentValue = tonumber(getgenv().tp_speed) or 0.1,
     Flag = "sideToSpeed",
     Callback = function(gotSideSpeed)
         local converted_num = tonumber(gotSideSpeed)
 
-        tp_speed = converted_num
+        getgenv().tp_speed = converted_num
     end,})
 
     getgenv().glitchScriptDistance = Tab16:CreateSlider({
@@ -9412,66 +9462,50 @@
     Range = {1, 100},
     Increment = 1,
     Suffix = "Distance",
-    CurrentValue = 20,
+    CurrentValue = tonumber(getgenv().teleportDistance) or 3,
     Flag = "sideToSideDistance",
     Callback = function(DistanceNum)
-        teleportDistance = DistanceNum
+        getgenv().teleportDistance = DistanceNum
     end,})
 
     getgenv().glitchingSide = Tab16:CreateToggle({
     Name = "Glitch Side To Side Script",
-    CurrentValue = false,
+    CurrentValue = getgenv().glitching_script_bool_active or false,
     Flag = "GlitchyScript",
     Callback = function(toggleBool)
         if toggleBool then
-            getgenv().glitchActive = true
-        
-            local player = game.Players.LocalPlayer
-            local character = getgenv().Character
-            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-            local runService = game:GetService("RunService")
+            getgenv().glitching_script_bool_active = true
+            local player = getgenv().LocalPlayer or game.Players.LocalPlayer
+            local character = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
+            local humanoidRootPart = getgenv().HumanoidRootPart or character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
+            local runService = getgenv().RunService or game:GetService("RunService")
             local tp_distance = teleportDistance
             local teleportSpeed = tp_speed
-            local toggleConnection
         
-            local function toggleTeleportEffect()
-                if getgenv().glitchActive then
-                    getgenv().toggleConnection = runService.RenderStepped:Connect(function()
-                        local direction = math.random(1, 2) == 1 and -1 or 1
-                        local rightVector = humanoidRootPart.CFrame.RightVector
-                        local offset = rightVector * (direction * tp_distance)
-                        humanoidRootPart.CFrame = humanoidRootPart.CFrame + offset
-                        task.wait(teleportSpeed)
-                        humanoidRootPart.CFrame = humanoidRootPart.CFrame - offset
-                    end)
-                end
-            end
-        
-            toggleTeleportEffect()
+            getgenv().teleport_effect_toggle_func()
         else
-            if getgenv().toggleConnection then
-                getgenv().toggleConnection:Disconnect()
-                getgenv().toggleConnection = nil
-            end
+            getgenv().glitching_script_bool_active = false
+            getgenv().FlamesLibrary.is_alive("teleport_effect")
         end
     end,})
 
-    getgenv().settings_flashback = {
+    -- [[ actually will save this time. ]] --
+    getgenv().settings_flashback = getgenv().settings_flashback or {
         Keybind = string.upper("C"),
         Speed = 1.7
     }
 
     getgenv().keyToFlash = Tab16:CreateInput({
     Name = "Flashback Rewind Keybind",
-    CurrentValue = "C",
+    CurrentValue = tostring(getgenv().settings_flashback) or "C",
     PlaceholderText = "Key Here",
     RemoveTextAfterFocusLost = true,
     Flag = "KeybindFlashback",
     Callback = function(keyPressedFlash)
-        if getgenv().flashbacks_script then 
-            getgenv().notify("Alert!", "Unloading Flashback Rewind to save changes...", 7)
+        if getgenv().flashbacks_script then
+            getgenv().notify("Warning", "Unloading Flashback Rewind to save changes...", 7)
             wait(0.3)
-            local runService = game:GetService("RunService") 
+            local runService = getgenv().RunService or game:GetService("RunService") 
         
             if getgenv().flashbacks_script then
                 pcall(function()
@@ -9485,16 +9519,16 @@
             if getgenv().flashback == nil and getgenv().flashbacks_script == false then
                 getgenv().settings_flashback.Keybind = string.upper(keyPressedFlash)
                 wait(0.1)
-                getgenv().notify("Success!", "We unloaded Flashback Rewind and updated keybind!", 7)
-                wait(0.2)
-                getgenv().notify("Changed.", "New Keybind: "..tostring(string.upper(keyPressedFlash)), 6.8)
+                getgenv().notify("Success", "We unloaded Flashback Rewind and updated keybind!", 3)
+                wait(0.1)
+                getgenv().notify("Info", "New Keybind: "..tostring(string.upper(keyPressedFlash)), 3)
             else
-                getgenv().notify("Failed!", "Unable to complete process, please reset.", 6)
+                getgenv().notify("Error", "Unable to complete process, try resetting.", 5)
             end
         else
             getgenv().settings_flashback.Keybind = string.upper(keyPressedFlash)
             wait(0.1)
-            getgenv().notify("Success!", "Flashback Rewind Updated To: "..tostring(string.upper(keyPressedFlash)), 7)
+            getgenv().notify("Success", "Flashback rewind keybind updated to: "..tostring(string.upper(keyPressedFlash)), 7)
         end    
     end,})
 
@@ -9503,7 +9537,7 @@
     Range = {0.7, 5},
     Increment = 0.1,
     Suffix = "",
-    CurrentValue = getgenv().settings_flashback.Speed,
+    CurrentValue = getgenv().settings_flashback.Speed or 1.7,
     Flag = "flashSpeed",
     Callback = function(gotSpeedFlashback)
         getgenv().settings_flashback.Speed = tonumber(gotSpeedFlashback)
@@ -9513,27 +9547,24 @@
     Name = "Flashback Rewind",
     Callback = function()
         if getgenv().flashbacks_script then
-            return getgenv().notify("Failed", "Flashback Rewind is already running!", 7)
+            return getgenv().notify("Error", "Flashback Rewind is already running!", 7)
         end
 
         local key = Enum.KeyCode[getgenv().settings_flashback.Keybind]
         if not Enum.KeyCode[getgenv().settings_flashback.Keybind] then
-            return getgenv().notify("Invalid Key!", "KeyCode seems to be invalid, try another one", 6)
+            return getgenv().notify("Warning", "KeyCode seems to be invalid, try another one", 6)
         end
 
         local flashbackLength = 95
         local flashbackSpeed = tonumber(getgenv().settings_flashback.Speed)
-        
         getgenv().frames = getgenv().frames or {}
         local frames = getgenv().frames
-        
-        local uis = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
-        local player = getgenv().LocalPlayer
-        local runService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-        local humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-        local character = getgenv().Character
-        local humanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
-
+        local uis = getgenv().UserInputService or cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+        local player = getgenv().LocalPlayer or Players.LocalPlayer
+        local runService = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+        local humanoid = getgenv().Humanoid or getgenv().Character:FindFirstChildWhichIsA("Humanoid") or get_human(LocalPlayer, 10)
+        local character = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
+        local humanoidRootPart = getgenv().HumanoidRootPart or getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
         getgenv().flashback = getgenv().flashback or {}
         local flashback = getgenv().flashback
         
@@ -9603,7 +9634,7 @@
                         getgenv().flashbacks_script = false
                         getgenv().flashback = nil
                     end)
-                    return getgenv().notify("Invalid Key!", "KeyCode seems to be invalid, try another one", 7)
+                    return getgenv().notify("Error", "KeyCode seems to be invalid, try another one.", 7)
                 end
             
                 if uis:IsKeyDown(key) then
@@ -9635,15 +9666,13 @@
                 getgenv().flashback = nil
             end)
         else
-            return getgenv().notify("Error:", "Flashback Rewind has not been loaded.", 5)
+            return getgenv().notify("Error", "Flashback Rewind has not been loaded.", 5)
         end
     end,})
 
-    if getgenv().Game.PlaceId == 6884319169 or getgenv().Game.PlaceId == 15546218972 then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
-        wait()
         getgenv().InfoLabelParagraph_2 = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
-        wait()
         getgenv().getHoverboardFlyInput = Tab13:CreateInput({
             Name = "Hoverboard Fly",
             PlaceholderText = "Speed",
@@ -9663,7 +9692,7 @@
                     else
                         getgenv().flying = false
                         getgenv().getHoverboardFlyInput:Set(false)
-                        return getgenv().notify("Failure:", "Hoverboard was not found in Backpack or Character, disabling...", 5)
+                        return getgenv().notify("Error", "Hoverboard was not found in Backpack or Character, disabling...", 5)
                     end
                     wait(0.5)
                     local player = getgenv().LocalPlayer
@@ -9673,7 +9702,6 @@
                     getgenv().speed = tonumber(GetSpeed) or 10
                     local bodyGyro = nil
                     local bodyVelocity = nil
-
                     local function startFly()
                         flying = true
                         bodyGyro = Instance.new("BodyGyro")
