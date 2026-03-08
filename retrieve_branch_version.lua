@@ -5949,8 +5949,8 @@
         MultipleOptions = false,
         Flag = "GetEmoteOption",
         Callback = function(selectedEmote)
-            local humanoid = getgenv().Humanoid
-            local character = getgenv().Character
+            local character = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
+            local humanoid = getgenv().Humanoid or character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer, 12)
             if humanoid and humanoid.RigType ~= Enum.HumanoidRigType.R15 then
                 return getgenv().notify("Error", "You have to be in R15 to use this!", 5)
             end
