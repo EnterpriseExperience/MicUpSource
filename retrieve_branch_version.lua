@@ -324,7 +324,7 @@
             Method = "GET"
         })
     else
-        response = nil
+        response = nil -- don't worry, we already have checks in place to make sure that if 'response' is nil, we'll do something else about it.
     end
     -- Before you ask, fuh naw, this dont work for every executor, and no it is really shit for when you wanna use Loadstring, plus it's fully UD (ultra detected), and I guarantee it bypasses no anti-cheats too, no way that it does.
     -- Doesn't bypass Football Fusion or popular anticheats or anything, because it's shit and old.
@@ -382,13 +382,13 @@
     end
     -- [] -->> Make sure the script it's self does not get executed more then once, when executed, they will need to click the Re-Execute GUI button to restart the script. <<-- [] --
     if SCRIPT_EXECUTED or getgenv().SCRIPT_EXECUTED and not _G.SCRIPT_EXECUTED == true then  
-        return Notification:Notify("Heads Up!", "Flames Hub is already running!", 5)
+        return Notification:Notify("Heads Up!", "Flames Hub is already running!", 5) -- this notification library is fine in this format since it's not the typical one with the special princess sissy preset arguments.
     end
     pcall(function() getgenv().SCRIPT_EXECUTED = true end) -- correctly store our loaded state, to ensure we track execution.
 
     -- just to check if the current experience is MIC UP, if it isn't, then just don't do anything else, simple. --
     local function is_mic_up() -- I need to use this tbh.
-        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then -- included both 17+ MIC UP and regular MIC UP experiences.
+        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then -- included both 18+ MIC UP and regular MIC UP experiences for clarity.
             return true
         else
             return false
@@ -408,7 +408,7 @@
     if enabled_vc == true then -- This just retrieves that response you get when you called "IsVoiceEnabledForUserIdAsync(game.Players.LocalPlayer.UserId)", even though I don't know why I have to match it to a Boolean, but ok.
         Notification:Notify("Success!", "Connected with VC successfully!", 3)
     elseif (enabled_vc == false and (not game.PlaceId == 6884319169)) or (not game.PlaceId == 15546218972) then
-        Notification:Notify("Success!", "Connected.", 5)
+        Notification:Notify("Success!", "Connected.", 5) -- I'm never sure why I did this tbh, just kind of figured it'd separate the messages, but never really mattered.
     elseif enabled_vc == false and game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         Notification:Notify("ALERT:", "You do not have VC, you may be kicked!", 5) -- Alerting that since the user does not have Voice Chat, MIC UP may remove them from the game (since it's literally a VC game lmao).
     else
@@ -425,7 +425,7 @@
     local all_beta_testers = {"Chick7nn", "LIL_RT228", "CrimGameHolder"}
     -- Only whitelisted people allowed here, and if you want to I guess you can put your own names, I mean go ahead, it's open sourced for a reason.
 
-    local function isWatchedPlayer(playerName)
+    local function isWatchedPlayer(playerName) -- don't blame me for the name of the function, like a year and a half ago (when I made the camelCase functions), I thought everyone made their function names like this lol.
         for _, name in ipairs(watchedPlayers) do
             if playerName == name then
                 return true -- Same here with what I said below.
@@ -434,7 +434,6 @@
         return false
     end
     print("5")
-
     function low_level_executor()
         -- this function is to prevent users from basically accessing scripts that they obviously cannot run, so you can hide it in your hub as well, if you make your own hub using this code, you can detect if they're using one of these and prevent that certain button, toggle, dropdown, etc from loading for the user, if you know it's not supported on they're executor.
         if executor_Name == "Solara" or string.find(executor_Name, "JJSploit") or executor_Name == "Xeno" then
@@ -512,7 +511,7 @@
             else
                 local head = character:WaitForChild("Head", 3)
                 if not head then return warn("Head does not exist!") end
-                if head:FindFirstChild("FlamesHubBillboard") then return end
+                if head:FindFirstChild("FlamesHubBillboard") then return end -- I don't need another BillboardGui on my head if I already have one lol.
 
                 local billboardGui = Instance.new("BillboardGui")
                 billboardGui.Name = "FlamesHubBillboard"
@@ -524,7 +523,7 @@
                 billboardGui.Parent = head
 
                 local background = Instance.new("Frame")
-                background.Size = UDim2.new(1, 0, 1, 0)
+                background.Size = UDim2.new(1, 0, 1, 0) -- nice scaling, hm.
                 background.BackgroundTransparency = transparency
                 background.BackgroundColor3 = color
                 background.BorderSizePixel = 0
@@ -573,7 +572,7 @@
         assign(player)
     end
 
-    if not getgenv().FlamesLibrary.is_alive("player_added_for_char_added_connection_start_flames_hub_titles_giver") then
+    if not getgenv().FlamesLibrary.is_alive("player_added_for_char_added_connection_start_flames_hub_titles_giver") then -- is the connection already running in the current environment?
         local main_conn = Players.PlayerAdded:Connect(function(player)
             player.CharacterAdded:Wait() -- keep this, almost forgot you gotta do this before assigning something to the LocalPlayer's Character's Head.
             task.wait(1) -- Roblox sucks for making us do this bullshit, if you don't have this, the player's Character seems to just fucking disappear and apparently in Roblox's eyes, never loaded.
@@ -581,21 +580,20 @@
             assign(player)
         end)
 
-        getgenv().FlamesLibrary.connect("flames_hub_player_added_connection_for_char_added", main_conn)
+        getgenv().FlamesLibrary.connect("flames_hub_player_added_connection_for_char_added", main_conn) -- guess it's not already connected, let's do that.
     end
     wait()
     print("9")
     wait(0.3)
     -- These down here are actually quite useful as it also preserves a lot of room to, since defining local variables usually should stay inside the function, because the main gui wrapper, is inside a function, these can be used outside of the function as well.
-    getgenv().Game = cloneref and cloneref(game) or game -- are we UD? (ultra detected), also, this needs to be dynamic, so do not 'if' check it.
-    if not game:IsLoaded() then game.Loaded:Wait() end
+    getgenv().Game = cloneref and cloneref(game) or game -- are we UD chat? (ultra detected), also, this needs to be dynamic, so do not 'if' check it.
     -- [[ like these. ]] --
     getgenv().JobID = game.JobId or getgenv().Game.JobId
     getgenv().PlaceID = game.PlaceId or getgenv().Game.PlaceId
 
     -- And you can also use this anywhere, even outside of the script, while having the script running, you can do like "getgenv().Service_Wrap("Workspace")", and it should work.
     -- You can do like: "local Workspace = getgenv().Service_Wrap("Workspace")" and it should work normally.
-    getgenv().Service_Wrap = getgenv().Service_Wrap or function(serviceName) -- I would use my setmetatable method, but I don't give a shit to do so.
+    getgenv().Service_Wrap = getgenv().Service_Wrap or function(serviceName) -- I would normally use my setmetatable method with caching, but I don't give a shit to do so.
         if cloneref then
             return cloneref(getgenv().Game:GetService(serviceName))
         else
@@ -932,19 +930,15 @@
     end
     wait(0.1)
     -- Correctly initialize our Folder we put into Workspace, since we can use this for later in the script as well.
-    if getgenv().Workspace:FindFirstChild("PartStorage") then
-        print("Already found Folder")
-    else
+    if not getgenv().Workspace:FindFirstChild("PartStorage") then
         local NewFolder = Instance.new("Folder")
         NewFolder.Name = "PartStorage"
         NewFolder.Parent = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
     end
     wait(0.2)
     -- Check our BasePlate, to correctly initialize an anti-void measure, which stretches extremely far.
-    if getgenv().passed_baseplate_check then
-        warn("Already loaded BasePlate check.")
-    else
-        function do_baseplate_check()
+    if not getgenv().passed_baseplate_check then
+        getgenv().do_baseplate_check = function()
             local TerrainFolder = getgenv().Workspace:FindFirstChild("TERRAIN_EDITOR") or Instance.new("Folder", getgenv().Workspace)
             TerrainFolder.Name = "TERRAIN_EDITOR"
             getgenv().Terrain_Folder_Baseplate_Flames_Hub = TerrainFolder or getgenv().Workspace:FindFirstChild("TERRAIN_EDITOR")
@@ -955,7 +949,7 @@
             color = Color3.fromRGB(50, 50, 50)
             transparency = 0
             
-            local function createPart(pos, partSize)
+            getgenv().createPart = function(pos, partSize)
                 local part = Instance.new("Part")
                 part.Size = partSize
                 part.Position = pos
@@ -984,7 +978,7 @@
             end
         end
         wait(0.2)
-        do_baseplate_check()
+        getgenv().do_baseplate_check()
         wait(0.1)
         getgenv().passed_baseplate_check = true
     end
@@ -1012,17 +1006,27 @@
         end
     end
     wait(0.5)
-    local TextChatService = getgenv().Service_Wrap("TextChatService")
-    local TextChannels = TextChatService:FindFirstChild("TextChannels")
-    local RBXGeneral = TextChannels:FindFirstChild("RBXGeneral")
+    local TextChatService = getgenv().TextChatService or getgenv().Service_Wrap("TextChatService")
+    local TextChannels
+    if TextChatService and TextChatService:FindFirstChild("TextChannels") then
+        TextChannels = TextChatService and TextChatService:FindFirstChild("TextChannels")
+    end
+    local RBXGeneral
+    if TextChannels and TextChannels:FindFirstChild("RBXGeneral") then
+        RBXGeneral = TextChannels and TextChannels:FindFirstChild("RBXGeneral")
+    end
 
-    RBXGeneral:DisplaySystemMessage("You are now running:")
-    wait(1.7)
-    RBXGeneral:DisplaySystemMessage("Flames Hub, with version:")
-    wait(1.8)
-    RBXGeneral:DisplaySystemMessage(tostring(Script_Version))
-    wait(1.5)
-    RBXGeneral:DisplaySystemMessage("Welcome, "..tostring(game.Players.LocalPlayer).." | We hope you enjoy scripting.")
+    if TextChannels and RBXGeneral then
+        pcall(function()
+            RBXGeneral:DisplaySystemMessage("You are now running:")
+            wait(1.7)
+            RBXGeneral:DisplaySystemMessage("Flames Hub, with version:")
+            wait(1.8)
+            RBXGeneral:DisplaySystemMessage(tostring(Script_Version))
+            wait(1.5)
+            RBXGeneral:DisplaySystemMessage("Welcome, "..tostring(game.Players.LocalPlayer).." | We hope you enjoy scripting.")
+        end)
+    end
     wait(0.5)
     -- This is a full advanced setup for Rayfield, which is why my UI is able to work on any executor.
     local Rayfield = nil
