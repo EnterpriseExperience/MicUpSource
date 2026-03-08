@@ -7959,7 +7959,7 @@
         end
     end,})
 
-    local function find_mic_up_baseplate()
+    getgenv().find_mic_up_baseplate = function()
         local Workspace = getgenv().Workspace
         local Map = getgenv().Workspace:FindFirstChild("map")
         if not Map then return end
@@ -7999,7 +7999,7 @@
         return nil
     end
 
-    local function find_mic_up_baseplate_2()
+    getgenv().find_mic_up_baseplate_2 = function()
         local Workspace = getgenv().Workspace
         local Room_Extra = Workspace:FindFirstChild("RoomExtra")
         if not Room_Extra then return end
@@ -8020,8 +8020,7 @@
     getgenv().Found_Baseplates = getgenv().Found_Baseplates or {}
     getgenv().Baseplate_OriginalColors = getgenv().Baseplate_OriginalColors or {}
     task.wait(0.1)
-
-    local function find_baseplate()
+    getgenv().find_baseplate = function()
         for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
             if v:IsA("BasePart") and string.find(v.Name:lower(), "baseplate") then
                 Found_Baseplate = true
@@ -8036,81 +8035,89 @@
         return nil
     end
 
-    function save_old_baseplate_color()
-        if getgenv().Has_Found_Successfully_Baseplate then
-            for _, baseplate in ipairs(getgenv().Found_Baseplates) do
-                if baseplate and baseplate:IsA("BasePart") then
-                    getgenv().Baseplate_OriginalColors[baseplate] = baseplate.Color
+    getgenv().find_baseplate = function()
+        for _,v in ipairs(getgenv().Workspace:GetDescendants()) do
+            if v:IsA("BasePart") and string.find(v.Name:lower(),"baseplate") then
+                table.insert(getgenv().Found_Baseplates,v)
+
+                if not getgenv().Baseplate_OriginalColors[v] then
+                    getgenv().Baseplate_OriginalColors[v] = v.Color
                 end
             end
         end
+
+        return getgenv().Found_Baseplates
     end
-    wait(0.2)
-    getgenv().RainbowBaseplate_Universal = Tab18:CreateToggle({
-    Name = "Rainbow Baseplate (Universal)",
-    CurrentValue = false,
-    Flag = "RainbowBaseplate_UniversalWorking",
-    Callback = function(Always_Rainbow_Baseplate_Ez)
-        if Always_Rainbow_Baseplate_Ez then
-            local find_baseplate_func = find_baseplate()
-            if not find_baseplate_func then
-                getgenv().rainbow_universal_baseplate_ez = false
-                getgenv().RainbowBaseplate_Universal:Set(false)
-                return getgenv().notify("Failure:", "Could not find a Baseplate in the current experience!", 5)
-            end
 
-            local TweenService = getgenv().TweenService
-            local Workspace = getgenv().Workspace
-            local Terrain
-            getgenv().rainbow_universal_baseplate_ez = true
+    getgenv().applyTweenColor = function(part,newColor)
+        local tweenInfo = TweenInfo.new(1,Enum.EasingStyle.Linear,Enum.EasingDirection.Out)
+        local tween = getgenv().TweenService:Create(part,tweenInfo,{Color = newColor})
+        tween:Play()
+    end
 
-            local colors = {
-                Color3.fromRGB(0, 255, 255),
-                Color3.fromRGB(0, 0, 0),
-                Color3.fromRGB(255, 255, 255),
-                Color3.fromRGB(128, 128, 128),
-                Color3.fromRGB(255, 0, 0),
-                Color3.fromRGB(255, 105, 180),
-                Color3.fromRGB(75, 0, 130),
-                Color3.fromRGB(50, 205, 50),
-                Color3.fromRGB(255, 20, 147),
-                Color3.fromRGB(138, 54, 15),
-                Color3.fromRGB(191, 64, 191),
-                Color3.fromRGB(255, 215, 0),
-                Color3.fromRGB(255, 140, 0)
-            }
+    getgenv().update_baseplate_colors = function(baseplates)
+        local colors = {
+            Color3.fromRGB(0,255,255),
+            Color3.fromRGB(0,0,0),
+            Color3.fromRGB(255,255,255),
+            Color3.fromRGB(128,128,128),
+            Color3.fromRGB(255,0,0),
+            Color3.fromRGB(255,105,180),
+            Color3.fromRGB(75,0,130),
+            Color3.fromRGB(50,205,50),
+            Color3.fromRGB(255,20,147),
+            Color3.fromRGB(138,54,15),
+            Color3.fromRGB(191,64,191),
+            Color3.fromRGB(255,215,0),
+            Color3.fromRGB(255,140,0)
+        }
 
-            local colorIndex = 1
-
-            getgenv().applyTweenColor = function(part, newColor)
-                local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-                local tween = TweenService:Create(part, tweenInfo, { Color = newColor })
-                tween:Play()
-            end
-
-            getgenv().updateColors = function()
-                while getgenv().rainbow_universal_baseplate_ez == true do
-                    local newColor = colors[colorIndex]
-                    applyTweenColor(find_baseplate_func, newColor)
-                    colorIndex = (colorIndex % #colors) + 1
-                    task.wait(1)
+        local colorIndex = 1
+        while getgenv().rainbow_universal_baseplate_ez == true do
+            local newColor = colors[colorIndex]
+            for _,part in ipairs(baseplates) do
+                if part and part.Parent then
+                    applyTweenColor(part,newColor)
                 end
             end
+            colorIndex = (colorIndex % #colors) + 1
+            task.wait(1)
+        end
+    end
 
-            task.spawn(updateColors)
+    getgenv().RainbowBaseplate_Universal = Tab18:CreateToggle({
+    Name = "Rainbow Baseplate (Universal)",
+    CurrentValue = getgenv().rainbow_universal_baseplate_ez or false,
+    Flag = "RainbowBaseplate_UniversalWorking",
+    Callback = function(state)
+        if state then
+            getgenv().Found_Baseplates = {}
+            local baseplates = find_baseplate()
+            if #baseplates == 0 then
+                getgenv().RainbowBaseplate_Universal:Set(false)
+                return getgenv().notify("Error","Could not find a Baseplate in the current experience!",5)
+            end
+
+            getgenv().rainbow_universal_baseplate_ez = true
+            FlamesLibrary.spawn(
+                "rainbow_baseplate_thread",
+                "spawn",
+                update_baseplate_colors,
+                baseplates
+            )
         else
             getgenv().rainbow_universal_baseplate_ez = false
-            wait(0.1)
-            getgenv().rainbow_universal_baseplate_ez = false
-            wait(0.3)
-            for i = 1, 10 do
-                getgenv().rainbow_universal_baseplate_ez = false
-            end
-            wait(0.5)
-            local Original_Color_Baseplate = save_old_baseplate_color()
-            local find_baseplate_func = find_baseplate()
+            FlamesLibrary.disconnect("rainbow_baseplate_thread")
 
-            find_baseplate_func.Color = Original_Color_Baseplate
+            for _,baseplate in ipairs(getgenv().Found_Baseplates) do
+                if baseplate and baseplate.Parent then
+                    local original = getgenv().Baseplate_OriginalColors[baseplate]
+
+                    if original then
+                        baseplate.Color = original
+                    end
+                end
+            end
         end
     end,})
 
