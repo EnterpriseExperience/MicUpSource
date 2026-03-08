@@ -49,7 +49,10 @@ getgenv().FlamesLibrary.spawn = function(name, mode, func, ...)
         thread = task.defer(func, ...)
     elseif mode == "delay" then
         local delay_time = ...
-        thread = task.delay(delay_time, func)
+        local args = {select(2, ...)}
+        thread = task.delay(delay_time, function()
+            func(unpack(args))
+        end)
     elseif mode == "wrap" then
         thread = coroutine.create(func)
         coroutine.resume(thread, ...)
