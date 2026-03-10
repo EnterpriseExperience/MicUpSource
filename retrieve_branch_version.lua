@@ -2701,21 +2701,20 @@
             getgenv().parts_rainbow_anti_void = true
             getgenv().parts_rainbow_anti_void = true
             getgenv().rainbowTweenConnection = nil
-            
             local TweenService = getgenv().TweenService
             local Workspace = getgenv().Workspace
             local PartStorage = Workspace:FindFirstChild("PartStorage")
-            if not PartStorage then return getgenv().notify("Failure:", "PartStorage does not exist in Workspace.", 5) end
+            if not PartStorage then return getgenv().notify("Error", "PartStorage does not exist in Workspace.", 5) end
             local Baseplate_AntiVoid = getgenv().myPlateThingy
 
             if not getgenv().myPlateThingy then
-                return getgenv().notify("Failure:", "Anti Void Baseplate does not exist.", 5)
+                return getgenv().notify("Error", "Anti Void Baseplate does not exist.", 5)
             end
             
             if not Baseplate_AntiVoid then
                 getgenv().RainbowAntiVoidBasePlate:Set(false)
                 getgenv().parts_rainbow_anti_void = false
-                return getgenv().notify("Failure", "Anti Void Part does not exist!", 5)
+                return getgenv().notify("Error", "Anti Void Part does not exist!", 5)
             end
             
             local colors = {
@@ -3209,7 +3208,7 @@
                     wait(0.2)
                     getgenv().getRoot(getgenv().Character).CFrame = OldCF
                     wait(0.2)
-                    getgenv().notify("Success:", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
+                    getgenv().notify("Success", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
                     if plr_booth then
                         return 
                     end
@@ -3659,45 +3658,51 @@
 
     getgenv().Spoof_Zoom_Script = Tab5:CreateToggle({
     Name = "Spoof MaxZoomDistance To Maximum.",
-    CurrentValue = false,
+    CurrentValue = getgenv().Spoofing_Zoom_DistanceOn_Camera_To_Maximum or false,
     Flag = "SpoofingZoomLoop",
     Callback = function(max_zoom_spoofed)
-        if getgenv().Zoom_Conn then
-            getgenv().Zoom_Conn:Disconnect()
-            getgenv().Zoom_Conn = nil
-        end
-
         if max_zoom_spoofed then
-            getgenv().Zoom_Conn = getgenv().RunService.RenderStepped:Connect(function()
-                getgenv().LocalPlayer.CameraMaxZoomDistance = 1000000
-            end)
+            getgenv().FlamesLibrary.disconnect("spoof_max_zoom_loop")
+
+            getgenv().Spoofing_Zoom_DistanceOn_Camera_To_Maximum = true
+            getgenv().FlamesLibrary.connect(
+                "spoof_max_zoom_loop",
+                getgenv().RunService.RenderStepped:Connect(function()
+                    getgenv().LocalPlayer.CameraMaxZoomDistance = 1000000
+                end)
+            )
         else
+            getgenv().FlamesLibrary.disconnect("spoof_max_zoom_loop")
+            getgenv().Spoofing_Zoom_DistanceOn_Camera_To_Maximum = false
             getgenv().LocalPlayer.CameraMaxZoomDistance = getgenv().CameraZoomDefaults.Max
         end
     end,})
 
     getgenv().Spoof_Min_Zoom_Script = Tab5:CreateToggle({
     Name = "Spoof MinZoomDistance To Minimum.",
-    CurrentValue = false,
+    CurrentValue = getgenv().Spoofing_Zoom_Distance_On_Camera_To_Minimum or false,
     Flag = "SpoofingMinZoomLoop",
     Callback = function(min_zoom_spoofed)
-        if getgenv().Min_Zoom_Conn then
-            getgenv().Min_Zoom_Conn:Disconnect()
-            getgenv().Min_Zoom_Conn = nil
-        end
-
         if min_zoom_spoofed then
-            getgenv().Min_Zoom_Conn = getgenv().RunService.RenderStepped:Connect(function()
-                getgenv().LocalPlayer.CameraMinZoomDistance = 0.5
-            end)
+            getgenv().FlamesLibrary.disconnect("spoof_min_zoom_loop")
+
+            getgenv().Spoofing_Zoom_Distance_On_Camera_To_Minimum = true
+            getgenv().FlamesLibrary.connect(
+                "spoof_min_zoom_loop",
+                getgenv().RunService.RenderStepped:Connect(function()
+                    getgenv().LocalPlayer.CameraMinZoomDistance = 0.5
+                end)
+            )
         else
+            getgenv().FlamesLibrary.disconnect("spoof_min_zoom_loop")
+            getgenv().Spoofing_Zoom_Distance_On_Camera_To_Minimum = false
             getgenv().LocalPlayer.CameraMinZoomDistance = getgenv().CameraZoomDefaults.Min
         end
     end,})
 
     getgenv().Custom_Anims_Allowed_Toggle = Tab5:CreateToggle({
     Name = "Allow Custom Animations (Regular)",
-    CurrentValue = false,
+    CurrentValue = getgenv().StarterPlayer.AllowCustomAnimations or false,
     Flag = "CustomAnimPackagesRegular",
     Callback = function(custom_anims_allowed_enabled)
         if custom_anims_allowed_enabled then
@@ -3711,7 +3716,7 @@
 
     getgenv().Spoof_Custom_Anims = Tab5:CreateToggle({
     Name = "Allow Custom Animations (Spoof)",
-    CurrentValue = false,
+    CurrentValue = getgenv().are_animations_spoofed or false,
     Flag = "CustomAnimPackagesSpoof",
     Callback = function(anims_spoofed)
         local run_service = getgenv().RunService
@@ -3917,7 +3922,7 @@
     wait(0.1)
     getgenv().AntiSit_Func = Tab2:CreateToggle({
     Name = "Anti Sit (working!)",
-    CurrentValue = false,
+    CurrentValue = getgenv().anti_sit_enabled or false,
     Flag = "noSittingDown",
     Callback = function(theSitDownAntiToggle)
         if theSitDownAntiToggle then
@@ -3932,7 +3937,7 @@
         getgenv().disabled_sit_function = false
     end
 
-    getgenv().HD_FlyEnabled = false
+    getgenv().HD_FlyEnabled = getgenv().HD_FlyEnabled or false
     local FlyConnection
     local speed = 50
 
@@ -3999,8 +4004,8 @@
     local anti_teleport_toggle_saved = false
     wait(0.2)
     getgenv().HDAdminFly = Tab2:CreateToggle({
-    Name = "HD Admin Fly (FE!)",
-    CurrentValue = false,
+    Name = "HD Admin Fly (FE)",
+    CurrentValue = getgenv().HD_FlyEnabled or false,
     Flag = "FlyHDAdmin",
     Callback = function(toggle_hd_fly)
         if toggle_hd_fly then
@@ -4031,20 +4036,18 @@
             local xeno_level_executor = low_level_executor()
 
             if HDAdmin_Found == false and xeno_level_executor == true then
-                getgenv().notify("Info", "E = Fly Up | Q = Fly Down.", 10)
+                if not UserInputService.TouchEnabled then
+                    getgenv().notify("Info", "E = Fly Up | Q = Fly Down.", 10)
+                end
                 getgenv().HD_FlyEnabled = true
 
-                local Players = getgenv().Players
-                local RunService = getgenv().RunService
-                local UserInputService = getgenv().UserInputService
-                local Workspace = getgenv().Workspace
-                local LocalPlayer = getgenv().LocalPlayer
-                repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                local Character = getgenv().Character
-                local HRP = getgenv().getRoot(getgenv().Character)
-                local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+                if not getgenv().HumanoidRootPart or not getgenv().Character:FindFirstChild("HumanoidRootPart") then
+                    repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                end
+                local Character = getgenv().Character or getgenv().LocalPlayer.Character or get_char(LocalPlayer, 10)
+                local HRP = getgenv().HumanoidRootPart or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 5)
+                local Humanoid = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildWhichIsA("Humanoid") or get_human(LocalPlayer, 10)
                 local Camera = getgenv().Camera
-
                 local KeysDown = {
                     W = false,
                     A = false,
@@ -4139,23 +4142,20 @@
                 wait()
                 toggleFly()
             elseif HDAdmin_Found == false then
-                getgenv().notify("Info", "E = Fly Up | Q = Fly Down.", 10)
+                if not UserInputService.TouchEnabled then
+                    getgenv().notify("Info", "E = Fly Up | Q = Fly Down.", 10)
+                end
                 getgenv().HD_FlyEnabled = true
                 speed = 75
 
-                local Players = getgenv().Players
-                local RunService = getgenv().RunService
-                local UserInputService = getgenv().UserInputService
-                local Workspace = getgenv().Workspace
-
                 local LocalPlayer = getgenv().LocalPlayer
-                repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-
-                local Character = getgenv().Character
-                local HRP = getgenv().getRoot(getgenv().Character)
-                local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+                if not getgenv().HumanoidRootPart or not getgenv().Character:FindFirstChild("HumanoidRootPart") then
+                    repeat task.wait() until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                end
+                local Character = getgenv().Character or getgenv().LocalPlayer.Character or get_char(LocalPlayer, 10)
+                local HRP = getgenv().HumanoidRootPart or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
+                local Humanoid = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildWhichIsA("Humanoid") or get_human(LocalPlayer, 10)
                 local Camera = getgenv().Camera
-
                 local KeysDown = {
                     W = false,
                     A = false,
@@ -4234,14 +4234,14 @@
             wait(0.2)
             if anti_fling_toggle_saved == true then
                 if getgenv().AntiFlingToggle then
-                    getgenv().notify("Alert:", "Turning 'Anti Fling' back on, it was enabled before.", 5)
+                    getgenv().notify("Warning", "Turning 'Anti Fling' back on, it was enabled before.", 5)
                     getgenv().AntiFlingToggle:Set(true)
                     anti_fling_toggle_saved = false
                 end
             end
             if anti_teleport_toggle_saved == true then
                 if getgenv().AntiTeleport_Univ then
-                    getgenv().notify("Alert:", "Turning 'Anti Teleport' back on, it was enabled before.", 5)
+                    getgenv().notify("Warning", "Turning 'Anti Teleport' back on, it was enabled before.", 5)
                     getgenv().AntiTeleport_Univ:Set(true)
                     anti_teleport_toggle_saved = false
                 end
@@ -4249,20 +4249,19 @@
         end
     end,})
 
+    getgenv().HD_FlySpeed = getgenv().HD_FlySpeed or 50
     getgenv().HDAdminFly_Speed = Tab2:CreateSlider({
     Name = "HD Admin Fly Speed",
     Range = {50, 500},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 50,
+    CurrentValue = tonumber(getgenv().HD_FlySpeed) or 50,
     Flag = "EditFlySpeedHDAdmin",
     Callback = function(HDAdminFlySpeed_Edit)
         speed = HDAdminFlySpeed_Edit
-        wait()
         getgenv().HD_FlySpeed = speed
     end,})
 
-    wait(0.1)
     getgenv().SendOwnNotification = Tab1:CreateInput({
     Name = "Send Your Own Notification",
     CurrentValue = "Text Here",
@@ -4270,19 +4269,21 @@
     RemoveTextAfterFocusLost = true,
     Flag = "SendNotifMessage",
     Callback = function(Notif_Sender)
-        getgenv().GuiService:SendNotification({
-            Title = tostring("Flames Hub:"),
-            Text = tostring(Notif_Sender),
-        })
-    end,})
-    wait()
-    local RunService = getgenv().RunService
-    local Players = getgenv().Players
-    local UserInputService = getgenv().UserInputService
-    local Player = getgenv().LocalPlayer
-    local Character = getgenv().Character
-    local RootPart = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        if not getgenv().GuiService or typeof(getgenv().GuiService.SendNotification) ~= "function" then
+            return getgenv().notify("Error", "GuiService does not exist or 'SendNotification' is not a function.", 7)
+        end
 
+        pcall(function()
+            getgenv().GuiService:SendNotification({
+                Title = tostring("Flames Hub:"),
+                Text = tostring(Notif_Sender),
+            })
+        end)
+    end,})
+
+    local Player = getgenv().LocalPlayer
+    local Character = getgenv().Character or getgenv().LocalPlayer.Character or get_char(LocalPlayer, 10)
+    local RootPart = getgenv().HumanoidRootPart or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
     local isHoldingJump = false
     local isHoldingKey = false
 
@@ -4302,7 +4303,7 @@
             Keybind = Enum.KeyCode.Space
         }
 
-        local Character = getgenv().Character
+        local Character = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer, 10)
         local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
 
         if Humanoid then
@@ -4316,117 +4317,87 @@
 
     wait(0.2)
 
-    local JailCellConnection
     getgenv().JailCellCheckEnabled = false
-
-    local function DisableJailCellWatcher()
+    local function disable_jail_cell_watcher()
         getgenv().JailCellCheckEnabled = false
-        if JailCellConnection then
-            JailCellConnection:Disconnect()
-            JailCellConnection = nil
-        end
+        getgenv().FlamesLibrary.disconnect("anti_jail_cell_watchers")
     end
-    wait(0.1)
-    getgenv().DisableJell_Cell_Watcher = DisableJailCellWatcher
-
-    local FreezeCheckConnection
-    local IceBlockConnection
+    task.wait(0.1)
+    getgenv().disable_jail_cell_watcher = disable_jail_cell_watcher
     getgenv().IceBlockCheckEnabled = false
 
-    local function DisableIceWatcher()
+    local function disable_ice_watcher()
         getgenv().IceBlockCheckEnabled = false
-        if IceBlockConnection then
-            IceBlockConnection:Disconnect()
-            IceBlockConnection = nil
-        end
-        if FreezeCheckConnection then
-            FreezeCheckConnection:Disconnect()
-            FreezeCheckConnection = nil
-        end
+        getgenv().FlamesLibrary.disconnect("anti_ice_block_watchers")
     end
-    wait(0.1)
-    getgenv().DisableIce_Block_Watcher = DisableIceWatcher
-
+    task.wait(0.1)
+    getgenv().disable_ice_watcher = disable_ice_watcher
     getgenv().AddAutoAntiIceJailCell = Tab16:CreateButton({
     Name = "Auto-Run Anti Ice/Jail (Leave manually to stop)",
     Callback = function()
         if getgenv().Loaded_Check_For_Anti_Ice_Jail then
-            return getgenv().notify("Heads Up:", "You already loaded auto-run anti ice/jail!", 6)
+            return getgenv().notify("Warning", "You already loaded auto-run anti ice/jail!", 6)
+        end
+        if not getgenv().queueteleport then
+            return getgenv().notify("Error", "Your executor does not support 'queueteleport'!", 6)
         end
         task.wait(0.2)
-        getgenv().notify("Heads Up!:", "You MUST leave manually and rejoin to disable/stop this script.", 5)
+        getgenv().notify("Info", "You MUST leave manually and rejoin to disable/stop this script.", 5)
         getgenv().Loaded_Check_For_Anti_Ice_Jail = true
-        getgenv().LocalPlayer.OnTeleport:Connect(function(State)
-            if (not getgenv().Anti_Ice_Jail_AutoRun) and getgenv().queueteleport then
+        getgenv().FlamesLibrary.disconnect("anti_ice_jail_autorun")
+        getgenv().FlamesLibrary.connect("anti_ice_jail_autorun", getgenv().LocalPlayer.OnTeleport:Connect(function(state)
+            if not getgenv().Anti_Ice_Jail_AutoRun then
                 getgenv().Anti_Ice_Jail_AutoRun = true
                 queueteleport("loadstring(game:HttpGet(('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Anti_Ice_Jail_HDAdmin.lua')))()")
-            else
-                return getgenv().notify("Failure:", "Your executor does not support 'queueteleport'!", 6)
             end
-        end)
+        end))
     end,})
 
     getgenv().AntiJailCell = Tab16:CreateToggle({
     Name = "Anti Jail Cell (HD Admin)",
-    CurrentValue = false,
+    CurrentValue = getgenv().JailCellCheckEnabled or false,
     Flag = "AntiJailCellConnection",
-    Callback = function(AntiJailHDAdmin)
-        if AntiJailHDAdmin then
+    Callback = function(anti_jail_hd_admin)
+        if anti_jail_hd_admin then
             local TeleportService = cloneref and cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
             local LocalPlayer = getgenv().LocalPlayer
-            local PlaceID = game.PlaceId
-            local JobID = game.JobId
+            local place_id = game.PlaceId
+            local job_id = game.JobId
 
-            getgenv().JailCellCheckEnabled = false
-
-            local function Rejoin()
-                TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
-            end
-
-            local function EnableJailCellWatcher()
-                if JailCellConnection then return end
-                getgenv().JailCellCheckEnabled = true
-
-                JailCellConnection = workspace.DescendantAdded:Connect(function(descendant)
+            getgenv().JailCellCheckEnabled = true
+            getgenv().FlamesLibrary.disconnect("anti_jail_cell_watchers")
+            getgenv().FlamesLibrary.connect(
+                "anti_jail_cell_watchers",
+                workspace.DescendantAdded:Connect(function(descendant)
                     if not getgenv().JailCellCheckEnabled then return end
+
                     if descendant:IsA("Model") and descendant.Name == LocalPlayer.Name.."'s JailCell" then
-                        Rejoin()
+                        rejoin()
                     end
                 end)
-            end
-
-            EnableJailCellWatcher()
+            )
         else
-            DisableJailCellWatcher()
+            getgenv().JailCellCheckEnabled = false
+            getgenv().FlamesLibrary.disconnect("anti_jail_cell_watchers")
         end
     end,})
 
     getgenv().AntiIceBlock = Tab16:CreateToggle({
     Name = "Anti Ice/Freeze (HD Admin)",
-    CurrentValue = false,
+    CurrentValue = getgenv().IceBlockCheckEnabled or false,
     Flag = "AntiIceBlockConnection",
-    Callback = function(AntiIceHDAdmin)
-        if AntiIceHDAdmin then
-            local TeleportService = cloneref and cloneref(game:GetService("TeleportService")) or game:GetService("TeleportService")
-            local Players = getgenv().Players
-            local RunService = getgenv().RunService
-
-            local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
-            local PlaceID = game.PlaceId
-            local JobID = game.JobId
-
-            local function Rejoin()
-                TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
-            end
-
-            local function IsFullyFrozen()
-                local character = LocalPlayer.Character
+    Callback = function(anti_ice_hd_admin)
+        if anti_ice_hd_admin then
+            local place_id = game.PlaceId
+            local job_id = game.JobId
+            local function rejoin() pcall(function() TeleportService:TeleportToPlaceInstance(place_id, job_id, getgenv().LocalPlayer) end) end
+            local function is_fully_frozen()
+                local character = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer,5)
                 if not character then return false end
-
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                local humanoid = getgenv().Humanoid or character and character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer,10)
                 if not humanoid then return false end
 
-                for _, part in ipairs(character:GetDescendants()) do
+                for _,part in ipairs(character:GetDescendants()) do
                     if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
                         if not part.Anchored then
                             return false
@@ -4437,30 +4408,33 @@
                 return true
             end
 
-            local function EnableIceWatcher()
-                if IceBlockConnection then return end
-                getgenv().IceBlockCheckEnabled = true
-
-                IceBlockConnection = workspace.DescendantAdded:Connect(function(descendant)
+            getgenv().IceBlockCheckEnabled = true
+            getgenv().FlamesLibrary.disconnect("anti_ice_block_watchers")
+            getgenv().FlamesLibrary.connect(
+                "anti_ice_block_watchers",
+                workspace.DescendantAdded:Connect(function(descendant)
                     if not getgenv().IceBlockCheckEnabled then return end
+
                     if descendant:IsA("Part") and descendant.Name == LocalPlayer.Name.."'s FreezeBlock" then
-                        Rejoin()
+                        rejoin()
                     end
                 end)
+            )
 
-                FreezeCheckConnection = RunService.Heartbeat:Connect(function()
+            getgenv().FlamesLibrary.connect(
+                "anti_ice_block_watchers",
+                RunService.Heartbeat:Connect(function()
                     if not getgenv().IceBlockCheckEnabled then return end
 
                     local character = LocalPlayer.Character
-                    if character and IsFullyFrozen() then
-                        Rejoin()
+                    if character and is_fully_frozen() then
+                        rejoin()
                     end
                 end)
-            end
-
-            EnableIceWatcher()
+            )
         else
-            DisableIceWatcher()
+            getgenv().IceBlockCheckEnabled = false
+            getgenv().FlamesLibrary.disconnect("anti_ice_block_watchers")
         end
     end,})
 
@@ -4490,57 +4464,61 @@
         end
     end,})
 
-    local anti_knockback_connection
-    getgenv().anti_knock_back_conn = anti_knockback_connection
-    local antiKnockbackEnabled = false
-
+    local anti_knockback_enabled = false
     getgenv().AntiFlingToggle = Tab16:CreateToggle({
     Name = "Anti Fling",
-    CurrentValue = false,
+    CurrentValue = getgenv().anti_fling_enabled or false,
     Flag = "AntiFlingAbsolutelyInsane",
-    Callback = function(EnableAntiFlingScript)
-        if EnableAntiFlingScript then
-            getgenv().antiFlingEnabled = true
-            getgenv().antiKnockbackEnabled = true
+    Callback = function(enable_anti_fling_script)
+        if enable_anti_fling_script then
+            getgenv().anti_fling_enabled = true
+            getgenv().anti_knockback_enabled = true
             local lp = getgenv().LocalPlayer
-            local function getHRP()
-                local char = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
+            local function get_hrp()
+                local char = getgenv().Character or lp.Character or get_char(lp, 10)
                 return getgenv().HumanoidRootPart or char and char:FindFirstChild("HumanoidRootPart") or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             end
-            local function cleanUpForces()
-                local hrp = getHRP()
-                if not hrp then return getgenv().notify("Error", "Your HumanoidRootPart does not exist yet, try resetting.", 7) end
 
-                for _, obj in ipairs(hrp:GetChildren()) do
+            local function cleanup_forces()
+                local hrp = get_hrp()
+                if not hrp then
+                    return getgenv().notify("Error", "Your HumanoidRootPart does not exist yet, try resetting.", 7)
+                end
+
+                for _,obj in ipairs(hrp:GetChildren()) do
                     if obj:IsA("BodyMover") or obj:IsA("VectorForce") or obj:IsA("Torque") or obj:IsA("LinearVelocity") then
-                        obj:Destroy()
+                        pcall(function() obj:Destroy() end)
                     end
                 end
             end
 
-            local function onHeartbeat()
-                if not (getgenv().antiKnockbackEnabled or getgenv().antiFlingEnabled) then return end
-
-                local hrp = getHRP()
-                local humanoid = lp.Character and lp.Character:FindFirstChildWhichIsA("Humanoid")
-                if not hrp or not humanoid then return end
-
-                local maxSpeed = 45
-                local maxAngularSpeed = 60
-
-                if hrp.Velocity.Magnitude > maxSpeed then
-                    hrp.Velocity = hrp.Velocity.Unit * maxSpeed
+            local function on_heartbeat()
+                if not (getgenv().anti_knockback_enabled or getgenv().anti_fling_enabled) then
+                    return
                 end
 
-                if hrp.AssemblyLinearVelocity.Magnitude > maxSpeed then
-                    hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity.Unit * maxSpeed
+                local hrp = get_hrp()
+                local humanoid = getgenv().Humanoid or lp.Character and lp.Character:FindFirstChildWhichIsA("Humanoid")
+                if not hrp or not humanoid then
+                    return
                 end
 
-                if hrp.RotVelocity.Magnitude > maxAngularSpeed then
+                local max_speed = 45
+                local max_angular_speed = 60
+
+                if hrp.Velocity.Magnitude > max_speed then
+                    hrp.Velocity = hrp.Velocity.Unit * max_speed
+                end
+
+                if hrp.AssemblyLinearVelocity.Magnitude > max_speed then
+                    hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity.Unit * max_speed
+                end
+
+                if hrp.RotVelocity.Magnitude > max_angular_speed then
                     hrp.RotVelocity = Vector3.zero
                 end
 
-                if hrp.AssemblyAngularVelocity.Magnitude > maxAngularSpeed then
+                if hrp.AssemblyAngularVelocity.Magnitude > max_angular_speed then
                     hrp.AssemblyAngularVelocity = Vector3.zero
                 end
 
@@ -4548,27 +4526,73 @@
                     humanoid.PlatformStand = false
                 end
 
-                cleanUpForces()
+                cleanup_forces()
             end
 
-            if getgenv().anti_knock_back_conn then
-                getgenv().anti_knock_back_conn:Disconnect()
-                getgenv().anti_knock_back_conn = nil
-            end
-            wait(0.2)
-            getgenv().anti_knock_back_conn = RunService.Heartbeat:Connect(onHeartbeat)
+            getgenv().FlamesLibrary.disconnect("anti_fling")
+            task.wait(0.2)
+            getgenv().FlamesLibrary.connect(
+                "anti_fling",
+                RunService.Heartbeat:Connect(on_heartbeat)
+            )
         else
-            getgenv().antiFlingEnabled = false
+            getgenv().anti_fling_enabled = false
+            getgenv().anti_knockback_enabled = false
+            getgenv().FlamesLibrary.disconnect("anti_fling")
+        end
+    end,})
 
-            if getgenv().antiFlingThing then
-                getgenv().antiFlingThing:Disconnect()
-                getgenv().antiFlingThing = nil
-            end
-            antiKnockbackEnabled = false
-            if getgenv().anti_knock_back_conn then
-                getgenv().anti_knock_back_conn:Disconnect()
-                getgenv().anti_knock_back_conn = nil
-            end
+    getgenv().gameplay_paused_toggle = function(state)
+        if typeof(state) ~= "boolean" then return end
+
+        local GuiService = getgenv().GuiService or cloneref and cloneref(game:GetService("GuiService")) or game:GetService("GuiService")
+
+        pcall(function()
+            GuiService:SetGameplayPausedNotificationEnabled(state)
+        end)
+    end
+
+    getgenv().Anti_Gameplay_Paused = Tab16:CreateToggle({
+    Name = "Anti Gameplay Paused",
+    CurrentValue = getgenv().NoGameplay_Paused_Screen_Loop_Toggled or false,
+    Flag = "NoGamePlayPausedScreenEver",
+    Callback = function(toggle_gameplay_paused_state)
+        if toggle_gameplay_paused_state then
+            getgenv().FlamesLibrary.disconnect("anti_gameplay_paused_loop")
+            getgenv().NoGameplay_Paused_Screen_Loop_Toggled = true
+            getgenv().FlamesLibrary.connect(
+                "anti_gameplay_paused_loop",
+                RunService.Heartbeat:Connect(function()
+                    getgenv().gameplay_paused_toggle(false)
+                end)
+            )
+        else
+            getgenv().FlamesLibrary.disconnect("anti_gameplay_paused_loop")
+            getgenv().NoGameplay_Paused_Screen_Loop_Toggled = false
+        end
+    end,})
+
+    getgenv().OrgDestroyHeight_Flames_Hub = getgenv().OrgDestroyHeight_Flames_Hub or workspace.FallenPartsDestroyHeight
+    getgenv().Anti_Void_Toggle = Tab16:CreateToggle({
+    Name = "Anti Void (working 2026!)",
+    CurrentValue = getgenv().AntiVoid_Toggled_State or false,
+    Flag = "AntiVoidProperWithBounceUpTeleporter",
+    Callback = function(anti_void_flag_toggled)
+        if anti_void_flag_toggled then
+            workspace.FallenPartsDestroyHeight = -9e9
+            getgenv().FlamesLibrary.disconnect("anti_void_toggleable_loop_runservice")
+            getgenv().AntiVoid_Toggled_State = true
+            getgenv().FlamesLibrary.connect("anti_void_toggleable_loop_runservice", RunService.Stepped:Connect(function()
+                local root = getgenv().HumanoidRootPart or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
+
+                if root and root.Position.Y <= getgenv().OrgDestroyHeight_Flames_Hub + 25 then
+                    root.Velocity = root.Velocity + Vector3.new(0,250,0)
+                end
+            end))
+        else
+            workspace.FallenPartsDestroyHeight = getgenv().OrgDestroyHeight_Flames_Hub
+            getgenv().AntiVoid_Toggled_State = false
+            getgenv().FlamesLibrary.disconnect("anti_void_toggleable_loop_runservice")
         end
     end,})
 
@@ -4586,7 +4610,7 @@
 
     local function perform_scan()
         local results = {}
-        for _, obj in ipairs(getgenv().Workspace:GetDescendants()) do
+        for _, obj in ipairs(workspace:GetDescendants()) do
             if obj:IsA("BasePart") then
                 local name = obj.Name:upper()
                 for _, word in ipairs(keywords) do
@@ -8127,7 +8151,7 @@
         Color = Color3.fromRGB(255, 0, 0),
         Flag = "PickingColorForMap",
         Callback = function(Base_Color)
-            local Mic_Up_Baseplate = find_mic_up_baseplate()
+            local Mic_Up_Baseplate = getgenv().find_mic_up_baseplate()
             
             if Mic_Up_Baseplate then
                 Mic_Up_Baseplate.Color = Base_Color
@@ -8164,12 +8188,33 @@
             end
         end,})
     elseif game.PlaceId == 136162036182779 then
-        local Shared = getgenv().ReplicatedStorage:FindFirstChild("Shared")
-        local Communication = Shared and Shared:FindFirstChild("Communication")
-        local Remote = Communication and Communication:FindFirstChild("Remote")
-        local Focus_RF = Remote and Remote:FindFirstChild("Focus")
+        getgenv().find_focus_Remote_Function = function()
+            local cache = getgenv().found_focus_remote_function_F
+            if cache and cache.Parent and cache:IsA("RemoteFunction") then
+                return cache
+            end
+
+            for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+                if v:IsA("RemoteFunction") and v.Name:lower():find("focus") then
+                    getgenv().found_focus_remote_function_F = v
+                    return v 
+                end
+            end
+
+            return nil
+        end
+        wait(0.1)
+        if not getgenv().found_focus_remote_function_F then pcall(function() getgenv().find_focus_Remote_Function() end)
+
+        local Focus_RF = getgenv().found_focus_remote_function_F or getgenv().find_focus_Remote_Function()
 
         function change_AFK(boolean)
+            local cache = getgenv().found_focus_remote_function_F
+            if not cache or not cache:IsA("RemoteFunction") then
+                getgenv().flashing_AFK_Title_Toggle = false
+                return getgenv().notify("Error", "You cannot use this (did not find 'Focus' RemoteFunction) or Focus isn't a RemoteFunction.", 6)
+            end
+
             if boolean == true then
                 Focus_RF:InvokeServer(true) -- Sets AFK visibility tag to false, so basically people cannot see the "AFK" tag.
             elseif boolean == false then
@@ -8189,7 +8234,6 @@
                     change_AFK(true)
                 end
             elseif toggle == false then
-                getgenv().flashing_AFK_Title_Toggle = false
                 getgenv().flashing_AFK_Title_Toggle = false
             else
                 return 
@@ -16184,7 +16228,6 @@
             wait(0.3)
             if not getgenv().Has_Died_Func then
                 if setfpscap then
-                    setfpscap(0)
                     wait(0.5)
                     print("Injecting Flames Hub...")
                     wait(0.5)
@@ -16192,18 +16235,14 @@
                     wait(0.2)
                     getgenv().emoting_actions()
                     wait(0.5)
-                    getgenv().Humanoid.Health = 0
-                    task.wait(0.1)
                     getgenv().Has_Died_Func = true
                     wait(0.3)
                     getgenv().Is_ZEH_Attached = true
                     wait(1)
-                    setfpscap(999)
+                    pcall(function() setfpscap(999) end)
                     wait()
                     getgenv().output_already_viewed = true
                 else
-                    getgenv().Humanoid.Health = 0
-                    wait()
                     getgenv().Has_Died_Func = true
                     wait(0.3)
                     getgenv().Is_ZEH_Attached = true
@@ -16227,7 +16266,7 @@
                 getgenv().Has_Died_Func = true
                 getgenv().output_already_viewed = true
                 wait(0.6)
-                setfpscap(999)
+                pcall(function() setfpscap(999) end)
                 wait(0.2)
                 print("Done injecting Flames Hub.")
             end
