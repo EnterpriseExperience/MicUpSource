@@ -753,7 +753,7 @@
     getgenv().HumanoidRootPart = getgenv().HumanoidRootPart or getRoot(getgenv().Character or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character) or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart")
     getgenv().Humanoid = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().LocalPlayer.Character and getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
     getgenv().Head = getgenv().Head or getgenv().Character and getgenv().Character:FindFirstChild("Head")
-    local VoiceChatInternal = getgenv().VoiceChatService or cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
+    local VoiceChatInternal = getgenv().VoiceChatInternal or cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
     local REJOIN_COUNT = 4
     local REJOIN_DELAY = 5
     local group_id = VoiceChatInternal:GetGroupId()
