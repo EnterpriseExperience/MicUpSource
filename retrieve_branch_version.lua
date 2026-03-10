@@ -754,11 +754,12 @@
     getgenv().Humanoid = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().LocalPlayer.Character and getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
     getgenv().Head = getgenv().Head or getgenv().Character and getgenv().Character:FindFirstChild("Head")
     local VoiceChatInternal = getgenv().VoiceChatService or cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
+    local REJOIN_COUNT = 4
+    local REJOIN_DELAY = 5
+    local group_id = VoiceChatInternal:GetGroupId()
     if VoiceChatInternal:IsVoiceEnabledForUserIdAsync(LocalPlayer.UserId) then
         pcall(function()
             local groupId = VoiceChatInternal:GetGroupId()
-            local REJOIN_COUNT = 4
-            local REJOIN_DELAY = 5
             local CurrentlyMuted = true
 
             VoiceChatInternal:JoinByGroupId(groupId, true)
@@ -1028,7 +1029,16 @@
             RBXGeneral:DisplaySystemMessage("Welcome, "..tostring(game.Players.LocalPlayer).." | We hope you enjoy scripting.")
         end)
     end
-    wait(0.5)
+    
+    getgenv().get_booth = function()
+        for i,v in pairs(getgenv().Workspace:FindFirstChild("map"):FindFirstChild("Booth"):GetChildren()) do
+            if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
+                return v
+            end
+        end
+        return nil
+    end
+
     -- This is a full advanced setup for Rayfield, which is why my UI is able to work on any executor.
     local Rayfield = nil
     local MAX_ATTEMPTS = 5
@@ -1539,7 +1549,7 @@
         end
     end
 
-    function resetLightingSettings()
+    getgenv().reset_lighting_settings = function()
         if not getgenv().Lighting:FindFirstChildOfClass("Atmosphere") then
             local Atmosphere = Instance.new("Atmosphere")
             Atmosphere.Density = 0.3
@@ -1669,7 +1679,7 @@
         end
     end)
     wait(0.2)
-    resetLightingSettings() -- Call it right here, since we have the upperhand on client shit.
+    getgenv().reset_lighting_settings() -- Call it right here, since we have the upperhand on client shit.
     wait(0.2)
     -- Now we can move past Lighting and focus on that 'Game' and 'Teleport' shit again, and correctly check if the Part 'Teleport' is moved to 'AssetService' (checking if it exists in the Folder still), so we don't run into errors.
     if not GetTeleportPart then
@@ -8667,7 +8677,7 @@
 
     getgenv().GraphicsEnhancer = Tab9:CreateToggle({
     Name = "Graphics Enhancer",
-    CurrentValue = false,
+    CurrentValue = getgenv().graphics_upper or false,
     Flag = "GraphicsEnhancerToggling",
     Callback = function(new_graphics_toggle)
         if new_graphics_toggle then
@@ -8677,54 +8687,44 @@
         else
             wait(0.5)
             getgenv().graphics_upper = false
-            wait()
-            getgenv().graphics_upper = false
             wait(0.1)
-            resetLightingSettings()
-            wait(0.5)
+            getgenv().reset_lighting_settings()
         end
     end,})
-    wait(0.1)
-    if getgenv().graphics_upper == true then
-        getgenv().graphics_upper = false
-        getgenv().GraphicsEnhancer:Set(false)
-        wait(0.3)
-        resetLightingSettings()
-    end
-    wait()
-    getgenv().CtrlClickTP = Tab16:CreateToggle({
+
+    getgenv().ctrl_click_tp = Tab16:CreateToggle({
     Name = "Ctrl Click-TP (Hold CTRL and Click)",
-    CurrentValue = false,
-    Flag = "CtrlClickTPConnection",
-    Callback = function(toggleConnectionClickTP)
-        if toggleConnectionClickTP then
-            if getgenv().TeleportConnection then getgenv().TeleportConnection:Disconnect() end
+    CurrentValue = getgenv().ctrl_click_tp_enabled or false,
+    Flag = "ctrl_click_tp_connection",
+    Callback = function(state)
+        getgenv().ctrl_click_tp_enabled = state
 
-            local UIS = game:GetService("UserInputService")
-            local Player = game.Players.LocalPlayer
-            local Mouse = Player:GetMouse()
+        if state then
+            getgenv().FlamesLibrary.disconnect("ctrl_click_tp")
 
-            function GetCharacter()
-                return Player.Character
+            local uis = getgenv().UserInputService or cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+            local mouse = getgenv().LocalPlayer:GetMouse() or game.Players.LocalPlayer:GetMouse()
+            local function get_character()
+                local newest_char = getgenv().Character or getgenv().LocalPlayer.Character or get_char(LocalPlayer, 10)
+
+                return newest_char
             end
-
-            function Teleport(pos)
-                local Char = GetCharacter()
-                if Char then
-                    Char:MoveTo(pos)
+            local function teleport_to(pos)
+                local char = get_character()
+                if char then
+                    char:MoveTo(pos)
                 end
             end
 
-            getgenv().TeleportConnection = UIS.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 and UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
-                    Teleport(Mouse.Hit.p)
+            local connection = uis.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 and uis:IsKeyDown(Enum.KeyCode.LeftControl) then
+                    teleport_to(mouse.Hit.p)
                 end
             end)
+
+            getgenv().FlamesLibrary.connect("ctrl_click_tp", connection)
         else
-            if getgenv().TeleportConnection then
-                getgenv().TeleportConnection:Disconnect()
-                getgenv().TeleportConnection = nil
-            end
+            getgenv().FlamesLibrary.disconnect("ctrl_click_tp")
         end
     end,})
 
@@ -8732,20 +8732,18 @@
     Name = "Backflips (FE)",
     Callback = function()
         if getgenv().zeezyEnabled then
-            return getgenv().notify("Failure", "Backflips is already loaded.", 5)
+            return getgenv().notify("Warning", "Backflips is already loaded/enabled.", 6)
         end
         wait()
         if getgenv().loaded_face_bang then
-            return getgenv().notify("Failure", "Please switch off Face F**k before using this.", 5)
+            return getgenv().notify("Error", "Please switch off Face F**k before using this.", 5)
         end
         wait(0.2)
         local ver = "2.15" 
         local scriptname = "feFlip"
-        
         local FrontflipKey = Enum.KeyCode.Z
         local BackflipKey = Enum.KeyCode.X
         local AirjumpKey = Enum.KeyCode.C
-        
         local ca = getgenv().ContextActionService
         getgenv().zeezyEnabled = true
         local h = 0.0174533
@@ -8753,45 +8751,45 @@
         function zeezyFrontflip(act, inp, obj)
             if not getgenv().zeezyEnabled then return end
             if inp == Enum.UserInputState.Begin then
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+                getgenv().Humanoid:ChangeState(3)
                 wait()
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = true
+                getgenv().Humanoid.Sit = true
                 for i = 1, 360 do 
                     delay(i / 720, function()
                         if not getgenv().zeezyEnabled then return end
-                        getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = true
-                        getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.Angles(-h, 0, 0)
+                        getgenv().Humanoid.Sit = true
+                        getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(-h, 0, 0)
                     end)
                 end
                 wait(0.55)
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = false
+                getgenv().humanoid.Sit = false
             end
         end
         
         function zeezyBackflip(act, inp, obj)
             if not getgenv().zeezyEnabled then return end
             if inp == Enum.UserInputState.Begin then
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)
+                getgenv().Humanoid:ChangeState(3)
                 wait()
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = true
+                getgenv().Humanoid.Sit = true
                 for i = 1, 360 do
                     delay(i / 720, function()
                         if not getgenv().zeezyEnabled then return end
-                        getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = true
-                        getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.Angles(h, 0, 0)
+                        getgenv().Humanoid.Sit = true
+                        getgenv().HumanoidRootPart.CFrame = getgenv().HumanoidRootPart.CFrame * CFrame.Angles(h, 0, 0)
                     end)
                 end
                 wait(0.55)
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid").Sit = false
+                getgenv().Humanoid.Sit = false
             end
         end
         
         function zeezyAirjump(act, inp, obj)
             if not getgenv().zeezyEnabled then return end
             if inp == Enum.UserInputState.Begin then
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState("Seated")
+                getgenv().Humanoid:ChangeState("Seated")
                 wait()
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(3)	
+                getgenv().Humanoid:ChangeState(3)	
             end
         end
         
@@ -8806,7 +8804,7 @@
         notifSound.PlayOnRemove = true
         notifSound:Destroy()
         wait(0.2)
-        getgenv().notify("Success", "FE Flip loaded successfully!", 6)
+        getgenv().notify("Success", "FE Flip loaded successfully.", 6)
         wait()
         game.StarterGui:SetCore("SendNotification", {
             Title = "feFlip", 
@@ -8820,8 +8818,8 @@
     getgenv().TurnOffBackflipsScript = Tab16:CreateButton({
     Name = "Disable Backflips Script",
     Callback = function()
-        if getgenv().zeezyEnabled == nil then
-            return getgenv().notify("Error:", "BackFlip is not loaded.", 5)
+        if not getgenv().zeezyEnabled then
+            return getgenv().notify("Warning", "BackFlip is not loaded.", 5)
         end
         
         getgenv().zeezyEnabled = false
@@ -8832,7 +8830,7 @@
         ca:UnbindAction("zeezyAirjump")
         wait(0.2)
         getgenv().notify("Success", "FE Flip has been disabled successfully!", 6)
-        game:GetService("StarterGui"):SetCore("SendNotification", {
+        getgenv().StarterGui:SetCore("SendNotification", {
             Title = "feFlip",
             Text = "FE Flip disabled successfully!",
             Icon = "rbxassetid://505845268",
@@ -8841,104 +8839,179 @@
         })
     end,})
 
-    getgenv().InfJumpDoFunc = Tab16:CreateToggle({
+    getgenv().jump_height = 50
+    task.wait(0.1)
+    getgenv().inf_jump_toggle = Tab16:CreateToggle({ -- support for PC and mobile, because Flames Hub thinks everyone should have fun as they please.
     Name = "Infinite Jump",
-    CurrentValue = false,
-    Flag = "ConnectionInfiJump",
-    Callback = function(infJumpConnect)
-        if infJumpConnect then
-            local Player = getgenv().LocalPlayer
-            local UIS = getgenv().UserInputService
-            
-            _G.JumpHeight = 50
-            
-            function Action(Object, Function)
-                if Object ~= nil then
-                    Function(Object)
+    CurrentValue = getgenv().infinite_jump_enabled or false,
+    Flag = "connection_infi_jump",
+    Callback = function(state)
+        getgenv().infinite_jump_enabled = state
+
+        if state then
+            getgenv().FlamesLibrary.disconnect("infinite_jump")
+
+            local player = getgenv().LocalPlayer
+            local uis = getgenv().UserInputService
+            getgenv().jump_height = 50
+
+            local function action(object, func)
+                if object then
+                    func(object)
                 end
             end
-            
-            getgenv().JumpBoostConnection = UIS.InputBegan:Connect(function(UserInput)
-                if UserInput.UserInputType == Enum.UserInputType.Keyboard and UserInput.KeyCode == Enum.KeyCode.Space then
-                    Action(Player.Character.Humanoid, function(self)
-                        if self:GetState() == Enum.HumanoidStateType.Jumping or self:GetState() == Enum.HumanoidStateType.Freefall then
-                            Action(self.Parent.HumanoidRootPart, function(self)
-                                self.Velocity = Vector3.new(0, _G.JumpHeight, 0)
-                            end)
+
+            if uis.TouchEnabled then
+                local inf_jump_debounce = false
+
+                local connection = uis.JumpRequest:Connect(function()
+                    if inf_jump_debounce then
+                        return
+                    end
+
+                    inf_jump_debounce = true
+                    if getgenv().Character and getgenv().Character:IsDescendantOf(workspace) then
+                        if getgenv().Humanoid and getgenv().Humanoid.Parent then
+                            pcall(function() getgenv().Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
                         end
-                    end)
-                end
-            end)
-        else
-            if getgenv().JumpBoostConnection then
-                getgenv().JumpBoostConnection:Disconnect()
-                getgenv().JumpBoostConnection = nil
+                    end
+                    task.wait()
+                    inf_jump_debounce = false
+                end)
+
+                getgenv().FlamesLibrary.connect("infinite_jump", connection)
+            else
+                local connection = uis.InputBegan:Connect(function(user_input)
+                    if user_input.UserInputType == Enum.UserInputType.Keyboard and user_input.KeyCode == Enum.KeyCode.Space then
+                        action(player.Character and player.Character:FindFirstChildOfClass("Humanoid"), function(self)
+                            if self:GetState() == Enum.HumanoidStateType.Jumping or self:GetState() == Enum.HumanoidStateType.Freefall then
+                                action(self.Parent and self.Parent:FindFirstChild("HumanoidRootPart"), function(root)
+                                    root.Velocity = Vector3.new(0, getgenv().jump_height, 0)
+                                end)
+                            end
+                        end)
+                    end
+                end)
+
+                getgenv().FlamesLibrary.connect("infinite_jump", connection)
             end
+        else
+            getgenv().FlamesLibrary.disconnect("infinite_jump")
         end
     end,})
+
+    getgenv().find_mic_toggle_button = function() -- to be used soon.
+        local cache = getgenv().mic_toggle_mute_unmute_button_CoreGui
+        if cache and cache.Parent and cache:IsA("TextButton") then
+            return cache
+        end
+
+        for _, v in ipairs(CoreGui:GetDescendants()) do
+            if v:IsA("TextButton") and v.Name:lower():find("toggle_mic") then
+                getgenv().mic_toggle_mute_unmute_button_CoreGui = v
+                return v
+            end
+        end
+
+        return nil
+    end
+    wait(0.1)
+    if not getgenv().mic_toggle_mute_unmute_button_CoreGui then task.spawn(function() getgenv().find_mic_toggle_button() end) end
+
+    getgenv().leave_voice_chat = function(leave_method)
+        if leave_method == "internal" then
+            pcall(function() getgenv().VoiceChatInternal:Leave() end)
+        elseif leave_method == "external" then
+            pcall(function() getgenv().VoiceChatService:leaveVoice() end)
+        elseif leave_method == "both" then
+            pcall(function() getgenv().VoiceChatInternal:Leave() end)
+            pcall(function() getgenv().VoiceChatService:leaveVoice() end)
+        else
+            return 
+        end
+    end
+
+    getgenv().join_vc_channel = function()
+        pcall(function()
+            getgenv().leave_voice_chat("internal")
+            getgenv().leave_voice_chat("external")
+            task.wait(0.25)
+            VoiceChatInternal:JoinByGroupIdToken("", false, true)
+            task.wait()
+            for _ = 1, REJOIN_COUNT do
+                VoiceChatInternal:JoinByGroupId(group_id, true)
+            end
+        end)
+    end
+
+    getgenv().rejoin_voice_chat = function()
+        pcall(function()
+            VoiceChatInternal:JoinByGroupId(group_id, true)
+            getgenv().leave_voice_chat("external")
+            task.wait()
+            for _ = 1, REJOIN_COUNT do
+                VoiceChatInternal:JoinByGroupId(group_id, true)
+            end
+            task.wait(REJOIN_DELAY)
+            VoiceChatService:joinVoice()
+            VoiceChatInternal:JoinByGroupId(group_id, true)
+        end)
+    end
 
     getgenv().ForceFullyRejoinVC = Tab21:CreateButton({
     Name = "Force Rejoin VC",
     Callback = function()
-        getgenv().VoiceChatInternal:Leave()
-        wait(0.2)
-        getgenv().VoiceChatService:rejoinVoice()
-        getgenv().VoiceChatService:rejoinVoice()
-        wait(0.1)
-        getgenv().VoiceChatService:joinVoice()
-        wait(0.3)
-        getgenv().VoiceChatInternal:Leave()
-        task.wait(.3)
-        getgenv().VoiceChatService:rejoinVoice()
-        getgenv().VoiceChatService:joinVoice()
+        getgenv().rejoin_voice_chat()
     end,})
 
     getgenv().LeaveVCToFix = Tab21:CreateButton({
     Name = "Leave VC (Should fix some VC connection issues)",
     Callback = function()
-        getgenv().VoiceChatInternal:Leave()
-        getgenv().VoiceChatInternal:Leave()
+        getgenv().leave_voice_chat("internal")
+        task.wait(.35)
+        for i = 1, 3 do
+            getgenv().leave_voice_chat("external")
+            task.wait(0)
+        end
     end,})
 
     getgenv().joinTheVoiceChatFederalMethod = Tab21:CreateButton({
-    Name = "Join Voice Chat (Federal Method)",
+    Name = "Join Voice Chat [new method]",
     Callback = function()
-        getgenv().VoiceChatInternal:JoinByGroupIdToken('', false, true)
-        getgenv().VoiceChatInternal:JoinByGroupId('', false)
+        VoiceChatInternal:JoinByGroupId(group_id, true)
+        getgenv().leave_voice_chat("external")
+        task.wait(.7)
+        getgenv().join_vc_channel()
     end,})
 
     getgenv().RejoinVCFederalMethod = Tab21:CreateButton({
-    Name = "Rejoin Voice Chat (Federal Method)",
+    Name = "Rejoin Voice Chat",
     Callback = function()
-        getgenv().VoiceChatInternal:JoinByGroupIdToken("", false, true)
+        getgenv().rejoin_voice_chat()
     end,})
 
-    getgenv().SetPrioritySpeaker = Tab21:CreateButton({
-    Name = "Become Priority Speaker",
-    Callback = function()
-        getgenv().VoiceChatInternal:PublishPause(false)
-        wait(0.1)
-        getgenv().VoiceChatInternal:SetSpeakerDevice('Default', '')
-    end,})
-
-    getgenv().RegularJoinVC = Tab21:CreateButton({
-    Name = "Join Voice Chat (Regular Method)",
-    Callback = function()
-        getgenv().VoiceChatService:joinVoice()
-        getgenv().VoiceChatService:joinVoice()
-    end,})
-
-    getgenv().RegularRejoinVoiceFunction = Tab21:CreateButton({
-    Name = "Rejoin Voice Chat (Regular Method)",
-    Callback = function()
-        getgenv().VoiceChatService:rejoinVoice()
-        getgenv().VoiceChatService:joinVoice()
-        getgenv().VoiceChatService:rejoinVoice()
-    end,})
+    -- [[ will be back soon, not to worry. ]] --
+    --[[
+        getgenv().SetPrioritySpeaker = Tab21:CreateButton({
+        Name = "Become Priority Speaker",
+        Callback = function()
+            getgenv().VoiceChatInternal:PublishPause(false)
+            wait(0.1)
+            getgenv().VoiceChatInternal:SetSpeakerDevice('Default', '')
+        end,})
+    --]]
 
     getgenv().BreakVCToFix = Tab21:CreateButton({
-    Name = "Fix Voice Chat (Break Method)",
+    Name = "Fix Voice Chat [should fix connection issues]",
     Callback = function()
+        for i = 1, 50 do
+            task.wait(0)
+            getgenv().leave_voice_chat("both")
+            task.wait(0)
+            getgenv().join_vc_channel()
+        end
+        task.wait(0.5)
+        getgenv().notify("Success", "Now rejoining Voice Chat...", 7)
         unsuspend()
     end,})
 
@@ -9152,55 +9225,50 @@
         distSlider = max_distance
     end,})
 
-    wait(0.2)
-    getgenv().noclipToggle = Tab2:CreateToggle({
-    Name = "Noclip",
-    CurrentValue =  false,
-    Flag = "toggleNoclipChar",
-    Callback = function(noclip_toggle)
-        getgenv().Noclip_Connection = nil
-
-        if noclip_toggle then
-            Clip = false
-            getgenv().Noclip_Enabled = true
-            getgenv()._noclipModifiedParts = {}
-
-            local function NoclipLoop()
-                if not Clip and getgenv().Character then
-                    for _, part in ipairs(getgenv().Character:GetDescendants()) do
-                        if part:IsA("BasePart") and part.CanCollide then
-                            part.CanCollide = false
-                            getgenv()._noclipModifiedParts[part] = true
-                        end
-                    end
+    getgenv().noclip_loop = getgenv().noclip_loop or function()
+        if not Clip and getgenv().Character then
+            for _, part in ipairs(getgenv().Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false
+                    getgenv().noclip_modified_parts[part] = true
                 end
             end
+        end
+    end
 
-            getgenv().Noclip_Connection = RunService.Stepped:Connect(NoclipLoop)
+    getgenv().noclip_toggle = Tab2:CreateToggle({
+    Name = "Noclip",
+    CurrentValue = getgenv().noclip_enabled or false,
+    Flag = "toggleNoclipChar",
+    Callback = function(noclip_toggle)
+        if noclip_toggle then
+            Clip = false
+            getgenv().noclip_enabled = true
+            getgenv().noclip_modified_parts = {}
+
+            getgenv().FlamesLibrary.connect("noclip_loop", RunService.Stepped:Connect(getgenv().noclip_loop))
         else
-            if getgenv().Noclip_Connection then
-                getgenv().Noclip_Connection:Disconnect()
-            end
+            getgenv().FlamesLibrary.disconnect("noclip_loop")
             Clip = true
-            getgenv().Noclip_Enabled = false
+            getgenv().noclip_enabled = false
 
-            if getgenv()._noclipModifiedParts then
-                for part, _ in pairs(getgenv()._noclipModifiedParts) do
+            if getgenv().noclip_modified_parts then
+                for part,_ in pairs(getgenv().noclip_modified_parts) do
                     if part and part:IsA("BasePart") then
                         part.CanCollide = true
                     end
                 end
-                getgenv()._noclipModifiedParts = nil
+                getgenv().noclip_modified_parts = nil
             end
         end
     end,})
-    wait()
+
     if game.PlaceId == 135275461271957 or game.PlaceId == 78589782053833 then
         if getgenv().PlayerGui:FindFirstChild("Notification") and getgenv().PlayerGui:FindFirstChild("Notification"):IsA("ScreenGui") then
             pcall(function() getgenv().PlayerGui:FindFirstChild("Notification"):Destroy() end)
         end
     end
-    wait()
+
     getgenv().FlyNoclip = Tab16:CreateToggle({
     Name = "Noclip Toggle For Fly",
     CurrentValue = false,
@@ -9211,269 +9279,231 @@
                 getgenv().FlyNoclip:Set(false)
                 return getgenv().notify("Error", "Noclip is already enabled.", 5)
             else
-                getgenv().noclipToggle:Set(true)
+                getgenv().noclip_toggle:Set(true)
             end
         end
     end,})
 
     if game.PlaceId == 135275461271957 or game.PlaceId == 78589782053833 then
-        getgenv().CollectAllFootballs = Tab1:CreateToggle({
-        Name = "Collect All Footballs",
-        CurrentValue = false,
-        Flag = "DoAllFootballs",
-        Callback = function(supportForAllFootballs)
-            if supportForAllFootballs then
-                getgenv().doing_all_footballs_ez = true
-                while getgenv().doing_all_footballs_ez == true do
-                wait(0.4)
-                    for _, v in ipairs(getgenv().Workspace:GetDescendants()) do
-                        if v:IsA("BasePart") and v.Name == "Football" then
-                            firetouchinterest(v, getgenv().Character:FindFirstChild("HumanoidRootPart"), 1)
-                            wait()
-                            firetouchinterest(v, getgenv().Character:FindFirstChild("HumanoidRootPart"), 0)
+        getgenv().collect_all_footballs_loop = getgenv().collect_all_footballs_loop or function()
+            while getgenv().doing_all_footballs_ez == true do
+                task.wait(0.5)
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("BasePart") and v.Name == "Football" then
+                        local root = getgenv().HumanoidRootPart or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
+
+                        if root then
+                            firetouchinterest(v, root, 1)
+                            task.wait()
+                            firetouchinterest(v, root, 0)
                         end
                     end
                 end
-            else
-                getgenv().doing_all_footballs_ez = false
-                getgenv().doing_all_footballs_ez = false
             end
-        end,})
+        end
+
+        if firetouchinterest then
+            getgenv().collect_all_footballs_toggle = Tab1:CreateToggle({
+            Name = "Collect All Footballs",
+            CurrentValue = getgenv().doing_all_footballs_ez or false,
+            Flag = "DoAllFootballs",
+            Callback = function(support_for_all_footballs)
+                if support_for_all_footballs then
+                    getgenv().doing_all_footballs_ez = true
+
+                    getgenv().FlamesLibrary.spawn(
+                        "collect_all_footballs_loop",
+                        "spawn",
+                        getgenv().collect_all_footballs_loop
+                    )
+                else
+                    getgenv().doing_all_footballs_ez = false
+                    getgenv().FlamesLibrary.disconnect("collect_all_footballs_loop")
+                end
+            end,})
+        end
     end
 
-    getgenv().flyspeed = 1
-    getgenv().vehicleflyspeed = 1
-    local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-    local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-    local SPEED = 0
-    wait(0.1)
-    local flySpeedGet = Tab16:CreateSlider({
+    getgenv().flyspeed = getgenv().flyspeed or 1
+    getgenv().vehicleflyspeed = getgenv().vehicleflyspeed or 1
+    local control = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+    local lcontrol = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+    local speed = 0
+    task.wait(0.1)
+    getgenv().fly_speed_get = Tab16:CreateSlider({
     Name = "Fly Speed",
     Range = {1, 50},
     Increment = 1,
     Suffix = "",
-    CurrentValue = 1,
+    CurrentValue = tonumber(getgenv().flyspeed) or 1,
     Flag = "getflyspeed",
     Callback = function(doflyspeed)
-        local fly_speed_get = tonumber(doflyspeed)
-
-        getgenv().flyspeed = fly_speed_get
-        getgenv().vehicleflyspeed = fly_speed_get
+        local fly_speed_value = tonumber(doflyspeed)
+        getgenv().flyspeed = fly_speed_value
+        getgenv().vehicleflyspeed = fly_speed_value
     end,})
-    wait(0.1)
-    getgenv().FlyScript = Tab16:CreateToggle({
+    task.wait(0.1)
+    getgenv().fly_toggle = Tab16:CreateToggle({
     Name = "Fly",
-    CurrentValue = false,
+    CurrentValue = getgenv().flying or false,
     Flag = "flyScriptToggle",
-    Callback = function(toggleTheFly)
-        if getgenv().antiFlingEnabled == true then
+    Callback = function(toggle_the_fly)
+        if getgenv().antiFlingEnabled then
             anti_fling_toggle_saved = true
             if getgenv().AntiFlingToggle then
                 getgenv().AntiFlingToggle:Set(false)
-                getgenv().notify("Warning", "Turned off Anti Fling for 'Fly' to work properly.", 6)
+                getgenv().notify("Warning","Turned off Anti Fling for 'Fly' to work properly.",6)
             else
-                return getgenv().notify("Error", "Please disable 'Anti Fling' for 'Fly' to work properly", 6)
+                return getgenv().notify("Error","Please disable 'Anti Fling' for 'Fly' to work properly",6)
             end
         end
-        wait()
-        if getgenv().AntiTeleport == true then
+        task.wait()
+        if getgenv().AntiTeleport then
             anti_teleport_toggle_saved = true
             if getgenv().AntiTeleport_Univ then
                 getgenv().AntiTeleport_Univ:Set(false)
-                getgenv().notify("Warning", "Turned off Anti Teleport for 'Fly' to work properly.", 6)
+                getgenv().notify("Warning","Turned off Anti Teleport for 'Fly' to work properly.",6)
             else
-                return getgenv().notify("Error", "Please disable 'Anti Teleport' for 'Fly' to work properly.", 6)
+                return getgenv().notify("Error","Please disable 'Anti Teleport' for 'Fly' to work properly.",6)
             end
         end
 
-        getgenv().FLYING = false
-        getgenv().QEfly = true
-        wait(0.1)
-        if toggleTheFly then
-            getgenv().FLYING = true
-            getgenv().QEfly = true
-            getgenv().flyConnectionRender = nil
-            getgenv().flyKeyDownConnection = nil
-            getgenv().flyKeyUpConnection = nil
+        getgenv().flying = false
+        getgenv().qefly = true
+        task.wait(0.1)
+        if toggle_the_fly then
+            getgenv().flying = true
+            getgenv().qefly = true
 
-            local function sFLY(vfly)
-                local player = getgenv().LocalPlayer or Players.LocalPlayer
-                local character = getgenv().Character or player.Character or get_char(LocalPlayer, 10)
-                local rootPart = getgenv().HumanoidRootPart or get_root(LocalPlayer, 10)
-                local humanoid = getgenv().Humanoid or character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer, 10)
-
-                if not rootPart or not humanoid then
-                    return 
-                end
-
-                if getgenv().flyKeyDownConnection then getgenv().flyKeyDownConnection:Disconnect() end
-                if getgenv().flyKeyUpConnection then getgenv().flyKeyUpConnection:Disconnect() end
-
-                local function FLY()
-                    getgenv().FLYING = true
-                    local BG = Instance.new("BodyGyro", rootPart)
-                    local BV = Instance.new("BodyVelocity", rootPart)
-
-                    BG.Name = "Gyro-Fly"
-                    BV.Name = "Velocity-Fly"
-                    BG.P = 9e4
-                    BG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-                    BG.cframe = rootPart.CFrame
-
-                    BV.velocity = Vector3.zero
-                    BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
-
-                    getgenv().flyConnectionRender = RunService.RenderStepped:Connect(function()
-                        if not getgenv().FLYING then return end
-
-                        if not vfly and humanoid then
-                            humanoid.PlatformStand = true
-                        end
-
-                        if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
-                            SPEED = 50
-                        elseif SPEED ~= 0 then
-                            SPEED = 0
-                        end
-
-                        if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
-                            BV.velocity = ((workspace.CurrentCamera.CFrame.LookVector * (CONTROL.F + CONTROL.B))
-                                + ((workspace.CurrentCamera.CFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p)
-                                - workspace.CurrentCamera.CFrame.p)) * SPEED
-
-                            lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R, Q = CONTROL.Q, E = CONTROL.E}
-                        else
-                            BV.velocity = Vector3.zero
-                        end
-
-                        BG.cframe = workspace.CurrentCamera.CFrame
-                    end)
-                end
-
-                getgenv().flyKeyDownConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-                    if gameProcessed then return end
-
-                    local key = input.KeyCode
-                    if key == Enum.KeyCode.W then
-                        CONTROL.F = (vfly and getgenv().vehicleflyspeed or getgenv().flyspeed)
-                    elseif key == Enum.KeyCode.S then
-                        CONTROL.B = -(vfly and getgenv().vehicleflyspeed or getgenv().flyspeed)
-                    elseif key == Enum.KeyCode.A then
-                        CONTROL.L = -(vfly and getgenv().vehicleflyspeed or getgenv().flyspeed)
-                    elseif key == Enum.KeyCode.D then
-                        CONTROL.R = (vfly and getgenv().vehicleflyspeed or getgenv().flyspeed)
-                    elseif getgenv().QEfly and key == Enum.KeyCode.E then
-                        CONTROL.Q = (vfly and getgenv().vehicleflyspeed or getgenv().flyspeed) * 2
-                    elseif getgenv().QEfly and key == Enum.KeyCode.Q then
-                        CONTROL.E = -(vfly and getgenv().vehicleflyspeed or getgenv().flyspeed) * 2
-                    end
-                end)
-
-                getgenv().flyKeyUpConnection = UserInputService.InputEnded:Connect(function(input, gameProcessed)
-                    if gameProcessed then return end
-
-                    local key = input.KeyCode
-                    if key == Enum.KeyCode.W then
-                        CONTROL.F = 0
-                    elseif key == Enum.KeyCode.S then
-                        CONTROL.B = 0
-                    elseif key == Enum.KeyCode.A then
-                        CONTROL.L = 0
-                    elseif key == Enum.KeyCode.D then
-                        CONTROL.R = 0
-                    elseif key == Enum.KeyCode.E then
-                        CONTROL.Q = 0
-                    elseif key == Enum.KeyCode.Q then
-                        CONTROL.E = 0
-                    end
-                end)
-
-                FLY()
-            end
-
-            sFLY(false)
-        else
             local player = getgenv().LocalPlayer or Players.LocalPlayer
-            local character = getgenv().Character or get_char(LocalPlayer, 10)
-            local rootPart = getgenv().HumanoidRootPart or get_root(LocalPlayer, 10)
-            local humanoid = getgenv().Humanoid or get_human(LocalPlayer, 10)
-            if not humanoid or not rootPart then
-                getgenv().FLYING = false
-                getgenv().QEfly = false
+            local character = getgenv().Character or player.Character or get_char(LocalPlayer,10)
+            local root_part = getgenv().HumanoidRootPart or get_root(LocalPlayer,10)
+            local humanoid = getgenv().Humanoid or character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer,10)
 
-                if getgenv().flyConnectionRender then
-                    getgenv().flyConnectionRender:Disconnect()
-                    getgenv().flyConnectionRender = nil
-                end
-
-                if getgenv().flyKeyDownConnection then
-                    getgenv().flyKeyDownConnection:Disconnect()
-                    getgenv().flyKeyDownConnection = nil
-                end
-
-                if getgenv().flyKeyUpConnection then
-                    getgenv().flyKeyUpConnection:Disconnect()
-                    getgenv().flyKeyUpConnection = nil
-                end
-                return getgenv().notify("Error", "Humanoid not found, disabled.", 6) 
+            if not root_part or not humanoid then
+                return
             end
 
-            if anti_teleport_toggle_saved == true then
-                if getgenv().AntiTeleport_Univ then
-                    getgenv().notify("Warning", "Turning 'Anti Teleport' back on, it was enabled before.", 5)
-                    getgenv().AntiTeleport_Univ:Set(true)
-                    anti_teleport_toggle_saved = false
-                end
+            local bg = root_part:FindFirstChild("Gyro-Fly") or Instance.new("BodyGyro", root_part)
+            local bv = root_part:FindFirstChild("Velocity-Fly") or Instance.new("BodyVelocity", root_part)
+
+            bg.Name = "Gyro-Fly"
+            bv.Name = "Velocity-Fly"
+            bg.P = 9e4
+            bg.maxTorque = Vector3.new(9e9,9e9,9e9)
+            bg.cframe = root_part.CFrame
+            bv.velocity = Vector3.zero
+            bv.maxForce = Vector3.new(9e9,9e9,9e9)
+
+            getgenv().FlamesLibrary.connect(
+                "fly_render_loop",
+                RunService.RenderStepped:Connect(function()
+                    if not getgenv().flying then return end
+
+                    if humanoid then
+                        humanoid.PlatformStand = true
+                    end
+
+                    if control.L + control.R ~= 0 or control.F + control.B ~= 0 or control.Q + control.E ~= 0 then
+                        speed = 50
+                    elseif speed ~= 0 then
+                        speed = 0
+                    end
+
+                    if control.L + control.R ~= 0 or control.F + control.B ~= 0 or control.Q + control.E ~= 0 then
+                        bv.velocity =
+                            ((workspace.CurrentCamera.CFrame.LookVector * (control.F + control.B))
+                            + ((workspace.CurrentCamera.CFrame * CFrame.new(control.L + control.R,(control.F + control.B + control.Q + control.E) * 0.2,0).p)
+                            - workspace.CurrentCamera.CFrame.p)) * speed
+
+                        lcontrol = {
+                            F = control.F,
+                            B = control.B,
+                            L = control.L,
+                            R = control.R,
+                            Q = control.Q,
+                            E = control.E
+                        }
+                    else
+                        bv.velocity = Vector3.zero
+                    end
+
+                    bg.cframe = workspace.CurrentCamera.CFrame
+                end)
+            )
+
+            getgenv().FlamesLibrary.connect(
+                "fly_key_down",
+                UserInputService.InputBegan:Connect(function(input,gp)
+                    if gp then return end
+                    local key = input.KeyCode
+
+                    if key == Enum.KeyCode.W then
+                        control.F = getgenv().flyspeed
+                    elseif key == Enum.KeyCode.S then
+                        control.B = -getgenv().flyspeed
+                    elseif key == Enum.KeyCode.A then
+                        control.L = -getgenv().flyspeed
+                    elseif key == Enum.KeyCode.D then
+                        control.R = getgenv().flyspeed
+                    elseif getgenv().qefly and key == Enum.KeyCode.E then
+                        control.Q = getgenv().flyspeed * 2
+                    elseif getgenv().qefly and key == Enum.KeyCode.Q then
+                        control.E = -getgenv().flyspeed * 2
+                    end
+                end)
+            )
+
+            getgenv().FlamesLibrary.connect(
+                "fly_key_up",
+                UserInputService.InputEnded:Connect(function(input,gp)
+                    if gp then return end
+                    local key = input.KeyCode
+
+                    if key == Enum.KeyCode.W then
+                        control.F = 0
+                    elseif key == Enum.KeyCode.S then
+                        control.B = 0
+                    elseif key == Enum.KeyCode.A then
+                        control.L = 0
+                    elseif key == Enum.KeyCode.D then
+                        control.R = 0
+                    elseif key == Enum.KeyCode.E then
+                        control.Q = 0
+                    elseif key == Enum.KeyCode.Q then
+                        control.E = 0
+                    end
+                end)
+            )
+        else
+            getgenv().FlamesLibrary.disconnect("fly_render_loop")
+            getgenv().FlamesLibrary.disconnect("fly_key_down")
+            getgenv().FlamesLibrary.disconnect("fly_key_up")
+
+            local root_part = getgenv().HumanoidRootPart
+            local humanoid = getgenv().Humanoid
+
+            if root_part and root_part:FindFirstChild("Gyro-Fly") then
+                pcall(function() root_part:FindFirstChild("Gyro-Fly"):Destroy() end)
             end
 
-            if anti_fling_toggle_saved == true then
-                if getgenv().AntiFlingToggle then
-                    getgenv().notify("Warning", "Turning 'Anti Fling' back on, it was enabled before.", 5)
-                    getgenv().AntiFlingToggle:Set(true)
-                    anti_fling_toggle_saved = false
-                end
+            if root_part and root_part:FindFirstChild("Velocity-Fly") then
+                pcall(function() root_part:FindFirstChild("Velocity-Fly"):Destroy() end)
             end
 
-            if getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly") then
-                pcall(function() getgenv().HumanoidRootPart:FindFirstChild("Gyro-Fly"):Destroy() end)
+            if root_part then
+                root_part.Velocity = Vector3.zero
+                root_part.AssemblyLinearVelocity = Vector3.zero
+                root_part.AssemblyAngularVelocity = Vector3.zero
             end
-            wait(0.1)
-            if getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly") then
-                pcall(function() getgenv().HumanoidRootPart:FindFirstChild("Velocity-Fly"):Destroy() end)
-            end
-            wait(0.2)
-            rootPart.Velocity = Vector3.zero
-            rootPart.AssemblyLinearVelocity = Vector3.zero
-            rootPart.AssemblyAngularVelocity = Vector3.zero
-            rootPart.CFrame = CFrame.new(rootPart.Position - Vector3.new(0, 10, 0))
 
             if humanoid then
                 humanoid.PlatformStand = false
                 humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
             end
 
-            task.wait(0.1)
-            if rootPart then
-                rootPart.Velocity = Vector3.zero
-            end
-            wait(0.3)
-            getgenv().FLYING = false
-            getgenv().QEfly = false
-
-            if getgenv().flyConnectionRender then
-                getgenv().flyConnectionRender:Disconnect()
-                getgenv().flyConnectionRender = nil
-            end
-
-            if getgenv().flyKeyDownConnection then
-                getgenv().flyKeyDownConnection:Disconnect()
-                getgenv().flyKeyDownConnection = nil
-            end
-
-            if getgenv().flyKeyUpConnection then
-                getgenv().flyKeyUpConnection:Disconnect()
-                getgenv().flyKeyUpConnection = nil
-            end
+            getgenv().flying = false
+            getgenv().qefly = false
         end
     end,})
 
@@ -9641,7 +9671,7 @@
         end
         
         function flashback:Revert(character, humanoidRootPart, humanoid)
-            if getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
+            if getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") and getgenv().Character:FindFirstChildWhichIsA("Humanoid") then
                 local frameCount = #frames
                 if frameCount == 0 then
                     self:Advance(character, humanoidRootPart, humanoid)
@@ -9657,23 +9687,17 @@
                 table.remove(frames, frameCount)
                 
                 if lastFrame and lastFrame[1] then
-                    getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = lastFrame[1]
+                    getgenv().HumanoidRootPart.CFrame = lastFrame[1]
                 end
                 wait(.3)
                 if lastFrame and lastFrame[2] then
-                    getgenv().Character:FindFirstChild("HumanoidRootPart").Velocity = -lastFrame[2]
-                else
-                    warn("LastFrame[2] not detected at runtime, skipping...")
+                    getgenv().HumanoidRootPart.Velocity = -lastFrame[2]
                 end
                 if lastFrame and lastFrame[3] then
-                    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(lastFrame[3])
-                else
-                    warn("LastFrame[3] not detected at runtime, skipping...")
+                    getgenv().Humanoid:ChangeState(lastFrame[3])
                 end
                 if lastFrame and lastFrame[4] then
-                    getgenv().Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = lastFrame[4]
-                else
-                    warn("LastFrame[4] not detected at runtime, skipping...")
+                    getgenv().Humanoid.PlatformStand = lastFrame[4]
                 end
             end
         end
@@ -9723,168 +9747,185 @@
                 getgenv().flashback = nil
             end)
         else
-            return getgenv().notify("Error", "Flashback Rewind has not been loaded.", 5)
+            return getgenv().notify("Warning", "Flashback Rewind has not been loaded.", 5)
         end
     end,})
 
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        getgenv().InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Type 'stop' to stop flying."})
-        getgenv().InfoLabelParagraph_2 = Tab13:CreateParagraph({Title = "Controls:", Content = "Space = Up | Q = Down"})
-        getgenv().getHoverboardFlyInput = Tab13:CreateInput({
-            Name = "Hoverboard Fly",
-            PlaceholderText = "Speed",
-            RemoveTextAfterFocusLost = true,
-            Callback = function(GetSpeed)
-                if tonumber(GetSpeed) then
-                    local args = {
-                        [1] = "Hoverboard"
-                    }
-                    
-                    getgenv().ReplicatedStorage:WaitForChild("Tool"):FireServer(unpack(args))
-                    wait(0.3)
-                    if getgenv().LocalPlayer:WaitForChild("Backpack"):FindFirstChild("Hoverboard") then
-                        getgenv().LocalPlayer:FindFirstChildOfClass("Backpack"):FindFirstChild("Hoverboard").Parent = getgenv().Character
-                    elseif getgenv().Character:FindFirstChild("Hoverboard") then
-                        warn("Already in Character.")
-                    else
-                        getgenv().flying = false
-                        getgenv().getHoverboardFlyInput:Set(false)
-                        return getgenv().notify("Error", "Hoverboard was not found in Backpack or Character, disabling...", 5)
-                    end
-                    wait(0.5)
-                    local player = getgenv().LocalPlayer
-                    local character = getgenv().Character
-                    local humanoidRootPart = getgenv().HumanoidRootPart
-                    getgenv().flying = false
-                    getgenv().speed = tonumber(GetSpeed) or 10
-                    local bodyGyro = nil
-                    local bodyVelocity = nil
-                    local function startFly()
-                        flying = true
-                        bodyGyro = Instance.new("BodyGyro")
-                        bodyGyro.MaxTorque = Vector3.new(0, 400000, 0)
-                        bodyGyro.CFrame = humanoidRootPart.CFrame
-                        bodyGyro.Parent = humanoidRootPart
-                        bodyVelocity = Instance.new("BodyVelocity")
-                        bodyVelocity.MaxForce = Vector3.new(1e4, 1e4, 1e4)
-                        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-                        bodyVelocity.Parent = humanoidRootPart
-                        character.Humanoid.PlatformStand = true
-                    end
+        getgenv().hoverboard_fly_speed = getgenv().hoverboard_fly_speed or 10
+        getgenv().hoverboard_flying = false
+        getgenv().InfoLabelParagraph = Tab13:CreateParagraph({Title = "Information:", Content = "Toggle to start/stop hoverboard flying."})
+        if not getgenv().UserInputService.TouchEnabled then
+            getgenv().InfoLabelParagraph_2 = Tab13:CreateParagraph({Title = "Controls:", Content = "WASD Move | Space Up | Q Down"})
+        end
 
-                    local function updateFly()
-                        if flying then
-                            local moveDirection = Vector3.new(0, 0, 0)
-                            local camera = getgenv().Workspace.CurrentCamera
-                            local lookVector = camera.CFrame.LookVector
-                            if getgenv().UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                                moveDirection = moveDirection + lookVector
-                            end
-                            if getgenv().UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                                moveDirection = moveDirection - lookVector
-                            end
-                            if getgenv().UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                                moveDirection = moveDirection - camera.CFrame.RightVector
-                            end
-                            if getgenv().UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                                moveDirection = moveDirection + camera.CFrame.RightVector
-                            end
-                            if getgenv().UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                                moveDirection = moveDirection + Vector3.new(0, 1, 0)
-                            end
-                            if getgenv().UserInputService:IsKeyDown(Enum.KeyCode.Q) then
-                                moveDirection = moveDirection - Vector3.new(0, 1, 0)
-                            end
-                            if moveDirection.Magnitude > 0 then
-                                bodyVelocity.Velocity = moveDirection.Unit * tonumber(getgenv().speed)
-                            else
-                                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-                            end
-                            bodyGyro.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + Vector3.new(lookVector.X, 0, lookVector.Z))
-                        end
-                    end
+        getgenv().find_tool_remote = function()
+            local cache = getgenv().found_tool_giver_Remote_Event_MIC_UP
+            if cache and cache.Parent and cache:IsA("RemoteEvent") then
+                return cache
+            end
 
-                    getgenv().RunService.RenderStepped:Connect(function()
-                        if flying then
-                            updateFly()
-                        end
-                    end)
+            for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+                if v:IsA("RemoteEvent") and v.Name:lower():find("event") and v.Name:lower():find("tool") then
+                    getgenv().found_tool_giver_Remote_Event_MIC_UP = v
+                    return v
+                end
+            end
 
-                    startFly()           
-                elseif tostring(GetSpeed) or GetSpeed == "stop" then
-                    local RunService = getgenv().RunService
-                    local ReplicatedStorage = getgenv().ReplicatedStorage
-                    
-                    wait(0.3)
-                    getgenv().flyLoop = false
-                    wait(0.2)
-                    local player = getgenv().LocalPlayer
-                    local character = getgenv().Character
-                    local humanoidRootPart = getgenv().HumanoidRootPart
-                    local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+            return nil
+        end
+        wait(0.1)
+        if not getgenv().found_tool_giver_Remote_Event_MIC_UP then task.spawn(function() getgenv().find_tool_remote() end) end
 
-                    if character:FindFirstChild("Hoverboard") then
-                        local hover = character:FindFirstChild("Hoverboard")
+        getgenv().find_tool_delete_remote = function()
+            local cache = getgenv().found_tool_deleter_Remote_Event
+            if cache and cache.Parent and cache:IsA("RemoteEvent") then
+                return cache
+            end
 
-                        hover.Parent = player.Backpack
-                        task.wait(0.2)
-                        getgenv().ReplicatedStorage:WaitForChild("ToolDelete"):FireServer()
-                    end
-                    wait(0.5)
-                    local function stopFly()
-                        if humanoidRootPart:FindFirstChild("BodyGyro") then
-                            humanoidRootPart.BodyGyro:Destroy()
-                        end
-                        if humanoidRootPart:FindFirstChild("BodyVelocity") then
-                            humanoidRootPart.BodyVelocity:Destroy()
-                        end
-                        character.Humanoid.PlatformStand = false
-                        getgenv().flyLoop = false
-                    end
-                    wait(0.2)
-                    stopFly()
-                wait(0.3)
-                getgenv().ReplicatedStorage:WaitForChild("ToolDelete"):FireServer()
-            elseif tonumber(GetSpeed) and getgenv().flying == true then
-                getgenv().speed = tonumber(GetSpeed)
+            for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+                if v:IsA("RemoteEvent") and v.Name:lower():find("tool") and v.Name:lower():find("delete") then
+                    getgenv().found_tool_deleter_Remote_Event = v
+                    return v
+                end
+            end
+
+            return nil
+        end
+        wait(0.1)
+        if not getgenv().found_tool_deleter_Remote_Event then task.spawn(function() getgenv().find_tool_delete_remote() end) end
+
+        getgenv().find_cloud_tool_for_hoverboard_fly = function()
+            for _, v in ipairs(getgenv().LocalPlayer:WaitForChild("Backpack"):GetChildren()) do
+                if v:IsA("Tool") and v.Name:lower():find("cloud") then
+                    return v
+                end
+            end
+
+            return nil
+        end
+
+        getgenv().hoverboard_fly_speed_input = Tab13:CreateInput({
+        Name = "Hoverboard Fly Speed",
+        PlaceholderText = "Speed",
+        RemoveTextAfterFocusLost = true,
+        Callback = function(speed_value)
+            local convert_to_number = tonumber(speed_value)
+
+            if typeof(convert_to_number) == "number" then
+                getgenv().hoverboard_fly_speed = speed_value
+            else
+                getgenv().hoverboard_fly_speed = tonumber(speed_value)
             end
         end,})
 
-        getgenv().HoverboardFlyStopFlying = Tab13:CreateButton({
-        Name = "Stop Hoverboard Flying",
-        Callback = function()
-            local RunService = getgenv().RunService
-            local ReplicatedStorage = getgenv().ReplicatedStorage
-            
-            wait(0.3)
-            getgenv().flyLoop = false
-            wait(0.2)
-            local player = getgenv().LocalPlayer
-            local character = getgenv().Character
-            local humanoidRootPart = getgenv().HumanoidRootPart
-            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        getgenv().hoverboard_fly_toggle = Tab13:CreateToggle({
+        Name = "Hoverboard Fly",
+        CurrentValue = getgenv().hoverboard_flying or false,
+        Flag = "hoverboardFlyToggle",
+        Callback = function(toggle_hoverboard_fly)
+            local cached = getgenv().found_tool_giver_Remote_Event_MIC_UP
+            if not cached or not cached:IsA("RemoteEvent") then
+                getgenv().hoverboard_fly_toggle:Set(false)
+                return getgenv().notify("Error", "Tool giver RemotEvent not found or is not a RemoteEvent.", 10)
+            end
 
-            if character:FindFirstChild("Hoverboard") then
-                local hover = character:FindFirstChild("Hoverboard")
-
-                hover.Parent = player.Backpack
+            if toggle_hoverboard_fly then
+                local args = {[1] = "fun_cloud"}
+                pcall(function() cached:FireServer(unpack(args)) end)
                 task.wait(0.3)
-                getgenv().ReplicatedStorage:WaitForChild("ToolDelete"):FireServer()
-            end
-            wait(0.5)
-            local function stopFly()
-                if humanoidRootPart:FindFirstChild("BodyGyro") then
-                    humanoidRootPart.BodyGyro:Destroy()
+                local player = getgenv().LocalPlayer
+                local character = getgenv().Character or getgenv().LocalPlayer.Character or get_char(LocalPlayer, 10)
+                local root_part = getgenv().HumanoidRootPart or character and character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
+                local humanoid = getgenv().Humanoid or character and character:FindFirstChildWhichIsA("Humanoid") or get_human(LocalPlayer, 10)
+                local hover = getgenv().find_cloud_tool_for_hoverboard_fly()
+                if not hover then
+                    getgenv().hoverboard_flying = false
+                    getgenv().hoverboard_fly_toggle:Set(false)
+                    return getgenv().notify("Error", "Hoverboard not found, disabling...", 5)
                 end
-                if humanoidRootPart:FindFirstChild("BodyVelocity") then
-                    humanoidRootPart.BodyVelocity:Destroy()
+
+                hover.Parent = character
+                task.wait(0.4)
+                local body_gyro = Instance.new("BodyGyro")
+                body_gyro.MaxTorque = Vector3.new(0,400000,0)
+                body_gyro.CFrame = root_part.CFrame
+                body_gyro.Parent = root_part
+
+                local body_velocity = Instance.new("BodyVelocity")
+                body_velocity.MaxForce = Vector3.new(1e4,1e4,1e4)
+                body_velocity.Velocity = Vector3.zero
+                body_velocity.Parent = root_part
+
+                humanoid.PlatformStand = true
+                getgenv().hoverboard_flying = true
+
+                getgenv().FlamesLibrary.connect("hoverboard_fly_loop", getgenv().RunService.RenderStepped:Connect(function()
+                    if not getgenv().hoverboard_flying then
+                        return
+                    end
+
+                    local move_direction = Vector3.zero
+                    local camera = getgenv().Workspace.CurrentCamera
+                    local look_vector = camera.CFrame.LookVector
+                    local right_vector = camera.CFrame.RightVector
+                    local input = getgenv().UserInputService
+
+                    if input:IsKeyDown(Enum.KeyCode.W) then
+                        move_direction += look_vector
+                    end
+                    if input:IsKeyDown(Enum.KeyCode.S) then
+                        move_direction -= look_vector
+                    end
+                    if input:IsKeyDown(Enum.KeyCode.A) then
+                        move_direction -= right_vector
+                    end
+                    if input:IsKeyDown(Enum.KeyCode.D) then
+                        move_direction += right_vector
+                    end
+                    if input:IsKeyDown(Enum.KeyCode.Space) then
+                        move_direction += Vector3.new(0,1,0)
+                    end
+                    if input:IsKeyDown(Enum.KeyCode.Q) then
+                        move_direction -= Vector3.new(0,1,0)
+                    end
+
+                    if move_direction.Magnitude > 0 then
+                        body_velocity.Velocity = move_direction.Unit * tonumber(getgenv().hoverboard_fly_speed)
+                    else
+                        body_velocity.Velocity = Vector3.zero
+                    end
+
+                    body_gyro.CFrame = CFrame.new(root_part.Position, root_part.Position + Vector3.new(look_vector.X,0,look_vector.Z))
+                end))
+            else
+                getgenv().hoverboard_flying = false
+                getgenv().FlamesLibrary.disconnect("hoverboard_fly_loop")
+
+                local hover = getgenv().find_cloud_tool_for_hoverboard_fly()
+                local player = getgenv().LocalPlayer
+                local character = getgenv().Character
+                local root_part = getgenv().HumanoidRootPart or get_root(LocalPlayer, 10)
+                local humanoid = getgenv().Humanoid or character and character:FindFirstChildWhichIsA("Humanoid")
+
+                if hover and hover:IsA("Tool") then
+                    local hover = character.Hoverboard
+                    hover.Parent = player.Backpack
+                    task.wait(0.2)
+                    getgenv().found_tool_deleter_Remote_Event:FireServer()
                 end
-                getgenv().Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
-                getgenv().flyLoop = false
-                getgenv().ReplicatedStorage:WaitForChild("ToolDelete"):FireServer()
+
+                if root_part:FindFirstChildOfClass("BodyGyro") then
+                    root_part:FindFirstChildOfClass("BodyGyro"):Destroy()
+                end
+                if root_part:FindFirstChildOfClass("BodyVelocity") then
+                    root_part:FindFirstChildOfClass("BodyVelocity"):Destroy()
+                end
+
+                if humanoid then
+                    humanoid.PlatformStand = false
+                end
             end
-            wait(0.2)
-            stopFly()
         end,})
     else
         warn("Not MIC UP or MIC UP 17+, not loading Hoverboard Fly")
@@ -9893,7 +9934,7 @@
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().viewBooth = Tab11:CreateToggle({
         Name = "View Your Booth",
-        CurrentValue = false,
+        CurrentValue = getgenv().viewing_booth or false,
         Flag = "theBoothView",
         Callback = function(specBooth)
             local function get_booth()
@@ -9908,7 +9949,7 @@
             local plr_booth = get_booth()
 
             if not plr_booth then
-                return getgenv().notify("Error:", "You do not have a booth, claim one!", 5)
+                return getgenv().notify("Error", "You do not have a booth, claim one!", 5)
             end
             wait()
             if specBooth and plr_booth then
@@ -9921,10 +9962,8 @@
             end
         end,})
         wait(0.1)
-        if getgenv().viewing_booth == true then
-            getgenv().viewing_booth = false
-            getgenv().viewBooth:Set(false)
-            getgenv().Camera.CameraSubject = getgenv().Character or getgenv().Humanoid or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
+        if getgenv().viewing_booth then
+            getgenv().Camera.CameraSubject = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildWhichIsA("Humanoid")
         end
 
         getgenv().TPToBooth = Tab11:CreateButton({
@@ -9942,10 +9981,10 @@
             local plr_booth = get_booth()
 
             if not plr_booth then
-                return getgenv().notify("Error:", "You do not have a booth, claim one!", 6.5)
+                return getgenv().notify("Error", "You do not have a booth, claim one!", 6.5)
             end
             task.wait()
-            getgenv().Character:PivotTo(plr_booth:GetPivot())
+            pcall(function() getgenv().Character:PivotTo(plr_booth:GetPivot()) end)
         end,})
     else
         warn("Did not load these Booth's [7].")
@@ -9980,11 +10019,11 @@
         Name = "Teleport To Avatar-UI",
         Callback = function()
             local Map = getgenv().Workspace:FindFirstChild("map")
-            if not Map then return getgenv().notify("Failure:", "Map doesn't exist in Workspace.", 5) end
+            if not Map then return getgenv().notify("Error", "Map doesn't exist in Workspace.", 5) end
             local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
-            if not Avatar_Folder then return getgenv().notify("Failure:", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
+            if not Avatar_Folder then return getgenv().notify("Error", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
             local Avatar_Model = Avatar_Folder:FindFirstChild("Model")
-            if not Avatar_Model then return getgenv().notify("Failure:", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
+            if not Avatar_Model then return getgenv().notify("Error", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
             wait(.1)
             if Avatar_Model then
                 getgenv().Character:PivotTo(Avatar_Model:GetPivot())
@@ -9993,20 +10032,20 @@
 
         getgenv().AutoLikingPlayer = Tab1:CreateToggle({
         Name = "[Avatar-UI]: Auto Like Players",
-        CurrentValue = false,
+        CurrentValue = getgenv().alrLike or false,
         Flag = "likingPlayerAuto",
         Callback = function(likeLol)
             local Map = getgenv().Workspace:FindFirstChild("map")
-            if not Map then return getgenv().notify("Failure:", "Map doesn't exist in Workspace.", 5) end
+            if not Map then return getgenv().notify("Error", "Map doesn't exist in Workspace.", 5) end
             local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
-            if not Avatar_Folder then return getgenv().notify("Failure:", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
+            if not Avatar_Folder then return getgenv().notify("Error", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
             local Avatar_Model = Avatar_Folder:FindFirstChild("Model")
-            if not Avatar_Model then return getgenv().notify("Failure:", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
+            if not Avatar_Model then return getgenv().notify("Error", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
             wait(.1)
             local Like_Button = Avatar_Model:WaitForChild("LikeButton")
-            if not Like_Button then return getgenv().notify("Failure:", "LikeButton doesn't exist in Avatar Model", 5) end
+            if not Like_Button then return getgenv().notify("Error", "LikeButton doesn't exist in Avatar Model", 5) end
             local Click_Detector_Input = Like_Button:FindFirstChildOfClass("ClickDetector")
-            if not Click_Detector_Input then return getgenv().notify("Failure:", "Click Detector doesn't exist in Like Button Part.", 5) end
+            if not Click_Detector_Input then return getgenv().notify("Error", "Click Detector doesn't exist in Like Button Part.", 5) end
 
             if likeLol then
                 if Click_Detector_Input then
@@ -10024,15 +10063,10 @@
                 end
             end
         end,})
-        wait()
-        if getgenv().alrLike == true then
-            getgenv().alrLike = false
-            getgenv().AutoLikingPlayer:Set(false)
-        end
 
         getgenv().dislikePlayersAvatar = Tab1:CreateToggle({
         Name = "[Avatar-UI]: Auto Dislike Players",
-        CurrentValue = false,
+        CurrentValue = getgenv().Disliking_Avatar_Enabled or false,
         Flag = "dislikingEverybody",
         Callback = function(dislikeButton)
             if dislikeButton then
@@ -10061,11 +10095,6 @@
                 end
             end
         end,})
-        wait(0.2)
-        if getgenv().Disliking_Avatar_Enabled or getgenv().Disliking_Avatar_Enabled == true then
-            getgenv().Disliking_Avatar_Enabled = false
-            getgenv().dislikePlayersAvatar:Set(false)
-        end
     else
         warn("User is not in MIC UP or MIC UP 17+, not loading.")
     end
@@ -10087,7 +10116,7 @@
                         end
                     end
                 else
-                    return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
+                    return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 6)
                 end
             end,})
 
@@ -10106,7 +10135,7 @@
                         end
                     end
                 else
-                    return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
+                    return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 6)
                 end
             end,})
 
@@ -10138,7 +10167,7 @@
                             end
                         end
                     else
-                        return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
+                        return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 6)
                     end
                 else
                     wait(1)
@@ -10159,7 +10188,7 @@
                             end
                         end
                     else
-                        return getgenv().notify("Error:", "Your executor does not support 'firesignal'!", 6)
+                        return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 6)
                     end
                 end
             end,})
@@ -10177,10 +10206,10 @@
 
     if getgenv().Game.PlaceId == 6884319169 or getgenv().Game.PlaceId == 15546218972 then
         if fireclickdetector then
-            -- All this shit below has been severely upgraded (as needed).
+            -- [[ all this shit below has been severely upgraded ]] --
             local function find_real_friend()
-                for _, v in ipairs(getgenv().Players:GetPlayers()) do
-                    if v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+                for _, v in ipairs(Players:GetPlayers()) do
+                    if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then -- I'm not sure why, but I forgot to check if the Player was the LocalPlayer, my bad.
                         return v
                     end
                 end
@@ -10194,13 +10223,13 @@
             end
 
             for _, v in ipairs(getgenv().Players:GetPlayers()) do
-                if v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+                if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
                     getgenv().All_Friends_Joined_Table[v.Name] = true
                 end
             end
 
             getgenv().Players.PlayerAdded:Connect(function(Player)
-                if Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
+                if Player ~= getgenv().LocalPlayer and Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
                     getgenv().All_Friends_Joined_Table[Player.Name] = true
                 end
             end)
@@ -10226,16 +10255,16 @@
             Callback = function(myFriendsLiked)
                 if myFriendsLiked then
                     local Map = getgenv().Workspace:FindFirstChild("map")
-                    if not Map then return getgenv().notify("Failure:", "Map doesn't exist in Workspace.", 5) end
+                    if not Map then return getgenv().notify("Error", "Map doesn't exist in Workspace.", 5) end
                     local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
-                    if not Avatar_Folder then return getgenv().notify("Failure:", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
+                    if not Avatar_Folder then return getgenv().notify("Error", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
                     local Avatar_Model = Avatar_Folder:FindFirstChild("Model")
-                    if not Avatar_Model then return getgenv().notify("Failure:", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
+                    if not Avatar_Model then return getgenv().notify("Error", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
                     wait(.1)
                     local Like_Button = Avatar_Model:WaitForChild("LikeButton")
-                    if not Like_Button then return getgenv().notify("Failure:", "LikeButton doesn't exist in Avatar Model", 5) end
+                    if not Like_Button then return getgenv().notify("Error", "LikeButton doesn't exist in Avatar Model", 5) end
                     local Click_Detector_Input = Like_Button:FindFirstChildOfClass("ClickDetector")
-                    if not Click_Detector_Input then return getgenv().notify("Failure:", "Click Detector doesn't exist in Like Button Part.", 5) end
+                    if not Click_Detector_Input then return getgenv().notify("Error", "Click Detector doesn't exist in Like Button Part.", 5) end
                     local Avatar_Part_UI = Avatar_Model
                     local Image_Label = Avatar_Part_UI:WaitForChild("Avatar"):FindFirstChildOfClass("SurfaceGui"):FindFirstChildOfClass("ImageLabel")
                     local Local_Player = getgenv().LocalPlayer
@@ -10244,7 +10273,7 @@
                     if not next(getgenv().All_Friends_Joined_Table) then
                         getgenv().WhitelistFriendPlr:Set(false)
                         getgenv().Like_Friends = false
-                        return getgenv().notify("Error:", "You have '0' friends in this server!", 6)
+                        return getgenv().notify("Error", "You have '0' friends in this server!", 6)
                     end
                     
                     function like_friend_only()
@@ -10298,19 +10327,19 @@
     Callback = function(get_player_func)
         local tp_pivot_plr = findplr(get_player_func)
         if not tp_pivot_plr then
-            return getgenv().notify("Error:", "Player not found or does not exist!", 6)
+            return getgenv().notify("Error", "Player not found or does not exist!", 6)
         end
         task.wait(.2)
 
         local tp_getpivot_char = tp_pivot_plr.Character or tp_pivot_plr.CharacterAdded:Wait()
         local targetPivot = tp_getpivot_char:GetPivot()
-        if not targetPivot then return getgenv().notify("Failure:", "This player's Character Pivot does not exist (out of distance?).", 5) end
+        if not targetPivot then return getgenv().notify("Error", "This player's Character Pivot does not exist (out of distance?).", 5) end
         local offset = CFrame.new(0, 1, -3)
 
         if tp_getpivot_char and tp_getpivot_char:FindFirstChild("Humanoid") and tp_getpivot_char:FindFirstChild("HumanoidRootPart") then
-            getgenv().Character:PivotTo(targetPivot * offset)
+            pcall(function() getgenv().Character:PivotTo(targetPivot * offset) end)
         else
-            return getgenv().notify("Error:", "Character: "..tostring(get_player_func).." has not loaded in yet or they have left!", 5)
+            return getgenv().notify("Error", "Character: "..tostring(get_player_func).." has not loaded in yet or they have left!", 5)
         end
     end,})
 
@@ -12955,96 +12984,98 @@
     Callback = function()
         resetLightingSettings()
         wait(0.3)
-        if getgenv().MaterialService.Use2022Materials or getgenv().MaterialService.Use2022Materials == true then
-            getgenv().notify("True", "'Use2022Materials' is enabled | Continue.", 7)
+        if getgenv().MaterialService.Use2022Materials then
+            getgenv().notify("Success", "'Use2022Materials' is now enabled.", 7)
         else
             getgenv().material_toggle(true)
         end
     end,})
 
-    getgenv().fireworksToggle = Tab9:CreateToggle({
-    Name = "FireWorks (Sky)",
-    CurrentValue = false,
-    Flag = "FireworksInSkyLoop",
-    Callback = function(FireWorksCrazy)
-        if FireWorksCrazy then
-            local Lighting = getgenv().Lighting
-            Lighting.ClockTime = 1
-            Lighting.Brightness = 2
-            wait()
-            getgenv().setFireWorksOn = true
-            while getgenv().setFireWorksOn == true do
-            wait()
-                local player = getgenv().LocalPlayer
+    getgenv().create_firework = function(position)
+        local firework = Instance.new("Part")
+        firework.Size = Vector3.new(1,1,1)
+        firework.Position = position
+        firework.Anchored = true
+        firework.CanCollide = false
+        firework.Material = Enum.Material.Neon
+        firework.Parent = workspace
 
-                local function createFirework(position)
-                    local firework = Instance.new("Part")
-                    firework.Size = Vector3.new(1, 1, 1)
-                    firework.Position = position
-                    firework.Anchored = true
-                    firework.CanCollide = false
-                    firework.Material = Enum.Material.Neon
-                    firework.Parent = workspace
-                
-                    local explosion = Instance.new("ParticleEmitter")
-                    explosion.Color = ColorSequence.new({
-                        ColorSequenceKeypoint.new(0, Color3.new(math.random(), math.random(), math.random())),
-                        ColorSequenceKeypoint.new(0.5, Color3.new(math.random(), math.random(), math.random())),
-                        ColorSequenceKeypoint.new(1, Color3.new(0, 0, 0))
-                    })
-                    explosion.Size = NumberSequence.new(2, 0)
-                    explosion.Lifetime = NumberRange.new(0.5, 1)
-                    explosion.Rate = 150
-                    explosion.Speed = NumberRange.new(75, 150)
-                    explosion.SpreadAngle = Vector2.new(180, 180)
-                    explosion.Parent = firework
-                
-                    local light = Instance.new("PointLight")
-                    light.Brightness = 300
-                    light.Range = 200
-                    light.Color = Color3.new(1, 1, 1)
-                    light.Parent = firework
-                
-                    local sound = Instance.new("Sound")
-                    sound.SoundId = "rbxassetid://272537961"
-                    sound.Volume = 4
-                    sound.Parent = firework
-                    sound:Play()
-                
-                    wait(0.1)
-                    explosion:Emit(200)
-                    wait(1)
-                    firework:Destroy()
-                end
-                
-                local function launchFireworks()
-                    local xOffset = math.random(-50, 50)
-                    local yOffset = math.random(50, 100)
-                    local zOffset = math.random(-50, 50)
-                    local position = Vector3.new(xOffset, 50 + yOffset, zOffset)
-                
-                    createFirework(position)
-                    wait(math.random(1, 2))
-                end
-                
-                launchFireworks()
+        local explosion = Instance.new("ParticleEmitter")
+        explosion.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,Color3.new(math.random(),math.random(),math.random())),
+            ColorSequenceKeypoint.new(0.5,Color3.new(math.random(),math.random(),math.random())),
+            ColorSequenceKeypoint.new(1,Color3.new(0,0,0))
+        })
+        explosion.Size = NumberSequence.new(2,0)
+        explosion.Lifetime = NumberRange.new(0.5,1)
+        explosion.Rate = 150
+        explosion.Speed = NumberRange.new(75,150)
+        explosion.SpreadAngle = Vector2.new(180,180)
+        explosion.Parent = firework
+
+        local light = Instance.new("PointLight")
+        light.Brightness = 300
+        light.Range = 200
+        light.Color = Color3.new(1,1,1)
+        light.Parent = firework
+
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://272537961"
+        sound.Volume = 4
+        sound.Parent = firework
+        sound:Play()
+
+        task.wait(0.1)
+        explosion:Emit(200)
+        task.wait(1)
+        firework:Destroy()
+    end
+    wait(0.1)
+    getgenv().launch_fireworks = function()
+        local x_offset = math.random(-50,50)
+        local y_offset = math.random(50,100)
+        local z_offset = math.random(-50,50)
+        local position = Vector3.new(x_offset,50 + y_offset,z_offset)
+
+        for i = 1, 3 do
+            getgenv().create_firework(position)
+            task.wait(0.2) -- for clarity.
+        end
+    end
+
+    getgenv().fireworks_toggle = Tab9:CreateToggle({
+    Name = "FireWorks (Sky)",
+    CurrentValue = getgenv().set_fireworks_on or false,
+    Flag = "fireworks_in_sky_loop",
+    Callback = function(state)
+        if state then
+            local lighting = getgenv().Lighting
+            if not lighting.ClockTime == 1 then
+                lighting.ClockTime = 1
             end
+            if not lighting.Brightness == 2 then
+                lighting.Brightness = 2
+            end
+
+            getgenv().set_fireworks_on = true
+            getgenv().FlamesLibrary.spawn("fireworks_loop","spawn",function()
+                while getgenv().set_fireworks_on == true do
+                    launch_fireworks()
+                    task.wait(1)
+                end
+            end)
         else
-            getgenv().setFireWorksOn = false
-            wait(0.5)
+            getgenv().set_fireworks_on = false
+            getgenv().FlamesLibrary.disconnect("fireworks_loop")
+            task.wait(0.5)
             resetLightingSettings()
         end
     end,})
-    wait()
-    if getgenv().setFireWorksOn == true then
-        getgenv().fireworksToggle:Set(false)
-        getgenv().setFireWorksOn = false
-    end
-    wait()
+
     getgenv().NightTimeButton = Tab9:CreateButton({
     Name = "NightTime",
     Callback = function()
-        local Lighting = game:GetService("Lighting")
+        local Lighting = getgenv().Lighting or game:GetService("Lighting")
         if Lighting.ClockTime <= 1 then
             Lighting.ClockTime = 0
             wait()
@@ -13061,7 +13092,7 @@
     getgenv().NightTimeWithLight = Tab9:CreateButton({
     Name = "NightTime (With Night-Light)",
     Callback = function()
-        local Lighting = game:GetService("Lighting")
+        local Lighting = getgenv().Lighting or game:GetService("Lighting")
         if Lighting.ClockTime <= 2 then
             Lighting.ClockTime = 1
             wait()
@@ -13078,144 +13109,123 @@
     getgenv().DayTimeReset = Tab9:CreateButton({
     Name = "DayTime",
     Callback = function()
-        local Lighting = game:GetService("Lighting")
+        local Lighting = getgenv().Lighting or game:GetService("Lighting")
 
         Lighting.ClockTime = 12
         wait()
-        Lighting.Brightness = 1.5
+        Lighting.Brightness = 1.5 -- technically 3, but too bright in some games.
     end,})
 
-    getgenv().SpookyMoonToggle = Tab9:CreateToggle({
-    Name = "Spooky Moon",
-    CurrentValue = false,
-    Flag = "SpookyMoonLooping",
-    Callback = function(moonCrazy)
-        local Lighting = game:GetService("Lighting") 
-        if moonCrazy then
-            getgenv().SpookyMoon = true
+    getgenv().spooky_moon_toggle = Tab9:CreateToggle({
+    name = "Spooky Moon",
+    currentvalue = getgenv().spookymoon or false,
+    flag = "spooky_moon_looping",
+    callback = function(mooncrazy)
+        local lighting = getgenv().Lighting or game:GetService("Lighting")
+
+        if mooncrazy then
+            getgenv().spookymoon = true
+
             local sky
-            wait(0.2)
-            if Lighting:FindFirstChildOfClass("Sky") then
-                sky = Lighting:FindFirstChildOfClass("Sky")
+            task.wait(0.2)
+
+            if lighting:FindFirstChildOfClass("Sky") then
+                sky = lighting:FindFirstChildOfClass("Sky")
             else
                 sky = Instance.new("Sky")
-                sky.Name = "Sky"
-                sky.Parent = Lighting
+                sky.name = "Sky"
+                sky.parent = lighting
                 sky.MoonAngularSize = 11
-            end
-            wait(0.2)
-            local function smoothTransition()
-                local Lighting = game:GetService("Lighting") 
-                Lighting.ClockTime = 0
-                for i = 1, 60, 0.5 do
-                    sky.MoonAngularSize = i
-                    wait(0.05)
-                end
-                for i = 60, 1, -0.5 do
-                    sky.MoonAngularSize = i
-                    wait(0.05)
-                end
             end
 
-            while getgenv().SpookyMoon == true do
-                wait()
-                smoothTransition()
-            end
+            getgenv().FlamesLibrary.spawn("spooky_moon_loop","spawn",function()
+                local function smooth_transition_moon()
+                    lighting.ClockTime = 0
+
+                    for i = 1,60,0.5 do
+                        sky.MoonAngularSize = i
+                        task.wait(0.05)
+                    end
+
+                    for i = 60,1,-0.5 do
+                        sky.MoonAngularSize = i
+                        task.wait(0.05)
+                    end
+                end
+
+                while getgenv().spookymoon == true do
+                    task.wait()
+                    smooth_transition_moon()
+                end
+            end)
         else
-            local Lighting = getgenv().Lighting
-            local sky = Lighting:FindFirstChildOfClass("Sky")
-            getgenv().SpookyMoon = false
-            getgenv().SpookyMoon = false
-            getgenv().SpookyMoon = false
-            repeat wait(5) until getgenv().SpookyMoon == false
-            if getgenv().SpookyMoon == false then
+            getgenv().spookymoon = false
+            getgenv().FlamesLibrary.disconnect("spooky_moon_loop")
+            local sky = lighting:FindFirstChildOfClass("Sky")
+
+            if sky then
                 resetLightingSettings()
-                wait(0.3)
+                task.wait(0.3)
                 sky.MoonAngularSize = 11
-                wait(0.3)
-                Lighting.ClockTime = 14
+                task.wait(0.3)
+                lighting.ClockTime = 14
             end
         end
     end,})
-    wait()
-    if getgenv().SpookyMoon == true then
-        getgenv().SpookyMoonToggle:Set(false)
-    end
 
-    getgenv().SpookySunLoop = Tab9:CreateToggle({
-    Name = "Spooky Sun",
-    CurrentValue = false,
-    Flag = "SpookySunDayTime",
-    Callback = function(sunSpooky)
-        if sunSpooky then
-            getgenv().SpookSun = true
-            local Lighting = getgenv().Lighting
+    getgenv().spooky_sun_loop = Tab9:CreateToggle({
+    name = "Spooky Sun",
+    currentvalue = getgenv().spooksun or false,
+    flag = "spooky_sun_day_time",
+    callback = function(sunspooky)
+        local lighting = getgenv().Lighting or game:GetService("Lighting")
+
+        if sunspooky then
+            getgenv().spooksun = true
             local sky
-            wait(0.2)
-            if Lighting:FindFirstChildOfClass("Sky") then
-                sky = Lighting:FindFirstChildOfClass("Sky")
+            task.wait(0.2)
+
+            if lighting:FindFirstChildOfClass("Sky") then
+                sky = lighting:FindFirstChildOfClass("Sky")
             else
                 sky = Instance.new("Sky")
-                sky.Name = "Sky"
-                sky.Parent = Lighting
-                sky.MoonAngularSize = 11
+                sky.name = "Sky"
+                sky.parent = lighting
+                sky.SunAngularSize = 11
             end
-            wait()
-            local function smoothTransition()
-                local Lighting = getgenv().Lighting
-                local sky
-                wait(0.2)
-                if sky then
-                    sky = Lighting:FindFirstChildOfClass("Sky")
-                else
-                    sky = Instance.new("Sky")
-                    sky.Name = "Sky"
-                    sky.Parent = Lighting
-                    sky.SunAngularSize = 11
-                    getgenv().SpookySunLoop:Set(false)
-                end
-                wait()
-                Lighting.ClockTime = 14
 
-                for i = 1, 60, 0.5 do
-                    sky.SunAngularSize = i
-                    wait(0.05)
+            getgenv().FlamesLibrary.spawn("spooky_sun_loop_thread","spawn",function()
+                local function smooth_transition_sun()
+                    lighting.ClockTime = 14
+
+                    for i = 1,60,0.5 do
+                        sky.SunAngularSize = i
+                        task.wait(0.05)
+                    end
+
+                    for i = 60,1,-0.5 do
+                        sky.SunAngularSize = i
+                        task.wait(0.05)
+                    end
                 end
-                for i = 60, 1, -0.5 do
-                    sky.SunAngularSize = i
-                    wait(0.05)
+
+                while getgenv().spooksun == true do
+                    task.wait()
+                    smooth_transition_sun()
                 end
-            end
-            
-            while getgenv().SpookSun == true do
-                wait()
-                smoothTransition()
-            end
+            end)
         else
-            local Lighting = game:GetService("Lighting")
-            local sky = Lighting:FindFirstChildOfClass("Sky")
-            repeat wait(5) until getgenv().SpookSun == false
-            if getgenv().SpookSun == false then
-                resetLightingSettings()
-            else
-                getgenv().SpookSun = false
-                getgenv().SpookSun = false
-                resetLightingSettings()
-            end
-            wait(0.1)
+            getgenv().spooksun = false
+            getgenv().FlamesLibrary.disconnect("spooky_sun_loop_thread")
+
             resetLightingSettings()
         end
     end,})
-    wait()
-    if getgenv().SpookSun == true then
-        getgenv().SpookySunLoop:Set(false)
-        getgenv().SpookSun = false
-    end
 
     getgenv().SpookyNightTimeHalloween = Tab9:CreateButton({
     Name = "Spooky NightTime (Halloween Style)",
     Callback = function()
-        local light = game:GetService("Lighting")
+        local light = getgenv().Lighting or game:GetService("Lighting")
 
         light.Ambient = Color3.new(0, 0, 0)
         light.Brightness = 0
@@ -13249,87 +13259,76 @@
             end
         end
     end
-    wait(0.1)
-    getgenv().doFreezeToggle = false
-    wait(0.1)
-    getgenv().slowMotionToggle = Tab12:CreateToggle({
-    Name = "Slow Motion Emotes (Loop)",
-    CurrentValue = false,
-    Flag = "slowMotionAllEmotes",
-    Callback = function(slowMotion)
-        if slowMotion then
-            getgenv().slowMotion = true
-            while getgenv().slowMotion == true do
-            wait()
-                getgenv().emoting_actions(0.2)
-            end
-        else
-            getgenv().slowMotion = false
-            getgenv().slowMotion = false
-        end
-    end,})
-    wait()
-    getgenv().slowMotion = false
-    wait(0.2)
-    if getgenv().slowMotion == true then
-        getgenv().slowMotionToggle:Set(false)
-        getgenv().slowMotion = false
-    end
-    wait()
-    getgenv().doFreezeToggle = false
-    wait()
-    getgenv().FreezeEmotesToggle = Tab12:CreateToggle({
-    Name = "Freeze Emotes",
-    CurrentValue = false,
-    Flag = "FreezingEveryEmote",
-    Callback = function(freezeToggle)
-        if freezeToggle then
-            getgenv().doFreezeToggle = true
-            while getgenv().doFreezeToggle == true do
-            wait()
-                getgenv().emoting_actions(0)
-            end
-        else
-            getgenv().doFreezeToggle = false
-            getgenv().doFreezeToggle = false
-        end
-    end,})
-    wait(0.1)
-    if getgenv().doFreezeToggle == true then
-        getgenv().FreezeEmotesToggle:Set(false)
-        getgenv().doFreezeToggle = false
-    end
 
-    getgenv().FastestEmotes = Tab12:CreateToggle({
-    Name = "Fast Emotes (Loop)",
-    CurrentValue = false,
-    Flag = "FastEmotesEveryEmote",
-    Callback = function(fastToggle)
-        if fastToggle then
-            getgenv().fastToggle = true
-            while getgenv().fastToggle == true do
-            wait()
-                getgenv().emoting_actions(70)
-            end
+    getgenv().slowmotion_toggle = Tab12:CreateToggle({
+    name = "Slow Motion Emotes (Loop)",
+    currentvalue = getgenv().slowmotion or false,
+    flag = "slowmotion_all_emotes",
+    callback = function(slowmotion)
+        if slowmotion then
+            getgenv().slowmotion = true
+            getgenv().FlamesLibrary.spawn("slowmotion_loop","spawn",function()
+                while getgenv().slowmotion == true do
+                    task.wait(0)
+                    getgenv().emoting_actions(0.2)
+                end
+            end)
         else
-            getgenv().fastToggle = false
-            getgenv().fastToggle = false
+            getgenv().slowmotion = false
+            getgenv().FlamesLibrary.disconnect("slowmotion_loop")
         end
     end,})
-    wait(0.1)
-    if getgenv().fastToggle == true then
-        getgenv().FastestEmotes:Set(false)
-        getgenv().fastToggle = false
-    end
-    wait()
+
+    getgenv().freeze_emotes_toggle = Tab12:CreateToggle({
+    name = "Freeze Emotes (Loop)",
+    currentvalue = getgenv().freezetoggle or false,
+    flag = "freezing_every_emote",
+    callback = function(freezetoggle)
+        if freezetoggle then
+            getgenv().freezetoggle = true
+            getgenv().FlamesLibrary.spawn("freezeemotes_loop","spawn",function()
+                while getgenv().freezetoggle == true do
+                    task.wait(0)
+                    getgenv().emoting_actions(0)
+                end
+            end)
+        else
+            getgenv().freezetoggle = false
+            getgenv().FlamesLibrary.disconnect("freezeemotes_loop")
+        end
+    end,})
+
+    getgenv().fastest_emotes = Tab12:CreateToggle({
+    name = "Fast Emotes (Loop)",
+    currentvalue = getgenv().fasttoggle or false,
+    flag = "fast_emotes_every_emote",
+    callback = function(fasttoggle)
+        if fasttoggle then
+            getgenv().fasttoggle = true
+            getgenv().FlamesLibrary.spawn("fastemotes_loop","spawn",function()
+                while getgenv().fasttoggle == true do
+                    task.wait(0)
+                    getgenv().emoting_actions(60) -- lowered because sometimes Roblox doesn't wanna render that fast of speeds for some clients.
+                end
+            end)
+        else
+            getgenv().fasttoggle = false
+            getgenv().FlamesLibrary.disconnect("fastemotes_loop")
+        end
+    end,})
+
     getgenv().StopAllEmotes = Tab12:CreateButton({
     Name = "Stop Playing Emotes",
     Callback = function()
-        if getgenv().Character:FindFirstChildWhichIsA("Humanoid").RigType == Enum.HumanoidRigType.R6 then
-            return getgenv().notify("Failure:", "You have to be in R15 to use this!", 5)
+        if getgenv().Humanoid and getgenv().Humanoid.RigType == Enum.HumanoidRigType.R6 then
+            return getgenv().notify("Error", "You have to be in R15 to use this!", 5)
+        elseif not getgenv().Humanoid then
+            return getgenv().notify("Error", "Humanoid does not exist, try respawning.", 7)
         end
 
         getgenv().emoting_actions()
+        wait(0.2)
+        if getgenv().Humanoid and getgenv().Humanoid.Sit then pcall(function() getgenv().Humanoid:ChangeState(3) end) end
     end,})
 
     getgenv().EmoteSlidingSpeed = Tab12:CreateSlider({
@@ -13389,13 +13388,37 @@
     end,})
 
     getgenv().FreeEmotesGUI = Tab12:CreateButton({
-    Name = "Free Emotes GUI",
+    Name = "Free Emotes GUI [1] [old]",
     Callback = function()
-        getgenv().notify("Free Emotes:", "Press , [comma] to open Free Emotes GUI", 5)
-        task.wait(.1)
-        getgenv().notify("Open Button:", "Or use the button on the left side of your screen.", 4)
+        if not getgenv().UserInputService.TouchEnabled then
+            getgenv().notify("Success", "Press [comma] to open.", 10)
+        else
+            getgenv().notify("Success", "Use the button on the left side of your screen to open.", 11)
+        end
         task.wait()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/LmaoItsCrazyBro/qweytguqwebuqt/refs/heads/main/marked_esp_system_ai"))()
+    end,})
+
+    getgenv().FreeEmotes_Modern = Tab12:CreateButton({
+    Name = "Free Emotes GUI [2] [NEW]",
+    Callback = function()
+        if getgenv().FreeEmotes_GUI or getgenv().FreeEmotes_Enabled or CoreGui:FindFirstChild("FlamesEmoteGUI") then
+            local msg = "You already have Flames Emoting GUI loaded!"
+            if getgenv().notify then
+                return getgenv().notify("Warning", msg, 6)
+            else
+                return warn(msg)
+            end
+        end
+
+        getgenv().FreeEmotes_Enabled = true
+        getgenv().FreeEmotes_GUI = true
+        if not getgenv().UserInputService.TouchEnabled then
+            getgenv().notify("Success", "Press F or use the green [F] button on the left side of your screen to open.", 15)
+        else
+            getgenv().notify("Success", "Press the green [F] on the left side of your screen to open/toggle.", 15)
+        end
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/flames_emotes_gui_new.lua"))()
     end,})
 
     getgenv().MuteAllBruh = Tab21:CreateToggle({
@@ -13994,12 +14017,12 @@
     end
 
     function refresh_anims()
-        local Char = getgenv().Character
-        local Human = getgenv().Humanoid
-        local Animate = getgenv().Character:FindFirstChild("Animate", true) or getgenv().Character:WaitForChild("Animate", 5)
+        local Char = getgenv().Character or getgenv().LocalPlayer.Character or get_char(LocalPlayer, 10)
+        local Human = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer, 10)
+        local Animate = getgenv().Character and getgenv().Character:FindFirstChild("Animate") or getgenv().get_animate_localscript()
 
         if not Human or not Animate then
-            return getgenv().notify('Failure:', 'Failed to get Animate LocalScript or Humanoid!', 5)
+            return getgenv().notify("Error", "Failed to get Animate LocalScript or Humanoid!", 5)
         end
         if Animate then
             Animate.Disabled = true
@@ -14019,6 +14042,7 @@
 
         if not StarterPlayer.AllowCustomAnimations or StarterPlayer.AllowCustomAnimations == false then
             StarterPlayer.AllowCustomAnimations = true
+            task.wait(0.5)
             refresh_anims()
         end
         wait(1)
