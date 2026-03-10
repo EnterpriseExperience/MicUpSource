@@ -14,7 +14,7 @@
     -- And don't think for 5 seconds that I'm gonna change the notification system, because there is TOO many notifications on here that I'd have to go around and correct, and I am NOT doing that.
 
     -- [[ Initialize new FlamesLibrary system. ]] --
-    local g = getgenv() or _G or {}
+    local g = getgenv()
     getgenv().hb = getgenv().hb or function()
         local rs = getgenv().RunService or (cloneref and cloneref(game:GetService("RunService"))) or game:GetService("RunService")
         rs.Heartbeat:Wait()
