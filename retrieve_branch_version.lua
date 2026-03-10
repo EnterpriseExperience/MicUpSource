@@ -14,6 +14,12 @@
     -- And don't think for 5 seconds that I'm gonna change the notification system, because there is TOO many notifications on here that I'd have to go around and correct, and I am NOT doing that.
 
     -- [[ Initialize new FlamesLibrary system. ]] --
+    if not getgenv().GlobalEnvironmentFramework_Initialized then -- new
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
+        wait(0.1)
+        getgenv().GlobalEnvironmentFramework_Initialized = true
+    end
+    wait(0.2)
     local g = getgenv()
     getgenv().hb = getgenv().hb or function()
         local rs = getgenv().RunService or (cloneref and cloneref(game:GetService("RunService"))) or game:GetService("RunService")
@@ -292,8 +298,8 @@
         return string.format("%s", executorDetails.Name) -- edit it down here too, for the version, if you want both.
     end
     wait()
-    -- say hello to Flames Hub API --
-    local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
+    -- say goodbye to Flames Hub API! --
+    --local Flames_API = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua'))()
     -- requirements loading here --
     local Module = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/zacks_easy_module.lua'))() -- old module, still use it though to patch updates, destroy the GUI, etc, basic stuff.
     local Notifications_Module_Flames_Hub = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Internal_Notification_System.lua'))()
@@ -307,9 +313,9 @@
     print("2") -- And throughout the beginning of the script there might be these random print statements, don't mind them, it's just my way of debugging, like if something doesn't load, then I'll count my steps back and see where it stopped loading at or errored at or what ever.
     wait(0.2) -- file is too big, so the print statements help a lot when figuring out issues.
     -- Because I mean, sometimes the errors don't exactly show where the issue is, so print statements everywhere helps identify where the issue is located at or around what area.
-    local CoreGui = Flames_API.Service("CoreGui") -- ooo, I like this service!
-    local vc_service = Flames_API.Service("VoiceChatService") -- This wasn't exactly necessary, but I decided to leave it in to keep our undetection via 'cloneref'.
-    local Players = Flames_API.Service("Players")
+    local CoreGui = getgenv().CoreGui or cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui") -- ooo, I like this service!
+    local vc_service = getgenv().VoiceChatService or cloneref and cloneref(game:GetService("VoiceChatService")) or game:GetService("VoiceChatService") -- This wasn't exactly necessary, but I decided to leave it in to keep our undetection via 'cloneref'.
+    local Players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local enabled_vc = vc_service:IsVoiceEnabledForUserIdAsync(LocalPlayer.UserId) -- This was to make sure users know if they have VoiceChat, because apparently some of them miss that part of Roblox.
     local Notification
@@ -337,7 +343,7 @@
     if (getgenv().SCRIPT_EXECUTED == true) and (getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE == false) then
         if not getgenv().notify then
             getgenv().StarterGui_Notify = function(title, content, duration) -- what the fuck was I thinking doing this dumb ass shit, this notification sucks, and so does Roblox.
-                local StarterGui = Flames_API.Service("StarterGui")
+                local StarterGui = getgenv().StarterGui or cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui")
                 StarterGui:SetCore("SendNotification", {
                     Title = tostring(title),
                     Text = tostring(content),
@@ -354,7 +360,7 @@
         else
             -- Reinitialize the function if somehow not already initialized/created above, or if the users internet is shit and didn't get a chance to create it's self. --
             getgenv().StarterGui_Notify = function(title, content, duration)
-                local StarterGui = Flames_API.Service("StarterGui") -- Is a bit slower, but still gets the job done in what we're trying to do.
+                local StarterGui = getgenv().StarterGui or cloneref and cloneref(game:GetService("StarterGui")) or game:GetService("StarterGui") -- Is a bit slower, but still gets the job done in what we're trying to do.
                 StarterGui:SetCore("SendNotification", {
                     Title = tostring(title),
                     Text = tostring(content),
@@ -397,11 +403,6 @@
         return nil
     end
     task.wait(0.1)
-    if not getgenv().GlobalEnvironmentFramework_Initialized then -- new
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
-        wait(0.1)
-        getgenv().GlobalEnvironmentFramework_Initialized = true
-    end
     -- Sometimes would fuck up, but that's because I accidentally removed the "not _G.SCRIPT_EXECUTED == true" part, didn't know it was necessary, so oops.
     task.wait(0.3) -- basically general for performance
     print("3")
@@ -743,16 +744,16 @@
         getgenv().Camera = workspace.CurrentCamera or getgenv().Workspace.Camera or getgenv().Workspace:FindFirstChild("Camera")
     end
     if not getgenv().LocalPlayer then
-        getgenv().LocalPlayer = getgenv().Players.LocalPlayer or game.Players.LocalPlayer or Flames_API.LocalPlayer -- Flames_API isn't always reliable in these scenarios, I've come to learn that.
+        getgenv().LocalPlayer = getgenv().Players.LocalPlayer or game.Players.LocalPlayer -- Flames_API isn't always reliable in these scenarios, I've come to learn that, so I removed it.
     end
-    getgenv().Backpack = getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:WaitForChild("Backpack")
-    getgenv().PlayerGui = getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or getgenv().LocalPlayer:WaitForChild("PlayerGui") or Flames_API.PlayerGui
-    getgenv().PlayerScripts = getgenv().LocalPlayer:FindFirstChildOfClass("PlayerScripts") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts") or getgenv().LocalPlayer:WaitForChild("PlayerScripts")
-    getgenv().Character = get_character_main_local(getgenv().LocalPlayer or game.Players.LocalPlayer) or getgenv().LocalPlayer.Character or Flames_API.Character
-    getgenv().HumanoidRootPart = getRoot(getgenv().Character or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character) or getgenv().Character:FindFirstChild("HumanoidRootPart") or Flames_API.HumanoidRootPart
-    getgenv().Humanoid = Flames_API.Humanoid
-    getgenv().Head = Flames_API.Head
-    local VoiceChatInternal = cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
+    getgenv().Backpack = getgenv().Backpack or getgenv().LocalPlayer:FindFirstChildOfClass("Backpack") or getgenv().LocalPlayer:FindFirstChildWhichIsA("Backpack") or getgenv().LocalPlayer:FindFirstChild("Backpack") or getgenv().LocalPlayer:WaitForChild("Backpack")
+    getgenv().PlayerGui = getgenv().PlayerGui or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerGui") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerGui") or getgenv().LocalPlayer:WaitForChild("PlayerGui")
+    getgenv().PlayerScripts = getgenv().PlayerScripts or getgenv().LocalPlayer:FindFirstChildOfClass("PlayerScripts") or getgenv().LocalPlayer:FindFirstChildWhichIsA("PlayerScripts") or getgenv().LocalPlayer:FindFirstChild("PlayerScripts") or getgenv().LocalPlayer:WaitForChild("PlayerScripts")
+    getgenv().Character = getgenv().Character or get_character_main_local(getgenv().LocalPlayer or game.Players.LocalPlayer) or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character
+    getgenv().HumanoidRootPart = getgenv().HumanoidRootPart or getRoot(getgenv().Character or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character) or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart")
+    getgenv().Humanoid = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") or getgenv().LocalPlayer.Character and getgenv().LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    getgenv().Head = getgenv().Head or getgenv().Character and getgenv().Character:FindFirstChild("Head")
+    local VoiceChatInternal = getgenv().VoiceChatService or cloneref and cloneref(game:GetService("VoiceChatInternal")) or game:GetService("VoiceChatInternal")
     if VoiceChatInternal:IsVoiceEnabledForUserIdAsync(LocalPlayer.UserId) then
         pcall(function()
             local groupId = VoiceChatInternal:GetGroupId()
