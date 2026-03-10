@@ -8205,7 +8205,7 @@
             return nil
         end
         wait(0.1)
-        if not getgenv().found_focus_remote_function_F then pcall(function() getgenv().find_focus_Remote_Function() end)
+        if not getgenv().found_focus_remote_function_F then pcall(function() getgenv().find_focus_Remote_Function() end) end
 
         local Focus_RF = getgenv().found_focus_remote_function_F or getgenv().find_focus_Remote_Function()
 
