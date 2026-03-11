@@ -596,9 +596,9 @@
     -- You can do like: "local Workspace = getgenv().Service_Wrap("Workspace")" and it should work normally.
     getgenv().Service_Wrap = getgenv().Service_Wrap or function(serviceName) -- I would normally use my setmetatable method with caching, but I don't give a shit to do so.
         if cloneref then
-            return cloneref(getgenv().Game:GetService(serviceName))
+            return cloneref(game:GetService(serviceName))
         else
-            return getgenv().Game:GetService(serviceName)
+            return game:GetService(serviceName)
         end
     end
 
@@ -14866,161 +14866,130 @@
         })
     end
     wait(0.2)
-    if getgenv().output_already_viewed then
-        warn("Already viewed and injected 'Flames Hub'")
-    else
-        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+if not getgenv().output_already_viewed then
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        pcall(function()
             GuiService:SendNotification({
                 Title = "Please wait...",
-                Text = "Attaching Flames Hub into MIC UP 🔊...",
+                Text = "Attaching Flames Hub into MIC UP 🔊..."
             })
-            wait(0.3)
-            if not getgenv().Has_Died_Func then
-                if setfpscap then
-                    wait(0.5)
-                    print("Injecting Flames Hub...")
-                    wait(0.5)
-                    getgenv().emoting_actions(0)
-                    wait(0.2)
-                    getgenv().emoting_actions()
-                    wait(0.5)
-                    getgenv().Has_Died_Func = true
-                    wait(0.3)
-                    getgenv().Is_ZEH_Attached = true
-                    wait(1)
-                    pcall(function() setfpscap(999) end)
-                    wait()
-                    getgenv().output_already_viewed = true
-                else
-                    getgenv().Has_Died_Func = true
-                    wait(0.3)
-                    getgenv().Is_ZEH_Attached = true
-                    wait()
-                    getgenv().output_already_viewed = true
-                end
-            else
-                warn("Setup death function already.")
-            end
-        else
-            Notifications_Module_Flames_Hub:SendNotification_Internal("Please wait...", 5)
-            Notifications_Module_Flames_Hub:SendNotification_Internal("Hooking and injecting into: "..tostring(getgenv().MarketplaceService:GetProductInfo(game.PlaceId).Name), 5)
-            wait(0.8)
+        end)
+
+        task.wait(0.3)
+
+        if not getgenv().Has_Died_Func then
             if setfpscap then
-                print("Injecting Flames Hub...")
-                wait(1)
-                getgenv().emoting_actions(0)
-                getgenv().emoting_actions(0)
-                wait(1)
-                getgenv().Is_ZEH_Attached = true
-                getgenv().Has_Died_Func = true
-                getgenv().output_already_viewed = true
-                wait(0.6)
-                pcall(function() setfpscap(999) end)
-                wait(0.2)
-                print("Done injecting Flames Hub.")
+                task.spawn(function()
+                    pcall(function() setfpscap(240) end)
+                end)
             end
+
+            if getgenv().emoting_actions then
+                pcall(function() getgenv().emoting_actions(0) end)
+                task.wait(0.2)
+                pcall(function() getgenv().emoting_actions() end)
+            end
+
+            getgenv().Has_Died_Func = true
+            getgenv().Is_ZEH_Attached = true
+            getgenv().output_already_viewed = true
         end
-    end
-    wait(0.1)
-    getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = true
-    wait(0.4)
-    if getgenv().seen_output_zeh then
-        warn("Already seen notification output.")
     else
-        if getgenv().Is_ZEH_Attached or getgenv().Is_ZEH_Attached == true then
+        if Notifications_Module_Flames_Hub then
+            pcall(function()
+                Notifications_Module_Flames_Hub:SendNotification_Internal("Please wait...",5)
+            end)
+
+            local name = "Experience"
+            pcall(function()
+                name = MarketplaceService:GetProductInfo(game.PlaceId).Name
+            end)
+
+            pcall(function()
+                Notifications_Module_Flames_Hub:SendNotification_Internal("Hooking and injecting into: "..tostring(name),5)
+            end)
+        end
+
+        if setfpscap then
+            task.spawn(function()
+                pcall(function() setfpscap(240) end)
+            end)
+        end
+
+        if getgenv().emoting_actions then
+            pcall(function() getgenv().emoting_actions(0) end)
+            task.wait(0.2)
+            pcall(function() getgenv().emoting_actions(0) end)
+        end
+
+        getgenv().Is_ZEH_Attached = true
+        getgenv().Has_Died_Func = true
+        getgenv().output_already_viewed = true
+    end
+end
+
+getgenv().All_TheWay_Loaded_FLAMES_HUB_GETGENV_VALUE = true
+
+if not getgenv().seen_output_zeh then
+    if getgenv().Is_ZEH_Attached then
+        pcall(function()
             GuiService:SendNotification({
                 Title = "Successful.",
-                Text = "Successfully injected into experience.",
+                Text = "Successfully injected into experience."
             })
-            getgenv().seen_output_zeh = true
-            return 
-        else
+        end)
+    else
+        pcall(function()
             GuiService:SendNotification({
                 Title = "Failure!",
-                Text = "Could not allocate memory to inject into!",
+                Text = "Could not allocate memory to inject into!"
             })
-            getgenv().seen_output_zeh = true
-            return 
-        end
-        
-        if getgenv().seen_output_zeh == false then
-            function random_hex()
-                local hex = "0x"
-                for i = 1, 8 do
-                    hex = hex .. string.format("%X", math.random(0, 15))
-                end
-                return hex
-            end
-            wait(0.2)
-            GuiService:SendNotification({
-                Title = "Please wait...",
-                Text = "Starting Watch-Dog Process...",
-            })
-            wait(0.3)
-            GuiService:SendNotification({
-                Title = "Success, Returned:",
-                Text = tostring(random_hex()),
-            })
-            wait(0.1)
-            GuiService:SendNotification({
-                Title = "Initialized!",
-                Text = "We will now provide performance as well whilst you play.",
-            })
-            wait(0.1)
-            getgenv().seen_output_zeh = true
-        end
-    end
-    wait(0.2)
-function Notify(message, duration)
-    local function safe_wrapper(S)
-        if cloneref then
-            return cloneref(game:GetService(S))
-        else
-            return game:GetService(S)
-        end
+        end)
     end
 
-    local Players = safe_wrapper("Players")
-    local TweenService = safe_wrapper("TweenService")
-    local CoreGui = get_hidden_gui and get_hidden_gui() or gethui and gethui() or safe_wrapper("CoreGui")
+    getgenv().seen_output_zeh = true
+end
+
+function Notify(message,duration)
+    duration = duration or 5
+
+    if CoreGui:FindFirstChild("CustomErrorGui") then
+        CoreGui.CustomErrorGui:Destroy()
+    end
 
     local NotificationGui = Instance.new("ScreenGui")
     NotificationGui.Name = "CustomErrorGui"
     NotificationGui.ResetOnSpawn = false
     NotificationGui.Parent = CoreGui
-    duration = duration or 5
 
     local Frame = Instance.new("Frame")
-    Frame.Name = "ErrorMessage"
-    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BackgroundColor3 = Color3.fromRGB(0,0,0)
     Frame.BackgroundTransparency = 0.3
     Frame.BorderSizePixel = 0
-    Frame.Size = UDim2.new(0, 400, 0, 60)
-    Frame.Position = UDim2.new(0, 20, 0, 100)
+    Frame.Size = UDim2.new(0,400,0,60)
+    Frame.Position = UDim2.new(0,20,0,100)
     Frame.Parent = NotificationGui
 
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 6)
+    UICorner.CornerRadius = UDim.new(0,6)
     UICorner.Parent = Frame
 
     local Icon = Instance.new("ImageLabel")
-    Icon.Name = "ErrorIcon"
-    Icon.AnchorPoint = Vector2.new(0, 0.5)
+    Icon.AnchorPoint = Vector2.new(0,0.5)
     Icon.BackgroundTransparency = 1
-    Icon.Position = UDim2.new(0, 10, 0.5, -20)
-    Icon.Size = UDim2.new(0, 40, 0, 40)
+    Icon.Position = UDim2.new(0,10,0.5,-20)
+    Icon.Size = UDim2.new(0,40,0,40)
     Icon.Image = "rbxasset://textures/ui/Emotes/ErrorIcon.png"
-    Icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+    Icon.ImageColor3 = Color3.fromRGB(255,255,255)
     Icon.Parent = Frame
 
     local Label = Instance.new("TextLabel")
-    Label.Name = "ErrorText"
     Label.BackgroundTransparency = 1
-    Label.Position = UDim2.new(0, 60, 0, 0)
-    Label.Size = UDim2.new(1, -70, 1, 0)
+    Label.Position = UDim2.new(0,60,0,0)
+    Label.Size = UDim2.new(1,-70,1,0)
     Label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json")
     Label.Text = message
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Label.TextColor3 = Color3.fromRGB(255,255,255)
     Label.TextSize = 20
     Label.TextWrapped = true
     Label.TextXAlignment = Enum.TextXAlignment.Left
@@ -15030,38 +14999,41 @@ function Notify(message, duration)
     Frame.BackgroundTransparency = 1
     Icon.ImageTransparency = 1
     Label.TextTransparency = 1
-    TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0.3}):Play()
-    TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
-    TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 
-    task.delay(duration, function()
+    TweenService:Create(Frame,TweenInfo.new(0.3),{BackgroundTransparency = 0.3}):Play()
+    TweenService:Create(Icon,TweenInfo.new(0.3),{ImageTransparency = 0}):Play()
+    TweenService:Create(Label,TweenInfo.new(0.3),{TextTransparency = 0}):Play()
+
+    task.delay(duration,function()
         if Frame and Frame.Parent then
-            TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-            TweenService:Create(Icon, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
-            TweenService:Create(Label, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+            TweenService:Create(Frame,TweenInfo.new(0.3),{BackgroundTransparency = 1}):Play()
+            TweenService:Create(Icon,TweenInfo.new(0.3),{ImageTransparency = 1}):Play()
+            TweenService:Create(Label,TweenInfo.new(0.3),{TextTransparency = 1}):Play()
             task.wait(0.35)
-            Frame:Destroy()
             NotificationGui:Destroy()
         end
     end)
 end
 
-task.spawn(function()
+if not getgenv().ConstantUpdate_Checker_Live then
     getgenv().ConstantUpdate_Checker_Live = true
-    while getgenv().ConstantUpdate_Checker_Live == true do
-        task.wait(1)
 
-        local success, latestVersionInfo = pcall(function()
-            local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON")
-            return HttpService:JSONDecode(versionJson)
-        end)
+    task.spawn(function()
+        while getgenv().ConstantUpdate_Checker_Live do
+            task.wait(60)
 
-        if success and latestVersionInfo then
-            if Script_Version ~= latestVersionInfo.Main_Hub_Version then
-                getgenv().ConstantUpdate_Checker_Live = false
-                Notify("JUST UPDATED: Rejoin and re-execute the Loadstring to update!", 20)
-                break
+            local success,data = pcall(function()
+                local versionJson = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Script_Versions_JSON")
+                return HttpService:JSONDecode(versionJson)
+            end)
+
+            if success and data then
+                if Script_Version ~= data.Main_Hub_Version then
+                    getgenv().ConstantUpdate_Checker_Live = false
+                    Notify("JUST UPDATED: Rejoin and re-execute the Loadstring to update!",20)
+                    break
+                end
             end
         end
-    end
-end)
+    end)
+end
