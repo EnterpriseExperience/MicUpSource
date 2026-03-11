@@ -14475,7 +14475,6 @@
         erase_config()
     end,})
 
-    getgenv().EmoteSystemEnabled = true
     getgenv().BoundConnections = {}
     speedToggle = 1
 
