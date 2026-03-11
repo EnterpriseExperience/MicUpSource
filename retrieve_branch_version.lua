@@ -757,7 +757,7 @@
     local REJOIN_COUNT = 4
     local REJOIN_DELAY = 5
     local group_id = VoiceChatInternal:GetGroupId()
-    if VoiceChatInternal:IsVoiceEnabledForUserIdAsync(LocalPlayer.UserId) then
+    --[[if VoiceChatInternal:IsVoiceEnabledForUserIdAsync(LocalPlayer.UserId) then
         pcall(function()
             local groupId = VoiceChatInternal:GetGroupId()
             local CurrentlyMuted = true
@@ -778,7 +778,7 @@
         if not ok then
             -- do nothing, doesn't matter, let Roblox eat it up. --
         end
-    end
+    end--]]
     
     if getgenv().advanced_workaround_method == false and getmetatable and setmetatable and hookmetamethod and hookfunction then -- forgot why I had this lmfao.
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/quick_workaround_rspy.lua'))()
