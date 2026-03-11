@@ -1029,14 +1029,117 @@
             RBXGeneral:DisplaySystemMessage("Welcome, "..tostring(game.Players.LocalPlayer).." | We hope you enjoy scripting.")
         end)
     end
-    
-    getgenv().get_booth = function()
-        for i,v in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-            if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
+
+    getgenv().event_booth_Remote_Event_exit_save = function()
+        local cache = getgenv().save_changes_booth_Remote_Event
+        if cache and cache.Parent and cache:IsA("RemoteEvent") then
+            return cache
+        end
+
+        for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+            if v:IsA("RemoteEvent") and v.Name:lower():find("event") and v.Name:lower():find("booth") and v.Name:lower():find("exit") then
+                getgenv().save_changes_booth_Remote_Event = v
                 return v
             end
         end
+
         return nil
+    end
+    wait(0.1)
+    if not getgenv().save_changes_booth_Remote_Event then task.spawn(function() getgenv().event_booth_Remote_Event_exit_save() end) end
+
+    getgenv().adjust_booth_Remote_Event_locator = function()
+        local cache = getgenv().adjust_booth_settings_color_Remote_Event
+        if cache and cache.Parent and cache:IsA("RemoteEvent") then
+            return cache
+        end
+
+        for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+            if v:IsA("RemoteEvent") and v.Name:lower():find("event") and v.Name:lower():find("booth") and v.Name:lower():find("adjust") then
+                getgenv().adjust_booth_settings_color_Remote_Event = v
+                return v
+            end
+        end
+
+        return nil
+    end
+    wait(0.1)
+    if not getgenv().adjust_booth_settings_color_Remote_Event then task.spawn(function() getgenv().adjust_booth_Remote_Event_locator() end) end
+
+    getgenv().delete_booth_RemoteEvent_locator = function()
+        local cache = getgenv().delete_remove_booth_Remote_Event_found
+        if cache and cache.Parent and cache:IsA("RemoteEvent") then
+            return cache
+        end
+
+        for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+            if v:IsA("RemoteEvent") and v.Name:lower():find("event") and v.Name:lower():find("booth") and v.Name:lower():find("delete") then
+                getgenv().delete_remove_booth_Remote_Event_found = v
+                return v
+            end
+        end
+
+        return nil
+    end
+    wait(0.1)
+    if not getgenv().delete_remove_booth_Remote_Event_found then task.spawn(function() getgenv().delete_booth_RemoteEvent_locator() end) end
+
+    getgenv().Current_Claimed_Booth = getgenv().Current_Claimed_Booth or nil
+    if getgenv().adjust_booth_settings_color_Remote_Event then
+        if not getgenv().Connected_To_Booth_Adjuster_Tracker_Remote_Event then
+            getgenv().Connected_To_Booth_Adjuster_Tracker_Remote_Event = true
+            getgenv().adjust_booth_settings_color_Remote_Event.OnClientEvent:Connect(function(arg)
+                getgenv().Current_Claimed_Booth = arg
+            end)
+        end
+    end
+
+    getgenv().change_booth_color_default = function()
+        local args = {
+            {
+                texture_preset = "concrete",
+                title_text = "",
+                texture_values = {
+                    ["02"] = {
+                        hue_number = 0,
+                        value_number = 0,
+                        saturation_number = 0
+                    },
+                    title = {
+                        hue_number = 0,
+                        value_number = 0,
+                        saturation_number = 0
+                    },
+                    ["01"] = {
+                        hue_number = 1,
+                        value_number = 1,
+                        saturation_number = 1
+                    }
+                }
+            }
+        }
+
+        pcall(function() getgenv().save_changes_booth_Remote_Event:FireServer(unpack(args)) end)
+    end
+    task.wait(0.2)
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
+        getgenv().change_booth_color_default()
+    end
+    
+    getgenv().get_booth = function()
+        if getgenv().Current_Claimed_Booth and getgenv().Current_Claimed_Booth:IsA("Folder") then
+            return getgenv().Current_Claimed_Booth
+        else
+            return getgenv().Current_Claimed_Booth
+        end
+    end
+
+    getgenv().has_booth = function()
+        if getgenv().Current_Claimed_Booth and getgenv().Current_Claimed_Booth:IsA("Folder") and getgenv().Current_Claimed_Booth.Parent then
+            return true
+        else
+            return false
+        end
     end
 
     -- This is a full advanced setup for Rayfield, which is why my UI is able to work on any executor.
@@ -2299,101 +2402,6 @@
             "LeftUpperLeg", "LeftLowerLeg", "LeftFoot",
             "RightUpperLeg", "RightLowerLeg", "RightFoot"
         }
-        wait(0.1)
-        getgenv().StallClaimToggle = Tab11:CreateToggle({
-        Name = "Claim Any Booth",
-        CurrentValue = false,
-        Flag = "StallClaimToggle",
-        Callback = function(claimAnyBooth)
-            if claimAnyBooth then
-                getgenv().isToggled = true
-
-                local Folder = getgenv().booth_folder_found_mic_up
-                if not Folder then
-                    return getgenv().notify("Error", "Booth Folder not found or does not exist.", 6)
-                end
-                local stalls = {
-                    Folder:FindFirstChild("Booth01"),
-                    Folder:FindFirstChild("Booth02"),
-                    Folder:FindFirstChild("Booth03"),
-                    Folder:FindFirstChild("Booth04"),
-                    Folder:FindFirstChild("Booth05")
-                }
-
-                getgenv().connections = {}
-
-                local function setupProximityPrompt(stall)
-                    local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                    if ProximityPrompt then
-                        local function enforceSettings()
-                            if getgenv().isToggled then
-                                ProximityPrompt.Enabled = true
-                                ProximityPrompt.ClickablePrompt = true
-                                ProximityPrompt.MaxActivationDistance = 15
-                                ProximityPrompt.RequiresLineOfSight = false
-                                ProximityPrompt.HoldDuration = 0
-                            else
-                                ProximityPrompt.Enabled = true
-                                ProximityPrompt.ClickablePrompt = true
-                                ProximityPrompt.MaxActivationDistance = 10
-                                ProximityPrompt.RequiresLineOfSight = true
-                                ProximityPrompt.HoldDuration = 1
-                            end
-                        end
-
-                        enforceSettings()
-
-                        getgenv().connections[ProximityPrompt] = {
-                            ProximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(enforceSettings),
-                            ProximityPrompt:GetPropertyChangedSignal("ClickablePrompt"):Connect(enforceSettings),
-                            ProximityPrompt:GetPropertyChangedSignal("MaxActivationDistance"):Connect(enforceSettings),
-                            ProximityPrompt:GetPropertyChangedSignal("RequiresLineOfSight"):Connect(enforceSettings),
-                            ProximityPrompt:GetPropertyChangedSignal("HoldDuration"):Connect(enforceSettings)
-                        }
-                    end
-                end
-
-                for _, stall in ipairs(stalls) do
-                    if stall then
-                        setupProximityPrompt(stall)
-                    end
-                end
-            else
-                getgenv().isToggled = false
-
-                local Folder = getgenv().booth_folder_found_mic_up
-                if not Folder then
-                    return getgenv().notify("Error", "Booth Folder not found or does not exist.", 6)
-                end
-                local stalls = {
-                    Folder:FindFirstChild("Booth01"),
-                    Folder:FindFirstChild("Booth02"),
-                    Folder:FindFirstChild("Booth03"),
-                    Folder:FindFirstChild("Booth04"),
-                    Folder:FindFirstChild("Booth05")
-                }
-                
-                for _, stall in ipairs(stalls) do
-                    if stall then
-                        local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                        if ProximityPrompt then
-                            ProximityPrompt.Enabled = true
-                            ProximityPrompt.ClickablePrompt = true
-                            ProximityPrompt.MaxActivationDistance = 10
-                            ProximityPrompt.RequiresLineOfSight = true
-                            ProximityPrompt.HoldDuration = 1
-                
-                            if getgenv().connections[ProximityPrompt] then
-                                for _, conn in ipairs(getgenv().connections[ProximityPrompt]) do
-                                    conn:Disconnect()
-                                end
-                                getgenv().connections[ProximityPrompt] = nil
-                            end
-                        end
-                    end
-                end            
-            end
-        end,})
 
         getgenv().FixGlitchedScreenBooth = Tab11:CreateButton({
         Name = "Fix Glitched Booth Screen (GUI)",
@@ -2405,136 +2413,10 @@
             if getgenv().PlayerGui:FindFirstChild("Booth") then
                 for _, v in pairs(getgenv().PlayerGui:GetChildren()) do
                     if v:IsA("ScreenGui") and v.Name:lower():find("booth") then
-                        getgenv().notify("Success", "Found GUI: "..tostring(v.Name)..", removing...", 5)
-                        wait(0.1)
-                        v:Destroy()
+                        pcall(function() v:Destroy() end)
                     end
                 end
             end
-        end,})
-
-        getgenv().claimRandomBooth = Tab11:CreateButton({
-        Name = "Claim Random Booth",
-        Callback = function()
-            local Folder = getgenv().booth_folder_found_mic_up
-            if not Folder then
-                return getgenv().notify("Error", "Booth Folder not found or does not exist.", 6)
-            end
-            local Character = getgenv().Character or getgenv().LocalPlayer.Character or getgenv().Players.LocalPlayer.Character or game.Players.LocalPlayer.Character
-            
-            local function getStall()
-                for _, v in pairs(Folder:GetChildren()) do
-                    local usernameGui = v:FindFirstChild("Username") and v.Username:FindFirstChild("BillboardGui")
-                    if usernameGui and usernameGui.TextLabel.Text == "Owned by: " .. tostring(LocalPlayer.Name) then
-                        return v
-                    end
-                end
-                return nil
-            end
-
-            local function get_plr_stall(Name)
-                for _, v in pairs(Folder:GetChildren()) do
-                    local usernameGui = v:FindFirstChild("Username") and v.Username:FindFirstChild("BillboardGui")
-                    if usernameGui and usernameGui.TextLabel.Text == "Owned by: " .. tostring(Name) then
-                        return v
-                    end
-                end
-                return nil
-            end
-            
-            local plr_booth = getStall()
-            
-            if plr_booth then
-                return getgenv().notify("Failure", "You already own a Booth!", 5)
-            end
-            
-            local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart") or getgenv().getRoot(getgenv().Character).CFrame
-            local stalls = {
-                Folder:FindFirstChild("Booth01"),
-                Folder:FindFirstChild("Booth02"),
-                Folder:FindFirstChild("Booth03"),
-                Folder:FindFirstChild("Booth04"),
-                Folder:FindFirstChild("Booth05")
-            }
-            
-            local function setupProximityPrompt(stall)
-                if not stall then return end
-
-                local usernameObj = stall:FindFirstChild("Username")
-                local user_stuff = usernameObj and usernameObj:FindFirstChild("BillboardGui")
-                local textlabel_bruh = user_stuff and user_stuff:FindFirstChild("TextLabel")
-
-                local retrieve_username = nil
-                if textlabel_bruh and textlabel_bruh:IsA("TextLabel") and textlabel_bruh.Text then
-                    retrieve_username = textlabel_bruh.Text:match("Owned by: (.+)")
-                end
-
-                if retrieve_username and getgenv().boothWhitelistingPlayer and getgenv().boothWhitelistingPlayer[retrieve_username] then
-                    return getgenv().notify("Failure", "This player is Booth Whitelisted, try again.", 6)
-                end
-
-                wait()
-                getgenv().StallClaimToggle:Set(true)
-            end
-            
-            local function Claim_A_Booth()
-                if not getgenv().ReplicatedStorage:FindFirstChild("UpdateBoothText") then
-                    return getgenv().notify("Failure:", "UpdateBoothText RemoteEvent was not found! (Patched?)", 5)
-                end
-                local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-            
-                local plr_booth = getStall()
-                if plr_booth then
-                    return notify("Failure", "You already own a Booth!", 6)
-                end
-
-                local stall = stalls[math.random(1, #stalls)]
-                if stall then
-                    setupProximityPrompt(stall)
-                    getgenv().StallClaimToggle:Set(true)
-                    task.wait(0.1)
-
-                    if stall then
-                        getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = stall:GetPivot()
-                    else
-                        return getgenv().notify("Error:", "Player's Booth was not found", 6)
-                    end
-                    task.wait(0.3)
-                    if not stall:FindFirstChild("Activate") then
-                        getgenv().notify("Error:", "Continue, but with caution, Activate Part not found.", 5)
-                    end
-                    task.wait(0.1)
-                    local ProximityPrompt = stall:FindFirstChild("Activate") and stall.Activate:FindFirstChildOfClass("ProximityPrompt")
-                    if ProximityPrompt then
-                        fireproximityprompt(ProximityPrompt)
-                    else
-                        getgenv().notify("???:", "ProximityPrompt not found somehow (probably patched!)", 5)
-                    end
-            
-                    task.wait(0.2)
-            
-                    local args = {
-                        [1] = "",
-                        [2] = "Gray",
-                        [3] = "SourceSans"
-                    }
-                    getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
-                    task.wait(0.2)
-                    getgenv().getRoot(getgenv().Character).CFrame = OldCF
-                    task.wait(0.1)
-                    plr_booth = getStall()
-                    if plr_booth then
-                        return 
-                    end
-                end
-            end
-
-            local stall = stalls[math.random(1, #stalls)]
-            setupProximityPrompt(stall)
-            task.wait(0.3)
-            Claim_A_Booth()
-            wait(0.1)
-            getgenv().StallClaimToggle:Set(false)
         end,})
     else
         warn("Did not load Booth's stuff [1].")
@@ -2552,7 +2434,7 @@
 
     getgenv().AntiVoidPlayer = Tab2:CreateToggle({
     Name = "Anti Void Baseplate (Goes under Character)",
-    CurrentValue = false,
+    CurrentValue = getgenv().keepMyPlateOn or false,
     Flag = "ToggleAntiVoidBasePlate",
     Callback = function(antiVoidFall)
         if antiVoidFall then
@@ -2705,11 +2587,10 @@
 
     getgenv().RainbowAntiVoidBasePlate = Tab2:CreateToggle({
     Name = "Rainbow Anti Void Baseplate",
-    CurrentValue = false,
+    CurrentValue = getgenv().parts_rainbow_anti_void or false,
     Flag = "GetRainbowPartLmao",
     Callback = function(GetRainbowStateAntiVoid)
         if GetRainbowStateAntiVoid then
-            getgenv().parts_rainbow_anti_void = true
             getgenv().parts_rainbow_anti_void = true
             getgenv().rainbowTweenConnection = nil
             local TweenService = getgenv().TweenService
@@ -2745,7 +2626,7 @@
             
             local function cycleColor()
                 if not getgenv().parts_rainbow_anti_void then
-                    return getgenv().notify("Stopped", "AntiVoid BasePlate rainbow loop disabled.", 6)
+                    return getgenv().notify("Warning", "AntiVoid BasePlate rainbow loop disabled.", 6)
                 end
             
                 local nextIndex = (index % #colors) + 1
@@ -2779,29 +2660,16 @@
             end
         end
     end,})
-    if getgenv().parts_rainbow_anti_void == true then
-        getgenv().AntiVoidPlayer:Set(false)
-        if getgenv().rainbowTweenConnection then
-            getgenv().rainbowTweenConnection:Disconnect()
-            getgenv().rainbowTweenConnection = nil
-        end
-    end
-    task.wait(0.2)
-    if getgenv().AntiVoidPlayer then
-        getgenv().AntiVoidPlayer:Set(false)
-    end
-    wait(0.1)
-    getgenv().Baseplate_Exists = false
+
     if getgenv().AntiVoidTransparency then
         getgenv().AntiVoidTransparency = nil
     end
     if getgenv().Change_Map_Color then
         getgenv().Change_Map_Color = nil
     end
-    wait()
+
     getgenv().RainbowBaseplate_Speed_Value = getgenv().RainbowBaseplate_Speed_Value or 0.5
     getgenv().RainbowSpeed = getgenv().RainbowSpeed or 2
-
     getgenv().RainbowBaseplateSliderSpeed = Tab22:CreateSlider({
     Name = "Rainbow Baseplate Speed",
     Range = {0, 6},
@@ -2815,7 +2683,7 @@
 
     getgenv().SmoothTweenBaseplateRainbow = Tab22:CreateToggle({
     Name = "Rainbow Baseplate",
-    CurrentValue = false,
+    CurrentValue = getgenv().smooth_rainbow or false,
     Flag = "enableSmoothTweeningRainbowBaseplate",
     Callback = function(turnOnRGBPart)
         if turnOnRGBPart then
@@ -2825,7 +2693,6 @@
             TerrainFolder.Name = "TERRAIN_EDITOR"
 
             getgenv().smooth_rainbow = true
-
             local colors = {
                 Color3.fromRGB(0, 255, 255),
                 Color3.fromRGB(0, 0, 0),
@@ -2877,7 +2744,7 @@
 
     getgenv().BaseplateCollisionToggle = Tab22:CreateToggle({
     Name = "Baseplate Collision",
-    CurrentValue = false,
+    CurrentValue = getgenv().no_baseplate_collision or false,
     Flag = "ToggleBaseplateCollision",
     Callback = function(parts_collision)
         if parts_collision then
@@ -2903,11 +2770,6 @@
             end
         end
     end,})
-    wait(0.1)
-    if getgenv().no_baseplate_collision == true then
-        getgenv().BaseplateCollisionToggle:Set(false)
-        getgenv().no_baseplate_collision = false
-    end
 
     getgenv().ColorPickerForBaseplate = Tab22:CreateColorPicker({
     Name = "Baseplate Color Picker",
@@ -2947,10 +2809,10 @@
             end
         end
     end,})
-    wait()
+    wait(0.1)
     print("Loading MIC UP Features...")
     getgenv().TransparencySelectorForBaseplate:Set(1)
-    wait()
+
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
         getgenv().coloredBooth = Tab11:CreateToggle({
         Name = "Booth Color Changer (FE)",
@@ -3053,199 +2915,22 @@
             end
         end,})
 
-        getgenv().ClaimPlrsBooth = Tab11:CreateInput({
-        Name = "Claim Someones Booth",
-        PlaceholderText = "User Here",
-        RemoveTextAfterFocusLost = true,
-        Callback = function(takeThatBooth)
-            local Players = getgenv().Players
-            local ReplicatedStorage = getgenv().ReplicatedStorage
-            local Workspace = getgenv().Workspace
-            local LocalPlayer = getgenv().LocalPlayer
-            local Character = getgenv().Character
-            local HumanoidRootPart = getgenv().HumanoidRootPart or getgenv().Character:WaitForChild("HumanoidRootPart") or getgenv().getRoot(getgenv().Character)
-            
-            local function findPlrBooth(player)
-                for _, booth in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-                    local usernameLabel = booth:FindFirstChild("Username") and booth.Username:FindFirstChild("BillboardGui") and booth.Username.BillboardGui:FindFirstChild("TextLabel")
-                    if usernameLabel and usernameLabel.Text == "Owned by: "..tostring(player) then
-                        return booth
-                    end
-                end
-                return nil
-            end
-            wait()
-            local find_plr_func_booth = findplr(takeThatBooth)
-            
-            if find_plr_func_booth == LocalPlayer then
-                getgenv().notify("Success", "Removed your booth, "..tostring(LocalPlayer.DisplayName), 6.5)
-                return ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
-            end
-            
-            if not find_plr_func_booth then
-                return getgenv().notify("Error", "Player not found!", 6.5)
-            end
-            
-            local plr_booth = findPlrBooth(find_plr_func_booth)
-            
-            if not plr_booth then
-                return getgenv().notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5)
-            end
-            
-            local OldCF = HumanoidRootPart.CFrame
-            
-            local function setupProximityPrompt(stall)
-                local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                if ProximityPrompt then
-                    ProximityPrompt.Enabled = true
-                    ProximityPrompt.ClickablePrompt = true
-                    ProximityPrompt.MaxActivationDistance = 15
-                    ProximityPrompt.RequiresLineOfSight = false
-                    ProximityPrompt.HoldDuration = 0
-                end
-            end
-            
-            local function Claim_A_Booth()
-                if not plr_booth then return end
-            
-                setupProximityPrompt(plr_booth)
-                task.wait(0.3)
-            
-                HumanoidRootPart.CFrame = plr_booth:GetPivot()
-                task.wait(0.5)
-            
-                local ProximityPrompt = plr_booth:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                if ProximityPrompt then
-                    fireproximityprompt(ProximityPrompt)
-                    task.wait(0.2)
-            
-                    local args = {"", "Gray", "SourceSans"}
-                    ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
-            
-                    task.wait(0.2)
-                    HumanoidRootPart.CFrame = OldCF
-                    task.wait(0.2)
-            
-                    getgenv().notify("Success", "Claimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
-                end
-            end
-            
-            task.wait(0.2)
-            setupProximityPrompt(plr_booth)
-            task.wait(0.3)
-            Claim_A_Booth()
-        end,})
-
-        getgenv().unclaimPlrBooth = Tab11:CreateInput({
-        Name = "Unclaim A Booth",
-        PlaceholderText = "User Here",
-        RemoveTextAfterFocusLost = true,
-        Callback = function(unclaimTheirBooth)
-            local Folder = getgenv().booth_folder_found_mic_up
-            local find_plr_func_booth = findplr(unclaimTheirBooth)
-
-            if getgenv().boothWhitelistingPlayer and getgenv().boothWhitelistingPlayer[find_plr_func_booth] then
-                return getgenv().notify("Warning", "This user is on the Booth Whitelist!", 6)
-            end
-
-            getgenv().notify("Info", "Make sure you are not Invisible when doing this!", 6.5)
-            task.wait(.2)
-
-            if find_plr_func_booth == getgenv().LocalPlayer then
-                getgenv().notify("Success", "Removed your booth. [LocalPlayer]", 6.5)
-                return getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
-            end
-
-            if not find_plr_func_booth then
-                return getgenv().notify("Error", "Player not found!", 6.5)
-            end
-
-            local function getStall()
-                for i,v in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-                    if v ~= getgenv().LocalPlayer and v:FindFirstChild("Username"):FindFirstChild("BillboardGui").TextLabel.Text == "Owned by: "..tostring(find_plr_func_booth) then
-                        return v
-                    end
-                end
-                return nil
-            end
-
-            local plr_booth = getStall()
-
-            if not plr_booth and find_plr_func_booth then
-                return getgenv().notify("Error", tostring(find_plr_func_booth).." does not own a booth!", 5, 3)
-            end
-
-            local Folder = getgenv().booth_folder_found_mic_up
-            local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-            local stalls = {
-                Folder:FindFirstChild("Booth01"),
-                Folder:FindFirstChild("Booth02"),
-                Folder:FindFirstChild("Booth03"),
-                Folder:FindFirstChild("Booth04"),
-                Folder:FindFirstChild("Booth05")
-            }
-
-            local function setupProximityPrompt(stall)
-                local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                if ProximityPrompt and not ProximityPrompt.Enabled then
-                    ProximityPrompt.Enabled = true
-                    ProximityPrompt.ClickablePrompt = true
-                    ProximityPrompt.MaxActivationDistance = 15
-                    ProximityPrompt.RequiresLineOfSight = false
-                    ProximityPrompt.HoldDuration = 0
-                end
-            end
-
-            local function Claim_A_Booth()
-                local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-                local stall = plr_booth
-                local ProximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                if stall then
-                    setupProximityPrompt(stall)
-                    wait(0.3)
-                    getgenv().Character:PivotTo(stall:GetPivot())
-                    wait(0.3)
-                    fireproximityprompt(ProximityPrompt)
-                    wait(0.2)
-                    local args = {
-                        [1] = "",
-                        [2] = "Gray",
-                        [3] = "SourceSans"
-                    }
-                    
-                    getgenv().ReplicatedStorage:WaitForChild("UpdateBoothText"):FireServer(unpack(args))
-                    wait(0.6)
-                    getgenv().ReplicatedStorage:WaitForChild("DeleteBoothOwnership"):FireServer()
-                    wait(0.2)
-                    getgenv().getRoot(getgenv().Character).CFrame = OldCF
-                    wait(0.2)
-                    getgenv().notify("Success", "Unclaimed "..tostring(find_plr_func_booth).."'s Booth!", 6.5)
-                    if plr_booth then
-                        return 
-                    end
-                end
-            end
-            wait(0.2)
-            local stall = plr_booth
-            setupProximityPrompt(stall)
-            wait(0.3)
-            Claim_A_Booth()
-        end,})
-
         getgenv().BoothNoclipperCollision = Tab11:CreateToggle({
         Name = "Booths Collisions",
-        CurrentValue = false,
+        CurrentValue = getgenv().toggling_all_booth_collisions or false,
         Flag = "NoClippingBooths",
         Callback = function(noclip_the_booths)
+            getgenv().toggling_all_booth_collisions = noclip_the_booths
+
             if noclip_the_booths then
                 for _, v in ipairs(getgenv().booth_folder_found_mic_up:GetDescendants()) do
-                    if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
+                    if v:IsA("BasePart") then
                         v.CanCollide = true
                     end
                 end
             else
                 for _, v in ipairs(getgenv().booth_folder_found_mic_up:GetDescendants()) do
-                    if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
+                    if v:IsA("BasePart") then
                         v.CanCollide = false
                     end
                 end
@@ -3254,7 +2939,7 @@
 
         if getgenv().booth_folder_found_mic_up and getgenv().booth_folder_found_mic_up.Parent and getgenv().booth_folder_found_mic_up:IsDescendantOf(workspace) and getgenv().booth_folder_found_mic_up:IsA("Folder") then
             for _, v in ipairs(getgenv().booth_folder_found_mic_up:GetDescendants()) do
-                if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" then
+                if v:IsA("BasePart") then
                     v.CanCollide = true
                 end
             end
@@ -3269,32 +2954,43 @@
         Flag = "booth_transparency_values",
         Callback = function(transparency_value_booths)
             for _, v in ipairs(getgenv().booth_folder_found_mic_up:GetDescendants()) do
-                if v:IsA("BasePart") and v.Name ~= "Activate" and v.Name ~= "Username" and v.Name ~= "Edit" then
-                    v.Transparency = transparency_value_booths
+                if v:IsA("BasePart") and not v.Name:lower():find("light") then
+                    local accessory = v.Parent
+                    if accessory.ClassName == "Accessory" and accessory.Parent.Name:lower():find("npc") then
+                        v.Transparency = transparency_value_booths
+                    end
                 end
             end
-            task.wait()
+            task.wait(0)
             for _, v in ipairs(getgenv().booth_folder_found_mic_up:GetDescendants()) do
                 if v:IsA("TextLabel") then
                     v.TextTransparency = transparency_value_booths
                 end
             end
-            task.wait()
+            task.wait(0)
             if transparency_value_booths == 1 then
                 for _, v in ipairs(getgenv().booth_folder_found_mic_up:GetDescendants()) do
-                    if v:IsA("Model") and v:FindFirstChild("Activate") then
-                        v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = false
+                    if v:IsA("Folder") then
+                        local prox_prompt_part_parent = v.Name:lower():find("claim")
+
+                        if prox_prompt_part_parent and prox_prompt_part_parent:FindFirstChildOfClass("ProximityPrompt") then
+                            prox_prompt_part_parent:FindFirstChildOfClass("ProximityPrompt").Enabled = true
+                        end
                     end
                 end
             else
                 for _, v in ipairs(getgenv().booth_folder_found_mic_up:GetDescendants()) do
-                    if v:IsA("Model") and v:FindFirstChild("Activate") then
-                        v:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt").Enabled = true
+                    if v:IsA("Folder") then
+                        local prox_prompt_part_parent = v.Name:lower():find("claim")
+
+                        if prox_prompt_part_parent and prox_prompt_part_parent:FindFirstChildOfClass("ProximityPrompt") then
+                            prox_prompt_part_parent:FindFirstChildOfClass("ProximityPrompt").Enabled = true
+                        end
                     end
                 end
             end
         end,})
-        wait(0.1)
+
         if getgenv().Workspace:FindFirstChild("map") then
             if getgenv().booth_folder_found_mic_up then
                 for _, v in ipairs(getgenv().booth_folder_found_mic_up:GetDescendants()) do
@@ -3310,7 +3006,7 @@
         end
         wait()
         getgenv().CopyAPlayersAv = Tab2:CreateInput({
-        Name = "Copy Player Avatar",
+        Name = "Copy Player Avatar (broken)",
         PlaceholderText = "Player",
         RemoveTextAfterFocusLost = true,
         Callback = function(copyUserAvatar)
@@ -6306,7 +6002,7 @@
     end
     wait(0.2)
     if game.PlaceId == 17274762379 then
-        local Remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+        local Remotes = ReplicatedStorage:FindFirstChild("Remotes")
         local RemoteEvents = Remotes and Remotes:FindFirstChild("RemoteEvents")
         local animationHandlerEvent = RemoteEvents and RemoteEvents:FindFirstChild("animationHandlerEvent")
         local RemoteFunctions = Remotes or Remotes:FindFirstChild("RemoteFunctions")
@@ -6377,6 +6073,10 @@
             local RemoteEvents = Remotes:FindFirstChild("RemoteEvents")
             local animationHandlerEvent = RemoteEvents:FindFirstChild("animationHandlerEvent")
 
+            if not animationHandlerEvent or not animationHandlerEvent:IsA("RemoteEvent") then
+                return getgenv().notify("Error", "animationHandlerEvent RemoteEvent does not exist or is not a RemoteEvent!", 10)
+            end 
+
             function play_anim_normally(arg, name)
                 local args = {
                     [1] = arg,
@@ -6396,7 +6096,9 @@
             local RemoteFunctions = Remotes or Remotes:FindFirstChild("RemoteFunctions")
             local Codes = RemoteFunctions:FindFirstChild("Codes")
 
-            Codes:InvokeServer("3mvisits")
+            if Codes and Codes.Parent and Codes:IsA("RemoteFunction") then
+                Codes:InvokeServer("3mvisits")
+            end
         end,})
 
         getgenv().InvitePlayerParty = Tab5:CreateInput({
@@ -6410,7 +6112,7 @@
             local OnInviteRequest = RemoteFunctions:FindFirstChild("OnInviteRequest")
 
             if not found_this_plr then
-                return getgenv().notify("Failure", "Player was not found or does not exist.", 6)
+                return getgenv().notify("Error", "Player was not found or does not exist.", 6)
             end
 
             function return_fire(player)
@@ -6427,7 +6129,7 @@
             return_fire(found_this_plr)
         end,})
 
-        if require then
+        if require and typeof(require) == "function" then
             getgenv().SendYourOwnDialogue = Tab2:CreateInput({
             Name = "Custom Dialogue Message",
             PlaceholderText = "User Here",
@@ -6441,7 +6143,7 @@
                     return getgenv().notify("Failure:", "This feature isn't supported on this executor.", 5)
                 end
 
-                getgenv().notify("Alert!", "If it gives you an error it means you can't do it.", 6)
+                getgenv().notify("Warning", "If it gives you an error it means you can't do it.", 6)
 
                 module.Speak(getgenv().LocalPlayer, {
                     RealName = tostring(game.Players.LocalPlayer.Name),
@@ -6471,7 +6173,7 @@
             local bruh_get_player = findplr(player_focus_bruh)
 
             if not bruh_get_player then
-                return getgenv().notify("Failure", "Player was not found or does not exist.", 6)
+                return getgenv().notify("Error", "Player was not found or does not exist.", 6)
             end
 
             local Players = getgenv().Players
@@ -6484,16 +6186,16 @@
             
             local function addPlayerToGlobalTable(player)
                 if next(getgenv().SpamWhitelistTable) then
-                    return getgenv().notify("Player Limit!", "Only one player can be added at a time!", 5)
+                    return getgenv().notify("Warning", "Only one player can be added at a time!", 5)
                 else
                     getgenv().SpamWhitelistTable[player.Name] = player
                     wait(0.2)
                     if getgenv().SpamWhitelistTable[player.Name] then
-                        getgenv().notify("Success!", tostring(player.Name)..", was added to Spam Invite Whitelist!", 5)
+                        getgenv().notify("Success", tostring(player.Name)..", was added to Spam Invite Whitelist!", 5)
                     elseif not Players[player.Name] then
-                        return getgenv().notify("Failure!", tostring(player)..", does not exist!", 5)
+                        return getgenv().notify("Error", tostring(player)..", does not exist!", 5)
                     elseif bruh_get_player == getgenv().LocalPlayer then
-                        return getgenv().notify("Failed!", "You cannot add yourself!", 5)
+                        return getgenv().notify("Error", "You cannot add yourself!", 5)
                     end
                 end
             end
@@ -6612,11 +6314,10 @@
         Flag = "BoothWhitelistingAddingUser",
         Callback = function(getThisPlayer)
             getgenv().boothWhitelistingPlayer = getgenv().boothWhitelistingPlayer or {}
-
             local bruhUser = findplr(getThisPlayer)
 
             if not bruhUser then
-                return getgenv().notify("Failure", "Player was not found.", 6)
+                return getgenv().notify("Error", "Player was not found.", 6)
             end
 
             wait(0.2)
@@ -6624,7 +6325,7 @@
                 getgenv().boothWhitelistingPlayer[player.Name] = player
                 wait(0.3)
                 if getgenv().boothWhitelistingPlayer[player.Name] then
-                    getgenv().notify("Success!", tostring(player.Name)..", was added to Booth Whitelist!", 5)
+                    getgenv().notify("Success", tostring(player.Name)..", was added to Booth Whitelist!", 5)
                 end
             end
             
@@ -6647,12 +6348,12 @@
                     getgenv().boothWhitelistingPlayer[player.Name] = nil
                     wait(0.2)
                     if getgenv().boothWhitelistingPlayer[player.Name] == nil then
-                        getgenv().notify("Success!", tostring(player.Name)..", was removed from the Booth Whitelist!", 5)
+                        getgenv().notify("Success", tostring(player.Name)..", was removed from the Booth Whitelist!", 5)
                     else
-                        return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
+                        return getgenv().notify("Error", tostring(player)..", does not exist!", 5)
                     end
                 else
-                    return getgenv().notify("Failed", tostring(player.Name)..", was not found in Booth Whitelist!", 5)
+                    return getgenv().notify("Error", tostring(player.Name)..", was not found in Booth Whitelist!", 5)
                 end
             end
             
@@ -6670,11 +6371,10 @@
     Flag = "AddingOtherScriptWhitelistUser",
     Callback = function(addThatUserHere)
         getgenv().script_whitelist_player = getgenv().script_whitelist_player or {}
-
         local bruhUser = findplr(addThatUserHere)
 
         if not bruhUser then
-            return getgenv().notify("Failure", "Player was not found.", 6)
+            return getgenv().notify("Error", "Player was not found.", 6)
         end
 
         wait(0.2)
@@ -6682,7 +6382,7 @@
             getgenv().script_whitelist_player[player.Name] = player
             wait(0.3)
             if getgenv().script_whitelist_player[player.Name] then
-                getgenv().notify("Success!", tostring(player.Name)..", was added to Script Whitelist!", 5)
+                getgenv().notify("Success", tostring(player.Name)..", was added to Script Whitelist!", 5)
             end
         end
         
@@ -6710,12 +6410,12 @@
                 getgenv().script_whitelist_player[player.Name] = nil
                 wait(0.2)
                 if getgenv().script_whitelist_player[player.Name] == nil then
-                    getgenv().notify("Success!", tostring(player.Name)..", was removed from the Script Whitelist!", 5)
+                    getgenv().notify("Success", tostring(player.Name)..", was removed from the Script Whitelist!", 5)
                 else
-                    return getgenv().notify("Failed", tostring(player)..", does not exist!", 5)
+                    return getgenv().notify("Error", tostring(player)..", does not exist!", 5)
                 end
             else
-                return getgenv().notify("Failed", tostring(player.Name)..", was not found in Script Whitelist!", 5)
+                return getgenv().notify("Error", tostring(player.Name)..", was not found in Script Whitelist!", 5)
             end
         end
         
@@ -6741,7 +6441,7 @@
         getgenv().PauseMainMenu = Tab1:CreateButton({
         Name = "Pause (Go To Main Menu)",
         Callback = function()
-            if MainMenu then
+            if MainMenu and MainMenu:IsA("RemoteFunction") then
                 MainMenu:InvokeServer()
             end
         end,})
@@ -6794,7 +6494,7 @@
                             connection:Disable()
                         end
                     else
-                        getgenv().notify("Failure:", "Could not find signal: "..tostring(property)..", for: "..tostring(object.Name), 5)
+                        getgenv().notify("Error", "Could not find signal: "..tostring(property)..", for: "..tostring(object.Name), 5)
                     end
                 end
     
@@ -6858,462 +6558,46 @@
             end
         end,})
 
-        getgenv().AutoReclaimToggle = Tab11:CreateToggle({
-        Name = "Anti Booth Stealer",
-        CurrentValue = false,
-        Flag = "NoStealingBooths",
-        Callback = function(boothStolen)
-            if boothStolen then
-                getgenv().AutoClaimEnabled = true
-                getgenv().Booth = nil
-                getgenv().OwnershipConnection = nil
-                local Character = getgenv().Character
-
-                if not getgenv().Oldest_AntiBoothStealer_CF then
-                    getgenv().Oldest_AntiBoothStealer_CF = getgenv().getRoot(getgenv().Character).CFrame
-                end
-            
-                local function getStall()
-                    for _, v in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-                        if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
-                            return v
-                        end
-                    end
-                    return nil
-                end
-
-                local has_stall_exists = getStall()
-                local booth_text
-
-                if has_stall_exists then
-                    booth_text = getStall():FindFirstChild("Text"):FindFirstChild("SurfaceGui"):FindFirstChild("TextLabel").Text
-                    getgenv().text_for_booth = tostring(booth_text)
-                else
-                    booth_text = ""
-                    getgenv().text_for_booth = tostring(booth_text)
-                end
-                wait()
-                local function claimStall(stall)
-                    if stall then
-                        getgenv().StallClaimToggle:Set(true)
-                        repeat
-                            if not getgenv().AutoClaimEnabled then return end
-
-                            Character:PivotTo(stall:GetPivot() + Vector3.new(0, 3, 0))
-                            task.wait(0.5)
-            
-                            local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                            if proximityPrompt then
-                                fireproximityprompt(proximityPrompt, 25)
-                            else
-                                warn("ProximityPrompt not found for the booth!")
-                            end
-            
-                            task.wait(0.5)
-                        until stall.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name or not getgenv().AutoClaimEnabled
-
-                        if getgenv().Oldest_AntiBoothStealer_CF then
-                            Character:PivotTo(getgenv().Oldest_AntiBoothStealer_CF)
-                            wait(0.1)
-                            getgenv().StallClaimToggle:Set(false)
-                            getgenv().ReplicatedStorage:FindFirstChild("UpdateBoothText"):FireServer(getgenv().text_for_booth, "Cinder", "SourceSans")
-                            wait(0.2)
-                            getgenv().text_for_booth = nil
-                        end
-                    end
-                end
-            
-                local function monitorOwnership()
-                    while getgenv().AutoClaimEnabled do
-                        local stall = getStall()
-                        if stall then
-                            getgenv().Booth = stall
-                            wait()
-                            getgenv().OwnershipConnection = stall.Username.BillboardGui.TextLabel:GetPropertyChangedSignal("Text"):Connect(function()
-                                if stall.Username.BillboardGui.TextLabel.Text ~= "Owned by: " .. getgenv().LocalPlayer.Name then
-                                    claimStall(stall)
-                                end
-                            end)
-                        else
-                            local newStall = getStall()
-                            claimStall(newStall)
-                        end
-            
-                        task.wait(0.6)
-                    end
-            
-                    if getgenv().OwnershipConnection then
-                        getgenv().OwnershipConnection:Disconnect()
-                        getgenv().OwnershipConnection = nil
-                    end
-                end
-            
-                local plr_booth = getStall()
-                if plr_booth and getgenv().AutoClaimEnabled then
-                    monitorOwnership()
-                else
-                    getgenv().AutoReclaimToggle:Set(false)
-                    return getgenv().notify("Error:", "No booth found! Claim a booth and toggle this on.", 7.5)
-                end
-            else
-                getgenv().AutoClaimEnabled = false
-            
-                if getgenv().OwnershipConnection then
-                    getgenv().OwnershipConnection:Disconnect()
-                    getgenv().OwnershipConnection = nil
-                else
-                    warn("Event not connected.")
-                end
-                
-                if getgenv().Booth then
-                    getgenv().Booth = nil
-                end
-                return 
-            end            
-        end,})
-        wait(0.3)
-        if getgenv().AutoClaimEnabled == true then
-            getgenv().AutoClaimEnabled = false
-            getgenv().AutoReclaimToggle:Set(false)
-            if getgenv().Booth then
-                getgenv().Booth = nil
-            end
-            if getgenv().OwnershipConnection then
-                getgenv().OwnershipConnection:Disconnect()
-                getgenv().OwnershipConnection = nil
-            else
-                warn("Event not connected.")
-            end
-        end
-
         getgenv().RainbowBoothClientSide = Tab11:CreateToggle({
-        Name = "Rainbow Booth (Client Side)",
-        CurrentValue = false,
+        Name = "Rainbow Booth (FE)",
+        CurrentValue = getgenv().rgb_booth_enabled or false,
         Flag = "BoothBeingRainbowClientSide",
-        Callback = function(booth_rainbow_not_fe)
-            if booth_rainbow_not_fe then
-                local function retrieve_booth()
-                    for _, v in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-                        if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
-                            return v
-                        end
+        Callback = function(enabled)
+            getgenv().rgb_booth_enabled = enabled
+
+            if enabled then
+                getgenv().rgb_booth_speed = 0.7
+                getgenv().FlamesLibrary.spawn("booth_rgb_loop", "spawn", function()
+                    local hue = 0
+
+                    while getgenv().FlamesLibrary.is_alive("booth_rgb_loop") do
+                        hue = (hue + getgenv().rgb_booth_speed) % 1
+
+                        getgenv().save_changes_booth_Remote_Event:FireServer({
+                            texture_preset = "fabric",
+                            title_text = "",
+                            texture_values = {
+                                ["02"] = {hue_number = hue,value_number = 0.4901960790157318,saturation_number = 1},
+                                title = {hue_number = hue,value_number = 0.9803921580314636,saturation_number = 1},
+                                ["01"] = {hue_number = hue,value_number = 0,saturation_number = 1}
+                            }
+                        })
+
+                        task.wait(0.7)
                     end
-                    return nil
-                end
-
-                local has_stall_exists = retrieve_booth()
-
-                if not has_stall_exists then
-                    getgenv().booth_colors_rgb_not_fe = false
-                    getgenv().RainbowBoothClientSide:Set(false)
-                    return getgenv().notify("Failure!", "No Booth found, please claim one and try again.", 5)
-                end
-                wait()
-                getgenv().booth_colors_rgb_not_fe = true
-                while getgenv().booth_colors_rgb_not_fe == true do
-                wait()
-                    local Workspace = getgenv().Workspace
-
-                    local function cycle_colors(objects)
-                        local colors = {
-                            "Black", "Really red", "White", "Bright blue",
-                            "New Yeller", "Toothpaste", "Royal purple", "Hot pink"
-                        }
-                        
-                        while getgenv().booth_colors_rgb_not_fe == true do
-                            for _, color in ipairs(colors) do
-                                for _, part in ipairs(objects) do
-                                    if part:IsA("BasePart") then
-                                        part.BrickColor = BrickColor.new(color)
-                                    end
-                                end
-                                task.wait(0.5)
-                            end
-                        end
-                    end
-
-                    if has_stall_exists then
-                        local baseParts = {}
-                        for _, v in ipairs(has_stall_exists:GetDescendants()) do
-                            if v:IsA("BasePart") then
-                                table.insert(baseParts, v)
-                            end
-                        end
-                        task.spawn(cycle_colors, baseParts)
-                    end
-                end
+                end)
             else
-                local function retrieve_booth()
-                    for _, v in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-                        if v.Username.BillboardGui.TextLabel.Text == "Owned by: " .. getgenv().LocalPlayer.Name then
-                            return v
-                        end
-                    end
-                    return nil
-                end
-
-                local has_stall_exists = retrieve_booth()
-                wait()
-                getgenv().booth_colors_rgb_not_fe = false
-                getgenv().booth_colors_rgb_not_fe = false
-                getgenv().booth_colors_rgb_not_fe = false
-                wait()
-                if has_stall_exists then
-                    for _, part in ipairs(has_stall_exists:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.BrickColor = BrickColor.new("Black")
-                        end
-                    end
-                else
-                    warn("Booth did not exist when turning off loop.")
-                end
+                getgenv().FlamesLibrary.disconnect("booth_rgb_loop")
             end
-        end,})
-        wait()
-        if getgenv().booth_colors_rgb_not_fe == true then
-            getgenv().booth_colors_rgb_not_fe = false
-            getgenv().RainbowBoothClientSide:Set(false)
-        end
-        wait(0.3)
-        getgenv().DeleteOldCFrameConnection = Tab11:CreateButton({
-        Name = "Delete Old CFrame (Anti-Booth Stealer)",
-        Callback = function()
-            if getgenv().Oldest_AntiBoothStealer_CF then
-                getgenv().Oldest_AntiBoothStealer_CF = nil
-            end
-        end,})
-        wait()
-        if getgenv().Oldest_AntiBoothStealer_CF then
-            getgenv().Oldest_AntiBoothStealer_CF = nil
-        end
-        wait()
-        getgenv().LoopRemoveAllBooths = Tab11:CreateToggle({
-        Name = "Loop Unclaim/Remove Every Booth",
-        CurrentValue = false,
-        Flag = "LoopGetRidOfAllBooths",
-        Callback = function(doLoopUnclaimAll)
-            if doLoopUnclaimAll then
-                local Players = getgenv().Players
-                local LocalPlayer = getgenv().LocalPlayer
-                local Character = getgenv().Character
-                local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-                local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
-                local Folder = getgenv().booth_folder_found_mic_up
-                
-                local Rep_Storage = game:GetService("ReplicatedStorage") or cloneref(game:GetService("ReplicatedStorage")) or game.ReplicatedStorage or game:FindService("ReplicatedStorage")
-                local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
-    
-                local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-                getgenv().Oldest_CFrame = OldCF
-                wait(0.3)
-                local function fireAndUnclaimStall(stall)
-                    if not getgenv().Oldest_CFrame or getgenv().Oldest_CFrame == nil then
-                        getgenv().LoopRemoveAllBooths:Set(false)
-                        return getgenv().notify("Failure", "Could not save old Position/CFrame, exiting...", 5)
-                    end
-                    wait(0.2)
-                    local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                    if proximityPrompt then
-                        proximityPrompt.ClickablePrompt = true
-                        proximityPrompt.RequiresLineOfSight = false
-                        proximityPrompt.HoldDuration = 0
-                        proximityPrompt.MaxActivationDistance = 17
-                        wait(0.2)
-                        Character:PivotTo(stall:GetPivot())
-                        wait(0.2)
-                        fireproximityprompt(proximityPrompt, 999)
-                        fireproximityprompt(proximityPrompt, 999)
-                        fireproximityprompt(proximityPrompt, 999)
-                        wait(0.2)
-                        Delete_Booth_Remote:FireServer()
-                        Delete_Booth_Remote:FireServer()
-                        Delete_Booth_Remote:FireServer()
-                        Delete_Booth_Remote:FireServer()
-                    elseif not proximityPrompt then
-                        getgenv().LoopRemoveAllBooths:Set(false)
-                        return getgenv().notify("Failed!", "ProximityPrompt is missing or doesn't exist.", 5)
-                    end
-                end
-    
-                local function unclaimStalls()
-                    for _, stall in pairs(Folder:GetChildren()) do
-                        if stall and stall:FindFirstChild("Activate") then
-                            wait()
-                            fireAndUnclaimStall(stall)
-                        end
-                    end
-                end
-                
-                wait()
-                getgenv().loop_unclaiming_all_booths = true
-                while getgenv().loop_unclaiming_all_booths == true do
-                wait(0.1)
-                    unclaimStalls()
-                end
-            else
-                getgenv().loop_unclaiming_all_booths = false
-                getgenv().loop_unclaiming_all_booths = false
-                wait(0.5)
-                if not getgenv().loop_unclaiming_all_booths or getgenv().loop_unclaiming_all_booths == false then
-                    for i = 1, 10 do
-                        getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = getgenv().Oldest_CFrame
-                        wait(0.4)
-                    end
-                    wait(0.4)
-                    if getgenv().Oldest_CFrame then
-                        getgenv().Oldest_CFrame = nil
-                    end
-                    wait(0.4)
-                    if not getgenv().Oldest_CFrame or getgenv().Oldest_CFrame == nil then
-                        getgenv().notify("Success", "Finished shutting down loop.", 6)
-                    else
-                        return getgenv().notify("Failure", "Loop did not shutdown correctly.", 5)
-                    end
-                end
-            end
-        end,})
-
-        getgenv().RemoveBooths = Tab11:CreateButton({
-        Name = "Remove Every Booth",
-        Callback = function()
-            local Players = getgenv().Players
-            local LocalPlayer = getgenv().LocalPlayer
-            local Character = getgenv().Character
-            local Humanoid = getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-            local HumanoidRootPart = getgenv().Character:FindFirstChild("HumanoidRootPart")
-            local Folder = getgenv().booth_folder_found_mic_up
-            local Rep_Storage = getgenv().ReplicatedStorage
-            local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
-            local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-
-            local function fireAndUnclaimStall(stall)
-                local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                if proximityPrompt then
-                    proximityPrompt.ClickablePrompt = true
-                    proximityPrompt.RequiresLineOfSight = false
-                    proximityPrompt.HoldDuration = 0
-                    proximityPrompt.MaxActivationDistance = 17
-                    wait(0.3)
-                    Character:PivotTo(stall:GetPivot())
-                    wait(0.1)
-                    Character:WaitForChild("HumanoidRootPart").Anchored = true
-                    wait(0.3)
-                    fireproximityprompt(proximityPrompt, 10)
-                    wait(0.5)
-                    Delete_Booth_Remote:FireServer()
-                    wait(0.2)
-                    Character:WaitForChild("HumanoidRootPart").Anchored = false
-                elseif not proximityPrompt then
-                    return getgenv().notify("Failed!", "ProximityPrompt is missing or doesn't exist.", 5)
-                end
-            end
-
-            local function unclaimStalls()
-                for _, stall in pairs(Folder:GetChildren()) do
-                    if stall and stall:FindFirstChild("Activate") then
-                        wait(0.3)
-                        fireAndUnclaimStall(stall)
-                    end
-                end
-            end
-            
-            wait(0.2)
-            unclaimStalls()
-            wait(0.3)
-            getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
         end,})
 
         getgenv().DeletePlrBooth = Tab11:CreateButton({
         Name = "Delete Current Booth",
         Callback = function()
-            for i = 1, 20 do
-                getgenv().ReplicatedStorage:FindFirstChild("DeleteBoothOwnership"):FireServer()
-            end
-        end,})
-
-        getgenv().RemoveBooths = Tab11:CreateButton({
-        Name = "Remove Every Booth",
-        Callback = function()
-            local Players = getgenv().Players
-            local LocalPlayer = getgenv().LocalPlayer
-            local Character = getgenv().Character or getgenv().LocalPlayer.Character or get_char(LocalPlayer, 10)
-            local Humanoid = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildWhichIsA("Humanoid")
-            local HumanoidRootPart = getgenv().HumanoidRootPart or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(LocalPlayer, 10)
-            local GetWorkspace = getgenv().Workspace
-            local Folder = getgenv().booth_folder_found_mic_up
-            local Rep_Storage = getgenv().ReplicatedStorage
-            local Delete_Booth_Remote = Rep_Storage:FindFirstChild("DeleteBoothOwnership") or Rep_Storage:WaitForChild("DeleteBoothOwnership")
-            local OldCF = getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame
-
-            local function fireAndUnclaimStall(stall)
-                local proximityPrompt = stall:FindFirstChild("Activate"):FindFirstChildOfClass("ProximityPrompt")
-                if proximityPrompt then
-                    proximityPrompt.ClickablePrompt = true
-                    proximityPrompt.RequiresLineOfSight = false
-                    proximityPrompt.HoldDuration = 0
-                    proximityPrompt.MaxActivationDistance = 17
-                    wait(0.3)
-                    Character:PivotTo(stall:GetPivot())
-                    wait(0.1)
-                    Character:WaitForChild("HumanoidRootPart").Anchored = true
-                    wait(0.3)
-                    fireproximityprompt(proximityPrompt, 10)
-                    wait(0.5)
-                    Delete_Booth_Remote:FireServer()
-                    wait(0.2)
-                    Character:WaitForChild("HumanoidRootPart").Anchored = false
-                elseif not proximityPrompt then
-                    return getgenv().notify("Failed!", "ProximityPrompt is missing or doesn't exist.", 5)
-                end
-            end
-
-            local function unclaimStalls()
-                for _, stall in pairs(Folder:GetChildren()) do
-                    if stall and stall:FindFirstChild("Activate") then
-                        wait(0.3)
-                        fireAndUnclaimStall(stall)
-                    end
-                end
-            end
             
-            wait(0.2)
-            unclaimStalls()
-            wait(0.3)
-            getgenv().Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
         end,})
-
-        local Feature_Not_Supported_Low_Level = low_level_executor()
-
-        -- I plan to add more MAYBE soon.
-        if Feature_Not_Supported_Low_Level == true then
-            local Module_Require = require(getgenv().ReplicatedStorage:WaitForChild("Menu"):FindFirstChild("AI"):FindFirstChild("Constants"))
-
-            -- Basically just gets rid of the AI generator delay, because this ModuleScript controls the delay entirely client-sided, so it also gets rid of that stupid timer, so when you open the Menu, you can do it yourself instead of having to have a script to do it for you.
-            Module_Require["GENERATION_DELAY"] = 0
-            if Module_Require["GENERATION_DELAY"] == 0 then
-                print("Successfully set AI Generation Delay to 0!")
-            else
-                warn("Not an error, probably a mistake though, must have not changed or wasn't checked correctly.")
-            end
-        else
-            warn("We we're not able to edit the cooldown of the AI generation section of the Menu, executor: "..tostring(executor_Name).." does not support 'require'.")
-        end
     else
         warn("Did not load these tabs [6].")
-    end
-
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        getgenv().ai_input_generator = Tab5:CreateInput({
-        Name = "AI Input Generator (No Cooldown)",
-        CurrentValue = "Input",
-        PlaceholderText = "Input",
-        RemoveTextAfterFocusLost = false,
-        Flag = "AIGeneratorQuestion",
-        Callback = function(ai_inputtedhere)
-            local Premade_Input = tostring(ai_inputtedhere)
-            wait(0.3)
-            getgenv().ReplicatedStorage:WaitForChild("Menu"):FindFirstChild("AI"):FindFirstChild("MeshEvent"):FireServer(Premade_Input, Vector3.new(getgenv().Character:FindFirstChild("HumanoidRootPart").Position.X, getgenv().Character:FindFirstChild("HumanoidRootPart").Position.Y, getgenv().Character:FindFirstChild("HumanoidRootPart").Position.Z))
-        end,})
     end
 
     getgenv().RemoveAllLaserEyes = Tab13:CreateToggle({
@@ -7331,8 +6615,8 @@
             getgenv().removing_any_laser_eyes = true
             while getgenv().removing_any_laser_eyes == true do
             wait(0.6)
-                for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-                    if player.Character then
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= getgenv().LocalPlayer and player and player.Character then
                         for _, item in pairs(player.Character:GetChildren()) do
                             if item:IsA("Accessory") and item.Name == "Accessory (cooleyes)" then
                                 item:Destroy()
@@ -7907,9 +7191,9 @@
         wait(0.2)
         if getgenv().Workspace:FindFirstChild("map") then
             local Map_Folder = getgenv().Workspace:FindFirstChild("map")
-            local Important_Folder = Map_Folder:FindFirstChild("Important")
-            local Baseplate_Folder = Important_Folder:FindFirstChild("Baseplate")
-            local Baseplate_Part = Baseplate_Folder:FindFirstChild("Baseplate")
+            local Important_Folder = Map_Folder and Map_Folder:FindFirstChild("Important")
+            local Baseplate_Folder = Important_Folder and Important_Folder:FindFirstChild("Baseplate")
+            local Baseplate_Part = Baseplate_Folder and Baseplate_Folder:FindFirstChild("Baseplate")
             local BasePlate = Baseplate_Part
 
             if BasePlate then
@@ -9937,27 +9221,33 @@
         CurrentValue = getgenv().viewing_booth or false,
         Flag = "theBoothView",
         Callback = function(specBooth)
-            local function get_booth()
-                for i,v in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-                    if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
-                        return v
-                    end
-                end
-                return nil
-            end
-
-            local plr_booth = get_booth()
-
+            local plr_booth = has_booth()
             if not plr_booth then
                 return getgenv().notify("Error", "You do not have a booth, claim one!", 5)
             end
-            wait()
-            if specBooth and plr_booth then
-                getgenv().viewing_booth = true
-                getgenv().Camera.CameraSubject = plr_booth
+            local get_plr_booth = get_booth()
+            if not get_plr_booth then
+                return getgenv().notify("Error", "You do not have a booth, claim one!", 5)
+            end
+
+            local spectate_part
+
+            for _, v in ipairS(get_plr_booth:GetDescendants()) do
+                if v:IsA("BasePart") and v.Name:lower():find("claim") then
+                    spectate_part = v
+                end
+            end
+            wait(0.2)
+            if specBooth then
+                if spectate_part then
+                    getgenv().viewing_booth = true
+                    getgenv().Camera.CameraSubject = spectate_part
+                else
+                    getgenv().viewing_booth = true
+                    getgenv().Camera.CameraSubject = get_plr_booth and get_plr_booth:FindFirstChildOfClass("Part")
+                end
             else
                 getgenv().viewing_booth = false
-                wait(0.1)
                 getgenv().Camera.CameraSubject = getgenv().Character or getgenv().Humanoid or getgenv().Character:FindFirstChildWhichIsA("Humanoid")
             end
         end,})
@@ -9969,353 +9259,27 @@
         getgenv().TPToBooth = Tab11:CreateButton({
         Name = "Teleport To Booth",
         Callback = function()
-            local function get_booth()
-                for i,v in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-                    if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
-                        return v
-                    end
-                end
-                return nil
-            end
-
-            local plr_booth = get_booth()
-
+            local plr_booth = has_booth()
             if not plr_booth then
                 return getgenv().notify("Error", "You do not have a booth, claim one!", 6.5)
             end
-            task.wait()
-            pcall(function() getgenv().Character:PivotTo(plr_booth:GetPivot()) end)
+            local get_plr_booth = get_booth()
+            if not get_plr_booth then
+                return getgenv().notify("Error", "You do not have a booth, claim one!", 5)
+            end
+
+            local booth_teleport_part
+
+            for _, v in ipairS(get_plr_booth:GetDescendants()) do
+                if v:IsA("BasePart") and v.Name:lower():find("claim") then
+                    booth_teleport_part = v
+                end
+            end
+
+            pcall(function() getgenv().Character:PivotTo(booth_teleport_part:GetPivot()) end)
         end,})
     else
         warn("Did not load these Booth's [7].")
-    end
-
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        local function Click_Detector_Fire(cd)
-            if typeof(cd) ~= "Instance" or not cd:IsA("ClickDetector") then
-                return false, "Not a ClickDetector"
-            end
-
-            local ok1, err1 = pcall(function()
-                fireclickdetector(cd)
-            end)
-
-            local ok2, err2 = pcall(function()
-                fireclickdetector(cd, 100)
-            end)
-
-            if ok2 then
-                return "WithDistance"
-            elseif ok1 then
-                return "Basic"
-            else
-                getgenv().Disliking_Avatar_Enabled = false
-                getgenv().alrLike = false
-                return false, "Unsupported"
-            end
-        end
-
-        getgenv().tpToAvatarUI = Tab1:CreateButton({
-        Name = "Teleport To Avatar-UI",
-        Callback = function()
-            local Map = getgenv().Workspace:FindFirstChild("map")
-            if not Map then return getgenv().notify("Error", "Map doesn't exist in Workspace.", 5) end
-            local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
-            if not Avatar_Folder then return getgenv().notify("Error", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
-            local Avatar_Model = Avatar_Folder:FindFirstChild("Model")
-            if not Avatar_Model then return getgenv().notify("Error", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
-            wait(.1)
-            if Avatar_Model then
-                getgenv().Character:PivotTo(Avatar_Model:GetPivot())
-            end
-        end,})
-
-        getgenv().AutoLikingPlayer = Tab1:CreateToggle({
-        Name = "[Avatar-UI]: Auto Like Players",
-        CurrentValue = getgenv().alrLike or false,
-        Flag = "likingPlayerAuto",
-        Callback = function(likeLol)
-            local Map = getgenv().Workspace:FindFirstChild("map")
-            if not Map then return getgenv().notify("Error", "Map doesn't exist in Workspace.", 5) end
-            local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
-            if not Avatar_Folder then return getgenv().notify("Error", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
-            local Avatar_Model = Avatar_Folder:FindFirstChild("Model")
-            if not Avatar_Model then return getgenv().notify("Error", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
-            wait(.1)
-            local Like_Button = Avatar_Model:WaitForChild("LikeButton")
-            if not Like_Button then return getgenv().notify("Error", "LikeButton doesn't exist in Avatar Model", 5) end
-            local Click_Detector_Input = Like_Button:FindFirstChildOfClass("ClickDetector")
-            if not Click_Detector_Input then return getgenv().notify("Error", "Click Detector doesn't exist in Like Button Part.", 5) end
-
-            if likeLol then
-                if Click_Detector_Input then
-                    getgenv().alrLike = true
-                    while getgenv().alrLike == true do
-                    task.wait(0.5)
-                        Click_Detector_Fire(Click_Detector_Input)
-                    end
-                end
-            else
-                getgenv().alrLike = false
-                task.wait(0.3)
-                for i = 1, 15 do
-                    getgenv().alrLike = false
-                end
-            end
-        end,})
-
-        getgenv().dislikePlayersAvatar = Tab1:CreateToggle({
-        Name = "[Avatar-UI]: Auto Dislike Players",
-        CurrentValue = getgenv().Disliking_Avatar_Enabled or false,
-        Flag = "dislikingEverybody",
-        Callback = function(dislikeButton)
-            if dislikeButton then
-                local Map = getgenv().Workspace:FindFirstChild("map")
-                if not Map then return getgenv().notify("Failure:", "Map doesn't exist in Workspace.", 5) end
-                local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
-                if not Avatar_Folder then return getgenv().notify("Failure:", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
-                local Avatar_Model = Avatar_Folder:FindFirstChild("Model")
-                if not Avatar_Model then return getgenv().notify("Failure:", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
-                wait(.1)
-                local Dislike_Button = Avatar_Model:WaitForChild("DislikeButton")
-                if not Dislike_Button then return getgenv().notify("Failure:", "DislikeButton doesn't exist in Avatar Model", 5) end
-                local Click_Detector_Input = Dislike_Button:FindFirstChildOfClass("ClickDetector")
-                if not Click_Detector_Input then return getgenv().notify("Failure:", "Click Detector doesn't exist in Dislike Button Part.", 5) end
-                
-                getgenv().Disliking_Avatar_Enabled = true
-                while getgenv().Disliking_Avatar_Enabled == true do
-                task.wait(0.5)
-                    Click_Detector_Fire(Click_Detector_Input)
-                end
-            else
-                getgenv().Disliking_Avatar_Enabled = false
-                wait(0.5)
-                for i = 1, 20 do
-                    getgenv().Disliking_Avatar_Enabled = false
-                end
-            end
-        end,})
-    else
-        warn("User is not in MIC UP or MIC UP 17+, not loading.")
-    end
-
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        if firesignal then
-            getgenv().Stop_Music_Player = Tab1:CreateButton({
-            Name = "Stop In-Game Music",
-            Callback = function()
-                local Stop_Music_Frame = getgenv().PlayerGui:FindFirstChild("Menu"):FindFirstChild("Background"):FindFirstChild("Music"):FindFirstChild("Stop")
-                local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-
-                if firesignal then
-                    for _,v in pairs(Stop_Music_Frame:GetDescendants()) do
-                        if v:IsA("ImageButton") or v:IsA("TextButton") then
-                            for i,Signal in pairs(Signals) do
-                                firesignal(v[Signal])
-                            end
-                        end
-                    end
-                else
-                    return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 6)
-                end
-            end,})
-
-            getgenv().Music_Player = Tab1:CreateButton({
-            Name = "Shuffle In-Game Music",
-            Callback = function()
-                local Shuffle_Music_Frame = getgenv().LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("Menu"):WaitForChild("Background"):WaitForChild("Music"):WaitForChild("Shuffle")
-                local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-
-                if firesignal then
-                    for _,v in pairs(Shuffle_Music_Frame:GetDescendants()) do
-                        if v:IsA("ImageButton") or v:IsA("TextButton") then
-                            for i,Signal in pairs(Signals) do
-                                firesignal(v[Signal])
-                            end
-                        end
-                    end
-                else
-                    return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 6)
-                end
-            end,})
-
-            getgenv().Music_Player = Tab1:CreateToggle({
-            Name = "Loop Shuffle In-Game Music",
-            CurrentValue = false,
-            Flag = "ToggleInGameMusic",
-            Callback = function(ingame_music)
-                if ingame_music then
-                    getgenv().plr_music_menu = true
-                    local Players = getgenv().Players
-                    local Local_Player = getgenv().LocalPlayer
-                    local Menu = getgenv().PlayerGui:WaitForChild("Menu")
-                    local Background = Menu:WaitForChild("Background")
-                    local Music = Background:WaitForChild("Music")
-                    local Stop = Music:WaitForChild("Stop")
-                    local Shuffle_Music_Frame = Music:WaitForChild("Shuffle")
-                    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-                    
-                    if firesignal then
-                        while getgenv().plr_music_menu == true do
-                        task.wait(1)
-                            for _,v in pairs(Shuffle_Music_Frame:GetDescendants()) do
-                                if v:IsA("ImageButton") or v:IsA("TextButton") then
-                                    for i,Signal in pairs(Signals) do
-                                        firesignal(v[Signal])
-                                    end
-                                end
-                            end
-                        end
-                    else
-                        return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 6)
-                    end
-                else
-                    wait(1)
-                    local Local_Player = getgenv().LocalPlayer
-                    local Menu = getgenv().PlayerGui:WaitForChild("Menu")
-                    local Background = Menu:WaitForChild("Background")
-                    local Music = Background:WaitForChild("Music")
-                    local Stop = Music:WaitForChild("Stop")
-                    local Signals = {"Activated", "MouseButton1Down", "MouseButton2Down", "MouseButton1Click", "MouseButton2Click"}
-                    getgenv().plr_music_menu = false
-                    task.wait(0.3)
-                    if firesignal then
-                        for _,v in pairs(Stop:GetDescendants()) do
-                            if v:IsA("ImageButton") or v:IsA("TextButton") then
-                                for i,Signal in pairs(Signals) do
-                                    firesignal(v[Signal])
-                                end
-                            end
-                        end
-                    else
-                        return getgenv().notify("Error", "Your executor does not support 'firesignal'!", 6)
-                    end
-                end
-            end,})
-            wait()
-            if getgenv().plr_music_menu == true then
-                getgenv().plr_music_menu = false
-                getgenv().Music_Player:Set(false)
-            end
-        else
-            warn("'firesignal' unsupported, not loading In-Game music functions.")
-        end
-    else
-        warn("Not MIC UP or MIC UP 17+, not loading In-Game music functions.")
-    end
-
-    if getgenv().Game.PlaceId == 6884319169 or getgenv().Game.PlaceId == 15546218972 then
-        if fireclickdetector then
-            -- [[ all this shit below has been severely upgraded ]] --
-            local function find_real_friend()
-                for _, v in ipairs(Players:GetPlayers()) do
-                    if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then -- I'm not sure why, but I forgot to check if the Player was the LocalPlayer, my bad.
-                        return v
-                    end
-                end
-                return nil
-            end
-
-            local friend_find = find_real_friend()
-            -- These getgenv() tables will actually store all your friends and below you can check out Players.PlayerRemoving connection to see where they are removed and how. --
-            if not getgenv().All_Friends_Joined_Table then
-                getgenv().All_Friends_Joined_Table = {}
-            end
-
-            for _, v in ipairs(getgenv().Players:GetPlayers()) do
-                if v ~= getgenv().LocalPlayer and v:IsFriendsWith(getgenv().LocalPlayer.UserId) then
-                    getgenv().All_Friends_Joined_Table[v.Name] = true
-                end
-            end
-
-            getgenv().Players.PlayerAdded:Connect(function(Player)
-                if Player ~= getgenv().LocalPlayer and Player:IsFriendsWith(getgenv().LocalPlayer.UserId) then
-                    getgenv().All_Friends_Joined_Table[Player.Name] = true
-                end
-            end)
-
-            getgenv().Players.PlayerRemoving:Connect(function(Player)
-                local ok, TheyreName = pcall(function()
-                    return Player.Name
-                end)
-
-                if ok and TheyreName and getgenv().All_Friends_Joined_Table[TheyreName] then
-                    getgenv().All_Friends_Joined_Table[TheyreName] = nil
-                end
-            end)
-
-            local function isFriendInServer(name) -- Way better system now, not that old shitty system I tried enhancing and failed to do.
-                return getgenv().All_Friends_Joined_Table[name] == true
-            end
-            wait(0.1)
-            getgenv().WhitelistFriendPlr = Tab1:CreateToggle({
-            Name = "[Avatar-UI]: Auto Like Friends",
-            CurrentValue = false,
-            Flag = "LikingOnlyFriends",
-            Callback = function(myFriendsLiked)
-                if myFriendsLiked then
-                    local Map = getgenv().Workspace:FindFirstChild("map")
-                    if not Map then return getgenv().notify("Error", "Map doesn't exist in Workspace.", 5) end
-                    local Avatar_Folder = getgenv().Workspace:FindFirstChild("GameAvatar")
-                    if not Avatar_Folder then return getgenv().notify("Error", "GameAvatar Folder does not exist in Map Folder (removed?).", 5) end
-                    local Avatar_Model = Avatar_Folder:FindFirstChild("Model")
-                    if not Avatar_Model then return getgenv().notify("Error", "Avatar Model does not exist in GameAvatar Folder (removed?)", 5) end
-                    wait(.1)
-                    local Like_Button = Avatar_Model:WaitForChild("LikeButton")
-                    if not Like_Button then return getgenv().notify("Error", "LikeButton doesn't exist in Avatar Model", 5) end
-                    local Click_Detector_Input = Like_Button:FindFirstChildOfClass("ClickDetector")
-                    if not Click_Detector_Input then return getgenv().notify("Error", "Click Detector doesn't exist in Like Button Part.", 5) end
-                    local Avatar_Part_UI = Avatar_Model
-                    local Image_Label = Avatar_Part_UI:WaitForChild("Avatar"):FindFirstChildOfClass("SurfaceGui"):FindFirstChildOfClass("ImageLabel")
-                    local Local_Player = getgenv().LocalPlayer
-                    local find_other_friends = find_real_friend()
-                    
-                    if not next(getgenv().All_Friends_Joined_Table) then
-                        getgenv().WhitelistFriendPlr:Set(false)
-                        getgenv().Like_Friends = false
-                        return getgenv().notify("Error", "You have '0' friends in this server!", 6)
-                    end
-                    
-                    function like_friend_only()
-                        for name in pairs(getgenv().All_Friends_Joined_Table) do
-                            local friend = getgenv().Players:FindFirstChild(name)
-                            if friend then
-                                local expectedURL = "rbxthumb://type=Avatar&id=" .. tostring(friend.UserId) .. "&w=420&h=420"
-                                if Image_Label.Image == expectedURL then
-                                    fireclickdetector(Click_Detector_Input)
-                                    return true
-                                end
-                            end
-                        end
-                        return false
-                    end
-                    
-                    getgenv().Like_Friends = true
-                    while getgenv().Like_Friends == true do
-                        task.wait(0.2)
-                        local like_only_friends = find_real_friend()
-                        if like_only_friends then
-                            like_friend_only(like_only_friends)
-                        end
-                    end
-                else
-                    getgenv().Like_Friends = false
-                    task.wait(0.3)
-                    for i = 1, 20 do
-                        getgenv().Like_Friends = false
-                    end
-                end
-            end,})
-            wait()
-            if getgenv().Like_Friends == true then
-                getgenv().Like_Friends = false
-                getgenv().WhitelistFriendPlr:Set(false)
-            end
-        else
-            warn("Your executor does not support 'fireclickdetector'.")
-        end
-    else
-        warn("User is not in MIC UP or MIC UP 17+, not loading.")
     end
 
     getgenv().GotoPlayerBox = Tab13:CreateInput({
@@ -13261,10 +12225,10 @@
     end
 
     getgenv().slowmotion_toggle = Tab12:CreateToggle({
-    name = "Slow Motion Emotes (Loop)",
-    currentvalue = getgenv().slowmotion or false,
-    flag = "slowmotion_all_emotes",
-    callback = function(slowmotion)
+    Name = "Slow Motion Emotes (Loop)",
+    CurrentValue = getgenv().slowmotion or false,
+    Flag = "slowmotion_all_emotes",
+    Callback = function(slowmotion)
         if slowmotion then
             getgenv().slowmotion = true
             getgenv().FlamesLibrary.spawn("slowmotion_loop","spawn",function()
@@ -13280,10 +12244,10 @@
     end,})
 
     getgenv().freeze_emotes_toggle = Tab12:CreateToggle({
-    name = "Freeze Emotes (Loop)",
-    currentvalue = getgenv().freezetoggle or false,
-    flag = "freezing_every_emote",
-    callback = function(freezetoggle)
+    Name = "Freeze Emotes (Loop)",
+    CurrentValue = getgenv().freezetoggle or false,
+    Flag = "freezing_every_emote",
+    Callback = function(freezetoggle)
         if freezetoggle then
             getgenv().freezetoggle = true
             getgenv().FlamesLibrary.spawn("freezeemotes_loop","spawn",function()
@@ -13299,9 +12263,9 @@
     end,})
 
     getgenv().fastest_emotes = Tab12:CreateToggle({
-    name = "Fast Emotes (Loop)",
-    currentvalue = getgenv().fasttoggle or false,
-    flag = "fast_emotes_every_emote",
+    Name = "Fast Emotes (Loop)",
+    CurrentValue = getgenv().fasttoggle or false,
+    Flag = "fast_emotes_every_emote",
     callback = function(fasttoggle)
         if fasttoggle then
             getgenv().fasttoggle = true
