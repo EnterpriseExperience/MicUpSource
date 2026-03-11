@@ -20,7 +20,7 @@ local Teams
 local CoreGui
 local StarterGui
 local SoundService
-local Version = "10.7.5"
+local Version = "10.7.8"
 
 function unload_services()
     getgenv().getLoopKick = false
