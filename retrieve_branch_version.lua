@@ -12081,10 +12081,10 @@
     end,})
 
     getgenv().spooky_moon_toggle = Tab9:CreateToggle({
-    name = "Spooky Moon",
-    currentvalue = getgenv().spookymoon or false,
-    flag = "spooky_moon_looping",
-    callback = function(mooncrazy)
+    Name = "Spooky Moon",
+    CurrentValue = getgenv().spookymoon or false,
+    Flag = "spooky_moon_looping",
+    Callback = function(mooncrazy)
         local lighting = getgenv().Lighting or game:GetService("Lighting")
 
         if mooncrazy then
@@ -12138,10 +12138,10 @@
     end,})
 
     getgenv().spooky_sun_loop = Tab9:CreateToggle({
-    name = "Spooky Sun",
-    currentvalue = getgenv().spooksun or false,
-    flag = "spooky_sun_day_time",
-    callback = function(sunspooky)
+    Name = "Spooky Sun",
+    CurrentValue = getgenv().spooksun or false,
+    Flag = "spooky_sun_day_time",
+    Callback = function(sunspooky)
         local lighting = getgenv().Lighting or game:GetService("Lighting")
 
         if sunspooky then
