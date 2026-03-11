@@ -1788,7 +1788,7 @@
     if not GetTeleportPart then
         warn("Part: Teleport = nil | false | null")
     else
-        if GameFolder:FindFirstChild("Teleport") then
+        if GameFolder and GameFolder:FindFirstChild("Teleport") then
             local TeleportPart = GameFolder:FindFirstChild("Teleport")
             TeleportPart.Parent = AssetService
         end
@@ -1806,42 +1806,38 @@
     else
         local GC = getconnections or get_signal_cons
 
-        if GC then
+        if getconnections or get_signal_cons then
             getgenv().OtherAntiAfk = false
             getgenv().AntiAfkScript = true
-            wait()
-            for i, v in pairs(GC(getgenv().LocalPlayer.Idled)) do
-                if v["Disable"] then
-                    v["Disable"](v)
-                    getgenv().notify("Idled!", "Disabling Event...", 7)
+            pcall(function()
+                for i, v in pairs(GC(getgenv().LocalPlayer.Idled)) do
+                    if v["Disable"] then
+                        v["Disable"](v)
+                        getgenv().notify("Info", "Disabling Event...", 7)
+                    end
                 end
-            end
+            end)
         else
             getgenv().AntiAfkScript = false
             getgenv().OtherAntiAfk = true
             wait(0.1)
             warn("Your executor does not support 'getconnections'! Using VirtualUser for Anti-AFK.")
-            wait()
-            getgenv().notify("Starting", "AntiAFK (2) is loading with VirtualUser...", 5)
-            wait()
+            getgenv().notify("Info", "AntiAFK (2) is loading with VirtualUser...", 5)
             getgenv().LocalPlayer.Idled:Connect(function()
-                getgenv().notify("Idled!", "Clicking button...", 5)
                 VirtualUser:CaptureController()
                 VirtualUser:ClickButton2(Vector2.new())
-                wait(0.1)
-                getgenv().notify("Success!", "Clicked Button (Anti-Idle)", 5)
             end)
         end
 
         wait(0.2)
         if getgenv().AntiAfkScript or getgenv().AntiAfkScript == true then
-            getgenv().notify("Success!", "AntiAFK (1) has loaded!", 5)
+            getgenv().notify("Success", "AntiAFK (1) has loaded!", 5)
         elseif not getgenv().AntiAfkScript or getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk or getgenv().OtherAntiAfk == true then
-            getgenv().notify("Success!", "AntiAFK (2) has loaded.", 5)
+            getgenv().notify("Success", "AntiAFK (2) has loaded.", 5)
         end
 
         if getgenv().AntiAfkScript == false and getgenv().OtherAntiAfk == false then
-            getgenv().notify("Failed!", "Could not load any Anti-AFK Scripts.", 5)
+            getgenv().notify("Error", "Could not load any Anti-AFK Scripts.", 5)
         end
     end
     wait(0.1)
@@ -1854,37 +1850,6 @@
     end
     wait(0.3)
     local ReplicatedStorage = getgenv().ReplicatedStorage
-    wait(0.5)
-    if getgenv().scripts_init then
-        warn("Scripts we're already modified.")
-    else
-        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-            getgenv().notify("Info", "We are removing the Kill-Parts for Private Room.", 5)
-            wait(0.2)
-            for _, descendant in pairs(getgenv().Workspace:GetDescendants()) do
-                if descendant:IsA("Script") and descendant.Name == "Kill" then
-                    local parent = descendant.Parent
-                    local touchInterest = parent:FindFirstChild("TouchInterest")
-                    if touchInterest then
-                        touchInterest:Destroy()
-                    end
-                    descendant:Destroy()
-                end
-            end
-            wait(0.2)
-            getgenv().scripts_init = true
-        else
-            warn("Skipping this part, not on MIC UP.")
-            getgenv().scripts_init = true
-        end
-        wait(0.2)
-        if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-            if getgenv().scripts_init or getgenv().scripts_init == true then
-                pcall(function() getgenv().notify("Success", "We have removed the Kill-Parts for Private Room", 5) end)
-            end
-        end
-    end
-    wait()
     local Workspace = getgenv().Workspace
     local SoccerField = Workspace:FindFirstChild("SoccerField")
     if SoccerField then
@@ -1920,8 +1885,12 @@
     local player = getgenv().LocalPlayer
     getgenv().whitelist = {}
     getgenv().ownerWhitelist = {
-        "L0CKED_1N1",
-        "CHEATING_B0SS"
+        "CIippedByAura",
+        "ReallyAmazlng",
+        "Amazing4urA",
+        "CleanestAuraEv3r",
+        "AuraWithClipFarmin",
+        "AmazingAura2",
     }
     wait(0.5)
     --[[if game.PlaceId == 97399198116506 then
