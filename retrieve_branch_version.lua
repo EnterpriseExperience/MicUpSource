@@ -10727,7 +10727,7 @@
                     FakeCharacter:WaitForChild("HumanoidRootPart", 1).CFrame = getgenv().HumanoidRootPart.CFrame
                 end
                 
-                pcall(funtion() getgenv().HumanoidRootPart.CFrame = StoredCF end)
+                pcall(function() getgenv().HumanoidRootPart.CFrame = StoredCF end)
                 FakeCharacter:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
                 Player.Character = RealCharacter
                 getgenv().Camera.CameraSubject = RealCharacter:FindFirstChildWhichIsA("Humanoid")
