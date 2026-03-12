@@ -2395,11 +2395,11 @@
         getgenv().FreeReanimationGUI = Tab1:CreateButton({
         Name = "Free Reanimations GUI (Best Anim Speed = 110-125)",
         Callback = function()
-            loadstring(getgenv().Game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/OpenSource_Reanim_Free.lua'))()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/OpenSource_Reanim_Free.lua'))()
         end,})
     end
 
-    local esplib = loadstring(getgenv().Game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/esp_library.lua"))()
+    local esplib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/esp_library.lua"))()
 
     getgenv().AntiVoidPlayer = Tab2:CreateToggle({
     Name = "Anti Void Baseplate (Goes under Character)",
@@ -9903,44 +9903,18 @@
             print(string.format("AnthonyIsntHere's Anti Chat-Logger has loaded in %s seconds.", string.format("%.2f", tostring(tick() - ACL_LoadTime))))
         end,})
     else
-        getgenv().notify("Warning:", "Your executor does not support hookfunction or hookmetamethod.", 5)
+        getgenv().notify("Error", "Your executor does not support hookfunction or hookmetamethod.", 5)
         warn("Hookmetamethod or hookfunction not supported, skipping anti chat log/anti screenshot.")
     end
-    wait(0.2)
+
     local textChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
-    local ReplicatedStorage = cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
 
-    local function detectChatVersion() 
-        local textChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
-        
-        if textChatService and textChatService.ChatVersion ~= Enum.ChatVersion.LegacyChatService then
-            return "TextChatService"
-        else
-            return "LegacyChatService"
-        end
-    end
-    wait(0.2)
-    local chatVersion = detectChatVersion()
-    wait(0.2)
     getgenv().sending_async = function(content)
-        local chatVersion = detectChatVersion()
-
-        if chatVersion == "LegacyChatService" then
-            local chatRemote = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
-            if chatRemote and chatRemote:FindFirstChild("SayMessageRequest") then
-                chatRemote.SayMessageRequest:FireServer(tostring(content), "All")
-            else
-                getgenv().notify("Error:", "Could not find SayMessageRequest in DefaultChatSystemChatEvents", 6)
-            end
-        elseif chatVersion == "TextChatService" then
-            local chatChannel = textChatService:FindFirstChild("TextChannels") and textChatService.TextChannels:FindFirstChild("RBXGeneral")
-            if chatChannel then
-                chatChannel:SendAsync(tostring(content))
-            else
-                getgenv().notify("Error:", "Could not find RBXGeneral channel in TextChatService", 6)
-            end
+        local chatChannel = textChatService:FindFirstChild("TextChannels") and textChatService.TextChannels:FindFirstChild("RBXGeneral")
+        if chatChannel then
+            chatChannel:SendAsync(tostring(content))
         else
-            return getgenv().notify("Error:", "Could not detect correct chat version/service.", 6)
+            getgenv().notify("Error", "Could not find RBXGeneral channel in TextChatService", 6)
         end
     end
     wait(0.2)
@@ -9957,10 +9931,42 @@
         getgenv().sending_async("/cls")
     end,})
 
-    getgenv().color_for_esp_value = Color3.fromRGB(255, 255, 255)
-    getgenv().RAINBOW_MODE = false
+    getgenv().color_for_esp_value = getgenv().color_for_esp_value or Color3.fromRGB(255, 255, 255)
+    getgenv().RAINBOW_MODE = getgenv().RAINBOW_MODE or false
     wait()
     if Drawing then
+        -- [[ You don't really need this, we don't really care for configuration that much right now. ]] --
+        getgenv().esp_config = {
+            box = {
+                enabled = true,
+                type = "normal",
+                padding = 1.15,
+                fill = Color3.new(1,1,1),
+                outline = Color3.new(0,0,0),
+            },
+            healthbar = {
+                enabled = true,
+                fill = Color3.new(0,1,0),
+                outline = Color3.new(0,0,0),
+            },
+            name = {
+                enabled = true,
+                fill = Color3.new(1,1,1),
+                size = 16,
+            },
+            distance = {
+                enabled = true,
+                fill = Color3.new(1,1,1),
+                size = 150,
+            },
+            tracer = {
+                enabled = true,
+                fill = Color3.new(1,1,1),
+                outline = Color3.new(0,0,0),
+                from = "mouse",
+            }
+        }
+
         local ESP_Boxes = {}
         local Connections = {}
         local RenderConnection = nil
@@ -10065,74 +10071,60 @@
             table.insert(Connections, conn)
         end
 
-        local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-
-        -- You don't really need this, we don't really care for configuration that much right now.
-        getgenv().esplib = {
-            box = {
-                enabled = true, -- Not necessary either especially, and that goes for healthbar, name, etc.
-                type = "normal",
-                padding = 1.15,
-                fill = Color3.new(1,1,1), -- Filler options tbh.
-                outline = Color3.new(0,0,0),
-            },
-            healthbar = {
-                enabled = true,
-                fill = Color3.new(0,1,0),
-                outline = Color3.new(0,0,0),
-            },
-            name = {
-                enabled = true,
-                fill = Color3.new(1,1,1),
-                size = 16,
-            },
-            distance = {
-                enabled = true,
-                fill = Color3.new(1,1,1),
-                size = 150,
-            },
-            tracer = {
-                enabled = true,
-                fill = Color3.new(1,1,1),
-                outline = Color3.new(0,0,0),
-                from = "mouse",
-            },
-        }
-
+        getgenv().esp_player_connection = getgenv().esp_player_connection or nil
+        getgenv().esp_char_connections = getgenv().esp_char_connections or {}
         getgenv().EspBox = Tab19:CreateToggle({
         Name = "Box",
         CurrentValue = false,
         Flag = "TogglingBoxESP",
-        Callback = function(box_Esp)
-            if box_Esp then
-                for _, player in pairs(getgenv().Players:GetPlayers()) do
-                    -- Added partial checks to ensure everything is properly initialized first, before actually loading, ensuring we run into 0 errors.
-                    if player ~= getgenv().LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
-                        wait(0.5)
-                        local character = player.Character or player.CharacterAdded:Wait() -- Actually wait for the Character to load, unlike other ESP menu's.
+        Callback = function(box_esp)
+            local lib = getgenv().FlamesLibrary
 
-                        esplib.add_box(character)
+            if box_esp then
+                for _, player in pairs(getgenv().Players:GetPlayers()) do
+                    if player ~= getgenv().LocalPlayer then
+                        local character = player.Character
+
+                        if character and character:FindFirstChild("HumanoidRootPart") and character:FindFirstChildOfClass("Humanoid") then
+                            pcall(function()
+                                esplib.add_box(character)
+                            end)
+                        end
+
+                        lib.connect("esp_char_"..player.UserId, player.CharacterAdded:Connect(function(char)
+                            if not char then repeat task.wait() until char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChildOfClass("Humanoid") end
+
+                            pcall(function()
+                                esplib.add_box(char)
+                            end)
+                        end))
                     end
                 end
 
-                getgenv().Players.PlayerAdded:Connect(function(player)
-                    player.CharacterAdded:Connect(function(char)
-                        player.CharacterAdded:Wait()
-                        repeat wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
-                        task.wait(0.5)
-                        if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
-                            esplib.add_box(char)
+                lib.connect("esp_player_added", getgenv().Players.PlayerAdded:Connect(function(player)
+                    if player == getgenv().LocalPlayer then return end
+                    lib.connect("esp_char_"..player.UserId, player.CharacterAdded:Connect(function(char)
+                        if not char then
+                            repeat task.wait() until char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChildOfClass("Humanoid")
                         end
-                    end)
-                end)
+
+                        pcall(function()
+                            esplib.add_box(char)
+                        end)
+                    end))
+                end))
             else
-                -- to be honest, smarter than a bunch of other scripts, like Infinite Yield who don't do this for some reason, so it never turns off fully if someone joins again (or resets and respawns).
-                wait(0.1)
-                esplib.remove_box()
-                wait(0.2)
-                esplib.remove_box()
-                wait(0.2)
-                esplib.remove_box()
+                lib.disconnect("esp_player_added")
+
+                for _, player in pairs(getgenv().Players:GetPlayers()) do
+                    lib.disconnect("esp_char_"..player.UserId)
+                end
+
+                if esplib and type(esplib.remove_box) == "function" then
+                    pcall(function()
+                        esplib.remove_box()
+                    end)
+                end
             end
         end,})
     else
@@ -10140,16 +10132,21 @@
     end
 
     local highlights = {}
-    local connections = {}
-    local highlight_color = Color3.fromRGB(255, 255, 255)
-    local rainbow_connection
+    local highlight_color = Color3.fromRGB(255,255,255)
 
-    local function Highlight(player)
-        if player == LocalPlayer then return end
+    local function highlight_player(player)
+        if player == getgenv().LocalPlayer then
+            return
+        end
+
         local char = player.Character
-        if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+        if not char or not char:FindFirstChild("HumanoidRootPart") then
+            return
+        end
 
-        if highlights[player] and highlights[player].Adornee == char then return end
+        if highlights[player] and highlights[player].Adornee == char then
+            return
+        end
 
         if highlights[player] then
             highlights[player]:Destroy()
@@ -10157,200 +10154,220 @@
         end
 
         local hl = Instance.new("Highlight")
-        hl.Name = "Highlight" -- Not a secure name at all for ESP, since game's can search the "game" DataModel for the string: "ESP" or "esp", and kick you if found.
+        hl.Name = "Highlight"
         hl.Adornee = char
         hl.FillColor = highlight_color
-        hl.OutlineColor = Color3.fromRGB(255, 255, 255) -- Default to white to preserve user personalization's and preferences.
+        hl.OutlineColor = Color3.fromRGB(255,255,255)
         hl.FillTransparency = 0.5
         hl.OutlineTransparency = 0
-        hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Not always recommended, but recommended since it works more than other options.
-        hl.Parent = char -- nil sometimes, parented to Workspace but usually not helpful in games like Bad Business which put Character's in other Folders and not directly in Workspace.
+        hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        hl.Parent = char
+
         highlights[player] = hl
     end
 
-    local function RemoveHighlight(player)
+    local function remove_highlight(player)
         if highlights[player] then
             highlights[player]:Destroy()
             highlights[player] = nil
         end
-        -- should add extra security here.
-    end
-
-    wait(0.2)
-    -- just wrap both in the same function, you'll be fine ( [ clear_highlights(), and: disconnect_all() ] )
-    local function disconnect_all()
-        for _, conn in ipairs(connections) do
-            if conn.Disconnect then conn:Disconnect() end
-        end
-        table.clear(connections)
     end
 
     local function clear_highlights()
         for _, hl in pairs(highlights) do
-            if hl and hl.Destroy then -- tbh, I will admit ChatGPT wrote that part, never needed a check for destroying Highlight ESP.
+            if hl then
                 hl:Destroy()
             end
         end
-        -- actually ensure ESP is cleared out fully, since you don't need leftover table highlights when disabling Highlight ESP, since Highlight ESP is weird.
-        -- since it's not made using the Drawing API, basically.
         table.clear(highlights)
     end
 
-    function shutdown_esp()
-        disconnect_all()
+    local function shutdown_esp()
+        getgenv().FlamesLibrary.disconnect("highlight_players")
+        getgenv().FlamesLibrary.disconnect("highlight_characters")
+        getgenv().FlamesLibrary.disconnect("highlight_render")
+
         clear_highlights()
-        if rainbow_connection then
-            rainbow_connection:Disconnect()
-            rainbow_connection = nil
-        end
     end
 
     getgenv().Name_DrawingESP = Tab19:CreateToggle({
     Name = "Name ESP",
-    CurrentValue = false,
+    CurrentValue = getgenv().Name_ESP_Toggled_Flames_Hub or false,
     Flag = "MainESP_Name",
     Callback = function(esp_name_ESP)
-        if esp_name_ESP then
-            for _, player in pairs(getgenv().Players:GetPlayers()) do
-                if player ~= getgenv().LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
-                    wait(0.5)
-                    local character = player.Character or player.CharacterAdded:Wait()
+        local lib = getgenv().FlamesLibrary
 
-                    esplib.add_name(character)
+        if esp_name_ESP then
+            getgenv().Name_ESP_Toggled_Flames_Hub = true
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= getgenv().LocalPlayer then
+                    local character = player.Character
+
+                    if character and character:FindFirstChild("HumanoidRootPart") and character:FindFirstChild("Humanoid") then
+                        pcall(function()
+                            esplib.add_name(character)
+                        end)
+                    end
+
+                    lib.connect("name_esp_char_" .. player.UserId, player.CharacterAdded:Connect(function(char)
+                        if not char then repeat task.wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") end
+
+                        if char then
+                            pcall(function()
+                                esplib.add_name(char)
+                            end)
+                        end
+                    end))
                 end
             end
 
-            getgenv().Players.PlayerAdded:Connect(function(player)
-                player.CharacterAdded:Connect(function(char)
-                    player.CharacterAdded:Wait()
-                    repeat wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
-                    task.wait(0.5)
-                    if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
-                        esplib.add_name(char)
+            lib.connect("name_esp_player_added", Players.PlayerAdded:Connect(function(player)
+                if player == getgenv().LocalPlayer then return end
+
+                lib.connect("name_esp_char_" .. player.UserId, player.CharacterAdded:Connect(function(char)
+                    if not char then repeat task.wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") end
+
+                    if char and char:FindFirstChild("HumanoidRootPart") then
+                        pcall(function()
+                            esplib.add_name(char)
+                        end)
                     end
-                end)
-            end)
+                end))
+            end))
         else
-            -- add checks here to ensure user does not still have Name ESP loaded on-screen, since Drawing Library on other executors, like Solara tend to bug out often.
-            wait(0.1)
-            esplib.remove_name()
-            wait(0.2)
-            esplib.remove_name()
-            wait(0.2)
+            lib.disconnect("name_esp_player_added")
+            getgenv().Name_ESP_Toggled_Flames_Hub = false
+            for _, player in pairs(Players:GetPlayers()) do
+                lib.disconnect("name_esp_char_" .. player.UserId)
+            end
+            task.wait(0)
             esplib.remove_name()
         end
     end,})
 
     getgenv().Distance_DrawingESP = Tab19:CreateToggle({
     Name = "Distance ESP",
-    CurrentValue = false,
+    CurrentValue = getgenv().Distance_ESP_Toggled_Flames_Hub or false,
     Flag = "MainESP_Distance",
     Callback = function(esp_distance_ESP)
-        if esp_distance_ESP then
-            for _, player in pairs(getgenv().Players:GetPlayers()) do
-                if player ~= getgenv().LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
-                    wait(0.5)
-                    local character = player.Character or player.CharacterAdded:Wait()
+        local lib = getgenv().FlamesLibrary
 
-                    esplib.add_distance(character)
+        if esp_distance_ESP then
+            getgenv().Distance_ESP_Toggled_Flames_Hub = true
+            for _, player in pairs(getgenv().Players:GetPlayers()) do
+                if player ~= getgenv().LocalPlayer then
+                    local character = player.Character
+
+                    if character and character:FindFirstChild("HumanoidRootPart") then
+                        pcall(function()
+                            esplib.add_distance(character)
+                        end)
+                    end
+
+                    lib.connect("distance_esp_char_" .. player.UserId, player.CharacterAdded:Connect(function(char)
+                        if not char then repeat task.wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") end
+                        char:WaitForChild("HumanoidRootPart", 1)
+
+                        if char and char:FindFirstChild("Humanoid") then
+                            pcall(function()
+                                esplib.add_distance(char)
+                            end)
+                        end
+                    end))
                 end
             end
 
-            getgenv().Players.PlayerAdded:Connect(function(player)
-                player.CharacterAdded:Connect(function(char)
-                    player.CharacterAdded:Wait()
-                    repeat wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
-                    task.wait(0.5)
-                    if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
-                        esplib.add_distance(char)
+            lib.connect("distance_esp_player_added", getgenv().Players.PlayerAdded:Connect(function(player)
+                if player == getgenv().LocalPlayer then return end
+
+                lib.connect("distance_esp_char_" .. player.UserId, player.CharacterAdded:Connect(function(char)
+                    if not char then repeat task.wait() until char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") end
+                    char:WaitForChild("HumanoidRootPart", 1)
+
+                    if char then
+                        pcall(function()
+                            esplib.add_distance(char)
+                        end)
                     end
-                end)
-            end)
+                end))
+            end))
         else
-            -- also add extra assurance here, since Drawing API is weird on other executors.
-            wait(0.1)
-            esplib.remove_distance()
-            wait(0.2)
-            esplib.remove_distance()
-            wait(0.2)
+            lib.disconnect("distance_esp_player_added")
+            getgenv().Distance_ESP_Toggled_Flames_Hub = false
+            for _, player in pairs(getgenv().Players:GetPlayers()) do
+                lib.disconnect("distance_esp_char_" .. player.UserId)
+            end
+            task.wait(0)
             esplib.remove_distance()
         end
     end,})
 
-    wait(0.2)
     getgenv().HighlightESP_Drawing = Tab19:CreateToggle({
     Name = "Highlight",
-    CurrentValue = false,
+    CurrentValue = getgenv().Highlight_ESP_Flames_Hub_Toggled or false,
     Flag = "ToggleHighlightESP",
     Callback = function(ez_highlight_esp)
-        wait(0.4)
-        if ez_highlight_esp then
-            local Players = getgenv().Players
-            local LocalPlayer = getgenv().LocalPlayer
-            local RunService = getgenv().RunService
+        local lib = getgenv().FlamesLibrary
 
-            local function onCharacterAdded(player, character)
-                local function tryAdd()
-                    if character:FindFirstChild("HumanoidRootPart") then
-                        Highlight(player)
+        if ez_highlight_esp then
+            local function on_character_added(player, character)
+                local function try_add()
+                    if character and character:FindFirstChild("HumanoidRootPart") then
+                        highlight_player(player)
                     else
                         local attempts = 0
-                        local connection
-                        connection = RunService.RenderStepped:Connect(function()
-                            attempts += 1
+
+                        lib.connect("highlight_render", RunService.RenderStepped:Connect(function()
+                            attempts = attempts + 1
                             if character:FindFirstChild("HumanoidRootPart") then
-                                Highlight(player)
-                                connection:Disconnect()
+                                highlight_player(player)
+                                lib.disconnect("highlight_render")
                             elseif attempts > 20 then
-                                connection:Disconnect()
+                                lib.disconnect("highlight_render")
                             end
-                        end)
-                        table.insert(connections, connection)
+                        end))
                     end
                 end
 
-                tryAdd()
+                try_add()
+                task.wait(0)
+                local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
                 if humanoid then
-                    local conn = humanoid.Died:Connect(function()
-                        RemoveHighlight(player)
-                    end)
-                    table.insert(connections, conn)
+                    lib.connect("highlight_characters", humanoid.Died:Connect(function()
+                        remove_highlight(player)
+                    end))
                 end
             end
 
-            local function onPlayerAdded(player)
-                if player == LocalPlayer then return end
-
-                if player.Character then
-                    onCharacterAdded(player, player.Character)
-                end
-
-                local conn = player.CharacterAdded:Connect(function(char)
-                    onCharacterAdded(player, char)
-                end)
-                table.insert(connections, conn)
+            local function on_player_added(player)
+                if player == getgenv().LocalPlayer then return end
+                if player.Character then on_character_added(player, player.Character) end
+                lib.connect("highlight_characters", player.CharacterAdded:Connect(function(char) 
+                    on_character_added(player, char)
+                end))
             end
 
-            local function onPlayerRemoving(player)
-                RemoveHighlight(player)
+            local function on_player_removing(player)
+                remove_highlight(player)
             end
 
-            for _, p in ipairs(Players:GetPlayers()) do
-                onPlayerAdded(p)
+            for _, p in ipairs(getgenv().Players:GetPlayers()) do
+                on_player_added(p)
             end
 
-            table.insert(connections, Players.PlayerAdded:Connect(onPlayerAdded))
-            table.insert(connections, Players.PlayerRemoving:Connect(onPlayerRemoving))
+            getgenv().Highlight_ESP_Flames_Hub_Toggled = true
+            lib.connect("highlight_players", getgenv().Players.PlayerAdded:Connect(on_player_added))
+            lib.connect("highlight_players", getgenv().Players.PlayerRemoving:Connect(on_player_removing))
         else
+            getgenv().Highlight_ESP_Flames_Hub_Toggled = false
             shutdown_esp()
         end
     end,})
 
     getgenv().RainbowMode = Tab19:CreateToggle({
     Name = "Rainbow Mode (For Highlight ESP)",
-    CurrentValue = false,
+    CurrentValue = getgenv().RAINBOW_MODE or false,
     Flag = "rainbowModeActive",
     Callback = function(doRainbowFunc)
         if doRainbowFunc then
@@ -10377,20 +10394,17 @@
             end
         end
     end,})
-    wait(0.2)
-    if getgenv().RAINBOW_MODE == true then
-        getgenv().RainbowMode:Set(false)
-        getgenv().RAINBOW_MODE = false
-    end
 
+    getgenv().Current_Highlight_Color_ESP_Flames_Hub = getgenv().Current_Highlight_Color_ESP_Flames_Hub or Color3.fromRGB(255,255,255)
     getgenv().HighlightColorPicker = Tab19:CreateColorPicker({
     Name = "Highlight Color",
-    Color = Color3.fromRGB(255,255,255),
+    Color = getgenv().Current_Highlight_Color_ESP_Flames_Hub or Color3.fromRGB(255,255,255),
     Flag = "ChangeHighlightColorVal",
     Callback = function(esp_color_selected)
         for _, hl in pairs(highlights) do
             if hl and hl:IsA("Highlight") then
-                hl.FillColor = newColor
+                getgenv().Current_Highlight_Color_ESP_Flames_Hub = esp_color_selected
+                hl.FillColor = esp_color_selected
             end
         end
     end,})
@@ -10414,9 +10428,7 @@
         Name = "Booth Text Bypass",
         PlaceholderText = "Text",
         RemoveTextAfterFocusLost = true,
-        Callback = function(enteredTextInput)
-            local Booth_Remote = getgenv().ReplicatedStorage:FindFirstChild("UpdateBoothText")
-
+        Callback = function(entered_text_input)
             local letters = {
                 set1 = {
                     ["a"] = "ẳ",
@@ -10512,111 +10524,44 @@
                 local randomIndex = math.random(1, #booth_fonts)
                 return booth_fonts[randomIndex]
             end
-
             wait(.2)
             local function send_bypass_config(msg)
-                local function getStall()
-                    for i,v in pairs(getgenv().booth_folder_found_mic_up:GetChildren()) do
-                        if v.User.SurfaceGui.ImageLabel.Image == "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(getgenv().LocalPlayer.UserId).."&width=420&height=420&format=png" then
-                            return v
-                        end
-                    end
-                    return nil
-                end
+                local LocalStall = getgenv().Current_Claimed_Booth
+                if not LocalStall then return getgenv().notify("Error", "You do not have a booth! Claim One", 5) end
 
-                local LocalStall = getStall()
-                
-                if not LocalStall then
-                    return getgenv().notify("Error:", "You do not have a booth! Claim One", 5)
-                else
-                    getgenv().notify("Success:", "Got your Booth: "..tostring(LocalStall).."!", 5)
-                end
-                wait()
                 local args = {
-                    [1] = tostring(convert(msg)),
-                    [2] = tostring(color_selector()),
-                    [3] = "SourceSans"
+                    {
+                        texture_preset = "",
+                        title_text = "",
+                        texture_values = {
+                            ["02"] = {
+                                hue_number = 0,
+                                value_number = 0.4901960790157318,
+                                saturation_number = 0
+                            },
+                            title = {
+                                hue_number = 0,
+                                value_number = 0.9803921580314636,
+                                saturation_number = 0
+                            },
+                            ["01"] = {
+                                hue_number = 0,
+                                value_number = 0.6235294342041016,
+                                saturation_number = 0
+                            }
+                        }
+                    }
                 }
-                        
-                Booth_Remote:FireServer(unpack(args))
+                
+                pcall(function() getgenv().save_changes_booth_Remote_Event:FireServer(unpack(args)) end)
             end
 
-            send_bypass_config(enteredTextInput)
+            send_bypass_config(entered_text_input)
         end,})
     else
         warn("Did not load this Booth tab [8].")
     end
 
-    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        local gamePassId = 951459548
-
-        getgenv().DoCharacterFlicking = Tab2:CreateToggle({
-        Name = "Character Flicker (FE)",
-        CurrentValue = false,
-        Flag = "CharFlickeringLmao",
-        Callback = function(Flick)
-            if Flick then
-                getgenv().CharFlick = true
-                while getgenv().CharFlick == true do
-                    task.wait()
-                    local Update_Height_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateHeight")
-                    local Update_Depth_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateDepth")
-                    local Update_Width_Remote = getgenv().ReplicatedStorage:WaitForChild("UpdateWidth")
-
-                    local args = {
-                        [1] = 0
-                    }
-                    
-                    Update_Height_Remote:FireServer(unpack(args))
-                    wait()
-                    local args = {
-                        [1] = 0
-                    }
-                    
-                    Update_Depth_Remote:FireServer(unpack(args))
-                    wait()
-                    local args = {
-                        [1] = 0
-                    }
-                    
-                    Update_Width_Remote:FireServer(unpack(args))
-                    wait()
-                    local args = {
-                        [1] = 1
-                    }
-                    
-                    Update_Height_Remote:FireServer(unpack(args))
-                    wait()
-                    local args = {
-                        [1] = 1
-                    }
-                    
-                    Update_Depth_Remote:FireServer(unpack(args))
-                    wait()
-                    local args = {
-                        [1] = 1
-                    }
-                    
-                    Update_Width_Remote:FireServer(unpack(args))
-                end
-            else
-                local Modify_User_Remote = getgenv().ReplicatedStorage:WaitForChild("ModifyUserEvent")
-                local Local_Player = getgenv().LocalPlayer
-                local Local_Plr_Name = Local_Player.Name or tostring(Local_Player.Name)
-
-                getgenv().CharFlick = false
-                wait(0.3)
-                local args = {
-                    [1] = tostring(Local_Plr_Name)
-                }
-                
-                Modify_User_Remote:FireServer(unpack(args))
-            end
-        end,})
-    else
-        warn("Not loading this part, not on MIC UP or MIC UP 17+")
-    end
-    wait()
     local Settings = {
         Keybind = string.upper("C")
     }
@@ -10634,19 +10579,14 @@
             4437551748,
             7054509230
         }
-        
         pcall(function() getgenv().Invis_Loaded = true end)
-        
         local ScriptStarted = false
         local Transparency = true
         local Keybind = Settings.Keybind
         local NoClip = true
-        
         local Player = getgenv().LocalPlayer
-        local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
-        
+        local RealCharacter = getgenv().Character or Player.Character or get_char(LocalPlayer, 10)
         local IsInvisible = false
-        
         RealCharacter.Archivable = true
 
         local FakeCharacter = RealCharacter:Clone()
@@ -10722,8 +10662,6 @@
 
             RealCharacter.Humanoid.Died:Connect(function()
                 getgenv().Invis_Loaded = false
-                getgenv().Invis_Loaded = false
-                getgenv().Invis_Loaded = false
                 RealCharacter:Destroy()
                 FakeCharacter:Destroy()
             end)
@@ -10731,8 +10669,6 @@
         end
 
         RealCharacter.Humanoid.Died:Connect(function()
-            getgenv().Invis_Loaded = false
-            getgenv().Invis_Loaded = false
             getgenv().Invis_Loaded = false
             RealCharacter:Destroy()
             FakeCharacter:Destroy()
@@ -10786,13 +10722,12 @@
                     StoredCF = FakeCharacter:FindFirstChild("HumanoidRootPart").CFrame
                 end
                 if FakeCharacter and FakeCharacter:FindFirstChild("Humanoid") and FakeCharacter:FindFirstChild("HumanoidRootPart") then
-                    FakeCharacter:FindFirstChild("HumanoidRootPart").CFrame = RealCharacter:FindFirstChild("HumanoidRootPart").CFrame
+                    FakeCharacter:FindFirstChild("HumanoidRootPart").CFrame = getgenv().HumanoidRootPart.CFrame
                 elseif not FakeCharacter:FindFirstChild("HumanoidRootPart") then
-                    FakeCharacter:WaitForChild("HumanoidRootPart", 1).CFrame = RealCharacter:WaitForChild("HumanoidRootPart", 0.5).CFrame
+                    FakeCharacter:WaitForChild("HumanoidRootPart", 1).CFrame = getgenv().HumanoidRootPart.CFrame
                 end
                 
-                RealCharacter:WaitForChild("HumanoidRootPart", 0.5).CFrame = StoredCF
-                
+                pcall(funtion() getgenv().HumanoidRootPart.CFrame = StoredCF end)
                 FakeCharacter:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
                 Player.Character = RealCharacter
                 getgenv().Camera.CameraSubject = RealCharacter:FindFirstChildWhichIsA("Humanoid")
@@ -10827,9 +10762,9 @@
         local Sound = Instance.new("Sound",Sound_Service)
         Sound.SoundId = "rbxassetid://232127604"
         Sound:Play()
-        getgenv().notify("Success", "Invisible Has Been Loaded!", 7)
+        getgenv().notify("Success", "Invisible Has Been Loaded!", 5)
         task.wait(.3)
-        getgenv().notify("Info", "Press: "..tostring(Settings.Keybind).." to change visibility.", 10)
+        getgenv().notify("Info", "Press: "..tostring(Settings.Keybind).." to change visibility.", 6)
     end,})
     wait(0.1)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
@@ -10837,7 +10772,7 @@
         Name = "TP To Crossroads Map (Only for Flames Hub users)",
         Callback = function()
             if not getgenv().Workspace:FindFirstChild("Crossroad") then
-                return getgenv().notify("Error", "Crossroads doesn't seem to be loaded in (removed).", 5)
+                return getgenv().notify("Error", "Crossroads doesn't seem to be loaded in (removed?).", 5)
             end
             task.wait(0.1)
             if getgenv().Humanoid and getgenv().Humanoid.Sit then
@@ -10853,18 +10788,19 @@
         Name = "TP To Modern House Map (Only for Flames Hub users)",
         Callback = function()
             if not getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate") then
-                return getgenv().notify("Error", "Modern House Map doesn't seem to be loaded in (removed).", 5)
+                return getgenv().notify("Error", "Modern House Map doesn't seem to be loaded in (removed?).", 5)
             end
             task.wait(0.1)
             if getgenv().Humanoid and getgenv().Humanoid.Sit then
                 getgenv().Humanoid:ChangeState(3)
                 wait(.2)
-                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 695, 0))
+                getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 695, 0)) -- LMFAO WHAT? 695?!?!?
             else
                 getgenv().Character:PivotTo(getgenv().Workspace:FindFirstChild("Grass_Modern_Model_Baseplate"):GetPivot() * CFrame.new(0, 695, 0))
             end
         end,})
 
+        -- [[ maybe one day. ]] --
         --[[getgenv().Prison_Life_Map_TP = Tab10:CreateButton({
         Name = "TP To Prison Life Map (Only for Flames Hub users)",
         Callback = function()
