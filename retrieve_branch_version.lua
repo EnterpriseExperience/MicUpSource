@@ -14,6 +14,7 @@
     -- And don't think for 5 seconds that I'm gonna change the notification system, because there is TOO many notifications on here that I'd have to go around and correct, and I am NOT doing that.
 
     -- [[ Initialize new FlamesLibrary system. ]] --
+    -- [[ say hello to Flames Hub newest innovation, global framework caching and servicing. ]] --
     if not getgenv().GlobalEnvironmentFramework_Initialized then -- new
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
         wait(0.1)
@@ -424,6 +425,7 @@
     local watchedPlayers = {"L0CKED_1N1", "CHEATING_B0SS"} -- these accounts are deleted since apparently I can't say what ever I want on 18+ Roblox chats with other 18+ year olds lmfao.
     local specialPlayer = "nobody"
     local all_beta_testers = {"Chick7nn", "LIL_RT228", "CrimGameHolder"}
+    local GC = getconnections or get_signal_cons
     -- Only whitelisted people allowed here, and if you want to I guess you can put your own names, I mean go ahead, it's open sourced for a reason.
 
     local function isWatchedPlayer(playerName) -- don't blame me for the name of the function, like a year and a half ago (when I made the camelCase functions), I thought everyone made their function names like this lol.
@@ -937,6 +939,47 @@
         NewFolder.Name = "PartStorage"
         NewFolder.Parent = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
     end
+
+    getgenv().respawn_time_math_calculation = function()
+        local respawn_time = getgenv().Players.RespawnTime or game.Players.RespawnTime
+
+        if respawn_time >= 3 then
+            return respawn_time + (math.random(50,150) / 100)
+        elseif respawn_time <= 2.8 then
+            return respawn_time + (math.random(80,190) / 100)
+        else
+            return respawn_time + 0.3
+        end
+    end
+
+    getgenv().pull_root_from_function = function(player)
+        if not player then
+            player = getgenv().LocalPlayer or game.Players.LocalPlayer
+        end
+
+        local character = player.Character
+
+        if not character then
+            repeat
+                task.wait(getgenv().respawn_time_math_calculation())
+                character = player.Character
+            until character
+        end
+
+        local root = character:FindFirstChild("HumanoidRootPart")
+
+        if not root then
+            repeat
+                task.wait(getgenv().respawn_time_math_calculation())
+                root = character:FindFirstChild("HumanoidRootPart")
+            until root
+        end
+
+        if root and root:IsA("BasePart") and root:IsDescendantOf(game) then -- real checking, that's how Flames Hub does it baby.
+            return root
+        end
+    end
+
     wait(0.2)
     -- Check our BasePlate, to correctly initialize an anti-void measure, which stretches extremely far.
     if not getgenv().passed_baseplate_check then
@@ -946,14 +989,14 @@
             getgenv().Terrain_Folder_Baseplate_Flames_Hub = TerrainFolder or getgenv().Workspace:FindFirstChild("TERRAIN_EDITOR")
             position = Vector3.new(66, -10, 72.5)
             size = Vector3.new(20000, 20, 20000)
-            maxPartSize = 2048
+            max_part_size = 2048
             material = Enum.Material.Asphalt
             color = Color3.fromRGB(50, 50, 50)
             transparency = 0
             
-            getgenv().createPart = function(pos, partSize)
+            getgenv().create_part = function(pos, part_size)
                 local part = Instance.new("Part")
-                part.Size = partSize
+                part.Size = part_size
                 part.Position = pos
                 part.Anchored = true
                 part.Material = material
@@ -963,25 +1006,24 @@
                 return part
             end
             
-            if size.X > maxPartSize or size.Z > maxPartSize then
-                divisionsX = math.ceil(size.X / maxPartSize)
-                divisionsZ = math.ceil(size.Z / maxPartSize)
-                partSize = Vector3.new(size.X / divisionsX, size.Y, size.Z / divisionsZ)
+            if size.X > max_part_size or size.Z > max_part_size then
+                divisionsX = math.ceil(size.X / max_part_size)
+                divisionsZ = math.ceil(size.Z / max_part_size)
+                part_size = Vector3.new(size.X / divisionsX, size.Y, size.Z / divisionsZ)
             
                 for i = 0, divisionsX - 1 do
                     for j = 0, divisionsZ - 1 do
-                        offsetX = (i - (divisionsX / 2)) * partSize.X + (partSize.X / 2)
-                        offsetZ = (j - (divisionsZ / 2)) * partSize.Z + (partSize.Z / 2)
-                        createPart(position + Vector3.new(offsetX, 0, offsetZ), partSize)
+                        offsetX = (i - (divisionsX / 2)) * part_size.X + (part_size.X / 2)
+                        offsetZ = (j - (divisionsZ / 2)) * part_size.Z + (part_size.Z / 2)
+                        create_part(position + Vector3.new(offsetX, 0, offsetZ), part_size)
                     end
                 end
             else
-                createPart(position, size)
+                create_part(position, size)
             end
         end
         wait(0.2)
         getgenv().do_baseplate_check()
-        wait(0.1)
         getgenv().passed_baseplate_check = true
     end
     wait(0.2)
@@ -1084,16 +1126,18 @@
     wait(0.1)
     if not getgenv().delete_remove_booth_Remote_Event_found then task.spawn(function() getgenv().delete_booth_RemoteEvent_locator() end) end
 
-    getgenv().Current_Claimed_Booth = getgenv().Current_Claimed_Booth or nil
-    if getgenv().adjust_booth_settings_color_Remote_Event then
-        if not getgenv().Connected_To_Booth_Adjuster_Tracker_Remote_Event then
-            getgenv().Connected_To_Booth_Adjuster_Tracker_Remote_Event = true
-            getgenv().adjust_booth_settings_color_Remote_Event.OnClientEvent:Connect(function(arg)
-                getgenv().Current_Claimed_Booth = arg
-            end)
+    if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then -- real checking in Flames Hub, come on now.
+        getgenv().Current_Claimed_Booth = getgenv().Current_Claimed_Booth or nil
+        if getgenv().adjust_booth_settings_color_Remote_Event then
+            if not getgenv().Connected_To_Booth_Adjuster_Tracker_Remote_Event then
+                getgenv().Connected_To_Booth_Adjuster_Tracker_Remote_Event = true
+                getgenv().adjust_booth_settings_color_Remote_Event.OnClientEvent:Connect(function(arg) -- not exactly recommended but it's all they have tbh.
+                    getgenv().Current_Claimed_Booth = arg
+                end)
+            end
         end
     end
-
+    wait(0.2) -- wait before running because we check if the Booth exists, and it might take a second before it becomes available.
     getgenv().change_booth_color_default = function()
         local args = {
             {
@@ -1123,7 +1167,9 @@
     end
     task.wait(0.2)
     if game.PlaceId == 6884319169 or game.PlaceId == 15546218972 then
-        getgenv().change_booth_color_default()
+        if getgenv().Current_Claimed_Booth then
+            getgenv().change_booth_color_default()
+        end
     end
     
     getgenv().get_booth = function()
@@ -1804,8 +1850,6 @@
         wait(0.2)
         warn("000 >>> 000 >>> nil")
     else
-        local GC = getconnections or get_signal_cons
-
         if getconnections or get_signal_cons then
             getgenv().OtherAntiAfk = false
             getgenv().AntiAfkScript = true
@@ -3264,7 +3308,7 @@
                 if Humanoid then
                     local connections = {}
                     local function AddConnectionsFromSignal(Signal)
-                        for i,v in getconnections(Signal) do
+                        for i,v in GC(Signal) do
                             if v.State then
                                 v:Disable()
                                 table.insert(connections,v)
@@ -3300,7 +3344,7 @@
 
     local function disable_connection(propertyName)
         local signal = getgenv().Humanoid:GetPropertyChangedSignal(propertyName)
-        for _, conn in ipairs(getconnections(signal)) do
+        for _, conn in ipairs(GC(signal)) do
             conn:Disable()
         end
     end
@@ -3431,7 +3475,7 @@
     getgenv().JumpingConnectionsBypass = Tab1:CreateButton({
     Name = "[AntiCheats]: JumpPower/JumpHeight Bypass (Connections method)",
     Callback = function()
-        if getconnections then
+        if GC then
             disable_connection("JumpPower")
             disable_connection("JumpHeight")
             getgenv().notify("Success", "Disabled connections for JumpPower/JumpHeight!", 5)
@@ -3443,11 +3487,11 @@
     getgenv().GravityConnectionsBypass = Tab1:CreateButton({
     Name = "Gravity Bypass (Connections method)",
     Callback = function()
-        if getconnections then
+        if getconnections or get_signal_cons then
             getgenv().notify("Info", "Disabling Gravity connections...", 5)
             task.wait(0.3)
             local function grav_connections()
-                for _, conn in ipairs(getconnections(getgenv().Workspace:GetPropertyChangedSignal("Gravity"))) do
+                for _, conn in ipairs(GC(workspace:GetPropertyChangedSignal("Gravity"))) do
                     conn:Disable()
                 end
             end
@@ -3455,7 +3499,7 @@
             wait(0.3)
             grav_connections()
             wait(0.3)
-            getgenv().notify("Success:", "We have applied Gravity bypass (disabled connection).", 5)
+            getgenv().notify("Success", "We have applied Gravity bypass (disabled connection).", 5)
         end
     end,})
 
@@ -3465,10 +3509,9 @@
         if getrawmetatable and newcclosure then
             getgenv().notify("Info", "Loading Heartbeat bypass...", 5)
             task.wait(0.3)
-            local spoofedWalkSpeed = 16
-            local spoofedJumpPower = 50
-            local spoofedJumpHeight = 7.2
-
+            local spoofedWalkSpeed = getgenv().StarterPlayer.CharacterWalkSpeed or 16
+            local spoofedJumpPower = getgenv().StarterPlayer.CharacterJumpPower or 50
+            local spoofedJumpHeight = getgenv().StarterPlayer.CharacterJumpHeight or 7.2
             local mt = getrawmetatable(game)
             setreadonly(mt, false)
 
@@ -3492,74 +3535,78 @@
         end
     end,})
 
+    local players = getgenv().Players or game:GetService("Players")
+    local local_player = players.LocalPlayer
+    local tag_name = "fly_bypass_system"
+    getgenv().disable_signal_conns = function(instance, signal_string)
+        local signal = instance[signal_string]
+        if typeof(signal) == "RBXScriptSignal" then
+            for _, conn in ipairs(GC(signal)) do
+                -- [[ Just incase the signal somehow gets corrupted or something. ]] --
+                pcall(function() conn:Disable() end)
+            end
+        end
+    end
+
+    local function patch_char(char)
+        disable_signal_conns(char, "DescendantAdded")
+
+        local root = getgenv().HumanoidRootPart or getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart") or get_root(char) -- all valid.
+        if root then
+            disable_signal_conns(root, "DescendantAdded")
+        end
+
+        for _, v in ipairs(char:GetDescendants()) do
+            disable_signal_conns(v, "ChildAdded")
+        end
+    end
+
+    local function apply_patch(character) patch_char(character) end
+    local function start_fly_bypass()
+        if getgenv().FlamesLibrary.is_alive(tag_name) then return end
+        if local_player.Character then
+            task.spawn(apply_patch, local_player.Character) -- ez
+        else
+            repeat task.wait() until local_player.Character
+            apply_patch(local_player.Character)
+        end
+
+        local char_connection = local_player.CharacterAdded:Connect(apply_patch)
+        getgenv().FlamesLibrary.connect(tag_name, char_connection)
+    end
+
     getgenv().FlyBypassConnections = Tab1:CreateButton({
     Name = "[AntiCheats]: Fly Bypass (Connections method)",
     Callback = function()
-        if getconnections then
-            if getgenv().notify then
-                getgenv().notify("Info", "Loading Fly Bypass, disabling connections...", 5)
-            end
+        if not (getconnections or get_signal_cons) then return getgenv().notify("Error", "Your executor does not support 'getconnections'!", 5) end
+        if getgenv().notify then getgenv().notify("Info", "Loading Fly Bypass, disabling connections...", 5) end
+        task.wait(0.3)
+        if local_player.Character then -- only need to check one.
+            if getgenv().notify then getgenv().notify("Info", "Now patching up Character connections...", 5) end
+            patch_char(local_player.Character or getgenv().Character)
+            start_fly_bypass()
             task.wait(0.3)
-            local physicsInstances = {
-                BodyVelocity = true,
-                BodyGyro = true,
-                BodyPosition = true,
-                BodyForce = true,
-                BodyAngularVelocity = true,
-                AlignPosition = true,
-                AlignOrientation = true,
-                VectorForce = true,
-                RocketPropulsion = true
-            }
-
-            local function disable_signal_conns(instance, signal_string)
-                local signal = instance[signal_string]
-                if typeof(signal) == "RBXScriptSignal" then
-                    for _, conn in ipairs(getconnections(signal)) do
-                        conn:Disable()
-                    end
-                end
-            end
-
-            local function patch_char(char)
-                disable_signal_conns(char, "DescendantAdded")
-                disable_signal_conns(getgenv().getRoot(getgenv().Character), "DescendantAdded")
-
-                for _, v in ipairs(char:GetDescendants()) do
-                    disable_signal_conns(v, "ChildAdded")
-                end
-            end
-
-            if getgenv().LocalPlayer.Character then
-                getgenv().notify("Info", "Now patching up Character connections...", 5)
-                task.wait(0.5)
-                patch_char(getgenv().Character)
-                wait(0.3)
-                getgenv().notify("Success", "We have successfully applied Fly Bypass.", 5)
-            else
-                return getgenv().notify("Error", "It seems as if your Character hasn't loaded, wait!", 5)
-            end
+            if getgenv().notify then getgenv().notify("Success", "We have successfully applied Fly Bypass.", 5) end
         else
-            return getgenv().notify("Error", "Your executor does not support 'getconnections'!", 5)
+            return getgenv().notify("Error", "It seems as if your Character hasn't loaded, wait!", 5)
         end
     end,})
 
     getgenv().anti_sit_enabled = getgenv().anti_sit_enabled or false
     local players = getgenv().Players or game:GetService("Players")
-    local local_player = getgenv().LocalPlayer or players.LocalPlayer
+    local local_player = players.LocalPlayer
     local tag_name = "anti_sit_system"
     local function hook_character(character)
-        local humanoid = getgenv().Humanoid or character:WaitForChild("Humanoid") or get_human(LocalPlayer, 10)
+        local humanoid = character:WaitForChild("Humanoid")
         local seated_connection
         seated_connection = humanoid.Seated:Connect(function(active)
-            if not getgenv().anti_sit_enabled then
-                return
-            end
+            if not getgenv().anti_sit_enabled then return end
 
             if active then
-                task.wait()
-                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                humanoid.Sit = false
+                task.defer(function()
+                    humanoid.Sit = false
+                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end)
             end
         end)
 
@@ -3567,17 +3614,16 @@
     end
 
     local function start_anti_sit()
-        if getgenv().FlamesLibrary.is_alive(tag_name) then
-            return
-        end
+        if getgenv().FlamesLibrary.is_alive(tag_name) then return end
 
         if local_player.Character then
+            task.spawn(hook_character, local_player.Character)
+        else
+            repeat task.wait() until local_player.Character and local_player.Character:FindFirstChildOfClass("Humanoid")
             hook_character(local_player.Character)
         end
 
-        local char_connection = local_player.CharacterAdded:Connect(function(character)
-            hook_character(character)
-        end)
+        local char_connection = local_player.CharacterAdded:Connect(hook_character)
 
         getgenv().FlamesLibrary.connect(tag_name, char_connection)
     end
@@ -3609,11 +3655,6 @@
             getgenv().toggle_anti_sit(false)
         end
     end,})
-    wait()
-    if getgenv().disabled_sit_function == true then
-        getgenv().AntiSit_Func:Set(false)
-        getgenv().disabled_sit_function = false
-    end
 
     getgenv().HD_FlyEnabled = getgenv().HD_FlyEnabled or false
     local FlyConnection
