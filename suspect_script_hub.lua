@@ -557,7 +557,7 @@ Tabs.Tasks:AddButton({Title = "Finish One Task (FE)", Callback = function()
     pcall(function() getgenv().task_one_main_Remote_Event_found:FireServer(true) end)
 end})
 
-Tabs.Tasks:AddToggle("auto_completer", {Title = "Automatically Complete Tasks (FE) MONEY FARMER!", Default = getgenv().doing_all_tasks_easily or false}):OnChanged(function(v)
+Tabs.Tasks:AddToggle("auto_completer", {Title = "Automatically Complete Tasks (FE)", Default = getgenv().doing_all_tasks_easily or false}):OnChanged(function(v)
     getgenv().doing_all_tasks_easily = v
     getgenv().FlamesLibrary.disconnect("easily_finishing_all_tasks")
     if not v then return end
@@ -574,6 +574,11 @@ Tabs.Tasks:AddToggle("auto_completer", {Title = "Automatically Complete Tasks (F
         getgenv().FlamesLibrary.disconnect("easily_finishing_all_tasks")
     end
 end)
+
+Tabs.Tasks:AddParagraph({
+    Title = "MONEY FARMER!",
+    Content = "THE TOGGLE ABOVE IS AN (FE) MONEY FARMER!"
+})
 
 Tabs.Auto:AddToggle("afk", {Title = "AntiAFK", Default = getgenv().anti_afk or true}):OnChanged(function(v)
     getgenv().anti_afk = v
