@@ -5173,290 +5173,78 @@
     Name = "Spin Character",
     PlaceholderText = "Speed",
     RemoveTextAfterFocusLost = true,
-    Callback = function(getSpinSpeed)
-        local HumanoidRootPart = getgenv().getRoot(getgenv().Character)
-        local spinSpeed = tonumber(getSpinSpeed)
-        if spinSpeed and spinSpeed <= 200 then
-            local Spin = Instance.new("BodyAngularVelocity")
-            Spin.Name = "Spinning"
-            Spin.Parent = HumanoidRootPart
-            Spin.MaxTorque = Vector3.new(0, math.huge, 0)
-            Spin.AngularVelocity = Vector3.new(0,spinSpeed,0)
-        elseif spinSpeed and spinSpeed >= 200 then
-            getgenv().notify("Limit Reached!", "We lowered speed, because you would be flung.", 5)
-            wait(0.2)
-            if not getgenv().getRoot(getgenv().Character):FindFirstChild("Spinning") then
-                local Spin = Instance.new("BodyAngularVelocity")
-                Spin.Name = "Spinning"
-                Spin.Parent = HumanoidRootPart
-                Spin.MaxTorque = Vector3.new(0, math.huge, 0)
-                Spin.AngularVelocity = Vector3.new(0,200,0)
-            else
-                HumanoidRootPart:FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,200,0)
+    Callback = function(get_spin_speed)
+        local humanoid_root_part = getgenv().HumanoidRootPart or (getgenv().Character and getgenv().Character:FindFirstChild("HumanoidRootPart")) or get_root(LocalPlayer, 10)
+        if not humanoid_root_part then return end
+        local spin_speed = tonumber(get_spin_speed)
+        if not spin_speed then return end
+        if spin_speed > 200 then spin_speed = 200 end
+        local spinning_velocity
+
+        for _, v in ipairs(getgenv().Character:GetDescendants()) do
+            if v:IsA("BodyAngularVelocity") and v.Name:lower():find("spinning") then
+                spinning_velocity = v
+                break
             end
-        elseif spinSpeed <= 200 and getgenv().getRoot(getgenv().Character):FindFirstChild("Spinning") then
-            getgenv().notify("Detected.", "Updated speed, detected duplicate spin.", 5)
-            wait(0.3)
-            getgenv().getRoot(getgenv().Character):FindFirstChild("Spinning").AngularVelocity = Vector3.new(0,spinSpeed,0)
         end
+
+        if not spinning_velocity then
+            spinning_velocity = Instance.new("BodyAngularVelocity")
+            spinning_velocity.Name = "Spinning"
+            spinning_velocity.Parent = humanoid_root_part
+            spinning_velocity.MaxTorque = Vector3.new(0, math.huge, 0)
+        end
+
+        spinning_velocity.AngularVelocity = Vector3.new(0, spin_speed, 0)
     end,})
 
     getgenv().UnspinNow = Tab2:CreateButton({
     Name = "Unspin",
     Callback = function()
-        for i,v in pairs(getgenv().getRoot(getgenv().Character):GetChildren()) do
-            if v.Name == "Spinning" then
-                v:Destroy()
+        if not getgenv().Character or not getgenv().Character.Parent then return getgenv().notify("Error", "Character has not been loaded yet (?), try respawning.", 7) end
+        local humanoid_root_part = getgenv().HumanoidRootPart or get_root(LocalPlayer, 10)
+        if not humanoid_root_part then return end
+
+        for _, v in ipairs(getgenv().Character:GetDescendants()) do
+            if v:IsA("BodyAngularVelocity") and v.Name:lower():find("spinning") then
+                pcall(function() v:Destroy() end)
             end
         end
     end,})
 
-    if getgenv().ReplicatedStorage:FindFirstChild("ModifyUsername") then
-        getgenv().CharIntoOwnerOfScript = Tab2:CreateButton({
-        Name = "Char Into: Owner Of Script",
-        Callback = function()
-            getgenv().ReplicatedStorage:FindFirstChild("ModifyUsername"):FireServer("L0CKED_1N1")
-            wait(0.3)
-            Zombie_Idle_1 = "10921344533"
-            Zombie_Idle_2 = "10921345304"
-            Zombie_Walk = "10921355261"
-            Zombie_Run = "616163682"
-            Zombie_Jump = "10921351278"
-            Zombie_Climb = "10921343576"
-            Zombie_Fall = "10921350320"
-            Catwalk_Idle_1 = "133806214992291"
-            Catwalk_Idle_2 = "94970088341563"
-            Catwalk_Walk = "109168724482748"
-            Catwalk_Run = "81024476153754"
-            Catwalk_Jump = "116936326516985"
-            Catwalk_Climb = "119377220967554"
-            Catwalk_Fall = "92294537340807"
-            Elder_Idle_1 = "10921101664"
-            Elder_Idle_2 = "10921102574"
-            Elder_Walk = "10921111375"
-            Elder_Run = "10921104374"
-            Elder_Jump = "10921107367"
-            Elder_Climb = "10921100400"
-            Elder_Fall = "10921105765"
-            Cartoony_Idle_1 = "10921071918"
-            Cartoony_Idle_2 = "10921072875"
-            Cartoony_Walk = "10921082452"
-            Cartoony_Run = "10921076136"
-            Cartoony_Jump = "10921078135"
-            Cartoony_Climb = "10921070953"
-            Cartoony_Fall = "10921077030"
-            Adidas_Idle_1 = "18537376492"
-            Adidas_Idle_2 = "18537371272"
-            Adidas_Walk = "18537392113"
-            Adidas_Run = "18537384940"
-            Adidas_Jump = "18537380791"
-            Adidas_Climb = "18537363391"
-            Adidas_Fall = "18537367238"
-            Werewolf_Idle_1 = "10921330408"
-            Werewolf_Idle_2 = "10921333667"
-            Werewolf_Walk = "10921342074"
-            Werewolf_Run = "10921336997"
-            Werewolf_Jump = "1083218792"
-            Werewolf_Climb = "10921329322"
-            Werewolf_Fall = "10921337907"
-            Vampire_Idle_1 = "10921315373"
-            Vampire_Idle_2 = "10921316709"
-            Vampire_Walk = "10921326949"
-            Vampire_Run = "10921320299"
-            Vampire_Jump = "10921322186"
-            Vampire_Climb = "10921314188"
-            Vampire_Fall = "10921321317"
-            Astronaut_Idle_1 = "10921034824"
-            Astronaut_Idle_2 = "10921036806"
-            Astronaut_Walk = "10921046031"
-            Astronaut_Run = "10921039308"
-            Astronaut_Jump = "10921042494"
-            Astronaut_Climb = "10921032124"
-            Astronaut_Fall = "10921040576"
-            Superhero_Idle_1 = "10921288909"
-            Superhero_Idle_2 = "10921290167"
-            Superhero_Walk = "10921298616"
-            Superhero_Run = "10921291831"
-            Superhero_Jump = "10921294559"
-            Superhero_Climb = "10921286911"
-            Superhero_Fall = "10921293373"
-            Knight_Idle_1 = "10921117521"
-            Knight_Idle_2 = "10921118894"
-            Knight_Walk = "10921127095"
-            Knight_Run = "10921121197"
-            Knight_Jump = "10921123517"
-            Knight_Climb = "10921116196"
-            Knight_Fall = "10921122579"
-            Mage_Idle_1 = "10921144709"
-            Mage_Idle_2 = "10921145797"
-            Mage_Walk = "10921152678"
-            Mage_Run = "10921148209"
-            Mage_Jump = "10921149743"
-            Mage_Climb = "10921143404"
-            Mage_Fall = "10921148939"
-            Ninja_Idle_1 = "10921155160"
-            Ninja_Idle_2 = "10921155867"
-            Ninja_Walk = "10921162768"
-            Ninja_Run = "10921157929"
-            Ninja_Jump = "10921160088"
-            Ninja_Climb = "10921154678"
-            Ninja_Fall = "10921159222"
-            Toy_Idle_1 = "10921301576"
-            Toy_Idle_2 = "10921302207"
-            Toy_Walk = "10921312010"
-            Toy_Run = "10921306285"
-            Toy_Jump = "10921308158"
-            Toy_Climb = "10921300839"
-            Toy_Fall = "10921307241"
-            NFL_Idle_1 = "92080889861410"
-            NFL_Idle_2 = "74451233229259"
-            NFL_Walk = "110358958299415"
-            NFL_Run = "117333533048078"
-            NFL_Jump = "119846112151352"
-            NFL_Climb = "134630013742019"
-            NFL_Fall = "129773241321032"
-            NoBoundaries_Idle_1 = "18747067405"
-            NoBoundaries_Idle_2 = "18747063918"
-            NoBoundaries_Walk = "18747074203"
-            NoBoundaries_Run = "18747070484"
-            NoBoundaries_Jump = "18747069148"
-            NoBoundaries_Climb = "18747060903"
-            NoBoundaries_Fall = "18747062535"
-            Oldschool_Idle_1 = "10921230744"
-            Oldschool_Idle_2 = "10921232093"
-            Oldschool_Walk = "10921244891"
-            Oldschool_Run = "10921240218"
-            Oldschool_Jump = "10921242013"
-            Oldschool_Climb = "10921229866"
-            Oldschool_Fall = "10921241244"
-            Pirate_Idle_1 = "750781874"
-            Pirate_Idle_2 = "750782770"
-            Pirate_Walk = "750785693"
-            Pirate_Run = "750783738"
-            Pirate_Jump = "750782230"
-            Pirate_Climb = "750779899"
-            Pirate_Fall = "750780242"
-            Levitation_Idle_1 = "10921132962"
-            Levitation_Idle_2 = "10921133721"
-            Levitation_Walk = "10921140719"
-            Levitation_Run = "10921135644"
-            Levitation_Jump = "10921137402"
-            Levitation_Climb = "10921132092"
-            Levitation_Fall = "10921136539"
-            Bubbly_Idle_1 = "10921054344"
-            Bubbly_Idle_2 = "10921055107"
-            Bubbly_Walk = "10980888364"
-            Bubbly_Run = "10921057244"
-            Bubbly_Jump = "10921062673"
-            Bubbly_Climb = "10921053544"
-            Bubbly_Fall = "10921061530"
-            Robot_Idle_1 = "10921248039"
-            Robot_Idle_2 = "10921248831"
-            Robot_Walk = "10921255446"
-            Robot_Run = "10921250460"
-            Robot_Jump = "10921252123"
-            Robot_Climb = "10921247141"
-            Robot_Fall = "10921251156"
-            WickedPopular_Idle_1 = "118832222982049"
-            WickedPopular_Idle_2 = "76049494037641"
-            WickedPopular_Walk = "92072849924640"
-            WickedPopular_Run = "72301599441680"
-            WickedPopular_Jump = "104325245285198"
-            WickedPopular_Climb = "131326830509784"
-            WickedPopular_Fall = "121152442762481"
-            Bold_Idle_1 = "16738333868"
-            Bold_Idle_2 = "16738334710"
-            Bold_Walk = "16738340646"
-            Bold_Run = "16738337225"
-            Bold_Jump = "16738336650"
-            Bold_Climb = "16738332169"
-            Bold_Fall = "16738333171"
-            Stylish_Idle_1 = "10921272275"
-            Stylish_Idle_2 = "10921273958"
-            Stylish_Walk = "10921283326"
-            Stylish_Run = "10921276116"
-            Stylish_Jump = "10921279832"
-            Stylish_Climb = "10921271391"
-            Stylish_Fall = "10921278648"
-            Rthro_Idle_1 = "10921259953"
-            Rthro_Idle_2 = "10921258489"
-            Rthro_Walk = "10921269718"
-            Rthro_Run = "10921261968"
-            Rthro_Jump = "10921263860"
-            Rthro_Climb = "10921257536"
-            Rthro_Fall = "10921262864"
-
-            local function disguise_anims(character)
-                if not character then return warn("Character not found!") end
-                local Animate = character:FindFirstChild("Animate")
-                if not Animate then return warn("Animate script is missing!") end
-
-                Animate.Disabled = true
-                task.wait(0.1)
-                Animate.Disabled = false
-
-                local humanoid = getgenv().Humanoid
-                if humanoid then
-                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                        track:Stop()
-                    end
-                end
-
-                task.wait(0.2)
-
-                Animate.idle:FindFirstChild("Animation1").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_1
-                Animate.idle:FindFirstChild("Animation2").AnimationId = "http://www.roblox.com/asset/?id=" .. Knight_Idle_2
-                Animate.walk:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Walk
-                Animate.run:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Run
-                Animate.jump:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Jump
-                Animate.climb:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Climb
-                Animate.fall:FindFirstChildOfClass("Animation").AnimationId = "http://www.roblox.com/asset/?id=" .. Zombie_Fall
-            end
-            wait()
-            disguise_anims(getgenv().Character)
-        end,})
-    end
-    wait()
-    local Players = getgenv().Players
-    local RunService = getgenv().RunService
-    
-    local speaker = Players.LocalPlayer
-    
-    local whitelistedPlayers = {
+    local players = getgenv().Players
+    local run_service = getgenv().RunService
+    local speaker = players.LocalPlayer
+    getgenv().bang_anim_whitelisted_players = getgenv().bang_anim_whitelisted_players or { -- players to protect.
         [652891519] = true,
         [4201949699] = true,
         [7592162677] = true
     }
-    
-    local bangAnimations = {
+    local bang_animations = {
         ["rbxassetid://148840371"] = true,
         ["rbxassetid://5918726674"] = true,
         ["rbxassetid://507768375"] = true
     }
-    
-    local function isWhitelisted(player)
-        return player and whitelistedPlayers[player.UserId]
-    end
-    
-    local function isPlayingBangAnimation(humanoid)
+    local function is_whitelisted(player) return player and whitelisted_players[player.UserId] end
+    getgenv().isplaying_bang_animation = function(humanoid)
         for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-            if track.Animation and bangAnimations[track.Animation.AnimationId] then
+            if track.Animation and bang_animations[track.Animation.AnimationId] then
                 return true
             end
         end
         return false
     end
-    
-    local function isBangingWhitelistedPlayer()
-        local speakerRoot = getgenv().getRoot(getgenv().Character)
-        
-        if not speakerRoot then return false end
-    
-        for _, player in pairs(Players:GetPlayers()) do
-            if isWhitelisted(player) then
-                local targetRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                if targetRoot then
-                    local offset = speakerRoot.Position - targetRoot.Position
+
+    getgenv().is_banging_whitelisted_player = function()
+        local speaker_root = get_root(speaker, 10)
+        if not speaker_root then return false end
+
+        for _, player in pairs(players:GetPlayers()) do
+            if player ~= LocalPlayer and is_whitelisted(player) then
+                local character = player.Character or get_char(player, 5)
+                local target_root = character and character:FindFirstChild("HumanoidRootPart")
+                if target_root then
+                    local offset = speaker_root.Position - target_root.Position
                     if math.abs(offset.X) < 2 and math.abs(offset.Y) < 2 and math.abs(offset.Z) < 2 then
                         return true
                     end
@@ -5465,28 +5253,26 @@
         end
         return false
     end
-    
-    local function monitorBangAttempts()
+
+    local function monitor_bang_attempts()
         while true do
             task.wait(0.1)
-    
-            local humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
+            local character = getgenv().Character or speaker.Character or get_char(LocalPlayer, 10)
+            local humanoid = getgenv().Humanoid or character and character:FindFirstChildWhichIsA("Humanoid") or get_human(LocalPlayer, 10)
             if not humanoid then continue end
-    
-            if isPlayingBangAnimation(humanoid) and isBangingWhitelistedPlayer() then
+            if isplaying_bang_animation(humanoid) and is_banging_whitelisted_player() then
                 humanoid.Health = 0
             end
         end
     end
-    
-    local function onCharacterAdded(character)
+
+    local function oncharacter_added(character)
         task.wait(1)
-        monitorBangAttempts()
+        task.spawn(monitor_bang_attempts)
     end
-    
-    speaker.CharacterAdded:Connect(onCharacterAdded)
-    
-    task.spawn(monitorBangAttempts)
+
+    speaker.CharacterAdded:Connect(oncharacter_added)
+    task.spawn(monitor_bang_attempts)
 
     if not getgenv().Character:FindFirstChild("Animate") then
         warn("'Animate' LocalScript not found inside of Character at runtime!")
@@ -10174,7 +9960,6 @@
 
     local highlights = {}
     local highlight_color = Color3.fromRGB(255,255,255)
-
     local function highlight_player(player)
         if player == getgenv().LocalPlayer then
             return
@@ -10229,6 +10014,71 @@
         getgenv().FlamesLibrary.disconnect("highlight_render")
 
         clear_highlights()
+    end
+
+    local team_highlights = {}
+    local team_highlight_color = Color3.fromRGB(255, 60, 60)
+    local function teamhighlight_apply(player)
+        if player == getgenv().LocalPlayer then
+            return
+        end
+
+        local local_team = getgenv().LocalPlayer.Team
+        if local_team and player.Team and player.Team == local_team then
+            return
+        end
+
+        local char = player.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then
+            return
+        end
+
+        if team_highlights[player] and team_highlights[player].Adornee == char then
+            return
+        end
+
+        if team_highlights[player] then
+            team_highlights[player]:Destroy()
+            team_highlights[player] = nil
+        end
+
+        local hl = Instance.new("Highlight")
+        hl.Name = "TeamHighlight"
+        hl.Adornee = char
+        hl.FillColor = team_highlight_color
+        hl.OutlineColor = Color3.fromRGB(255,255,255)
+        hl.FillTransparency = 0.5
+        hl.OutlineTransparency = 0
+        hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        hl.Parent = char
+
+        team_highlights[player] = hl
+    end
+
+    local function teamhighlight_remove(player)
+        if team_highlights[player] then
+            team_highlights[player]:Destroy()
+            team_highlights[player] = nil
+        end
+    end
+
+    local function teamhighlight_clear_all()
+        for _, hl in pairs(team_highlights) do
+            if hl then
+                hl:Destroy()
+            end
+        end
+        table.clear(team_highlights)
+    end
+
+    local function teamhighlight_shutdown()
+        local lib = getgenv().FlamesLibrary
+
+        lib.disconnect("teamhighlight_players")
+        lib.disconnect("teamhighlight_characters")
+        lib.disconnect("teamhighlight_render")
+
+        teamhighlight_clear_all()
     end
 
     getgenv().Name_DrawingESP = Tab19:CreateToggle({
@@ -10340,6 +10190,72 @@
             end
             task.wait(0)
             esplib.remove_distance()
+        end
+    end,})
+
+    getgenv().TeamHighlightESP_Drawing = Tab19:CreateToggle({
+    Name = "Team Highlight",
+    CurrentValue = getgenv().TeamHighlightESP_Flames_Hub_Toggled or false,
+    Flag = "ToggleTeamHighlightESP",
+    Callback = function(team_highlight_toggle)
+        local lib = getgenv().FlamesLibrary
+
+        if team_highlight_toggle then
+            getgenv().TeamHighlightESP_Flames_Hub_Toggled = true
+
+            local function on_character_added_team(player, character)
+                local function try_apply()
+                    if character and character:FindFirstChild("HumanoidRootPart") then
+                        teamhighlight_apply(player)
+                    else
+                        local attempts = 0
+
+                        lib.connect("teamhighlight_render", RunService.RenderStepped:Connect(function()
+                            attempts += 1
+                            if character:FindFirstChild("HumanoidRootPart") then
+                                teamhighlight_apply(player)
+                                lib.disconnect("teamhighlight_render")
+                            elseif attempts > 20 then
+                                lib.disconnect("teamhighlight_render")
+                            end
+                        end))
+                    end
+                end
+
+                try_apply()
+                task.wait(0)
+                local humanoid = character and character:FindFirstChildOfClass("Humanoid") or get_human(player, 3)
+                if humanoid then
+                    lib.connect("teamhighlight_characters", humanoid.Died:Connect(function()
+                        teamhighlight_remove(player)
+                    end))
+                end
+            end
+
+            local function on_player_added_team(player)
+                if player == getgenv().LocalPlayer then return end
+                if player.Character then
+                    on_character_added_team(player, player.Character)
+                end
+
+                lib.connect("teamhighlight_characters", player.CharacterAdded:Connect(function(char)
+                    on_character_added_team(player, char)
+                end))
+            end
+
+            local function on_player_removing_team(player)
+                teamhighlight_remove(player)
+            end
+
+            for _, p in ipairs(getgenv().Players:GetPlayers()) do
+                on_player_added_team(p)
+            end
+
+            lib.connect("teamhighlight_players", Players.PlayerAdded:Connect(on_player_added_team))
+            lib.connect("teamhighlight_players", Players.PlayerRemoving:Connect(on_player_removing_team))
+        else
+            getgenv().TeamHighlightESP_Flames_Hub_Toggled = false
+            teamhighlight_shutdown()
         end
     end,})
 
