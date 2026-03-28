@@ -87,7 +87,7 @@ getgenv().handleCommand = function(sender, message)
       end
 
       stop_rainbow_car()
-   elseif raw_cmd == "togglechat" or raw_cmd == "uichat" or raw_cmd == "flameschat" or raw_cmd == "toggleflameschat" or raw_cmd == "flameschatui" or raw_cmd == "flamesnet" or raw_cmd == "chat" or raw_cmd == "chattoggle" or raw_cmd == "" then
+   elseif raw_cmd == "togglechat" or raw_cmd == "uichat" or raw_cmd == "flameschat" or raw_cmd == "toggleflameschat" or raw_cmd == "flameschatui" or raw_cmd == "flamesnet" or raw_cmd == "chat" or raw_cmd == "chattoggle" or raw_cmd == "chatui" then
       getgenv().set_chat_visible(true)
    elseif raw_cmd == "commandbar" or raw_cmd == "cmdbar" or raw_cmd == "commandsbar" or raw_cmd == "cmdsbar" then
       command_bar_GUI(true)
