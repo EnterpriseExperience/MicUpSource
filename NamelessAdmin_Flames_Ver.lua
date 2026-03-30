@@ -7659,7 +7659,7 @@ local function buildNotifArgs(input, duration, title, allowDurationDefault)
 end
 
 function DoNotif(text, duration, title)
-	Notify(buildNotifArgs(text, duration, title, true))
+	pcall(function() Notify(buildNotifArgs(text, duration, title, true)) end)
 end
 
 function DebugNotif(text, duration, title)
