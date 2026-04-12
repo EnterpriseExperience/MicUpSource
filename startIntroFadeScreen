@@ -6,8 +6,8 @@ local TweenService = cloneref and cloneref(game:GetService("TweenService")) or g
 local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
 local scramble_time = 3.5
 local scramble_speed = 0.01
-local fade_out_text_time = 1
-local fade_out_background_time = 1
+local fade_out_text_time = 2
+local fade_out_background_time = 1.7
 local intro_phrases = {
     "Welcome",
     "Wsp",
@@ -119,7 +119,7 @@ copyright_label.BackgroundTransparency = 1
 copyright_label.TextColor3 = Color3.fromRGB(255, 0, 0)
 copyright_label.Font = Enum.Font.SourceSans
 copyright_label.TextScaled = true
-copyright_label.Text = "© Flames Hub | 2026 | DOMINATING The Market | Unstoppable | Loyal Userbase | ©"
+copyright_label.Text = "©️ | Flames Hub | ON TOP | 15K+ users daily! | amazing community! | ©️"
 copyright_label.Parent = screen_gui
 
 task.spawn(function()
@@ -178,10 +178,8 @@ local function rgb_cycle(label)
     end
 end
 
-reveal_text(scramble_time, "Recommend us to all your connections, peers, friends, associated, who ever, but, enjoy!", text_label)
-
+reveal_text(scramble_time, "Make sure to use our 'feedback' command to report users, request features, report bugs/issues, and more!", text_label)
 task.wait(scramble_time + 1)
-
 getgenv().rgb_running = false
 fade_out_text(welcome_label)
 fade_out_text(text_label)
@@ -194,6 +192,5 @@ getgenv().rgb_running_background_coloring_frame = false
 move_out_text()
 
 TweenService:Create(background_frame, TweenInfo.new(fade_out_background_time, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
-
 task.wait(fade_out_background_time + 1)
 screen_gui:Destroy()
