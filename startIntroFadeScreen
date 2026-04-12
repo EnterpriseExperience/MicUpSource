@@ -75,7 +75,7 @@ end
 
 local screen_gui = Instance.new("ScreenGui")
 screen_gui.Name = "fullscreenscramblegui"
-screen_gui.Parent = CoreGui or player:WaitForChild("PlayerGui")
+screen_gui.Parent = player:WaitForChild("PlayerGui")
 screen_gui.IgnoreGuiInset = true
 screen_gui.ResetOnSpawn = false
 
