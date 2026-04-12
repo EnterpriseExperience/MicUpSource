@@ -4,6 +4,7 @@ local player = Players.LocalPlayer
 local player_name = player.DisplayName
 local TweenService = cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
 local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local scramble_time = 3.5
 local scramble_speed = 0.01
 local fade_out_text_time = 2
@@ -24,9 +25,28 @@ local intro_phrases = {
     "You're powerful now",
     "Have fun"
 }
+local reveal_text_phrases = {
+    "Make sure to use our 'feedback' command to report users, request features, report bugs/issues, and more!",
+    "Make sure to recommend us to everyone you know!",
+    "Remember!: Do NOT harass, bully, or otherwise target other Flames Hub users! you can get BANNED from Flames Hub for doing it!",
+    "Ensuring Flames Hub always provides top notch services and utilities is our speciality!",
+    "Nobody can replicate / clone Flames Hub for a reason! We're too good at what we do!",
+    "Flames Hub has almost daily updates, over 195+ commands, customizable features, easy configuration and more!",
+    "We dominate the market for a reason! Flames Hub forever!",
+    "Don't forget that Flames Hub will always be #1!",
+    "Did you know? Flames Hub automatically runs an anti-cheat scan incase Life Together RP adds an anti-cheat?",
+    "We provide you with protection, endurance, power and much more, in return you help promote our services and utilities!",
+    "If you enjoy Flames Hub, don't forget to send us YOUR feedback if you haven't already! using our 'feedback' command.",
+    "©️ | Flames Hub | ON TOP | 15K+ users daily! | amazing community! | ©️"
+}
 local function smooth_rgb(label, speed_flag_name, speed)
     local hue = 0
     getgenv()[speed_flag_name] = true
+
+    local min_hue = 0.75
+    local max_hue = 0.95
+    local saturation = 0.8
+    local brightness = 0.7
 
     if label:IsA("TextLabel") or label:IsA("TextButton") then
         local conn
@@ -35,9 +55,9 @@ local function smooth_rgb(label, speed_flag_name, speed)
                 conn:Disconnect()
                 return
             end
-
             hue = (hue + dt * speed) % 1
-            label.TextColor3 = Color3.fromHSV(hue, 1, 1)
+            local mapped = min_hue + (hue % (max_hue - min_hue))
+            label.TextColor3 = Color3.fromHSV(mapped, saturation, brightness)
         end)
     else
         local conn
@@ -46,16 +66,16 @@ local function smooth_rgb(label, speed_flag_name, speed)
                 conn:Disconnect()
                 return
             end
-
             hue = (hue + dt * speed) % 1
-            label.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
+            local mapped = min_hue + (hue % (max_hue - min_hue))
+            label.BackgroundColor3 = Color3.fromHSV(mapped, saturation, brightness)
         end)
     end
 end
 
 local screen_gui = Instance.new("ScreenGui")
 screen_gui.Name = "fullscreenscramblegui"
-screen_gui.Parent = player:WaitForChild("PlayerGui")
+screen_gui.Parent = CoreGui or player:WaitForChild("PlayerGui")
 screen_gui.IgnoreGuiInset = true
 screen_gui.ResetOnSpawn = false
 
@@ -71,9 +91,9 @@ end)
 
 local ui_gradient = Instance.new("UIGradient")
 ui_gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 50)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 0, 100)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 200))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 20, 80)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 30, 120)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 60, 140))
 }
 ui_gradient.Rotation = 45
 ui_gradient.Parent = background_frame
@@ -114,12 +134,12 @@ end)
 
 local copyright_label = Instance.new("TextLabel")
 copyright_label.Size = UDim2.new(1, 0, 0.1, 0)
-copyright_label.Position = UDim2.new(0, 0, 0.8, 0)
+copyright_label.Position = UDim2.new(0, 0, 0.83, 0)
 copyright_label.BackgroundTransparency = 1
 copyright_label.TextColor3 = Color3.fromRGB(255, 0, 0)
 copyright_label.Font = Enum.Font.SourceSans
 copyright_label.TextScaled = true
-copyright_label.Text = "©️ | Flames Hub | ON TOP | 15K+ users daily! | amazing community! | ©️"
+copyright_label.Text = tostring(reveal_text_phrases[math.random(1, #reveal_text_phrases)])
 copyright_label.Parent = screen_gui
 
 task.spawn(function()
@@ -178,7 +198,7 @@ local function rgb_cycle(label)
     end
 end
 
-reveal_text(scramble_time, "Make sure to use our 'feedback' command to report users, request features, report bugs/issues, and more!", text_label)
+reveal_text(scramble_time, reveal_text_phrases[math.random(1, #reveal_text_phrases)], text_label)
 task.wait(scramble_time + 1)
 getgenv().rgb_running = false
 fade_out_text(welcome_label)
