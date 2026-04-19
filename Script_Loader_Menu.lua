@@ -28,11 +28,10 @@ local scriptstoload = {
         id = 1333478699,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/The_Lanes.lua"
     },
-    -- they took the game down? lmao --
-    --[[["Player or AI"] = {
+    ["Player or AI"] = {
         id = 95217169945642,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Player_Or_AI.lua"
-    },--]]
+    },
     ["Main Street RP"] = {
         id = 18753889337,
         link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Main_Street_RP.lua"
@@ -136,7 +135,6 @@ local Section1 = Tab1:CreateSection("| 🏡 Scripts Section 🏡 |")
 local Tab2 = window:CreateTab("🎮 Game TPs 🎮", 0)
 local Section2 = Tab2:CreateSection("| 🎮 Scripts Section 🎮 |")
 wait(0.2)
-
 getgenv().FlamesHubUniversal = Tab1:CreateButton({
 Name = "Flames Hub (Universal)",
 Callback = function()
