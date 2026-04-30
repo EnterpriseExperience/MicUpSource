@@ -91,7 +91,7 @@ for name, all_scripts in pairs(scriptstoload) do
             if not getgenv().LifeTogetherRP_Admin then
                 return load_str(scriptstoload["LifeTogether Admin Commands (FE)"].link)
             else
-                return getgenv().notify("Error", "You have already loaded the Life Together Admin commands.", 10)
+                return getgenv().notify("Warning", "You have already loaded the Life Together Admin commands.", 10)
             end
         end
 
