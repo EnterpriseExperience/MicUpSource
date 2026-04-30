@@ -7,13 +7,11 @@ local vehicles = {
     '02Camaro', '12C_CanAm', '12C_Spider', '22b', '240SX', '250GTO', '296GTB', '3000GT', '300CDonk', '300CHearse', '300CHearseGT', '300CLimo', '300SRT8', '33Stradale', '33Stradale_25', '360', '370z', '370zBase', '3Series', '400Z', '488Pista', '4C', '500K', '570s', '600LT', '675LT', '718_Spyder', '720s', '720SGT3', '74Camaro', '765LT', '812Superfast', '8C', '8Series', '911_80', '911_GT3RS', '911_Turbo', '911_TurboS', '917K', '917New', '918Police', '918_Spyder', '9300', '930Offroad', 'A110New', 'A2Quattro', 'A7Sportback', 'Absolut', 'ACCobra', 'Accord', 'Aero', 'Alfieri', 'AM4', 'Ambulance', 'AmgGT3', 'AMGGTBlack', 'AMGGTR', 'Antos', 'Apollo', 'ApolloEvo', 'AresS1', 'ArmoredCar', 'Arrow', 'Artura', 'Asterion', 'Aston', 'Atlantic', 'Aventador', 'AventadorGold', 'AventadorSVJ', 'B95', 'Bacalar', 'Batur', 'Bearcat', 'Beast', 'BelAir', 'BendyBus', 'Bentayga', 'BlazerK5', 'Bluebird', 'Bolide', 'BolidePolice', 'Bora', 'BoraR', 'BoxsterS', 'BoxTruck', 'Bread', 'BriishTaxi', 'Bronco', 'Bronco2Door', 'BroncoRacer', 'BRZ_21', 'BRZ_UD', 'C100', 'C2Corvette', 'C500', 'C63_AMG', 'C63_AMG_UD', 'C8Z06', 'California57', 'Camaro', 'Camaro2020', 'Camaro67', 'Camaro82', 'CamaroBumblebee', 'CamaroDonk', 'CamaroRS', 'CamaroRS16', 'Caravan', 'CargoShip', 'CarreraGT', 'CarreraRS', 'Cayenne', 'Cayenne_GTS_21', 'CaymanGT4', 'CaymanGT4RS', 'CaymanR', 'CCGT', 'CCXR', 'CementMixer', 'Centenario', 'Centodieci', 'Challenger', 'Challenger70', 'ChallengerThicc', 'Charger', 'Charger2015', 'Charger70', 'ChargerNew', 'ChargerPursuit', 'ChargerThicc', 'Cherokee', 'Chevelle', 'ChevySS', 'Chiron', 'ChristmasTruck', 'CityBus', 'Civic', 'Cizeta', 'CL500', 'ClassicSedan', 'CLK500', 'CLKGTR', 'CobaltSS', 'CobraR', 'Cobra_UD', 'Coffin', 'Colorado', 'CommodoreUte', 'Continental', 'ContinentalSS', 'Corrado', 'Corvette', 'CorvetteC1', 'CorvetteC2', 'CorvetteC6', 'CorvetteC6_ZR1', 'CorvetteC8', 'CosworthRS500', 'Countach', 'CountachDonk', 'Countach_22', 'Cruiser', 'CruiserSlicktop', 'Cruze', 'CRX', 'CT5V', 'CT5V_2', 'CTSV', 'CTSVCoupe', 'Cullinan', 'CullinanDonk', 'Cutlass442', 'CX75', 'Cybertruck', 'Daytona', 'DB12', 'DBS', 'DBSSuper', 'Defender', 'Demon', 'Dennis', 'Deora', 'Devel16', 'Diablo', 'Dino', 'Divo', 'DMC12', 'DMC12BTTF', 'DoubleDecker', 'DumpTruck', 'EB110', 'ElantraN', 'ElCamino', 'ElDorado', 'ElDorado2', 'Elise', 'Elva', 'Emira', 'Enzo', 'Equinox', 'EquinoxTaxi', 'Escalade', 'Esperante', 'Esprit', 'Essenza', 'eTron', 'EType', 'EventNineteenBus', 'Evija', 'Exige360Cup', 'Explorer', 'F1', 'F1Base', 'F150', 'F150_87', 'F150_87_Pope', 'F1Mclaren', 'F40', 'F40Police', 'F430', 'F50', 'F8', 'FalconUte', 'Fenyr', 'Fiat500', 'Fiata', 'FifthElementTaxi', 'Firebird', 'FireEngine', 'FireF150', 'FirePolice', 'FitSport', 'FJCruiser', 'Fleetwood', 'FleetwoodGhost', 'FocusRS', 'FocusST', 'Freightliner', 'FRS', 'FTO', 'FType', 'Furai', 'FXXKEvo', 'G6', 'G63', 'G70', 'G8', 'G80_Competition', 'G82_M4', 'Galaxie', 'GalaxieNoTree', 'Gallardo', 'GallardoSuper', 'Gemera', 'Genesis', 'Giulia', 'Gladiator', 'GNX', 'GoKart', 'GoldenSleigh', 'Golf', 'GolfCart', 'GolfR', 'GranTurismo', 'Griffith', 'GS350', 'GT', 'GT2RS', 'GT350R', 'GT3RS22', 'GT3RS996', 'GT500', 'GT63S', 'GTISuper', 'GTO', 'GTOJudge', 'GTR', 'GTR50', 'GTRR34', 'GTRNismo23', 'Gullwing', 'GWagon6x6', 'GWagon6x6Taxi_Actual', 'H2', 'H5', 'Hornet', 'Hovercar', 'Hovercar2', 'Hovercar3', 'HTron', 'HuayraRoadster', 'HummerEV', 'HummerLimo', 'HummerLimoDonk', 'Huracan', 'HuracanEVO', 'Hussarya', 'Hyundai', 'I30N', 'i8', 'ID4', 'Imola', 'Impala', 'ImprezaWRXSTI', 'InsigniaGSI', 'IntegraR', 'Intensa', 'Ioniq6', 'IronNight', 'Jeep', 'Jesko', 'JetTruck', 'JPTaxi', 'K5', 'Kenworth', 'Komatsu', 'KrAZ', 'LaFerrari', 'Lancer', 'LancerIX', 'Landcruiser', 'Landrobe', 'LaVoiture', 'Lawnmower', 'Leaf', 'Levorg', 'LFA', 'Limo', 'LolaT70', 'Lonestar', 'LTD', 'LTD_Chicken', 'LTL900', 'LucidAir', 'M12', 'M2CS', 'M3', 'M3Convert', 'M3GTR', 'M3GTR_UD', 'M4', 'M5', 'M500', 'M8', 'Mach1_21', 'Mach1_69', 'MachE', 'Mack', 'MailTruck', 'MarathonTaxi', 'Maverick', 'Maxima', 'MaybachVision', 'Mazda3', 'MC12', 'MC20', 'McGT', 'ME412', 'Megane', 'MercLimo', 'Miata19', 'Miata89', 'MiniCooper', 'Mirage', 'MissionEWagon', 'Mistral', 'Miura', 'ML63AMG', 'Model3', 'Model3Taxi', 'ModelA', 'ModelS', 'ModelSShooting', 'ModelX', 'Monaco', 'MonsterBus', 'MonsterTruck', 'MonsterVan', 'MonteCarloDonk', 'MonteCarloSS', 'MR2', 'MT45', 'MT45Mail', 'Murcielago', 'Mustang', 'MustangGT14', 'MustangGT99', 'MustangSupercar', 'MX30', 'Neon', 'Neoplan', 'NewCityBus', 'Nomad', 'NSX', 'NSX02', 'NSX97', 'NukeTruck', 'NVision', 'OffroadBeetle', 'OldBeetle', 'OldSedan', 'Omologato', 'One:1', 'Onroak', 'Ornament', 'OversizedF150', 'P1', 'P72', 'P924', 'PanameraTurismo', 'Pantera', 'Passat', 'Pete351', 'Pete379', 'Pete379Long', 'Peterbilt', 'Peterbilt387', 'PeterbiltFlatNose', 'Phantom', 'Piano', 'Pickup', 'Plaid', 'Polestar2', 'PoliceCamaro', 'PoliceCharger', 'PoliceCorvette', 'PoliceExplorer', 'PoliceF150', 'PoliceMonaco', 'PoliceRaptor', 'PoliceSenna', 'PoliceTaurus', 'PoliceVan', 'Porsche935', 'Porsche959', 'Porsche959B', 'PorscheRSR', 'PortaPotty', 'Prevost', 'Prius', 'PriusGT', 'ProjectGTP', 'ProjectONE', 'Prowler', 'R8', 'R8Spyder', 'Raesr2', 'Ram1500', 'Ram1500_21', 'RamSRT10', 'Ranger', 'Raptor', 'Rav4', 'RCF', 'RebelTRX', 'Regera', 'Rick', 'RimacCTwo', 'Roadster', 'Roma', 'Royale', 'RS3_22', 'RS5', 'RS6Avant', 'RS7', 'RSQ8', 'RV', 'RX350', 'RX350Bow', 'RX7', 'RX7_UD', 'S1', 'S13', 'S1GT4', 'S1Quattro', 'S209', 'S281', 'S2K', 'S4', 'S65AMG', 'S7', 'S9', 'Sabre', 'SafTLiner', 'Saleen', 'SantaCruz', 'SantasSleigh', 'SC20', 'SchoolBus', 'Schuppan', 'Sedan', 'Senna', 'SennaGTR', 'Sergio', 'Sesto', 'SF90', 'ShelbyDaytona', 'ShortSchoolBus', 'Sian', 'Silverado', 'SilveradoZ71', 'Silverado_Parade', 'Silverado_Pope', 'Silvia', 'Skyline', 'SL65_AMG', 'SLR', 'SLR_SM', 'SLSAMG', 'SmartCar', 'Solus', 'Speed3', 'Speedtail', 'Sport410', 'Sprinter', 'StingerGT', 'Supercoach', 'Supercoach_School', 'Supra', 'SupraMKV', 'SUV', 'SVRoadster', 'T33', 'T50', 'T50SNL', 'T680', 'Tahoe', 'Taurus', 'Taxi', 'Taycan', 'Tazio', 'Terzo', 'TeslaSemi', 'Testarossa', 'ThanosCar', 'Thunderbird', 'TLXTypeS', 'Torsus', 'TowTruck', 'Trabant', 'TrabantGT', 'TrabantTaxi', 'TrabantTrooper', 'Trackhawk', 'TrailblazerSS', 'TransAm77', 'Travego', 'TSX', 'TTMK3', 'TTRS', 'TTSRoadster', 'Tuatara', 'Tucker', 'TylersRealSwatVan', 'TylersSwatVan', 'TypeR', 'TypeR04', 'Typhoon', 'UCChargerPursuit', 'UDSportsCar', 'Undercover', 'UndercoverCharger', 'UndercoverExplorer', 'UndercoverSUV', 'UndercoverTaurus', 'Urus', 'USLimo', 'Utopia', 'Valhalla', 'Valkyrie', 'Valour', 'Van', 'VanSport', 'Vantage', 'Veloster', 'VelosterN', 'Veneno', 'Venom', 'VenomGT', 'Veyron', 'Victor', 'Viper', 'Viper96', 'ViperACR', 'VisionGT', 'Vulcan', 'Walmart', 'WeinerMobile', 'WesternStar', 'WiesmannGT', 'Wraith', 'Wrangler', 'WRX', 'WRX18', 'WRXSedan', 'WRXSTI', 'WS6', 'X3', 'XKRS', 'XRPHEV', 'Z3', 'Z4', 'Zenvo', 'Zerouno', 'ZL1_12', 'ZR1', 'DaytonaSP3', 'R8_GT2', 'ContinentalGT3', 'NSX_Racer', 'ArteonR', 'CayenneDonk', 'EscaladeDonk', 'ChallengerThiccDonk', 'CybertruckDonk', 'ClassicSedanDonk', 'ChironDonk', 'CorvetteC7z06', 'ViperACRSRT10', 'CamaroZL12020', 'HyperX', 'CC850', 'Speedster', 'DP100', 'ExpressVan', 'V6Clio', 'DarkHorse', 'Model3UD', 'CherryPicker', 'EquipmentTruck', 'DOT1500', 'SalterF150', 'DOTF150'
 }
 -- [[ stfu, I didn't wanna do: getgenv().vehicle_list = getgenv().vehicle_list or vehicles (kill me, it's the same thing anyway). ]] --
-if not getgenv().vehicle_list then
-    getgenv().vehicle_list = vehicles
-end
-
+getgenv().vehicle_list = vehicles
 g.Game = cloneref and cloneref(game) or game
 g.JobID = game.JobId
 g.PlaceID = game.PlaceId
+getgenv().LoopKilling_Tbl = getgenv().LoopKilling_Tbl or {}
 
 if not getgenv().GlobalEnvironmentFramework_Initialized then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
@@ -52,278 +50,6 @@ g.get_or_set = g.get_or_set or function(name, value)
     end
 
     return existing
-end
-
-g.wait_until = g.wait_until or function(condition, interval, max_tries)
-    interval = tonumber(interval) or 0.05
-
-    if typeof(max_tries) == "string" then
-        local lower = max_tries:lower()
-        if lower == "inf" or lower == "infinite" or lower == "infinity" or lower == "∞" then
-            max_tries = 9e9
-        else
-            max_tries = tonumber(max_tries)
-        end
-    end
-
-    max_tries = max_tries or 100
-
-    if interval < 0.03 then
-        interval = 0.05
-    end
-
-    if typeof(condition) ~= "function" then
-        local target = condition
-        condition = function()
-            return (typeof(target) == "Instance" and target.Parent ~= nil) or target
-        end
-    end
-
-    local tries = 0
-
-    repeat
-        task.wait(interval)
-        tries += 1
-    until condition() or tries >= max_tries
-
-    return condition() and true or false
-end
-
-local function wait_for_datamodel(inst)
-    if not inst then return false end
-
-    local attempts = 0
-    local maximum_attempts = 300
-
-    while attempts < maximum_attempts do
-        if inst.Parent and inst:IsDescendantOf(workspace) then
-            return true
-        end
-        task.wait(0.1)
-        attempts += 1
-    end
-
-    return false
-end
-wait(0.1)
-get_or_set("wait_for_datamodel", wait_for_datamodel)
-
-local function wait_for_child(parent, name)
-    if not parent then return nil end
-
-    local existing = parent:FindFirstChild(name)
-    if existing then return existing end
-
-    local ok, obj = pcall(function()
-        return parent:WaitForChild(name, math.huge)
-    end)
-
-    return ok and obj or nil
-end
-wait(0.1)
-get_or_set("wait_for_child", wait_for_child)
-
-local function wait_for_descendant(parent, name)
-    if not parent then return nil end
-
-    local found = parent:FindFirstChild(name, true)
-    if found then return found end
-
-    local conn
-    local result = nil
-
-    conn = parent.DescendantAdded:Connect(function(d)
-        if d.Name == name then
-            result = d
-            conn:Disconnect()
-        end
-    end)
-
-    while not result do
-        local check = parent:FindFirstChild(name, true)
-        if check then
-            result = check
-            conn:Disconnect()
-            break
-        end
-        task.wait()
-    end
-
-    return result
-end
-wait(0.1)
-get_or_set("wait_for_descendant", wait_for_descendant)
-
-local function wait_for_child_safe(parent, name)
-    if not parent then return nil end
-
-    local ok, obj = pcall(function()
-        return parent:WaitForChild(name, 9e9)
-    end)
-
-    if ok and obj then
-        return obj
-    end
-
-    return nil
-end
-wait(0.1)
-get_or_set("wait_for_child_safe", wait_for_child_safe)
-
-local function retry_find(func, retries, delay)
-    for _ = 1, retries do
-        local ok, result = pcall(func)
-        if ok and result then
-            return result
-        end
-        task.wait(delay)
-    end
-    return nil
-end
-wait(0.1)
-get_or_set("retry_find", retry_find)
-
-g.get_char = g.get_char or function(Player)
-    if not Player or not Player:IsA("Player") then return nil end
-
-    local current_char
-    local diedconn
-    local added_conn
-
-    local function hookchar(char)
-        current_char = char
-
-        if diedconn then diedconn:Disconnect() end
-
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-            diedconn = hum.Died:Once(function()
-                current_char = nil
-            end)
-        end
-    end
-
-    if Player.Character and Player.Character.Parent then
-        hookchar(Player.Character)
-    end
-
-    added_conn = Player.CharacterAdded:Connect(hookchar)
-
-    while not current_char do
-        task.wait()
-        local char = Player.Character
-        if char and char.Parent then
-            hookchar(char)
-        end
-    end
-
-    return current_char
-end
-wait(0.5)
-if not g.get_human then
-    g.get_human = function(Player)
-        local char = g.get_char(Player)
-        if not char then return nil end
-
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then return hum end
-
-        local hum_conn
-        hum_conn = char.ChildAdded:Connect(function(c)
-            if c:IsA("Humanoid") then
-                hum = c
-                hum_conn:Disconnect()
-            end
-        end)
-
-        local died = false
-        local h = char:FindFirstChildOfClass("Humanoid")
-        if h then
-            h.Died:Connect(function()
-                died = true
-            end)
-        end
-
-        while not hum and not died do
-            task.wait()
-        end
-
-        if hum_conn then hum_conn:Disconnect() end
-
-        return (not died) and hum or nil
-    end
-end
-
-if not g.get_root then
-    g.get_root = function(Player)
-        local char = g.get_char(Player)
-        if not char then return nil end
-
-        local root = char:FindFirstChild("HumanoidRootPart")
-                or char:FindFirstChild("UpperTorso")
-                or char:FindFirstChild("Torso")
-        if root then return root end
-
-        local targets = {
-            HumanoidRootPart = true,
-            UpperTorso = true,
-            Torso = true
-        }
-
-        local died = false
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-            hum.Died:Connect(function() died = true end)
-        end
-
-        local added_conn
-        added_conn = char.ChildAdded:Connect(function(c)
-            if targets[c.Name] then
-                root = c
-                added_conn:Disconnect()
-            end
-        end)
-
-        while not root and not died do
-            task.wait()
-        end
-
-        if added_conn then added_conn:Disconnect() end
-
-        return (not died) and root or nil
-    end
-end
-
-if not g.get_head then
-    g.get_head = function(Player)
-        local char = g.get_char(Player)
-        if not char then return nil end
-
-        local head = char:FindFirstChild("Head")
-        if head then return head end
-
-        local died = false
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-            hum.Died:Connect(function() died = true end)
-        end
-
-        local added_conn
-        added_conn = char.ChildAdded:Connect(function(c)
-            if c.Name == "Head" then
-                head = c
-                added_conn:Disconnect()
-            end
-        end)
-
-        while not head and not died do
-            task.wait()
-        end
-
-        if added_conn then added_conn:Disconnect() end
-
-        return (not died) and head or nil
-    end
 end
 
 g.Service_Wrap = g.Service_Wrap or function(name)
@@ -517,44 +243,6 @@ getgenv().httprequest_Init = (syn and syn.request) or (http and http.request) or
 get_http = getgenv().httprequest_Init or (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 getgenv().queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 queueteleport = getgenv().queueteleport
-
-local function init_services()
-    local services = {
-        "Players",
-        "Workspace",
-        "Lighting",
-        "ReplicatedStorage",
-        "TweenService",
-        "RunService",
-        "MaterialService",
-        "ReplicatedFirst",
-        "Teams",
-        "StarterPack",
-        "StarterPlayer",
-        "VoiceChatInternal",
-        "VoiceChatService",
-        "CoreGui",
-        "SoundService",
-        "StarterGui",
-        "MarketplaceService",
-        "TeleportService",
-        "Chat",
-        "AssetService",
-        "HttpService",
-        "UserInputService",
-        "TextChatService",
-        "ContextActionService",
-        "GuiService",
-        "PhysicsService"
-    }
-
-    for _, serviceName in pairs(services) do
-        getgenv()[serviceName] = cloneref and cloneref(getgenv().Game:GetService(serviceName)) or getgenv().Game:GetService(serviceName)
-    end
-end
-wait()
-init_services()
-wait()
 local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
 local Vehicles_LocalPlayer_Folder = LocalPlayer:FindFirstChild("Vehicles")
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
@@ -642,7 +330,6 @@ local function spawn_vehicle(name)
 end
 
 local Rayfield
-
 local function retrieve_vehicle()
     for _, v in ipairs(Vehicles_Folder:GetChildren()) do
         local vals = v:FindFirstChild("Values", true)
@@ -849,19 +536,16 @@ function Can_Damage()
     end
 end
 
-local function kill_player(player)
+getgenv().kill_player = function(player)
     if not player or not player:IsDescendantOf(game.Players) then return end
-
     local char = Character
     local lp = LocalPlayer
     local hum = Humanoid
-    local hrp = HumanoidRootPart
     local backpack = Backpack
-    local weapon_hit = ReplicatedStorage:WaitForChild("WeaponsSystem"):WaitForChild("Network"):WaitForChild("WeaponHit")
-    local victim_char = get_char(player) or player.Character
-    local victim_hum = get_human(player)
-    local victim_hrp = get_root(player)
-
+    local weapon_hit = ReplicatedStorage:FindFirstChild("WeaponHit", true)
+    local victim_char = player.Character or get_char(player, 7)
+    local victim_hum = victim_char and victim_char:FindFirstChildOfClass("Humanoid") or get_human(player, 5)
+    local victim_hrp = victim_char and victim_char:FindFirstChild("HumanoidRootPart") or get_root(player, 5)
     if not victim_hrp or not victim_hum then return end
     if lp.Team.Name ~= "Criminal" then
         if getgenv().notify then
@@ -870,35 +554,43 @@ local function kill_player(player)
         return
     end
 
-    local equipped_correctly = false
-    for _, tool in ipairs(backpack:GetChildren()) do
-        if tool:IsA("Tool") and tool:FindFirstChild("Configuration") then
-            hum:EquipTool(tool)
-            repeat task.wait() until char:FindFirstChild(tool.Name)
-            equipped_correctly = true
-            break
+    local equipped_tool = char and char:FindFirstChildWhichIsA("Tool")
+    if not equipped_tool then
+        local chosen_tool = nil
+
+        for _, tool in ipairs(backpack:GetChildren()) do
+            if tool:IsA("Tool") and tool:FindFirstChildOfClass("Configuration") then
+                chosen_tool = tool
+                break
+            end
+        end
+
+        if chosen_tool then
+            hum:EquipTool(chosen_tool)
+            local timeout = 0
+            repeat task.wait() timeout += 1 until char:FindFirstChild(chosen_tool.Name) or timeout > 30
+            if char:FindFirstChild(chosen_tool.Name) then
+                equipped_tool = chosen_tool
+            end
         end
     end
 
-    if not equipped_correctly then
+    if not equipped_tool then
         if getgenv().notify then
             getgenv().notify("Error", "No valid gun in backpack.", 5)
         end
         return
     end
 
-    local equipped_tool = char:FindFirstChildWhichIsA("Tool")
-    if not equipped_tool then return end
-
     for i = 1, 100 do
         task.wait()
-        local args = {
+        weapon_hit:FireServer(
             equipped_tool,
             {
                 p = vector.create(1795.986328125, 59.66236877441406, 5395.9365234375),
                 pid = 1,
                 origin = vector.create(1787.1165771484375, 60.78240966796875, 5399.0166015625),
-                part = victim_hrp or victim_char:FindFirstChild("Hitbox"),
+                part = victim_hrp,
                 d = 9.455890655517578,
                 maxDist = 9.389322280883789,
                 h = victim_hum,
@@ -907,13 +599,11 @@ local function kill_player(player)
                 t = 0.28342804913539854,
                 sid = 8
             }
-        }
-        weapon_hit:FireServer(unpack(args))
+        )
     end
 end
 
 local script_errors = {}
-
 local function write_error_log_file(filepath, new_error)
     if writefile and readfile then
         local old_content = ""
@@ -935,7 +625,6 @@ if isfile then
 end
 task.wait(0.2)
 local error_logs_file = "UltimateDriving_ErrorLog.txt"
-
 local function Is_In_Race()
     local error_exited = false
 
@@ -1023,7 +712,7 @@ local function load_rayfield()
     repeat
         attempts += 1
         success, result = pcall(function()
-            local raw = game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary")
+            local raw = game:HttpGet("https://sirius.menu/rayfield")
             local func = loadstring(raw)
             return func()
         end)
@@ -1046,9 +735,13 @@ Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "✅ Ultimate Driving ✅ | 1.5.6 | "..tostring(executor_Name),
+        Name = "🔫 Ultimate Driving 🚬 | 1.6.3 | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "Ultimate Driving | Hub.",
+        Theme = "Default",
+        ToggleUIKeybind = "K",
+        DisableRayfieldPrompts = true,
+        DisableBuildWarnings = true,
         ConfigurationSaving = {
             Enabled = false,
             FolderName = "UltimateDrivingHub-Config",
@@ -1063,7 +756,7 @@ if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
         KeySettings = {
             Title = "None",
             Subtitle = "No key system is provided.",
-            Note = "nice hidden dumper skid, it's useless (like you), joking, take a joke, this is open source.",
+            Note = "yo",
             FileName = "Key",
             SaveKey = false,
             GrabKeyFromSite = false,
@@ -1114,7 +807,7 @@ Callback = function(car_tint_color)
     else
         return getgenv().notify("Error", "Please spawn a vehicle before using this.", 5)
     end
-    task.wait(.5)
+    task.wait(.2)
     current_car_tint_color = car_tint_color
 end,})
 
@@ -1197,18 +890,18 @@ end
 
 getgenv().InfStamina_FE = Tab2:CreateToggle({
 Name = "Infinite Stamina (FE)",
-CurrentValue = false,
+CurrentValue = getgenv().inf_stamina or false,
 Flag = "InfStaminaScript",
 Callback = function(inf_stamina)
     if inf_stamina then
         local Players = getgenv().Players
         local LocalPlayer = getgenv().LocalPlayer
-        local Character = getgenv().Character
-        local Humanoid = getgenv().Humanoid
-        local Modules = LocalPlayer:FindFirstChild("Modules")
-        local Managers_Folder = Modules:FindFirstChild("Managers")
+        local Character = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
+        local Humanoid = getgenv().Humanoid or Character and Character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer, 10)
+        local Modules = LocalPlayer:FindFirstChild("Modules", true)
+        local Managers_Folder = Modules:FindFirstChild("Managers", true)
         local Sprint_Manager = require(Managers_Folder:FindFirstChild("SprintManager"))
-        local Stamina_Attribute = Humanoid:GetAttribute("Stamina")
+        local Stamina_Attribute = Humanoid and Humanoid:GetAttribute("Stamina")
         if not Stamina_Attribute then
             getgenv().inf_stamina = false
             return warn("Unable to return Stamina value Attribute!") 
@@ -1217,14 +910,13 @@ Callback = function(inf_stamina)
         getgenv().inf_stamina = true
         Inf_Stamina_Active = true
 
-        if Stamina_Attribute then
+        if inf_stamina then
             while getgenv().inf_stamina == true do
-            task.wait()
-                Humanoid:SetAttribute("Stamina", 9e9)
+            task.wait(0)
+                pcall(function() Humanoid:SetAttribute("Stamina", 9e9) end)
             end
         end
     else
-        getgenv().inf_stamina = false
         getgenv().inf_stamina = false
         if getgenv().Humanoid:GetAttribute("Stamina") then
             getgenv().Humanoid:SetAttribute("Stamina", 100)
@@ -1234,23 +926,17 @@ Callback = function(inf_stamina)
         end
     end
 end,})
-wait(0.2)
-if getgenv().inf_stamina == true then
-    getgenv().inf_stamina = false
-    getgenv().InfStamina_FE:Set(false)
-    getgenv().notify("Info", "Turned off InfiniteStamina, it was enabled at runtime.", 6)
-end
 
 getgenv().AntiRagdoll = Tab2:CreateToggle({
 Name = "Anti Ragdoll",
-CurrentValue = false,
+CurrentValue = getgenv().Anti_Ragdoll_Enabled or false,
 Flag = "FullAntiRagdoll",
 Callback = function(anti_ragdoll)
     if anti_ragdoll then
         getgenv().Anti_Ragdoll_Enabled = true
         Anti_Ragdoll_Active = true
         task.wait(.3)
-        if getgenv().Character and getgenv().Character:FindFirstChild("Humanoid") and getgenv().Humanoid then
+        if getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") and getgenv().Humanoid then
             if getgenv().Character:FindFirstChild("RagdollConstraints") then
                 getgenv().Character:FindFirstChild("RagdollConstraints"):Destroy()
             end
@@ -1287,12 +973,6 @@ Callback = function(anti_ragdoll)
         end
     end
 end,})
-wait(0.2)
-if getgenv().Anti_Ragdoll_Enabled == true then
-    getgenv().notify("Info", "Turned off AntiRagdoll it was enabled at runtime.", 5)
-    getgenv().Anti_Ragdoll_Enabled = false
-    getgenv().AntiRagdoll:Set(false)
-end
 
 getgenv().run_Shift_Speed = getgenv().run_Shift_Speed or 50
 getgenv().walkSpeed = getgenv().walkSpeed or 16
@@ -1368,7 +1048,7 @@ end,})
 wait(0.2)
 getgenv().ShiftToRun = Tab2:CreateToggle({
 Name = "Shift To Run",
-CurrentValue = false,
+CurrentValue = getgenv().runningEnabled or false,
 Flag = "SpeedCoilAlt",
 Callback = function(state)
     getgenv().runningEnabled = state
@@ -1378,16 +1058,6 @@ Callback = function(state)
         getgenv().disable_shift_to_run()
     end
 end,})
-wait(0.2)
-if getgenv().runningEnabled == true then
-    if getgenv().shift_to_run_connection then
-        getgenv().shift_to_run_connection:Disconnect()
-        getgenv().shift_to_run_connection = nil
-    end
-    getgenv().Humanoid.WalkSpeed = getgenv().walkSpeed or 16
-    getgenv().runningEnabled = false
-    getgenv().ShiftToRun:Set(false)
-end
 
 getgenv().Rainbow_FE_Car = Tab4:CreateToggle({
 Name = "Rainbow Car (FE)",
@@ -1448,7 +1118,7 @@ Callback = function(rainbow_car)
 
         getgenv().rainbow_vehicle = true
         while getgenv().rainbow_vehicle == true do
-        task.wait()
+        task.wait(0)
             for name, preset in pairs(colors) do
                 local current_car = retrieve_vehicle()
                 if current_car then
@@ -1465,12 +1135,6 @@ Callback = function(rainbow_car)
         getgenv().rainbow_vehicle = false
     end
 end,})
-wait(0.2)
-if getgenv().rainbow_vehicle == true then
-    getgenv().notify("Info", "Disabled Rainbow Car, it was enabled at runtime.", 5)
-    getgenv().rainbow_vehicle = false
-    getgenv().Rainbow_FE_Car:Set(false)
-end
 
 getgenv().Kill_Player_FE = Tab5:CreateInput({
 Name = "Kill Player (FE)",
@@ -1480,6 +1144,7 @@ Callback = function(player_to_eliminate)
     local Target_To_Kill = findplr(player_to_eliminate)
 
     if not Target_To_Kill then return getgenv().notify("Error", "Player does not seem to exist.", 5) end
+    if Target_To_Kill:GetAttribute("PvP_Active") == false then getgenv().notify("Warning", "This Player has PvP OFF! They may not die.", 6) end
     wait(0.2)
     if Target_To_Kill.Team == getgenv().Teams.Citizen then
         getgenv().notify("Warning", "Player is a Civilian, they MAY not die or take damage.", 5)
@@ -1487,7 +1152,9 @@ Callback = function(player_to_eliminate)
     task.wait()
     kill_player(Target_To_Kill)
     wait(0.5)
-    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
+    if getgenv().Humanoid and getgenv().Humanoid.Parent then
+        pcall(function() getgenv().Humanoid:UnequipTools() end)
+    end
 end,})
 
 getgenv().KillCrims = Tab5:CreateButton({
@@ -1547,34 +1214,21 @@ Callback = function()
 end,})
 
 local function loop_kill_addon(target, toggled)
-    if not target then 
-        return warn("Target or Target's Character does not appear to exist.") 
-    end
-
-    if target.Team and target.Team.Name == "Civilian" then
-        getgenv().notify("Warning", "Player is a Civilian, they MAY not die or take damage.", 5)
-    end
+    if not target then  return warn("Target does not exist or has left the game.")  end
+    if target.Team and target.Team.Name == "Civilian" then getgenv().notify("Warning", "Player is a Civilian, they MAY not die or take damage.", 5) end
 
     getgenv().looping_kills = true
-
     coroutine.wrap(function()
         while getgenv().looping_kills == true and toggled == true do
-            task.wait()
-
+            task.wait(.1)
             if not target or not target:IsDescendantOf(game.Players) then
                 getgenv().looping_kills = false
                 getgenv().Humanoid:UnequipTools()
                 return getgenv().notify("Info", "Turned off LoopKill, player left or does not exist.", 5)
             end
 
-            if not target.Character then
-                local success, char = pcall(function()
-                    return target.CharacterAdded:Wait()
-                end)
-                if success then
-                    target.Character = char
-                    wait(0.2)
-                end
+            if not target.Character or not target.Character.Parent then
+                repeat task.wait() until target.Character
             end
 
             if target.Character and target.Character:FindFirstChild("Humanoid") then
@@ -1823,14 +1477,14 @@ end,})
 
 getgenv().PvPSetting = Tab2:CreateToggle({
 Name = "PvP",
-CurrentValue = false,
+CurrentValue = getgenv().pvp_damage_value or false,
 Flag = "PvPToggle",
 Callback = function(is_pvp_on)
     if is_pvp_on then
         getgenv().pvp_damage_value = true
-        local Character = get_char(LocalPlayer) or getgenv().Character
-        local PvP_Attribute = Character:GetAttribute("PVPDamageEnabled")
-        if PvP_Attribute == nil then
+        local Character = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 5)
+        local PvP_Attribute = Character and Character:GetAttribute("PVPDamageEnabled")
+        if not PvP_Attribute then
             getgenv().pvp_damage_value = false
             getgenv().PvPSetting:Set(false)
             return getgenv().notify("Error", "PvP Attribute was not found in Character, cannot set PvP.", 5)
@@ -1855,42 +1509,74 @@ else
     getgenv().Character:SetAttribute("PVPDamageEnabled", false)
 end
 
+getgenv().looping_kills = true
 getgenv().LoopKill_Plr = Tab5:CreateInput({
 Name = "LoopKill Player (FE)",
 PlaceholderText = "User Here",
 RemoveTextAfterFocusLost = true,
 Callback = function(plr_to_loopkill)
     local Plr_LoopKill = findplr(plr_to_loopkill)
+    if not Plr_LoopKill then
+        return getgenv().notify("Error", "Player does not seem to exist.", 5)
+    end
 
-    if not Plr_LoopKill then return getgenv().notify("Error", "Player does not seem to exist.", 5) end
-    wait(0.2)
+    getgenv().looping_kills = true
+    if getgenv().LoopKilling_Tbl[Plr_LoopKill] then
+        pcall(function()
+            getgenv().LoopKilling_Tbl[Plr_LoopKill]:Disconnect()
+        end)
+        getgenv().LoopKilling_Tbl[Plr_LoopKill] = nil
+    end
+
+    if Plr_LoopKill:GetAttribute("PvP_Active") == false then getgenv().notify("Warning", "This Player has turned off PvP! They may not die.", 6) end
+    task.wait(0.25)
     loop_kill_addon(Plr_LoopKill, true)
-    wait(0.2)
-    Plr_LoopKill.CharacterAdded:Connect(function(their_new_character)
-        if their_new_character and their_new_character:FindFirstChild("Humanoid") then
+    local debounce = false
+    getgenv().LoopKilling_Tbl[Plr_LoopKill] = Plr_LoopKill.CharacterAdded:Connect(function(char)
+        if not getgenv().looping_kills then return end
+        if debounce then return end
+        debounce = true
+        if Plr_LoopKill:GetAttribute("PvP_Active") == false then getgenv().notify("Warning", "This Player has turned off PvP! They may not die.", 6) end
+
+        if not char then repeat task.wait() until char and char.Parent end
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            task.wait(0.2)
             kill_player(Plr_LoopKill)
         end
+
+        task.delay(1, function()
+            debounce = false
+        end)
     end)
 end,})
 
 getgenv().StopLoopKill = Tab5:CreateButton({
 Name = "Shutdown/Stop LoopKill",
 Callback = function()
-    getgenv().looping_kills = false
-    getgenv().Character:FindFirstChildWhichIsA("Humanoid"):UnequipTools()
-    wait(0.4)
     if not getgenv().looping_kills then
-        getgenv().notify("Success", "LoopKill has been successfully stopped.", 5)
-        return 
-    else
-        getgenv().notify("Error", "Could not properly shutdown LoopKill!", 5)
-        return 
+        return getgenv().notify("Warning", "Loop-Kill is not enabled!", 5)
     end
+
+    getgenv().looping_kills = false
+
+    for plr, conn in pairs(getgenv().LoopKilling_Tbl) do
+        pcall(function()
+            conn:Disconnect()
+        end)
+        getgenv().LoopKilling_Tbl[plr] = nil
+    end
+
+    if getgenv().Humanoid and getgenv().Humanoid.Parent then
+        getgenv().Humanoid:UnequipTools()
+    end
+
+    getgenv().notify("Success", "Stopped Loop-Kill loop!", 5)
 end,})
 
 getgenv().Rainbow_Tint_FE = Tab4:CreateToggle({
 Name = "Rainbow Tint (FE)",
-CurrentValue = false,
+CurrentValue = getgenv().rainbow_tinting_car or false,
 Flag = "RainbowFlashingTint",
 Callback = function(best_rainbow_tint)
     if best_rainbow_tint then
@@ -1942,16 +1628,10 @@ Callback = function(best_rainbow_tint)
         getgenv().rainbow_tinting_car = false
     end
 end,})
-wait(0.2)
-if getgenv().rainbow_tinting_car == true then
-    getgenv().notify("Info", "Disabled Rainbow Tint, it was enabled at runtime.", 5)
-    getgenv().rainbow_tinting_car = false
-    getgenv().Rainbow_Tint_FE:Set(false)
-end
 
 getgenv().Rainbow_Vehicle_Underglows = Tab4:CreateToggle({
 Name = "Rainbow Vehicle Underglow (FE)",
-CurrentValue = false,
+CurrentValue = getgenv().rainbow_vehicle_underglow or false,
 Flag = "RainbowUnderglow",
 Callback = function(rainbow_underglow)
     if rainbow_underglow then
@@ -2001,16 +1681,10 @@ Callback = function(rainbow_underglow)
         getgenv().rainbow_vehicle_underglow = false
     end
 end,})
-wait(0.2)
-if getgenv().rainbow_vehicle_underglow == true then
-    getgenv().notify("Info", "Disabled Rainbow Underglow, it was enabled at runtime.", 5)
-    getgenv().rainbow_vehicle_underglow = false
-    getgenv().Rainbow_Vehicle_Underglows:Set(false)
-end
 
 getgenv().Rainbow_Tires_FE = Tab4:CreateToggle({
 Name = "Rainbow Tires (FE)",
-CurrentValue = false,
+CurrentValue = getgenv().RainbowTires_Script or false,
 Flag = "RainbowFETiresScript",
 Callback = function(Rainbow_Tires_Main)
     if Rainbow_Tires_Main then
@@ -2058,12 +1732,6 @@ Callback = function(Rainbow_Tires_Main)
         getgenv().RainbowTires_Script = false
     end
 end,})
-wait(0.2)
-if getgenv().RainbowTires_Script == true then
-    getgenv().notify("Info", "Disabled Rainbow Tires, it was enabled at runtime.", 5)
-    getgenv().RainbowTires_Script = false
-    getgenv().Rainbow_Tires_FE:Set(false)
-end
 
 local Owned_Vehicle_Slots = {}
 table.clear(Owned_Vehicle_Slots)
@@ -2077,7 +1745,7 @@ local vehicle_selected = nil
 getgenv().Spawn_Vehicle_Plr = Tab3:CreateDropdown({
 Name = "Spawn A Vehicle",
 Options = Owned_Vehicle_Slots,
-CurrentOption = "",
+CurrentOption = Owned_Vehicle_Slots[1] or "",
 MultipleOptions = false,
 Flag = "vehicle_slot",
 Callback = function(vehicle_slot_picker)
