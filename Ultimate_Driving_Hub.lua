@@ -541,7 +541,7 @@ getgenv().kill_player = function(player)
     local char = Character
     local lp = LocalPlayer
     local hum = Humanoid
-    local backpack = Backpack
+    local backpack = getgenv().LocalPlayer:FindFirstChildOfClass("Backpack")
     local weapon_hit = ReplicatedStorage:FindFirstChild("WeaponHit", true)
     local victim_char = player.Character or get_char(player, 7)
     local victim_hum = victim_char and victim_char:FindFirstChildOfClass("Humanoid") or get_human(player, 5)
@@ -559,7 +559,7 @@ getgenv().kill_player = function(player)
         local chosen_tool = nil
 
         for _, tool in ipairs(backpack:GetChildren()) do
-            if tool:IsA("Tool") and tool:FindFirstChildOfClass("Configuration") then
+            if tool:IsA("Tool") and tool:GetAttribute("Weapon") == true then
                 chosen_tool = tool
                 break
             end
