@@ -703,7 +703,6 @@ end
    end
 end--]]
 --[[local FIREBASE_PROJECT = "user-outfits-backup"
-local FIREBASE_KEY = "AIzaSyDpxaTpjNQVDoeXp9IyleGU7ErIwBXgaDY"
 g.coins_firestore_url = function(username) return "https://firestore.googleapis.com/v1/projects/" .. FIREBASE_PROJECT .. "/databases/(default)/documents/coins/" .. username .. "?key=" .. FIREBASE_KEY end
 g.get_coins_firebase = function(username, callback)
    local ok, result = pcall(function()
