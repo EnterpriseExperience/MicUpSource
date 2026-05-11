@@ -16,7 +16,6 @@ if not game:IsLoaded() then
 end
 
 local g = getgenv()
-print("Got environment: "..tostring(g))
 local Raw_Version = "V8.9.3"
 g.Script_Version = tostring(Raw_Version).."-LifeAdmin"
 local Players = g.Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
@@ -39,13 +38,11 @@ g.colors = g.colors or {
 g.LocalPlayer = g.LocalPlayer or localPlayer
 
 if not g.GlobalEnvironmentFramework_Initialized then
-   print("Initializing Global Framework.")
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Global_Environment.lua"))()
    wait(0.1)
    g.GlobalEnvironmentFramework_Initialized = true
 end
 wait(0.25)
-print("Loading...")
 if not g.LifeTogether_Actual_Flames_Hub_Running_Functioning_Currently_On_Client then
    if g.notify then
       g.notify("Success", "Got LocalPlayer: "..tostring(g.LocalPlayer), 5)
@@ -56,13 +53,10 @@ local has_gethui = (typeof(get_hui) == "function") or (typeof(g.get_hui) == "fun
 local has_gethidden = (typeof(get_hidden_gui) == "function") or (typeof(g.get_hidden_gui) == "function")
 g.found_image_button_for_yt_music_player = g.found_image_button_for_yt_music_player or nil
 local CoreGui = g.CoreGui or cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-getgenv().
 
---[[if not g.yt_music_player_loaded_flames_hub then
-   print("Starting YouTube Music finder...")
+if not g.yt_music_player_loaded_flames_hub then
    g.yt_music_player_loaded_flames_hub = true
-   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/yt_music_player_backup.lua'))()
-   print("Got YouTube Music Player Boolean: "..tostring(g.yt_music_player_loaded_flames_hub))
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/yt_music_plr.lua'))()
 
    local function try_to_find_music_plr(v)
       if v:IsA("ScreenGui") then
@@ -89,9 +83,8 @@ getgenv().
          end
       end)
    end
-end--]]
+end
 
-print("Initializing...")
 if not has_gethui and not has_gethidden and not g.roblox_hidden_gui_location then
    local CoreGui = g.CoreGui or cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
    g.roblox_hidden_gui_location = g.roblox_hidden_gui_location or nil
@@ -228,14 +221,13 @@ g.disabled_global_value_correctly = g.disabled_global_value_correctly or functio
 end
 
 g.LifeTogether_Actual_Flames_Hub_Running_Functioning_Currently_On_Client = true
-print("Got client Boolean: "..tostring(g.LifeTogether_Actual_Flames_Hub_Running_Functioning_Currently_On_Client))
 local userid = game.Players.LocalPlayer.UserId
 local http = g.HttpService or cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local lib = g.FlamesLibrary
 getgenv().lib = getgenv().FlamesLibrary -- necessary for some reason.
 local lib_attempts = 0
 local lib_max_attempts = 15
---[[while (not lib or type(lib) ~= "table") and lib_attempts < lib_max_attempts do
+while (not lib or type(lib) ~= "table") and lib_attempts < lib_max_attempts do
    task.wait(0.5)
    lib_attempts = lib_attempts + 1
    lib = g.FlamesLibrary
@@ -244,9 +236,8 @@ end
 if not lib or type(lib) ~= "table" then
    if g.notify then g.notify("Error", "FlamesLibrary failed to load, title system cannot continue.", 10) end
    return
-end--]]
+end
 
-print(getgenv().FlamesLibrary)
 local function mask_unique_id(id)
    if not id then return nil end
    local parts = string.split(id, "-")
@@ -312,7 +303,6 @@ local me = Players.LocalPlayer or game:GetService("Players").LocalPlayer
 local TextChatService = cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
 local ws_connect = (syn and syn.websocket and syn.websocket.connect) or (WebSocket and WebSocket.connect) or (websocket and websocket.connect)
 local http_req = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
-print("Initializing will_tag function...")
 g.will_tag = g.will_tag or function(text)
    local filtered
    local success, response = pcall(function()
@@ -3001,7 +2991,6 @@ g.safe_wrapper = g.safe_wrapper or function(service)
    end
 end
 
-print("FlamesLibrary Global: "..tostring(getgenv().FlamesLibrary))
 g.FlamesLibrary = getgenv().FlamesLibrary
 local replicate_sig_func = replicatesignal or replicate_signal or DeltaSignal
 local set_hid_func = sethiddenproperty or set_hidden_property or set_hidden_prop or sethiddenprop
@@ -3654,8 +3643,8 @@ function check_file_agreed()
 end
 
 check_file_agreed()
-local Flames_API = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Flame_Hubs_API.lua"))()
-local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local Flames_API = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Flames_Hub_API.lua"))()
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Notify_Lib.lua"))()
 local valid_titles = {success="Success",info="Info",warning="Warning",error="Error",succes="Success",sucess="Success",eror="Error",erorr="Error",warnin="Warning"}
 local function format_title(str)
    if typeof(str) ~= "string" then
@@ -4026,7 +4015,7 @@ g.try_load = g.try_load or function(urls)
 end
 
 g.NotifyLib = g.NotifyLib or try_load({
-   "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua",
+   "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Notify_Lib.lua",
    "https://pastebin.com/raw/tg4tu73Y",
    "https://pastefy.app/nks8Kwws/raw"
 })
@@ -4034,7 +4023,7 @@ g.NotifyLib = g.NotifyLib or try_load({
 -- [[ you can use these, or you can modify the source code from each one and upload it to your own GitHub. ]] --
 local github_urls = {
    GlobalEnv_Framework = {
-      "https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"
+      "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Global_Environment.lua"
    },
    Life_Together_Network = {
       "https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/Life_Together_Network.lua"
@@ -4064,10 +4053,10 @@ local github_urls = {
       "https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/Dex_Explorer_Checker.lua"
    },
    Configuration_API = {
-      "https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/main/configuration.lua"
+      "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Configuration_GUI.lua"
    },
    NotifyLib = {
-      "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"
+      "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Notify_Lib.lua"
    },
    Life_Together_Admin = {
       "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
@@ -4077,7 +4066,7 @@ local github_urls = {
    }
 }
 
--- [[ you can use these, or you can change them into your own if you want. ]] --
+-- [[ you can use these, or you can change them into your own if you want, but if GitHub goes down, they'll work for you, unless somehow GitHub, Pastebin AND Pastefy are down. ]] --
 local fallback_urls = {
    GlobalEnv_Framework = {
       "https://pastebin.com/raw/T25mDhBZ",
@@ -4580,7 +4569,7 @@ if game.PlaceId ~= 13967668166 and game.PlaceId ~= 99644611200703 and game.Place
 end
 
 -- [[ configuration GUI. ]] --
-if not CoreGui:FindFirstChild("FlamesAdminGUI", true) then loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/RushTeam/refs/heads/main/configuration.lua"))() end
+if not CoreGui:FindFirstChild("FlamesAdminGUI", true) then loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Configuration_GUI.lua"))() end
 --local base_url_API = tostring("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/billboard_main_framework.lua")
 local config_path = "Flames_Admin_Config.json"
 --loadstring(game:HttpGet(base_url_API))()
@@ -4972,7 +4961,7 @@ if not g.spoofed_maximum_fps_count then
    if setfpscap or setfps or set_fps or set_fps_cap then
       set_fps(360)
       fw(0.2)
-      notify("Success", "Successfully maximized FPS capabilities.", 5)
+      if g.notify then g.notify("Success", "Successfully maximized FPS capabilities.", 5) end
    end
 
    g.spoofed_maximum_fps_count = true
@@ -5269,7 +5258,7 @@ Lib.connect("bad_accessories_player_removing", Players.PlayerRemoving:Connect(fu
 end))
 
 if not g.Loaded_Actual_Chat_Actors_Global_Setter then
-   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/FlamesHub_OldAPI_Runtime_Functions/refs/heads/main/chat_handler_exclusive.lua'))()
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/chat_handler_exclusive.lua'))()
    g.Loaded_Actual_Chat_Actors_Global_Setter = true
 end
 
@@ -7334,8 +7323,8 @@ g.night_vision = function(toggle)
    end
 end
 
-g.Net = find_module_s("Net") or require(g.Core:FindFirstChild("Net"))
-g.owner_joined = function(Name) -- so when I update the script I can update the message below dynamically
+g.Net = getgenv().Net or find_module_s("Net") or require(g.Core:FindFirstChild("Net"))
+g.owner_joined = function(Name) -- so when I update the script I can update the message below dynamically.
    notify("Success", "Flames Hub | Owner has joined this server ("..tostring(Name).."), this is my current and only account right now, so come to me if you need help/assistance.", 45)
 end
 
@@ -7445,48 +7434,7 @@ g.workspace_editor_script_GUI = function()
       return 
    end
    fw(0.1)
-   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Workspace_Editor.lua'))()
-end
-
-local chats = {
-   "yo",
-   "bro",
-   "wait",
-   "nicee",
-   "holdon",
-   "we here",
-   "no wayy",
-   "lets gooo",
-   "aigh bru",
-   "almost there",
-   "that was wild",
-   "aigh bro we here",
-   "yo that was wild fr",
-   "cant believe that just happened"
-}
-
-local function random_decimal(min, max) return min + (max - min) * math.random() end
-local function send_safe(channel, msg)
-   channel:SendAsync(msg)
-
-   if math.random() < 0.3 then
-      wait(1)
-      channel:SendAsync("yo")
-   end
-end
-
-g.advertise_command_send_chats = function()
-   local textchatservice = g.TextChatService
-   local channel = textchatservice:FindFirstChild("RBXGeneral", true) or textchatservice:FindFirstChild("TextChannels"):FindFirstChild("RBXGeneral")
-   if not channel then return end
-   local msg = chats[math.random(1, #chats)]
-   if will_tag(msg) then
-      return g.notify("Warning", "Saved from hashtags! Message was going to filter.", 5)
-   end
-   wait(random_decimal(0.01, 0.9))
-   pcall(function()
-      send_safe(channel, msg)
-   end)
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Workspace_Editor.lua'))()
 end
 
 g.is_localplayer_server_owner = function()
@@ -8862,10 +8810,10 @@ if Bindable then
    end)
 end
 
-if g.get_enrolled_state == nil then
-   notify("Info", "Waiting until g.get_enrolled_state exists...", 6)
+if getgenv().get_enrolled_state == nil then
+   notify("Info", "Waiting until 'get_enrolled_state' exists...", 6)
    repeat task.wait() until g.get_enrolled_state and g.get_enrolled_state ~= nil
-   if g.get_enrolled_state then
+   if getgenv().get_enrolled_state then
       notify("Success", "Found get_enrolled_state correctly.", 5)
    end
 end
@@ -10057,7 +10005,7 @@ g.streamer_mode_script = function()
       return notify("Warning", "Streamer Mode script is already loaded.", 5)
    end
 
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Streamer_Mode.lua"))()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Streamer_Mode.lua"))()
 end
 
 g.unload_streamer_mode_script = function()
@@ -10662,7 +10610,7 @@ g.save_copied_plrs_emote = function()
       end
 
       g.FreeEmotes_Enabled = true
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/flames_emotes_gui_new.lua"))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Emotes_Backup.lua"))()
       wait(1)
       g.notify("Info", "Try the command again, you did not have our Free Emotes GUI loaded.", 15)
       wait(1)
@@ -11178,80 +11126,64 @@ end
 
 print("cooldown handler is good.")
 
-local View_Outfit_State_Toggle = g.LocalPlayer:GetAttribute("hide_view_outfit") or true
-fw(0.2)
-local function push_stealer_state(state)
-   if not g.ws_main_reactor_connector then return end
-   g.ws_main_reactor_connector:Send(HttpService:JSONEncode{
-      type = "anti_stealer_state",
-      secret = "12f1f56de573e18df02f9da819ec2e6bd5ffb8141eae682187d51ea37392472f",
-      user = tostring(g.LocalPlayer.Name),
-      state = state
-   })
-end
-
-g.anti_outfit_copier = function(toggle)
+local View_Outfit_State_Toggle = getgenv().LocalPlayer:GetAttribute("hide_view_outfit") or true
+getgenv().anti_outfit_copier = function(toggle)
    if toggle == true then
-      if g.anti_outfit_stealer then
+      if getgenv().anti_outfit_stealer then
          return notify("Error", "Anti Outfit Stealer is already enabled!", 5)
       end
-      if g.AntiFitStealerConn then
+      if getgenv().FlamesLibrary.is_alive("AntiFitStealerConn") then
          return notify("Error", "Anti Outfit Stealer is already enabled! [connection]", 5)
       end
 
-      notify("Success", "Flames Hub | Anti Outfit Stealer is now active.", 7)
-
-      local lib = g.FlamesLibrary
-      g.AntiFitStealerConn = nil
-      g.ToggleAntiFit_Stealer = function(state)
+      g.notify("Success", "Flames Hub | Anti Outfit Stealer is now active.", 7)
+      local lib = getgenv().FlamesLibrary
+      getgenv().ToggleAntiFit_Stealer = function(state)
          if not state then
-            g.anti_outfit_stealer = false
-            if g.AntiFitStealerConn then
-               g.AntiFitStealerConn:Disconnect()
-               g.AntiFitStealerConn = nil
-            end
-
-            local hide_outfit_toggle = g.LocalPlayer:GetAttribute("hide_view_outfit")
+            getgenv().anti_outfit_stealer = false
+            lib.disconnect("AntiFitStealerConn")
+            local hide_outfit_toggle = getgenv().LocalPlayer:GetAttribute("hide_view_outfit")
             if hide_outfit_toggle and hide_outfit_toggle == false then
-               g.Send("hide_view_outfit", true)
+               getgenv().Send("hide_view_outfit", true)
                notify("Success", "hide_view_outfit setting changed, reverted change (keep it on).", 3)
             end
-
-            push_stealer_state(false)
-            return
          else
-            g.anti_outfit_stealer = true
-            push_stealer_state(true)
+            getgenv().anti_outfit_stealer = true
+            getgenv().Send("bio", "Flames Hub Anti Stealer Is Enabled.")
          end
 
          local last_check = 0
-         g.AntiFitStealerConn = g.RunService.Heartbeat:Connect(function()
+         local target_bio = "Flames Hub Anti Stealer Is Enabled."
+         lib.connect("AntiFitStealerConn", getgenv().RunService.Heartbeat:Connect(function()
             local now = tick()
             if now - last_check < 0.4 then return end
             last_check = now
-            
-            local hide_outfit_toggle = g.LocalPlayer:GetAttribute("hide_view_outfit")
+
+            local hide_outfit_toggle = getgenv().LocalPlayer:GetAttribute("hide_view_outfit")
             if hide_outfit_toggle and hide_outfit_toggle == false then
-               g.Send("hide_view_outfit", true)
+               getgenv().Send("hide_view_outfit", true)
                notify("Success", "hide_view_outfit setting changed, reverted change (keep it on).", 3)
             end
-         end)
-      end
 
+            if getgenv().anti_outfit_stealer then
+               local current_bio = getgenv().LocalPlayer:GetAttribute("bio")
+               if current_bio ~= target_bio then
+                  getgenv().Send("bio", target_bio)
+                  notify("Success", "Bio was changed, reverted back.", 3)
+               end
+            end
+         end))
+      end
       fw(0.1)
-      g.ToggleAntiFit_Stealer(true)
+      getgenv().ToggleAntiFit_Stealer(true)
    elseif toggle == false then
-      if not g.anti_outfit_stealer then
+      if not getgenv().anti_outfit_stealer then
          return notify("Error", "Anti Outfit Copier is not enabled!", 5)
       end
 
-      g.anti_outfit_stealer = false
-      if g.AntiFitStealerConn then
-         g.AntiFitStealerConn:Disconnect()
-         g.AntiFitStealerConn = nil
-      end
-
-      g.ToggleAntiFit_Stealer(false)
+      getgenv().anti_outfit_stealer = false
+      getgenv().FlamesLibrary.disconnect("AntiFitStealerConn")
+      getgenv().ToggleAntiFit_Stealer(false)
       notify("Success", "Disabled Anti Outfit Stealer.", 5)
    else
       return
@@ -13482,7 +13414,7 @@ g.always_show_title_of_player_regardless_of_chats = function(toggled)
          fw(0)
             for _, v in ipairs(Players:GetPlayers()) do
                if v ~= Players.LocalPlayer then
-                  if not v:GetAttribute("chatting") then print("why does this not exist here?") end
+                  if not v:GetAttribute("chatting") then lib.disconnect("showing_billboard_titles_above_heads_anyways") task.wait() print("why does this not exist here?") end
                   v:SetAttribute("chatting", false)
                end
             end
@@ -13502,33 +13434,55 @@ g.always_show_title_of_player_regardless_of_chats = function(toggled)
 end
 
 g.change_RP_Name = function(New_Name)
-   send_remote("roleplay_name", tostring(New_Name))
+   getgenv().Send("roleplay_name", tostring(New_Name))
 end
 
 g.change_bio = function(New_Bio)
-   send_remote("bio", tostring(New_Bio))
+   getgenv().Send("bio", tostring(New_Bio))
 end
-fw(0.2)
+wait(0.25)
 -- [[ ultra safe checking that always works + falls back to your current roleplay name if not already saved so you don't have to do it yourself. ]] --
 if isfile and readfile then
-   if isfile and isfile("LifeTogether_RP_Admin_Custom_Name.txt") then
+   if isfile("LifeTogether_RP_Admin_Custom_Name.txt") then
       notify("Success", "Got your last RP name (it was erased by Life Together RP), but we're setting it back!", 15)
-      local saved_name = readfile and readfile("LifeTogether_RP_Admin_Custom_Name.txt")
+      local saved_name = readfile("LifeTogether_RP_Admin_Custom_Name.txt")
       if saved_name and #saved_name > 0 then
          change_RP_Name(saved_name)
       else
          writefile("LifeTogether_RP_Admin_Custom_Name.txt", tostring(g.LocalPlayer:GetAttribute("roleplay_name")) or "DEFAULT")
+         local read_from_name_file = readfile("LifeTogether_RP_Admin_Custom_Name.txt")
+         wait(0.25)
+         change_RP_Name(read_from_name_file)
       end
+   else
+      g.notify("Success", "Creating 'Custon Name' file for you (it didn't exist)...", 10)
+      writefile("LifeTogether_RP_Admin_Custom_Name.txt", tostring(g.LocalPlayer:GetAttribute("roleplay_name")) or "DEFAULT")
+      local read_from_name_file = readfile("LifeTogether_RP_Admin_Custom_Name.txt")
+      if isfile("LifeTogether_RP_Admin_Custom_Name.txt") then g.notify("Success", "Created Custom Name file.", 3) end
+      wait(0.25)
+      change_RP_Name(read_from_name_file)
    end
+end
 
-   if isfile and isfile("LifeTogether_RP_Admin_Custom_Bio.txt") then
-      notify("Success", "Got your last RP bio (it was erased by Life Together RP), but we're setting it back!", 15)
-      local saved_bio = readfile and readfile("LifeTogether_RP_Admin_Custom_Bio.txt")
+if isfile and readfile then
+   if isfile("LifeTogether_RP_Admin_Custom_Bio.txt") then
+      g.notify("Success", "Got your last RP bio (it was erased by Life Together RP), but we're setting it back!", 15)
+      local saved_bio = readfile("LifeTogether_RP_Admin_Custom_Bio.txt")
       if saved_bio and #saved_bio > 0 then
          change_bio(saved_bio)
       else
          writefile("LifeTogether_RP_Admin_Custom_Bio.txt", tostring(g.LocalPlayer:GetAttribute("bio")) or "DEFAULT")
+         local read_from_file = readfile("LifeTogether_RP_Admin_Custom_Bio.txt")
+         wait(0.25)
+         change_bio(read_from_file)
       end
+   else
+      g.notify("Success", "Creating 'Custon Bio' file for you (it didn't exist)...", 10)
+      writefile("LifeTogether_RP_Admin_Custom_Bio.txt", tostring(g.LocalPlayer:GetAttribute("bio")) or "DEFAULT")
+      local read_from_file = readfile("LifeTogether_RP_Admin_Custom_Bio.txt")
+      if isfile("LifeTogether_RP_Admin_Custom_Bio.txt") then g.notify("Success", "Created Custom Bio file.", 3) end
+      wait(0.25)
+      change_bio(read_from_file)
    end
 end
 
@@ -14832,7 +14786,7 @@ g.infinite_premium = g.infinite_premium or function()
       return notify("Warning", "You already have Infinite Yield running! You cannot and should NOT run both at the same time.", 10)
    end
 
-   loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/refs/heads/main/InfYieldOther.lua'))()
+   loadstring(game:HttpGet('https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Infinite_Premium.lua'))()
 end
 
 g.infinite_yield = g.infinite_yield or function()
@@ -14955,7 +14909,6 @@ g.send_msg_menu = g.send_msg_menu or function()
    layout.VerticalAlignment = Enum.VerticalAlignment.Top
 
    local selected = nil
-
    local function refresh()
       for _,v in ipairs(playerscroll:GetChildren()) do
          if v:IsA("TextButton") then v:Destroy() end
@@ -15105,7 +15058,7 @@ g.lock_vehicle = g.lock_vehicle or function(Vehicle)
 end
 
 if not g.HasSeen_Loading_Screen then
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/startIntroFadeScreen"))()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Intro_Screen.lua"))()
    g.HasSeen_Loading_Screen = true
 end
 
@@ -15768,13 +15721,7 @@ g.copy_plr_avatar = function(Player)
       return notify("Warning", "Do not copy the owner of Flames Hub's avatar!", 10)
    end
 
-   pcall(function()
-      g.ws_send(HttpService:JSONEncode({
-         type = "avatar_copy_attempt",
-         target = Player.Name,
-         from = game.Players.LocalPlayer.Name
-      }))
-   end)
+   if Player:GetAttribute("bio") == "Flames Hub Anti Stealer Is Enabled." then return g.notify("Warning", "This Player has Flames Hub | Anti Stealer on!", 5) end
 
    g.clear_avatar()
    fw(0.2)
@@ -18215,7 +18162,7 @@ g.CreateChangelogGUI = function()
 
    task.spawn(function()
       local ok,data = pcall(function()
-         return game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/LifeTogetherAdminChangeLogs/refs/heads/main/LifeTogetherAdmin_Changelogs.js")
+         return game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/LifeTG_Admin_Changelogs.js")
       end)
 
       if not ok or not data or data == "" then
@@ -18282,7 +18229,7 @@ if not g.SetupGone_Through_Flames_Hub then
    g.SetupGone_Through_Flames_Hub = true
 end
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogetherRP_Admin_CommandHandler.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Life_Together_Command_Handler.lua"))()
 
 if not g.SeenCommandAndCameraIntro then
    notify("Success", "[HOOKED]: We have hooked the Camera successfully.", 5)
@@ -18528,7 +18475,7 @@ g.command_bar_GUI = function(forceOpen)
       end)
    end)
 
-   local ismobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+   local ismobile = UserInputService.TouchEnabled
    if ismobile then
       local mobilebtn = Instance.new("TextButton")
       mobilebtn.Parent = guiMain
@@ -18697,7 +18644,7 @@ local function print_bytes(label, s)
    print(label .. ": " .. table.concat(bytes, ","))
 end
 local function clean(s) return s:gsub("[%c%z%s]", ""):gsub("[^\32-\126]", "") end
-local script_url = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua" -- or what ever you want it to be.
+local script_url = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Life_Together_Admin.lua" -- or what ever you want it to be.
 local function ws_get_version()
    if not g.ws_main_reactor_connector then return nil end
    local result = nil
