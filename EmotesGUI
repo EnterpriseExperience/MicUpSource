@@ -1,4 +1,4 @@
-if getgenv().FreeEmotes_GUI or getgenv().FreeEmotes_Enabled or CoreGui:FindFirstChild("FlamesEmoteGUI") then
+if getgenv().FreeEmotes_GUI or getgenv().FreeEmotes_Enabled or game:GetService("CoreGui"):FindFirstChild("FlamesEmoteGUI") then
     local msg = "You already have Flames Emoting GUI loaded!"
     if getgenv().notify then
         return getgenv().notify("Warning", msg, 6)
