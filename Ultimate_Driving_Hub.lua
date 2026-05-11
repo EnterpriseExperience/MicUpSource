@@ -1,6 +1,5 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 if game.PlaceId ~= 54865335 then return end
-
 local g = getgenv()
 -- [[ you know how fucking long this shit took to get from the ModuleScript, had Grok extract this shit for me just incase. ]] --
 local vehicles = {
@@ -8,18 +7,19 @@ local vehicles = {
 }
 -- [[ stfu, I didn't wanna do: getgenv().vehicle_list = getgenv().vehicle_list or vehicles (kill me, it's the same thing anyway). ]] --
 getgenv().vehicle_list = vehicles
+getgenv().Script_Version_UD = "1.7.1-UD"
 g.Game = cloneref and cloneref(game) or game
 g.JobID = game.JobId
 g.PlaceID = game.PlaceId
 getgenv().LoopKilling_Tbl = getgenv().LoopKilling_Tbl or {}
 
-if not getgenv().GlobalEnvironmentFramework_Initialized then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
-    wait(0.1)
-    getgenv().GlobalEnvironmentFramework_Initialized = true
+if not g.GlobalEnvironmentFramework_Initialized then
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Global_Environment.lua"))()
+   wait(0.1)
+   g.GlobalEnvironmentFramework_Initialized = true
 end
 
-local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Notify_Lib.lua"))()
 local valid_titles = {success="Success",info="Info",warning="Warning",error="Error",succes="Success",sucess="Success",eror="Error",erorr="Error",warnin="Warning"}
 local function format_title(str)
    if typeof(str)~="string" then return "Info" end
@@ -81,6 +81,74 @@ g.Service_Wrap = g.Service_Wrap or function(name)
     end
 
     return svc
+end
+
+local function find_blocked_music_folder()
+    local cache = getgenv().blocked_music_folder_found
+    if cache and cache.Parent and cache:IsA("Folder") and cache:IsDescendantOf(getgenv().ReplicatedStorage) then
+        return cache
+    end
+
+    for _, v in ipairs(getgenv().ReplicatedStorage:GetDescendants()) do
+        if v:IsA("Folder") and v.Name:lower():find("block") and v.Name:lower():find("music") then
+            getgenv().blocked_music_folder_found = v
+            return v
+        end
+    end
+
+    return nil
+end
+
+if not getgenv().blocked_music_folder_found then pcall(find_blocked_music_folder) end
+task.wait(0.1)
+g.clear_folder_children = function()
+    local folder = getgenv().blocked_music_folder_found
+    if not folder then return end
+    for _, v in ipairs(folder:GetChildren()) do
+        if v:IsA("NumberValue") or v:IsA("IntValue") or v:IsA("StringValue") then
+            pcall(function() v.Parent = nil end)
+        end
+    end
+end
+task.wait(0.25)
+g.clear_folder_children()
+
+local debounce = false
+getgenv().FlamesLibrary.connect("folder_cleanup_added", getgenv().blocked_music_folder_found.ChildAdded:Connect(function(v)
+    if not (v:IsA("NumberValue") or v:IsA("IntValue") or v:IsA("StringValue")) then return end
+    if debounce then return end
+    debounce = true
+    task.defer(function()
+        g.clear_folder_children()
+        debounce = false
+    end)
+end))
+
+getgenv().active_friends_online = getgenv().active_friends_online or true
+getgenv().FlamesLibrary.spawn("friends_online_loop", "spawn", function()
+    local Players = g.Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+    local LocalPlayer = g.LocalPlayer or Players.LocalPlayer
+    local fw = getgenv().FlamesLibrary.wait
+
+    while getgenv().active_friends_online == true do
+        pcall(function() LocalPlayer:SetAttribute("FriendsInServer", 5) end)
+        fw(0)
+    end
+end)
+
+if not getgenv().Activated_Print_Bypass_Leaderboard_Annoying_Loop then
+    if hookfunction then
+        getgenv().Activated_Print_Bypass_Leaderboard_Annoying_Loop = true
+        local old_print
+        old_print = hookfunction(print, function(...)
+            local trace = debug.traceback("", 2)
+            if trace:find("LeaderboardManager") then return end
+            old_print(...)
+        end)
+        getgenv().notify("Success", "Bypassed LeaderboardManager annoying print spam (hooked).", 5)
+    else
+        getgenv().Activated_Print_Bypass_Leaderboard_Annoying_Loop = true
+    end
 end
 
 local function getExecutor()
@@ -292,11 +360,10 @@ end
 wait(0.1)
 get_car_names()
 
--- To be input into script hub soon.
--- local Gun_Shop_Prompt = getgenv().Workspace:FindFirstChild("_Main"):FindFirstChild("GunGivers"):FindFirstChild("WeaponBuilding"):FindFirstChild("Building"):FindFirstChild("GunShop"):FindFirstChild("ShopPad"):FindFirstChildOfClass("ProximityPrompt")
+-- [[ To be added into the script hub soon. ]] --
+-- local Gun_Shop_Prompt = workspace:FindFirstChild("_Main"):FindFirstChild("GunGivers"):FindFirstChild("WeaponBuilding"):FindFirstChild("Building"):FindFirstChild("GunShop"):FindFirstChild("ShopPad"):FindFirstChildOfClass("ProximityPrompt")
 
 local all_vehicles = get_car_names()
-
 if not all_vehicles or #all_vehicles == 0 then
     local args = {
         "VehiclePurchase",
@@ -307,14 +374,14 @@ if not all_vehicles or #all_vehicles == 0 then
             false
         }
     }
-    getgenv().ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
+    ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
 end
 
 wait(1)
 
 local function spawn_vehicle(name)
     if type(name) ~= "string" then
-        return notify("Error", tostring(name).." is not a string!", 5)
+        return 
     end
 
     local args = {
@@ -326,7 +393,7 @@ local function spawn_vehicle(name)
         }
     }
     
-    getgenv().ReplicatedStorage:FindFirstChild("Events"):FindFirstChild("RemoteFunction"):InvokeServer(unpack(args))
+    ReplicatedStorage:FindFirstChild("Events"):FindFirstChild("RemoteFunction"):InvokeServer(unpack(args))
 end
 
 local Rayfield
@@ -339,7 +406,8 @@ local function retrieve_vehicle()
     end
 end
 
-local Old_PVP_Enabled = Character:GetAttribute("PVPDamageEnabled")
+local char_pvp = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
+local Old_PVP_Enabled = char_pvp:GetAttribute("PVPDamageEnabled")
 getgenv().specific_weapon_mod = false
 getgenv().all_weapon_mods = false
 local User_Configuration = User_Configuration or {}
@@ -730,12 +798,11 @@ local Window
 
 LocalPlayer_loaded()
 render_safe()
-
 Rayfield = load_rayfield()
 
 if typeof(Rayfield) == "table" and Rayfield.CreateWindow then
     Window = Rayfield:CreateWindow({
-        Name = "🔫 Ultimate Driving 🚬 | 1.6.3 | "..tostring(executor_Name),
+        Name = "🔫 Ultimate Driving 🚬 | "..tostring(getgenv().Script_Version_UD).." | "..tostring(executor_Name),
         LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
         LoadingSubtitle = "Ultimate Driving | Hub.",
         Theme = "Default",
@@ -869,7 +936,6 @@ if writefile and delfile and loadfile then
         if isfile("car_tint_config.json") then
             local contents = readfile("car_tint_config.json")
             local data = HttpService:JSONDecode(contents)
-
             current_car_tint_color = Color3.new(data.TintColor.R, data.TintColor.G, data.TintColor.B)
             current_car_tint_transparency = data.TintTransparency
             task.wait(.3)
@@ -888,44 +954,129 @@ else
     warn("Didn't load these options, writefile/del/loadfile is unsupported.")
 end
 
+local function apply_inf_stamina(humanoid)
+    if not humanoid then return end
+    getgenv().FlamesLibrary.spawn("inf_stamina_loop", "spawn", function()
+        while getgenv().inf_stamina == true do
+            task.wait(0)
+            pcall(function() humanoid:SetAttribute("Stamina", 9e9) end)
+        end
+    end)
+end
+
 getgenv().InfStamina_FE = Tab2:CreateToggle({
 Name = "Infinite Stamina (FE)",
 CurrentValue = getgenv().inf_stamina or false,
 Flag = "InfStaminaScript",
 Callback = function(inf_stamina)
     if inf_stamina then
-        local Players = getgenv().Players
-        local LocalPlayer = getgenv().LocalPlayer
-        local Character = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
-        local Humanoid = getgenv().Humanoid or Character and Character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer, 10)
-        local Modules = LocalPlayer:FindFirstChild("Modules", true)
-        local Managers_Folder = Modules:FindFirstChild("Managers", true)
-        local Sprint_Manager = require(Managers_Folder:FindFirstChild("SprintManager"))
-        local Stamina_Attribute = Humanoid and Humanoid:GetAttribute("Stamina")
-        if not Stamina_Attribute then
+        local char = getgenv().Character or getgenv().LocalPlayer.Character or get_char(getgenv().LocalPlayer, 10)
+        local humanoid = getgenv().Humanoid or char and char:FindFirstChildOfClass("Humanoid") or get_human(getgenv().LocalPlayer, 10)
+        local stamina_attribute = humanoid and humanoid:GetAttribute("Stamina")
+        if stamina_attribute == nil then
             getgenv().inf_stamina = false
-            return warn("Unable to return Stamina value Attribute!") 
+            return warn("Unable to return Stamina value Attribute!")
         end
-        wait(0.2)
+        task.wait(0.2)
         getgenv().inf_stamina = true
-        Inf_Stamina_Active = true
+        apply_inf_stamina(humanoid)
 
-        if inf_stamina then
-            while getgenv().inf_stamina == true do
-            task.wait(0)
-                pcall(function() Humanoid:SetAttribute("Stamina", 9e9) end)
-            end
-        end
+        getgenv().FlamesLibrary.connect("inf_stamina_char_added", getgenv().LocalPlayer.CharacterAdded:Connect(function(new_char)
+            getgenv().FlamesLibrary.spawn("inf_stamina_char_spawn", "delay", 0.3, function()
+                if not new_char then
+                    repeat task.wait() until new_char and new_char:FindFirstChild("Humanoid")
+                end
+                local new_humanoid = new_char:WaitForChild("Humanoid", 5)
+                getgenv().Humanoid = new_humanoid
+                if not new_humanoid or not new_humanoid:GetAttribute("Stamina") then return warn("Unable to return Stamina value Attribute!") end
+                getgenv().FlamesLibrary.disconnect("inf_stamina_loop")
+                task.wait(0.1)
+                apply_inf_stamina(new_humanoid)
+            end)
+        end))
     else
         getgenv().inf_stamina = false
-        if getgenv().Humanoid:GetAttribute("Stamina") then
-            getgenv().Humanoid:SetAttribute("Stamina", 100)
+        getgenv().FlamesLibrary.disconnect("inf_stamina_loop")
+        getgenv().FlamesLibrary.disconnect("inf_stamina_char_added")
+        getgenv().FlamesLibrary.disconnect("inf_stamina_char_spawn")
+        task.wait(0.25)
+        local humanoid = getgenv().Humanoid or getgenv().Character:FindFirstChildOfClass("Humanoid") or get_human(LocalPlayer, 10)
+        if humanoid and humanoid:GetAttribute("Stamina") then
+            pcall(function() humanoid:SetAttribute("Stamina", 100) end)
             return getgenv().notify("Success", "Sprint stamina successfully reset to 100.", 5)
         else
             return getgenv().notify("Error", "Stamina Attribute was not found in Humanoid!", 5)
         end
     end
 end,})
+
+local function has_disabled_property(instance)
+    local ok, result = pcall(function() return typeof(instance.Disabled) == "boolean" end)
+    return ok and result
+end
+
+local function disable_script(script_instance, target_parent)
+    if not script_instance then return end
+    if script_instance:IsA("LocalScript") or has_disabled_property(script_instance) then
+        script_instance.Disabled = true
+    end
+    script_instance.Parent = target_parent
+end
+
+local function apply_anti_ragdoll()
+    local char = getgenv().Character
+    if not (char and char:FindFirstChildOfClass("Humanoid") and getgenv().Humanoid) then return end
+
+    if char:FindFirstChild("RagdollConstraints") then
+        char:FindFirstChild("RagdollConstraints"):Destroy()
+    end
+
+    local ragdoll_client = getgenv().LocalPlayer.PlayerScripts:FindFirstChild("RagdollClient")
+    if ragdoll_client then
+        disable_script(ragdoll_client, getgenv().SoundService)
+    end
+
+    local starter_ragdoll_client = getgenv().StarterPlayer.StarterPlayerScripts:FindFirstChild("RagdollClient")
+    if starter_ragdoll_client then
+        disable_script(starter_ragdoll_client, getgenv().TweenService)
+    end
+
+    if getgenv().ReplicatedStorage:FindFirstChild("WeaponsSystem")
+        and getgenv().ReplicatedStorage.WeaponsSystem:FindFirstChild("Libraries")
+        and getgenv().ReplicatedStorage.WeaponsSystem.Libraries:FindFirstChild("Ragdoll") then
+        disable_script(getgenv().ReplicatedStorage.WeaponsSystem.Libraries.Ragdoll, game:GetService("ReplicatedFirst"))
+    end
+
+    if Modules:FindFirstChild("Ragdoll") then
+        disable_script(Modules.Ragdoll, getgenv().AssetService)
+    end
+
+    if getgenv().ReplicatedFirst:FindFirstChild("Ragdoll") then
+        disable_script(getgenv().ReplicatedFirst.Ragdoll, getgenv().AssetService)
+    end
+end
+
+local function revert_anti_ragdoll()
+    if getgenv().SoundService:FindFirstChild("RagdollClient") then
+        local s = getgenv().SoundService.RagdollClient
+        s.Disabled = false
+        s.Parent = getgenv().LocalPlayer.PlayerScripts
+    end
+
+    if getgenv().TweenService:FindFirstChild("RagdollClient") then
+        local s = getgenv().TweenService.RagdollClient
+        s.Disabled = false
+        s.Parent = getgenv().StarterPlayer.StarterPlayerScripts
+    end
+
+    if getgenv().AssetService:FindFirstChild("Ragdoll") then
+        local s = getgenv().AssetService.Ragdoll
+        if has_disabled_property(s) then
+            s.Disabled = false
+        end
+        s.Parent = Modules
+    end
+end
 
 getgenv().AntiRagdoll = Tab2:CreateToggle({
 Name = "Anti Ragdoll",
@@ -934,129 +1085,481 @@ Flag = "FullAntiRagdoll",
 Callback = function(anti_ragdoll)
     if anti_ragdoll then
         getgenv().Anti_Ragdoll_Enabled = true
-        Anti_Ragdoll_Active = true
-        task.wait(.3)
-        if getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") and getgenv().Humanoid then
-            if getgenv().Character:FindFirstChild("RagdollConstraints") then
-                getgenv().Character:FindFirstChild("RagdollConstraints"):Destroy()
-            end
-            if getgenv().LocalPlayer:FindFirstChild("PlayerScripts"):FindFirstChild("RagdollClient") then
-                getgenv().LocalPlayer:FindFirstChild("PlayerScripts"):FindFirstChild("RagdollClient").Parent = getgenv().SoundService
-            end
-            if getgenv().StarterPlayer:FindFirstChild("StarterPlayerScripts"):FindFirstChild("RagdollClient") then
-                getgenv().StarterPlayer:FindFirstChild("StarterPlayerScripts"):FindFirstChild("RagdollClient").Parent = getgenv().TweenService
-            end
-            if getgenv().ReplicatedStorage:FindFirstChild("WeaponsSystem"):FindFirstChild("Libraries"):FindFirstChild("Ragdoll") then
-                getgenv().ReplicatedStorage:FindFirstChild("WeaponsSystem"):FindFirstChild("Libraries"):FindFirstChild("Ragdoll").Parent = getgenv().ReplicatedFirst or game:GetService("ReplicatedFirst")
-            end
-            if Modules:FindFirstChild("Ragdoll") then
-                Modules:FindFirstChild("Ragdoll").Parent = getgenv().AssetService
-            end
-            if getgenv().ReplicatedFirst:FindFirstChild("Ragdoll") then
-                getgenv().ReplicatedFirst:FindFirstChild("Ragdoll"):Destroy()
-            end
-        end
+
+        getgenv().FlamesLibrary.connect("anti_ragdoll_char_added", getgenv().LocalPlayer.CharacterAdded:Connect(function(char)
+            getgenv().FlamesLibrary.spawn("anti_ragdoll_char_spawn", "delay", 0.3, function()
+                getgenv().Character = char
+                getgenv().Humanoid = char:WaitForChild("Humanoid", 5)
+                apply_anti_ragdoll()
+            end)
+        end))
+
+        getgenv().FlamesLibrary.spawn("anti_ragdoll_init", "delay", 0.3, function()
+            apply_anti_ragdoll()
+        end)
     else
         getgenv().Anti_Ragdoll_Enabled = false
-        getgenv().Anti_Ragdoll_Enabled = false
-        Anti_Ragdoll_Active = false
-        Anti_Ragdoll_Active = false
-        task.wait(.3)
-        if getgenv().SoundService:FindFirstChild("RagdollClient") then
-            getgenv().SoundService:FindFirstChild("RagdollClient").Parent = getgenv().LocalPlayer:FindFirstChild("PlayerScripts")
-        end
-        if getgenv().TweenService:FindFirstChild("RagdollClient") then
-            getgenv().TweenService:FindFirstChild("RagdollClient").Parent = getgenv().StarterPlayer:FindFirstChild("StarterPlayerScripts")
-        end
-        if getgenv().AssetService:FindFirstChild("Ragdoll") then
-            getgenv().AssetService:FindFirstChild("Ragdoll").Parent = Modules
-        end
+
+        getgenv().FlamesLibrary.disconnect("anti_ragdoll_char_added")
+        getgenv().FlamesLibrary.disconnect("anti_ragdoll_char_spawn")
+        getgenv().FlamesLibrary.disconnect("anti_ragdoll_init")
+
+        task.wait(0.25)
+        revert_anti_ragdoll()
     end
 end,})
 
-getgenv().run_Shift_Speed = getgenv().run_Shift_Speed or 50
-getgenv().walkSpeed = getgenv().walkSpeed or 16
-getgenv().runningEnabled = getgenv().runningEnabled or false
-getgenv().shift_to_run_connection = getgenv().shift_to_run_connection or nil
-getgenv().shift_input_began = getgenv().shift_input_began or nil
-getgenv().shift_input_end = getgenv().shift_input_end or nil
-getgenv().shift_char_added = getgenv().shift_char_added or nil
-getgenv().get_human_here = getgenv().get_human_here or function(plr)
-    local c = getgenv().Character or get_char(LocalPlayer) or plr.Character
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local Vehicles_Folder = workspace:FindFirstChild("_Main"):FindFirstChild("Vehicles")
+local g = getgenv()
+g.vehicle_fly = g.vehicle_fly or false
+g.vehicle_fly_speed = g.vehicle_fly_speed or 3
+g.vehiclefly_conns = g.vehiclefly_conns or {}
+g.vehiclefly_control = {f=0,b=0,l=0,r=0,q=0,e=0}
+g.vehiclefly_noclip = g.vehiclefly_noclip or false
+g.vehiclefly_collisions = g.vehiclefly_collisions or {}
+g.vehiclefly_springs = g.vehiclefly_springs or {}
+local is_mobile = UserInputService.TouchEnabled
+local Control_Module
+if is_mobile then
+   Control_Module = require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+end
+
+local function Retrieve_Vehicle()
+   for _, v in ipairs(Vehicles_Folder:GetChildren()) do
+      local vals = v:FindFirstChild("Values", true)
+      if vals and vals:GetAttribute("Owner") == LocalPlayer.Name then
+         return v
+      end
+   end
+end
+
+local function Get_Seat(Car)
+   return Car:FindFirstChildWhichIsA("VehicleSeat", true)
+end
+
+g.cleanup = function()
+   if g.vehiclefly_conns.render then
+      pcall(function() g.vehiclefly_conns.render:Disconnect() end)
+      g.vehiclefly_conns.render = nil
+   end
+   if g.vehiclefly_conns.down then
+      pcall(function() g.vehiclefly_conns.down:Disconnect() end)
+      g.vehiclefly_conns.down = nil
+   end
+   if g.vehiclefly_conns.up then
+      pcall(function() g.vehiclefly_conns.up:Disconnect() end)
+      g.vehiclefly_conns.up = nil
+   end
+
+   if g.vehiclefly_bv then
+      pcall(function() g.vehiclefly_bv.Velocity = Vector3.zero end)
+      pcall(function() g.vehiclefly_bv:Destroy() end)
+      g.vehiclefly_bv = nil
+   end
+
+   if g.vehiclefly_bg then
+      pcall(function() g.vehiclefly_bg:Destroy() end)
+      g.vehiclefly_bg = nil
+   end
+end
+
+g.enable_vehicle_noclip = function()
+   if g.vehiclefly_noclip then return end
+   g.vehiclefly_noclip = true
+   g.vehiclefly_collisions = {}
+   local Car = Retrieve_Vehicle()
+   if not Car then return end
+
+   for _, v in ipairs(Car:GetDescendants()) do
+      if v:IsA("BasePart") then
+         g.vehiclefly_collisions[v] = v.CanCollide
+         v.CanCollide = false
+      end
+   end
+end
+
+g.disable_vehicle_noclip = function()
+   if not g.vehiclefly_noclip then return end
+   g.vehiclefly_noclip = false
+
+   for Part, State in pairs(g.vehiclefly_collisions) do
+      if Part and Part.Parent then
+         Part.CanCollide = State
+      end
+   end
+   g.vehiclefly_collisions = {}
+end
+
+g.disable_springs = function(Car)
+   g.vehiclefly_springs = {}
+   for _, v in ipairs(Car:GetDescendants()) do
+      if v:IsA("SpringConstraint") then
+         g.vehiclefly_springs[v] = {
+            Free_Length = v.FreeLength,
+            Stiffness = v.Stiffness,
+            Damping = v.Damping,
+         }
+         pcall(function()
+            v.Stiffness = 0
+            v.Damping = 0
+            v.FreeLength = v.CurrentLength
+         end)
+      end
+   end
+end
+
+g.restore_springs = function()
+   for Spring, Data in pairs(g.vehiclefly_springs) do
+      if Spring and Spring.Parent then
+         pcall(function()
+            Spring.FreeLength = Data.Free_Length
+            Spring.Stiffness = Data.Stiffness
+            Spring.Damping = Data.Damping
+         end)
+      end
+   end
+   g.vehiclefly_springs = {}
+end
+
+g.start_vehicle_fly = function()
+   if g.vehiclefly_bg or g.vehiclefly_bv then return end
+   local Car = Retrieve_Vehicle()
+   if not Car then return end
+   local Seat = Get_Seat(Car)
+   if not Seat then return end
+   local Weight_Part = Car:FindFirstChild("#Weight", true)
+   local Physics_Root = Weight_Part or Seat
+   local Drag_Force = Seat:FindFirstChild("DragForce")
+   local Boost_Force = Seat:FindFirstChild("BoostForce")
+   local Float_Force = Seat:FindFirstChild("FloatForce")
+   if Drag_Force then Drag_Force.Force = Vector3.zero end
+   if Boost_Force then Boost_Force.Force = Vector3.zero end
+   if Float_Force then Float_Force.Position = Seat.Position end
+
+   g.disable_springs(Car)
+
+   local Bg = Instance.new("BodyGyro")
+   Bg.P = 3e4
+   Bg.D = 1e3
+   Bg.MaxTorque = Vector3.new(0, 9e9, 0)
+   Bg.CFrame = Physics_Root.CFrame
+   Bg.Parent = Physics_Root
+
+   local Bv = Instance.new("BodyVelocity")
+   Bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+   Bv.Velocity = Vector3.zero
+   Bv.Parent = Physics_Root
+
+   g.vehiclefly_bg = Bg
+   g.vehiclefly_bv = Bv
+
+   g.vehiclefly_conns.render = RunService.Heartbeat:Connect(function()
+      if not g.vehicle_fly or not Physics_Root.Parent then
+         Bv.Velocity = Vector3.zero
+         g.vehiclefly_control = {f=0,b=0,l=0,r=0,q=0,e=0}
+         return
+      end
+
+      Physics_Root.AssemblyAngularVelocity = Vector3.zero
+
+      if Float_Force then Float_Force.Position = Seat.Position end
+      if Drag_Force then Drag_Force.Force = Vector3.zero end
+      if Boost_Force then Boost_Force.Force = Vector3.zero end
+
+      local Cam = workspace.CurrentCamera
+
+      if is_mobile then
+         Bg.CFrame = Cam.CFrame
+         local Mv = Control_Module:GetMoveVector()
+         local Vel = Vector3.zero
+         if Mv.X ~= 0 then Vel = Vel + Cam.CFrame.RightVector * (Mv.X * (45 * g.vehicle_fly_speed)) end
+         if Mv.Z ~= 0 then Vel = Vel - Cam.CFrame.LookVector * (Mv.Z * (45 * g.vehicle_fly_speed)) end
+         Bv.Velocity = Vel
+      else
+         local Look = Cam.CFrame.LookVector
+         local Yaw = math.atan2(-Look.X, -Look.Z)
+         Bg.CFrame = CFrame.new(Physics_Root.Position) * CFrame.Angles(0, Yaw, 0)
+
+         local c = g.vehiclefly_control
+         local Forward = (c.f or 0) + (c.b or 0)
+         local Right = (c.l or 0) + (c.r or 0)
+         local Up = (c.q or 0) + (c.e or 0)
+
+         Bv.Velocity = (
+            Cam.CFrame.LookVector * Forward +
+            Cam.CFrame.RightVector * Right +
+            Vector3.new(0, Up, 0)
+         ) * (45 * g.vehicle_fly_speed)
+      end
+   end)
+
+   if not is_mobile then
+      g.vehiclefly_conns.down = UserInputService.InputBegan:Connect(function(i, gp)
+         if gp then return end
+         if i.KeyCode == Enum.KeyCode.W then g.vehiclefly_control.f = 1  end
+         if i.KeyCode == Enum.KeyCode.S then g.vehiclefly_control.b = -1 end
+         if i.KeyCode == Enum.KeyCode.A then g.vehiclefly_control.l = -1 end
+         if i.KeyCode == Enum.KeyCode.D then g.vehiclefly_control.r = 1  end
+         if i.KeyCode == Enum.KeyCode.Q then g.vehiclefly_control.q = -1 end
+         if i.KeyCode == Enum.KeyCode.E then g.vehiclefly_control.e = 1  end
+      end)
+
+      g.vehiclefly_conns.up = UserInputService.InputEnded:Connect(function(i)
+         if i.KeyCode == Enum.KeyCode.W then g.vehiclefly_control.f = 0 end
+         if i.KeyCode == Enum.KeyCode.S then g.vehiclefly_control.b = 0 end
+         if i.KeyCode == Enum.KeyCode.A then g.vehiclefly_control.l = 0 end
+         if i.KeyCode == Enum.KeyCode.D then g.vehiclefly_control.r = 0 end
+         if i.KeyCode == Enum.KeyCode.Q then g.vehiclefly_control.q = 0 end
+         if i.KeyCode == Enum.KeyCode.E then g.vehiclefly_control.e = 0 end
+      end)
+   end
+end
+
+g.stop_vehicle_fly = function()
+   g.vehicle_fly = false
+   g.restore_springs()
+   g.disable_vehicle_noclip()
+   g.cleanup()
+   g.vehiclefly_control = {f=0,b=0,l=0,r=0,q=0,e=0}
+end
+task.wait(0.25)
+getgenv().Vehicle_Fly_Script = Tab4:CreateToggle({
+Name = "Vehicle Fly (FE)",
+CurrentValue = getgenv().vehicle_fly or false,
+Flag = "VehicleFlyFunctionalityToggle",
+Callback = function(toggle_v_fly)
+    if toggle_v_fly then
+        g.vehicle_fly = true
+        g.enable_vehicle_noclip()
+        g.start_vehicle_fly()
+    else
+        getgenv().stop_vehicle_fly()
+    end
+end,})
+
+if not getgenv().WalkSpeed_Has_Been_Applied then
+    getgenv().WalkSpeed_Has_Been_Applied = true
+    local lp = g.Players.LocalPlayer
+    getgenv().hooks = {
+        walkspeed = 16,
+        jumppower = 50
+    }
+    local index
+    local newindex
+
+    index = hookmetamethod(game, "__index", function(self, property)
+        if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and getgenv().hooks[property:lower()] then
+            return getgenv().hooks[property:lower()]
+        end
+        return index(self, property)
+    end)
+
+    newindex = hookmetamethod(game, "__newindex", function(self, property, value)
+        if not checkcaller() and self:IsA("Humanoid") and self:IsDescendantOf(lp.Character) and getgenv().hooks[property:lower()] then
+            return
+        end
+        return newindex(self, property, value)
+    end)
+end
+
+getgenv().run_shift_speed = getgenv().run_shift_speed or 50
+getgenv().walk_speed = getgenv().walk_speed or 16
+getgenv().running_enabled = getgenv().running_enabled or false
+local function get_human_here(plr)
+    local c = getgenv().Character or plr.Character or get_char(plr)
     if not c then return nil end
     return c:FindFirstChildOfClass("Humanoid")
 end
-getgenv().setup_shift_to_run = getgenv().setup_shift_to_run or function()
-    if getgenv().shift_to_run_connection then getgenv().shift_to_run_connection:Disconnect() end
-    if getgenv().shift_input_began then getgenv().shift_input_began:Disconnect() end
-    if getgenv().shift_input_end then getgenv().shift_input_end:Disconnect() end
-    if getgenv().shift_char_added then getgenv().shift_char_added:Disconnect() end
 
-    local shiftHeld = false
-    local hum = getgenv().get_human_here(getgenv().LocalPlayer)
+local function setup_shift_to_run()
+    getgenv().FlamesLibrary.disconnect("shift_input_began")
+    getgenv().FlamesLibrary.disconnect("shift_input_end")
+    getgenv().FlamesLibrary.disconnect("shift_char_added")
 
-    getgenv().shift_to_run_connection = getgenv().RunService.Heartbeat:Connect(function()
-        if not getgenv().runningEnabled then return end
-        hum = getgenv().get_human_here(getgenv().LocalPlayer)
-        if not hum then return end
-        if shiftHeld then
-            hum.WalkSpeed = getgenv().run_Shift_Speed
-        else
-            hum.WalkSpeed = getgenv().walkSpeed
-        end
-    end)
+    local shift_held = false
 
-    getgenv().shift_input_began = getgenv().UserInputService.InputBegan:Connect(function(i, g)
-        if g then return end
-        if not getgenv().runningEnabled then return end
+    getgenv().FlamesLibrary.connect("shift_input_began", getgenv().UserInputService.InputBegan:Connect(function(i, gp)
+        if gp or not getgenv().running_enabled then return end
         if i.KeyCode == Enum.KeyCode.LeftShift then
-            shiftHeld = true
+            shift_held = true
+            getgenv().hooks.walkspeed = getgenv().run_shift_speed
+            local hum = get_human_here(getgenv().LocalPlayer)
+            if hum then hum.WalkSpeed = getgenv().run_shift_speed end
         end
-    end)
+    end))
 
-    getgenv().shift_input_end = getgenv().UserInputService.InputEnded:Connect(function(i, g)
-        if g then return end
-        if not getgenv().runningEnabled then return end
+    getgenv().FlamesLibrary.connect("shift_input_end", getgenv().UserInputService.InputEnded:Connect(function(i, gp)
+        if gp or not getgenv().running_enabled then return end
         if i.KeyCode == Enum.KeyCode.LeftShift then
-            shiftHeld = false
+            shift_held = false
+            getgenv().hooks.walkspeed = getgenv().walk_speed
+            local hum = get_human_here(getgenv().LocalPlayer)
+            if hum then hum.WalkSpeed = getgenv().walk_speed end
         end
-    end)
+    end))
 
-    getgenv().shift_char_added = getgenv().LocalPlayer.CharacterAdded:Connect(function()
-        hum = getgenv().get_human_here(getgenv().LocalPlayer)
-    end)
+    getgenv().FlamesLibrary.connect("shift_char_added", getgenv().LocalPlayer.CharacterAdded:Connect(function(new_char)
+        getgenv().FlamesLibrary.spawn("shift_char_spawn", "delay", 0.3, function()
+            getgenv().Character = new_char
+        end)
+    end))
 end
 
-getgenv().disable_shift_to_run = getgenv().disable_shift_to_run or function()
-    if getgenv().shift_to_run_connection then getgenv().shift_to_run_connection:Disconnect() end
-    if getgenv().shift_input_began then getgenv().shift_input_began:Disconnect() end
-    if getgenv().shift_input_end then getgenv().shift_input_end:Disconnect() end
-    if getgenv().shift_char_added then getgenv().shift_char_added:Disconnect() end
-
-    local hum = getgenv().get_human_here(getgenv().LocalPlayer)
-    if hum then hum.WalkSpeed = getgenv().walkSpeed end
+local function disable_shift_to_run()
+    getgenv().FlamesLibrary.disconnect("shift_input_began")
+    getgenv().FlamesLibrary.disconnect("shift_input_end")
+    getgenv().FlamesLibrary.disconnect("shift_char_added")
+    getgenv().FlamesLibrary.disconnect("shift_char_spawn")
+    getgenv().hooks.walkspeed = getgenv().walk_speed
 end
 
-getgenv().ShifTToRunSpeed = Tab2:CreateInput({
-Name = "Shift_To_Run Speed",
+getgenv().ShiftToRunSpeed = Tab2:CreateInput({
+Name = "Shift To Run Speed",
 PlaceholderText = "Enter Speed",
 RemoveTextAfterFocusLost = true,
 Callback = function(get_speed)
     local s = tonumber(get_speed)
-    if s then getgenv().run_Shift_Speed = s end
+    if s then
+        getgenv().run_shift_speed = s
+        if getgenv().running_enabled then
+            getgenv().hooks.walkspeed = s
+        end
+    end
 end,})
-wait(0.2)
+
 getgenv().ShiftToRun = Tab2:CreateToggle({
 Name = "Shift To Run",
-CurrentValue = getgenv().runningEnabled or false,
+CurrentValue = getgenv().running_enabled or false,
 Flag = "SpeedCoilAlt",
 Callback = function(state)
-    getgenv().runningEnabled = state
+    getgenv().running_enabled = state
     if state then
-        getgenv().setup_shift_to_run()
+        setup_shift_to_run()
     else
-        getgenv().disable_shift_to_run()
+        disable_shift_to_run()
     end
+end,})
+
+g.AntiFling_Enabled = g.AntiFling_Enabled or false
+g.antifling_parts_cache = g.antifling_parts_cache or {}
+local lib = getgenv().FlamesLibrary
+local _uid = 0
+local function make_key(prefix, inst) _uid = _uid + 1 return prefix .. "_" .. tostring(inst):gsub("[^%w]", "") .. "_" .. _uid end
+local function is_wheel_model(obj) local parent = obj.Parent return parent and (parent.Name == "Wheels" or parent.Name == "WheelsVisible") end
+local function process_part(part)
+    if not part:IsA("BasePart") then return end
+    if g.antifling_parts_cache[part] then return end
+    if is_wheel_model(part) then return end
+    part.CanCollide = false
+    g.antifling_parts_cache[part] = true
+
+    local key = make_key("AntiFling_PartCleanup", part)
+    lib.connect(key, part.AncestryChanged:Connect(function()
+        if not part:IsDescendantOf(game) then
+            g.antifling_parts_cache[part] = nil
+            lib.disconnect(key)
+        end
+    end))
+end
+
+local function process_vehicle(model)
+    if not model or not model.Parent then
+        local elapsed = 0
+        repeat task.wait(0.5) elapsed = elapsed + 0.5 until (model and model.Parent) or elapsed >= 10
+        if not model or not model.Parent then return end
+    end
+
+    for _, inst in ipairs(model:GetDescendants()) do
+        if inst:IsA("BasePart") then
+            process_part(inst)
+        end
+    end
+
+    lib.connect(make_key("AntiFling_DescAdded", model), model.DescendantAdded:Connect(function(desc)
+        if not g.AntiFling_Enabled then return end
+        if desc:IsA("BasePart") then
+            process_part(desc)
+        end
+    end))
+end
+
+local function setup_vehicles_folder(folder)
+    for _, child in ipairs(folder:GetChildren()) do
+        if child:IsA("Model") then
+            process_vehicle(child)
+        elseif child:IsA("BasePart") then
+            process_part(child)
+        end
+    end
+
+    if lib.is_alive("AntiFling_ChildAdded") then
+        lib.disconnect("AntiFling_ChildAdded")
+    end
+
+    lib.connect("AntiFling_ChildAdded", folder.ChildAdded:Connect(function(child)
+        if not g.AntiFling_Enabled then return end
+        if child:IsA("Model") then
+            process_vehicle(child)
+        elseif child:IsA("BasePart") then
+            process_part(child)
+        end
+    end))
+
+    if g.notify then
+        g.notify("Success", "Flames Hub | Anti Vehicle Fling enabled.", 5)
+    end
+end
+
+local function clear_all()
+    g.AntiFling_Enabled = false
+    table.clear(g.antifling_parts_cache)
+    lib.cleanup_all()
+end
+
+g.anti_fling = function(state)
+    if state == true then
+        if g.AntiFling_Enabled then
+            return 
+        end
+
+        g.AntiFling_Enabled = true
+        table.clear(g.antifling_parts_cache)
+
+        local main = Workspace:FindFirstChild("_Main")
+        local vehicles_folder = main and main:FindFirstChild("Vehicles")
+        if vehicles_folder then
+            setup_vehicles_folder(vehicles_folder)
+        end
+
+        lib.connect("AntiFling_FolderWatch", Workspace.DescendantAdded:Connect(function(child)
+            if not g.AntiFling_Enabled then return end
+            if child.Name == "Vehicles" and child:IsA("Folder") and child.Parent and child.Parent.Name == "_Main" then
+                setup_vehicles_folder(child)
+            end
+        end))
+    elseif state == false then
+        if not g.AntiFling_Enabled then
+            return 
+        end
+
+        clear_all()
+
+        if g.notify then
+            g.notify("Success", "Flames Hub | Anti Vehicle Fling disabled.", 5)
+        end
+    end
+end
+
+getgenv().AntiFling = Tab4:CreateToggle({
+Name = "Anti Vehicle Fling",
+CurrentValue = g.AntiFling_Enabled or false,
+Flag = "AntiVehicleFling",
+Callback = function(state)
+    g.anti_fling(state)
 end,})
 
 getgenv().Rainbow_FE_Car = Tab4:CreateToggle({
@@ -1482,32 +1985,28 @@ Flag = "PvPToggle",
 Callback = function(is_pvp_on)
     if is_pvp_on then
         getgenv().pvp_damage_value = true
-        local Character = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 5)
-        local PvP_Attribute = Character and Character:GetAttribute("PVPDamageEnabled")
-        if not PvP_Attribute then
+        local char_pvp = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
+        local PvP_Attribute = char_pvp:GetAttribute("PVPDamageEnabled")
+        if PvP_Attribute == nil then
             getgenv().pvp_damage_value = false
             getgenv().PvPSetting:Set(false)
             return getgenv().notify("Error", "PvP Attribute was not found in Character, cannot set PvP.", 5)
         end
 
         if getgenv().pvp_damage_value == true then
-            Character:SetAttribute("PVPDamageEnabled", true)
+            char_pvp:SetAttribute("PVPDamageEnabled", true)
         end
     else
         getgenv().pvp_damage_value = false
-        if getgenv().Character:GetAttribute("PVPDamageEnabled") and getgenv().Character:GetAttribute("PVPDamageEnabled") == true then
+        local char_pvp = getgenv().Character or LocalPlayer.Character or get_char(LocalPlayer, 10)
+        local PvP_Attribute = char_pvp:GetAttribute("PVPDamageEnabled")
+        if PvP_Attribute == true then
             getgenv().Character:SetAttribute("PVPDamageEnabled", false)
         end
     end
 end,})
-wait(0.3)
-if Old_PVP_Enabled == true then
-    getgenv().PvPSetting:Set(true)
-    getgenv().Character:SetAttribute("PVPDamageEnabled", true)
-else
-    getgenv().PvPSetting:Set(false)
-    getgenv().Character:SetAttribute("PVPDamageEnabled", false)
-end
+wait(0.25)
+pcall(function() getgenv().Character:SetAttribute("PvPDamageEnabled", getgenv().pvp_damage_value or false) end)
 
 getgenv().looping_kills = true
 getgenv().LoopKill_Plr = Tab5:CreateInput({
@@ -1741,7 +2240,7 @@ for name, _ in pairs(carNames) do
 end
 wait()
 local vehicle_selected = nil
-
+local dropdown_ready = false
 getgenv().Spawn_Vehicle_Plr = Tab3:CreateDropdown({
 Name = "Spawn A Vehicle",
 Options = Owned_Vehicle_Slots,
@@ -1749,12 +2248,24 @@ CurrentOption = Owned_Vehicle_Slots[1] or "",
 MultipleOptions = false,
 Flag = "vehicle_slot",
 Callback = function(vehicle_slot_picker)
+    if not dropdown_ready then
+        dropdown_ready = true
+        return
+    end
+
     if typeof(vehicle_slot_picker) == "table" then
         vehicle_slot_picker = vehicle_slot_picker[1]
     end
 
+    if not vehicle_slot_picker or vehicle_slot_picker == "" then return end
+
     vehicle_selected = carNames[vehicle_slot_picker]
-    task.wait(.3)
+
+    if not vehicle_selected then
+        return notify("Error", "No vehicle found for: " .. tostring(vehicle_slot_picker), 5)
+    end
+
+    task.wait(0.3)
     spawn_vehicle(vehicle_slot_picker)
 end,})
 
@@ -1880,6 +2391,22 @@ Callback = function()
     end
 end,})
 
+local function get_tuning_module(module_name)
+    local current_vehicle = retrieve_vehicle()
+    if not current_vehicle then return nil end
+    local chassis = current_vehicle:FindFirstChild("Chassis: Core")
+    if not chassis then return nil end
+    local tuning = chassis:FindFirstChild("Tuning Components")
+    if not tuning then return nil end
+    local module = tuning:FindFirstChild(module_name)
+    if not module then return nil end
+    return require(module)
+end
+
+local sliders_ready = false
+task.wait(0.5)
+sliders_ready = true
+
 if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
     if not string.find(executor_Name, "JJSploit") then
         local current_vehicle = retrieve_vehicle()
@@ -1897,7 +2424,7 @@ if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
         end
 
         local function read_components_folder()
-            local veh = request_vehicle()
+            local veh = retrieve_vehicle()
             if not veh then return nil end
             local chassis = veh:FindFirstChild("Chassis: Core")
             if not chassis then return nil end
@@ -1946,7 +2473,7 @@ if executor_Name ~= "Solara" and executor_Name ~= "Xeno" then
         getgenv().Apply_Best_Vehicle_Settings = Tab1:CreateButton({
         Name = "Auto Best Settings (WIP, NOT DONE YET / BETA!)",
         Callback = function()
-            local veh = request_vehicle()
+            local veh = retrieve_vehicle()
             if not veh then
                 return getgenv().notify("Error", "Spawn a vehicle first.", 6)
             end
@@ -2139,5 +2666,5 @@ Callback = function()
         return getgenv().notify("Warning", "System Broken is already loaded.", 5)
     end
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/SystemBroken/refs/heads/main/source"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/System_Broken.lua"))()
 end,})
