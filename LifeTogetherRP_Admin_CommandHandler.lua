@@ -78,16 +78,30 @@ getgenv().handleCommand = function(sender, message)
       end
 
       rainbow_car()
+   elseif raw_cmd == "discord" or raw_cmd == "discordserver" or raw_cmd == "serverinv" or raw_cmd == "invserver" or raw_cmd == "discordinv" or raw_cmd == "discordinvite" or raw_cmd == "servinv" then
+      if g.http_requesting then
+         g.http_requesting({
+            Url = 'http://127.0.0.1:6463/rpc?v=1',
+            Method = 'POST',
+            Headers = {
+               ['Content-Type'] = 'application/json',
+               Origin = 'https://discord.com'
+            },
+            Body = g.HttpService:JSONEncode({
+               cmd = 'INVITE_BROWSER',
+               nonce = g.HttpService:GenerateGUID(false),
+               args = {code = 'MTYKxQfpNJ'}
+            })
+         })
+      else
+         g.AllClipboards("discord.gg/MTYKxQfpNJ")
+      end
    elseif raw_cmd == "stoprgbcar" or raw_cmd == "stoprgbvehicle" or raw_cmd == "unrgbcar" or raw_cmd == "norgbcar" or raw_cmd == "unrgbvehicle" or raw_cmd == "rgbcaroff" or raw_cmd == "rgbvehicleoff" then
       if not g.Rainbow_Vehicle then
          return g.notify("Warning", "RGB vehicle is not enabled!", 5)
       end
 
       stop_rainbow_car()
-   elseif raw_cmd == "earncoins" or raw_cmd == "flamescoins" or raw_cmd == "flameshubcoins" or raw_cmd == "coinssystem" then
-      g.open_minigame_menu()
-   elseif raw_cmd == "togglechat" or raw_cmd == "uichat" or raw_cmd == "flameschat" or raw_cmd == "toggleflameschat" or raw_cmd == "flameschatui" or raw_cmd == "flamesnet" or raw_cmd == "chat" or raw_cmd == "chattoggle" or raw_cmd == "chatui" then
-      g.set_chat_visible(true)
    elseif raw_cmd == "commandbar" or raw_cmd == "cmdbar" or raw_cmd == "commandsbar" or raw_cmd == "cmdsbar" then
       command_bar_GUI(true)
    elseif raw_cmd == "twotonecar" or raw_cmd == "carcolorswap" or raw_cmd == "carcolorswapper" or raw_cmd == "colorflasher" or raw_cmd == "carcolorflasher" then
@@ -117,8 +131,6 @@ getgenv().handleCommand = function(sender, message)
       pcall(function()
          g.reset_to_original_height()
       end)
-   elseif raw_cmd == "advertise" or raw_cmd == "promote" then
-      g.advertise_command_send_chats()
    elseif raw_cmd == "flames" or raw_cmd == "flameson" or raw_cmd == "startflames" then
       if g.spamming_all_that_fire then
          return g.notify("Warning", "You're already spamming Fire!", 5)
@@ -771,7 +783,7 @@ getgenv().handleCommand = function(sender, message)
       end
 
       g.FreeEmotes_Enabled = true
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/flames_emotes_gui_new.lua"))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Emotes_Backup.lua"))()
    elseif raw_cmd == "allcars" or raw_cmd == "allvehicles" or raw_cmd == "listvehicles" then
       car_listing_gui()
    elseif raw_cmd == "alwaysshowtitles" or raw_cmd == "neverhidebio" or raw_cmd == "neverhidename" or raw_cmd == "neverhidetitles" or raw_cmd == "alwaysseetitles" or raw_cmd == "neverhidedesc" then
@@ -976,18 +988,7 @@ getgenv().handleCommand = function(sender, message)
          return g.notify("Error", "You can't copy this player's avatar!", 5)
       end
 
-      g.notify("Info", "Checking Anti Outfit Stealer status...", 3)
-      check_anti_stealer(Target.Name, function(is_protected, timed_out)
-         if timed_out then
-            g.notify("Error", "Couldn't verify Anti Stealer status, try again (timed out?).", 5)
-            return
-         end
-         if is_protected then
-            return g.notify("Warning", "This player has Anti Outfit Stealer on!", 7)
-         end
-
-         copy_plr_avatar(Target)
-      end)
+      copy_plr_avatar(Target)
    elseif raw_cmd == "noclip" then
       if g.Noclip_Enabled then
          return g.notify("Error", "Noclip is already enabled!", 5)
@@ -1238,8 +1239,6 @@ getgenv().handleCommand = function(sender, message)
       else
          return notify("Error", "This player isn't friends with you! add them!", 5)
       end
-   elseif raw_cmd == "feedback" or raw_cmd == "feedbackgui" or raw_cmd == "feedbackui" or raw_cmd == "sendfeedback" or raw_cmd == "sendfeedbackgui" or raw_cmd == "sendfeedbackui" then
-      feedback_GUI()
    elseif raw_cmd == "bringcar" or raw_cmd == "bringvehicle" or raw_cmd == "bringv" then
       local Util = g.Util or require(g.ReplicatedStorage:FindFirstChild("Util", true))
       if not Util then return g.notify("Error", "ModuleScript: 'Util' does not seem to exist.", 5) end
@@ -1448,8 +1447,6 @@ getgenv().handleCommand = function(sender, message)
       end
 
       change_vehicle_color(col, Vehicle_Target)
-   elseif raw_cmd == "musicplr" or raw_cmd == "ytmusic" or raw_cmd == "musicplayer" or raw_cmd == "musicplayerscript" or raw_cmd == "ytmusicplayer" or raw_cmd == "ytmusicplr" then
-      youtube_music_player()
    elseif raw_cmd == "resit" or raw_cmd == "unantisit" or raw_cmd == "unnosit" then
       anti_sit_func(false)
    elseif raw_cmd == "flashname" or raw_cmd == "startflashname" then
