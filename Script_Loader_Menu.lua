@@ -1,4 +1,5 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
+local g = getgenv()
 local scriptstoload = {
     ["Tower Of Misery"] = {
         id = 4954752502,
@@ -6,19 +7,15 @@ local scriptstoload = {
     },
     ["Ultimate Driving"] = {
         id = 54865335,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Ultimate_Driving_Hub.lua"
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Ultimate_Driving.lua"
     },
-    ["LifeTogether RP"] = { -- ion update ts no more
+    ["LifeTogether RP"] = { -- bora bora & ski resort.
         id = {13967668166, 99644611200703, 99154507657228},
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP.lua"
-    },
-    ["LifeTogether Admin Commands (FE)"] = {
-        id = {13967668166, 99644611200703, 99154507657228},
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LifeTogether_RP_Admin.lua"
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Life_Together_Admin.lua"
     },
     ["Hide And Seek Extreme"] = {
         id = 205224386,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Hide_And_Seek_Extreme.lua"
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Hide_And_Seek_Extreme.lua"
     },
     ["Apartment Hangout Spot"] = {
         id = 108873247414429,
@@ -26,7 +23,7 @@ local scriptstoload = {
     },
     ["The Lanes"] = {
         id = 1333478699,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/The_Lanes.lua"
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/The_Lanes.lua"
     },
     ["Player or AI"] = {
         id = 95217169945642,
@@ -38,7 +35,7 @@ local scriptstoload = {
     },
     ["Southwest Florida Beta"] = {
         id = 5104202731,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Southwest_Florida.lua"
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Southwest_Florida_BETA.lua"
     },
     ["Driving Empire"] = {
         id = 3351674303,
@@ -50,18 +47,26 @@ local scriptstoload = {
     },
     ["Mega Fun Obby"] = {
         id = 12996397,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/MegaFunObby.lua"
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Mega_Fun_Obby.lua"
     },
     ["Catalog Avatar Creator"] = {
         id = 7041939546,
-        link = "https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/CatalogAvatarCreator.lua"
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/CatalogAvatarCreator.lua"
+    },
+    ["Tower Of Hell"] = {
+        id = 1962086868,
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Tower_Of_Hell_Script_Hub.lua"
+    },
+    ["Car Driving Ultimate"] = {
+        id = 11145865512,
+        link = "https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Car_Driving_Ultimate.lua"
     }
 }
 
-getgenv().Game = cloneref and cloneref(game) or game
-local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/main/Notification_Lib.lua"))()
+g.Game = cloneref and cloneref(game) or game
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Notify_Lib.lua"))()
 wait(0.2)
-getgenv().notify = getgenv().notify or function(notif_type, msg, duration)
+g.notify = g.notify or function(notif_type, msg, duration)
     NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration))
 end
 
@@ -89,9 +94,9 @@ for name, all_scripts in pairs(scriptstoload) do
     if matcheswhat(all_scripts.id, game.PlaceId) then
         if matcheswhat(scriptstoload["LifeTogether RP"].id, game.PlaceId) then
             if not getgenv().LifeTogetherRP_Admin then
-                return load_str(scriptstoload["LifeTogether Admin Commands (FE)"].link)
+                return load_str(scriptstoload["LifeTogether RP"].link)
             else
-                return getgenv().notify("Warning", "You have already loaded the Life Together Admin commands.", 10)
+                return getgenv().notify("Warning", "You have already loaded the Life Together script.", 10)
             end
         end
 
@@ -100,8 +105,7 @@ for name, all_scripts in pairs(scriptstoload) do
     end
 end
 
-local rf = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/GetUILibrary"))()
-wait(0.1)
+local rf = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Rayfield_UI.lua"))()
 local window = rf:CreateWindow({
     Name = "Flames Hub | 🏠 Script Hub Loader 🏠",
     LoadingTitle = "Welcome, "..tostring(game.Players.LocalPlayer),
@@ -128,8 +132,7 @@ local window = rf:CreateWindow({
     }
 })
 wait(0.1)
-getgenv().Buttons = getgenv().Buttons or {}
-
+g.Buttons = g.Buttons or {}
 local Tab1 = window:CreateTab("🏡 Scripts 🏡", 0)
 local Section1 = Tab1:CreateSection("| 🏡 Scripts Section 🏡 |")
 local Tab2 = window:CreateTab("🎮 Game TPs 🎮", 0)
