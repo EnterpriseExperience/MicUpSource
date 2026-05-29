@@ -1,1 +1,2935 @@
-return(function(...)local v={"\067\068\090\110\120\080\069\101\073\068\121\077\073\052\073\051\120\077\049\061";"\120\066\106\103\070\080\085\112\106\080\069\114\120\077\119\118","\119\075\078\113\050\072\043\107","\120\055\054\069\122\081\050\080\072\108\099\107\122\076\061\061";"\069\051\053\115\069\085\104\109\068\065\097\084\100\086\089\061","\105\075\055\088";"\068\105\090\084\106\075\121\106\087\081\103\113\078\077\078\052\077\076\061\061","\089\114\086\076\071\055\072\061","\072\055\050\069\120\055\076\061","\057\050\073\088\080\116\043\078\068\066\108\073\113\055\087\070\051\049\053\106\101\108\049\067\047\052\099\106\106\090\120\074\104\083\108\088\056\052\067\104\107\071\065\079\082\049\080\056\114\117\075\047\117\105\107\085\122\097\052\076\121\104\048\121\074\076\061\061","\111\076\068\107\075\076\061\061","\097\112\099\080\122\043\061\061";"\122\118\106\080\122\118\106\107\078\116\061\061","\043\048\121\043";"\066\085\054\112\097\076\061\061","\050\051\122\117\077\077\083\087\070\108\099\070\078\099\071\080\050\052\043\061";"\078\118\115\090\078\102\061\061","\048\052\103\118\077\055\056\083\120\085\079\069\070\051\106\065";"\122\118\115\083\122\043\061\061","\056\068\120\119\099\069\121\056\054\043\061\061","\078\055\115\113\120\055\077\061","\070\055\122\118\077\105\121\106\048\112\099\077\097\099\050\087\097\118\080\061";"\078\068\114\076\097\068\050\065";"\078\118\115\101\120\116\061\061";"\079\119\076\077\047\043\061\061";"\070\068\122\087\078\051\119\061","\110\079\084\103\070\090\047\118\089\054\120\090\097\098\077\061","\048\098\072\100\048\055\085\101\078\112\050\081\067\119\069\066\106\075\116\061","\120\052\071\061","\078\098\069\069\073\055\106\043\122\068\114\097\047\080\056\079";"\070\081\121\052\106\080\110\118\047\080\121\100\122\112\122\107\120\102\061\061";"\078\055\054\051\078\081\121\090\120\108\072\061","\079\081\099\052\047\055\122\051\068\055\099\097\073\068\050\047\050\080\043\061","\120\068\115\080\070\102\061\061","\047\051\106\088\077\055\122\075\106\051\121\073\079\098\102\056\073\075\116\101";"","\047\081\079\080\072\105\078\099\078\102\061\061";"\079\066\121\075\067\048\115\121\120\098\050\081\072\055\069\085","\086\081\103\081\108\114\084\050\067\110\099\100\099\102\071\076\088\109\073\107\120\076\061\061";"\097\098\100\056\112\087\099\106\069\072\120\080\075\115\076\116\099\053\117\070\089\115\075\056\073\043\061\061";"\072\098\079\101\070\068\114\112","\120\055\106\107";"\050\056\101\090";"\122\105\076\118\077\068\090\043\120\077\090\043\073\098\078\119\070\043\061\061";"\086\066\049\122\110\086\105\099","\065\068\047\115\104\111\078\112\107\115\080\089\116\117\057\120\087\077\070\070\108\099\066\117\098\043\061\061","\048\081\050\106\043\112\072\085\106\081\106\055\097\118\056\076";"\110\120\105\051\085\073\087\080\047\101\108\077\054\074\098\098\049\115\084\116\101\112\100\109\078\114\069\116\107\098\052\073\047\088\099\109\066\055\101\111";"\122\066\121\101\120\098\071\061";"\077\108\056\087\097\099\097\085\072\068\099\108\097\066\050\079\079\066\105\061","\070\081\079\080\072\102\061\061","\078\115\078\112\070\099\078\071\048\080\083\107\048\098\071\114";"\122\118\085\069\078\055\050\089","\098\110\075\106\081\103\078\065";"\072\108\106\056\078\068\106\051\078\102\061\061";"\066\087\084\103\106\053\072\073";"\114\057\113\082\085\113\076\098\117\043\061\061","\055\050\112\066\108\102\061\061";"\071\088\082\074\116\122\051\100";"\072\118\106\080\120\068\106\080\097\066\079\069\097\108\056\099","\067\043\082\089\069\112\053\048\104\067\081\120\088\097\108\081\068\077\069\107\052\116\061\061";"\106\055\115\083\072\055\106\101\071\105\079\099\078\055\106\075\078\055\106\119\071\043\061\061";"\066\085\054\090\120\108\079\099\067\102\061\061","\070\105\106\071\122\112\106\089\070\080\083\085\073\108\056\101\048\076\061\061";"\074\089\065\090\053\043\061\061","\122\108\056\104\120\098\071\061","\070\055\110\100\077\115\099\100\087\105\100\098\048\099\116\101";"\070\081\079\080\072\115\054\101\122\066\115\085\122\066\050\080";"\078\055\054\107\078\068\085\113\122\066\071\061";"\048\048\106\071\067\075\106\086\122\081\090\085\122\112\090\106","\122\098\050\085\097\116\061\061";"\074\104\049\076\085\089\077\054","\106\080\057\109\105\054\080\101","\097\118\054\107\097\118\115\080";"\072\098\099\107";"\072\108\106\083\120\098\122\099";"\103\097\089\104";"\112\107\076\117\090\076\061\061";"\079\048\121\109\122\068\115\050\072\118\110\101\120\085\079\107";"\121\102\051\118\065\115\098\083\089\043\061\061","\068\055\115\051\073\108\114\118\072\119\114\050\078\105\122\099";"\073\099\090\048\122\068\078\109\078\066\103\043\067\099\099\076\070\068\077\061";"\097\118\069\069\072\116\061\061","\122\108\056\085\067\081\106\051";"\118\089\120\050\115\057\116\081\074\084\057\079\118\118\080\073\100\050\071\049\083\056\081\118\056\119\090\122\109\088\081\081\100\049\072\104\056\088\104\057\068\084\078\107\104\114\108\083\113\112\078\081\051\089\076\073\079\101\079\048\097\054\047\069\108\043\090\112\086\097\107\050\121\097\122\057\116\099\050\122\081\088\076\098\118\055\120\083\117\048\108\083\104\047\122\107\110\086\054\079\066\072\089\110\102\076\061\061";"\052\113\118\101\077\103\100\106";"\087\116\061\061";"\116\108\084\050\069\066\070\100";"\066\085\054\083\122\066\079\069\078\055\115\113\120\055\077\061";"\087\113\116\099\122\111\089\090\087\116\061\061";"\066\085\054\110\122\068\100\061","\120\052\105\061","\087\086\056\099\089\097\107\049\085\102\109\098\072\083\097\078\104\100\084\074\100\065\048\071\081\098\050\120\122\053\055\051\088\076\073\071\113\116\050\051\067\118\048\119\083\116\110\078\054\084\067\069\112\073\082\087\053\057\057\050\076\102\104\079\083\076\061\061";"\067\118\052\080\090\056\116\082";"\066\051\085\066\089\069\112\110\107\076\061\061","\072\108\115\107\122\055\054\083";"\068\084\102\112\107\057\084\098\043\057\102\071\118\114\089\098\083\048\111\100\087\105\114\099\097\067\118\082\107\111\098\080\109\055\116\061","\070\118\054\100\122\077\114\121\122\080\054\081\073\055\085\056";"\120\080\105\101\072\048\099\108\072\119\121\099\070\106\115\080\050\105\049\061";"\073\102\101\109";"\107\122\113\086\112\108\074\069\079\117\066\121\080\067\085\119\098\100\086\057\090\105\099\112\081\050\043\071\121\078\065\113\086\102\061\061","\077\105\069\117\070\075\099\081","\100\050\113\115\048\051\069\101\100\076\061\061"}for w,O in ipairs({{-982024+982025,-360420+360523};{-952911+952912;11957-11870};{-445690+445778,-630115-(-630218)}})do while O[398941+-398940]<O[530802+-530800]do v[O[-475790+475791]],v[O[-890556-(-890558)]],O[-801208-(-801209)],O[463591-463589]=v[O[-769243-(-769245)]],v[O[-311590+311591]],O[390289+-390288]+(-343995-(-343996)),O[-993712+993714]-(882393+-882392)end end local function w(w)return v[w-(670431+-629270)]end do local w=string.char local O=table.concat local k={r=996478+-996421;P=-140883+140935,y=881311-881302,j=-164152+164173,L=-708542-(-708590),E=-325505-(-325538);["\048"]=-260763+260782,u=-1002596+1002638;Q=22290+-22283;["\052"]=-340448-(-340451),R=980626-980563,g=225026-225025,T=-464682-(-464692),["\051"]=829115+-829064,["\050"]=409612+-409599;A=-10715+10758,["\049"]=722754-722694,["\053"]=-222929+222988,p=517661-517622,Y=26230+-26190;C=-695091-(-695121);l=738362+-738324,["\054"]=619463-619402,k=-625126-(-625172);w=-535138-(-535174),n=15483-15439;["\047"]=-841214-(-841232);U=251463+-251410;m=735492-735434;["\055"]=6401+-6395;B=-241447-(-241470),D=145585+-145563;t=466524+-466492,N=387155+-387126,c=515697-515660;V=966530+-966515;O=-435633-(-435650),J=756793-756762,f=-117644+117644;Z=-745821-(-745862);a=860540-860516;F=-864145-(-864171);G=1040898-1040890;K=875428-875393;M=-436784-(-436804),I=226896+-226884;v=-933497+933551,h=183501-183454;o=-297992+297994;["\056"]=425104-425055;d=-239245+239301,i=-350094-(-350098),["\043"]=492970+-492954;s=574336+-574331;S=-526421+526466,H=836663-836635;["\057"]=331050+-330988,x=-377792-(-377819);z=-22223+22248,X=-108597-(-108608),W=-135027+135041,b=69452+-69397;e=578725+-578675;q=172720+-172686}local y=table.insert local x=v local p=string.len local Q=string.sub local t=math.floor local G=type for v=-687209+687210,#x,621564-621563 do local q=x[v]if G(q)=="\115\116\114\105\110\103"then local G=p(q)local z={}local D=754085-754084 local K=944881+-944881 local n=-356516-(-356516)while D<=G do local v=Q(q,D,D)local O=k[v]if O then K=K+O*(-506779+506843)^((154972+-154969)-n)n=n+(207907+-207906)if n==-107145-(-107149)then n=482813+-482813 local v=t(K/(-41906+107442))local O=t((K%(-200421-(-265957)))/(839304+-839048))local k=K%(394952-394696)y(z,w(v,O,k))K=654444+-654444 end elseif v=="\061"then y(z,w(t(K/(173918-108382))))if D>=G or Q(q,D+(-234472+234473),D+(-1890-(-1891)))~="\061"then y(z,w(t((K%(160589+-95053))/(752406-752150))))end break end D=D+(565619-565618)end x[v]=O(z)end end end return(function(v,k,y,x,p,Q,t,C,A,N,L,q,O,a,K,R,n,z,Y,F,G,D,j)R,j,N,a,q,z,L,O,n,D,A,F,Y,C,G,K=function(v,w)local k=K(w)local y=function(y,x,p,Q,t,G,q)return O(v,{y;x;p,Q,t;G;q},w,k)end return y end,function(v,w)local k=K(w)local y=function(...)return O(v,{...},w,k)end return y end,function(v,w)local k=K(w)local y=function(y,x)return O(v,{y;x},w,k)end return y end,function(v,w)local k=K(w)local y=function(y,x,p)return O(v,{y,x,p},w,k)end return y end,{},function()D=D+(23324+-23323)q[D]=-64961-(-64962)return D end,function(v,w)local k=K(w)local y=function()return O(v,{},w,k)end return y end,function(O,y,x,p)local I,g,M,H,Z,r,q,o,m,d,W,P,J,u,i,U,b,j,n,D,s,c,E,f,X,t,B,T,e,h,V,S,l,K while O do if O<180472+6713790 then if O<3574235-289088 then if O<2869706-954152 then if O<948759-(-297441)then if O<-153002+1025522 then if O<-849280+1309350 then if O<634307-274120 then if O<879219-734026 then O=6368330-(-879761)V=w(858990+-817822)U=v[V]t=U else I=-350232+17433901561806 n=G[x[-256887+256889]]j=G[x[461227+-461224]]Z=w(1041828+-1000618)l=j(Z,I)O=-431608+17113920 K=n[l]D=q[K]t=D end else K=G[x[-327163-(-327165)]]l=w(332736-291552)Z=435415+35010752158424 n=G[x[973408-973405]]j=n(l,Z)O=false t=K[j]t={O,t}O=v[w(-895638-(-936816))]end else if O<-89048+882210 then O=G[x[-967286-(-967293)]]O=O and 11633684-805963 or 5544240-(-221919)else O=20139+9417255 end end else if O<1218989-44400 then if O<577647+522727 then K=-826949+826950 D=G[x[-422469+422472]]q=D~=K O=q and 367996+11597359 or 72095+8422283 else T=G[D]O=T and 1733966-369704 or 3489495-(-780574)t=T end else if O<-245568+1480637 then O=false t={O,K}O=v[w(-786175-(-827390))]else O=10069+4049218 end end end else if O<2366133-926097 then if O<338830+997623 then if O<277994+1011754 then O=f V=s O=s and 13961169-(-459789)or 12694976-500242 else O=g I=V O=V and 6113953-(-266692)or 132084+14015278 end else if O<323712+1030126 then d=not o H=H+m M=H<=W M=d and M d=H>=W d=o and d M=d or M d=-85894+3184151 O=M and d M=10110069-637486 O=O or M else u=-889901+889902 P=B[u]u=false c=O J=P==u O=J and-987357+8661056 or 478728+10273260 T=J end end else if O<1866499-234798 then if O<988473-(-618181)then O=252481+2233787 else i=G[D]O=i and-315184+8551512 or 13683676-633540 X=i end else if O<-509522+2289364 then I=9882919932141-671475 Z=w(-511519-(-552742))n=G[x[-235933-(-235935)]]j=G[x[989626+-989623]]l=j(Z,I)K=n[l]D=q[K]t=D O=D and 15665730-(-1016582)or 959396+-608776 else G[x[-716971-(-716976)]]=t q=nil O=-262657-(-971922)end end end end else if O<2171437-(-603288)then if O<2999516-681878 then if O<2684266-687978 then if O<2167047-182575 then if O<-779663+2759691 then K=9643845-(-256029)t=-645141+10327932 D=w(61299+-20037)q=D^K O=t-q q=O t=w(-928647-(-969827))O=t/q t={O}O=v[w(601571-560374)]else o=w(-965758-(-1006937))E=-172390+172645 m=z()G[m]=X t=v[o]o=w(-943412+984653)O=t[o]d=576948-576848 o=169970+-169969 t=O(o,d)e=767040+-767040 o=z()d=265046+-265046 G[o]=t B=356899-356897 O=G[Z]t=O(d,E)d=z()G[d]=t J=w(-881909-(-923086))E=-424395-(-424396)O=G[Z]b=G[o]t=O(E,b)E=z()h=874032+-874031 G[E]=t t=G[Z]b=t(h,B)t=891288-891287 O=b==t B=w(-427927+469159)b=z()G[b]=O t=w(-702551+743786)c=v[J]P=G[Z]r=-236748-(-246748)u={P(e,r)}J=c(k(u))c=w(-450703+491935)T=J..c O=w(-354324-(-395540))h=B..T O=M[O]O=O(M,t,h)h=z()B=w(610270+-569013)G[h]=O T=N(-723133+11430289,{Z;m,V;K,D;H,b;h;o;E,d,U})t=v[B]B={t(T)}O={k(B)}B=O O=G[b]O=O and-573733+1688314 or 9629759-331778 end else l=nil n=nil O=-17417+2733248 Z=nil end else if O<2090780-(-101847)then O=9667767-(-9329)H=nil else t=w(-501839+543091)O=v[t]t=O(q)q=nil O=t()t={}O=v[w(-977146-(-1018370))]end end else if O<2479294-(-53743)then if O<-6503+2522498 then O=true O=O and-503122+7306252 or 9146877-57372 else q=y[-49742-(-49743)]D=y[70514-70512]O=G[x[-249992-(-249993)]]K=O O=K[D]O=O and 4694756-816768 or 9449811-(-757019)end else if O<426806+2183291 then W=w(111296-70127)H=v[W]d=G[n]E=G[D]P=431423+23000093365399 O=1510111-686021 J=w(320710-279464)B=E(J,P)m=d[B]W=H(m,V)else O=v[w(-226874+268101)]t={D}end end end else if O<-17448+3212701 then if O<3720024-818244 then if O<3036224-181936 then O=9626478-1031776 else D=G[x[430071-430069]]K=-94857+94870 q=D*K D=22437727792861-(-702962)t=q+D q=35184373080252-991420 D=493985-493984 O=t%q G[x[-271244+271246]]=O q=G[x[420102+-420099]]O=8187111-(-307267)t=q~=D end else if O<2665733-(-405695)then S=w(897828+-856642)I=V i=v[S]S=w(857143-815883)X=i[S]i=X(q,I)X=G[x[-800166+800172]]S=X()H=i+S O=4849787-(-964302)S=554929-554928 M=H+l H=-725380-(-725636)f=M%H l=f H=K[D]i=l+S X=n[i]I=nil M=H..X K[D]=M else M=H d=M f[M]=d O=631561-(-715188)M=nil end end else if O<3498174-288081 then if O<-1036099+4240394 then t=U O=V O=U and 7957529-709438 or 283069-253110 else O=t and 4859297-(-810924)or 833830+-124565 end else if O<3348449-135618 then t=w(-883409-(-924603))q=w(49213-8006)O=v[t]t=O(q)t={}O=v[w(-149732+190941)]else b=w(-31331-(-72533))W=w(773656+-732427)H=v[W]m=G[n]O=9195936-377988 h=476076+25787310172988 d=G[D]E=d(b,h)W=m[E]M=H[W]s=M end end end end end else if O<5683167-448758 then if O<780808+3187026 then if O<4325294-638222 then if O<185399+3449145 then if O<3890603-335832 then if O<3870986-435697 then m=not W X=X+S t=X<=i t=m and t m=X>=i m=W and m t=m or t m=2310844-326810 O=t and m t=1654164-30616 O=O or t else j=O Z=w(574983+-533783)l=v[Z]K=l O=l and 316761+13244884 or 647798+5197331 end else D=z()G[D]=t t=G[D]O=not t O=O and-1035082+9521662 or 430406+11337365 end else if O<4629706-960044 then M=w(-184949+226169)f=v[M]H=G[n]E=-96773+35144534702578 W=G[D]O=2212965-901035 d=w(220368+-179143)m=W(d,E)M=H[m]s=f[M]V=s else t=G[x[-958277+958278]]O=not t O=O and 12981908-(-882313)or 4527623-(-367144)end end else if O<663051+3210898 then if O<-437995+4154203 then f=w(-580963-(-622129))s=v[f]f=w(116788+-75620)g=s[f]U=g O=2881572-(-321850)else j=w(326803-285550)O=false l=33255355825259-(-49170)D=G[x[-819199-(-819201)]]K=G[x[-953221+953224]]n=K(j,l)t=D[n]t={O,t}O=v[w(428593-387344)]end else if O<-932436+4869777 then O=-854308+3570139 else P=30677738720515-726326 m=w(850236+-808975)W=v[m]m=W()d=G[n]J=w(232628-191427)E=G[D]B=E(J,P)W=d[B]H=m[W]O=H and-801741+15842925 or 140610+2411616 end end end else if O<3839013-(-499064)then if O<3893355-(-315459)then if O<3224717-(-914289)then O=732938+5127280 else O=-816892+4876179 end else if O<-735757+5018655 then G[D]=t O=9097848-362131 else O=G[x[672551-672550]]U=-744543-(-744798)I=791319+-791319 D=K Z=O(I,U)q[D]=Z D=nil O=6892638-424337 end end else if O<-998515+5983800 then if O<4372350-(-326676)then t=w(-874032+915284)O=v[t]q=G[x[946469+-946468]]t=O(q)O=t()t={}O=v[w(-883560-(-924786))]else U=27945558488787-(-506882)O=G[x[-113181-(-113182)]]I=w(383243-341992)K=G[x[-257523-(-257525)]]l=w(518444+-477199)Z=26746395633358-865832 n=G[x[138163-138160]]j=n(l,Z)D=K[j]K=G[x[-547880+547884]]j=G[x[-253556+253558]]V=10795459008310-230291 l=G[x[663979-663976]]Z=l(I,U)U=w(936858-895670)n=j[Z]l=G[x[-561415-(-561417)]]Z=G[x[608410-608407]]I=Z(U,V)j=l[I]q={[D]=K;[n]=j}t=O(q)q=t O=not q O=O and 8383737-112591 or 14954608-(-1041346)end else if O<6064680-883271 then t=-203752+3598120 D=w(597+40574)K=10192348-(-7353)q=D^K O=t-q t=w(895286-854039)q=O O=t/q t={O}O=v[w(-967586-(-1008749))]else J=-766122+766123 O=-729031+7870824 c=B[J]T=c end end end end else if O<5085401-(-759912)then if O<-1021899+6686949 then if O<5832226-268895 then if O<5856522-488179 then W=w(313264+-272090)O=v[W]W=w(-419364-(-460601))v[W]=O O=-43091+7661450 else l=t Z=w(-648879-(-690058))t=v[Z]I=w(873939-832773)Z=w(549418-508177)O=t[Z]Z=z()G[Z]=O t=v[I]I=w(596032+-554813)O=t[I]V=O I=O s=w(1010083+-968917)g=v[s]U=g O=g and 4037466-343753 or 3077932-(-125490)end else if O<380135+5218274 then f=w(-925822-(-967042))s=v[f]V=s U=O g=O O=s and-630472+4295285 or-91568+1403498 else H={I()}f=H[-442792-(-442793)]O=1743219-497341 U=f M=H[-166110+166112]V=M end end else if O<5828515-60484 then if O<6481415-751823 then t=w(-89312+130526)O=v[t]U=F(706212+1270424,{})I=w(1006028-964771)n=w(207649+-166472)q=G[x[704752-704748]]K=v[n]Z=v[I]I={Z(U)}Z=-466850-(-466852)l={k(I)}j=l[Z]n=K(j)K=w(-262680+303915)D=q(n,K)q={D()}t=O(k(q))D=G[x[131271-131266]]O=D and-741561+8593548 or-509696+2318677 q=t t=D else O={}q=O K=G[x[-849413+849422]]O=38708+6429593 n=K K=-253610+253611 D=-945107+945108 j=K K=-932451-(-932451)l=j<K K=D-j end else if O<5114543-(-706364)then V=V+g I=V<=U f=not s I=f and I f=V>=U f=s and f I=f or I f=363836+2538361 O=I and f I=-497591+2482391 O=O or I else Z=O U=w(689592-648379)I=v[U]O=I and-794516+12410639 or 283017+5287780 l=I end end end else if O<5959655-(-570413)then if O<5754315-(-285083)then if O<974281+4896715 then O=U and 13272045-(-236739)or-986930+4928683 else O=true O=O and 96428+1418820 or 14384878-(-1034198)end else if O<-124045+6584858 then l=I O=U O=172606+11443517 else K=K+j Z=not l D=K<=n D=Z and D Z=K>=n Z=l and Z D=Z or D Z=1047137+3242839 O=D and Z D=16226851-559909 O=O or D end end else if O<965425+5729958 then if O<-459080+7019794 then H=W B={K()}h=B[-553791-(-553793)]b=B[316654+-316653]U=b O=U and 10034345-179518 or-88561+2260534 V=h else U=-299620+10959951554131 l=w(-384838-(-426092))V=3744445097638-106455 O=G[x[-918926+918927]]K=G[x[852413+-852411]]n=G[x[-668236+668239]]Z=13534879256874-784524 j=n(l,Z)I=w(-897362-(-938601))D=K[j]K=G[x[74787+-74783]]j=G[x[-605333+605335]]l=G[x[-369224+369227]]Z=l(I,U)n=j[Z]l=G[x[171857+-171855]]U=w(-685097-(-726319))Z=G[x[317401-317398]]I=Z(U,V)j=l[I]q={[D]=K;[n]=j}t=O(q)q=t O=not q O=O and 345028+3528218 or 1829432-70754 end else if O<216713+6603000 then W=295119-295113 S=-860591+860592 O=G[Z]i=O(S,W)O=w(-147840+189014)W=w(373505+-332331)v[O]=i S=v[W]W=-72286-(-72288)O=S>W O=O and 9667109-(-228180)or 976868+4322767 else t={}O=v[w(-674087-(-715263))]end end end end end end else if O<10358914-(-370209)then if O<9693091-947555 then if O<765461+7084476 then if O<6210839-(-977994)then if O<800622+6298631 then if O<-37013+6991442 then if O<352350+6555861 then t=w(-795256+836508)O=v[t]n={O(D)}K=n[-962657+962659]t=n[664033+-664032]n=t O=not n O=O and-402167+1634607 or 12470383-(-587942)else j=10527291977918-826776 O=false n=w(-189965-(-231150))q=G[x[743489+-743487]]D=G[x[-976106+976109]]K=D(n,j)t=q[K]t={O,t}O=v[w(-825194-(-866438))]end else W=898584+-898582 H=-752595+752596 m=W W=-678420-(-678421)d=W W=352636-352636 E=d<W O=10366257-689161 W=H-d end else if O<6375656-(-764135)then O=-1000735+9951509 else e=-103293-(-103294)G[D]=T u=G[E]P=u+e J=B[P]c=g+J J=374789+-374533 O=c%J g=O P=G[d]O=-303071+9038788 J=s+P P=-898564-(-898820)c=J%P s=c end end else if O<174988+7416023 then if O<835987+6544384 then U=z()M=F(106741+4883229,{})G[U]=t g=475318+-475253 O=G[Z]V=1020697-1020694 t=O(V,g)f=w(-733553+774810)O=379198-379198 V=z()G[V]=t S=w(846578+-805401)g=O O=343584-343584 t=v[f]f={t(M)}s=O t=-847867-(-847869)O={k(f)}f=O O=f[t]t=w(-645542-(-686756))M=O O=v[t]H=G[K]i=v[S]S=i(M)i=w(-765176-(-806411))X=H(S,i)H={X()}t=O(k(H))H=z()G[H]=t O=2721298-(-623043)t=-736017-(-736018)X=G[V]i=X X=-561308-(-561309)S=X X=-272553-(-272553)W=S<X X=t-S else H=z()M={}m=z()G[H]=M M=z()b=w(22821-(-18387))g=nil W=Y(10283680-(-2270),{H;U,V,j})d={}o=w(-968967-(-1010172))G[M]=W W={}G[m]=W B=w(166073-124839)W=v[o]I=nil l=nil h=G[m]J=nil E={[b]=h,[B]=J}o=W(d,E)W=R(3496653-965415,{m;H;s,U,V;M})Z=nil U=C(U)H=C(H)G[n]=o s=C(s)V=C(V)G[D]=W M=C(M)m=C(m)j=C(j)j=w(-538048-(-579210))f=nil l=w(-259434+300695)K=nil K=v[j]j=K()j=v[l]l=j()V=w(-332763+373994)g=-868311+23252301408802 Z=G[n]I=G[D]U=I(V,g)j=Z[U]K=l[j]O=K and 7779776-(-1004403)or 2862962-(-627260)end else if O<7636776-(-8224)then O=2175237-(-311031)else u=-772584+772586 P=B[u]O=930164+9821824 u=G[h]J=P==u T=J end end end else if O<8880174-489318 then if O<7729338-(-508226)then if O<-206609+8224704 then O=175172+1633809 K=G[x[222753+-222747]]D=K==q t=D else i=g==s O=-1013403+14063539 X=i end else if O<-310067+8662487 then l=-350440+21156737023843 j=w(-310950+352122)D=G[x[-594456+594458]]O=false K=G[x[-479662-(-479665)]]n=K(j,l)t=D[n]t={O;t}O=v[w(-917496-(-958691))]else t=G[x[-695797-(-695798)]]O=not t O=O and-690378+7606942 or-368581+7024497 end end else if O<-607867+9198062 then if O<8150969-(-339077)then K=G[x[916363+-916361]]Z=353807+24375788865095 O=false n=G[x[782011-782008]]l=w(-203684+244890)j=n(l,Z)t=K[j]t={O,t}O=v[w(10841+30332)]else K=950270+-950140 D=G[x[-731224-(-731227)]]q=D*K D=-6274+6531 t=q%D G[x[119-116]]=t O=104385+981208 end else if O<9738263-1004059 then O=true O=O and 10023779-874213 or 7700481-836354 else E=C(E)O=3077387-(-266954)B=nil o=C(o)m=C(m)b=C(b)h=C(h)d=C(d)end end end end else if O<525005+8995418 then if O<8096032-(-1036085)then if O<8413189-(-442827)then if O<9024478-227732 then l=w(-478876+520137)j=v[l]g=307274+25990480084732 l=j()Z=G[n]I=G[D]V=w(922336+-881132)U=I(V,g)g=34558674549672-982220 s=-2455+31121068966450 j=Z[U]V=w(-880829+922088)K=l[j]Z=G[n]O=3003974-(-486248)I=G[D]U=I(V,g)l=Z[U]g=w(-842360-(-883602))I=G[n]U=G[D]V=U(g,s)Z=I[V]I=-62891.5-(-62894)j=K(l,Z,I)else O=f O=14259998-(-160960)V=s end else if O<8223966-(-772354)then M=nil g=nil l=nil V=C(V)l=w(977624+-936445)Z=C(Z)H=C(H)K=C(K)I=nil f=nil M=-422229-(-422230)n=C(n)D=C(D)g={}D=nil j=C(j)U=C(U)O=2032272-685523 s=nil f={}K=nil n=z()G[n]=D D=z()G[D]=K Z=w(-612016+653195)j=v[l]l=w(-453921-(-495132))I=w(-123250-(-164416))K=j[l]j=z()G[j]=K l=v[Z]V=z()Z=w(-369672+410913)K=l[Z]U=w(-470740+511926)Z=v[I]I=w(553879-512658)l=Z[I]I=v[U]U=w(476158-434930)Z=I[U]I=-503209-(-503209)U=z()G[U]=I s=z()I=-102108+102110 G[V]=I H=344443+-344187 W=H I={}G[s]=g H=-805839+805840 g=-79533+79533 m=H H=102830+-102830 o=m<H H=M-m else O=v[w(270949+-229737)]t={}end end else if O<-368048+9736607 then if O<8634182-(-532392)then t=w(-770470-(-811644))O=v[t]q=w(-388593-(-429830))t=v[q]q=w(-601212-(-642449))v[q]=O q=w(839103+-797929)v[q]=t O=-400926+8995628 q=G[x[-849275+849276]]D=q()else c=G[D]T=c O=c and 888824+4309325 or 6903497-(-238296)end else if O<8507491-(-945877)then t={}j=C(j)l=C(l)O=v[w(239507+-198318)]U=nil K=nil Z=nil V=nil I=nil D=C(D)n=C(n)else H=#f O=888976+13995052 W=-411537+411537 M=H==W end end end else if O<-303732+10382537 then if O<9184468-(-497811)then if O<-576775+10236947 then K=w(-35403-(-76589))O=true D=z()G[D]=O q=y t=v[K]K=w(-478238+519436)j=z()O=t[K]K=z()n=z()I=F(12329332-(-499711),{j})G[K]=O O=A(800822+2411897,{})G[n]=O Z=w(388881+-347624)O=false G[j]=O l=v[Z]Z=l(I)O=Z and 448539+11870825 or-739805+6298598 t=Z else W=W+d b=not E H=W<=m H=b and H b=W>=m b=E and b H=b or H b=5799400-(-752091)O=H and b H=-834516+4974234 O=O or H end else if O<10280883-398648 then O=3807459-(-332259)H=nil else S=w(-406395-(-447572))O=v[S]m=w(651823-610586)W=v[m]S=O(W)O=w(749860+-708686)v[O]=S O=434200+7184159 end end else if O<9367299-(-937930)then if O<11041927-818323 then O={}G[x[796288-796286]]=O t=G[x[49595+-49592]]O=963422+4850667 j=35184372825243-736411 Z=-174127-(-174382)n=t t=D%j G[x[773607-773603]]=t l=D%Z Z=-609946-(-609948)j=l+Z G[x[-315075-(-315080)]]=j I=w(707433+-666247)Z=v[I]I=w(-925390-(-966577))l=Z[I]I=1018611-1018610 Z=l(q)l=w(444684+-403503)V=706740+-706739 K[D]=l g=V V=951245-951245 l=712145-712062 U=Z s=g<V V=I-g else q=G[x[324481+-324480]]t=#q q=330720+-330720 O=t==q O=O and-1046181+3946969 or 237238+13352435 end else if O<11665808-1001517 then g=G[j]O=g and 14318730-(-876261)or 7531162-438503 else D=G[x[-56999+57000]]n=994959+-994958 j=837537-837535 K=D(n,j)D=943957-943956 q=K==D t=q O=q and 207925+3001622 or 718101+12622692 end end end end end else if O<13191924-(-332164)then if O<-29620+12305928 then if O<10889445-(-833745)then if O<10834785-(-714929)then if O<-221952+11219106 then if O<-580424+11382196 then O=c O=4377960-107891 t=T else q=w(-236552+277746)O=v[q]K=361427+-361427 D=G[x[391787+-391779]]q=O(D,K)O=6814157-1047998 end else W=w(-417584+458780)H=v[W]h=857379+12314880917827 m=G[n]b=w(649399+-608159)d=G[D]E=d(b,h)W=m[E]M=H[W]s=M O=-630124+1878258 end else if O<10961896-(-641636)then W=881711+-881711 H=#f M=H==W O=M and 7468879-(-117462)or 15856168-972140 else O=Z K=l O=14274188-712543 end end else if O<891919+11175679 then if O<12815812-1020624 then t=w(-484943-(-526200))K=Y(998893+3351178,{D})O=v[t]t={O(K)}O=v[w(675211-634036)]t={k(t)}else D=G[x[-29339-(-29342)]]K=664392-664360 q=D%K O=835089+12754584 g=-979700+979713 n=G[x[946774+-946770]]U=-616542+616544 Z=G[x[-893887-(-893889)]]M=G[x[310016-310013]]f=M-q M=-283101-(-283133)s=f/M V=g-s I=U^V l=Z/I j=n(l)I=-523933+523934 n=4295551229-583933 K=j%n j=280984+-280982 U=148229-147973 n=j^q D=K/n n=G[x[263692+-263688]]Z=D%I g=543595-543339 I=4295989687-1022391 l=Z*I j=n(l)n=G[x[240410+-240406]]Z=-905768+971304 l=n(D)K=j+l j=668152+-602616 n=K%j l=K-n j=l/Z Z=971013+-970757 l=n%Z D=nil I=n-l Z=I/U q=nil K=nil U=-294281-(-294537)I=j%U V=j-I U=V/g n=nil j=nil V={l,Z,I,U}Z=nil G[x[977891+-977890]]=V U=nil I=nil l=nil end else if O<901178+11278950 then t=w(279590+-238333)O=v[t]D=N(14817803-(-685881),{x[970476-970475],x[587848+-587846];x[566474-566471]})K={O(D)}t=K[937819-937818]q=K[338211+-338209]O=v[w(128979+-87787)]D=t t={D,q}else f=O H=w(404303+-363074)M=v[H]s=M O=M and 2515439-(-717495)or-899126+9717074 end end end else if O<-86735+13064296 then if O<227489+12451135 then if O<11810740-(-671512)then l=G[j]t=l O=5985549-426756 else m=w(791888+-750627)W=v[m]m=W()J=w(901581-860382)d=G[n]O=196282+14443883 P=4687258122889-520707 E=G[D]B=E(J,P)u=-746987+26561027380795 W=d[B]H=m[W]d=G[n]J=w(-977884-(-1019132))P=496928+11310910046067 E=G[D]B=E(J,P)m=d[B]E=G[n]P=w(-567504-(-608762))B=G[D]J=B(P,u)d=E[J]E=515654-515648 W=H(m,d,E)end else if O<-637313+13430115 then I=-444248+18686576486741 D=w(-577541-(-618802))t=v[D]Z=26599720720743-(-218875)D=t()K=G[x[-826429+826431]]n=G[x[-194393-(-194396)]]l=w(-290330-(-331520))j=n(l,Z)t=K[j]Z=317651581385-(-607946)O=D[t]K=G[x[-461738-(-461740)]]n=G[x[662090-662087]]l=w(419113+-377948)j=n(l,Z)D=K[j]n=G[x[-887725+887727]]Z=w(-1002576+1043814)j=G[x[-255487-(-255490)]]l=j(Z,I)K=n[l]n=605301-605295 t=O(D,K,n)O=608025+1645594 else O=true G[x[866823+-866822]]=O O=v[w(-66964+108214)]t={}end end else if O<596299+12466346 then if O<240970+12813705 then G[D]=X O=G[D]O=O and 646103+6454538 or 14585123-582635 else t=w(29732+11525)O=v[t]t={O(n)}t={k(t)}O=v[w(-697862+739105)]end else if O<-374170+13876217 then D=G[x[445620+-445618]]K=G[x[-789378-(-789381)]]q=D==K O=2901840-(-307707)t=q else m=w(-126849+168110)P=606265+3308725487051 W=v[m]m=W()J=w(-985561-(-1026794))d=G[n]E=G[D]B=E(J,P)W=d[B]H=m[W]O=H and-223398+12831088 or 15184761-544596 end end end end else if O<667289+14149617 then if O<13553053-(-427425)then if O<-623129+14229717 then if O<-504929+14068061 then O=j V=11664975082929-(-647046)j=z()G[j]=K U=w(-991212+1032442)l=G[n]Z=G[D]I=Z(U,V)K=l[I]l=z()Z=L(2898535-(-787680),{j;n,D,l})I=N(150910+8224753,{j,n;D;l})G[l]=K K=L(11110419-(-1015630),{l,n;D})g={K()}V=g[267369+-267367]U=g[335911+-335910]g=not U O=g and 330125+10019870 or 5172057-(-688161)else K=w(372895+-331729)D=v[K]K=w(405524-364303)q=D[K]K=G[x[29512+-29511]]D={q(K)}O=v[w(747601-706434)]t={k(D)}end else if O<13473686-(-244535)then I=544838+33057277422555 Z=w(91072-49869)n=G[x[244673+-244671]]j=G[x[-220967+220970]]l=j(Z,I)O=-311671+3869657 K=n[l]D=q[K]t=D else n=w(-587129-(-628320))O=false q=G[x[1026718+-1026716]]D=G[x[-39975+39978]]j=31329294710677-687769 K=D(n,j)t=q[K]t={O;t}O=v[w(558112+-516857)]end end else if O<13525134-(-744419)then if O<13821911-(-254026)then O=true O=14789334-(-629742)else f=O g=O H=w(554040+-512844)M=v[H]s=M O=M and-541402+12060162 or 2067329-819195 end else if O<-762613+15388775 then O=g I=V O=-1004816+7385461 else O=304326+9133068 end end end else if O<14626765-(-832565)then if O<1040394+14036012 then if O<254857+14725586 then H=566935-566934 W=#f M=K(H,W)d=701611-701610 H=l(f,M)M=nil O=12324780-744669 W=G[s]o=H-d m=Z(o)W[H]=m H=nil else m=w(-912717-(-953978))W=v[m]e=30637900618232-123454 m=W()d=G[n]E=G[D]P=10685211487252-(-517979)J=w(1074664-1033446)B=E(J,P)J=w(-660317+701573)P=193809+22497723298779 W=d[B]H=m[W]d=G[n]E=G[D]B=E(J,P)m=d[B]B=G[n]u=w(-732068+773261)J=G[D]P=J(u,e)J=w(-1350+42527)E=B[P]B=v[J]J=B(V)d=E..J O=-178016+1002106 E=-110039-(-110059)W=H(m,d,E)end else if O<980333+14388723 then f={Z()}g=f[528911+-528910]U=g s=f[289847-289845]V=s f=not U O=f and 285240+5378421 or 468063-(-777815)else O=a(-700108+3506614,{n})i={O()}O=v[w(713506-672242)]t={k(i)}end end else if O<359163+15452874 then if O<-702022+16286270 then D=w(-796817-(-838078))t=w(252824-211660)O=v[t]q=G[x[-395282-(-395283)]]t=w(-797179+838361)t=O[t]t=t(O,q)q=t t=v[D]Z=-440605+22126837490012 D=t()K=G[x[671932-671930]]l=w(607937-566720)n=G[x[-435543+435546]]j=n(l,Z)t=K[j]O=D[t]O=O and 187357+12544572 or 1993611-(-260008)else O=G[x[602288+-602278]]D=G[x[-209466-(-209477)]]q[O]=D O=G[x[412917+-412905]]D={O(q)}t={k(D)}O=v[w(943579+-902396)]end else if O<18716+16022736 then Z=w(437961+-396791)n=G[x[379883-379881]]j=G[x[-144805-(-144808)]]I=2174113512998-834098 l=j(Z,I)K=n[l]D=q[K]t=D O=D and 2577004-(-980982)or 14253237-612620 else D=t O=not D O=O and-522751-(-961316)or-158530+7054686 end end end end end end end end O=#p return k(t)end,function(v)local w,O=-997263+997264,v[-868025+868026]while O do q[O],w=q[O]-(418680-418679),(-226729+226730)+w if 960572-960572==q[O]then q[O],G[O]=nil,nil end O=v[w]end end,-996211-(-996211),function(v,w)local k=K(w)local y=function(y)return O(v,{y},w,k)end return y end,function(v,w)local k=K(w)local y=function(y,x,p,Q,t)return O(v,{y;x,p;Q;t},w,k)end return y end,function(v,w)local k=K(w)local y=function(y,x,p,Q)return O(v,{y;x;p,Q},w,k)end return y end,function(v)q[v]=q[v]-(370990-370989)if q[v]==-209562+209562 then q[v],G[v]=nil,nil end end,{},function(v)for w=495617+-495616,#v,774804-774803 do q[v[w]]=q[v[w]]+(-691231+691232)end if y then local O=y(true)local k=p(O)k[w(-957697-(-998905))],k[w(-898475+939738)],k[w(-508247-(-549483))]=v,n,function()return 228366+2556484 end return O else return x({},{[w(801406-760143)]=n;[w(-25052-(-66260))]=v,[w(-750717-(-791953))]=function()return 3050104-265254 end})end end return(j(9346626-(-269585),{}))(k(t))end)(getfenv and getfenv()or _ENV,unpack or table[w(-635171-(-676339))],newproxy,setmetatable,getmetatable,select,{...})end)(...)
+if not game:IsLoaded() then game.Loaded:Wait() end
+if getgenv().TheLanesScript_Hub_Loaded then
+    if getgenv().notify then
+        return getgenv().notify("Warning", "The Lanes | Script Hub is already loaded.", 6)
+    else
+        return warn("The Lanes | Script Hub is already loaded.")
+    end
+end
+
+getgenv().TheLanesScript_Hub_Loaded = true
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Notify_Lib.lua"))()
+getgenv().notify = getgenv().notify or function(notif_type, msg, duration) NotifyLib:External_Notification(tostring(notif_type), tostring(msg), tonumber(duration)) end
+if game.PlaceId ~= 1333478699 then
+    if getgenv().notify then
+        return getgenv().notify("Error", "This is not The Lanes!", 10)
+    else
+        return warn("This is not The Lanes!")
+    end
+end
+
+if not getgenv().GlobalEnvironmentFramework_Initialized then
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Global_Environment.lua"))()
+   wait(0.1)
+   getgenv().GlobalEnvironmentFramework_Initialized = true
+end
+
+getgenv().safe_func = function(...)
+    for i = 1, select("#", ...) do
+        local f = select(i, ...)
+        if typeof(f) == "function" then
+            return f
+        end
+    end
+    return function() end
+end
+
+local function function_exists(func) return typeof(func) == "function" end
+local TextChatService = getgenv().TextChatService or cloneref and cloneref(game:GetService("TextChatService")) or game:GetService("TextChatService")
+local Workspace = getgenv().Workspace or cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
+local Players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local ReplicatedStorage = getgenv().ReplicatedStorage or cloneref and cloneref(game:GetService("ReplicatedStorage")) or game:GetService("ReplicatedStorage")
+local LocalPlayer = getgenv().LocalPlayer or Players.LocalPlayer
+local channel = TextChatService:FindFirstChild("RBXGeneral", true)
+local queue_tp = safe_func(
+    queue_on_teleport,
+    syn and syn.queue_on_teleport,
+    fluxus and fluxus.queue_on_teleport
+)
+local set_clip_board = safe_func(
+    setclipboard,
+    toclipboard,
+    set_clipboard,
+    Clipboard and Clipboard.set
+)
+getgenv().TheLanes_Debugging_Mode_Enabled = getgenv().TheLanes_Debugging_Mode_Enabled or false
+getgenv().Flames_Bowling_Animations = {}
+
+local executor_string = nil
+local function executor_contains(substr)
+    if typeof(executor_string) ~= "string" then
+        return false
+    end
+    return string.find(string.lower(executor_string), string.lower(substr), 1, true) ~= nil
+end
+
+local function retrieve_executor()
+    local name
+    if identifyexecutor then
+        name = identifyexecutor()
+    end
+    return { Name = name or "Unknown Executor" }
+end
+
+local function identify_executor()
+    local executorinfo = retrieve_executor()
+    return tostring(executorinfo.Name)
+end
+
+executor_string = identify_executor()
+
+local function get_lplr()
+    local players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local lplr = getgenv().LocalPlayer or players.LocalPlayer or game.Players.LocalPlayer
+
+    return lplr
+end
+
+local function get_char()
+    local players = getgenv().Players or cloneref and cloneref(game:GetService("Players")) or game:GetService("Players") or game.Players
+    local lplr = getgenv().LocalPlayer or players.LocalPlayer
+    local find_character = getgenv().Character or lplr.Character or getgenv().LocalPlayer.Character or getgenv().LocalPlayer.CharacterAdded:Wait() or players.LocalPlayer.CharacterAdded:Wait() or lplr.CharacterAdded:Wait()
+
+    return find_character
+end
+
+local function get_root()
+    local rootpart = getgenv().HumanoidRootPart or character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart", 3) or getgenv().Character:WaitForChild("HumanoidRootPart", 5)
+
+    return rootpart
+end
+
+function low_level_executor()
+    if executor_contains("solara") then return true end
+    if executor_contains("jjsploit") then return true end
+    if executor_contains("xeno") then return true end
+    return false
+end
+
+getgenv().FlamesLibrary = getgenv().FlamesLibrary or {}
+getgenv().FlamesLibrary._connections = getgenv().FlamesLibrary._connections or {}
+getgenv().FlamesLibrary.connect = function(name, connection)
+	getgenv().FlamesLibrary._connections[name] = getgenv().FlamesLibrary._connections[name] or {}
+	table.insert(getgenv().FlamesLibrary._connections[name], connection)
+	return connection
+end
+
+getgenv().FlamesLibrary.disconnect = function(name)
+	local list = getgenv().FlamesLibrary._connections[name]
+
+	if list then
+		for _, item in ipairs(list) do
+			if typeof(item) == "RBXScriptConnection" then
+				item:Disconnect()
+			elseif type(item) == "thread" then
+				pcall(task.cancel, item)
+			end
+		end
+		getgenv().FlamesLibrary._connections[name] = nil
+	end
+end
+
+getgenv().FlamesLibrary.spawn = function(name, mode, func, ...)
+	if not name or not mode or type(func) ~= "function" then
+		return 
+	end
+
+	if getgenv().FlamesLibrary._connections[name] then
+		getgenv().FlamesLibrary.disconnect(name)
+	end
+
+	getgenv().FlamesLibrary._connections[name] = {}
+
+	local thread
+
+	if mode == "spawn" then
+		thread = task.spawn(func, ...)
+	elseif mode == "defer" then
+		thread = task.defer(func, ...)
+	elseif mode == "delay" then
+		local delay_time = ...
+		thread = task.delay(delay_time, func)
+	elseif mode == "wrap" then
+		thread = coroutine.create(func)
+		coroutine.resume(thread, ...)
+	else
+        -- don't really need a warning --
+		-- warn("Invalid spawn mode / argument: "..tostring(mode))
+		return
+	end
+
+	table.insert(getgenv().FlamesLibrary._connections[name], thread)
+	return thread
+end
+
+getgenv().FlamesLibrary.is_thread_alive = function(input)
+    local lib = getgenv().FlamesLibrary
+
+    if type(input) == "thread" then
+        local ok, status = pcall(coroutine.status, input)
+        if not ok then
+            return false
+        end
+        return status ~= "dead"
+    end
+
+    if type(input) == "string" then
+        local list = lib._connections[input]
+        if not list then
+            return false
+        end
+
+        for _, item in ipairs(list) do
+            if type(item) == "thread" then
+                local ok, status = pcall(coroutine.status, item)
+                if ok and status ~= "dead" then
+                    return true
+                end
+            end
+        end
+
+        return false
+    end
+
+    return false
+end
+
+getgenv().FlamesLibrary.is_alive = function(name)
+    local lib = getgenv().FlamesLibrary
+    local list = lib._connections[name]
+
+    if not list then
+        return false
+    end
+
+    for _, item in ipairs(list) do
+        if typeof(item) == "RBXScriptConnection" then
+            if item.Connected then
+                return true
+            end
+        elseif type(item) == "thread" then
+            if lib.is_thread_alive(item) then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+getgenv().FlamesLibrary.cleanup_all = function()
+	for name in pairs(getgenv().FlamesLibrary._connections) do
+		getgenv().FlamesLibrary.disconnect(name)
+	end
+end
+
+local function keycode_to_string(keycode)
+    if typeof(keycode) ~= "EnumItem" then
+        return nil
+    end
+
+    if keycode.EnumType == Enum.KeyCode then
+        return keycode.Name
+    end
+
+    return nil
+end
+
+local function string_to_keycode(key)
+    if typeof(key) ~= "string" then
+        return nil
+    end
+
+    return Enum.KeyCode[key]
+end
+
+getgenv().Flames_Bowling_Configuration = getgenv().Flames_Bowling_Configuration or {
+    maxPlayers = 4,
+    playerJoinMode = "REQUEST",
+    useBarriers = false,
+    scoringMode = "STANDARD"
+}
+getgenv().Flames_Keybind_Configuration = getgenv().Flames_Keybind_Configuration or {
+    unlock_camera = Enum.KeyCode.F,
+    unlock_camera_string = "F"
+}
+wait(0.1)
+getgenv().Flames_Keybind_Configuration.unlock_camera_string = keycode_to_string(getgenv().Flames_Keybind_Configuration.unlock_camera)
+local function get_config() return getgenv().Flames_Bowling_Configuration end
+local function find_game_over_RF()
+    local cache = getgenv().game_over_arcade_RF
+    if cache and cache:IsA("RemoteFunction") then
+        return cache
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("RemoteFunction") and v.Name:lower():find("gameover") then
+            getgenv().game_over_arcade_RF = v
+            return v
+        end
+    end
+
+    return nil
+end
+
+if not getgenv().game_over_arcade_RF then task.spawn(function() find_game_over_RF() end) end
+
+local function find_arcade_helper_module_script()
+    local cache = getgenv().arcade_helper_modulescript
+    if cache and cache:IsA("ModuleScript") then
+        return cache
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("arcade") and v.Name:lower():find("helper") then
+            getgenv().arcade_helper_modulescript = v
+            return v
+        end
+    end
+
+    return nil
+end
+
+if not getgenv().arcade_helper_modulescript then task.spawn(function() find_arcade_helper_module_script() end) end
+wait(0.1)
+getgenv().mod_arcade_high_score = function()
+    local Arcade_Remote_Function = getgenv().game_over_arcade_RF
+    if not Arcade_Remote_Function then
+        return getgenv().notify("Error", "Could not locate RemoteFunction: 'gameOver' to modify high-score.", 7) 
+    end
+    local mod = require(getgenv().arcade_helper_modulescript)
+    local new_val = 999999999
+    local args
+    local ok, response = pcall(function()
+        mod["MAXIMUM_SCORE"] = new_val
+    end)
+
+    if not ok then
+        print("[src/helpers/arcade-helper.ts:5] Unable to modify numeric data 'MAXIMUM_SCORE', modification was rejected by the client sender")
+    end
+
+    if not low_level_executor() then
+        args = {
+            "AsteroidBlaster",
+            99999 -- the highest it can go, if you set it any higher, it just errors: "Invalid parameter #2 for async remote 'gameOver': got 100000".
+        }
+    else
+        args = {
+            "AsteroidBlaster",
+            new_val
+        }
+    end
+
+    local ok, response = pcall(function() Arcade_Remote_Function:InvokeServer(unpack(args)) end)
+
+    if not ok then
+        return getgenv().notify("Error", "An error occurred while setting maximum Arcade high-score: "..tostring(response), 25)
+    else
+        return getgenv().notify("Success", "Successfully modified high-score to the highest amount possible.", 8)
+    end
+end
+
+getgenv().get_bowling_lanes_folder = function()
+    local cached = getgenv().bowling_folder_found
+    if cached and cached:IsA("Folder") then
+        return cached
+    end
+    wait(0.1)
+    for _, v in ipairs(Workspace:GetChildren()) do
+        if v:IsA("Folder") and v.Name:lower():find("bowl") and v.Name:lower():find("lane") then
+            getgenv().bowling_folder_found = v
+            return v
+        end
+    end
+
+    for _, v in ipairs(Workspace:GetDescendants()) do
+        if v:IsA("Folder") and v.Name:lower():find("bowl") and v.Name:lower():find("lane") then
+            getgenv().bowling_folder_found = v
+            return v
+        end
+    end
+    
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("Folder") and v.Name:lower():find("bowl") and v.Name:lower():find("lane") then
+            getgenv().bowling_folder_found = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().bowling_folder_found then task.spawn(function() get_bowling_lanes_folder() end) end
+wait(0.1)
+getgenv().get_currently_open_lane = function()
+	local claimed_lane_ids = {}
+    local cached = getgenv().bowling_folder_found
+    if not cached then
+        return getgenv().notify("Error", "We could not find the Folder 'BowlingLanes', you cannot use this at this time.", 10)
+    end
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		local lane_id = player:GetAttribute("BowlingLaneId")
+		if lane_id ~= nil then
+			claimed_lane_ids[lane_id] = true
+		end
+	end
+
+	for _, obj in ipairs(cached:GetDescendants()) do
+		if obj:IsA("Model") then
+			local lane_id = obj:GetAttribute("LaneId")
+			if lane_id ~= nil and not claimed_lane_ids[lane_id] then
+				return obj
+			end
+		end
+	end
+
+	return nil
+end
+wait(0.2)
+getgenv().are_all_lanes_occupied = function()
+	local cached = getgenv().bowling_folder_found
+	if not cached then
+		return false
+	end
+
+	local claimed_lane_ids = {}
+	local total_lanes = 0
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		local lane_id = player:GetAttribute("BowlingLaneId")
+		if lane_id ~= nil then
+			claimed_lane_ids[lane_id] = true
+		end
+	end
+
+	for _, obj in ipairs(cached:GetDescendants()) do
+		if obj:IsA("Model") then
+			local lane_id = obj:GetAttribute("LaneId")
+			if lane_id ~= nil then
+				total_lanes = total_lanes + 1
+
+				if not claimed_lane_ids[lane_id] then
+					return false
+				end
+			end
+		end
+	end
+
+	return total_lanes > 0
+end
+
+getgenv().flowrgb = getgenv().flowrgb or function(connname,speed,obj,toggle)
+    local ts=game:GetService("TweenService")
+    local rs=game:GetService("RunService")
+    if toggle==false then
+        if getgenv()[connname] then
+            pcall(function() getgenv()[connname]:Disconnect() end)
+            getgenv()[connname]=nil
+        end
+    else
+        if getgenv()[connname] then
+            pcall(function() getgenv()[connname]:Disconnect() end)
+            getgenv()[connname]=nil
+        end
+        if not obj then
+            return
+        end
+        local hue=0
+        getgenv()[connname]=rs.RenderStepped:Connect(function(dt)
+            hue=(hue+(dt*speed))%1
+            local col=Color3.fromHSV(hue,1,1)
+            if typeof(obj) == "Instance" and obj:IsA("BasePart") then
+                obj.Color = col
+                pcall(function() obj.BrickColor = BrickColor.new(col) end)
+            else
+                pcall(function()
+                    ts:Create(obj,TweenInfo.new(0.10,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{BackgroundColor3=col}):Play()
+                end)
+            end
+        end)
+    end
+end
+
+getgenv().find_start_game_RF = function()
+    local cached = getgenv().start_game_RF
+    if cached and cached:IsA("RemoteFunction") then
+        return cached
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("RemoteFunction") and v.Name:lower():find("start") and v.Name:lower():find("game") then
+            getgenv().start_game_RF = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().start_game_RF then task.spawn(function() getgenv().find_start_game_RF() end) end -- never use 'pcall' for something like this, on some executors it'll just pause execution for a while until it finds it, which is risky.
+
+local function Get_LocalPlayers_Bowling_Ball()
+    local player = getgenv().LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+    if not player then return nil end
+
+    local player_lane_id = player:GetAttribute("BowlingLaneId")
+    local resolved_lane_id = player_lane_id
+    local resolved_lane_name
+    local replicated_lanes = ReplicatedStorage:FindFirstChild("BowlingLanes")
+    local bowling_lanes = getgenv().bowling_folder_found or workspace:FindFirstChild("BowlingLanes")
+
+    if replicated_lanes then
+        if resolved_lane_id ~= nil then
+            for _, model in ipairs(replicated_lanes:GetDescendants()) do
+                if model:IsA("Model") then
+                    local model_lane_id = model:GetAttribute("LaneId")
+                    if model_lane_id ~= nil and tostring(model_lane_id) == tostring(resolved_lane_id) then
+                        resolved_lane_name = model.Name
+                        break
+                    end
+                end
+            end
+        end
+
+        if resolved_lane_id == nil then
+            for _, folder in ipairs(replicated_lanes:GetChildren()) do
+                if folder:IsA("Folder") then
+                    local host_user_id = folder:GetAttribute("HostUserId")
+                    if host_user_id ~= nil and tostring(host_user_id) == tostring(player.UserId) then
+                        resolved_lane_id = folder.Name
+                        break
+                    end
+                end
+            end
+        end
+
+        if resolved_lane_name == nil and resolved_lane_id ~= nil then
+            for _, model in ipairs(replicated_lanes:GetDescendants()) do
+                if model:IsA("Model") then
+                    local model_lane_id = model:GetAttribute("LaneId")
+                    if model_lane_id ~= nil and tostring(model_lane_id) == tostring(resolved_lane_id) then
+                        resolved_lane_name = model.Name
+                        break
+                    end
+                end
+            end
+        end
+    end
+
+    if not bowling_lanes then return nil end
+    if resolved_lane_id == nil and resolved_lane_name == nil then return nil end
+
+    if resolved_lane_name then
+        local direct_match = bowling_lanes:FindFirstChild(resolved_lane_name, true)
+        if direct_match and direct_match:IsA("Model") then
+            local ball = direct_match:FindFirstChild("Ball", true)
+            if ball and ball:IsA("BasePart") then
+                return ball, direct_match
+            end
+        end
+    end
+
+    for _, model in ipairs(bowling_lanes:GetDescendants()) do
+        if model:IsA("Model") then
+            local model_lane_id = model:GetAttribute("LaneId")
+            local lane_id_match = (resolved_lane_id ~= nil and model_lane_id ~= nil and tostring(model_lane_id) == tostring(resolved_lane_id))
+            local lane_name_match = (resolved_lane_name ~= nil and model.Name == resolved_lane_name)
+
+            if lane_id_match or lane_name_match then
+                local ball = model:FindFirstChild("Ball", true)
+                if ball and ball:IsA("BasePart") then
+                    return ball, model
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+local Character = getgenv().Character or LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait() or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character or get_char(LocalPlayer, 5)
+local HumanoidRootPart = getgenv().HumanoidRootPart or (Character and Character:FindFirstChild("HumanoidRootPart", true)) or (Character and Character:WaitForChild("HumanoidRootPart", 10)) or get_root(LocalPlayer, 5)
+getgenv().unlock_char = getgenv().unlock_char or false
+wait(0.1)
+local function un_anchor()
+    local currentCharacter = getgenv().Character or Character
+    if not currentCharacter or not currentCharacter.Parent or not currentCharacter:IsDescendantOf(game) then
+        local lp = LocalPlayer or getgenv().LocalPlayer
+        if not lp then return end
+        local newChar = lp.Character or lp.CharacterAdded:Wait()
+        Character = newChar
+        currentCharacter = newChar
+        HumanoidRootPart = nil
+    end
+
+    for _, obj in ipairs(currentCharacter:GetDescendants()) do
+        if obj:IsA("BasePart") and obj.Anchored then
+            obj.Anchored = false
+        end
+    end
+
+    local hrp = getgenv().HumanoidRootPart or currentCharacter:FindFirstChild("HumanoidRootPart", true) or currentCharacter:WaitForChild("HumanoidRootPart", 2)
+    local humanoid = getgenv().Humanoid or currentCharacter:FindFirstChildOfClass("Humanoid") or currentCharacter:WaitForChild("Humanoid", 2)
+
+    if hrp then
+        HumanoidRootPart = hrp
+    end
+
+    if humanoid then
+        humanoid.WalkSpeed = 22.75
+    end
+end
+
+if getgenv().FlamesLibrary and getgenv().FlamesLibrary.disconnect then getgenv().FlamesLibrary.disconnect("TheLanes_UnlockLoop") end
+wait(0.2)
+getgenv().FlamesLibrary.spawn("TheLanes_UnlockLoop", "spawn", function()
+    while getgenv().unlock_char == true do
+        task.wait()
+        pcall(un_anchor)
+    end
+end)
+wait(0.1)
+if not getgenv().Character_Unlocker_The_Lanes_Connection then
+    getgenv().Character_Unlocker_The_Lanes_Connection = true
+    getgenv().FlamesLibrary.connect("TheLanes_CharacterAdded", LocalPlayer.CharacterAdded:Connect(function(char)
+        Character = char
+        HumanoidRootPart = nil
+
+        if char then
+            char:WaitForChild("HumanoidRootPart", 5)
+            char:WaitForChild("Humanoid", 5)
+            pcall(un_anchor)
+        end
+    end))
+end
+
+getgenv().beam_rgb_enabled = getgenv().beam_rgb_enabled or false
+getgenv().flowrgb_beam = getgenv().flowrgb_beam or function(connname, speed, beams, toggle)
+    local rs = getgenv().RunService or cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+
+    if getgenv()[connname] then
+        pcall(function() getgenv()[connname]:Disconnect() end)
+        getgenv()[connname] = nil
+    end
+
+    if not toggle then
+        return
+    end
+
+    local hue = 0
+    getgenv()[connname] = rs.RenderStepped:Connect(function(dt)
+        hue = (hue + (dt * speed)) % 1
+        local col = Color3.fromHSV(hue, 1, 1)
+        local seq = ColorSequence.new(col)
+        local active_beams = beams
+        if typeof(beams) == "function" then
+            local ok, result = pcall(beams)
+            if ok and typeof(result) == "table" then
+                active_beams = result
+            else
+                active_beams = {}
+            end
+        end
+
+        for _, beam in ipairs(active_beams or {}) do
+            if beam and beam.Parent then
+                beam.Color = seq
+            end
+        end
+    end)
+end
+
+getgenv().instant_proximity_prompts = function(toggle)
+    local Prox_Service = cloneref and cloneref(game:GetService("ProximityPromptService")) or game:GetService("ProximityPromptService")
+    local lib = getgenv().FlamesLibrary
+
+    getgenv()._prox_original_durations = getgenv()._prox_original_durations or {}
+
+    if toggle == true then
+        if lib.is_alive("instantpp") then
+            lib.disconnect("instantpp")
+        end
+
+        getgenv().instantly_press_prox_prompts = true
+        lib.connect("instantpp",
+            Prox_Service.PromptShown:Connect(function(prompt)
+                if not getgenv()._prox_original_durations[prompt] then
+                    getgenv()._prox_original_durations[prompt] = prompt.HoldDuration
+                end
+
+                prompt.HoldDuration = 0
+            end)
+        )
+    elseif toggle == false then
+        if lib.is_alive("instantpp") then
+            lib.disconnect("instantpp")
+
+            for prompt, duration in pairs(getgenv()._prox_original_durations) do
+                if prompt and prompt.Parent then
+                    prompt.HoldDuration = duration
+                end
+            end
+
+            getgenv().instantly_press_prox_prompts = false
+            table.clear(getgenv()._prox_original_durations)
+        else
+            return getgenv().notify("Warning", "Instant ProximityPrompt(S) is not enabled.", 6)
+        end
+    end
+end
+
+local function get_aim_beams()
+    local t = {}
+    local char = getgenv().Character or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character
+    if not char then return t end
+
+    for _, v in ipairs(char:GetDescendants()) do
+        if v:IsA("Beam") and v.Name:lower():find("aim") then
+            table.insert(t, v)
+        end
+    end
+    return t
+end
+
+local function get_camera_module()
+    local cached_module = getgenv().Activity_Camera_Module
+    if cached_module and cached_module:IsA("ModuleScript") then
+        return cached_module
+    end
+
+    for _, v in ipairs(getgenv().LocalPlayer:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("camera") then
+            local p = v.Parent
+            if p and p.Name:lower():find("activity") then
+                getgenv().Activity_Camera_Module = v
+                return v
+            end
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().Activity_Camera_Module then task.spawn(function() get_camera_module() end) end
+wait(0.1)
+local cameraModule
+if not low_level_executor() then
+    cameraModule = require(getgenv().Activity_Camera_Module)
+else
+    cameraModule = getgenv().Activity_Camera_Module
+end
+
+local function force_release_camera()
+    local cam = workspace.CurrentCamera
+    if not cam then return end
+    local StarterPlayer = getgenv().StarterPlayer or cloneref and cloneref(game:GetService("StarterPlayer")) or game:GetService("StarterPlayer")
+    local lp = getgenv().LocalPlayer or game.Players.LocalPlayer or cloneref(game:GetService("Players")).LocalPlayer or game:GetService("Players").LocalPlayer
+
+    pcall(function() cam.CameraType = Enum.CameraType.Custom end) -- pcall(function() incase it's 'CameraType' is already 'Custom'.
+    lp.CameraMinZoomDistance = StarterPlayer.CameraMinZoomDistance
+    lp.CameraMaxZoomDistance = StarterPlayer.CameraMaxZoomDistance
+    if cam.CameraSubject ~= getgenv().Character or cam.CameraSubject ~= getgenv().Humanoid or cam.CameraSubject ~= getgenv().Character:FindFirstChildOfClass("Humanoid") then
+        cam.CameraSubject = getgenv().Humanoid or getgenv().Character or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character or getgenv().Character:WaitForChild("Humanoid", 5) or game.Players.LocalPlayer.Character:WaitForChild("Humanoid", 5)
+    end
+end
+
+local function unlock_cam()
+    local cam = workspace.CurrentCamera
+    if cam then
+        pcall(function()
+            cam.CameraType = Enum.CameraType.Custom
+        end)
+    end
+
+    if cameraModule and typeof(cameraModule.releaseCamera) == "function" then
+        pcall(cameraModule.releaseCamera)
+    else
+        force_release_camera()
+        return 
+    end
+
+    if cam.CameraSubject ~= getgenv().Character or cam.CameraSubject ~= getgenv().Humanoid or cam.CameraSubject ~= getgenv().Character:FindFirstChildOfClass("Humanoid") then
+        cam.CameraSubject = getgenv().Humanoid or getgenv().Character or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character or getgenv().Character:WaitForChild("Humanoid", 5) or game.Players.LocalPlayer.Character:WaitForChild("Humanoid", 5)
+    end
+end
+
+local function lock_cam(cframe, fov, duration) -- not gonna be used tbh.
+    cameraModule.controlCamera({
+        goalId = "ManualLock",
+        cframe = cframe,
+        fieldOfView = fov or 70,
+        duration = duration or 1
+    })
+end
+
+getgenv().FlamesLibrary.spawn("cameraUnlockListener", "spawn", function()
+    local conn = UserInputService.InputBegan:Connect(function(input, gp)
+        if gp then return end
+
+        local keybinds = getgenv().Flames_Keybind_Configuration
+        if not keybinds then return end
+
+        if input.KeyCode and input.KeyCode.Name == keybinds.unlock_camera_string and getgenv().Unlock_Camera_Toggled then
+            unlock_cam()
+        end
+    end)
+
+    getgenv().FlamesLibrary.connect("cameraUnlockListener", conn)
+end)
+wait(0.1)
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+    Name = "🎳 | Flames Hub | The Lanes | 🎳",
+    Icon = 0,
+    LoadingTitle = "🎳 Welcome to, Flames Hub 🔥",
+    LoadingSubtitle = "Produced by: Flames Hub",
+    ShowText = "FLAMES",
+    Theme = "Default",
+    ToggleUIKeybind = "K",
+    DisableRayfieldPrompts = true,
+    DisableBuildWarnings = true,
+    ConfigurationSaving = {
+        Enabled = false,
+        FolderName = nil,
+        FileName = "FlamesHubTheLanes"
+    },
+    Discord = {
+        Enabled = false,
+        Invite = "noinvitelink",
+        RememberJoins = true
+    },
+    KeySystem = false,
+    KeySettings = {
+        Title = "!!!",
+        Subtitle = "!!!!!",
+        Note = "No method of obtaining the key is provided.",
+        FileName = "Key",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = {"."}
+    }
+})
+wait(0.1)
+local Tab = Window:CreateTab("🏠 Main 🏠", 0)
+local Section = Tab:CreateSection("Main Section")
+local Tab_2 = Window:CreateTab("🧍 Character 🧍", 0)
+local Section_2 = Tab_2:CreateSection("Character Section")
+local Tab_3 = Window:CreateTab("🎳 Ball 🎳", 0)
+local Section_3 = Tab_3:CreateSection("Bowling Ball Section")
+local Tab_4 = Window:CreateTab("🛠️ Game Config 🛠️", 0)
+local Section_4 = Tab_4:CreateSection("Game Setup Configuration")
+local Tab_5 = Window:CreateTab("🔨 Config 🔨", 0)
+local Section_5 = Tab_5:CreateSection("Configuration and Keybinds Section")
+local current_ball
+local current_lane
+
+getgenv().find_TS_notifications_module = function()
+    local cached = getgenv().TS_notifications_module_main
+    if cached and cached:IsA("ModuleScript") then
+        return cached
+    end
+
+    for _, v in ipairs(getgenv().LocalPlayer:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("notifications") then
+            local l = v.Parent
+            local p = l.Name:lower()
+            if l and l:IsA("Folder") and p:find("notifications") then
+                getgenv().TS_notifications_module_main = v
+                return v
+            end
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().TS_notifications_module_main then task.spawn(function() find_TS_notifications_module() end) end
+
+getgenv().find_constants_for_bowling = function()
+    local cache = getgenv().bowling_constants_module
+    if cache and cache:IsA("ModuleScript") then
+        return cache
+    end
+
+    for _, v in ipairs(getgenv().LocalPlayer:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("constants") then
+            local o = v.Parent
+            local k = o.Name:lower()
+            if o and k:find("bowling") and o:IsA("Folder") then
+                getgenv().bowling_constants_module = v
+                return v
+            end
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().bowling_constants_module then task.spawn(function() find_constants_for_bowling() end) end
+
+getgenv().find_TS_models_notifications_module = function()
+    local cache = getgenv().replicated_storage_ts_notifications_module
+    if cache and cache:IsA("ModuleScript") and cache:IsDescendantOf(game) then
+        return cache
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("notification") then
+            local u = v.Parent
+            local r = u.Name:lower()
+
+            if u and u:IsA("Folder") and r:find("notifications") then
+                getgenv().replicated_storage_ts_notifications_module = v
+                return v
+            end
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().replicated_storage_ts_notifications_module then task.spawn(function() find_TS_models_notifications_module() end) end
+
+getgenv().in_game_notification = function(text)
+    if not low_level_executor() then
+        pcall(function()
+            local notify_module = require(getgenv().find_TS_notifications_module)
+            local notify_keys_module = require(getgenv().bowling_constants_module)
+            local notify_type_module = require(getgenv().replicated_storage_ts_notifications_module)
+
+            if notify_module and notify_keys_module then
+                notify_module.addNotification({
+                    ["key"] = notify_keys_module.Request,
+                    ["text"] = tostring(text),
+                    ["type"] = notify_type_module.Success
+                })
+            end
+        end)
+    end
+end
+
+local function lane_id_matches(model, local_lane_id)
+    if not model or not model:IsA("Model") then return false end
+    local model_lane_id = model:GetAttribute("LaneId")
+    if model_lane_id == nil or local_lane_id == nil then return false end
+    return tostring(model_lane_id) == tostring(local_lane_id)
+end
+
+local function is_valid_returned_ball_part(obj)
+    if not obj or not obj:IsA("BasePart") then return false end
+    local collision_sound = obj:FindFirstChild("CollisionSound")
+    local dynamic_sound = obj:FindFirstChild("DynamicSound")
+    local ball_mesh = obj:FindFirstChild("BallMesh")
+    return collision_sound and collision_sound:IsA("Sound")
+        and dynamic_sound and dynamic_sound:IsA("Sound")
+        and ball_mesh and ball_mesh:IsA("MeshPart")
+end
+
+local function is_live_ball(ball)
+    return ball and ball:IsA("BasePart") and ball.Parent and ball:IsDescendantOf(game)
+end
+
+local function find_returned_ball_for_local_lane()
+    local bowling_folder = getgenv().bowling_folder_found or (getgenv().get_bowling_lanes_folder and getgenv().get_bowling_lanes_folder())
+    if not bowling_folder then return nil, nil end
+
+    local local_lane_id = LocalPlayer:GetAttribute("BowlingLaneId")
+    if local_lane_id == nil then return nil, nil end
+
+    for _, lane_model in ipairs(bowling_folder:GetDescendants()) do
+        if lane_model:IsA("Model") and lane_id_matches(lane_model, local_lane_id) then
+            local returned_folder = lane_model:FindFirstChild("ReturnedBalls", true)
+            if returned_folder and returned_folder:IsA("Folder") then
+                for _, obj in ipairs(returned_folder:GetDescendants()) do
+                    if is_valid_returned_ball_part(obj) then
+                        return obj, lane_model
+                    end
+                end
+            end
+        end
+    end
+
+    return nil, nil
+end
+
+local ok, response = pcall(function()
+    getgenv().in_game_notification("Welcome to Flames Hub, "..tostring(getgenv().LocalPlayer.DisplayName), 15)
+end)
+
+if not ok then
+    print("[src/shared/games/notifications/notifications.tsx] Failed to produce notification prompt - error")
+end
+
+local function attach_removal_watcher(ball)
+    getgenv().FlamesLibrary.disconnect("ball_removal_watch")
+    getgenv().FlamesLibrary.connect("ball_removal_watch", ball.AncestryChanged:Connect(function(_, parent)
+        if not parent then
+            current_ball = nil
+            current_lane = nil
+        end
+    end))
+end
+
+local function refresh_ball()
+    local ball, lane = Get_LocalPlayers_Bowling_Ball()
+
+    if not is_live_ball(ball) then
+        ball, lane = find_returned_ball_for_local_lane()
+    end
+
+    if is_live_ball(ball) then
+        current_ball = ball
+        current_lane = lane
+        attach_removal_watcher(ball)
+    else
+        current_ball = nil
+        current_lane = nil
+    end
+end
+
+local function start_ball_tracker()
+    getgenv().FlamesLibrary.disconnect("ball_descendant_listener")
+
+    local folder = getgenv().bowling_folder_found or (getgenv().get_bowling_lanes_folder and getgenv().get_bowling_lanes_folder())
+    if not folder then
+        current_ball = nil
+        current_lane = nil
+        return
+    end
+
+    local connection = folder.DescendantAdded:Connect(function(obj)
+        if obj.Name == "Ball" or obj.Name == "ReturnedBalls" or obj.Name == "BallMesh" or obj.Name == "CollisionSound" or obj.Name == "DynamicSound" then
+            getgenv().FlamesLibrary.spawn("ball_refresh_thread", "spawn", function()
+                refresh_ball()
+            end)
+        end
+    end)
+
+    getgenv().FlamesLibrary.connect("ball_descendant_listener", connection)
+    refresh_ball()
+end
+
+getgenv().FlamesLibrary.spawn("ball_tracker_init", "spawn", function()
+    start_ball_tracker()
+end)
+
+local Current_Ball_Label = Tab_3:CreateLabel("Current Ball: "..tostring(current_ball or "None"), 0, Color3.fromRGB(40, 40, 40), false)
+
+getgenv().FlamesLibrary.spawn("ball_label_updater", "spawn", function()
+    while true do
+        if Current_Ball_Label then
+            local ball_name = current_ball and current_ball.Name or "None"
+            if not ball_name:lower():find("ball") then
+                Current_Ball_Label:Set("Current Ball: Temp-Ball", 0, Color3.fromRGB(40, 40, 40), false)
+            else
+                Current_Ball_Label:Set("Current Ball: "..ball_name, 0, Color3.fromRGB(40, 40, 40), false)
+            end
+        end
+        task.wait(0.2)
+    end
+end)
+
+getgenv().ball_weight_enabled = getgenv().ball_weight_enabled or false
+getgenv().default_ball_props = getgenv().default_ball_props or nil
+getgenv().modify_ball_weight = function(enable)
+    if not current_ball then return end
+
+    if enable then
+        if not getgenv().default_ball_props then
+            getgenv().default_ball_props = current_ball.CustomPhysicalProperties
+        end
+
+        local props = current_ball.CustomPhysicalProperties
+        if props then
+            current_ball.CustomPhysicalProperties = PhysicalProperties.new(
+                props.Density * 1.08,
+                props.Friction,
+                props.Elasticity,
+                props.FrictionWeight,
+                props.ElasticityWeight
+            )
+        end
+    else
+        if getgenv().default_ball_props then
+            current_ball.CustomPhysicalProperties = getgenv().default_ball_props
+        end
+    end
+end
+
+local function find_player_scripts_bowling_helper_module()
+    local cache = getgenv().player_scripts_bowling_helper
+    if cache and cache:IsA("ModuleScript") then
+        return cache
+    end
+
+    for _, v in ipairs(getgenv().LocalPlayer:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("bowling") and v.Name:lower():find("helper") then
+            getgenv().player_scripts_bowling_helper = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().player_scripts_bowling_helper then task.spawn(function() find_player_scripts_bowling_helper_module() end) end
+
+local function find_points_text_label()
+    local cache = getgenv().points_and_lane_text_label
+    if cache and cache:IsA("TextLabel") and cache.Parent then
+        return cache
+    end
+
+    for _, v in ipairs(PlayerGui:GetDescendants()) do
+        if v:IsA("ImageButton") and v.BackgroundColor3 == Color3.fromRGB(246, 18, 255) then
+            local frame = v.Parent
+            if frame and frame:IsA("Frame") then
+                local nameLower = frame.Name:lower()
+
+                if nameLower:find("1") or nameLower:find("2") then
+                    for _, child in ipairs(frame:GetDescendants()) do
+                        if child:IsA("TextLabel") and child.Text:match("Lane") then
+                            getgenv().points_and_lane_text_label = child
+                            return child
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().points_and_lane_text_label then task.spawn(function() find_points_text_label() end) end
+
+local function get_points_in_text_label(label)
+    if not label then return end
+    local text = label.Text or getgenv().points_and_lane_text_label
+    local pts = tonumber(text:match("(%d+)%s*pts"))
+
+    return pts
+end
+
+getgenv().get_is_my_turn = function()
+    if not getgenv().player_scripts_bowling_helper then return false end
+    local module = require(getgenv().player_scripts_bowling_helper)
+    local getReplicationFolderFromLaneId = module and module.getReplicationFolderFromLaneId
+    local function islocalplayerturn(lane_id)
+        if not getReplicationFolderFromLaneId or typeof(getReplicationFolderFromLaneId) ~= "function" then
+            getgenv().notify("Error", "Function not loaded or found: getReplicationFolderFromLaneId (broken / patched?)", 15)
+            return false
+        end
+        local folder = getReplicationFolderFromLaneId(lane_id)
+        if not folder then
+            return false
+        end
+        return folder:GetAttribute("CurrentUserId") == getgenv().LocalPlayer.UserId
+    end
+
+    local bowling_lane_id = getgenv().LocalPlayer:GetAttribute("BowlingLaneId")
+    if not bowling_lane_id then
+        return false
+    end
+
+    return islocalplayerturn(bowling_lane_id) and true or false
+end
+
+local function update_lane_state()
+    if getgenv().LocalPlayer:GetAttribute("BowlingLaneId") ~= nil then
+        getgenv().is_currently_playing_in_a_lane = "playing"
+    else
+        getgenv().is_currently_playing_in_a_lane = "not_playing"
+    end
+end
+wait(0.1)
+if not getgenv().FlamesLibrary.is_alive("has_left_playing_lane_tracker") then
+	update_lane_state()
+
+	getgenv().FlamesLibrary.connect(
+		"has_left_playing_lane_tracker",
+		getgenv().LocalPlayer:GetAttributeChangedSignal("BowlingLaneId"):Connect(function()
+			update_lane_state()
+		end)
+	)
+end
+
+local function find_ts_module_script_bowling()
+    local cache = getgenv().signals_module_script_for_bowling_folder
+    if cache and cache:IsA("ModuleScript") then
+        return cache
+    end
+
+    for _, v in ipairs(getgenv().LocalPlayer:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("signals") then
+            local p = v.Parent
+            local n = p.Name:lower()
+            if p and p:IsA("Folder") and n:find("bowling") then
+                getgenv().signals_module_script_for_bowling_folder = v
+                return v
+            end
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().signals_module_script_for_bowling_folder then pcall(find_ts_module_script_bowling) end
+wait(0.1)
+if not low_level_executor() then
+    local bowlingSignalsModule = require(getgenv().signals_module_script_for_bowling_folder)
+    local bowlingSignals = bowlingSignalsModule.bowlingSignals
+    local STAND_OFFSET = 0.08
+    local AIM_OFFSET = 0.58
+    local BALL_SPEED = 89.4
+    local BALL_SPIN = 0
+
+    getgenv().AutoBowl = function()
+        local bowlingSignalsModule = require(getgenv().signals_module_script_for_bowling_folder)
+        local bowlingSignals = bowlingSignalsModule.bowlingSignals
+        local STAND_OFFSET = 0.08
+        local AIM_OFFSET = 0.58
+        local BALL_SPEED = 89.4
+        local BALL_SPIN = 0
+
+        bowlingSignals.launchBowlingBall:Fire(
+            STAND_OFFSET,
+            AIM_OFFSET,
+            BALL_SPEED,
+            BALL_SPIN
+        )
+    end
+end
+wait(0.1)
+getgenv().launch_bowling_shot = function()
+    if low_level_executor() then
+        return getgenv().notify("Error", "Your executor cannot run this, no proper 'require' support.", 6)
+    end
+
+    local bowlingSignalsModule = require(getgenv().signals_module_script_for_bowling_folder)
+    local bowlingSignals = bowlingSignalsModule.bowlingSignals
+    local STAND_OFFSET = 0.08
+    local AIM_OFFSET = 0.57
+    local BALL_SPEED = 89.4
+    local BALL_SPIN = 0
+    local get_sig = getgenv().get_is_my_turn()
+    task.wait() -- a little wait in between each use.
+    if getgenv().LocalPlayer:GetAttribute("BowlingLaneId") and get_sig == true and getgenv().is_currently_playing_in_a_lane == "playing" then
+        if getgenv().AutoBowl then
+            getgenv().AutoBowl()
+        end
+    elseif get_sig == false then
+        return 
+    end
+
+    -- [[ not in use for now ]] --
+    UserInputService.InputBegan:Connect(function(input, gpe)
+        if gpe then return end
+        if input.KeyCode == Enum.KeyCode.Q then
+            getgenv().AutoBowl()
+        end
+    end)
+end
+wait(0.1)
+getgenv().launch_bowling_shot()
+
+getgenv().retry_open_lane_toggle = function(state)
+    if state == true then
+        if getgenv().FlamesLibrary.is_alive("retry_open_lane") then
+            return
+        end
+        
+        getgenv().FlamesLibrary.spawn("retry_open_lane", "spawn", function()
+            local found_lane
+            
+            while true do
+                task.wait(1)
+                local ok, result = pcall(function()
+                    return getgenv().get_currently_open_lane()
+                end)
+                
+                if ok and result and result:IsA("Model") and result:IsDescendantOf(game) then
+                    found_lane = result
+                    break
+                end
+            end
+            
+            if found_lane then
+                local lane_id = found_lane:GetAttribute("LaneId")
+                
+                if lane_id then
+                    start_bowling_at_lane(lane_id)
+                    
+                    local begin_game_RF = getgenv().start_game_RF or getgenv().find_start_game_RF()
+                    if begin_game_RF and begin_game_RF:IsA("RemoteFunction") then
+                        pcall(function()
+                            begin_game_RF:InvokeServer(lane_id)
+                        end)
+                    elseif not begin_game_RF then
+                        begin_game_RF = ReplicatedStorage:FindFirstChild("startGame", true)
+
+                        pcall(function()
+                            begin_game_RF:InvokeServer(lane_id)
+                        end)
+                    end
+                end
+            end
+        end)
+    elseif state == false then
+        if getgenv().FlamesLibrary.is_alive("retry_open_lane") then
+            getgenv().FlamesLibrary.disconnect("retry_open_lane")
+        end
+    else
+        return 
+    end
+end
+wait(0.1)
+getgenv().auto_farm_toggle = function(toggle)
+    if toggle == true then
+        getgenv().automatically_farming_bowling_games = true
+        getgenv().automatically_farming_watching_game_done = true
+        if getgenv().FlamesLibrary.is_alive("auto_farm_currently_enabled") then getgenv().FlamesLibrary.disconnect("auto_farm_currently_enabled") end
+        wait(0.1)
+        getgenv().FlamesLibrary.spawn("auto_farm_currently_enabled", "spawn", function()
+            while getgenv().automatically_farming_bowling_games == true do
+            task.wait(0.15)
+                local get_sig = getgenv().get_is_my_turn()
+                if get_sig == true and getgenv().is_currently_playing_in_a_lane == "playing" then
+                    getgenv().launch_bowling_shot()
+                end
+            end
+        end)
+        task.wait()
+        getgenv().FlamesLibrary.spawn("auto_farm_watching_game_done", "spawn", function()
+            while getgenv().automatically_farming_watching_game_done == true do
+                task.wait(0.15)
+                local verify_pts = get_points_in_text_label(getgenv().points_and_lane_text_label)
+                local Bowling_Lane_ID = getgenv().LocalPlayer:GetAttribute("BowlingLaneId")
+
+                if verify_pts and verify_pts > 298 then
+                    if Bowling_Lane_ID then
+                        if getgenv().exit_game_RF and getgenv().exit_game_RF:IsA("RemoteFunction") then
+                            getgenv().exit_game_RF:InvokeServer(Bowling_Lane_ID)
+                        elseif not getgenv().exit_game_RF then
+                            getgenv().exit_game_RF = ReplicatedStorage:FindFirstChild("leaveGame", true)
+                        end
+                        wait(0.2)
+                        local ok, response = pcall(function()
+                            getgenv().are_all_lanes_occupied()
+                        end)
+
+                        if not ok then
+                            return getgenv().notify("Warning", "No lanes are currently open, try again later.", 7)
+                        end
+
+                        local begin_game_RF = getgenv().start_game_RF or getgenv().find_start_game_RF()
+                        local res
+                        repeat
+                            task.wait(1)
+                            local ok = pcall(function()
+                                res = getgenv().get_currently_open_lane()
+                            end)
+                        until ok and res and res:IsA("Model") and res:IsDescendantOf(game)
+
+                        if res and res.Parent and res:IsDescendantOf(game) then
+                            if getgenv().notify then
+                                getgenv().notify("Success", "Teleporting to open lane...", 5)
+                            end
+                            wait(0.2)
+                            if getgenv().Character then
+                                local laneCFrame = res:GetPivot()
+                                local backwardsOffset = -laneCFrame.LookVector * 75
+
+                                pcall(function() getgenv().Character:PivotTo(laneCFrame + backwardsOffset) end)
+                            end
+                        end
+
+                        if res and res:IsA("Model") and res:IsDescendantOf(game) then
+                            local convert_to_string = res:GetAttribute("LaneId")
+
+                            start_bowling_at_lane(convert_to_string)
+                            wait(0.3)
+                            local ok, response = pcall(function() begin_game_RF:InvokeServer(convert_to_string) end)
+
+                            if not ok then
+                                if getgenv().notify then
+                                    return getgenv().notify("Error", "An unexpected error occurred while calling RemoteFunction 'startGame', got response: "..tostring(response), 30)
+                                else
+                                    return 
+                                end
+                            else
+                                if getgenv().notify then
+                                    getgenv().notify("Success", "Game: "..tostring(convert_to_string).." has been started successfully.", 6)
+                                end
+                            end
+                        elseif not res or res.ClassName ~= "Model" then
+                            if getgenv().notify then
+                                return getgenv().notify("Error", tostring(res).." was not found or is not a Model!", 6)
+                            else
+                                return 
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    elseif toggle == false then
+        getgenv().automatically_farming_bowling_games = false
+        getgenv().automatically_farming_watching_game_done = false
+        if getgenv().FlamesLibrary.is_alive("auto_farm_currently_enabled") then
+            getgenv().FlamesLibrary.disconnect("auto_farm_currently_enabled")
+        end
+        if getgenv().FlamesLibrary.is_alive("auto_farm_watching_game_done") then
+            getgenv().FlamesLibrary.disconnect("auto_farm_watching_game_done")
+        end
+    else
+        return 
+    end
+end
+
+local function find_bowling_helper_module()
+    local cache = getgenv().found_bowling_helper_module_script
+    if cache and cache:IsA("ModuleScript") then
+        return cache
+    end
+    
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("bowling") and v.Name:lower():find("helper") then
+            getgenv().found_bowling_helper_module_script = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().found_bowling_helper_module_script then task.spawn(function() find_bowling_helper_module() end) end
+
+getgenv().find_create_game_RF = function()
+    local cached = getgenv().create_game_RF
+    if cached and cached:IsA("RemoteFunction") then
+        return cached 
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("RemoteFunction") and v.Name:lower():find("create") and v.Name:lower():find("game") then
+            getgenv().create_game_RF = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().create_game_RF then task.spawn(function() getgenv().find_create_game_RF() end) end
+
+local function find_bowling_anims_folder()
+    local cache = getgenv().bowling_animations_folder
+    if cache and cache:IsA("Folder") then
+        return cache
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("Folder") and v.Name:lower():find("bowling") and v.Name:lower():find("animation") then
+            getgenv().bowling_animations_folder = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().bowling_animations_folder then task.spawn(function() find_bowling_anims_folder() end) end
+wait(0.1)
+getgenv().apply_free_animations = function()
+    local folder = getgenv().bowling_animations_folder or find_bowling_anims_folder()
+    if not folder then return end
+
+    for _, v in ipairs(folder:GetChildren()) do
+        if v:IsA("Configuration") and v:GetAttribute("coins") and v:GetAttribute("coins") ~= nil then
+            pcall(function() v:SetAttribute("coins", 0) end)
+        end
+    end
+end
+wait(0.2)
+getgenv().apply_free_animations()
+
+if getgenv().bowling_animations_folder then
+    for _, v in ipairs(getgenv().bowling_animations_folder:GetChildren()) do
+        if v:IsA("Configuration") then
+            local coins = v:GetAttribute("coins")
+
+            if coins ~= nil then
+                table.insert(getgenv().Flames_Bowling_Animations, {
+                    name = v.Name,
+                    coins = coins,
+                    instance = v
+                })
+            end
+        end
+    end
+end
+
+getgenv().bowling_anim_toggle = getgenv().bowling_anim_toggle or false
+getgenv().bowling_anim_slug = getgenv().bowling_anim_slug or "slide"
+wait(0.1)
+getgenv().apply_anim_override_hook = function(toggled, slug)
+    getgenv().bowling_anim_toggle = toggled
+
+    if slug then
+        getgenv().bowling_anim_slug = slug
+    end
+end
+
+getgenv().find_configure_ten_pin_game_RF = function()
+    local cached = getgenv().ten_pin_game_RF
+    if cached and cached:IsA("RemoteFunction") then
+        return cached
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("RemoteFunction") and v.Name:lower():find("config") and v.Name:lower():find("tenpin") then
+            getgenv().ten_pin_game_RF = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().ten_pin_game_RF then task.spawn(function() getgenv().find_configure_ten_pin_game_RF() end) end
+
+getgenv().find_leave_game_RF = function()
+    local cached = getgenv().exit_game_RF
+    if cached and cached:IsA("RemoteFunction") then
+        return cached
+    end
+
+    for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("RemoteFunction") and v.Name:lower():find("leave") and v.Name:lower():find("game") then
+            getgenv().exit_game_RF = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().exit_game_RF then task.spawn(function() getgenv().find_leave_game_RF() end) end
+
+getgenv().bowling_pins_highlight_ESP = function(toggle)
+    local state = getgenv().bowling_pins_esp_state or {cache = {}, monitorConn = nil, removeConn = nil, heartbeatConn = nil}
+    getgenv().bowling_pins_esp_state = state
+    getgenv().highlight_pins_enabled = (toggle ~= false)
+    local cache = state.cache
+    local function create_highlight(target)
+        if not (target:IsA("BasePart") or target:IsA("Model")) then return end
+        if cache[target] then return end
+
+        local highlight = Instance.new("Highlight")
+        highlight.Adornee = target
+        highlight.FillColor = Color3.fromRGB(255, 100, 100)
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.FillTransparency = 0.65
+        highlight.OutlineTransparency = 0
+        highlight.Parent = target
+
+        cache[target] = highlight
+    end
+
+    local function remove_highlight(target)
+        if cache[target] then
+            cache[target]:Destroy()
+            cache[target] = nil
+        end
+    end
+
+    local function is_pin(instance)
+        local name = instance.Name:lower()
+        return name:match("^pin%d+$") ~= nil
+    end
+
+    local function highlight_pin_instance(pinObj)
+        if pinObj:IsA("Model") then
+            create_highlight(pinObj)
+            return
+        end
+
+        if pinObj:IsA("BasePart") then
+            create_highlight(pinObj)
+        end
+    end
+
+    local function remove_pin_instance(pinObj)
+        if pinObj:IsA("Model") then
+            remove_highlight(pinObj)
+            return
+        end
+
+        if pinObj:IsA("BasePart") then
+            remove_highlight(pinObj)
+        end
+    end
+
+    local function scan_model(model)
+        for _, descendant in ipairs(model:GetDescendants()) do
+            if is_pin(descendant) then
+                highlight_pin_instance(descendant)
+            end
+        end
+    end
+
+    local bowling_lanes = getgenv().bowling_folder_found or workspace:WaitForChild("BowlingLanes")
+
+    if toggle == false then
+        for _, highlight in pairs(cache) do
+            highlight.Enabled = false
+        end
+        return
+    end
+
+    scan_model(bowling_lanes)
+
+    if not state.monitorConn then
+        state.monitorConn = bowling_lanes.DescendantAdded:Connect(function(desc)
+            if is_pin(desc) and getgenv().highlight_pins_enabled then
+                highlight_pin_instance(desc)
+            end
+        end)
+    end
+
+    if not state.removeConn then
+        state.removeConn = bowling_lanes.DescendantRemoving:Connect(function(desc)
+            if is_pin(desc) then
+                remove_pin_instance(desc)
+            end
+        end)
+    end
+
+    if not state.heartbeatConn then
+        state.heartbeatConn = RunService.Heartbeat:Connect(function()
+            for part, highlight in pairs(cache) do
+                if not part.Parent then
+                    remove_highlight(part)
+                else
+                    highlight.Enabled = getgenv().highlight_pins_enabled
+                end
+            end
+        end)
+    end
+end
+
+local function start_bowling_at_lane(lane)
+    local cached = getgenv().create_game_RF
+    if not cached then
+        return getgenv().notify("Error", "Could not find 'createGame' RemoteFunction when trying to create a game.", 8)
+    end
+    local config_ten_pin_game = getgenv().ten_pin_game_RF or getgenv().find_configure_ten_pin_game_RF()
+    if not config_ten_pin_game then
+        return getgenv().notify("Error", "Could not find 'configureTenPinGame' RemoteFunction when trying to set the game rules.", 7)
+    end
+    local all_lanes_took = getgenv().are_all_lanes_occupied()
+    if all_lanes_took then
+        return getgenv().notify("Error", "All lanes are currently occupied, try again later.", 7)
+    end
+
+    local config_args = {
+        tostring(lane),
+        {
+            maxPlayers = 4,
+            playerJoinMode = "REQUEST",
+            useBarriers = false,
+            scoringMode = "STANDARD"
+        }
+    }
+    wait(0.2)
+    local args = {
+        tostring(lane),
+        "TEN_PIN"
+    }
+
+    local ok, response = pcall(function() cached:InvokeServer(unpack(args)) end)
+
+    if not ok then
+        return getgenv().notify("Error", "An unexpected error occurred when trying to create game: "..tostring(response), 25)
+    end
+    wait(0.4)
+    local ok, response = pcall(function() config_ten_pin_game:InvokeServer(unpack(config_args)) end)
+
+    if not ok then
+        return getgenv().notify("Error", "An unexpected error occurred when trying to configure game: "..tostring(response), 25)
+    end
+end
+
+local function start_bowling_with_config(lane)
+    local create_game = getgenv().create_game_RF
+    if not create_game then
+        return getgenv().notify("Error", "Could not find 'createGame' RemoteFunction when trying to create a game.", 8)
+    end
+
+    local configure_game = getgenv().ten_pin_game_RF or getgenv().find_configure_ten_pin_game_RF()
+    if not configure_game then
+        return getgenv().notify("Error", "Could not find 'configureTenPinGame' RemoteFunction when trying to set the game rules.", 7)
+    end
+
+    if getgenv().are_all_lanes_occupied() then
+        return getgenv().notify("Error", "All lanes are currently occupied, try again later.", 7)
+    end
+
+    local cfg = getgenv().Flames_Bowling_Configuration or {}
+    local config_args = {
+        tostring(lane),
+        {
+            maxPlayers = tonumber(cfg.maxPlayers) or 4,
+            playerJoinMode = tostring(cfg.playerJoinMode or "REQUEST"),
+            useBarriers = (cfg.useBarriers == true),
+            scoringMode = tostring(cfg.scoringMode or "STANDARD")
+        }
+    }
+
+    local create_args = { tostring(lane), "TEN_PIN" }
+
+    task.wait(0.2)
+    local ok_create, create_err = pcall(function()
+        create_game:InvokeServer(unpack(create_args))
+    end)
+    if not ok_create then
+        return getgenv().notify("Error", "An unexpected error occurred when trying to create game: " .. tostring(create_err), 25)
+    end
+
+    task.wait(0.4)
+    local ok_config, config_err = pcall(function()
+        configure_game:InvokeServer(unpack(config_args))
+    end)
+    if not ok_config then
+        return getgenv().notify("Error", "An unexpected error occurred when trying to configure game: " .. tostring(config_err), 25)
+    end
+end
+wait(0.2)
+getgenv().Start_Default_Game = Tab:CreateButton({
+Name = "Start game with set configuration (FE)",
+Callback = function()
+    local ok, response = pcall(function()
+        getgenv().are_all_lanes_occupied()
+    end)
+
+    if not ok then
+        return getgenv().notify("Warning", "No lanes are currently open, try again later.", 7)
+    end
+
+    local begin_game_RF = getgenv().start_game_RF or getgenv().find_start_game_RF()
+    local res = getgenv().get_currently_open_lane()
+
+    if res and res.Parent and res:IsDescendantOf(game) then
+        getgenv().notify("Success", "Teleporting to open lane...", 5)
+        wait(0.2)
+        if getgenv().Character then
+            local laneCFrame = res:GetPivot()
+            local backwardsOffset = -laneCFrame.LookVector * 75
+
+            pcall(function() getgenv().Character:PivotTo(laneCFrame + backwardsOffset) end)
+        end
+    end
+
+    if res and res:IsA("Model") and res:IsDescendantOf(game) then
+        local convert_to_string = res:GetAttribute("LaneId")
+
+        start_bowling_with_config(convert_to_string)
+        wait(0.3)
+        local ok, response = pcall(function() begin_game_RF:InvokeServer(convert_to_string) end)
+
+        if not ok then
+            return getgenv().notify("Error", "An unexpected error occurred while calling RemoteFunction 'startGame', got response: "..tostring(response), 30)
+        else
+            getgenv().notify("Success", "Game: "..tostring(convert_to_string).." has been started successfully.", 6)
+        end
+    elseif not res or res.ClassName ~= "Model" then
+        return getgenv().notify("Error", tostring(res).." was not found or is not a Model!", 6)
+    end
+end,})
+
+local function set_unlock_keybind(key)
+    getgenv().Unlock_Keybind_Configuration:Set(key)
+    getgenv().Flames_Keybind_Configuration.unlock_camera_string = key
+    getgenv().Flames_Keybind_Configuration.unlock_camera = Enum.KeyCode[key]
+    getgenv().notify(
+        "Success",
+        "Keybind for unlock_cam() changed to: "..key,
+        3.5
+    )
+end
+
+getgenv().Unlock_Cam_Toggle = Tab:CreateButton({
+Name = "Unlock Camera (working!)",
+Callback = function()
+    local ok, response = pcall(function()
+        unlock_cam()
+    end)
+
+    if not ok then
+        return getgenv().notify("Error", "An unexpected error occurred while calling 'unlock_cam', got response: "..tostring(response), 20)
+    end
+end,})
+
+getgenv().Unlock_Keybind_Configuration = Tab_5:CreateKeybind({
+Name = "Unlock Camera Keybind",
+CurrentKeybind = getgenv().Flames_Keybind_Configuration.unlock_camera_string or "F",
+HoldToInteract = false,
+Flag = "ChangeUnlockCameraKeybindToggle",
+Callback = function()
+    wait(0.12)
+    if not getgenv().Unlock_Camera_Toggled then return end
+    local set_key = getgenv().Unlock_Keybind_Configuration.CurrentKeybind or keycode_to_string(getgenv().Unlock_Keybind_Configuration.CurrentKeybind)
+    wait(0.2)
+    local converted_keycode = string_to_keycode(set_key)
+
+    if set_key and converted_keycode then
+        getgenv().Flames_Keybind_Configuration.unlock_camera = converted_keycode
+        getgenv().Flames_Keybind_Configuration.unlock_camera_string = set_key
+        wait(0.2)
+        if getgenv().Flames_Keybind_Configuration.unlock_camera == converted_keycode then
+            if not getgenv().print_notification_keybind_change then
+                print("[src/client/interface.client.tsx:98] Keybind published to (main) from (client) as data: "..tostring(converted_keycode))
+                getgenv().print_notification_keybind_change = true
+            end
+        end
+    else
+        return getgenv().notify("Error", "An unexpected error occurred when setting data "..tostring(set_key).." | "..tostring(converted_keycode).." | value entered to: 'unlock_camera_string' was / is: "..tostring(set_key), 30)
+    end
+
+    unlock_cam()
+end,})
+
+getgenv().Unlock_Camera_Toggle_Keybind = Tab_5:CreateToggle({
+Name = "Toggle Use Unlock Camera Keybind",
+CurrentValue = getgenv().Unlock_Camera_Toggled or false,
+Flag = "UnlockCameraKeybindInUse",
+Callback = function(is_keybind_enabled)
+    if is_keybind_enabled then
+        getgenv().Unlock_Camera_Toggled = true
+    else
+        getgenv().Unlock_Camera_Toggled = false
+    end
+end,})
+
+getgenv().Start_Default_Game = Tab:CreateButton({
+Name = "Start default game (FE)",
+Callback = function()
+    local ok, response = pcall(function()
+        getgenv().are_all_lanes_occupied()
+    end)
+
+    if not ok then
+        return getgenv().notify("Warning", "No lanes are currently open, try again later.", 7)
+    end
+
+    local begin_game_RF = getgenv().start_game_RF or getgenv().find_start_game_RF()
+    local res = getgenv().get_currently_open_lane()
+
+    if res and res.Parent and res:IsDescendantOf(game) then
+        getgenv().notify("Success", "Teleporting to open lane...", 3)
+        wait(0.2)
+        if getgenv().Character then
+            local laneCFrame = res:GetPivot()
+            local backwardsOffset = -laneCFrame.LookVector * 75
+
+            pcall(function() getgenv().Character:PivotTo(laneCFrame + backwardsOffset) end)
+        end
+    end
+
+    if res and res:IsA("Model") and res:IsDescendantOf(game) then
+        local convert_to_string = res:GetAttribute("LaneId")
+
+        start_bowling_at_lane(convert_to_string)
+        wait(0.3)
+        local ok, response = pcall(function() begin_game_RF:InvokeServer(convert_to_string) end)
+
+        if not ok then
+            return getgenv().notify("Error", "An unexpected error occurred while calling RemoteFunction 'startGame', got response: "..tostring(response), 30)
+        else
+            getgenv().notify("Success", "Game: "..tostring(convert_to_string).." has been started successfully.", 6)
+        end
+    elseif not res or res.ClassName ~= "Model" then
+        return getgenv().notify("Error", tostring(res).." was not found or is not a Model!", 6)
+    end
+end,})
+
+getgenv().Flames_Bowling_Configuration.maxPlayers = getgenv().Flames_Bowling_Configuration.maxPlayers or 4
+getgenv().MaxPlayers_For_Games = Tab_4:CreateSlider({
+Name = "Set Max Players (FE)",
+Range = {1, 5},
+Increment = 1,
+Suffix = "",
+CurrentValue = tonumber(getgenv().Flames_Bowling_Configuration.maxPlayers) or 4,
+Flag = "BowlingConfigMaxPlayersSlider",
+Callback = function(max_plrs_val)
+    getgenv().Flames_Bowling_Configuration.maxPlayers = tonumber(max_plrs_val) or 4
+end,})
+wait(0.2)
+getgenv().MaxPlayers_For_Games:Set(tonumber(getgenv().Flames_Bowling_Configuration.maxPlayers) or 4)
+
+getgenv().Flames_Bowling_Configuration.playerJoinMode = getgenv().Flames_Bowling_Configuration.playerJoinMode or "REQUEST"
+getgenv().MaxPlayers_For_Games = Tab_4:CreateDropdown({
+Name = "Set Player Join Type (FE)",
+Options = {"REQUEST", "FRIENDS", "OPEN"},
+CurrentOption = {getgenv().Flames_Bowling_Configuration.playerJoinMode},
+MultipleOptions = false,
+Flag = "SetPlayerJoiningModeForGames",
+Callback = function(join_type)
+    local selected = join_type
+
+    if typeof(selected) == "table" then
+        selected = selected[1]
+    end
+
+    if typeof(selected) ~= "string" then
+        return getgenv().notify("Error", "Invalid playerJoinMode selection.", 5)
+    end
+
+    getgenv().Flames_Bowling_Configuration.playerJoinMode = selected
+end,})
+
+getgenv().Flames_Bowling_Configuration.useBarriers = getgenv().Flames_Bowling_Configuration.useBarriers or false
+getgenv().Set_Use_Barriers = Tab_4:CreateToggle({
+Name = "Set Use Barriers (FE)",
+CurrentValue = getgenv().Flames_Bowling_Configuration.useBarriers or false,
+Flag = "UseBarriersToggleForGames",
+Callback = function(using_barriers)
+    if using_barriers then
+        getgenv().Flames_Bowling_Configuration.useBarriers = true
+    else
+        getgenv().Flames_Bowling_Configuration.useBarriers = false
+    end
+end,})
+
+getgenv().Flames_Bowling_Configuration.scoringMode = getgenv().Flames_Bowling_Configuration.scoringMode or "STANDARD"
+getgenv().MaxPlayers_For_Games = Tab_4:CreateDropdown({
+Name = "Set Scoring Type (FE)",
+Options = {"STANDARD", "WORLD"},
+CurrentOption = {getgenv().Flames_Bowling_Configuration.scoringMode},
+MultipleOptions = false,
+Flag = "SetScoringModeForGames",
+Callback = function(scoring_mode)
+    local selected = scoring_mode
+    if typeof(selected) == "table" then selected = selected[1] end
+    if typeof(selected) ~= "string" then return getgenv().notify("Error", "Invalid scoringMode selection.", 5) end
+    if selected == "WORLD" then
+        getgenv().MaxPlayers_For_Games:Set({"STANDARD"})
+        selected = "STANDARD"
+        getgenv().notify("Error", "The game will break with the selection: 'WORLD', we changed it back to 'STANDARD' for you (they don't support it yet).", 25)
+    end
+    wait(0.2)
+    getgenv().Flames_Bowling_Configuration.scoringMode = selected
+end,})
+
+getgenv().Mod_Arcade_Points = Tab:CreateButton({
+Name = "Mod Arcade Points (FE)",
+Callback = function()
+    getgenv().mod_arcade_high_score()
+end,})
+
+getgenv().RGB_Bowling_Ball = Tab_3:CreateToggle({
+Name = "RGB Bowling Ball",
+CurrentValue = getgenv().RGB_Bowling_Ball_Enabled or false,
+Flag = "BowlingBallSwitchingColorsNotFE",
+Callback = function(rgb_ball)
+    getgenv().RGB_Bowling_Ball_Enabled = rgb_ball
+    local function is_valid_rgb_ball(ball)
+        return ball and typeof(ball) == "Instance" and ball:IsA("BasePart") and ball.Name == "Ball" and ball.Parent and ball:IsDescendantOf(game)
+    end
+    local function get_ball_mesh(ball)
+        if not is_valid_rgb_ball(ball) then
+            return nil
+        end
+        local mesh = ball:FindFirstChildWhichIsA("MeshPart")
+        if mesh then
+            return mesh
+        end
+        return ball:FindFirstChildWhichIsA("MeshPart", true)
+    end
+    local function set_ball_visual_state(ball, enabled)
+        if not is_valid_rgb_ball(ball) then
+            return
+        end
+        local mesh = get_ball_mesh(ball)
+        if enabled then
+            pcall(function() ball.Transparency = 0 end)
+            if mesh then
+                pcall(function() mesh.Transparency = 1 end)
+            end
+        else
+            pcall(function() ball.Transparency = 1 end)
+            if mesh then
+                pcall(function() mesh.Transparency = 0 end)
+            end
+        end
+    end
+
+    if rgb_ball then
+        local last_target = nil
+        getgenv().FlamesLibrary.spawn("RGB_Bowling_Ball_Monitor", "spawn", function()
+            while getgenv().RGB_Bowling_Ball_Enabled == true do
+                local target = is_valid_rgb_ball(current_ball) and current_ball or nil
+                if target ~= last_target then
+                    if last_target then
+                        set_ball_visual_state(last_target, false)
+                    end
+                    if target then
+                        set_ball_visual_state(target, true)
+                        getgenv().flowrgb("RGB_Bowling_Ball_Conn", 1.5, target, true)
+                        getgenv().RGB_Bowling_Ball_LastTarget = target
+                    else
+                        getgenv().flowrgb("RGB_Bowling_Ball_Conn", 1.5, nil, false)
+                        getgenv().RGB_Bowling_Ball_LastTarget = nil
+                    end
+                    last_target = target
+                end
+                task.wait(0.2)
+            end
+            if last_target then
+                set_ball_visual_state(last_target, false)
+                getgenv().RGB_Bowling_Ball_LastTarget = nil
+            end
+            getgenv().flowrgb("RGB_Bowling_Ball_Conn", 0.6, nil, false)
+        end)
+    else
+        if getgenv().FlamesLibrary and getgenv().FlamesLibrary.disconnect then
+            getgenv().FlamesLibrary.disconnect("RGB_Bowling_Ball_Monitor")
+        end
+        local fallback_ball = getgenv().RGB_Bowling_Ball_LastTarget or current_ball
+        if is_valid_rgb_ball(fallback_ball) then
+            set_ball_visual_state(fallback_ball, false)
+        end
+        getgenv().RGB_Bowling_Ball_LastTarget = nil
+        getgenv().flowrgb("RGB_Bowling_Ball_Conn", 0.6, nil, false)
+    end
+end,})
+
+local function find_physics_module()
+    local cached = getgenv().bowling_physics_module_found
+    if cached and cached:IsA("ModuleScript") then
+        return cached
+    end
+
+    for _, v in ipairs(getgenv().LocalPlayer:GetDescendants()) do
+        if v:IsA("ModuleScript") and v.Name:lower():find("bowl") and v.Name:lower():find("physic") then
+            getgenv().bowling_physics_module_found = v
+            return v
+        end
+    end
+
+    return nil
+end
+wait(0.1)
+if not getgenv().bowling_physics_module_found then task.spawn(function() find_physics_module() end) end
+getgenv().force_straight_bowl = getgenv().force_straight_bowl or false
+getgenv().force_no_spin_enabled = getgenv().force_no_spin_enabled or false
+getgenv().bowl_only_strikes_man = getgenv().bowl_only_strikes_man or false
+getgenv().bowl_strike_aim_offset = getgenv().bowl_strike_aim_offset or 0.57
+getgenv().force_bowl_speed_enabled = getgenv().force_bowl_speed_enabled or false
+getgenv().forced_bowl_speed = getgenv().forced_bowl_speed or 90
+getgenv().force_stand_offset_enabled = getgenv().force_stand_offset_enabled or false
+getgenv().forced_bowl_stand_offset = tonumber(getgenv().forced_bowl_stand_offset) or 3
+getgenv().bowl_right_step_offset = tonumber(getgenv().bowl_right_step_offset) or 2
+getgenv().force_heavier_ball_enabled = getgenv().force_heavier_ball_enabled or false
+getgenv().extra_ball_weight_lbs = tonumber(getgenv().extra_ball_weight_lbs) or 5
+getgenv().zooming_hook_setup_for_client = getgenv().zooming_hook_setup_for_client or false
+
+if not getgenv().zooming_hook_setup_for_client then
+    if hookfunction and getgc then
+        getgenv().zooming_hook_setup_for_client = true
+        local scroll_delta = 0
+        UserInputService.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseWheel then
+                scroll_delta = -input.Position.Z
+            end
+        end)
+
+        for _, v in pairs(getgc(true)) do
+            if type(v) == "table" then
+                local ok, val = pcall(function() return rawget(v, "getZoomDelta") end)
+                if ok and type(val) == "function" then
+                    hookfunction(val, function(p43)
+                        local delta = scroll_delta
+                        scroll_delta = 0
+                        return delta
+                    end)
+                    break
+                end
+            end
+        end
+    else
+        getgenv().zooming_hook_setup_for_client = true
+    end
+end
+
+local function install_perform_bowl_hook()
+    if not hookfunction then
+        return false, "missing hookfunction"
+    end
+
+    local players = getgenv().Players or game:GetService("Players")
+    local lp = getgenv().LocalPlayer or players.LocalPlayer
+    local moduleScript = getgenv().bowling_physics_module_found or (find_physics_module and find_physics_module()) or lp.PlayerScripts.TS.games.bowling["bowling-physics"]
+    local bowlingPhysics = require(moduleScript)
+
+    if getgenv()._PerformBowl_MainHooked and getgenv()._PerformBowl_MainOld then
+        bowlingPhysics.performBowl = getgenv()._PerformBowl_MainOld
+        getgenv()._PerformBowl_MainOld = nil
+        getgenv()._PerformBowl_MainHooked = false
+        getgenv()._oldPerformBowl = nil
+        getgenv()._performBowlHooked = false
+    end
+
+    local old
+    old = hookfunction(bowlingPhysics.performBowl, newcclosure(function(laneId, standOffset, aimOffset, speed, spin, animCfg)
+        if getgenv().bowling_anim_toggle and animCfg then
+            animCfg.animationSlug = getgenv().bowling_anim_slug or animCfg.animationSlug
+        end
+
+        if getgenv().bowling_preset_lock_enabled then
+            aimOffset = tonumber(getgenv().bowl_strike_aim_offset) or aimOffset
+        end
+
+        if getgenv().force_stand_offset_enabled then
+            standOffset = tonumber(getgenv().forced_bowl_stand_offset) or standOffset
+        end
+        standOffset = (tonumber(standOffset) or 0) + (tonumber(getgenv().bowl_right_step_offset) or 0)
+
+        if getgenv().bowl_only_strikes_man then
+            aimOffset = tonumber(getgenv().bowl_strike_aim_offset) or aimOffset
+            spin = 0
+        elseif getgenv().force_straight_bowl or getgenv().force_no_spin_enabled or getgenv().bowling_preset_lock_enabled then
+            spin = 0
+        end
+
+        if getgenv().force_bowl_speed_enabled then
+            speed = tonumber(getgenv().forced_bowl_speed) or speed
+        end
+        if getgenv().force_heavier_ball_enabled then
+            speed = math.max(1, (tonumber(speed) or 0) - (tonumber(getgenv().extra_ball_weight_lbs) or 0))
+        end
+
+        return old(laneId, standOffset, aimOffset, speed, spin, animCfg)
+    end))
+
+    getgenv()._PerformBowl_MainOld = old
+    getgenv()._PerformBowl_MainHooked = true
+    getgenv()._oldPerformBowl = old
+    getgenv()._performBowlHooked = true
+    return true
+end
+
+local function ensure_perform_bowl_hook_active()
+    if getgenv()._PerformBowl_MainHooked and getgenv()._PerformBowl_MainOld then
+        return true
+    end
+    if not hookfunction then
+        return false, "missing hookfunction"
+    end
+    return install_perform_bowl_hook()
+end
+
+local function uninstall_perform_bowl_hook()
+    local old = getgenv()._PerformBowl_MainOld -- already hooked?
+    if not old then
+        getgenv()._PerformBowl_MainHooked = false
+        getgenv()._performBowlHooked = false
+        return true
+    end
+
+    local players = getgenv().Players or game:GetService("Players")
+    local lp = getgenv().LocalPlayer or players.LocalPlayer
+    local moduleScript = getgenv().bowling_physics_module_found or (find_physics_module and find_physics_module()) or lp.PlayerScripts.TS.games.bowling["bowling-physics"]
+    local success, bowlingPhysics = pcall(function()
+        return require(moduleScript)
+    end)
+    
+    if success then
+        bowlingPhysics.performBowl = old
+    else
+        getgenv()._PerformBowl_MainOld = nil
+        getgenv()._PerformBowl_MainHooked = false
+        getgenv()._oldPerformBowl = nil
+        getgenv()._performBowlHooked = false
+        return getgenv().notify("Your executor does not support 'require'!", 6)
+    end
+
+    getgenv()._PerformBowl_MainOld = nil
+    getgenv()._PerformBowl_MainHooked = false
+    getgenv()._oldPerformBowl = nil
+    getgenv()._performBowlHooked = false
+    return true
+end
+
+local BOWLING_PRESET_LOCK_VALUES = {
+    speed = 87.4,
+    aimOffset = 0.57,
+    standOffset = 0.08,
+    rightStepOffset = 0.07,
+    extraWeight = 8
+}
+
+local function apply_bowling_preset_lock_values()
+    getgenv().force_bowl_speed_enabled = true
+    getgenv().forced_bowl_speed = BOWLING_PRESET_LOCK_VALUES.speed
+    getgenv().bowl_strike_aim_offset = BOWLING_PRESET_LOCK_VALUES.aimOffset
+    getgenv().force_stand_offset_enabled = true
+    getgenv().forced_bowl_stand_offset = BOWLING_PRESET_LOCK_VALUES.standOffset
+    getgenv().bowl_right_step_offset = BOWLING_PRESET_LOCK_VALUES.rightStepOffset
+    getgenv().force_heavier_ball_enabled = true
+    getgenv().extra_ball_weight_lbs = BOWLING_PRESET_LOCK_VALUES.extraWeight
+    getgenv().force_straight_bowl = true
+    getgenv().force_no_spin_enabled = true
+end
+
+local function start_bowling_preset_lock_loop()
+    if getgenv().FlamesLibrary and getgenv().FlamesLibrary.is_alive and getgenv().FlamesLibrary.spawn then
+        if not getgenv().FlamesLibrary.is_alive("TheLanes_BowlingPresetLockLoop") then
+            getgenv().FlamesLibrary.spawn("TheLanes_BowlingPresetLockLoop", "spawn", function()
+                while getgenv().bowling_preset_lock_enabled == true do
+                    task.wait(0.1)
+                    apply_bowling_preset_lock_values()
+                end
+            end)
+        end
+        return
+    end
+
+    if getgenv()._bowlingPresetLoopRunning then
+        return
+    end
+    -- [[ I think the code below here is unnecessary. ]] --
+    --[[
+        getgenv()._bowlingPresetLoopRunning = true
+        task.spawn(function()
+            while getgenv().bowling_preset_lock_enabled == true do
+                task.wait(0.1)
+                apply_bowling_preset_lock_values()
+            end
+            getgenv()._bowlingPresetLoopRunning = false
+        end)
+    --]]
+end
+
+getgenv().toggle_bowling_preset_lock = function(state)
+    local enabled = state
+    if enabled == nil then
+        enabled = not (getgenv().bowling_preset_lock_enabled == true)
+    else
+        enabled = (state == true)
+    end
+
+    if enabled then
+        local ok, err = ensure_perform_bowl_hook_active()
+        if not ok then
+            if getgenv().notify then
+                getgenv().notify("Error", "Preset hook failed: "..tostring(err), 10)
+            end
+            return false, err
+        end
+
+        getgenv().bowling_preset_lock_enabled = true
+        getgenv()._preset_prev_force_straight_bowl = getgenv().force_straight_bowl
+        getgenv()._preset_prev_force_no_spin_enabled = getgenv().force_no_spin_enabled
+        apply_bowling_preset_lock_values()
+        start_bowling_preset_lock_loop()
+
+        if getgenv().Force_Stand_Offset and getgenv().Force_Stand_Offset.Set then
+            pcall(function() getgenv().Force_Stand_Offset:Set(true) end)
+        end
+        if getgenv().Force_Stand_Offset_Value and getgenv().Force_Stand_Offset_Value.Set then
+            pcall(function() getgenv().Force_Stand_Offset_Value:Set(BOWLING_PRESET_LOCK_VALUES.standOffset) end)
+        end
+        if getgenv().Right_Step_Offset and getgenv().Right_Step_Offset.Set then
+            pcall(function() getgenv().Right_Step_Offset:Set(BOWLING_PRESET_LOCK_VALUES.rightStepOffset) end)
+        end
+        if getgenv().Force_Heavier_Ball and getgenv().Force_Heavier_Ball.Set then
+            pcall(function() getgenv().Force_Heavier_Ball:Set(true) end)
+        end
+        if getgenv().Extra_Ball_Weight and getgenv().Extra_Ball_Weight.Set then
+            pcall(function() getgenv().Extra_Ball_Weight:Set(BOWLING_PRESET_LOCK_VALUES.extraWeight) end)
+        end
+
+        if getgenv().notify then
+            getgenv().notify("Success", "Bowling preset lock enabled.", 6)
+        end
+        return true
+    end
+
+    getgenv().bowling_preset_lock_enabled = false
+    getgenv().force_bowl_speed_enabled = false
+    getgenv().force_stand_offset_enabled = false
+    getgenv().bowl_right_step_offset = 0
+    getgenv().force_heavier_ball_enabled = false
+    getgenv().extra_ball_weight_lbs = 0
+    if getgenv()._preset_prev_force_straight_bowl ~= nil then
+        getgenv().force_straight_bowl = getgenv()._preset_prev_force_straight_bowl
+        getgenv()._preset_prev_force_straight_bowl = nil
+    else
+        getgenv().force_straight_bowl = false
+    end
+    if getgenv()._preset_prev_force_no_spin_enabled ~= nil then
+        getgenv().force_no_spin_enabled = getgenv()._preset_prev_force_no_spin_enabled
+        getgenv()._preset_prev_force_no_spin_enabled = nil
+    else
+        getgenv().force_no_spin_enabled = false
+    end
+
+    if getgenv().Force_Stand_Offset and getgenv().Force_Stand_Offset.Set then
+        pcall(function() getgenv().Force_Stand_Offset:Set(false) end)
+    end
+    if getgenv().Right_Step_Offset and getgenv().Right_Step_Offset.Set then
+        pcall(function() getgenv().Right_Step_Offset:Set(0) end)
+    end
+    if getgenv().Force_Heavier_Ball and getgenv().Force_Heavier_Ball.Set then
+        pcall(function() getgenv().Force_Heavier_Ball:Set(false) end)
+    end
+    if getgenv().Extra_Ball_Weight and getgenv().Extra_Ball_Weight.Set then
+        pcall(function() getgenv().Extra_Ball_Weight:Set(0) end)
+    end
+
+    local ok, err = pcall(uninstall_perform_bowl_hook)
+    if not ok then
+        if getgenv().notify then
+            getgenv().notify("Warning", "Preset disabled, hook restore failed: "..tostring(err), 10)
+        end
+        return false, err
+    end
+
+    if getgenv().notify then
+        getgenv().notify("Success", "Bowling preset lock disabled and hook restored.", 6)
+    end
+    return true
+end
+wait(0.1)
+getgenv().BowlOnlyStrikes = Tab_3:CreateToggle({
+Name = "Bowl Strikes (FE)",
+CurrentValue = getgenv().bowling_preset_lock_enabled or false,
+Flag = "BowlingOnlyStrikesEasily",
+Callback = function(bowling_strikes_easily)
+    if bowling_strikes_easily then
+        local function get_random_module()
+            for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+                if v:IsA("ModuleScript") then
+                    local h = v.Parent
+                    if h and h:IsA("Folder") then
+                        return v
+                    end
+                end
+            end
+        end
+
+        local found_random_mod = get_random_module()
+        task.wait()
+        local ok, response = pcall(function()
+            require(found_random_mod)
+        end)
+
+        if not ok then
+            return getgenv().notify("Error", "We apologize, but, you cannot use this, your executor does not support: 'require'!", 12)
+        else
+            if not getgenv().notification_for_automatically_bowling_sent then
+                print("[src/shared/helpers/shop-helper.ts:17] Data transmitted successfully to version 0264277 (main)")
+                getgenv().notification_for_automatically_bowling_sent = true
+            end
+        end
+        task.wait(0.1) -- don't make a big delay for the users who have (actual) 'require' function support.
+        pcall(function() getgenv().NoBall_SpinEz_Strikes:Set(false) end)
+        pcall(function() getgenv().Force_Stand_Offset:Set(false) end)
+        pcall(function() getgenv().Edit_Strike_Aim_Offset:Set(0.57) end)
+        pcall(function() getgenv().Edit_Bowling_Speed_Offset:Set(89.4) end)
+        pcall(function() getgenv().Force_Stand_Offset:Set(false) end)
+        pcall(function() getgenv().Force_Stand_Offset_Value:Set(0.08) end)
+        pcall(function() getgenv().Right_Step_Offset:Set(0.07) end)
+        pcall(function() getgenv().Force_Heavier_Ball:Set(false) end)
+        pcall(function() getgenv().Extra_Ball_Weight:Set(8) end)
+        pcall(function() getgenv().BowlStrikes_EveryTime:Set(false) end)
+        wait(0.3)
+        getgenv().toggle_bowling_preset_lock(true)
+        wait(0.2)
+        getgenv().modify_ball_weight(true)
+    else
+        getgenv().toggle_bowling_preset_lock(false)
+        wait(0.2)
+        getgenv().modify_ball_weight(false)
+    end
+end,})
+
+getgenv().NoBall_SpinEz_Strikes = Tab_3:CreateToggle({
+Name = "No Ball Spin (FE)",
+CurrentValue = getgenv().force_straight_bowl or false,
+Flag = "EzNoBallSpinWorking",
+Callback = function(no_ball_spin_toggled)
+    if not hookfunction then
+        getgenv().force_straight_bowl = false
+        getgenv().NoBall_SpinEz_Strikes:Set(false)
+        return getgenv().notify("Error", "You cannot run this, missing function: 'hookfunction'.", 10)
+    end
+
+    local ok, err = install_perform_bowl_hook()
+    if not ok then
+        getgenv().force_straight_bowl = false
+        getgenv().NoBall_SpinEz_Strikes:Set(false)
+        return getgenv().notify("Error", "No Ball Spin hook failed: "..tostring(err), 10)
+    end
+
+    getgenv().force_straight_bowl = no_ball_spin_toggled
+    getgenv().force_no_spin_enabled = no_ball_spin_toggled
+end,})
+
+getgenv().bowl_strike_aim_offset = tonumber(getgenv().bowl_strike_aim_offset) or 0.57
+getgenv().Edit_Strike_Aim_Offset = Tab_3:CreateSlider({
+Name = "Bowling Aim Offset",
+Range = {-1, 1},
+Increment = 0.01,
+Suffix = "",
+CurrentValue = getgenv().bowl_strike_aim_offset or 0.57,
+Flag = "BowlStrikeAimOffsetDynamic",
+Callback = function(new_offset)
+    getgenv().bowl_strike_aim_offset = tonumber(new_offset) or 0
+end,})
+
+getgenv().forced_bowl_speed = tonumber(getgenv().forced_bowl_speed) or 90
+getgenv().Edit_Bowling_Speed_Offset = Tab_3:CreateSlider({
+Name = "Bowling Speed",
+Range = {25, 500},
+Increment = 0.1,
+Suffix = "",
+CurrentValue = getgenv().forced_bowl_speed or 90,
+Flag = "BowlStrikeSpeedDynamic",
+Callback = function(new_speed)
+    getgenv().forced_bowl_speed = tonumber(new_speed) or 0
+end,})
+
+getgenv().force_stand_offset_enabled = getgenv().force_stand_offset_enabled or false
+getgenv().Force_Stand_Offset = Tab_3:CreateToggle({
+Name = "Force Stand Offset (FE)",
+CurrentValue = getgenv().force_stand_offset_enabled or false,
+Flag = "ForceStandOffsetToggle",
+Callback = function(v)
+    if v then
+        local ok, err = ensure_perform_bowl_hook_active()
+        if not ok then
+            getgenv().force_stand_offset_enabled = false
+            getgenv().Force_Stand_Offset:Set(false)
+            return getgenv().notify("Error", "Stand Offset hook failed: "..tostring(err), 10)
+        end
+    end
+    getgenv().force_stand_offset_enabled = v
+end,})
+
+getgenv().forced_bowl_stand_offset = tonumber(getgenv().forced_bowl_stand_offset) or 0
+getgenv().Force_Stand_Offset_Value = Tab_3:CreateSlider({
+Name = "Stand Offset Lock",
+Range = {-6, 6},
+Increment = 0.01,
+Suffix = "",
+CurrentValue = getgenv().forced_bowl_stand_offset or 0,
+Flag = "ForceStandOffsetValue",
+Callback = function(v)
+    getgenv().forced_bowl_stand_offset = tonumber(v) or 0
+end,})
+
+getgenv().bowl_right_step_offset = tonumber(getgenv().bowl_right_step_offset) or 0
+getgenv().Right_Step_Offset = Tab_3:CreateSlider({
+Name = "Right Step Offset",
+Range = {-3, 3},
+Increment = 0.01,
+Suffix = "",
+CurrentValue = getgenv().bowl_right_step_offset or 0,
+Flag = "BowlRightStepOffset",
+Callback = function(v)
+    if tonumber(v) ~= 0 then
+        local ok, err = ensure_perform_bowl_hook_active()
+        if not ok then
+            getgenv().bowl_right_step_offset = 0
+            getgenv().Right_Step_Offset:Set(0)
+            return getgenv().notify("Error", "Right step hook failed: "..tostring(err), 10)
+        end
+    end
+    getgenv().bowl_right_step_offset = tonumber(v) or 0
+end,})
+
+getgenv().force_heavier_ball_enabled = getgenv().force_heavier_ball_enabled or false
+getgenv().Force_Heavier_Ball = Tab_3:CreateToggle({
+Name = "Heavier Ball Effect (FE)",
+CurrentValue = getgenv().force_heavier_ball_enabled or false,
+Flag = "ForceHeavierBallEffect",
+Callback = function(v)
+    if v then
+        local ok, err = ensure_perform_bowl_hook_active()
+        if not ok then
+            getgenv().force_heavier_ball_enabled = false
+            getgenv().Force_Heavier_Ball:Set(false)
+            return getgenv().notify("Error", "Heavier Ball hook failed: "..tostring(err), 10)
+        end
+    end
+    getgenv().force_heavier_ball_enabled = v
+end,})
+
+getgenv().extra_ball_weight_lbs = tonumber(getgenv().extra_ball_weight_lbs) or 0
+getgenv().Extra_Ball_Weight = Tab_3:CreateSlider({
+Name = "Extra Ball Weight (lbs)",
+Range = {0, 8},
+Increment = 0.01,
+Suffix = "",
+CurrentValue = getgenv().extra_ball_weight_lbs or 0,
+Flag = "ExtraBallWeightLbs",
+Callback = function(v)
+    if tonumber(v) ~= 0 then
+        local ok, err = ensure_perform_bowl_hook_active()
+        if not ok then
+            getgenv().extra_ball_weight_lbs = 0
+            getgenv().Extra_Ball_Weight:Set(0)
+            return getgenv().notify("Error", "Ball weight hook failed: "..tostring(err), 10)
+        end
+    end
+    getgenv().extra_ball_weight_lbs = tonumber(v) or 0
+end,})
+
+local Recommended_Aim_Offset = Tab_3:CreateLabel("Recommended Aim Offset: 0.56", 0, Color3.fromRGB(40, 40, 40), false)
+local Recommended_Bowling_Speed = Tab_3:CreateLabel("Recommended Bowling Speed: 89", 0, Color3.fromRGB(40, 40, 40), false)
+
+getgenv().BowlStrikes_EveryTime = Tab_3:CreateToggle({
+Name = "Bowl with set Offset and Speed (FE)",
+CurrentValue = getgenv().bowl_only_strikes_man or false,
+Flag = "BowlLiterallyOnlyStrikes",
+Callback = function(bowling_strikes)
+    if not hookfunction then
+        getgenv().BowlStrikes_EveryTime:Set(false)
+        getgenv().force_straight_bowl = false
+        getgenv().bowl_only_strikes_man = false
+        return getgenv().notify("Error", "Your executor cannot run this, missing function: 'hookfunction'.", 8)
+    end
+
+    local ok, err = install_perform_bowl_hook()
+    if not ok then
+        getgenv().bowl_only_strikes_man = false
+        getgenv().BowlStrikes_EveryTime:Set(false)
+        return getgenv().notify("Error", "No Ball Spin hook failed: "..tostring(err), 10)
+    end
+
+    getgenv().bowl_only_strikes_man = bowling_strikes
+    if bowling_strikes then
+        getgenv().force_bowl_speed_enabled = true
+        getgenv().force_straight_bowl = false
+    else
+        getgenv().bowl_only_strikes_man = false
+    end
+end,})
+
+getgenv().Leave_Current_Game = Tab:CreateButton({
+Name = "Leave Current Lane (FE)",
+Callback = function()
+    local main = getgenv().exit_game_RF
+    if not main then
+        return getgenv().notify("Error", "An error occurred when trying to find 'leaveGame' RemoteFunction | Not Found.", 8)
+    end
+    local current_lane_id = LocalPlayer:GetAttribute("BowlingLaneId")
+    if not current_lane_id then
+        return getgenv().notify("Warning", "You're not currently in a game.", 7)
+    end
+
+    local ok, response = pcall(function() main:InvokeServer(current_lane_id) end)
+    if not ok then
+        return getgenv().notify("Error", "An unexpected error occurred while calling 'leaveGame' RemoteFunction, got response: "..tostring(response), 25)
+    else
+        getgenv().notify("Success", "Left game: "..tostring(current_lane_id), 10)
+    end
+end,})
+
+getgenv().Pins_Highlight_ESP = Tab:CreateToggle({
+Name = "Pins ESP",
+CurrentValue = getgenv().highlight_pins_enabled or false,
+Flag = "PinsToggleableESP",
+Callback = function(pins_esp_toggle)
+    if pins_esp_toggle then
+        getgenv().bowling_pins_highlight_ESP(true)
+    else
+        getgenv().bowling_pins_highlight_ESP(false)
+    end
+end,})
+
+getgenv().Character_Unlocker_Free_Move_FE = Tab_2:CreateToggle({
+Name = "Character Unlocker (Free Move, FE)",
+CurrentValue = getgenv().unlock_char or false,
+Flag = "UnlockCharacterEvenOnRespawnWhenBowling",
+Callback = function(unlock)
+    getgenv().unlock_char = unlock
+    if getgenv().FlamesLibrary.is_alive("TheLanes_UnlockLoop") then
+        getgenv().FlamesLibrary.disconnect("TheLanes_UnlockLoop")
+    end
+
+    if unlock then
+        getgenv().FlamesLibrary.spawn("TheLanes_UnlockLoop", "spawn", function()
+            while getgenv().unlock_char == true do
+                task.wait()
+                pcall(un_anchor)
+            end
+        end)
+    else
+        getgenv().unlock_char = false
+        getgenv().FlamesLibrary.disconnect("TheLanes_UnlockLoop")
+    end
+end,})
+
+getgenv().animation_names = {}
+getgenv().animation_lookup = {}
+
+for _, data in ipairs(getgenv().Flames_Bowling_Animations or {}) do
+    table.insert(getgenv().animation_names, data.name)
+    getgenv().animation_lookup[data.name] = data
+end
+
+local default_animation = getgenv().bowling_anim_slug
+
+if not getgenv().animation_lookup[default_animation] then
+    default_animation = getgenv().animation_names[1]
+end
+
+getgenv().PickBowlAnimation = Tab_2:CreateDropdown({
+Name = "Set Bowling Animation (FE, FREE!)",
+Options = getgenv().animation_names,
+CurrentOption = {default_animation},
+MultipleOptions = false,
+Flag = "SelectingBowlAnimationFE",
+Callback = function(anim_selected)
+    local selected_name = anim_selected[1]
+    local selected_data = getgenv().animation_lookup[selected_name]
+
+    if selected_data then
+        getgenv().Selected_Bowling_Animation = selected_name
+        getgenv().Selected_Bowling_Animation_Instance = selected_data.instance
+        getgenv().Selected_Bowling_Animation_Coins = selected_data.coins
+
+        if getgenv().apply_anim_override_hook and typeof(getgenv().apply_anim_override_hook) == "function" then
+            getgenv().apply_anim_override_hook(true, selected_name)
+        else
+            getgenv().bowling_anim_slug = selected_name
+            getgenv().bowling_anim_toggle = true
+        end
+    end
+end,})
+
+getgenv().Instant_ProximityPrompts_Toggle = Tab_2:CreateToggle({
+Name = "Instant Proximity Prompt(S)",
+CurrentValue = getgenv().instantly_press_prox_prompts or false,
+Flag = "InstantProxPromptsFlames",
+Callback = function(enabled)
+    getgenv().instant_proximity_prompts(enabled)
+end,})
+
+local function get_aim_beam_main(char)
+    local get_char = char
+        or getgenv().Character
+        or (getgenv().LocalPlayer and getgenv().LocalPlayer.Character)
+        or game.Players.LocalPlayer.Character
+
+    if not get_char then
+        return nil
+    end
+
+    for _, v in ipairs(get_char:GetChildren()) do
+        if v:IsA("Beam") and v.Name:lower():find("aim") then
+            return v
+        end
+    end
+
+    return nil
+end
+
+getgenv().apply_beam_width = function()
+    local beam = get_aim_beam_main()
+    if not beam then return end
+
+    local value = getgenv().Edit_Beam_Width
+        and getgenv().Edit_Beam_Width.CurrentValue
+
+    if typeof(value) ~= "number" then return end
+
+    beam.Width0 = value
+    beam.Width1 = value
+end
+
+getgenv().FlamesLibrary.spawn("aimBeamWatcher", "spawn", function()
+    local lp = getgenv().LocalPlayer or Players.LocalPlayer or getgenv().Players.LocalPlayer or game.Players.LocalPlayer
+
+    local function watch_character(char)
+        if not char then return end
+        task.defer(apply_beam_width)
+
+        getgenv().FlamesLibrary.connect("aimBeamChildAdded_"..char:GetDebugId(), char.ChildAdded:Connect(function(child) -- very VERY safe btw.
+            if child:IsA("Beam") and child.Name:lower():find("aim") then
+                task.wait()
+                apply_beam_width()
+            end
+        end))
+    end
+
+    if lp.Character or getgenv().Character or game.Players.LocalPlayer.Character then
+        watch_character(lp.Character or getgenv().Character or getgenv().Players.LocalPlayer.Character or getgenv().LocalPlayer.Character or game.Players.LocalPlayer.Character)
+    end
+
+    getgenv().FlamesLibrary.connect("aimBeamCharacterAdded", lp.CharacterAdded:Connect(watch_character))
+end)
+
+local current_beam = get_aim_beam_main()
+local default_width = 0.2
+if current_beam and current_beam:IsA("Beam") then
+    default_width = tonumber(current_beam.Width0) or 0.2
+end
+task.wait(0.2)
+getgenv().Edit_Beam_Width = Tab:CreateSlider({
+Name = "Edit AimBeam Width",
+Range = {0, 10},
+Increment = 0.1,
+Suffix = "",
+CurrentValue = getgenv().aim_beam_editing_width_sizes or default_width,
+Flag = "AimBeamWidthModifications",
+Callback = function(new_beam_width)
+    local aim_beam = get_aim_beam_main()
+    if not aim_beam then
+        return 
+    end
+
+    if not aim_beam:IsA("Beam") then
+        return getgenv().notify("Error", "AimBeam was found, but is not a Beam.", 3)
+    end
+    if not aim_beam:IsDescendantOf(game) then
+        return getgenv().notify("Error", "AimBeam is no longer in the game.", 3)
+    end
+
+    if aim_beam then
+        aim_beam.Width0 = new_beam_width
+        aim_beam.Width1 = new_beam_width
+        getgenv().aim_beam_editing_width_sizes = new_beam_width
+    end
+end,})
+
+local rainbow_colors = {
+    Color3.fromRGB(255, 0, 0),
+    Color3.fromRGB(255, 60, 0),
+    Color3.fromRGB(255, 127, 0),
+    Color3.fromRGB(255, 180, 0),
+    Color3.fromRGB(255, 255, 0),
+    Color3.fromRGB(180, 255, 0),
+    Color3.fromRGB(0, 255, 0),
+    Color3.fromRGB(0, 255, 127),
+    Color3.fromRGB(0, 255, 255),
+    Color3.fromRGB(0, 180, 255),
+    Color3.fromRGB(0, 0, 255),
+    Color3.fromRGB(60, 0, 255),
+    Color3.fromRGB(139, 0, 255),
+    Color3.fromRGB(180, 0, 255),
+    Color3.fromRGB(255, 0, 255),
+    Color3.fromRGB(255, 0, 180),
+    Color3.fromRGB(255, 0, 127),
+    Color3.fromRGB(255, 0, 60),
+}
+
+getgenv().Rainbow_RGB_Beam = Tab:CreateToggle({
+Name = "RGB AimBeam",
+CurrentValue = getgenv().beam_rgb_enabled or false,
+Flag = "RainbowAimBeamNotFE",
+Callback = function(rgb_beam)
+    if getgenv().path2d_rgb_conn then
+        pcall(function() getgenv().path2d_rgb_conn:Disconnect() end)
+        getgenv().path2d_rgb_conn = nil
+    end
+    if rgb_beam then
+        getgenv().beam_rgb_enabled = true
+        getgenv().flowrgb_beam("AimBeamRGBConn", 0.5, get_aim_beams, getgenv().beam_rgb_enabled)
+        local rs = cloneref(game:GetService("RunService"))
+        local Players = cloneref(game:GetService("Players"))
+        local color_timer = 0
+        getgenv().path2d_rgb_conn = rs.RenderStepped:Connect(function(dt)
+            color_timer = (color_timer + dt * 2) % #rainbow_colors
+            local index = math.floor(color_timer)
+            local next_index = (index + 1) % #rainbow_colors
+            local alpha = color_timer - index
+            local col = rainbow_colors[index + 1]:Lerp(rainbow_colors[next_index + 1], alpha)
+            local Player_Gui = getgenv().PlayerGui or Players.LocalPlayer:FindFirstChildOfClass("PlayerGui")
+            local Main_GUI = Player_Gui and Player_Gui:FindFirstChild("ReactGui")
+            if not Main_GUI then return end
+            for _, v in ipairs(Main_GUI:GetDescendants()) do
+                if v:IsA("Path2D") and v.Parent and v.Parent.Name == "Minimap" and v.Parent.Parent and v.Parent.Parent.Name == "Aim" then
+                    v.Color3 = col
+                end
+            end
+        end)
+    else
+        getgenv().beam_rgb_enabled = false
+        getgenv().flowrgb_beam("AimBeamRGBConn", 0.5, {}, false)
+    end
+end,})
+
+-- for debugging --
+local function Dump_Ball_Contents(ball)
+    if not ball then return end
+    if not set_clip_board then
+        return getgenv().notify("Error", "setclipboard does not work on your executor!", 6)
+    end
+    local output = {}
+    local function format_value(v)
+        local t = typeof(v)
+        if t == "Vector3" then
+            return string.format("Vector3(%.6f, %.6f, %.6f)", v.X, v.Y, v.Z)
+        elseif t == "Vector2" then
+            return string.format("Vector2(%.6f, %.6f)", v.X, v.Y)
+        elseif t == "CFrame" then
+            local c = {v:GetComponents()}
+            return string.format("CFrame(%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f)", c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12])
+        elseif t == "Color3" then
+            return string.format("Color3(%.6f, %.6f, %.6f)", v.R, v.G, v.B)
+        elseif t == "BrickColor" then
+            return tostring(v.Number) .. ":" .. tostring(v.Name)
+        elseif t == "UDim2" or t == "UDim" or t == "Rect" then
+            return tostring(v)
+        elseif t == "EnumItem" then
+            return tostring(v)
+        elseif t == "Instance" then
+            return v:GetFullName()
+        elseif t == "PhysicalProperties" then
+            return string.format("PhysicalProperties(Density=%.6f,Friction=%.6f,Elasticity=%.6f,FrictionWeight=%.6f,ElasticityWeight=%.6f)", v.Density, v.Friction, v.Elasticity, v.FrictionWeight, v.ElasticityWeight)
+        else
+            return tostring(v)
+        end
+    end
+
+    local common_props = {"Name", "ClassName", "Archivable", "Parent"}
+    local basepart_props = {"Anchored", "CanCollide", "CanTouch", "CanQuery", "Massless", "Size", "Position", "CFrame", "Orientation", "Rotation", "Velocity", "RotVelocity", "AssemblyLinearVelocity", "AssemblyAngularVelocity", "Color", "BrickColor", "Material", "MaterialVariant", "Transparency", "Reflectance", "CollisionGroup", "CustomPhysicalProperties", "RootPriority"}
+    local meshpart_props = {"MeshId", "TextureID", "RenderFidelity"}
+    local sound_props = {"SoundId", "Volume", "PlaybackSpeed", "TimePosition", "TimeLength", "Looped", "PlayOnRemove", "EmitterSize", "RollOffMode", "RollOffMinDistance", "RollOffMaxDistance", "Playing"}
+    local model_props = {"PrimaryPart", "WorldPivot"}
+    local attachment_props = {"Position", "Orientation", "Axis", "SecondaryAxis", "WorldPosition", "WorldOrientation", "Visible"}
+    local specialmesh_props = {"MeshType", "MeshId", "TextureId", "Scale"}
+    local function recurse(obj, prefix)
+        prefix = prefix or ""
+        table.insert(output, prefix .. obj:GetFullName() .. " | Class=" .. obj.ClassName)
+
+        for _, p in ipairs(common_props) do
+            local ok, val = pcall(function() return obj[p] end)
+            if ok then
+                table.insert(output, prefix .. "  Property:" .. tostring(p) .. "=" .. format_value(val))
+            end
+        end
+
+        if obj:IsA("BasePart") then
+            for _, p in ipairs(basepart_props) do
+                local ok, val = pcall(function() return obj[p] end)
+                if ok then
+                    table.insert(output, prefix .. "  Property:" .. tostring(p) .. "=" .. format_value(val))
+                end
+            end
+        end
+
+        if obj:IsA("MeshPart") then
+            for _, p in ipairs(meshpart_props) do
+                local ok, val = pcall(function() return obj[p] end)
+                if ok then
+                    table.insert(output, prefix .. "  Property:" .. tostring(p) .. "=" .. format_value(val))
+                end
+            end
+        end
+
+        if obj:IsA("Sound") then
+            for _, p in ipairs(sound_props) do
+                local ok, val = pcall(function() return obj[p] end)
+                if ok then
+                    table.insert(output, prefix .. "  Property:" .. tostring(p) .. "=" .. format_value(val))
+                end
+            end
+        end
+
+        if obj:IsA("Model") then
+            for _, p in ipairs(model_props) do
+                local ok, val = pcall(function() return obj[p] end)
+                if ok then
+                    table.insert(output, prefix .. "  Property:" .. tostring(p) .. "=" .. format_value(val))
+                end
+            end
+        end
+
+        if obj:IsA("Attachment") then
+            for _, p in ipairs(attachment_props) do
+                local ok, val = pcall(function() return obj[p] end)
+                if ok then
+                    table.insert(output, prefix .. "  Property:" .. tostring(p) .. "=" .. format_value(val))
+                end
+            end
+        end
+
+        if obj:IsA("SpecialMesh") then
+            for _, p in ipairs(specialmesh_props) do
+                local ok, val = pcall(function() return obj[p] end)
+                if ok then
+                    table.insert(output, prefix .. "  Property:" .. tostring(p) .. "=" .. format_value(val))
+                end
+            end
+        end
+
+        local attrs = obj:GetAttributes()
+        for prop_name, val in pairs(attrs) do
+            table.insert(output, prefix .. "  Attribute:" .. tostring(prop_name) .. "=" .. format_value(val))
+        end
+
+        for _, child in ipairs(obj:GetChildren()) do
+            recurse(child, prefix .. "  ")
+        end
+    end
+
+    recurse(ball)
+    local result = table.concat(output, "\n")
+    pcall(function() set_clip_board(result) end)
+end
+
+getgenv().CopyAllBowlingBallParts = Tab:CreateButton({
+Name = "Copy All Bowling Ball parts and properties (everything)",
+Callback = function()
+    local ball = Get_LocalPlayers_Bowling_Ball()
+
+    if not ball then
+        return getgenv().notify("Error", "Ball doesn't exist or was not found.", 6)
+    end
+    if not set_clip_board then
+        return getgenv().notify("Error", "setclipboard does not work on your executor!", 6)
+    end
+
+    Dump_Ball_Contents(ball)
+    getgenv().notify("Success", "Copied Bowling Ball properties and it's descendants/children from: "..tostring(ball), 15)
+end,})
+
+getgenv().CopyBowlingBallFullPathLoc = Tab:CreateButton({
+Name = "[DEBUG]: Copy Bowling Ball Full Path",
+Callback = function()
+    local ball = Get_LocalPlayers_Bowling_Ball()
+
+    if not ball then
+        return getgenv().notify("Error", "Ball doesn't exist or was not found.", 6)
+    end
+    if not set_clip_board then
+        return getgenv().notify("Error", "setclipboard does not work on your executor!", 6)
+    end
+
+    set_clip_board(tostring(ball:GetFullName()))
+    getgenv().notify("Success", "Copied: "..tostring(ball).."'s Path to your clipboard!", 15)
+end,})
+
+getgenv().CopyBowlingBallFullPathLoc = Tab:CreateButton({
+Name = "[DEBUG]: Copy Bowling Ball Folder",
+Callback = function()
+    local folder = getgenv().bowling_folder_found or (getgenv().get_bowling_lanes_folder and getgenv().get_bowling_lanes_folder())
+
+    if not folder then
+        return getgenv().notify("Error", "Bowling Folder doesn't exist or was not found.", 6)
+    end
+    if not set_clip_board then
+        return getgenv().notify("Error", "setclipboard does not work on your executor!", 6)
+    end
+
+    set_clip_board(folder:GetFullName())
+    getgenv().notify("Success", "Copied Bowling Ball Folder: "..tostring(folder).."'s Path to your clipboard!", 15)
+end,})
