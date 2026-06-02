@@ -1,7 +1,13 @@
 if not game:IsLoaded() then
    game.Loaded:Wait()
 end
-wait(0.2)
+wait(0.1)
+if not getgenv().GlobalEnvironmentFramework_Initialized then
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua"))()
+   wait(0.1)
+   getgenv().GlobalEnvironmentFramework_Initialized = true
+end
+wait(0.3)
 local MarketplaceService = game:GetService("MarketplaceService")
 local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LumUILibrary.lua"))()
@@ -544,7 +550,7 @@ local End_Screen_Frame = Gui_Main:FindFirstChild("EndScreenFrame")
 local New_Game_Button = End_Screen_Frame:FindFirstChild("NewGameButton")
 local Main_Frame = Gui_Main:FindFirstChild("MainFrame")
 local Guess_Frame = Main_Frame:FindFirstChild("GuessFrame")
-local Opponent_Chat_Frame = Main_Frame:FindFirstChild("OpponentChatFrame")
+local Opponent_Chat_Frame = Main_Frame:FindFirstChild("ChatFrame")
 local Signals = {
    "Activated",
    "MouseButton1Down",
@@ -558,8 +564,8 @@ function Click_Button(Button)
 
    if Button:IsA("TextButton") or Button:IsA("ImageButton") then
       for _, signalName in ipairs(Signals) do
-         local signal = rawget(Button, signalName)
-         if typeof(signal) == "RBXScriptSignal" then
+         local ok, signal = pcall(function() return Button[signalName] end)
+         if ok and typeof(signal) == "RBXScriptSignal" then
             pcall(firesignal, signal)
          end
       end
@@ -840,122 +846,163 @@ for _, item in ipairs(custom_options) do
    end)
 end
 
-local reply_monitor_connection
+local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+local Math_Keywords = {
+   ["plus"] = "+", ["minus"] = "-", ["times"] = "*",
+   ["multiplied by"] = "*", ["divided by"] = "/",
+   ["over"] = "/", ["what's"] = "", ["what is"] = "",
+   ["calculate"] = "", ["solve"] = "", ["pi"] = tostring(math.pi),
+}
 
-getgenv().SmartReplyExploit = Exploits_Section:Toggle("Smart Reply (FE)", function(activated_auto_reply)
-   if activated_auto_reply then
-      getgenv().smartResponderEnabled = true
-      getgenv().smartResponderConnection = nil
+local Greeting_Replies = {
+   "Hey, what's up?",
+   "Yo, what do you need?",
+   "Hello! Got a math problem for me?",
+}
 
-      local function solveMathFromText(text)
-         text = text:lower()
-         wait()
-         text = text:gsub("plus", "+")
-         text = text:gsub("minus", "-")
-         text = text:gsub("times", "*")
-         text = text:gsub("multiplied by", "*")
-         text = text:gsub("divided by", "/")
-         text = text:gsub("over", "/")
-         text = text:gsub("equals", "=")
-         text = text:gsub("what's", "")
-         text = text:gsub("what is", "")
-         text = text:gsub("calculate", "")
-         text = text:gsub("solve", "")
-         text = text:gsub("x", "*")
-         text = text:gsub("pi", "math.pi")
-         text = text:gsub("sqrt", "math.sqrt")
-         text = text:gsub("sin", "math.sin")
-         text = text:gsub("cos", "math.cos")
-         text = text:gsub("tan", "math.tan")
-         text = text:gsub("log", "math.log")
-         wait()
-         text = text:gsub("[^%w%._%+%-%*/%^%=()%s]", "")
-         text = text:match("[0-9%a%._%+%-%*/%^%=()%s]+")
+local Math_Replies = {
+   "The answer is: %s.",
+   "Calculated: %s.",
+   "That comes out to %s.",
+}
 
-         if not text then return end
+local function Normalize_Text(text)
+   return text:lower():gsub("%s+", " "):match("^%s*(.-)%s*$")
+end
 
-         if text:match("=") and text:match("x") then
-            local lhs, rhs = text:match("(.+)%s*=%s*(.+)")
-            if lhs and rhs then
-               local val = tonumber(rhs)
-               if val then
-                  local expr = lhs:gsub("x", "")
-                  local num = tonumber(expr)
-                  if num then
-                     local x = val - num
-                     return "x = " .. tostring(x)
-                  end
-               end
+local function Solve_Math(text)
+   text = text:lower()
+   for word, symbol in pairs(Math_Keywords) do
+      text = text:gsub(word, symbol)
+   end
+   text = text:gsub("[^%d%.%+%-%*/%%^%(%)\n%s]", "")
+   text = text:match("[%d%.%+%-%*/%%^%(%)%s]+")
+   if not text or #text < 1 then return nil end
+   local ok, result = pcall(loadstring, "return " .. text)
+   if not ok or type(result) ~= "function" then return nil end
+   local ok2, val = pcall(result)
+   if ok2 and type(val) == "number" and val == val then
+      return tostring(math.round(val * 1e6) / 1e6)
+   end
+   return nil
+end
+
+local Reply_Rules = {
+   {
+      priority = 1,
+      check = function(n)
+         return n:find("your name") or n:find("ur name") or n:find("who are you")
+      end,
+      reply = function()
+         return "My name is " .. tostring(Players.LocalPlayer.DisplayName) .. "."
+      end
+   },
+   {
+      priority = 2,
+      check = function(n)
+         return n:match("^hey") or n:match("^hi") or n:match("^yo") or n:find("hello")
+      end,
+      reply = function()
+         return Greeting_Replies[math.random(#Greeting_Replies)]
+      end
+   },
+   {
+      priority = 3,
+      check = function(n)
+         return n:find("how are you") or n:find("how r u") or n:find("u good")
+      end,
+      reply = function()
+         return "Doing good, throw a math problem at me."
+      end
+   },
+   {
+      priority = 4,
+      check = function(n)
+         return n:find("siri") or n:find("alexa") or n:find("gpt") or n:find("bot")
+      end,
+      reply = function()
+         return "Hello, I can solve math problems for you."
+      end
+   },
+   {
+      priority = 5,
+      check = function(n)
+         return n:find("are you real") or n:find("are u real") or n:find("ur a bot")
+      end,
+      reply = function()
+         return "Automated, but I can solve math — try me."
+      end
+   },
+}
+
+local function Get_Smart_Reply(raw_msg)
+   local normalized = Normalize_Text(raw_msg)
+
+   table.sort(Reply_Rules, function(a, b) return a.priority < b.priority end)
+   for _, rule in ipairs(Reply_Rules) do
+      if rule.check(normalized) then
+         return rule.reply()
+      end
+   end
+
+   local math_result = Solve_Math(raw_msg)
+   if math_result then
+      local template = Math_Replies[math.random(#Math_Replies)]
+      return template:format(math_result)
+   end
+
+   return nil
+end
+
+getgenv().SmartReplyExploit = Exploits_Section:Toggle("Smart Reply (Broken)", function(activated)
+   if activated then
+      getgenv().Smart_Reply_Enabled = true
+      if getgenv().Smart_Reply_Connection then getgenv().Smart_Reply_Connection:Disconnect() end
+      local function Handle_Opponent_Message(opponent_message)
+         task.spawn(function()
+            local bubble_frame = opponent_message:FindFirstChild("OpponentMessageBubble")
+            if not bubble_frame then
+               opponent_message.ChildAdded:Connect(function(v)
+                  if v.Name == "OpponentMessageBubble" then bubble_frame = v end
+               end)
+               repeat task.wait() until bubble_frame
             end
-         end
 
-         local success, result = pcall(function()
-            return loadstring("return " .. text)()
-         end)
+            local text_label = bubble_frame:FindFirstChild("MessageText")
+            if not text_label then
+               bubble_frame.ChildAdded:Connect(function(v)
+                  if v.Name == "MessageText" then text_label = v end
+               end)
+               repeat task.wait() until text_label
+            end
 
-         if success and type(result) == "number" then
-            return tostring(result)
-         end
-      end
-
-      local function getSmartReply(message)
-         local normalized = normalize(message)
-
-         if normalized:find("your name") or normalized:find("ur name") or normalized:find("whats your name") or normalized:find("what is your name") or normalized:find("who are you") then
-            return "My name is "..tostring(LocalPlayer.DisplayName)
-         end
-
-         if normalized:match("^(yo+)%s") or normalized:find("hello") or normalized:find("hi") or normalized:find("hey") then
-            return "Hello, how are you doing?"
-         end
-
-         if normalized:find("siri") or normalized:find("alexa") then
-            return "Hello, how may I assist you today? math problems?"
-         end
-
-         if normalized:find("how are you") or normalized:find("how r u") then
-            return "I'm doing well, give me a math problem to solve."
-         end
-
-         local mathAnswer = solveMathFromText(message)
-         if mathAnswer then
-            return "The answer is: "..mathAnswer
-         end
-
-         if normalized:find("are you real") or normalized:find("are u real") then
-            return "I'm real, but automated using scripts, give me a math problem."
-         end
-
-         return nil
-      end
-      wait()
-      if getgenv().smartResponderConnection then
-         getgenv().smartResponderConnection:Disconnect()
-      end
-
-      getgenv().smartResponderConnection = Opponent_Chat_Frame.ChildAdded:Connect(function(child)
-         if not getgenv().smartResponderEnabled then return end
-
-         wait(0.1)
-         local textLabel = child:FindFirstChild("MessageText")
-         if textLabel and textLabel:IsA("TextLabel") then
-            local msg = textLabel.Text
-            local reply = getSmartReply(msg)
+            local reply = Get_Smart_Reply(text_label.Text)
             if reply then
                Send_Message_Event:FireServer(reply)
-               getgenv().notify("Success", "Successfully Replied with: "..tostring(reply), 6)
+               getgenv().notify("Success", "Replied: " .. tostring(reply), 5)
             end
-         end
-      end)
-   else
-      getgenv().smartResponderEnabled = false
-      wait()
-      if getgenv().smartResponderConnection then
-         getgenv().smartResponderConnection:Disconnect()
-         getgenv().smartResponderConnection = nil
+         end)
       end
-      wait(0.2)
-      getgenv().notify("Success", "Disconnected Smart Responder.", 5)
+
+      getgenv().Smart_Reply_Connection = Opponent_Chat_Frame.ChildAdded:Connect(function(child)
+         if not getgenv().Smart_Reply_Enabled then return end
+         if child.Name ~= "OpponentMessage" or not child:IsA("Frame") then return end
+         Handle_Opponent_Message(child)
+      end)
+
+      for _, child in ipairs(Opponent_Chat_Frame:GetChildren()) do
+         if child.Name == "OpponentMessage" and child:IsA("Frame") then
+            Handle_Opponent_Message(child)
+         end
+      end
+   else
+      getgenv().Smart_Reply_Enabled = false
+      if getgenv().Smart_Reply_Connection then
+         getgenv().Smart_Reply_Connection:Disconnect()
+         getgenv().Smart_Reply_Connection = nil
+      end
+      task.wait(0.2)
+      getgenv().notify("Success", "Smart-Responder has been disabled.", 5)
    end
 end)
 
