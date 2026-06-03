@@ -966,6 +966,12 @@ getgenv().handleCommand = function(sender, message)
       if not g.AutoLockOn then return g.notify("Error", "You do not have 'AutoLockCar' enabled!", 5) end
 
       g.ToggleAutoLock(false)
+   elseif raw_cmd == "collectall" or raw_cmd == "nbacollectall" or raw_cmd == "findall" or raw_cmd == "findallprops" or raw_cmd == "collectallprops" then
+      local attr = g.LocalPlayer:GetAttribute("NBA_HUNT_PROGRESS")
+      if not attr then return end
+      if attr ~= "PLAYING" then return getgenv().notify("Warning", "Talk to the NPC first and enter in before trying this!", 10) end
+
+      g.collect_all_nba_props()
    elseif raw_cmd == "hidedelta" or raw_cmd == "hidedeltaicon" then
       g.toggle_delta_image_button_flames_hub(false)
    elseif raw_cmd == "showdelta" or raw_cmd == "showdeltaicon" or raw_cmd == "unhidedelta" or raw_cmd == "unhidedeltaicon" then
