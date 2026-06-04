@@ -1,14 +1,15 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 if getgenv().CatalogAvatarCreator_Script_Menu_Loaded then
-    return 
+    if getgenv().notify then
+        return getgenv().notify("Warning", "Flames Hub | Catalog Avatar Creator is already loaded!", 5)
+    else
+        warn("Flames Hub | Catalog Avatar Creator is already loaded!")
+    end
 end
-
 getgenv().CatalogAvatarCreator_Script_Menu_Loaded = true
-
 local g = getgenv()
-
 if not getgenv().GlobalEnvironmentFramework_Initialized then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Global_Environment.lua'))()
     wait(0.1)
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
@@ -27,16 +28,47 @@ end
 repeat task.wait() until service_wrap
 local MarketplaceService = service_wrap("MarketplaceService")
 local game_name = MarketplaceService:GetProductInfo(game.PlaceId).Name
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/LumUILibrary.lua"))()
-local Window = Library.new(tostring(game_name).." - Control Panel")
-local HomeTab = Window:Tab("Home")
-local ReanimationTab = Window:Tab("Reanimation")
-local UITab = Window:Tab("UI")
-local AvatarSection = HomeTab:Section("Avatar/Character")
-local PlayersSection = HomeTab:Section("LocalPlayer/Players")
-local PrivServerSection = HomeTab:Section("Private Server")
-local R6AnimationsSection = ReanimationTab:Section("R6 Animations")
-local UISection = UITab:Section("UI")
+local Luna = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Nebula.lua", true))()
+local Window = Luna:CreateWindow({
+    Name = tostring(game_name),
+    Subtitle = "- Flames Hub",
+    LogoID = "0",
+    LoadingEnabled = true,
+    LoadingTitle = tostring(game_name) .. " | Presents",
+    LoadingSubtitle = "Control Panel",
+    ConfigSettings = {
+        RootFolder = nil,
+        ConfigFolder = tostring(game_name)
+    },
+
+    KeySystem = false,
+    KeySettings = {
+        Title = tostring(game_name) .. " | Key System",
+        Subtitle = "",
+        Note = "Welcome to the Control Panel!",
+        SaveInRoot = false,
+        SaveKey = true,
+        Key = {"Example Key"},
+        SecondAction = {
+            Enabled = false,
+            Type = "Link",
+            Parameter = ""
+        }
+    }
+})
+
+local HomeTab = Window:CreateTab({Name = "🏠 Home 🏠", Icon = "view_in_ar", ImageSource = "Material", ShowTitle = true})
+local LocalPlayerTab = Window:CreateTab({Name = "👤 LocalPlayer 👤", Icon = "view_in_ar", ImageSource = "Material", ShowTitle = true})
+local PlayersTab = Window:CreateTab({Name = "👥 Players 👥", Icon = "view_in_ar", ImageSource = "Material", ShowTitle = true})
+local ReanimationTab = Window:CreateTab({Name = "💀 Reanimation 💀", Icon = "view_in_ar", ImageSource = "Material", ShowTitle = true})
+local ExtrasTab = Window:CreateTab({Name = "⭐ Extras ⭐", Icon = "view_in_ar", ImageSource = "Material", ShowTitle = true})
+local UITab = Window:CreateTab({Name = "🖥️ UI 🖥️", Icon = "view_in_ar", ImageSource = "Material", ShowTitle = true})
+local AvatarSection = HomeTab:CreateSection("Section | Avatar/Character")
+local LocalPlayerSection = LocalPlayerTab:CreateSection("Section | LocalPlayer")
+local PlayersSection = PlayersTab:CreateSection("Section | Players")
+local R6AnimationsSection = ReanimationTab:CreateSection("Section | R6 Animations")
+local ExtrasSection = ExtrasTab:CreateSection("Section | Extras")
+local UISection = UITab:CreateSection("Section | UI")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
@@ -47,6 +79,14 @@ getgenv().disabled_conns = getgenv().disabled_conns or {}
 wait(0.2)
 getgenv().toggle_logging = function(state)
     if state then
+        if getgenv().logging_disabled then
+            if getgenv().notify then
+                return getgenv().notify("Warning", "Logging is already disabled.", 5)
+            else
+                return warn("Logging is already disabled.")
+            end
+        end
+
         getgenv().logging_disabled = true
         for _, conn in next, get_conns(LogService.MessageOut) do
             if conn then
@@ -55,6 +95,14 @@ getgenv().toggle_logging = function(state)
             end
         end
     else
+        if not getgenv().logging_disabled then
+            if getgenv().notify then
+                return getgenv().notify("Warning", "Logging is not disabled.", 5)
+            else
+                return warn("Logging is not disabled.")
+            end
+        end
+
         for _, conn in next, getgenv().disabled_conns do
             if conn.Enable then
                 conn:Enable()
@@ -79,7 +127,7 @@ local ReplicatedStorage = service_wrap("ReplicatedStorage")
 local TweenService = service_wrap("TweenService")
 
 function close_menu()
-    closeWindow()
+    Luna:Destroy()
     getgenv().CatalogAvatarCreator_Script_Menu_Loaded = false
 end
 
@@ -253,7 +301,6 @@ local Save_Fit_RE = Events_Folder and Events_Folder:FindFirstChild("SavedOutfits
 local Upd_Plr_Status = Events_Folder and Events_Folder:FindFirstChild("UpdatePlayerStatus", true)
 local IsPriv_RF = Events_Folder and Events_Folder:FindFirstChild("GetIsVIPServer", true)
 local ApplyPose_RE = Events_Folder and Events_Folder:FindFirstChild("ApplyPose", true)
-local g = getgenv()
 wait(0.3)
 function ingame_notify(title, message, colorName, dur)
     if type_checker_function(Popup_Message, "BindableEvent") then
@@ -340,7 +387,6 @@ end
 
 local maximum_retries_for_char = 500 -- basically has to always exist, there's no way.
 local maximum_retries = 350 -- for everything else.
-
 g.get_char = g.get_char or function(Player)
     if not Player or not Player:IsA("Player") then
         ingame_notify("error", "player don't exist: "..tostring(player), "red", 5)
@@ -402,10 +448,8 @@ wait(0.2)
 function copy_avatar(player)
     if not player then return end
     if getgenv().avatar_copier_current_busy then return ingame_notify("Wait!","You're currently copying someone's avatar, wait until it's done.","yellow",6) end
-
     local char = player.Character or get_char(player)
     local hum = char:FindFirstChildWhichIsA("Humanoid") or get_human(player)
-
     getgenv().avatar_copier_current_busy = true
     wait(0.2)
     if not getgenv().AnimSlots then
@@ -598,7 +642,6 @@ end
 function gun_idle_cool_anim(toggle)
     if toggle then
         getgenv().gun_animation_idle_animation = true
-
         task.spawn(function()
             local t = 0
             while getgenv().gun_animation_idle_animation do
@@ -697,10 +740,8 @@ function float_idle(toggle)
             local t = 0
             while getgenv().float_idle == true do
                 t = t + 0.05
-
                 local hover = math.sin(t/4) * 3
                 local tilt  = math.sin(t/6) * 0.05
-
                 local pose = {
                     ["RootJoint"] = {
                         C0 = CFrame.new(0, hover, 0) 
@@ -775,7 +816,6 @@ end
 
 function make_avatar(targetPlayer, rig_type)
     local userId
-    
     if typeof(targetPlayer) == "Instance" and targetPlayer:IsA("Player") then
         userId = targetPlayer.UserId
     else
@@ -797,13 +837,15 @@ function make_avatar(targetPlayer, rig_type)
         return ingame_notify("error", "provide a valid rigtype lil bro.", "red", 10)
     end
 
-    local data = {
-        Action = "MorphIntoPlayer",
-        UserId = userId,
-        RigType = humanoidRig
-    }
+    if Catalog_Remote and Catalog_Remote:IsA("RemoteFunction") then
+        local data = {
+            Action = "MorphIntoPlayer",
+            UserId = userId,
+            RigType = humanoidRig
+        }
 
-    Catalog_Remote:InvokeServer(data)
+        Catalog_Remote:InvokeServer(data)
+    end
 end
 
 local function is_vip_owner()
@@ -868,6 +910,7 @@ function name_changer_premium(toggle)
 end
 
 function flash_name_title(toggle)
+    if not Upd_Plr_Status then getgenv().updating_status_title = false return ingame_notify("error", "Could not find RemoteEvent (patched?).", "red", 5) end
     if toggle == true then
         local titles = {
             "[AFK]",
@@ -892,6 +935,7 @@ function flash_name_title(toggle)
 end
 
 function vip_server_notif_spam(toggle)
+    if not Settings_RF then getgenv().updating_status_title = false return ingame_notify("error", "Could not find RemoteFunction (patched?).", "red", 5) end
 	local ohTable = {
 		Action = "ToggleGearsEnabled",
 		Enabled = true
@@ -913,7 +957,6 @@ function vip_server_notif_spam(toggle)
 		end)
 	elseif toggle == false then
 		getgenv().settings_spam = false
-
 		if getgenv().settings_spam_task then
 			pcall(function()
 				task.cancel(getgenv().settings_spam_task)
@@ -926,31 +969,16 @@ function vip_server_notif_spam(toggle)
 end
 
 getgenv().saved_colors = getgenv().saved_colors or {}
-local function is_r15(hum)
-   return hum and hum.RigType == Enum.HumanoidRigType.R15
-end
-local function is_r6(hum)
-   return hum and hum.RigType == Enum.HumanoidRigType.R6
-end
-
+local function is_r15(hum) return hum and hum.RigType == Enum.HumanoidRigType.R15 end
+local function is_r6(hum) return hum and hum.RigType == Enum.HumanoidRigType.R6 end
 local function save_skin()
     local LP = Players.LocalPlayer
-
     local hum = get_human(LP)
-    if not hum then
-        return false, nil
-    end
-
+    if not hum then return false, nil end
     local char = get_char(LP)
-    if not char then
-        return false, hum.RigType
-    end
-
+    if not char then return false, hum.RigType end
     local bc = char:FindFirstChildOfClass("BodyColors")
-    if not bc then
-        return false, rig
-    end
-
+    if not bc then return false, rig end
     if next(getgenv().saved_colors) ~= nil then
         for k in next, getgenv().saved_colors do
             getgenv().saved_colors[k] = nil
@@ -963,34 +991,21 @@ local function save_skin()
     getgenv().saved_colors.LeftLegColor3 = bc.LeftLegColor3
     getgenv().saved_colors.RightLegColor3 = bc.RightLegColor3
     getgenv().saved_colors.TorsoColor3 = bc.TorsoColor3
-
     ingame_notify("info", "saved body color(s).", "white", 5)
 
     return true, rig
 end
 
 getgenv().save_certain_body_parts_skintone = function(bodyPart)
-    local LP = Players.LocalPlayer
-
-    local hum = get_human(LP)
-    if not hum then
-        return false, nil
-    end
-
-    local char = get_char(LP)
-    if not char then
-        return false, hum.RigType
-    end
-
+    local LP = getgenv().LocalPlayer or Players.LocalPlayer
+    local hum = getgenv().Humanoid or getgenv().Character and getgenv().Character:FindFirstChildOfClass("Humanoid") or get_human(LP)
+    if not hum then return false, nil end
+    local char = getgenv().Character or LP.Character or get_char(LP)
+    if not char then return false, hum.RigType end
     local bc = char:FindFirstChildOfClass("BodyColors")
-    if not bc then
-        return false, hum.RigType
-    end
-
+    if not bc then return false, hum.RigType end
     getgenv().partial_saved_colors = getgenv().partial_saved_colors or {}
-
     local input = typeof(bodyPart) == "string" and bodyPart:lower() or ""
-
     local function saveProp(prop)
         local val = bc[prop .. "3"]
         if val then
@@ -1067,14 +1082,9 @@ end
 getgenv().apply_default_skin_tone_on_body_part = function(bodyPart)
     local partialStore = getgenv().partial_saved_colors
     local defaultStore = getgenv().saved_colors
-
-    if typeof(partialStore) ~= "table" and typeof(defaultStore) ~= "table" then
-        return false
-    end
-
+    if typeof(partialStore) ~= "table" and typeof(defaultStore) ~= "table" then return false end
     local input = typeof(bodyPart) == "string" and bodyPart:lower() or ""
     local props = {}
-
     local function resolveProp(prop)
         local key = prop .. "3"
         local val = partialStore and partialStore[key] or nil
@@ -1304,7 +1314,10 @@ getgenv().reset_humanoid_desc = function()
     })
 end
 
-AvatarSection:Button("Char Into Owner Of Script.", function()
+getgenv().Char_Into_Owners_Outfit_Button = AvatarSection:CreateButton({
+Name = "Char Into Owner Of Script.",
+Description = "Morphs your character into the script owner's appearance.",
+Callback = function()
     if getgenv().Humanoid.RigType ~= Enum.HumanoidRigType.R15 then
         return ingame_notify("error", "you need to be r15 to do this.", "red", 5)
     end
@@ -1328,7 +1341,6 @@ AvatarSection:Button("Char Into Owner Of Script.", function()
         Action = "TryBundle",
         BundleId = 808195
     })
-
     task.wait(0.4)
     Catalog_Remote:InvokeServer(getgenv().owner_of_scripts_body_type_scales)
     wait(0.3)
@@ -1351,18 +1363,27 @@ AvatarSection:Button("Char Into Owner Of Script.", function()
     wait(0.1)
     getgenv().set_animation_fuzzy("fall", 619541867)
     wait(0.1)
+    Catalog_Remote:InvokeServer({
+        Action = "TryBundle",
+        BundleId = 148613568982570
+    })
+    wait(0.1)
     Catalog_Remote:InvokeServer(getgenv().korblox_equip_tables.right_leg)
 
     ingame_notify("success", "Applied all accessories.", "green", 5)
-end)
+end})
 
-getgenv().RainbowSkin_ToggleUI = AvatarSection:Toggle("Rainbow Skin (FE)", function(state)
-    if state then
+getgenv().RainbowSkin_ToggleUI = AvatarSection:CreateToggle({
+Name = "Rainbow Skin (FE)",
+Description = "Cycles your skin color through a rainbow of colors.",
+CurrentValue = getgenv().Rainbow_Skin_Enabled or false,
+Callback = function(Value)
+    if Value then
         save_skin()
         ingame_notify("info", "saved current skintone and enabled rgb skin.", "white", 5)
         getgenv().Rainbow_Skin_Enabled = true
-            while getgenv().Rainbow_Skin_Enabled == true do
-            task.wait()
+        while getgenv().Rainbow_Skin_Enabled == true do
+            task.wait(.1)
             for name, color in pairs(colors) do
                 task.wait(0)
                 local ohTable = {
@@ -1391,14 +1412,18 @@ getgenv().RainbowSkin_ToggleUI = AvatarSection:Toggle("Rainbow Skin (FE)", funct
             ingame_notify("success", "reset skintone.", "green", 5)
         end
     end
-end)
+end}, "RainbowSkin_Toggle")
 
-getgenv().RainbowArms_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Legs (FE)", function(state)
-    if state then
+getgenv().RainbowArms_Toggle_UI = AvatarSection:CreateToggle({
+Name = "Rainbow/RGB Legs (FE)",
+Description = "Cycles your leg skin color through a rainbow of colors.",
+CurrentValue = getgenv().Rainbow_Legs_Enabled or false,
+Callback = function(Value)
+    if Value then
         getgenv().save_certain_body_parts_skintone("legs")
         ingame_notify("info", "saved current skintone and enabled rgb legs.", "white", 5)
         getgenv().Rainbow_Legs_Enabled = true
-            while getgenv().Rainbow_Legs_Enabled == true do
+        while getgenv().Rainbow_Legs_Enabled == true do
             task.wait()
             for name, color in pairs(colors) do
                 task.wait(0)
@@ -1424,14 +1449,18 @@ getgenv().RainbowArms_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Legs (FE)", 
             ingame_notify("success", "reset legs skintone.", "green", 5)
         end
     end
-end)
+end}, "RainbowLegs_Toggle")
 
-getgenv().Rainbow_Arms_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Arms (FE)", function(state)
-    if state then
+getgenv().Rainbow_Arms_Toggle_UI = AvatarSection:CreateToggle({
+Name = "Rainbow/RGB Arms (FE)",
+Description = "Cycles your arm skin color through a rainbow of colors.",
+CurrentValue = getgenv().Rainbow_Arms_Enabled or false,
+Callback = function(Value)
+    if Value then
         getgenv().save_certain_body_parts_skintone("arms")
         ingame_notify("info", "saved current skintone and enabled rgb arms.", "white", 5)
         getgenv().Rainbow_Arms_Enabled = true
-            while getgenv().Rainbow_Arms_Enabled == true do
+        while getgenv().Rainbow_Arms_Enabled == true do
             task.wait()
             for name, color in pairs(colors) do
                 task.wait(0)
@@ -1443,13 +1472,13 @@ getgenv().Rainbow_Arms_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Arms (FE)",
                 }
                 Catalog_Remote:InvokeServer(ohTable)
                 task.wait(0)
-                local ohTable = {
+                local ohTable2 = {
                     ["Action"] = "UpdateHumanDescProperties",
                     ["Properties"] = {
                         ["RightArmColor"] = color
                     }
                 }
-                Catalog_Remote:InvokeServer(ohTable)
+                Catalog_Remote:InvokeServer(ohTable2)
             end
         end
     else
@@ -1464,10 +1493,14 @@ getgenv().Rainbow_Arms_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Arms (FE)",
             ingame_notify("success", "reset arms skintone.", "green", 5)
         end
     end
-end)
+end}, "RainbowArms_Toggle")
 
-getgenv().Rainbow_Head_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Head (FE)", function(state)
-    if state then
+getgenv().Rainbow_Head_Toggle_UI = AvatarSection:CreateToggle({
+Name = "Rainbow/RGB Head (FE)",
+Description = "Cycles your head skin color through a rainbow of colors.",
+CurrentValue = getgenv().Rainbow_Head_Enabled or false,
+Callback = function(Value)
+    if Value then
         getgenv().save_certain_body_parts_skintone("head")
         ingame_notify("info", "saved current skintone and enabled rgb head.", "white", 5)
         getgenv().Rainbow_Head_Enabled = true
@@ -1496,10 +1529,18 @@ getgenv().Rainbow_Head_Toggle_UI = AvatarSection:Toggle("Rainbow/RGB Head (FE)",
             ingame_notify("success", "reset head skintone.", "green", 5)
         end
     end
-end)
+end}, "RainbowHead_Toggle")
 
-PlayersSection:TextBox("Copy Avatar (FE)", function(player_user)
-    local copy_target = findplr(player_user)
+getgenv().Copy_Avatar_Plr_Input = PlayersSection:CreateInput({
+Name = "Copy Avatar (FE)",
+Description = "Copy another player's avatar appearance.",
+PlaceholderText = "Enter player name...",
+CurrentValue = "",
+Numeric = false,
+MaxCharacters = nil,
+Enter = true,
+Callback = function(Text)
+    local copy_target = findplr(Text)
     if not copy_target then
         return ingame_notify("error", "that player don't exist bro.", "red", 10)
     end
@@ -1511,10 +1552,18 @@ PlayersSection:TextBox("Copy Avatar (FE)", function(player_user)
     getgenv().reset_humanoid_desc()
     task.wait(0.5)
     copy_avatar(copy_target)
-end)
+end}, "CopyAvatar_Input")
 
-PlayersSection:TextBox("Get Plrs Avatar", function(player_entered)
-    local copy_target = findplr(player_entered)
+getgenv().Get_Anyones_Avatar_In_Current_Server_Plr_Input = PlayersSection:CreateInput({
+Name = "Get Plrs Avatar",
+Description = "Become a player in the server's avatar.",
+PlaceholderText = "Enter player name...",
+CurrentValue = "",
+Numeric = false,
+MaxCharacters = nil,
+Enter = true,
+Callback = function(Text)
+    local copy_target = findplr(Text)
     if not copy_target then
         return ingame_notify("error", "that player don't exist bro.", "red", 10)
     end
@@ -1522,18 +1571,26 @@ PlayersSection:TextBox("Get Plrs Avatar", function(player_entered)
     if not copy_target_char then return ingame_notify("error", "players character doesn't exist anymore.", "red", 6) end
     local copy_target_hum = copy_target_char:FindFirstChildWhichIsA("Humanoid") or copy_target_char:WaitForChild("Humanoid", 3) or get_human(copy_target)
     if not copy_target_hum then
-        return 
+        return
     end
 
     ingame_notify("success", "becoming: "..tostring(copy_target), "green", 5)
     make_avatar(copy_target, rig_to_string(copy_target_hum))
-end)
+end}, "GetPlrsAvatar_Input")
 
-PlayersSection:TextBox("Become Anyone On Roblox", function(player_entered)
+getgenv().Become_Any_Player_On_Roblox_Input = PlayersSection:CreateInput({
+Name = "Become Anyone On Roblox",
+Description = "Become any Roblox user's avatar by username.",
+PlaceholderText = "Enter Roblox username...",
+CurrentValue = "",
+Numeric = false,
+MaxCharacters = nil,
+Enter = true,
+Callback = function(Text)
     local userId
 
     local success, result = pcall(function()
-        return Players:GetUserIdFromNameAsync(player_entered)
+        return Players:GetUserIdFromNameAsync(Text)
     end)
 
     if not success or not result then
@@ -1541,181 +1598,216 @@ PlayersSection:TextBox("Become Anyone On Roblox", function(player_entered)
     end
 
     userId = result
-    ingame_notify("success", "becoming: "..player_entered.." ("..userId..")", "green", 5)
+    ingame_notify("success", "becoming: "..Text.." ("..userId..")", "green", 5)
     make_avatar(userId, "r15")
-end)
+end}, "BecomeAnyone_Input")
 
-AvatarSection:Toggle("Korblox Loop (Legs)", function(state)
-	if state then
-		getgenv().korblox_flasher_toggle = true
+getgenv().Korblox_Loop_Toggle_Only_Legs = AvatarSection:CreateToggle({
+Name = "Korblox Loop (Legs)",
+Description = "Rapidly flashes Korblox on your legs.",
+CurrentValue = getgenv().korblox_flasher_toggle or false,
+Callback = function(Value)
+    if Value then
+        getgenv().korblox_flasher_toggle = true
 
-		if not getgenv().korblox_saved_legs then
-			local char = game.Players.LocalPlayer.Character
-			local hum = char and char:FindFirstChildOfClass("Humanoid")
-			if hum then
-				local d = hum:GetAppliedDescription()
-				getgenv().korblox_saved_legs = {
-					RightLeg = d.RightLeg,
-					LeftLeg = d.LeftLeg
-				}
-			end
-		end
+        if not getgenv().korblox_saved_legs then
+            local char = game.Players.LocalPlayer.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                local d = hum:GetAppliedDescription()
+                getgenv().korblox_saved_legs = {
+                    RightLeg = d.RightLeg,
+                    LeftLeg = d.LeftLeg
+                }
+            end
+        end
 
-		getgenv().korblox_toggling_task_spawned_loop = task.spawn(function()
-			while getgenv().korblox_flasher_toggle == true do
-				for _, key in ipairs({"right_leg","left_leg"}) do
-					if not getgenv().korblox_flasher_toggle then break end
-					local t = getgenv().korblox_equip_tables[key]
-					if t then
-						Catalog_Remote:InvokeServer({
-							Action = t.Action,
-							Id = t.Id,
-							PropertyName = t.PropertyName
-						})
-						Catalog_Remote:InvokeServer({
-							Action = "TakeOffItem",
-							Id = t.Id
-						})
-					end
-				end
-			end
-		end)
-	else
-		getgenv().korblox_flasher_toggle = false
-		task.wait(0.05)
+        getgenv().korblox_toggling_task_spawned_loop = task.spawn(function()
+            while getgenv().korblox_flasher_toggle == true do
+                for _, key in ipairs({"right_leg","left_leg"}) do
+                    if not getgenv().korblox_flasher_toggle then break end
+                    local t = getgenv().korblox_equip_tables[key]
+                    if t then
+                        Catalog_Remote:InvokeServer({
+                            Action = t.Action,
+                            Id = t.Id,
+                            PropertyName = t.PropertyName
+                        })
+                        Catalog_Remote:InvokeServer({
+                            Action = "TakeOffItem",
+                            Id = t.Id
+                        })
+                    end
+                end
+            end
+        end)
+    else
+        getgenv().korblox_flasher_toggle = false
+        task.wait(0.05)
+        if getgenv().korblox_toggling_task_spawned_loop then
+            pcall(function()
+                task.cancel(getgenv().korblox_toggling_task_spawned_loop)
+            end)
+            getgenv().korblox_toggling_task_spawned_loop = nil
+        end
 
-		if getgenv().korblox_toggling_task_spawned_loop then
-			pcall(function()
-				task.cancel(getgenv().korblox_toggling_task_spawned_loop)
-			end)
-			getgenv().korblox_toggling_task_spawned_loop = nil
-		end
+        if getgenv().korblox_saved_legs then
+            for prop, id in pairs(getgenv().korblox_saved_legs) do
+                if id and id ~= 0 then
+                    Catalog_Remote:InvokeServer({
+                        Action = "TryItem",
+                        Id = id,
+                        PropertyName = prop
+                    })
+                end
+            end
+            getgenv().korblox_saved_legs = nil
+        end
+    end
+end}, "KorbloxLegsLoop_Toggle")
 
-		if getgenv().korblox_saved_legs then
-			for prop, id in pairs(getgenv().korblox_saved_legs) do
-				if id and id ~= 0 then
-					Catalog_Remote:InvokeServer({
-						Action = "TryItem",
-						Id = id,
-						PropertyName = prop
-					})
-				end
-			end
-			getgenv().korblox_saved_legs = nil
-		end
-	end
-end)
+getgenv().Korblox_Avatar_Loop_Changer_Arms_Only_Toggle = AvatarSection:CreateToggle({
+Name = "Korblox Loop (Arms)",
+Description = "Rapidly flashes Korblox on your arms.",
+CurrentValue = getgenv().korblox_arms_loop or false,
+Callback = function(Value)
+    if Value then
+        getgenv().korblox_arms_loop = true
+        if not getgenv().korblox_saved_arms then
+            local char = getgenv().Character or game.Players.LocalPlayer.Character
+            local hum = getgenv().Humanoid or char and char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                local d = hum:GetAppliedDescription()
+                getgenv().korblox_saved_arms = {
+                    RightArm = d.RightArm,
+                    LeftArm = d.LeftArm
+                }
+            end
+        end
 
-AvatarSection:Toggle("Korblox Loop (Arms)", function(state)
-	if state then
-		getgenv().korblox_arms_loop = true
+        getgenv().korblox_arms_toggling_spawned_loop = task.spawn(function()
+            while getgenv().korblox_arms_loop == true do
+                for _, key in ipairs({"right_arm","left_arm"}) do
+                    if not getgenv().korblox_arms_loop then break end
+                    local t = getgenv().korblox_equip_tables[key]
+                    if t then
+                        Catalog_Remote:InvokeServer({
+                            Action = t.Action,
+                            Id = t.Id,
+                            PropertyName = t.PropertyName
+                        })
+                        Catalog_Remote:InvokeServer({
+                            Action = "TakeOffItem",
+                            Id = t.Id
+                        })
+                    end
+                end
+            end
+        end)
+    else
+        getgenv().korblox_arms_loop = false
+        task.wait(0.05)
+        if getgenv().korblox_arms_toggling_spawned_loop then
+            pcall(function()
+                task.cancel(getgenv().korblox_arms_toggling_spawned_loop)
+            end)
+            getgenv().korblox_arms_toggling_spawned_loop = nil
+        end
 
-		if not getgenv().korblox_saved_arms then
-			local char = game.Players.LocalPlayer.Character
-			local hum = char and char:FindFirstChildOfClass("Humanoid")
-			if hum then
-				local d = hum:GetAppliedDescription()
-				getgenv().korblox_saved_arms = {
-					RightArm = d.RightArm,
-					LeftArm = d.LeftArm
-				}
-			end
-		end
+        if getgenv().korblox_saved_arms then
+            for prop, id in pairs(getgenv().korblox_saved_arms) do
+                if id and id ~= 0 then
+                    Catalog_Remote:InvokeServer({
+                        Action = "TryItem",
+                        Id = id,
+                        PropertyName = prop
+                    })
+                end
+            end
+            getgenv().korblox_saved_arms = nil
+        end
+    end
+end}, "KorbloxArmsLoop_Toggle")
 
-		getgenv().korblox_arms_toggling_spawned_loop = task.spawn(function()
-			while getgenv().korblox_arms_loop == true do
-				for _, key in ipairs({"right_arm","left_arm"}) do
-					if not getgenv().korblox_arms_loop then break end
-					local t = getgenv().korblox_equip_tables[key]
-					if t then
-						Catalog_Remote:InvokeServer({
-							Action = t.Action,
-							Id = t.Id,
-							PropertyName = t.PropertyName
-						})
-						Catalog_Remote:InvokeServer({
-							Action = "TakeOffItem",
-							Id = t.Id
-						})
-					end
-				end
-			end
-		end)
-	else
-		getgenv().korblox_arms_loop = false
-		task.wait(0.05)
-
-		if getgenv().korblox_arms_toggling_spawned_loop then
-			pcall(function()
-				task.cancel(getgenv().korblox_arms_toggling_spawned_loop)
-			end)
-			getgenv().korblox_arms_toggling_spawned_loop = nil
-		end
-
-		if getgenv().korblox_saved_arms then
-			for prop, id in pairs(getgenv().korblox_saved_arms) do
-				if id and id ~= 0 then
-					Catalog_Remote:InvokeServer({
-						Action = "TryItem",
-						Id = id,
-						PropertyName = prop
-					})
-				end
-			end
-			getgenv().korblox_saved_arms = nil
-		end
-	end
-end)
-
-AvatarSection:Button("Refresh Character (FE)", function()
+getgenv().Respawn_Refrech_Char_Button = LocalPlayerSection:CreateButton({
+Name = "Refresh Character (FE)",
+Description = "Refreshes your character's appearance.",
+Callback = function()
     local hum = get_human(LocalPlayer)
-
     make_avatar(LocalPlayer, rig_to_string(hum))
     ingame_notify("success", "refreshed character successfully.", "green", 5)
-end)
+end})
 
-getgenv().Spam_Name_Toggle = PlayersSection:Toggle("Spam Names (FE)", function(state)
-    if state then
-        name_changer_premium(true)
-    else
-        name_changer_premium(false)
-    end
-end)
+getgenv().Spam_Name_Toggle = LocalPlayerSection:CreateToggle({
+Name = "Spam Names (FE)",
+Description = "Spams name changes on your character.",
+CurrentValue = false,
+Callback = function(Value)
+    name_changer_premium(Value)
+end}, "SpamNames_Toggle")
 
-getgenv().Flash_Name_Toggle = PlayersSection:Toggle("Spam Titles (FE)", function(state)
-    if state then
-        flash_name_title(true)
-    else
-        flash_name_title(false)
-    end
-end)
+getgenv().Flash_Name_Toggle = LocalPlayerSection:CreateToggle({
+Name = "Spam Titles (FE)",
+Description = "Spams title changes on your character.",
+CurrentValue = false,
+Callback = function(Value)
+    flash_name_title(Value)
+end}, "SpamTitles_Toggle")
 
-getgenv().PrivServerNotificationSpamToggle = PrivServerSection:Toggle("Notification Spam (Blinding, FE)", function(state)
-    vip_server_notif_spam(state)
-end)
+getgenv().PrivServerNotificationSpamToggle = ExtrasSection:CreateToggle({
+Name = "Notification Spam (Blinding, FE)",
+Description = "Spams notifications in the private server.",
+CurrentValue = false,
+Callback = function(Value)
+    vip_server_notif_spam(Value)
+end}, "NotifSpam_Toggle")
 
-getgenv().SelfWalkingLegs_Anim = R6AnimationsSection:Toggle("Self Walking Anim (FE)", function(state)
-    self_walking_reanimation_legs(state)
-end)
+getgenv().SelfWalkingLegs_Anim = R6AnimationsSection:CreateToggle({
+Name = "Self Walking Anim (FE)",
+Description = "Plays a self walking animation on your legs.",
+CurrentValue = false,
+Callback = function(Value)
+    self_walking_reanimation_legs(Value)
+end}, "SelfWalkingLegs_Toggle")
 
-getgenv().Gun_Idle_Animation = R6AnimationsSection:Toggle("Gun Idle (Kinda Broken, FE)", function(state)
-    gun_idle_cool_anim(state)
-end)
+getgenv().Gun_Idle_Animation = R6AnimationsSection:CreateToggle({
+Name = "Gun Idle (Kinda Broken, FE)",
+Description = "Plays a gun idle animation on your character.",
+CurrentValue = false,
+Callback = function(Value)
+    gun_idle_cool_anim(Value)
+end}, "GunIdle_Toggle")
 
-getgenv().Float_Idle_Animation = R6AnimationsSection:Toggle("Float Idle (FE)", function(state)
-    float_idle(state)
-end)
+getgenv().Float_Idle_Animation = R6AnimationsSection:CreateToggle({
+Name = "Float Idle (FE)",
+Description = "Plays a floating idle animation on your character.",
+CurrentValue = false,
+Callback = function(Value)
+    float_idle(Value)
+end}, "FloatIdle_Toggle")
 
-PlayersSection:TextBox("Save Current Outfit", function(curname)
-    save_current_avatar(curname)
-    ingame_notify("success", "saved outfit: "..tostring(curname), "green", 10)
-end)
+getgenv().Save_Currently_Wearing_Fit_Outfit_Name_Input = LocalPlayerSection:CreateInput({
+Name = "Save Current Outfit",
+Description = "Saves your current outfit under a given name.",
+PlaceholderText = "Enter outfit name...",
+CurrentValue = "",
+Numeric = false,
+MaxCharacters = nil,
+Enter = true,
+Callback = function(Text)
+    save_current_avatar(Text)
+    ingame_notify("success", "saved outfit: "..tostring(Text), "green", 10)
+end}, "SaveOutfit_Input")
 
-getgenv().WearAllPlrsOutfits = PlayersSection:Toggle("Wear Everyones Outfits (Loop, FE)", function(state)
-    if state then
+getgenv().WearAllPlrsOutfits = LocalPlayerSection:CreateToggle({
+Name = "Wear Everyones Outfits (Loop, FE)",
+Description = "Cycles through and wears every player's outfit in a loop.",
+CurrentValue = getgenv().wearing_everyones_outfits or false,
+Callback = function(Value)
+    if Value then
         getgenv().wearing_everyones_outfits = true
         while getgenv().wearing_everyones_outfits == true do
-        task.wait(3)
+            task.wait(3)
             for _, v in ipairs(Players:GetPlayers()) do
                 if v ~= Players.LocalPlayer then
                     local theirhum = get_human(v)
@@ -1730,8 +1822,11 @@ getgenv().WearAllPlrsOutfits = PlayersSection:Toggle("Wear Everyones Outfits (Lo
     else
         getgenv().wearing_everyones_outfits = false
     end
-end)
+end}, "WearAllOutfits_Toggle")
 
-UISection:Button("Destroy GUI", function()
+UISection:CreateButton({
+Name = "Destroy GUI",
+Description = "Closes and destroys the menu.",
+Callback = function()
     pcall(function() close_menu() end)
-end)
+end})
