@@ -1107,7 +1107,7 @@ getgenv().handleCommand = function(sender, message)
             end
          end
       end
-   elseif raw_cmd == "glitchoutfit" then
+   elseif raw_cmd == "glitchoutfit" or raw_cmd == "glitchfit" then
       glitch_outfit(true)
    elseif raw_cmd == "noglitchoutfit" or raw_cmd == "unglitchoutfit" then
       glitch_outfit(false)
@@ -1519,21 +1519,21 @@ getgenv().handleCommand = function(sender, message)
          return g.notify("Error", "You do not have LifePay premium for this (will not be FE without it).", 10)
       end
       fw(0.2)
-      local Is_Invis = Invisible_Module.enabled.get()
+      local Is_Invis = g.InvisibleMode.enabled.get()
       g.Invisible_Flash = true
 
       if Is_Invis then
-         Invisible_Module.enabled.set(false)
+         g.InvisibleMode.enabled.set(false)
       end
       fw(0.1)
       g.FlamesLibrary.spawn("flames_flash_invis", "spawn", function()
-         while g.Invisible_Flash do
-            Invisible_Module.enabled.set(true)
+         while g.Invisible_Flash == true do
+            g.InvisibleMode.enabled.set(true)
             fw(0.05)
-            Invisible_Module.enabled.set(false)
+            g.InvisibleMode.enabled.set(false)
             fw(0.05)
          end
-         Invisible_Module.enabled.set(false)
+         g.InvisibleMode.enabled.set(false)
       end)
    elseif raw_cmd == "noflashinvis" or raw_cmd == "unflashinvis" or raw_cmd == "stopflashinvis" then
       g.Invisible_Flash = false
@@ -1890,8 +1890,10 @@ getgenv().handleCommand = function(sender, message)
       fw(0.1)
       if not debug.getupvalue then return g.notify("Error", "This feature is unsupported in your executor!", 5) end
 
-      local update = debug.getupvalue(Data.initiate, 2)
-      update("is_verified", true)
+      if LocalPlayer:GetAttribute("is_verified") == false then
+         local update = debug.getupvalue(Data.initiate, 2)
+         update("is_verified", true)
+      end
       fw(0.2)
       if LocalPlayer:GetAttribute("is_verified") == false then
          g.notify("Info", "FreePay still ran, don't worry, but, you can't spawn Premium Houses (it's not possible).", 15)
