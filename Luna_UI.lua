@@ -4377,12 +4377,12 @@ function Luna:CreateWindow(WindowSettings)
 					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
 					TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
 				else
-					tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)})
+					if Button and Button:FindFirstChild("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)}) end
 					wait(0.2)
 					if ButtonV.Hover then
-						tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+						if Button and Button:FindFirstChild("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)}) end
 					else
-						tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+						if Button and Button:FindFirstChild("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)}) end
 					end
 				end
 			end)
@@ -4406,7 +4406,6 @@ function Luna:CreateWindow(WindowSettings)
 
 				ButtonSettings = ButtonSettings2
 				ButtonV.Settings = ButtonSettings2
-
 				Button.Name = ButtonSettings.Name
 				Button.Title.Text = ButtonSettings.Name
 				if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" and Button.Desc ~= nil then
