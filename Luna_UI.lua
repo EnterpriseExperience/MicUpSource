@@ -2208,9 +2208,7 @@ function Luna:CreateWindow(WindowSettings)
 	}, WindowSettings.KeySettings.SecondAction)
 
 	local Passthrough = false
-
 	local Window = { Bind = Enum.KeyCode.K, CurrentTab = nil, State = true, Size = false, Settings = nil }
-
 	Main.Title.Title.Text = WindowSettings.Name
 	Main.Title.subtitle.Text = WindowSettings.Subtitle
 	Main.Logo.Image = "rbxassetid://" .. WindowSettings.LogoID
@@ -2226,6 +2224,22 @@ function Luna:CreateWindow(WindowSettings)
 
 	tween(Elements.Parent, {BackgroundTransparency = 1})
 	Elements.Parent.Visible = false
+
+	function Window:Set(new_settings)
+		new_settings = Kwargify({
+			Name = WindowSettings.Name,
+			Subtitle = WindowSettings.Subtitle,
+			LogoID = WindowSettings.LogoID,
+		}, new_settings or {})
+
+		WindowSettings.Name = new_settings.Name
+		WindowSettings.Subtitle = new_settings.Subtitle
+		WindowSettings.LogoID = new_settings.LogoID
+
+		Main.Title.Title.Text = WindowSettings.Name
+		Main.Title.subtitle.Text = WindowSettings.Subtitle
+		Main.Logo.Image = "rbxassetid://" .. WindowSettings.LogoID
+	end
 
 	LoadingFrame.Frame.Frame.Title.Text = WindowSettings.LoadingTitle
 	LoadingFrame.Frame.Frame.Subtitle.Text = WindowSettings.LoadingSubtitle
@@ -2321,7 +2335,7 @@ function Luna:CreateWindow(WindowSettings)
 			
 			Btn.Interact.MouseButton1Click:Connect(function()
 				if typesys == "Discord" then
-					setclipboard(tostring("https://discord.gg/"..KeySettings.SecondAction.Parameter)) -- Hunter if you see this I added copy also was too lazy to send u msg
+					if setclipboard then setclipboard(tostring("https://discord.gg/"..KeySettings.SecondAction.Parameter)) end
 					if request then
 						request({
 							Url = 'http://127.0.0.1:6463/rpc?v=1',
@@ -2338,7 +2352,7 @@ function Luna:CreateWindow(WindowSettings)
 						})
 					end
 				else
-					setclipboard(tostring(KeySettings.SecondAction.Parameter))
+					if setclipboard then setclipboard(tostring(KeySettings.SecondAction.Parameter)) end
 				end
 			end)
 
@@ -2447,7 +2461,6 @@ function Luna:CreateWindow(WindowSettings)
 	local FirstTab = true
 
 	function Window:CreateHomeTab(HomeTabSettings)
-
 		HomeTabSettings = Kwargify({
 			Icon = 1,
 			SupportedExecutors = {"Vega X", "Delta", "Nihon", "Xeno"}, -- THESE DEFAULTS ARE PLACEHOLDERS!! I DO NOT ADVERTISE THESE, THEY ARE JUS THE FIRST THAT CAME TO MIND. I HAVE NO IDEA WHETHER THEYA RE RATS (they prob are) AND IM NOT RESPONSIBLE IF U GET VIRUSES FROM INSTALLING AFTER SEEING THIS LIST
@@ -2455,7 +2468,6 @@ function Luna:CreateWindow(WindowSettings)
 		}, HomeTabSettings or {})
 
 		local HomeTab = {}
-
 		local HomeTabButton = Navigation.Tabs.Home
 		HomeTabButton.Visible = true
 		if HomeTabSettings.Icon == 2 then
@@ -2509,10 +2521,8 @@ function Luna:CreateWindow(WindowSettings)
 			end
 		end
 
-		-- Stolen From Sirius Stuff Begins Here
-
 		HomeTabPage.detailsholder.dashboard.Discord.Interact.MouseButton1Click:Connect(function()
-			setclipboard(tostring("https://discord.gg/"..HomeTabSettings.DiscordInvite)) -- Hunter if you see this I added copy also was too lazy to send u msg
+			if setclipboard then setclipboard(tostring("https://discord.gg/"..HomeTabSettings.DiscordInvite)) end
 			if request then
 				request({
 					Url = 'http://127.0.0.1:6463/rpc?v=1',
@@ -2532,29 +2542,23 @@ function Luna:CreateWindow(WindowSettings)
 
 		local friendsCooldown = 0
 		local function getPing() return math.clamp(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue(), 10, 700) end
-
 		local function checkFriends()
 			if friendsCooldown == 0 then
-
 				friendsCooldown = 25
-
 				local playersFriends = {}
 				local friendsInTotal = 0
 				local onlineFriends = 0 
 				local friendsInGame = 0 
-
 				local list = Players:GetFriendsAsync(Player.UserId)
-				while true do -- loop through all the pages
+				while true do
 					for _, data in list:GetCurrentPage() do
 						friendsInTotal +=1
 						table.insert(playersFriends, Data)
 					end
 
 					if list.IsFinished then
-						-- stop the loop since this is the last page
 						break
 					else 
-						-- go to the next page
 						list:AdvanceToNextPageAsync()
 					end
 				end
@@ -2592,31 +2596,17 @@ function Luna:CreateWindow(WindowSettings)
 
 		coroutine.wrap(function()
 			while task.wait() do
-
-
-				-- Players
 				HomeTabPage.detailsholder.dashboard.Server.Players.Value.Text = #Players:GetPlayers().." playing"
 				HomeTabPage.detailsholder.dashboard.Server.MaxPlayers.Value.Text = Players.MaxPlayers.." players can join this server"
-
-				-- Ping
 				HomeTabPage.detailsholder.dashboard.Server.Latency.Value.Text = isStudio and tostring(math.round((Players.LocalPlayer:GetNetworkPing() * 2 ) / 0.01)) .."ms" or tostring(math.floor(getPing()) .."ms")
-
-				-- Time
 				HomeTabPage.detailsholder.dashboard.Server.Time.Value.Text = convertToHMS(time())
-
-				-- Region
 				HomeTabPage.detailsholder.dashboard.Server.Region.Value.Text = Localization:GetCountryRegionForPlayerAsync(Players.LocalPlayer)
-
 				checkFriends()
 			end
 		end)()
-
-		-- Stolen From Sirius Stuff ends here
-
 	end
 
 	function Window:CreateTab(TabSettings)
-
 		local Tab = {}
 
 		TabSettings = Kwargify({
@@ -2689,7 +2679,6 @@ function Luna:CreateWindow(WindowSettings)
 
 		FirstTab = false
 
-		-- Section
 		function Tab:CreateSection(name : string)
 
 			local Section = {}
@@ -2715,7 +2704,6 @@ function Luna:CreateWindow(WindowSettings)
 				Sectiont:Destroy()
 			end
 
-			-- Divider
 			function Section:CreateDivider()
 				TabPage.Position = UDim2.new(0,0,0,28)
 				local b = Elements.Template.Divider:Clone()
@@ -2725,10 +2713,8 @@ function Luna:CreateWindow(WindowSettings)
 				tween(b.Line, {BackgroundTransparency = 0})
 			end
 
-			-- Button
 			function Section:CreateButton(ButtonSettings)
 				TabPage.Position = UDim2.new(0,0,0,28)
-
 				ButtonSettings = Kwargify({
 					Name = "Button",
 					Description = nil,
@@ -2741,7 +2727,6 @@ function Luna:CreateWindow(WindowSettings)
 					Hover = false,
 					Settings = ButtonSettings
 				}
-
 
 				local Button
 				if ButtonSettings.Description == nil and ButtonSettings.Description ~= "" then
@@ -2830,7 +2815,6 @@ function Luna:CreateWindow(WindowSettings)
 				return ButtonV
 			end
 
-			-- Label
 			function Section:CreateLabel(LabelSettings)
 				TabPage.Position = UDim2.new(0,0,0,28)
 
@@ -2882,7 +2866,6 @@ function Luna:CreateWindow(WindowSettings)
 				return LabelV
 			end
 
-			-- Paragraph
 			function Section:CreateParagraph(ParagraphSettings)
 				TabPage.Position = UDim2.new(0,0,0,28)
 
