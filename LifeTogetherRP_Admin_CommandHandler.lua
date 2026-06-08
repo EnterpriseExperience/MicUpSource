@@ -773,7 +773,7 @@ getgenv().handleCommand = function(sender, message)
       g.FlamesLibrary.disconnect("calls_blocker")
       g.notify("Success", "Calls_Blocker_V3 has been disabled.", 5)
    elseif raw_cmd == "chatbypass" or raw_cmd == "chatbypasser" or raw_cmd == "bypasschat" or raw_cmd == "chatbypassgui" or raw_cmd == "chatbypassmenu" or raw_cmd == "cbypass" then
-      g.load_chat_bypasser_script()
+      g.load_workaround_script()
    elseif raw_cmd == "freeemotes" or raw_cmd == "freeemotesgui" or raw_cmd == "allemotes" or raw_cmd == "freeemote" or raw_cmd == "freemotes" or raw_cmd == "freemotesgui" or raw_cmd == "freeemotesscript" or raw_cmd == "freemotesscript" or raw_cmd == "freemotescript" then
       if g.FreeEmotes_Enabled then
          return g.notify("Warning", "You already have Flames Emoting GUI loaded!", 6)
