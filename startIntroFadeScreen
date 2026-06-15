@@ -29,23 +29,23 @@ local intro_phrases = {
 }
 local reveal_text_phrases = {
     "Make sure to recommend us to everyone you know!",
-    "Ensuring Flames Hub always provides top notch services and utilities is our speciality!",
+    "Ensuring Flames Hub always provides top notch services is our speciality!",
     "Nobody can replicate / clone Flames Hub for a reason! We're too good at what we do!",
-    "Flames Hub has almost daily updates, over 195+ commands, customizable features, easy configuration and more!",
+    "Flames Hub has almost daily updates, customizable options, easy configuration and much more!",
     "We dominate the market for a reason! Flames Hub forever!",
-    "Don't forget that Flames Hub will always be #1!",
-    "Did you know? Flames Hub automatically runs an anti-cheat scan incase Life Together RP adds an anti-cheat?",
+    "Don't forget: Flames Hub will always be #1!",
+    "Did you know? Flames Hub automatically runs an anti-cheat scan incase the game contains an anti-cheat?",
     "We provide you with protection, endurance, power and much more, in return you help promote our services and utilities!",
-    "©️ | Flames Hub | ON TOP | 15K+ users daily! | amazing community! | ©️"
+    "©️ | Flames Hub | ON TOP | growing userbase! | amazing community! | ©️"
 }
 local function smooth_rgb(label, speed_flag_name, speed)
     local hue = 0
     getgenv()[speed_flag_name] = true
 
-    local min_hue = 0.75
-    local max_hue = 0.95
-    local saturation = 0.8
-    local brightness = 0.7
+    local min_hue = 0.10
+    local max_hue = 0.18
+    local saturation = 1
+    local brightness = 1
 
     if label:IsA("TextLabel") or label:IsA("TextButton") then
         local conn
@@ -90,9 +90,9 @@ end)
 
 local ui_gradient = Instance.new("UIGradient")
 ui_gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 20, 80)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 30, 120)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 60, 140))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 50, 0)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(160, 110, 0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 180, 30))
 }
 ui_gradient.Rotation = 45
 ui_gradient.Parent = background_frame
@@ -121,7 +121,7 @@ local text_label = Instance.new("TextLabel")
 text_label.Size = UDim2.new(1, 0, 0.2, 0)
 text_label.Position = UDim2.new(0, 0, 0.5, 0)
 text_label.BackgroundTransparency = 1
-text_label.TextColor3 = Color3.fromRGB(255, 255, 255)
+text_label.TextColor3 = Color3.fromRGB(255, 200, 0)
 text_label.Font = Enum.Font.SourceSansBold
 text_label.TextScaled = true
 text_label.TextTransparency = 1
@@ -135,7 +135,7 @@ local copyright_label = Instance.new("TextLabel")
 copyright_label.Size = UDim2.new(1, 0, 0.1, 0)
 copyright_label.Position = UDim2.new(0, 0, 0.83, 0)
 copyright_label.BackgroundTransparency = 1
-copyright_label.TextColor3 = Color3.fromRGB(255, 0, 0)
+copyright_label.TextColor3 = Color3.fromRGB(255, 180, 0)
 copyright_label.Font = Enum.Font.SourceSans
 copyright_label.TextScaled = true
 copyright_label.Text = tostring(reveal_text_phrases[math.random(1, #reveal_text_phrases)])
@@ -179,13 +179,13 @@ end
 local function rgb_cycle(label)
     local t = 0.5
     local list = {
-        Color3.fromRGB(255, 0, 0),
+        Color3.fromRGB(255, 200, 0),
         Color3.fromRGB(255, 165, 0),
-        Color3.fromRGB(255, 255, 0),
-        Color3.fromRGB(0, 255, 0),
-        Color3.fromRGB(0, 255, 255),
-        Color3.fromRGB(0, 0, 255),
-        Color3.fromRGB(255, 0, 255)
+        Color3.fromRGB(255, 220, 50),
+        Color3.fromRGB(200, 150, 0),
+        Color3.fromRGB(255, 240, 100),
+        Color3.fromRGB(180, 120, 0),
+        Color3.fromRGB(255, 180, 0)
     }
 
     getgenv().rgb_running_background_fading_tween = true
@@ -209,7 +209,6 @@ getgenv().rgb_running_welcome_label = false
 getgenv().rgb_running_scrambled_text_label_main = false
 getgenv().rgb_running_background_coloring_frame = false
 move_out_text()
-
 TweenService:Create(background_frame, TweenInfo.new(fade_out_background_time, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
 task.wait(fade_out_background_time + 1)
 screen_gui:Destroy()
