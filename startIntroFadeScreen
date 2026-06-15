@@ -1,4 +1,6 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
+if g.HasSeen_Loading_Screen then return end
+g.HasSeen_Loading_Screen = true
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local player = Players.LocalPlayer
 local player_name = player.DisplayName
@@ -26,9 +28,7 @@ local intro_phrases = {
     "Have fun"
 }
 local reveal_text_phrases = {
-    "Make sure to use our 'feedback' command to report users, request features, report bugs/issues, and more!",
     "Make sure to recommend us to everyone you know!",
-    "Remember!: Do NOT harass, bully, or otherwise target other Flames Hub users! you can get BANNED from Flames Hub for doing it!",
     "Ensuring Flames Hub always provides top notch services and utilities is our speciality!",
     "Nobody can replicate / clone Flames Hub for a reason! We're too good at what we do!",
     "Flames Hub has almost daily updates, over 195+ commands, customizable features, easy configuration and more!",
@@ -36,7 +36,6 @@ local reveal_text_phrases = {
     "Don't forget that Flames Hub will always be #1!",
     "Did you know? Flames Hub automatically runs an anti-cheat scan incase Life Together RP adds an anti-cheat?",
     "We provide you with protection, endurance, power and much more, in return you help promote our services and utilities!",
-    "If you enjoy Flames Hub, don't forget to send us YOUR feedback if you haven't already! using our 'feedback' command.",
     "©️ | Flames Hub | ON TOP | 15K+ users daily! | amazing community! | ©️"
 }
 local function smooth_rgb(label, speed_flag_name, speed)
