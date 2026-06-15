@@ -1,4 +1,5 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
+local g = getgenv()
 if g.HasSeen_Loading_Screen then return end
 g.HasSeen_Loading_Screen = true
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
