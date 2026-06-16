@@ -7,7 +7,7 @@ local RunService = cloneref and cloneref(game:GetService("RunService")) or game:
 local Localization = cloneref and cloneref(game:GetService("LocalizationService")) or game:GetService("LocalizationService")
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local Player = Players.LocalPlayer
-local Camera = cloneref and cloneref(workspace.CurrentCamera) or workspace.CurrentCamera
+local Camera = workspace.CurrentCamera
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local isStudio
 local website = "enterpriseexperience.github.io"
@@ -4231,9 +4231,7 @@ function Luna:CreateWindow(WindowSettings)
 			tween(b.Line, {BackgroundTransparency = 0})
 		end
 
-		-- Button
 		function Tab:CreateButton(ButtonSettings)
-
 			ButtonSettings = Kwargify({
 				Name = "Button",
 				Description = nil,
@@ -5231,7 +5229,6 @@ function Luna:CreateWindow(WindowSettings)
 
 		end
 
-		-- Dynamic Input
 		function Tab:CreateInput(InputSettings, Flag)
 			local InputV = { IgnoreConfig = false, Class = "Input", Settings = InputSettings }
 
@@ -5350,7 +5347,7 @@ function Luna:CreateWindow(WindowSettings)
 						TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
 					end
 				end
-				InputV.CurrentValue = Input.InputFrame.InputBox.Text				
+				InputV.CurrentValue = Input.InputFrame.InputBox.Text
 			end)
 
 			Input["MouseEnter"]:Connect(function()
@@ -5361,25 +5358,17 @@ function Luna:CreateWindow(WindowSettings)
 				tween(Input.UIStroke, {Color = Color3.fromRGB(64,61,76)})
 			end)
 
-
 			function InputV:Set(NewInputSettings)
-
 				NewInputSettings = Kwargify(InputSettings, NewInputSettings or {})
-
 				InputV.Settings = NewInputSettings
 				InputSettings = NewInputSettings
-
 				Input.Name = InputSettings.Name
 				Input.Title.Text = InputSettings.Name
-				if InputSettings.Description ~= nil and InputSettings.Description ~= "" and Input.Desc ~= nil then
-					Input.Desc.Text = InputSettings.Description
-				end
-
+				if InputSettings.Description ~= nil and InputSettings.Description ~= "" and Input.Desc ~= nil then Input.Desc.Text = InputSettings.Description end
 				Input.InputFrame.InputBox:CaptureFocus()
 				Input.InputFrame.InputBox.Text = tostring(InputSettings.CurrentValue)
 				Input.InputFrame.InputBox:ReleaseFocus()
 				Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 42)
-
 				InputV.CurrentValue = InputSettings.CurrentValue
 			end
 
@@ -5388,16 +5377,10 @@ function Luna:CreateWindow(WindowSettings)
 				Input:Destroy()
 			end
 
-			if Flag then
-				Luna.Options[Flag] = InputV
-			end
-
-
+			if Flag then Luna.Options[Flag] = InputV end
 			return InputV
-
 		end
 
-		-- Dropdown
 		function Tab:CreateDropdown(DropdownSettings, Flag)
 			local DropdownV = { IgnoreConfig = false, Class = "Dropdown", Settings = DropdownSettings}
 
