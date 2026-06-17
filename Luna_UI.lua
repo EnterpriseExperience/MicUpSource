@@ -9,6 +9,7 @@ local Players = cloneref and cloneref(game:GetService("Players")) or game:GetSer
 local Player = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 local CoreGui = game:GetService("CoreGui")
+local is_mobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 local isStudio
 local website = "enterpriseexperience.github.io"
 if RunService:IsStudio() then isStudio = true end
@@ -3554,8 +3555,14 @@ function Luna:CreateWindow(WindowSettings)
 				TweenService:Create(Input.InputFrame.InputBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 
 				Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
-				Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
-
+				if not is_mobile then
+					Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
+				else
+					task.defer(function()
+						local min_width = 120
+						Input.InputFrame.Size = UDim2.new(0, math.max(Input.InputFrame.InputBox.TextBounds.X + 52, min_width), 0, 30)
+					end)
+				end
 				Input.InputFrame.InputBox.FocusLost:Connect(function()
 					local Success, Response = pcall(function()
 						InputSettings.Callback(Input.InputFrame.InputBox.Text)
@@ -3597,29 +3604,13 @@ function Luna:CreateWindow(WindowSettings)
 					InputV.CurrentValue = Input.InputFrame.InputBox.Text
 				end)
 
-				local UserInputService = game:GetService("UserInputService")
+				Input["MouseEnter"]:Connect(function()
+					tween(Input.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				end)
 
-				if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
-					Input.InputBegan:Connect(function(input)
-						if input.UserInputType == Enum.UserInputType.Touch then
-							tween(Input.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
-						end
-					end)
-
-					Input.InputEnded:Connect(function(input)
-						if input.UserInputType == Enum.UserInputType.Touch then
-							tween(Input.UIStroke, {Color = Color3.fromRGB(64, 61, 76)})
-						end
-					end)
-				else
-					Input["MouseEnter"]:Connect(function()
-						tween(Input.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
-					end)
-
-					Input["MouseLeave"]:Connect(function()
-						tween(Input.UIStroke, {Color = Color3.fromRGB(64, 61, 76)})
-					end)
-				end
+				Input["MouseLeave"]:Connect(function()
+					tween(Input.UIStroke, {Color = Color3.fromRGB(64, 61, 76)})
+				end)
 
 				function InputV:Set(NewInputSettings)
 					NewInputSettings = Kwargify(InputSettings, NewInputSettings or {})
@@ -4239,7 +4230,6 @@ function Luna:CreateWindow(WindowSettings)
 
 		end
 
-		-- Divider
 		function Tab:CreateDivider()
 			local b = Elements.Template.Divider:Clone()
 			b.Parent = TabPage
@@ -4260,7 +4250,6 @@ function Luna:CreateWindow(WindowSettings)
 				Hover = false,
 				Settings = ButtonSettings
 			}
-
 
 			local Button
 			if ButtonSettings.Description == nil and ButtonSettings.Description ~= "" then
@@ -4672,6 +4661,7 @@ function Luna:CreateWindow(WindowSettings)
 			local Toggle
 
 			if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+				while not Elements.Template or not Template.Template.ToggleDesc do task.wait() do
 				Toggle = Elements.Template.ToggleDesc:Clone()
 			else
 				Toggle = Elements.Template.Toggle:Clone()
@@ -5297,7 +5287,12 @@ function Luna:CreateWindow(WindowSettings)
 			Input.InputFrame.Active = true
 			Input.InputFrame.InputBox.Active = true
 			task.defer(function()
-				Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
+				if is_mobile then
+					Input.InputFrame.Size = UDim2.new(1, -20, 0, 36)
+					Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
+				else
+					Input.InputFrame.Size = UDim2.new(0, math.max(Input.InputFrame.InputBox.TextBounds.X + 52, 120), 0, 30)
+				end
 			end)
 			Input.InputFrame.InputBox.FocusLost:Connect(function()
 				local Success, Response = pcall(function()
@@ -5336,7 +5331,9 @@ function Luna:CreateWindow(WindowSettings)
 						Input.InputFrame.InputBox.Text = Input.InputFrame.InputBox.Text:sub(1, InputSettings.MaxCharacters)
 					end
 				end
-				TweenService:Create(Input.InputFrame, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)}):Play()
+				if not is_mobile then
+					TweenService:Create(Input.InputFrame, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)}):Play()
+				end
 				InputV.CurrentValue = Input.InputFrame.InputBox.Text
 			end)
 
