@@ -4645,7 +4645,6 @@ function Luna:CreateWindow(WindowSettings)
 
 		end
 
-		-- Toggle
 		function Tab:CreateToggle(ToggleSettings, Flag)    
 			local ToggleV = { IgnoreConfig = false, Class = "Toggle" }
 
@@ -4657,11 +4656,8 @@ function Luna:CreateWindow(WindowSettings)
 				end,
 			}, ToggleSettings or {})
 
-
 			local Toggle
-
 			if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
-				while not Elements.Template or not Template.Template.ToggleDesc do task.wait() do
 				Toggle = Elements.Template.ToggleDesc:Clone()
 			else
 				Toggle = Elements.Template.Toggle:Clone()
