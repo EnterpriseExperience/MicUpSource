@@ -8,7 +8,7 @@ local Localization = cloneref and cloneref(game:GetService("LocalizationService"
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local Player = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
-local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local CoreGui = game:GetService("CoreGui")
 local isStudio
 local website = "enterpriseexperience.github.io"
 if RunService:IsStudio() then isStudio = true end
@@ -3597,13 +3597,29 @@ function Luna:CreateWindow(WindowSettings)
 					InputV.CurrentValue = Input.InputFrame.InputBox.Text
 				end)
 
-				Input["MouseEnter"]:Connect(function()
-					tween(Input.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
-				end)
+				local UserInputService = game:GetService("UserInputService")
 
-				Input["MouseLeave"]:Connect(function()
-					tween(Input.UIStroke, {Color = Color3.fromRGB(64,61,76)})
-				end)
+				if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+					Input.InputBegan:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.Touch then
+							tween(Input.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+						end
+					end)
+
+					Input.InputEnded:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.Touch then
+							tween(Input.UIStroke, {Color = Color3.fromRGB(64, 61, 76)})
+						end
+					end)
+				else
+					Input["MouseEnter"]:Connect(function()
+						tween(Input.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+					end)
+
+					Input["MouseLeave"]:Connect(function()
+						tween(Input.UIStroke, {Color = Color3.fromRGB(64, 61, 76)})
+					end)
+				end
 
 				function InputV:Set(NewInputSettings)
 					NewInputSettings = Kwargify(InputSettings, NewInputSettings or {})
@@ -5278,8 +5294,11 @@ function Luna:CreateWindow(WindowSettings)
 			TweenService:Create(Input.InputFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
 			TweenService:Create(Input.InputFrame.InputBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 			Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
-			Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
-
+			Input.InputFrame.Active = true
+			Input.InputFrame.InputBox.Active = true
+			task.defer(function()
+				Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
+			end)
 			Input.InputFrame.InputBox.FocusLost:Connect(function()
 				local Success, Response = pcall(function()
 					InputSettings.Callback(Input.InputFrame.InputBox.Text)
