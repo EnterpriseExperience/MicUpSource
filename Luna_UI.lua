@@ -5253,6 +5253,7 @@ function Luna:CreateWindow(WindowSettings)
 			Input.InputFrame.InputBox.Active = true
 			task.defer(function()
 				if is_mobile then
+					Input.Title.Active = false
 					Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
 					Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
 					if descriptionbool and Input:FindFirstChild("Desc") then
