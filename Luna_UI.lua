@@ -2120,19 +2120,8 @@ local function Unhide(Window, currentTab)
 
 end
 
-local MainSize
-local MinSize 
-if is_mobile then
-	MainSize = UDim2.new(0.95, 0, 0.85, 0)
-	MinSize = UDim2.fromOffset(Camera.ViewportSize.X - 275, 42)
-elseif Camera.ViewportSize.X > 774 and Camera.ViewportSize.Y > 503 then
-	MainSize = UDim2.fromOffset(675, 424)
-	MinSize = UDim2.fromOffset(500, 42)
-else
-	MainSize = UDim2.fromOffset(Camera.ViewportSize.X - 100, Camera.ViewportSize.Y - 100)
-	MinSize = UDim2.fromOffset(Camera.ViewportSize.X - 275, 42)
-end
-
+local MainSize = UDim2.new(0.95, 0, 0.85, 0)
+local MinSize = UDim2.fromOffset(Camera.ViewportSize.X - 275, 42)
 local function Maximise(Window)
 	Window.Controls.ToggleSize.ImageLabel.Image = "rbxassetid://10137941941"
 	tween(Window, {Size = MainSize})
@@ -3528,14 +3517,9 @@ function Luna:CreateWindow(WindowSettings)
 				TweenService:Create(Input.InputFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.9}):Play()
 				TweenService:Create(Input.InputFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
 				TweenService:Create(Input.InputFrame.InputBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-
 				Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
-				if not is_mobile then
-					Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
-				else
-					Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
-					Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
-				end
+				Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
+				Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
 				Input.InputFrame.InputBox.FocusLost:Connect(function()
 					local Success, Response = pcall(function()
 						InputSettings.Callback(Input.InputFrame.InputBox.Text)
@@ -5251,18 +5235,9 @@ function Luna:CreateWindow(WindowSettings)
 			Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
 			Input.InputFrame.Active = true
 			Input.InputFrame.InputBox.Active = true
-			task.defer(function()
-				if is_mobile then
-					Input.Title.Active = false
-					Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
-					Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
-					if descriptionbool and Input:FindFirstChild("Desc") then
-						Input.Desc.Visible = false
-					end
-				else
-					Input.InputFrame.Size = UDim2.new(0, math.max(Input.InputFrame.InputBox.TextBounds.X + 52, 120), 0, 30)
-				end
-			end)
+			Input.Title.Active = false
+			Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
+			Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
 			Input.InputFrame.InputBox.FocusLost:Connect(function()
 				local Success, Response = pcall(function()
 					InputSettings.Callback(Input.InputFrame.InputBox.Text)
