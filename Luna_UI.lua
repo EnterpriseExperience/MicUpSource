@@ -1859,7 +1859,6 @@ FlamesUI.Enabled = false
 FlamesUI.SmartWindow.Visible = false
 FlamesUI.Notifications.Template.Visible = false
 FlamesUI.DisplayOrder = 1000000000
-
 local Main : Frame = FlamesUI.SmartWindow
 local Dragger = Main.Drag
 local dragBar = FlamesUI.Drag
@@ -1992,7 +1991,6 @@ local function Draggable(Bar, Window, enableTaptic, tapticOffset)
 					if Input.UserInputState == Enum.UserInputState.End then
 						Dragging = false
 						connectFunctions()
-
 						if enableTaptic then
 							TweenService:Create(dragBarCosmetic, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 100, 0, 4), BackgroundTransparency = 0.7}):Play()
 						end
@@ -2010,7 +2008,6 @@ local function Draggable(Bar, Window, enableTaptic, tapticOffset)
 		UserInputService.InputChanged:Connect(function(Input)
 			if Input == DragInput and Dragging then
 				local Delta = Input.Position - MousePos
-
 				local newMainPosition = UDim2.new(FramePos.X.Scale, FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
 				TweenService:Create(Window, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Position = newMainPosition}):Play()
 
@@ -2020,7 +2017,6 @@ local function Draggable(Bar, Window, enableTaptic, tapticOffset)
 				end
 			end
 		end)
-
 	end)
 end
 
@@ -2082,13 +2078,9 @@ function Luna:Notification(data)
 		TweenService:Create(newNotification.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
 		TweenService:Create(newNotification.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 		TweenService:Create(newNotification.Description, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-
 		TweenService:Create(newNotification, TweenInfo.new(1, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, -90, 0, 0)}):Play()
-
 		task.wait(1)
-
 		TweenService:Create(newNotification, TweenInfo.new(1, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, -90, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)}):Play()
-
 		newNotification.Visible = false
 		newNotification:Destroy()
 	end)
@@ -5195,9 +5187,7 @@ function Luna:CreateWindow(WindowSettings)
 
 				Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
 				Bind.BindFrame.BindBox.Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 16, 0, 42)
-
 				-- Luna.Flags[BindSettings.Flag] = BindSettings
-
 			end
 
 			function BindV:Destroy()
@@ -5251,7 +5241,6 @@ function Luna:CreateWindow(WindowSettings)
 			Input.InputFrame.BackgroundTransparency = 1
 			Input.InputFrame.UIStroke.Transparency = 1
 			Input.InputFrame.InputBox.TextTransparency = 1
-
 			TweenService:Create(Input, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
 			TweenService:Create(Input.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
 			TweenService:Create(Input.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
@@ -5266,6 +5255,9 @@ function Luna:CreateWindow(WindowSettings)
 				if is_mobile then
 					Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
 					Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
+					if descriptionbool and Input:FindFirstChild("Desc") then
+						Input.Desc.Visible = false
+					end
 				else
 					Input.InputFrame.Size = UDim2.new(0, math.max(Input.InputFrame.InputBox.TextBounds.X + 52, 120), 0, 30)
 				end
