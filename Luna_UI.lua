@@ -1502,7 +1502,6 @@ local IconModule = {
 	}
 }
 
--- Other Variables
 local request = (syn and syn.request) or (http and http.request) or http_request or nil
 local tweeninfo = TweenInfo.new(0.3, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 local PresetGradients = {
@@ -1542,7 +1541,6 @@ local function GetIcon(icon, source)
 
 			local irs = Vector2.new(rirs[1], rirs[2])
 			local iro = Vector2.new(riro[1], riro[2])
-
 			local asset = {
 				id = r[1],
 				imageRectSize = irs,
@@ -1601,10 +1599,8 @@ local function BlurModule(Frame)
 	local binds = {}
 	local root = Instance.new('Folder', camera)
 	root.Name = 'LunaBlur'
-
 	local gTokenMH = 99999999
 	local gToken = math.random(1, gTokenMH)
-
 	local DepthOfField = Instance.new('DepthOfFieldEffect', game:GetService('Lighting'))
 	DepthOfField.FarIntensity = 0
 	DepthOfField.FocusDistance = 51.6
@@ -1619,7 +1615,7 @@ local function BlurModule(Frame)
 	frame.AnchorPoint = Vector2.new(0.5, 0.5)
 	frame.BackgroundTransparency = 1
 
-	local GenUid; do -- Generate unique names for RenderStepped bindings
+	local GenUid; do
 		local id = 0
 		function GenUid()
 			id = id + 1
@@ -1639,11 +1635,9 @@ local function BlurModule(Frame)
 	end
 
 	local DrawQuad; do
-
 		local acos, max, pi, sqrt = math.acos, math.max, math.pi, math.sqrt
 		local sz = 0.22
-		local function DrawTriangle(v1, v2, v3, p0, p1) -- I think Stravant wrote this function
-
+		local function DrawTriangle(v1, v2, v3, p0, p1)
 			local s1 = (v1 - v2).magnitude
 			local s2 = (v2 - v3).magnitude
 			local s3 = (v3 - v1).magnitude
@@ -1660,25 +1654,19 @@ local function BlurModule(Frame)
 			local para = ( (B-A).x*(C-A).x + (B-A).y*(C-A).y + (B-A).z*(C-A).z ) / (A-B).magnitude
 			local perp = sqrt((C-A).magnitude^2 - para*para)
 			local dif_para = (A - B).magnitude - para
-
 			local st = CFrame.new(B, A)
 			local za = CFrame.Angles(pi/2,0,0)
-
 			local cf0 = st
-
 			local Top_Look = (cf0 * za).lookVector
 			local Mid_Point = A + CFrame.new(A, B).lookVector * para
 			local Needed_Look = CFrame.new(Mid_Point, C).lookVector
 			local dot = Top_Look.x*Needed_Look.x + Top_Look.y*Needed_Look.y + Top_Look.z*Needed_Look.z
-
 			local ac = CFrame.Angles(0, 0, acos(dot))
-
 			cf0 = cf0 * ac
 			if ((cf0 * za).lookVector - Needed_Look).magnitude > 0.01 then
 				cf0 = cf0 * CFrame.Angles(0, 0, -2*acos(dot))
 			end
 			cf0 = cf0 * CFrame.new(0, perp/2, -(dif_para + para/2))
-
 			local cf1 = st * ac * CFrame.Angles(0, pi, 0)
 			if ((cf1 * za).lookVector - Needed_Look).magnitude > 0.01 then
 				cf1 = cf1 * CFrame.Angles(0, 0, 2*acos(dot))
@@ -1717,15 +1705,11 @@ local function BlurModule(Frame)
 		end
 	end
 
-	if binds[frame] then
-		return binds[frame].parts
-	end
-
+	if binds[frame] then return binds[frame].parts end
 	local uid = GenUid()
 	local parts = {}
 	local f = Instance.new('Folder', root)
 	f.Name = frame.Name
-
 	local parents = {}
 	do
 		local function add(child)
@@ -1743,7 +1727,6 @@ local function BlurModule(Frame)
 			BrickColor = BrickColor.new('Institutional white');
 		}
 		local zIndex = 1 - 0.05*frame.ZIndex
-
 		local tl, br = frame.AbsolutePosition, frame.AbsolutePosition + frame.AbsoluteSize
 		local tr, bl = Vector2.new(br.x, tl.y), Vector2.new(tl.x, br.y)
 		do
@@ -1786,7 +1769,6 @@ local function BlurModule(Frame)
 end
 
 local function unpackt(array : table)
-
 	local val = ""
 	local i = 0
 	for _,v in pairs(array) do
@@ -1843,7 +1825,6 @@ local function Hide(Window, bind, notif)
 	Window.Elements.Parent.Visible = false
 	Window.Visible = false
 end
-
 
 if gethui then
 	FlamesUI.Parent = gethui()
@@ -2149,7 +2130,10 @@ end
 
 local MainSize
 local MinSize 
-if Camera.ViewportSize.X > 774 and Camera.ViewportSize.Y > 503 then
+if is_mobile then
+	MainSize = UDim2.new(0.95, 0, 0.85, 0)
+	MinSize = UDim2.fromOffset(Camera.ViewportSize.X - 275, 42)
+elseif Camera.ViewportSize.X > 774 and Camera.ViewportSize.Y > 503 then
 	MainSize = UDim2.fromOffset(675, 424)
 	MinSize = UDim2.fromOffset(500, 42)
 else
@@ -2170,7 +2154,6 @@ local function Minimize(Window)
 	Window.Navigation.Visible = false
 	tween(Window, {Size = MinSize})
 end
-
 
 function Luna:CreateWindow(WindowSettings)
 	WindowSettings = Kwargify({
@@ -4642,7 +4625,6 @@ function Luna:CreateWindow(WindowSettings)
 			end)
 
 			return SliderV
-
 		end
 
 		function Tab:CreateToggle(ToggleSettings, Flag)    
@@ -5284,7 +5266,7 @@ function Luna:CreateWindow(WindowSettings)
 			Input.InputFrame.InputBox.Active = true
 			task.defer(function()
 				if is_mobile then
-					Input.InputFrame.Size = UDim2.new(1, -20, 0, 36)
+					Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
 					Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
 				else
 					Input.InputFrame.Size = UDim2.new(0, math.max(Input.InputFrame.InputBox.TextBounds.X + 52, 120), 0, 30)
