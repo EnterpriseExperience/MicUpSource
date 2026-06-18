@@ -9,7 +9,7 @@ local Players = cloneref and cloneref(game:GetService("Players")) or game:GetSer
 local Player = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 local CoreGui = game:GetService("CoreGui")
-local is_mobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+local is_mobile = UserInputService.TouchEnabled
 local isStudio
 local website = "enterpriseexperience.github.io"
 if RunService:IsStudio() then isStudio = true end
