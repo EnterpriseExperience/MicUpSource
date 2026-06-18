@@ -3501,6 +3501,10 @@ function Luna:CreateWindow(WindowSettings)
 				Input.Name = InputSettings.Name
 				Input.Title.Text = InputSettings.Name
 				if descriptionbool then Input.Desc.Text = InputSettings.Description end
+				if Input and Input:FindFirstChild("Desc") then
+					Input.Desc.Size = UDim2.new(0.600000024, 5, 0, 18)
+					Input.Desc.TextScaled = true
+				end
 				Input.Visible = true
 				Input.Parent = TabPage
 				Input.BackgroundTransparency = 1
@@ -3518,7 +3522,7 @@ function Luna:CreateWindow(WindowSettings)
 				TweenService:Create(Input.InputFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
 				TweenService:Create(Input.InputFrame.InputBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 				Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
-				Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
+				Input.InputFrame.Size = UDim2.new(0, 100, 0, 30)
 				Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
 				Input.InputFrame.InputBox.FocusLost:Connect(function()
 					local Success, Response = pcall(function()
@@ -3579,7 +3583,7 @@ function Luna:CreateWindow(WindowSettings)
 					Input.InputFrame.InputBox:CaptureFocus()
 					Input.InputFrame.InputBox.Text = tostring(InputSettings.CurrentValue)
 					Input.InputFrame.InputBox:ReleaseFocus()
-					Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 42)
+					Input.InputFrame.Size = UDim2.new(0, 100, 0, 30)
 					InputV.CurrentValue = InputSettings.CurrentValue
 				end
 
@@ -5215,9 +5219,12 @@ function Luna:CreateWindow(WindowSettings)
 			Input.Name = InputSettings.Name
 			Input.Title.Text = InputSettings.Name
 			if descriptionbool then Input.Desc.Text = InputSettings.Description end
+			if Input and Input:FindFirstChild("Desc") then
+				Input.Desc.Size = UDim2.new(0.600000024, 5, 0, 18)
+				Input.Desc.TextScaled = true
+			end
 			Input.Visible = true
 			Input.Parent = TabPage
-
 			Input.BackgroundTransparency = 1
 			Input.UIStroke.Transparency = 1
 			Input.Title.TextTransparency = 1
@@ -5236,7 +5243,7 @@ function Luna:CreateWindow(WindowSettings)
 			Input.InputFrame.Active = true
 			Input.InputFrame.InputBox.Active = true
 			Input.Title.Active = false
-			Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
+			Input.InputFrame.Size = UDim2.new(0, 100, 0, 30)
 			Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
 			Input.InputFrame.InputBox.FocusLost:Connect(function()
 				local Success, Response = pcall(function()
@@ -5299,7 +5306,7 @@ function Luna:CreateWindow(WindowSettings)
 				Input.InputFrame.InputBox:CaptureFocus()
 				Input.InputFrame.InputBox.Text = tostring(InputSettings.CurrentValue)
 				Input.InputFrame.InputBox:ReleaseFocus()
-				Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 42)
+				Input.InputFrame.Size = UDim2.new(0, 100, 0, 30)
 				InputV.CurrentValue = InputSettings.CurrentValue
 			end
 
