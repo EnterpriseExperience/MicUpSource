@@ -3541,10 +3541,8 @@ function Luna:CreateWindow(WindowSettings)
 				if not is_mobile then
 					Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
 				else
-					task.defer(function()
-						local min_width = 120
-						Input.InputFrame.Size = UDim2.new(0, math.max(Input.InputFrame.InputBox.TextBounds.X + 52, min_width), 0, 30)
-					end)
+					Input.InputFrame.Size = UDim2.new(1, -20, 0, 48)
+					Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
 				end
 				Input.InputFrame.InputBox.FocusLost:Connect(function()
 					local Success, Response = pcall(function()
