@@ -2120,8 +2120,11 @@ local function Unhide(Window, currentTab)
 end
 
 local MainSize
-local MinSize 
-if Camera.ViewportSize.X > 774 and Camera.ViewportSize.Y > 503 then
+local MinSize
+if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+	MainSize = UDim2.fromOffset(Camera.ViewportSize.X, Camera.ViewportSize.Y)
+	MinSize = UDim2.fromOffset(Camera.ViewportSize.X, 42)
+elseif Camera.ViewportSize.X > 774 and Camera.ViewportSize.Y > 503 then
 	MainSize = UDim2.fromOffset(675, 424)
 	MinSize = UDim2.fromOffset(500, 42)
 else
