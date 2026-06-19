@@ -2716,14 +2716,14 @@ function Luna:CreateWindow(WindowSettings)
 				Button.Visible = true
 				Button.Parent = TabPage
 
-				Button.UIStroke.Transparency = 1
+				if Button:FindFirstChildOfClass("UIStroke") then Button.UIStroke.Transparency = 1 end
 				Button.Title.TextTransparency = 1
 				if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
 					Button.Desc.TextTransparency = 1
 				end
 
 				TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
-				TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				if Button:FindFirstChildOfClass("UIStroke") then TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play() end
 				TweenService:Create(Button.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
 				if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
 					TweenService:Create(Button.Desc, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
@@ -2735,33 +2735,33 @@ function Luna:CreateWindow(WindowSettings)
 					if not Success then
 						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
 						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
-						TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						if Button:FindFirstChildOfClass("UIStroke") then TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play() end
 						Button.Title.Text = "Callback Error"
 						print("Flames Interface Suite | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
 						wait(0.5)
 						Button.Title.Text = ButtonSettings.Name
 						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
 						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
-						TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+						if Button:FindFirstChildOfClass("UIStroke") then TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play() end
 					else
-						tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)})
+						if Button:FindFirstChildOfClass("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)}) end
 						wait(0.2)
 						if ButtonV.Hover then
-							tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+							if Button:FindFirstChildOfClass("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)}) end
 						else
-							tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+							if Button:FindFirstChildOfClass("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)}) end
 						end
 					end
 				end)
 
 				Button["MouseEnter"]:Connect(function()
 					ButtonV.Hover = true
-					tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+					if Button:FindFirstChildOfClass("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)}) end
 				end)
 
 				Button["MouseLeave"]:Connect(function()
 					ButtonV.Hover = false
-					tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+					if Button:FindFirstChildOfClass("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)}) end
 				end)
 
 				function ButtonV:Set(ButtonSettings2)
@@ -4234,15 +4234,14 @@ function Luna:CreateWindow(WindowSettings)
 			end
 			Button.Visible = true
 			Button.Parent = TabPage
-
-			Button.UIStroke.Transparency = 1
+			if Button:FindFirstChildOfClass("UIStroke") then Button.UIStroke.Transparency = 1 end
 			Button.Title.TextTransparency = 1
 			if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
 				Button.Desc.TextTransparency = 1
 			end
 
 			TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
-			TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+			if Button:FindFirstChildOfClass("UIStroke") then TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play() end
 			TweenService:Create(Button.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
 			if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
 				TweenService:Create(Button.Desc, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
