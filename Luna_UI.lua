@@ -1530,7 +1530,6 @@ local function GetIcon(icon, source)
 	if source == "Custom" then
 		return "rbxassetid://" .. icon
 	elseif source == "Lucide" then
-		-- full credit to latte softworks :)
 		local iconData = not isStudio and game:HttpGet("https://raw.githubusercontent.com/latte-soft/lucide-roblox/refs/heads/master/lib/Icons.luau")
 		local icons = isStudio and IconModule.Lucide or loadstring(iconData)()
 		if not isStudio then
@@ -1544,7 +1543,6 @@ local function GetIcon(icon, source)
 
 			local rirs = r[2]
 			local riro = r[3]
-
 			if type(r[1]) ~= "number" or type(rirs) ~= "table" or type(riro) ~= "table" then
 				error("Lucide Icons: Internal error: Invalid auto-generated asset entry")
 			end
@@ -1562,11 +1560,16 @@ local function GetIcon(icon, source)
 		else
 			return "rbxassetid://10723434557"
 		end
-	else	
+	else
 		if icon ~= nil and IconModule[source] then
 			local sourceicon = IconModule[source]
-			return sourceicon[icon]
+			local result = sourceicon[icon]
+			if not result then
+				warn("GetIcon | No icon named '" .. tostring(icon) .. "' found in IconModule." .. tostring(source))
+			end
+			return result
 		else
+			warn("GetIcon | IconModule has no source table named '" .. tostring(source) .. "'")
 			return nil
 		end
 	end
@@ -1613,7 +1616,6 @@ local function BlurModule(Frame)
 
 	local gTokenMH = 99999999
 	local gToken = math.random(1, gTokenMH)
-
 	local DepthOfField = Instance.new('DepthOfFieldEffect', game:GetService('Lighting'))
 	DepthOfField.FarIntensity = 0
 	DepthOfField.FocusDistance = 51.6
@@ -1628,7 +1630,7 @@ local function BlurModule(Frame)
 	frame.AnchorPoint = Vector2.new(0.5, 0.5)
 	frame.BackgroundTransparency = 1
 
-	local GenUid; do -- Generate unique names for RenderStepped bindings
+	local GenUid; do
 		local id = 0
 		function GenUid()
 			id = id + 1
@@ -1648,11 +1650,9 @@ local function BlurModule(Frame)
 	end
 
 	local DrawQuad; do
-
 		local acos, max, pi, sqrt = math.acos, math.max, math.pi, math.sqrt
 		local sz = 0.22
-		local function DrawTriangle(v1, v2, v3, p0, p1) -- I think Stravant wrote this function
-
+		local function DrawTriangle(v1, v2, v3, p0, p1)
 			local s1 = (v1 - v2).magnitude
 			local s2 = (v2 - v3).magnitude
 			local s3 = (v3 - v1).magnitude
@@ -1795,7 +1795,6 @@ local function BlurModule(Frame)
 end
 
 local function unpackt(array : table)
-
 	local val = ""
 	local i = 0
 	for _,v in pairs(array) do
@@ -1811,11 +1810,8 @@ local function unpackt(array : table)
 	return val
 end
 
--- Interface Management
 local LunaUI = isStudio and script.Parent:WaitForChild("Luna UI") or game:GetObjects("rbxassetid://86467455075715")[1]
-
 local SizeBleh = nil
-
 local function Hide(Window, bind, notif)
 	SizeBleh = Window.Size
 	bind = string.split(tostring(bind), "Enum.KeyCode.")
@@ -1855,7 +1851,6 @@ local function Hide(Window, bind, notif)
 	Window.Elements.Parent.Visible = false
 	Window.Visible = false
 end
-
 
 if gethui then
 	LunaUI.Parent = gethui()
@@ -2055,7 +2050,7 @@ local function Draggable(Bar, Window, enableTaptic, tapticOffset)
 	end)
 end
 
-function Luna:Notification(data) -- action e.g open messages
+function Luna:Notification(data)
 	task.spawn(function()
 		data = Kwargify({
 			Title = "Missing Title",
@@ -2064,20 +2059,15 @@ function Luna:Notification(data) -- action e.g open messages
 			ImageSource = "Material"
 		}, data or {})
 
-		-- Notification Object Creation
 		local newNotification = Notifications.Template:Clone()
 		newNotification.Name = data.Title
 		newNotification.Parent = Notifications
 		newNotification.LayoutOrder = #Notifications:GetChildren()
 		newNotification.Visible = false
 		BlurModule(newNotification)
-
-		-- Set Data
 		newNotification.Title.Text = data.Title
 		newNotification.Description.Text = data.Content 
 		newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource)
-
-		-- Set initial transparency values
 		newNotification.BackgroundTransparency = 1
 		newNotification.Title.TextTransparency = 1
 		newNotification.Description.TextTransparency = 1
@@ -2085,31 +2075,21 @@ function Luna:Notification(data) -- action e.g open messages
 		newNotification.Shadow.ImageTransparency = 1
 		newNotification.Icon.ImageTransparency = 1
 		newNotification.Icon.BackgroundTransparency = 1
-
 		task.wait()
-
-		-- Calculate textbounds and set initial values
 		newNotification.Size = UDim2.new(1, 0, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)
-
 		newNotification.Icon.Size = UDim2.new(0, 28, 0, 28)
 		newNotification.Icon.Position = UDim2.new(0, 16, 0.5, -1)
-
 		newNotification.Visible = true
-
 		newNotification.Description.Size = UDim2.new(1, -65, 0, math.huge)
 		local bounds = newNotification.Description.TextBounds.Y + 55
 		newNotification.Description.Size = UDim2.new(1,-65,0, bounds - 35)
 		newNotification.Size = UDim2.new(1, 0, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)
 		TweenService:Create(newNotification, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, 0, 0, bounds)}):Play()
-
 		task.wait(0.15)
 		TweenService:Create(newNotification, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.45}):Play()
 		TweenService:Create(newNotification.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-
 		task.wait(0.05)
-
 		TweenService:Create(newNotification.Icon, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
-
 		task.wait(0.05)
 		TweenService:Create(newNotification.Description, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0.35}):Play()
 		TweenService:Create(newNotification.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Transparency = 0.95}):Play()
@@ -2117,20 +2097,15 @@ function Luna:Notification(data) -- action e.g open messages
 
 		local waitDuration = math.min(math.max((#newNotification.Description.Text * 0.1) + 2.5, 3), 10)
 		task.wait(data.Duration or waitDuration)
-
 		newNotification.Icon.Visible = false
 		TweenService:Create(newNotification, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 		TweenService:Create(newNotification.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 		TweenService:Create(newNotification.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
 		TweenService:Create(newNotification.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 		TweenService:Create(newNotification.Description, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-
 		TweenService:Create(newNotification, TweenInfo.new(1, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, -90, 0, 0)}):Play()
-
 		task.wait(1)
-
 		TweenService:Create(newNotification, TweenInfo.new(1, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, -90, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)}):Play()
-
 		newNotification.Visible = false
 		newNotification:Destroy()
 	end)
