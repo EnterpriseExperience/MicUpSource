@@ -3540,7 +3540,6 @@ function Luna:CreateWindow(WindowSettings)
 				end
 
 				-- Luna.Flags[BindSettings.Flag] = BindSettings
-
 				return BindV
 			end
 
@@ -3600,9 +3599,7 @@ function Luna:CreateWindow(WindowSettings)
 
 				Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
 				Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
-
 				Input.InputFrame.InputBox.FocusLost:Connect(function(bleh)
-
 					if InputSettings.Enter then
 						if bleh then
 							local Success, Response = pcall(function()
@@ -5373,7 +5370,8 @@ function Luna:CreateWindow(WindowSettings)
 			local mobile_user = UserInputService.TouchEnabled
 			local fixed_width = mobile_user and 220 or 160
 			local fixed_height = mobile_user and 42 or 30
-			Input.InputFrame.Size = UDim2.new(0, fixed_width, 0, fixed_height)
+			Input.InputFrame.Size = UDim2.new(0, 100, 0, 30)
+			Input.InputFrame.InputBox.Size = UDim2.new(1, -10, 1, 0)
 			Input.InputFrame.InputBox.FocusLost:Connect(function(bleh)
 				if InputSettings.Enter then
 					if bleh then
