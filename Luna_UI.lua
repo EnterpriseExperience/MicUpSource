@@ -4379,12 +4379,12 @@ function Luna:CreateWindow(WindowSettings)
 
 			Button["MouseEnter"]:Connect(function()
 				ButtonV.Hover = true
-				tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				task.spawn(function() tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)}) end)
 			end)
 
 			Button["MouseLeave"]:Connect(function()
 				ButtonV.Hover = false
-				tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+				task.spawn(function() tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)}) end)
 			end)
 
 			function ButtonV:Set(ButtonSettings2)
