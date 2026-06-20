@@ -2045,7 +2045,6 @@ local function Draggable(Bar, Window, enableTaptic, tapticOffset)
 				end
 			end
 		end)
-
 	end)
 end
 
@@ -2065,8 +2064,17 @@ function Luna:Notification(data)
 		newNotification.Visible = false
 		BlurModule(newNotification)
 		newNotification.Title.Text = data.Title
-		newNotification.Description.Text = data.Content 
-		newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource)
+		newNotification.Description.Text = data.Content
+		local resolvedIcon = GetIcon(data.Icon, data.ImageSource)
+		if type(resolvedIcon) == "string" then
+			newNotification.Icon.Image = resolvedIcon
+		elseif type(resolvedIcon) == "table" and resolvedIcon.id then
+			newNotification.Icon.Image = "rbxassetid://" .. resolvedIcon.id
+			newNotification.Icon.ImageRectSize = resolvedIcon.imageRectSize
+			newNotification.Icon.ImageRectOffset = resolvedIcon.imageRectOffset
+		else
+			newNotification.Icon.Image = "rbxassetid://0"
+		end
 		newNotification.BackgroundTransparency = 1
 		newNotification.Title.TextTransparency = 1
 		newNotification.Description.TextTransparency = 1
