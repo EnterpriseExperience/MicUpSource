@@ -6658,15 +6658,6 @@ function Luna:Destroy_UI()
 	LunaUI:Destroy()
 end
 
-if (getgenv and not getgenv().ConfirmLuna) or (not getgenv) then
-	Luna:Notification({ 
-    	Title = "Luna Is Deprecated",
-    	Icon = "warning",
-    	ImageSource = "Material",
-    	Content = "If you are not the script developer, ignore this message. \n\n The Luna Interface Library Is Deprecated And Not Recommended to Use. A New Library Is Available at nebulasoftworks.xyz/starlight. If you insist on using Luna, set the getgenv().ConfirmLuna variable to true. "
-	})
-end
-
 if isStudio then
 	local Window = Luna:CreateWindow({
 		Name = "Nebula Client - Luna Hub | Blade Ball",
