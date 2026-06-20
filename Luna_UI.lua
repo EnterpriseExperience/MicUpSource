@@ -2401,7 +2401,6 @@ function Luna:CreateWindow(WindowSettings)
 			end)
 
 			KeySystem.Close.MouseButton1Click:Connect(function()
-				
 				Luna:Destroy()
 			end)
 		end
@@ -6638,6 +6637,17 @@ function Luna:CreateWindow(WindowSettings)
 end
 
 function Luna:Destroy()
+	Main.Visible = false
+	for _, Notification in ipairs(Notifications:GetChildren()) do
+		if Notification.ClassName == "Frame" then
+			Notification.Visible = false
+			Notification:Destroy()
+		end
+	end
+	LunaUI:Destroy()
+end
+
+function Luna:Destroy_UI()
 	Main.Visible = false
 	for _, Notification in ipairs(Notifications:GetChildren()) do
 		if Notification.ClassName == "Frame" then
