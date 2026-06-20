@@ -2149,17 +2149,32 @@ local function Unhide(Window, currentTab)
 			TweenService:Create(tabbtn.DropShadowHolder.DropShadow, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
 		end
 	end
-
 end
 
 local MainSize
-local MinSize 
-if Camera.ViewportSize.X > 774 and Camera.ViewportSize.Y > 503 then
+local MinSize
+if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+	MainSize = UDim2.fromOffset(Camera.ViewportSize.X, Camera.ViewportSize.Y)
+	MinSize = UDim2.fromOffset(Camera.ViewportSize.X, 42)
+elseif Camera.ViewportSize.X > 774 and Camera.ViewportSize.Y > 503 then
 	MainSize = UDim2.fromOffset(675, 424)
 	MinSize = UDim2.fromOffset(500, 42)
 else
 	MainSize = UDim2.fromOffset(Camera.ViewportSize.X - 100, Camera.ViewportSize.Y - 100)
 	MinSize = UDim2.fromOffset(Camera.ViewportSize.X - 275, 42)
+end
+local function Maximise(Window)
+	Window.Controls.ToggleSize.ImageLabel.Image = "rbxassetid://10137941941"
+	tween(Window, {Size = MainSize})
+	Window.Elements.Visible = true
+	Window.Navigation.Visible = true
+end
+
+local function Minimize(Window)
+	Window.Controls.ToggleSize.ImageLabel.Image = "rbxassetid://11036884234"
+	Window.Elements.Visible = false
+	Window.Navigation.Visible = false
+	tween(Window, {Size = MinSize})
 end
 
 local function Maximise(Window)
@@ -2178,7 +2193,6 @@ end
 
 
 function Luna:CreateWindow(WindowSettings)
-
 	WindowSettings = Kwargify({
 		Name = "Luna UI Example Window",
 		Subtitle = "",
