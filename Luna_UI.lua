@@ -2197,7 +2197,6 @@ local function Minimize(Window)
 	tween(Window, {Size = MinSize})
 end
 
-
 function Luna:CreateWindow(WindowSettings)
 	WindowSettings = Kwargify({
 		Name = "Luna UI Example Window",
@@ -2206,14 +2205,13 @@ function Luna:CreateWindow(WindowSettings)
 		LoadingEnabled = true,
 		LoadingTitle = "Luna Interface Suite",
 		LoadingSubtitle = "by Nebula Softworks",
-
 		ConfigSettings = {},
-
 		KeySystem = false,
 		KeySettings = {}
 	}, WindowSettings or {})
 
 	WindowSettings.ConfigSettings = Kwargify({
+		Enabled = false,
 		RootFolder = nil,
 		ConfigFolder = "Big Hub"
 	}, WindowSettings.ConfigSettings or {})
@@ -2222,22 +2220,20 @@ function Luna:CreateWindow(WindowSettings)
 		Title = WindowSettings.Name,
 		Subtitle = "Key System",
 		Note = "No Instructions",
-		SaveInRoot = false, -- Enabling will save the key in your RootFolder (YOU MUST HAVE ONE BEFORE ENABLING THIS OPTION)
-		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-		Key = {""}, -- List of keys that will be accepted by the system, please use a system like Pelican or Luarmor that provide key strings based on your HWID since putting a simple string is very easy to bypass
+		SaveInRoot = false,
+		SaveKey = true,
+		Key = {""},
 		SecondAction = {}	
 	}, WindowSettings.KeySettings or {})
 
 	WindowSettings.KeySettings.SecondAction = Kwargify({
 		Enabled = false,
-		Type = "Discord", -- Link/Discord
-		Parameter = "" -- for discord, add the invite link like home tab. for link, type the link of ur key sys
+		Type = "Discord",
+		Parameter = ""
 	}, WindowSettings.KeySettings.SecondAction)
 
 	local Passthrough = false
-
 	local Window = { Bind = Enum.KeyCode.K, CurrentTab = nil, State = true, Size = false, Settings = nil }
-
 	Main.Title.Title.Text = WindowSettings.Name
 	Main.Title.subtitle.Text = WindowSettings.Subtitle
 	Main.Logo.Image = "rbxassetid://" .. WindowSettings.LogoID
@@ -2253,11 +2249,9 @@ function Luna:CreateWindow(WindowSettings)
 
 	tween(Elements.Parent, {BackgroundTransparency = 1})
 	Elements.Parent.Visible = false
-
 	LoadingFrame.Frame.Frame.Title.Text = WindowSettings.LoadingTitle
 	LoadingFrame.Frame.Frame.Subtitle.Text = WindowSettings.LoadingSubtitle
 	LoadingFrame.Version.Text = LoadingFrame.Frame.Frame.Title.Text == "Luna Interface Suite" and Release or "Luna UI"
-
 	Navigation.Player.icon.ImageLabel.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
 	Navigation.Player.Namez.Text = Players.LocalPlayer.DisplayName
 	Navigation.Player.TextLabel.Text = Players.LocalPlayer.Name
@@ -2275,33 +2269,41 @@ function Luna:CreateWindow(WindowSettings)
 
 	LoadingFrame.Visible = true
 
-	-- pcall(function()
-	-- 	if not isfolder(ConfigurationFolder) then
-	-- 		makefolder(ConfigurationFolder)
-	-- 	end
-	-- 	if WindowSettings.ConfigSettings.RootFolder then
-	-- 		if not isfolder(ConfigurationFolder .. WindowSettings.ConfigSettings.RootFolder) then
-	-- 			makefolder(ConfigurationFolder .. WindowSettings.ConfigSettings.RootFolder)
-	-- 			if not isfolder(ConfigurationFolder .. WindowSettings.ConfigSettings.RootFolder .. WindowSettings.ConfigSettings.ConfigFolder) then
-	-- 				makefolder(ConfigurationFolder .. WindowSettings.ConfigSettings.RootFolder .. WindowSettings.ConfigSettings.ConfigFolder)
-	-- 			end
-	-- 		end
-	-- 	else
-	-- 		if not isfolder(ConfigurationFolder .. WindowSettings.ConfigSettings.ConfigFolder) then
-	-- 			makefolder(ConfigurationFolder .. WindowSettings.ConfigSettings.ConfigFolder)
-	-- 		end
-	-- 	end
+	if WindowSettings.ConfigSettings.Enabled then
+		pcall(function()
+			local BaseFolder = ConfigurationFolder
+			local RootFolder = WindowSettings.ConfigSettings.RootFolder
+			local ConfigFolder = WindowSettings.ConfigSettings.ConfigFolder
+			if not isfolder(BaseFolder) then
+				makefolder(BaseFolder)
+			end
 
-	-- 	LoadAutoLoad(WindowSettings.ConfigSettings.ConfigFolder, WindowSettings.ConfigSettings.RootFolder)
-	-- end)
+			if RootFolder then
+				local RootPath = BaseFolder .. "/" .. RootFolder
+				if not isfolder(RootPath) then
+					makefolder(RootPath)
+				end
+
+				local FullPath = RootPath .. "/" .. ConfigFolder
+				if not isfolder(FullPath) then
+					makefolder(FullPath)
+				end
+			else
+				local FullPath = BaseFolder .. "/" .. ConfigFolder
+				if not isfolder(FullPath) then
+					makefolder(FullPath)
+				end
+			end
+
+			LoadAutoLoad(ConfigFolder, RootFolder)
+		end)
+	end
 
 	LunaUI.Enabled = true
-
 	BlurModule(Main)
 
 	if WindowSettings.KeySystem then
 		local KeySettings = WindowSettings.KeySettings
-		
 		Draggable(Dragger, Main)
 		Draggable(LunaUI.MobileSupport, LunaUI.MobileSupport)
 		if dragBar then Draggable(dragInteract, Main, true, 255) end
@@ -2314,9 +2316,7 @@ function Luna:CreateWindow(WindowSettings)
 		WindowSettings.KeySettings.FileName = "key"
 
 		if typeof(WindowSettings.KeySettings.Key) == "string" then WindowSettings.KeySettings.Key = {WindowSettings.KeySettings.Key} end
-
 		local direc = WindowSettings.KeySettings.SaveInRoot and "Luna/Configurations/" .. WindowSettings.ConfigSettings.RootFolder .. "/" .. WindowSettings.ConfigSettings.ConfigFolder .. "/Key System/" or "Luna/Configurations/" ..  WindowSettings.ConfigSettings.ConfigFolder .. "/Key System/"
-
 		if isfile and isfile(direc .. WindowSettings.KeySettings.FileName .. ".luna") then
 			for i, Key in ipairs(WindowSettings.KeySettings.Key) do
 				if string.find(readfile(direc .. WindowSettings.KeySettings.FileName .. ".luna"), Key) then
@@ -2327,7 +2327,6 @@ function Luna:CreateWindow(WindowSettings)
 		end
 
 		if not Passthrough then
-
 			local Btn = KeySystem.Action.Copy
 			local typesys = KeySettings.SecondAction.Type
 			
@@ -2348,7 +2347,7 @@ function Luna:CreateWindow(WindowSettings)
 			
 			Btn.Interact.MouseButton1Click:Connect(function()
 				if typesys == "Discord" then
-					setclipboard(tostring("https://discord.gg/"..KeySettings.SecondAction.Parameter)) -- Hunter if you see this I added copy also was too lazy to send u msg
+					setclipboard(tostring("https://discord.gg/"..KeySettings.SecondAction.Parameter))
 					if request then
 						request({
 							Url = 'http://127.0.0.1:6463/rpc?v=1',
@@ -2409,7 +2408,6 @@ function Luna:CreateWindow(WindowSettings)
 					end
 				else
 					if AttemptsRemaining == 0 then
-
 						game.Players.LocalPlayer:Kick("No Attempts Remaining")
 						game:Shutdown()
 					end
@@ -2474,11 +2472,10 @@ function Luna:CreateWindow(WindowSettings)
 	local FirstTab = true
 
 	function Window:CreateHomeTab(HomeTabSettings)
-
 		HomeTabSettings = Kwargify({
 			Icon = 1,
-			SupportedExecutors = {"Vega X", "Delta", "Nihon", "Xeno"}, -- THESE DEFAULTS ARE PLACEHOLDERS!! I DO NOT ADVERTISE THESE, THEY ARE JUS THE FIRST THAT CAME TO MIND. I HAVE NO IDEA WHETHER THEYA RE RATS (they prob are) AND IM NOT RESPONSIBLE IF U GET VIRUSES FROM INSTALLING AFTER SEEING THIS LIST
-			DiscordInvite = "noinvitelink" -- The disvord invite link. Do not include the link so for example if my invite was discord.gg/nebula I would put nebula
+			SupportedExecutors = {"Vega X", "Delta", "Nihon", "Xeno"},
+			DiscordInvite = "noinvitelink"
 		}, HomeTabSettings or {})
 
 		local HomeTab = {}
@@ -2496,18 +2493,14 @@ function Luna:CreateWindow(WindowSettings)
 			tween(HomeTabButton.ImageLabel, {ImageColor3 = Color3.fromRGB(255,255,255)})
 			tween(HomeTabButton, {BackgroundTransparency = 0})
 			tween(HomeTabButton.UIStroke, {Transparency = 0.41})
-
 			Elements.UIPageLayout:JumpTo(HomeTabPage)
-
 			task.wait(0.05)
-
 			for _, OtherTabButton in ipairs(Navigation.Tabs:GetChildren()) do
 				if OtherTabButton.Name ~= "InActive Template" and OtherTabButton.ClassName == "Frame" and OtherTabButton ~= HomeTabButton then
 					tween(OtherTabButton.ImageLabel, {ImageColor3 = Color3.fromRGB(221,221,221)})
 					tween(OtherTabButton, {BackgroundTransparency = 1})
 					tween(OtherTabButton.UIStroke, {Transparency = 1})
 				end
-
 			end
 
 			Window.CurrentTab = "Home"
@@ -2519,11 +2512,9 @@ function Luna:CreateWindow(WindowSettings)
 			HomeTab:Activate()
 		end)
 
-
 		HomeTabPage.icon.ImageLabel.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 		HomeTabPage.player.Text.Text = "Hello, " .. Players.LocalPlayer.DisplayName
 		HomeTabPage.player.user.Text = Players.LocalPlayer.Name .. " - ".. WindowSettings.Name
-
 		HomeTabPage.detailsholder.dashboard.Client.Title.Text = (isStudio and "Debugging (Studio)" or identifyexecutor()) or "Your Executor Does Not Support identifyexecutor."
 		for i,v in pairs(HomeTabSettings.SupportedExecutors) do
 			if isStudio then HomeTabPage.detailsholder.dashboard.Client.Subtitle.Text = "Luna Interface Suite - Debugging Mode" break end
@@ -2536,10 +2527,8 @@ function Luna:CreateWindow(WindowSettings)
 			end
 		end
 
-		-- Stolen From Sirius Stuff Begins Here
-
 		HomeTabPage.detailsholder.dashboard.Discord.Interact.MouseButton1Click:Connect(function()
-			setclipboard(tostring("https://discord.gg/"..HomeTabSettings.DiscordInvite)) -- Hunter if you see this I added copy also was too lazy to send u msg
+			setclipboard(tostring("https://discord.gg/"..HomeTabSettings.DiscordInvite))
 			if request then
 				request({
 					Url = 'http://127.0.0.1:6463/rpc?v=1',
@@ -2559,29 +2548,23 @@ function Luna:CreateWindow(WindowSettings)
 
 		local friendsCooldown = 0
 		local function getPing() return math.clamp(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue(), 10, 700) end
-
 		local function checkFriends()
 			if friendsCooldown == 0 then
-
 				friendsCooldown = 25
-
 				local playersFriends = {}
 				local friendsInTotal = 0
 				local onlineFriends = 0 
 				local friendsInGame = 0 
-
 				local list = Players:GetFriendsAsync(Player.UserId)
-				while true do -- loop through all the pages
+				while true do
 					for _, data in list:GetCurrentPage() do
 						friendsInTotal +=1
 						table.insert(playersFriends, Data)
 					end
 
 					if list.IsFinished then
-						-- stop the loop since this is the last page
 						break
 					else 
-						-- go to the next page
 						list:AdvanceToNextPageAsync()
 					end
 				end
@@ -2599,7 +2582,6 @@ function Luna:CreateWindow(WindowSettings)
 				HomeTabPage.detailsholder.dashboard.Friends.Offline.Value.Text = tostring(friendsInTotal - onlineFriends).." friends"
 				HomeTabPage.detailsholder.dashboard.Friends.Online.Value.Text = tostring(onlineFriends).." friends"
 				HomeTabPage.detailsholder.dashboard.Friends.InGame.Value.Text = tostring(friendsInGame).." friends"
-
 			else
 				friendsCooldown -= 1
 			end
@@ -2619,27 +2601,15 @@ function Luna:CreateWindow(WindowSettings)
 
 		coroutine.wrap(function()
 			while task.wait() do
-
-
-				-- Players
 				HomeTabPage.detailsholder.dashboard.Server.Players.Value.Text = #Players:GetPlayers().." playing"
 				HomeTabPage.detailsholder.dashboard.Server.MaxPlayers.Value.Text = Players.MaxPlayers.." players can join this server"
-
-				-- Ping
 				HomeTabPage.detailsholder.dashboard.Server.Latency.Value.Text = isStudio and tostring(math.round((Players.LocalPlayer:GetNetworkPing() * 2 ) / 0.01)) .."ms" or tostring(math.floor(getPing()) .."ms")
-
-				-- Time
 				HomeTabPage.detailsholder.dashboard.Server.Time.Value.Text = convertToHMS(time())
-
-				-- Region
 				HomeTabPage.detailsholder.dashboard.Server.Region.Value.Text = Localization:GetCountryRegionForPlayerAsync(Players.LocalPlayer)
 
 				checkFriends()
 			end
 		end)()
-
-		-- Stolen From Sirius Stuff ends here
-
 	end
 
 	function Window:CreateTab(TabSettings)
@@ -6081,7 +6051,6 @@ function Luna:CreateWindow(WindowSettings)
 
 			local inputPath = nil
 			local selectedConfig = nil
-
 			local Title = Elements.Template.Title:Clone()
 			Title.Text = "Configurations"
 			Title.Visible = true
@@ -6315,7 +6284,6 @@ function Luna:CreateWindow(WindowSettings)
 					end
 				end
 			},
-			-- buggy as hell stil
 			["Colorpicker"] = {
 				Save = function(Flag, data)
 					local function Color3ToHex(color)
@@ -6344,9 +6312,7 @@ function Luna:CreateWindow(WindowSettings)
 			}
 		}
 
-
 		function Tab:BuildThemeSection()
-
 			local Title = Elements.Template.Title:Clone()
 			Title.Text = "Theming"
 			Title.Visible = true
@@ -6412,9 +6378,7 @@ function Luna:CreateWindow(WindowSettings)
 					end,
 				})
 			end
-
 		end
-
 
 		local function BuildFolderTree()
 			if isStudio then return "Config system unavailable." end
@@ -6432,9 +6396,7 @@ function Luna:CreateWindow(WindowSettings)
 		end
 
 		local function SetFolder()
-
 			if isStudio then return "Config system unavailable." end
-
 			if WindowSettings.ConfigSettings.RootFolder ~= nil and WindowSettings.ConfigSettings.RootFolder ~= "" then
 				Luna.Folder = WindowSettings.ConfigSettings.RootFolder .. "/" .. WindowSettings.ConfigSettings.ConfigFolder
 			else
@@ -6501,11 +6463,8 @@ function Luna:CreateWindow(WindowSettings)
 
 		function Luna:LoadAutoloadConfig()
 			if isfile(Luna.Folder .. "/settings/autoload.txt") then
-
 				if isStudio then return "Config system unavailable." end
-
 				local name = readfile(Luna.Folder .. "/settings/autoload.txt")
-
 				local success, err = Luna:LoadConfig(name)
 				if not success then
 					return Luna:Notification({
@@ -6528,9 +6487,7 @@ function Luna:CreateWindow(WindowSettings)
 
 		function Luna:RefreshConfigList()
 			if isStudio then return "Config system unavailable." end
-
 			local list = listfiles(Luna.Folder .. "/settings")
-
 			local out = {}
 			for i = 1, #list do
 				local file = list[i]
@@ -6552,12 +6509,10 @@ function Luna:CreateWindow(WindowSettings)
 					end
 				end
 			end
-
 			return out
 		end
 		return Tab
 	end
-
 
 	Elements.Parent.Visible = true
 	tween(Elements.Parent, {BackgroundTransparency = 0.1})
@@ -6637,8 +6592,7 @@ function Luna:CreateWindow(WindowSettings)
 	end)
 	Main.Controls.Theme["MouseLeave"]:Connect(function()
 		tween(Main.Controls.Theme.ImageLabel, {ImageColor3 = Color3.fromRGB(195,195,195)})
-	end)	
-
+	end)
 
 	LunaUI.MobileSupport.Interact.MouseButton1Click:Connect(function()
 		Unhide(Main, Window.CurrentTab)
@@ -6646,6 +6600,11 @@ function Luna:CreateWindow(WindowSettings)
 		Window.State = true
 		LunaUI.MobileSupport.Visible = false
 	end)
+
+	function Window:Set(NewName)
+		WindowSettings.Name = NewName
+		Main.Title.Title.Text = NewName
+	end
 
 	return Window
 end
