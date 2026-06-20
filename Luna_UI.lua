@@ -1668,17 +1668,13 @@ local function BlurModule(Frame)
 			local para = ( (B-A).x*(C-A).x + (B-A).y*(C-A).y + (B-A).z*(C-A).z ) / (A-B).magnitude
 			local perp = sqrt((C-A).magnitude^2 - para*para)
 			local dif_para = (A - B).magnitude - para
-
 			local st = CFrame.new(B, A)
 			local za = CFrame.Angles(pi/2,0,0)
-
 			local cf0 = st
-
 			local Top_Look = (cf0 * za).lookVector
 			local Mid_Point = A + CFrame.new(A, B).lookVector * para
 			local Needed_Look = CFrame.new(Mid_Point, C).lookVector
 			local dot = Top_Look.x*Needed_Look.x + Top_Look.y*Needed_Look.y + Top_Look.z*Needed_Look.z
-
 			local ac = CFrame.Angles(0, 0, acos(dot))
 
 			cf0 = cf0 * ac
@@ -1786,7 +1782,6 @@ local function BlurModule(Frame)
 				end
 			end
 		end
-
 	end
 
 	UpdateOrientation(true)
@@ -1896,90 +1891,101 @@ local Navigation = Main.Navigation
 local Tabs = Navigation.Tabs
 local Notifications = LunaUI.Notifications
 local KeySystem : Frame = Main.KeySystem
+local function BuildConfigPath(ConfigurationFolder, hasRoot, ConfigFolder, fileName)
+	if hasRoot then
+		return ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. fileName
+	else
+		return ConfigurationFolder .. "/" .. ConfigFolder .. "/" .. fileName
+	end
+end
 
--- local function LoadConfiguration(Configuration, autoload)
--- 	local Data = HttpService:JSONDecode(Configuration)
--- 	local changed
--- 	local notified = false
+local function LoadConfiguration(Configuration, autoload)
+	local Data = HttpService:JSONDecode(Configuration)
+	local changed = false
+	local notified = false
 
--- 	-- Iterate through current UI elements' flags
--- 	for FlagName, Flag in pairs(Luna.Flags) do
--- 		local FlagValue = Data[FlagName]
+	for FlagName, Flag in pairs(Luna.Flags) do
+		local FlagValue = Data[FlagName]
 
--- 		if FlagValue then
--- 			task.spawn(function()
--- 				if Flag.Type == "ColorPicker" then
--- 					changed = true
--- 					Flag:Set(UnpackColor(FlagValue))
--- 				else
--- 					if (Flag.CurrentValue or Flag.CurrentKeybind or Flag.CurrentOption or Flag.Color) ~= FlagValue then 
--- 						changed = true
--- 						Flag:Set(FlagValue) 	
--- 					end
--- 				end
--- 			end)
--- 		else
--- 			notified = true
--- 			Luna:Notification({Title = "Config Error", Content = "Luna was unable to load or find '"..FlagName.. "'' in the current script. Check ".. website .." for help.", Icon = "flag"})
--- 		end
--- 	end
--- 	if autoload and notified == false then
--- 		Luna:Notification({
--- 			Title = "Config Autoloaded",
--- 			Content = "The Configuration Has Been Automatically Loaded. Thank You For Using Luna Library",
--- 			Icon = "file-code-2",
--- 			ImageSource = "Lucide"
--- 		})
--- 	elseif notified == false then
--- 		Luna:Notification({
--- 			Title = "Config Loaded",
--- 			Content = "The Configuration Has Been Loaded. Thank You For Using Luna Library",
--- 			Icon = "file-code-2",
--- 			ImageSource = "Lucide"
--- 		})
--- 	end
+		if FlagValue ~= nil then
+			if Flag.Type == "ColorPicker" then
+				changed = true
+				Flag:Set(UnpackColor(FlagValue))
+			else
+				local CurrentVal = Flag.CurrentValue
+				if CurrentVal == nil then CurrentVal = Flag.CurrentKeybind end
+				if CurrentVal == nil then CurrentVal = Flag.CurrentOption end
+				if CurrentVal == nil then CurrentVal = Flag.Color end
 
--- 	return changed
--- end
+				if CurrentVal ~= FlagValue then
+					changed = true
+					Flag:Set(FlagValue)
+				end
+			end
+		else
+			notified = true
+			Luna:Notification({
+				Title = "Config Error",
+				Content = "Luna was unable to load or find '" .. FlagName .. "' in the current script. Check " .. website .. " for help.",
+				Icon = "flag"
+			})
+		end
+	end
 
--- local function SaveConfiguration(Configuration, ConfigFolder, hasRoot)
--- 	local Data = {}
--- 	for i,v in pairs(Luna.Flags) do
--- 		if v.Type == "ColorPicker" then
--- 			Data[i] = PackColor(v.Color)
--- 		else
--- 			Data[i] = v.CurrentValue or v.CurrentBind or v.CurrentOption or v.Color
--- 		end
--- 	end	
--- 	if hasRoot then
--- 		writefile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. Configuration .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
--- 	else
--- 		writefile(ConfigurationFolder .. "/" .. "/" .. ConfigFolder .. Configuration .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
--- 	end
--- end
+	if autoload and not notified then
+		Luna:Notification({
+			Title = "Config Autoloaded",
+			Content = "The Configuration Has Been Automatically Loaded. Thank You For Using Luna Library",
+			Icon = "file-code-2",
+			ImageSource = "Lucide"
+		})
+	elseif not notified then
+		Luna:Notification({
+			Title = "Config Loaded",
+			Content = "The Configuration Has Been Loaded. Thank You For Using Luna Library",
+			Icon = "file-code-2",
+			ImageSource = "Lucide"
+		})
+	end
 
--- local function SetAutoload(ConfigName, ConfigFolder, hasRoot)
--- 	if hasRoot then
--- 		writefile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. "autoload.txt", tostring(ConfigName) .. ConfigurationExtension)
--- 	else
--- 		writefile(ConfigurationFolder .. "/" .. "/" .. ConfigFolder .. "autoload.txt", tostring(ConfigName) .. ConfigurationExtension)
--- 	end
--- end
+	return changed
+end
 
--- local function LoadAutoLoad(ConfigFolder, hasRoot)
--- 	local autoload = isfile(ConfigurationFolder .. "/" .. "/" .. ConfigFolder .. "autoload.txt")
--- 	if hasRoot then
--- 		autoload = isfile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. "autoload.txt")
--- 	end
+local function SaveConfiguration(Configuration, ConfigFolder, hasRoot)
+	local Data = {}
+	for i, v in pairs(Luna.Flags) do
+		if v.Type == "ColorPicker" then
+			Data[i] = PackColor(v.Color)
+		else
+			local val = v.CurrentValue
+			if val == nil then val = v.CurrentKeybind end
+			if val == nil then val = v.CurrentOption end
+			if val == nil then val = v.Color end
+			Data[i] = val
+		end
+	end
 
--- 	if autoload then
--- 		if hasRoot then
--- 			LoadConfiguration(readfile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. readfile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. "autoload.txt")), true)
--- 		else
--- 			LoadConfiguration(readfile(ConfigurationFolder .. "/" .. ConfigFolder .. "/" .. readfile(ConfigurationFolder .. "/" .. ConfigFolder .. "/" .. "autoload.txt")), true)
--- 		end
--- 	end
--- end
+	local path = BuildConfigPath(ConfigurationFolder, hasRoot, ConfigFolder, Configuration .. ConfigurationExtension)
+	writefile(path, tostring(HttpService:JSONEncode(Data)))
+end
+
+local function SetAutoload(ConfigName, ConfigFolder, hasRoot)
+	local path = BuildConfigPath(ConfigurationFolder, hasRoot, ConfigFolder, "autoload.txt")
+	writefile(path, tostring(ConfigName) .. ConfigurationExtension)
+end
+
+local function LoadAutoLoad(ConfigFolder, hasRoot)
+	local autoloadPath = BuildConfigPath(ConfigurationFolder, hasRoot, ConfigFolder, "autoload.txt")
+
+	if isfile(autoloadPath) then
+		local configFileName = readfile(autoloadPath) -- e.g. "MyConfig.json"
+		local configPath = BuildConfigPath(ConfigurationFolder, hasRoot, ConfigFolder, configFileName)
+
+		if isfile(configPath) then
+			LoadConfiguration(readfile(configPath), true)
+		end
+	end
+end
 
 local function Draggable(Bar, Window, enableTaptic, tapticOffset)
 	pcall(function()
