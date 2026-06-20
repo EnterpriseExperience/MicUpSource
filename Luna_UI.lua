@@ -3705,9 +3705,7 @@ function Luna:CreateWindow(WindowSettings)
 					Luna.Options[Flag] = InputV
 				end
 
-
 				return InputV
-
 			end
 
 			-- Dropdown
@@ -5372,12 +5370,10 @@ function Luna:CreateWindow(WindowSettings)
 			TweenService:Create(Input.InputFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
 			TweenService:Create(Input.InputFrame.InputBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 			Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
-
-			local mobile_user = IsMobileUser()
+			local mobile_user = UserInputService.TouchEnabled
 			local fixed_width = mobile_user and 220 or 160
 			local fixed_height = mobile_user and 42 or 30
 			Input.InputFrame.Size = UDim2.new(0, fixed_width, 0, fixed_height)
-
 			Input.InputFrame.InputBox.FocusLost:Connect(function(bleh)
 				if InputSettings.Enter then
 					if bleh then
