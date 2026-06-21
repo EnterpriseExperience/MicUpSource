@@ -2728,7 +2728,6 @@ function Luna:CreateWindow(WindowSettings)
 				Sectiont:Destroy()
 			end
 
-			-- Divider
 			function Section:CreateDivider()
 				TabPage.Position = UDim2.new(0,0,0,28)
 				local b = Elements.Template.Divider:Clone()
@@ -2738,7 +2737,6 @@ function Luna:CreateWindow(WindowSettings)
 				tween(b.Line, {BackgroundTransparency = 0})
 			end
 
-			-- Button
 			function Section:CreateButton(ButtonSettings)
 				TabPage.Position = UDim2.new(0,0,0,28)
 
@@ -2843,7 +2841,6 @@ function Luna:CreateWindow(WindowSettings)
 				return ButtonV
 			end
 
-			-- Label
 			function Section:CreateLabel(LabelSettings)
 				TabPage.Position = UDim2.new(0,0,0,28)
 
@@ -4316,7 +4313,6 @@ function Luna:CreateWindow(WindowSettings)
 
 		end
 
-		-- Divider
 		function Tab:CreateDivider()
 			local b = Elements.Template.Divider:Clone()
 			b.Parent = TabPage
@@ -4324,9 +4320,7 @@ function Luna:CreateWindow(WindowSettings)
 			tween(b.Line, {BackgroundTransparency = 0})
 		end
 
-		-- Button
 		function Tab:CreateButton(ButtonSettings)
-
 			ButtonSettings = Kwargify({
 				Name = "Button",
 				Description = nil,
@@ -4339,7 +4333,6 @@ function Luna:CreateWindow(WindowSettings)
 				Hover = false,
 				Settings = ButtonSettings
 			}
-
 
 			local Button
 			if ButtonSettings.Description == nil and ButtonSettings.Description ~= "" then
@@ -4369,26 +4362,50 @@ function Luna:CreateWindow(WindowSettings)
 			end
 
 			Button.Interact["MouseButton1Click"]:Connect(function()
-				local Success,Response = pcall(ButtonSettings.Callback)
+				if Button:FindFirstChild("UIStroke") then tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)}) end
+				task.wait(0.2)
+				local Success, Response = pcall(ButtonSettings.Callback)
 
 				if not Success then
-					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
-					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
-					TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-					Button.Title.Text = "Callback Error"
-					print("Flames Interface Suite | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
-					wait(0.5)
-					Button.Title.Text = ButtonSettings.Name
-					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
-					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
-					TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					if Button.Parent then
+						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+
+						local stroke = Button:FindFirstChild("UIStroke")
+						if stroke then
+							TweenService:Create(stroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						else
+							print("UIStroke not found inside Button: "..tostring(Button))
+						end
+
+						Button.Title.Text = "Callback Error"
+						print("Flames Interface Suite | "..ButtonSettings.Name.." Callback Error "..tostring(Response))
+						task.wait(0.5)
+						Button.Title.Text = ButtonSettings.Name
+						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+
+						stroke = Button:FindFirstChild("UIStroke")
+						if stroke then
+							TweenService:Create(stroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+						else
+							print("UIStroke not found inside Button: "..tostring(Button))
+						end
+					end
 				else
-					if Button then tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)}) end
-					wait(0.2)
-					if Button then
-						tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+					if not Button.Parent then
+						return
+					end
+
+					local stroke = Button:FindFirstChild("UIStroke")
+					if not stroke then
+						return 
+					end
+
+					if ButtonV.Hover then
+						tween(stroke, {Color = Color3.fromRGB(87, 84, 104)})
 					else
-						tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+						tween(stroke, {Color = Color3.fromRGB(64, 61, 76)})
 					end
 				end
 			end)
