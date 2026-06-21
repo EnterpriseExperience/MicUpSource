@@ -12,11 +12,9 @@ local Screen = setmetatable({}, {
         end
     end
 })
-local g = getgenv() or _G
+local g = getgenv()
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-if not getgenv().Workspace then
-    getgenv().Workspace = Workspace
-end
+if not getgenv().Workspace then getgenv().Workspace = Workspace end
 local Screen = workspace.CurrentCamera.ViewportSize
 local all_clipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 
@@ -264,10 +262,10 @@ mainContainer.Draggable = true
 mainContainer.Parent = gui
 createCorner(mainContainer, 12)
 
-local g = Instance.new("UIGradient")
-g.Color = ColorSequence.new(Color3.fromRGB(255,255,255),Color3.fromRGB(255,255,255))
-g.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0.05),NumberSequenceKeypoint.new(1,0.1)}
-g.Parent=mainContainer
+local color_gradient = Instance.new("UIGradient")
+color_gradient.Color = ColorSequence.new(Color3.fromRGB(255,255,255),Color3.fromRGB(255,255,255))
+color_gradient.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0.05),NumberSequenceKeypoint.new(1,0.1)}
+color_gradient.Parent=mainContainer
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, scale("Y", 36))
@@ -640,14 +638,14 @@ end
 --// UNIFIED EDIT FUNCTIONS
 -- only ChatGPT uses words like "unified" 🙏.
 getgenv().EditSlider = function(targetName, newValue)
-    local apply = self._sliders[targetName]
+    local apply = getgenv().Settings._sliders[targetName]
     if apply then
         apply(newValue)
     end
 end
 
 getgenv().EditToggle = function(targetName, newValue)
-    local apply = self._toggles[targetName]
+    local apply = getgenv().Settings._toggles[targetName]
     if apply then
         getgenv().Settings[targetName] = newValue
         apply(newValue)
