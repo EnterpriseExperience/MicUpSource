@@ -1,3 +1,4 @@
+local g = getgenv()
 local view_port_proxy = setmetatable({}, {
     __index = function(_, key)
         local cam = workspace.CurrentCamera
@@ -14,7 +15,6 @@ local view_port_proxy = setmetatable({}, {
 })
 
 g.View_Port_Size = g.View_Port_Size or view_port_proxy
-local g = getgenv()
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 if not getgenv().Workspace then getgenv().Workspace = Workspace end
 local all_clipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
