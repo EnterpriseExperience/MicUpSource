@@ -8,6 +8,8 @@ if (game.PlaceId == 13967668166 or game.PlaceId == 99154507657228 or game.PlaceI
         return
     end
 end
+if getgenv().FreeEmotes_Enabled then return end
+getgenv().FreeEmotes_Enabled = true
 local view_port_size = setmetatable({}, {
     __index = function(_, key)
         local cam = Workspace.CurrentCamera
