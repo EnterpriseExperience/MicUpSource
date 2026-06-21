@@ -2249,6 +2249,22 @@ function Luna:CreateWindow(WindowSettings)
 
 	tween(Elements.Parent, {BackgroundTransparency = 1})
 	Elements.Parent.Visible = false
+	function Window:Set(new_settings)
+		new_settings = Kwargify({
+			Name = WindowSettings.Name,
+			Subtitle = WindowSettings.Subtitle,
+			LogoID = WindowSettings.LogoID,
+		}, new_settings or {})
+
+		WindowSettings.Name = new_settings.Name
+		WindowSettings.Subtitle = new_settings.Subtitle
+		WindowSettings.LogoID = new_settings.LogoID
+
+		Main.Title.Title.Text = WindowSettings.Name
+		Main.Title.subtitle.Text = WindowSettings.Subtitle
+		Main.Logo.Image = "rbxassetid://" .. WindowSettings.LogoID
+	end
+
 	LoadingFrame.Frame.Frame.Title.Text = WindowSettings.LoadingTitle
 	LoadingFrame.Frame.Frame.Subtitle.Text = WindowSettings.LoadingSubtitle
 	LoadingFrame.Version.Text = LoadingFrame.Frame.Frame.Title.Text == "Luna Interface Suite" and Release or "Luna UI"
@@ -4367,9 +4383,9 @@ function Luna:CreateWindow(WindowSettings)
 					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
 					TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
 				else
-					tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)})
+					if Button then tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)}) end
 					wait(0.2)
-					if ButtonV.Hover then
+					if Button then
 						tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
 					else
 						tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
@@ -4412,9 +4428,7 @@ function Luna:CreateWindow(WindowSettings)
 			return ButtonV
 		end
 
-		-- Label
 		function Tab:CreateLabel(LabelSettings)
-
 			local LabelV = {}
 
 			LabelSettings = Kwargify({
@@ -6600,11 +6614,6 @@ function Luna:CreateWindow(WindowSettings)
 		Window.State = true
 		LunaUI.MobileSupport.Visible = false
 	end)
-
-	function Window:Set(NewName)
-		WindowSettings.Name = NewName
-		Main.Title.Title.Text = NewName
-	end
 
 	return Window
 end
