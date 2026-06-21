@@ -1,21 +1,22 @@
-local Screen = setmetatable({}, {
-    __index= function(_, key)
-        local cam= workspace.CurrentCamera
-        local size= cam and cam.ViewportSize or Vector2.new(1920, 1080)
+local view_port_proxy = setmetatable({}, {
+    __index = function(_, key)
+        local cam = workspace.CurrentCamera
+        local size = cam and cam.ViewportSize or Vector2.new(1920, 1080)
 
-        if key== "Width" then
+        if key == "X" or key == "Width" then
             return size.X
-        elseif key== "Height" then
+        elseif key == "Y" or key == "Height" then
             return size.Y
-        elseif key== "Size" then
+        elseif key == "Size" then
             return size
         end
     end
 })
+
+g.View_Port_Size = g.View_Port_Size or view_port_proxy
 local g = getgenv()
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 if not getgenv().Workspace then getgenv().Workspace = Workspace end
-local Screen = workspace.CurrentCamera.ViewportSize
 local all_clipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 
 function scale(axis, value)
@@ -24,9 +25,9 @@ function scale(axis, value)
     local scaleFactor = isMobile and 2 or 1.5
 
     if axis == "X" then
-        return value * (Screen.X / baseWidth) * scaleFactor
+        return value * (g.View_Port_Size.X / baseWidth) * scaleFactor
     elseif axis == "Y" then
-        return value * (Screen.Y / baseHeight) * scaleFactor
+        return value * (g.View_Port_Size.Y / baseHeight) * scaleFactor
     end
 end
 
