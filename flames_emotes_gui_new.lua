@@ -1,9 +1,11 @@
 local g = getgenv()
-if game.PlaceId == 13967668166 and g.Flames_Hub_Base_Loader_Currently_Shown and not g.LifeTogetherRP_Admin then
+if (game.PlaceId == 13967668166 or game.PlaceId == 99154507657228 or game.PlaceId == 99644611200703)
+    and g.Flames_Hub_Base_Loader_Currently_Shown
+    and not g.LifeTogetherRP_Admin then
     if g.notify then
         return g.notify("Warning", "Please load the Life Together RP script first!", 5)
     else
-        return 
+        return
     end
 end
 local view_port_size = setmetatable({}, {
