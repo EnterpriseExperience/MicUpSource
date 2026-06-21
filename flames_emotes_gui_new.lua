@@ -1,3 +1,11 @@
+local g = getgenv()
+if game.PlaceId == 13967668166 and g.Flames_Hub_Base_Loader_Currently_Shown and not g.LifeTogetherRP_Admin then
+    if g.notify then
+        return g.notify("Warning", "Please load the Life Together RP script first!", 5)
+    else
+        return 
+    end
+end
 local view_port_size = setmetatable({}, {
     __index = function(_, key)
         local cam = Workspace.CurrentCamera
@@ -6,7 +14,6 @@ local view_port_size = setmetatable({}, {
         elseif key == "Y" then return size.Y end
     end
 })
-local g = getgenv()
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
 local cam = Workspace.CurrentCamera
