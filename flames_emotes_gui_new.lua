@@ -1,33 +1,26 @@
-local g = getgenv()
-local view_port_proxy = setmetatable({}, {
+local view_port_size = setmetatable({}, {
     __index = function(_, key)
-        local cam = workspace.CurrentCamera
+        local cam = Workspace.CurrentCamera
         local size = cam and cam.ViewportSize or Vector2.new(1920, 1080)
-
-        if key == "X" or key == "Width" then
-            return size.X
-        elseif key == "Y" or key == "Height" then
-            return size.Y
-        elseif key == "Size" then
-            return size
-        end
+        if key == "X" then return size.X
+        elseif key == "Y" then return size.Y end
     end
 })
-
-g.View_Port_Size = g.View_Port_Size or view_port_proxy
+local g = getgenv()
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
-if not getgenv().Workspace then getgenv().Workspace = Workspace end
+local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
+local cam = Workspace.CurrentCamera
+local view_port_size = cam and cam.ViewportSize or Vector2.new(1920, 1080)
 local all_clipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
-
 function scale(axis, value)
     local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
     local baseWidth, baseHeight = 1920, 1080
     local scaleFactor = isMobile and 2 or 1.5
 
     if axis == "X" then
-        return value * (g.View_Port_Size.X / baseWidth) * scaleFactor
+        return value * (view_port_size.X / baseWidth) * scaleFactor
     elseif axis == "Y" then
-        return value * (g.View_Port_Size.Y / baseHeight) * scaleFactor
+        return value * (view_port_size.Y / baseHeight) * scaleFactor
     end
 end
 
@@ -66,8 +59,6 @@ local function safe_wrapper()
         end
     }))
 end
-
-repeat task.wait() until typeof(safe_wrapper) == "function"
 
 local Services = getgenv().get_or_set("Services", setmetatable({}, {
     __index = function(_, name)
@@ -737,10 +728,10 @@ end
 
 saveCollisionStates()
 
+local invis_connection = nil
 if not getgenv().local_heartbeat_allow_invis_connection_watcher then
-    local connection
-
-    connection = RunService.Stepped:Connect(function() -- what the hell even is this 😭😭🙏
+    getgenv().local_heartbeat_allow_invis_connection_watcher = true
+    invis_connection = RunService.Stepped:Connect(function()
         if character and character.Parent then
             local currentFixClip = getgenv().Settings["Allow Invisible  "]
             if lastFixClipState ~= currentFixClip then
@@ -756,8 +747,8 @@ if not getgenv().local_heartbeat_allow_invis_connection_watcher then
             end
         else
             restoreCollisionStates()
-            if connection then
-                connection:Disconnect() -- ok.
+            if invis_connection then
+                invis_connection:Disconnect()
             end
         end
     end)
@@ -765,17 +756,18 @@ end
 
 if not getgenv().allow_invis_local_connection_char_added_watcher then
     getgenv().allow_invis_local_connection_char_added_watcher = true
-
     player.CharacterAdded:Connect(function(newCharacter)
         restoreCollisionStates()
         character = newCharacter
         humanoid = newCharacter:WaitForChild("Humanoid")
         saveCollisionStates()
         lastFixClipState = getgenv().Settings["Allow Invisible  "]
-        if connection then
-            connection:Disconnect()
+
+        if invis_connection then
+            invis_connection:Disconnect()
         end
-        connection = RunService.Stepped:Connect(function()
+
+        invis_connection = RunService.Stepped:Connect(function()
             if character and character.Parent then
                 local currentFixClip = getgenv().Settings["Allow Invisible  "]
                 if lastFixClipState ~= currentFixClip then
@@ -791,8 +783,8 @@ if not getgenv().allow_invis_local_connection_char_added_watcher then
                 end
             else
                 restoreCollisionStates()
-                if connection then
-                    connection:Disconnect()
+                if invis_connection then
+                    invis_connection:Disconnect()
                 end
             end
         end)
@@ -811,7 +803,6 @@ local currentSortIndex = 1
 local currentKeyword = ""
 local currentPages = nil
 local currentPageNumber = 1
-
 local function getPages(keyword)
     local params = CatalogSearchParams.new()
     params.SearchKeyword = keyword or ""
