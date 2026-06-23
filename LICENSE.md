@@ -2,7 +2,7 @@ MIT License – Digital Distribution.
 License ID: DL-2025-AX92-3417
 Version: 1.0 | Issued: August 2025
 
-Copyright (c) 2025 Flames Hub / Flames Hub API / Documentation
+Copyright (c) 2026 Flames Hub / Flames Hub API / Documentation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software, its APIs, and associated documentation files (the "Software"), 
