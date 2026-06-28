@@ -1,10 +1,8 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
-
 local parent_main_gui = (get_hidden_gui and get_hidden_gui()) or (gethui and gethui())
 local g = getgenv()
-
 if not getgenv().GlobalEnvironmentFramework_Initialized then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/EnterpriseExperience/Script_Framework/refs/heads/main/GlobalEnv_Framework.lua'))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Global_Environment.lua"))()
     wait(0.1)
     getgenv().GlobalEnvironmentFramework_Initialized = true
 end
@@ -71,8 +69,8 @@ if parent_main_gui then
     end
 end
 wait(0.6)
-local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/ParadiseRPScript/refs/heads/main/Turtle_UI_Remake.lua"))()
-local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/MicUpSource/refs/heads/main/Notification_Lib.lua"))()
+local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Turtle_UI.lua"))()
+local NotifyLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Notify_Lib.lua"))()
 local Main = lib:Window("Main")
 local Players_Tab = lib:Window("Players")
 local Extras = lib:Window("Extras")
@@ -981,7 +979,7 @@ function pivot_to_plr(Player)
     local Targets_Char = get_char(Player) or Player.Character
 
     if Targets_Char and Targets_Char:FindFirstChild("Humanoid") then
-        Character:PivotTo(Targets_Char:GetPivot())
+        pcall(function() Character:PivotTo(Targets_Char:GetPivot()) end)
     end
 end
 
@@ -1015,10 +1013,10 @@ function collect_all_coins(method)
 
     for _, obj in Game_Objects:GetDescendants() do
         local isCoin = obj.Name == "Credit" or obj:FindFirstChildOfClass("TouchTransmitter")
-        if not isCoin then print("") end
+        if not isCoin then continue end
 
         local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
-        if not part then print("") end
+        if not part then continue end
 
         if use_touch then
             local ok = pcall(function()
@@ -1120,7 +1118,7 @@ getgenv().Main_Audio_Input = Audio:Box("Music (FE):", function(text, focuslost)
         getgenv().Current_ID = id
     end
 end)
-wait(0.1)
+
 getgenv().ClearInputBoxAbove = Audio:Button("Clear Box", function()
     getgenv().Main_Audio_Input:Set("")
     getgenv().Current_ID = 0
@@ -1190,7 +1188,6 @@ Audio:Slider("Boombox Vol",0,10,tonumber(getgenv().new_boombox_main_volume) or 0
 end)
 
 function play_music_with_id(id_to_play)
-    wait(0.1)
     local sound = find_boombox()
     if typeof(sound) == "Instance" and sound:IsA("Sound") and sound.Parent then
         local id = tostring(sound.SoundId)
@@ -1229,7 +1226,7 @@ function play_music_with_sound_id()
         getgenv().Current_ID = 0
         return getgenv().notify("Error", "Audio has been banned or you cannot access it.", 10)
     end
-    wait(0.1)
+
     local sound = find_boombox()
     local ok, response = pcall(function()
         Play_Sound_Boombox_RE:FireServer(Current_ID)
@@ -1311,17 +1308,24 @@ Audio:Button("Stop Music", function()
 end)
 
 local table_of_ids = {
-    {id = 120784692155389, desc = "bubonic tiktok song"},
+    {id = 72957306505286, desc = "Tiki Tiki!"}
     {id = 138150862722180, desc = "AntBeale - Sunshine"},
     {id = 130978049854081, desc = "met her on the net"},
     {id = 136498380707179, desc = "Tre$o - Stars"},
-    {id = 82860499713146, desc = "Try Me (Remix)"},
-    {id = 84257907631377, desc = "unleaked (idk)"},
-    {id = 137350238118013, desc = "NUE POCOYO FUNK"},
     {id = 103606830325471, desc = "JUJU - Falls"},
-    {id = 128134028500828, desc = "Juice - Moonlight"},
     {id = 76927176566054,  desc = "ULTERIOR MOTIVES"},
     {id = 129255676311189, desc = "unleaked lol"},
+    {id = 120741970921527, desc = "Lucid Dreams (wait)"},
+    {id = 121493555077011, desc = "TayK The Race"},
+    {id = 107939777740637, desc = "Roxanne"},
+    {id = 116906212909880, desc = "EFN (BRO?!)"},
+    {id = 134270835038966, desc = "Chief Keef"},
+    {id = 125182193252186, desc = "Brainrot Rap"},
+    {id = 97905548161740, desc = "Very Loud"},
+    {id = 93329207753390, desc = "Let a N smash"},
+    {id = 74697049223758, desc = "Phonk (Sped Up)"},
+    {id = 118957335322667, desc = "Counting Stars"},
+    {id = 116207627988511, desc = "Gay Song Lol"}
 }
 
 local dropdown_items = {}
@@ -1912,16 +1916,6 @@ Extras:Button("Try To Predict IT/Seeker", function()
     Try_To_predict_IT_Plr()
 end)
 
-Extras:Button("Chat Bypasser", function()
-    if getgenv().UserCreated_Chat_Bypasser_Loaded then
-        return getgenv().notify("Warning", "Chat Bypasser already loaded.", 5)
-    end
-
-    getgenv().UserCreated_Chat_Bypasser_Loaded = true
-    getgenv().notify("Info", "The key is: typethisout", 30)
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/a675d4a69c2e1d8e301a4af260fb719b.lua"))()
-end)
-
 Extras:Button("IY", function()
     if getgenv().IY_LOADED then
         return getgenv().notify("Error", "You've already loaded Infinite Yield.", 5)
@@ -1930,7 +1924,7 @@ Extras:Button("IY", function()
         return getgenv().notify("Error", "You've already loaded Infinite Premium.", 5)
     end
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EnterpriseExperience/crazyDawg/main/InfYieldOther.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/dudeididntliterally/Backup_Repo/refs/heads/main/Infinite_Premium.lua"))()
 end)
 
 Audio:Slider("Sound Vol (FE)", 0.1,10,tonumber(getgenv().main_volume_sound_others) or 3, function(New_Vol)
