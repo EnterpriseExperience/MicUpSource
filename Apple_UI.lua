@@ -8,8 +8,8 @@ local notifs = {}
 local visible = true
 local dbcooper = false
 local function tp(ins, pos, time, thing) TweenService:Create(ins, TweenInfo.new(time, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut),{Position = pos}):Play() end
-local has_gethui = (typeof(get_hui) == "function") or (typeof(g.get_hui) == "function")
-local has_gethidden = (typeof(get_hidden_gui) == "function") or (typeof(g.get_hidden_gui) == "function")
+local has_gethui = typeof(get_hui) == "function"
+local has_gethidden = typeof(get_hidden_gui) == "function"
 if not has_gethui and not has_gethidden and not g.roblox_hidden_gui_location then
     g.roblox_hidden_gui_location = g.roblox_hidden_gui_location or nil
     if not g.roblox_hidden_gui_location then
