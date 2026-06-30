@@ -1,15 +1,17 @@
+local HttpService = cloneref and cloneref(game:GetService("HttpService")) or game:GetService("HttpService")
 local uis = game:GetService("UserInputService")
 local core = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
-
+local http_requesting = request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request)
+local AllClipboards = setclipboard or toclipboard or set_clipboard or Clipboard and Clipboard.set
+if core:FindFirstChild("Current_Context_Not_Supported_GUI") and core:FindFirstChild("Current_Context_Not_Supported_GUI"):IsA("ScreenGui") then return end
 local scr = Instance.new("ScreenGui")
-scr.Name = "ExecutorInterface"
+scr.Name = "Current_Context_Not_Supported_GUI"
 scr.ResetOnSpawn = false
 scr.IgnoreGuiInset = true
 scr.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 scr.Parent = core
 
 local is_mob = uis.TouchEnabled
-
 local fr = Instance.new("Frame")
 fr.Name = "MainFrame"
 fr.Size = is_mob and UDim2.new(0.300000012, 0, 0.449999988, 0) or UDim2.new(0.6,0,0.6,0)
@@ -54,14 +56,51 @@ sub.Name = "CreditLabel"
 sub.Size = is_mob and UDim2.new(1,-20,0,35) or UDim2.new(1,-40,0,50)
 sub.Position = is_mob and UDim2.new(0,10,0.33,40) or UDim2.new(0,20,0.4,50)
 sub.BackgroundTransparency = 1
-sub.Text = "Made by: computerbinaries on Discord."
+sub.Text = "https://discord.gg/MTYKxQfpNJ"
 sub.TextScaled = true
 sub.Font = Enum.Font.SourceSans
 sub.TextColor3 = Color3.fromRGB(180,180,180)
 sub.Parent = fr
 
+local btn = Instance.new("TextButton")
+btn.Name = "DiscordButton"
+btn.Size = is_mob and UDim2.new(0.55,0,0,28) or UDim2.new(0.45,0,0,38)
+btn.Position = is_mob and UDim2.new(0.225,0,0.33,85) or UDim2.new(0.275,0,0.4,105)
+btn.BackgroundColor3 = Color3.fromRGB(88,101,242)
+btn.Text = "Join Discord"
+btn.TextScaled = true
+btn.Font = Enum.Font.SourceSansBold
+btn.TextColor3 = Color3.fromRGB(255,255,255)
+btn.BorderSizePixel = 0
+btn.Parent = fr
+
+local cr3 = Instance.new("UICorner")
+cr3.CornerRadius = UDim.new(0,8)
+cr3.Parent = btn
+
 cls.MouseButton1Click:Connect(function()
     scr:Destroy()
+end)
+
+btn.MouseButton1Click:Connect(function()
+    if http_requesting then
+        http_requesting({
+            Url = 'http://127.0.0.1:6463/rpc?v=1',
+            Method = 'POST',
+            Headers = {
+                ['Content-Type'] = 'application/json',
+                Origin = 'https://discord.com'
+            },
+            Body = HttpService:JSONEncode({
+                cmd = 'INVITE_BROWSER',
+                nonce = HttpService:GenerateGUID(false),
+                args = {code = 'MTYKxQfpNJ'}
+            })
+        })
+    else
+        if AllClipboards then AllClipboards("https://discord.gg/MTYKxQfpNJ") end
+        if getgenv().notify then getgenv().notify("Success", "Successfully copied Discord link to Clipboard.", 5) end
+    end
 end)
 
 local UIS = uis
