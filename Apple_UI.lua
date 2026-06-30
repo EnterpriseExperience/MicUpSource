@@ -580,12 +580,54 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         end
     end
 
-    if visiblekey then
+    local is_mobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
+    if is_mobile then
+        local ScreenGui = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
+        
+        local toggle_gui = Instance.new("ScreenGui")
+        toggle_gui.Name = "FlamesToggle"
+        toggle_gui.ResetOnSpawn = false
+        toggle_gui.DisplayOrder = 999
+        toggle_gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        toggle_gui.Parent = game:GetService("CoreGui")
+
+        local toggle_btn = Instance.new("TextButton")
+        toggle_btn.Name = "ToggleBtn"
+        toggle_btn.Size = UDim2.new(0, 48, 0, 48)
+        toggle_btn.Position = UDim2.new(0.5, -24, 0, 8)
+        toggle_btn.AnchorPoint = Vector2.new(0, 0)
+        toggle_btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        toggle_btn.BorderSizePixel = 0
+        toggle_btn.Text = "Toggle AppleUI"
+        toggle_btn.TextScaled = true
+        toggle_btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        toggle_btn.TextSize = 22
+        toggle_btn.Font = Enum.Font.GothamBold
+        toggle_btn.ZIndex = 10
+        toggle_btn.Parent = toggle_gui
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 10)
+        corner.Parent = toggle_btn
+
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(80, 80, 80)
+        stroke.Thickness = 1
+        stroke.Parent = toggle_btn
+
+        toggle_btn.MouseButton1Click:Connect(function()
+            window:ToggleVisible()
+        end)
+        minimize.Visible = false
+    elseif visiblekey then
         minimize.MouseButton1Click:Connect(function()
             window:ToggleVisible()
         end)
-        if getgenv().Toggle_Window_Keybind_Connection then getgenv().Toggle_Window_Keybind_Connection:Disconnect() end
-        wait(0.25) -- wait before trying to continue.
+        if getgenv().Toggle_Window_Keybind_Connection then
+            getgenv().Toggle_Window_Keybind_Connection:Disconnect()
+        end
+        wait(0.25)
         getgenv().Toggle_Window_Keybind_Connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if input.KeyCode == visiblekey then
                 window:ToggleVisible()
