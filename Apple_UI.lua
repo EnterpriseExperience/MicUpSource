@@ -1,6 +1,8 @@
 local TweenService = cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
 local Debris = cloneref and cloneref(game:GetService("Debris")) or game:GetService("Debris")
 local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
+local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
 local lib = {}
 local sections = {}
 local workareas = {}
@@ -38,50 +40,43 @@ if not has_gethui and not has_gethidden and not g.roblox_hidden_gui_location the
 end
 wait(0.25)
 function lib:init(ti, dosplash, visiblekey, deleteprevious)
-    if syn then
-        cg = game:GetService("CoreGui")
-        if cg:FindFirstChild("ScreenGui") and deleteprevious then
-            tp(cg.ScreenGui.main, cg.ScreenGui.main.Position + UDim2.new(0,0,2,0), 0.5)
-            Debris:AddItem(cg.ScreenGui, 1)
+    local function find_existing()
+        if gethui then
+            return gethui():FindFirstChild("Apple_UI")
+        elseif get_hidden_gui then
+            return get_hidden_gui():FindFirstChild("Apple_UI")
+        else
+            local cg = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+            local existing = cg:FindFirstChild("Apple_UI")
+            if not existing then
+                local pg = game:GetService("Players").LocalPlayer:FindFirstChildOfClass("PlayerGui")
+                existing = pg and pg:FindFirstChild("Apple_UI")
+            end
+            return existing
         end
+    end
 
-        scrgui = Instance.new("ScreenGui")
-        if syn and syn.protect_gui and typeof(syn.protect_gui) == "function" then
-            syn.protect_gui(scrgui)
+    if deleteprevious then
+        local existing = find_existing()
+        if existing then
+            local main = existing:FindFirstChild("main")
+            if main then
+                main:TweenPosition(main.Position + UDim2.new(0,0,2,0), "InOut", "Quart", 0.5)
+            end
+            Debris:AddItem(existing, 1)
         end
-        scrgui.Parent = game:GetService("CoreGui")
-    elseif gethui then
-        if gethui():FindFirstChild("ScreenGui") and deleteprevious then
-            gethui().ScreenGui.main:TweenPosition(gethui().ScreenGui.main.Position + UDim2.new(0,0,2,0), "InOut", "Quart", 0.5)
-            Debris:AddItem(gethui().ScreenGui, 1)
-        end
+    end
 
-        scrgui = Instance.new("ScreenGui")
+    scrgui = Instance.new("ScreenGui")
+    scrgui.Name = "Apple_UI"
+
+    if gethui then
         scrgui.Parent = gethui()
     elseif get_hidden_gui then
-        if get_hidden_gui():FindFirstChild("ScreenGui") and deleteprevious then
-            get_hidden_gui().ScreenGui.main:TweenPosition(get_hidden_gui().ScreenGui.main.Position + UDim2.new(0,0,2,0), "InOut", "Quart", 0.5)
-            Debris:AddItem(get_hidden_gui().ScreenGui, 1)
-        end
-
-        scrgui = Instance.new("ScreenGui")
         scrgui.Parent = get_hidden_gui()
-    elseif game:GetService("CoreGui") ~= nil then
-        cg = game:GetService("CoreGui")
-        if cg:FindFirstChild("ScreenGui") and deleteprevious then
-            tp(cg.ScreenGui.main, cg.ScreenGui.main.Position + UDim2.new(0,0,2,0), 0.5)
-            Debris:AddItem(cg.ScreenGui, 1)
-        end
-        scrgui = Instance.new("ScreenGui")
-        scrgui.Parent = cg
     else
-        p_g = game:GetService("Players").LocalPlayer:FindFirstChildOfClass("PlayerGui")
-        if p_g:FindFirstChild("ScreenGui") and deleteprevious then
-            tp(p_g.ScreenGui.main, p_g.ScreenGui.main.Position + UDim2.new(0,0,2,0), 0.5)
-            Debris:AddItem(p_g.ScreenGui, 1)
-        end
-        scrgui = Instance.new("ScreenGui")
-        scrgui.Parent = p_g
+        local cg = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+        scrgui.Parent = cg
     end
 
     if dosplash then
@@ -133,9 +128,8 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         splash:TweenPosition(UDim2.new(0.5, 0, 0.5, 0), "InOut", "Quart", 1)
         wait(2)
         splash:TweenPosition(UDim2.new(0.5, 0, 2, 0), "InOut", "Quart", 1)
-        game:GetService("Debris"):AddItem(splash, 1)
+        Debris:AddItem(splash, 1)
     end
-        
 
     local main = Instance.new("Frame")
     main.Name = "main"
@@ -150,12 +144,10 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     uc.CornerRadius = UDim.new(0, 18)
     uc.Parent = main
 
-    local UserInputService = game:GetService("UserInputService") --- skidded ik
     local dragging
     local dragInput
     local dragStart
     local startPos
-    
     local function update(input)
         local delta = input.Position - dragStart
         main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
@@ -187,8 +179,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         end
     end)
 
-    -- workarea right side setup
-
     local workarea = Instance.new("Frame")
     workarea.Name = "workarea"
     workarea.Parent = main
@@ -206,9 +196,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     workareacornerhider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     workareacornerhider.BorderSizePixel = 0
     workareacornerhider.Size = UDim2.new(0, 18, 0.99895674, 0)
-
-
-    -- searchbar
 
     local search = Instance.new("Frame")
     search.Name = "search"
@@ -253,8 +240,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         searchtextbox:CaptureFocus()
     end)
 
-    -- sidebar
-
     local sidebar = Instance.new("ScrollingFrame")
     sidebar.Name = "sidebar"
     sidebar.Parent = main
@@ -273,26 +258,27 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     ull_2.SortOrder = Enum.SortOrder.LayoutOrder
     ull_2.Padding = UDim.new(0, 5)
 
-    game:GetService("RunService"):BindToRenderStep("search", 1, function() -- i sure do love skidding
-        if not searchtextbox:IsFocused() then 
-            for b,v in next, sidebar:GetChildren() do
-                if not v:IsA("TextButton") then return end
-                v.Visible = true
-            end
-        end
-        local InputText=string.upper(searchtextbox.Text)
-        for _,button in pairs(sidebar:GetChildren())do
-            if button:IsA("TextButton")then
-                if InputText==""or string.find(string.upper(button.Text),InputText)~=nil then
-                    button.Visible=true
-                else
-                    button.Visible=false
+    if not getgenv().Apple_UI_Search_Bind_Render_Step then
+        getgenv().Apple_UI_Search_Bind_Render_Step = RunService:BindToRenderStep("search", 1, function()
+            if not searchtextbox:IsFocused() then 
+                for b,v in next, sidebar:GetChildren() do
+                    if not v:IsA("TextButton") then return end
+                    v.Visible = true
                 end
             end
-        end
-    end)
-    -- macos style buttons
 
+            local InputText = string.upper(searchtextbox.Text)
+            for _, button in pairs(sidebar:GetChildren())do
+                if button:IsA("TextButton")then
+                    if InputText == "" or string.find(string.upper(button.Text),InputText) ~= nil then
+                        button.Visible = true
+                    else
+                        button.Visible = false
+                    end
+                end
+            end
+        end)
+    end
 
     local buttons = Instance.new("Frame")
     buttons.Name = "buttons"
@@ -309,7 +295,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     ull_3.VerticalAlignment = Enum.VerticalAlignment.Center
     ull_3.Padding = UDim.new(0, 10)
 
-
     local close = Instance.new("TextButton")
     close.Name = "close"
     close.Parent = buttons
@@ -320,15 +305,11 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     close.Text = ""
     close.TextColor3 = Color3.fromRGB(255, 50, 50)
     close.TextSize = 14
-    close.MouseButton1Click:Connect(function()
-        scrgui:Destroy()
-    end)
-
+    close.MouseButton1Click:Connect(function() scrgui:Destroy() end)
 
     local uc_18 = Instance.new("UICorner")
     uc_18.CornerRadius = UDim.new(1, 0)
     uc_18.Parent = close
-
 
     local minimize = Instance.new("TextButton")
     minimize.Name = "minimize"
@@ -341,11 +322,9 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     minimize.TextColor3 = Color3.fromRGB(255, 50, 50)
     minimize.TextSize = 14
 
-
     local uc_19 = Instance.new("UICorner")
     uc_19.CornerRadius = UDim.new(1, 0)
     uc_19.Parent = minimize
-
 
     local resize = Instance.new("TextButton")
     resize.Name = "resize"
@@ -362,9 +341,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     uc_20.CornerRadius = UDim.new(1, 0)
     uc_20.Parent = resize
 
-    -- title text at topbar
-
-
     local title = Instance.new("TextLabel")
     title.Name = "title"
     title.Parent = main
@@ -380,7 +356,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     title.TextWrapped = true
     title.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- notif1
     local notif = Instance.new("Frame")
     notif.Name = "notif"
     notif.Parent = main
@@ -468,12 +443,10 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     notiftext.Size = UDim2.new(0, 254, 0, 66)
     notiftext.ZIndex = 3
     notiftext.Font = Enum.Font.Gotham
-    notiftext.Text = "We would like to contact you regarding your car's extended warranty."
+    notiftext.Text = "67 is requesting an update." -- ok
     notiftext.TextColor3 = Color3.fromRGB(95, 95, 95)
     notiftext.TextSize = 16
     notiftext.TextWrapped = true
-
-    -- notifcation 2 (two button)
 
     local notif2 = Instance.new("Frame")
     notif2.Name = "notif2"
@@ -513,7 +486,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     notif2title.TextColor3 = Color3.fromRGB(95, 95, 95)
     notif2title.TextSize = 28
 
-
     local notif2text = Instance.new("TextLabel")
     notif2text.Name = "notif2text"
     notif2text.Parent = notif2
@@ -523,11 +495,10 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     notif2text.Size = UDim2.new(0, 254, 0, 66)
     notif2text.ZIndex = 3
     notif2text.Font = Enum.Font.Gotham
-    notif2text.Text = "We would like to contact you regarding your car's extended warranty."
+    notif2text.Text = "Lebron James is requesting a video call."
     notif2text.TextColor3 = Color3.fromRGB(95, 95, 95)
     notif2text.TextSize = 16
     notif2text.TextWrapped = true
-
 
     local notif2button1 = Instance.new("TextButton")
     notif2button1.Name = "notif2button1"
@@ -545,7 +516,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     uc_15.CornerRadius = UDim.new(0, 9)
     uc_15.Parent = notif2button1
 
-
     local notif2shadow = Instance.new("ImageLabel")
     notif2shadow.Name = "notif2shadow"
     notif2shadow.Parent = notif2
@@ -555,7 +525,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     notif2shadow.Size = UDim2.new(1.20000005, 0, 1.20000005, 0)
     notif2shadow.Image = "rbxassetid://313486536"
     notif2shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-
 
     local notif2darkness = Instance.new("Frame")
     notif2darkness.Name = "notif2darkness"
@@ -567,11 +536,9 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     notif2darkness.Size = UDim2.new(0, 721, 0, 584)
     notif2darkness.ZIndex = 2
 
-
     local uc_16 = Instance.new("UICorner")
     uc_16.CornerRadius = UDim.new(0, 18)
     uc_16.Parent = notif2darkness
-
 
     local notif2button2 = Instance.new("TextButton")
     notif2button2.Name = "notif2button2"
@@ -586,7 +553,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     notif2button2.TextColor3 = Color3.fromRGB(95, 95, 95)
     notif2button2.TextSize = 21
 
-
     local uc_17 = Instance.new("UICorner")
     uc_17.CornerRadius = UDim.new(0, 9)
     uc_17.Parent = notif2button2
@@ -596,7 +562,7 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     else
         title.Text = ""
     end
-       tp(main, UDim2.new(0.5, 0, 0.5, 0), 1)
+    tp(main, UDim2.new(0.5, 0, 0.5, 0), 1)
     window = {}
 
     function window:ToggleVisible()
@@ -618,7 +584,9 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         minimize.MouseButton1Click:Connect(function()
             window:ToggleVisible()
         end)
-        game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if getgenv().Toggle_Window_Keybind_Connection then getgenv().Toggle_Window_Keybind_Connection:Disconnect() end
+        wait(0.25) -- wait before trying to continue.
+        getgenv().Toggle_Window_Keybind_Connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if input.KeyCode == visiblekey then
                 window:ToggleVisible()
             end
@@ -626,8 +594,9 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     end
 
     function window:GreenButton(callback)
-        if _G.gbutton_123123 then _G.gbutton_123123:Disconnect() end
-        _G.gbutton_123123 = resize.MouseButton1Click:Connect(function()
+        if getgenv().gbutton_123123 then getgenv().gbutton_123123:Disconnect() end
+        wait(0.25)
+        getgenv().gbutton_123123 = resize.MouseButton1Click:Connect(function()
             callback()
         end)
     end
@@ -638,6 +607,7 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
                 v.Position += UDim2.new(0,0,0,130)
             end
         end
+        wait(0.1)
         local tempnotif = Instance.new("Frame")
         tempnotif.Name = "tempnotif"
         tempnotif.Parent = scrgui
@@ -669,7 +639,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         t2.TextXAlignment = Enum.TextXAlignment.Left
         t2.TextYAlignment = Enum.TextYAlignment.Top
 
-
         local t1 = Instance.new("TextLabel")
         t1.Name = "t1"
         t1.Parent = tempnotif
@@ -684,7 +653,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         t1.TextSize = 28
         t1.TextXAlignment = Enum.TextXAlignment.Left
 
-
         local ticon = Instance.new("ImageLabel")
         ticon.Name = "ticon"
         ticon.Parent = tempnotif
@@ -696,7 +664,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         ticon.Image = icon
         ticon.ImageColor3 = Color3.fromRGB(95, 95, 95)
         ticon.ScaleType = Enum.ScaleType.Fit
-
 
         local tshadow = Instance.new("ImageLabel")
         tshadow.Name = "tshadow"
@@ -710,7 +677,7 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
         tshadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
         tshadow.ImageTransparency = 0.400
         tshadow.TileSize = UDim2.new(0, 1, 0, 1)
-        game:GetService("Debris"):AddItem(tempnotif, 5)
+        Debris:AddItem(tempnotif, 5)
     end
 
     function window:Notify(txt1, txt2, b1, icohn, callback)
@@ -825,6 +792,7 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
             end
             workareamain.Visible = true
         end
+
         function sec:Divider(name)
             local section = Instance.new("TextLabel")
             section.Name = "section"
@@ -842,6 +810,7 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
             section.TextXAlignment = Enum.TextXAlignment.Left
             section.TextYAlignment = Enum.TextYAlignment.Bottom
         end
+
         function sec:Button(name, callback)
             local button = Instance.new("TextButton")
             button.Name = "button"
@@ -863,7 +832,6 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
             us.ApplyStrokeMode = "Border"
             us.Color = Color3.fromRGB(21, 103, 251)
             us.Thickness = 1
-
 
             if callback then
                 button.MouseButton1Click:Connect(function() 
@@ -938,13 +906,9 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
                 Frame.BackgroundColor3 = Color3.fromRGB(21, 103, 251)
             end
 
-            Frame.MouseButton1Click:Connect(function()
+            Frame.MouseButton1Click:Connect(function() -- tf? I'm sorry? Did you say "Frame"??? I beg your finest pardon? Click this Frame, not a TextButton, lmao.
                 mode = not mode
-
-                if callback then
-                    callback(mode)
-                end
-
+                if callback then callback(mode) end
                 if mode then
                     TextButton:TweenPosition(UDim2.new(0, 35, 0, 1), "In", "Sine", 0.1, true)
                     Frame.BackgroundColor3 = Color3.fromRGB(21, 103, 251)
@@ -953,13 +917,10 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
                     Frame.BackgroundColor3 = Color3.fromRGB(216, 216, 216)
                 end
             end)
+
             TextButton.MouseButton1Click:Connect(function()
                 mode = not mode
-
-                if callback then
-                    callback(mode)
-                end
-
+                if callback then callback(mode) end
                 if mode then
                     TextButton:TweenPosition(UDim2.new(0, 35, 0, 1), "In", "Sine", 0.1, true)
                     Frame.BackgroundColor3 = Color3.fromRGB(21, 103, 251)
