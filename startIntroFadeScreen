@@ -1,76 +1,56 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
-local g = getgenv()
-if g.HasSeen_Loading_Screen then return end
-g.HasSeen_Loading_Screen = true
 local Players = cloneref and cloneref(game:GetService("Players")) or game:GetService("Players")
 local player = Players.LocalPlayer
 local player_name = player.DisplayName
 local TweenService = cloneref and cloneref(game:GetService("TweenService")) or game:GetService("TweenService")
 local RunService = cloneref and cloneref(game:GetService("RunService")) or game:GetService("RunService")
-local CoreGui = cloneref and cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
 local scramble_time = 3.5
 local scramble_speed = 0.01
-local fade_out_text_time = 2
-local fade_out_background_time = 1.7
+local fade_out_text_time = 1
+local fade_out_background_time = 1
 local intro_phrases = {
-    "Welcome",
-    "Wsp",
-    "Was poppin",
-    "Was goin on",
-    "How you doin",
-    "We hope you enjoy",
-    "Hope you doin good",
-    "Wassup",
-    "Was good",
-    "Hello",
-    "Greetings",
-    "Whats crackin",
-    "You're powerful now",
-    "Have fun"
-}
-local reveal_text_phrases = {
-    "Make sure to recommend us to everyone you know!",
-    "Ensuring Flames Hub always provides top notch services is our speciality!",
-    "Nobody can replicate / clone Flames Hub for a reason! We're too good at what we do!",
-    "Flames Hub has almost daily updates, customizable options, easy configuration and much more!",
-    "We dominate the market for a reason! Flames Hub forever!",
-    "Don't forget: Flames Hub will always be #1!",
-    "Did you know? Flames Hub automatically runs an anti-cheat scan incase the game contains an anti-cheat?",
-    "We provide you with protection, endurance, power and much more, in return you help promote our services and utilities!",
-    "©️ | Flames Hub | ON TOP | growing userbase! | amazing community! | ©️"
+   "Welcome",
+   "Wsp",
+   "Was poppin",
+   "Was goin on",
+   "How you doin",
+   "We hope you enjoy",
+   "Hope you doin good",
+   "Wassup",
+   "Was good",
+   "Hello",
+   "Greetings",
+   "Whats crackin",
+   "You're powerful now",
+   "Have fun"
 }
 local function smooth_rgb(label, speed_flag_name, speed)
-    local hue = 0
-    getgenv()[speed_flag_name] = true
+   local hue = 0
+   getgenv()[speed_flag_name] = true
 
-    local min_hue = 0.10
-    local max_hue = 0.18
-    local saturation = 1
-    local brightness = 1
+   if label:IsA("TextLabel") or label:IsA("TextButton") then
+      local conn
+      conn = RunService.RenderStepped:Connect(function(dt)
+         if not getgenv()[speed_flag_name] or not label or not label.Parent then
+            conn:Disconnect()
+            return
+         end
 
-    if label:IsA("TextLabel") or label:IsA("TextButton") then
-        local conn
-        conn = RunService.RenderStepped:Connect(function(dt)
-            if not getgenv()[speed_flag_name] or not label or not label.Parent then
-                conn:Disconnect()
-                return
-            end
-            hue = (hue + dt * speed) % 1
-            local mapped = min_hue + (hue % (max_hue - min_hue))
-            label.TextColor3 = Color3.fromHSV(mapped, saturation, brightness)
-        end)
-    else
-        local conn
-        conn = RunService.RenderStepped:Connect(function(dt)
-            if not getgenv()[speed_flag_name] or not label or not label.Parent then
-                conn:Disconnect()
-                return
-            end
-            hue = (hue + dt * speed) % 1
-            local mapped = min_hue + (hue % (max_hue - min_hue))
-            label.BackgroundColor3 = Color3.fromHSV(mapped, saturation, brightness)
-        end)
-    end
+         hue = (hue + dt * speed) % 1
+         label.TextColor3 = Color3.fromHSV(hue, 1, 1)
+      end)
+   else
+      local conn
+      conn = RunService.RenderStepped:Connect(function(dt)
+         if not getgenv()[speed_flag_name] or not label or not label.Parent then
+            conn:Disconnect()
+            return
+         end
+
+         hue = (hue + dt * speed) % 1
+         label.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
+      end)
+   end
 end
 
 local screen_gui = Instance.new("ScreenGui")
@@ -86,14 +66,14 @@ background_frame.BackgroundTransparency = 1
 background_frame.Parent = screen_gui
 
 task.spawn(function()
-    smooth_rgb(background_frame, "rgb_running_background_coloring_frame", 1.5)
+   smooth_rgb(background_frame, "rgb_running_background_coloring_frame", 1.5)
 end)
 
 local ui_gradient = Instance.new("UIGradient")
 ui_gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 50, 0)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(160, 110, 0)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 180, 30))
+   ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 50)),
+   ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 0, 100)),
+   ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 200))
 }
 ui_gradient.Rotation = 45
 ui_gradient.Parent = background_frame
@@ -115,91 +95,93 @@ welcome_label.Text = random_phrase..", "..tostring(player_name).."."
 welcome_label.Parent = screen_gui
 
 task.spawn(function()
-    smooth_rgb(welcome_label, "rgb_running_welcome_label", 10)
+   smooth_rgb(welcome_label, "rgb_running_welcome_label", 10)
 end)
 
 local text_label = Instance.new("TextLabel")
 text_label.Size = UDim2.new(1, 0, 0.2, 0)
 text_label.Position = UDim2.new(0, 0, 0.5, 0)
 text_label.BackgroundTransparency = 1
-text_label.TextColor3 = Color3.fromRGB(255, 200, 0)
+text_label.TextColor3 = Color3.fromRGB(255, 255, 255)
 text_label.Font = Enum.Font.SourceSansBold
 text_label.TextScaled = true
 text_label.TextTransparency = 1
 text_label.Parent = screen_gui
 
 task.spawn(function()
-    smooth_rgb(text_label, "rgb_running_scrambled_text_label_main", 10)
+   smooth_rgb(text_label, "rgb_running_scrambled_text_label_main", 10)
 end)
 
 local copyright_label = Instance.new("TextLabel")
 copyright_label.Size = UDim2.new(1, 0, 0.1, 0)
-copyright_label.Position = UDim2.new(0, 0, 0.83, 0)
+copyright_label.Position = UDim2.new(0, 0, 0.8, 0)
 copyright_label.BackgroundTransparency = 1
-copyright_label.TextColor3 = Color3.fromRGB(255, 180, 0)
+copyright_label.TextColor3 = Color3.fromRGB(255, 0, 0)
 copyright_label.Font = Enum.Font.SourceSans
 copyright_label.TextScaled = true
-copyright_label.Text = tostring(reveal_text_phrases[math.random(1, #reveal_text_phrases)])
+copyright_label.Text = "© Flames Hub | 2026 | DOMINATING The Market | Unstoppable | Loyal Userbase | ©"
 copyright_label.Parent = screen_gui
 
 task.spawn(function()
-    smooth_rgb(copyright_label, "rgb_running_copyright", 10)
+   smooth_rgb(copyright_label, "rgb_running_copyright", 10)
 end)
 
 local function scramble_text(t)
-    local s = ""
-    for i = 1, #t do
-        local c = string.char(math.random(48, 122))
-        while not (c:match("%a") or c:match("%d")) do
-            c = string.char(math.random(48, 122))
-        end
-        s = s .. c
-    end
-    return s
+   local s = ""
+   for i = 1, #t do
+      local c = string.char(math.random(48, 122))
+      while not (c:match("%a") or c:match("%d")) do
+         c = string.char(math.random(48, 122))
+      end
+      s = s .. c
+   end
+   return s
 end
 
 local function reveal_text(scramble_time, main_text, label)
-    local time = 0
-    while time < scramble_time do
-        label.Text = scramble_text(main_text)
-        label.TextTransparency = 0
-        time = time + scramble_speed
-        task.wait(scramble_speed)
-    end
-    label.Text = main_text
+   local time = 0
+   while time < scramble_time do
+      label.Text = scramble_text(main_text)
+      label.TextTransparency = 0
+      time = time + scramble_speed
+      task.wait(scramble_speed)
+   end
+   label.Text = main_text
 end
 
 local function fade_out_text(label)
-    TweenService:Create(label, TweenInfo.new(fade_out_text_time, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
+   TweenService:Create(label, TweenInfo.new(fade_out_text_time, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
 end
 
 local function move_out_text()
-    TweenService:Create(text_label, TweenInfo.new(fade_out_text_time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0, 0)}):Play()
+   TweenService:Create(text_label, TweenInfo.new(fade_out_text_time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0, 0)}):Play()
 end
 
 local function rgb_cycle(label)
-    local t = 0.5
-    local list = {
-        Color3.fromRGB(255, 200, 0),
-        Color3.fromRGB(255, 165, 0),
-        Color3.fromRGB(255, 220, 50),
-        Color3.fromRGB(200, 150, 0),
-        Color3.fromRGB(255, 240, 100),
-        Color3.fromRGB(180, 120, 0),
-        Color3.fromRGB(255, 180, 0)
-    }
+   local t = 0.5
+   local list = {
+      Color3.fromRGB(255, 0, 0),
+      Color3.fromRGB(255, 165, 0),
+      Color3.fromRGB(255, 255, 0),
+      Color3.fromRGB(0, 255, 0),
+      Color3.fromRGB(0, 255, 255),
+      Color3.fromRGB(0, 0, 255),
+      Color3.fromRGB(255, 0, 255)
+   }
 
-    getgenv().rgb_running_background_fading_tween = true
-    while getgenv().rgb_running_background_fading_tween do
-        for _, col in ipairs(list) do
-            TweenService:Create(label, TweenInfo.new(t, Enum.EasingStyle.Linear), {TextColor3 = col}):Play()
-            task.wait(t)
-        end
-    end
+   getgenv().rgb_running_background_fading_tween = true
+   while getgenv().rgb_running_background_fading_tween do
+      for _, col in ipairs(list) do
+         TweenService:Create(label, TweenInfo.new(t, Enum.EasingStyle.Linear), {TextColor3 = col}):Play()
+         task.wait(t)
+      end
+   end
 end
 
-reveal_text(scramble_time, reveal_text_phrases[math.random(1, #reveal_text_phrases)], text_label)
+reveal_text(scramble_time, "Flames Hub = number fucking one, fucking enjoy bro!", text_label)
+
 task.wait(scramble_time + 1)
+
 getgenv().rgb_running = false
 fade_out_text(welcome_label)
 fade_out_text(text_label)
@@ -210,6 +192,8 @@ getgenv().rgb_running_welcome_label = false
 getgenv().rgb_running_scrambled_text_label_main = false
 getgenv().rgb_running_background_coloring_frame = false
 move_out_text()
+
 TweenService:Create(background_frame, TweenInfo.new(fade_out_background_time, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
+
 task.wait(fade_out_background_time + 1)
 screen_gui:Destroy()
