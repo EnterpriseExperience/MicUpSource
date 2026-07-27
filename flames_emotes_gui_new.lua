@@ -5,10 +5,16 @@ if (game.PlaceId == 13967668166 or game.PlaceId == 99154507657228 or game.PlaceI
     if g.notify then
         return g.notify("Warning", "Please load the Life Together RP script first!", 5)
     else
-        return
+        return warn("Please load the Life Together RP script first.")
     end
 end
-if getgenv().FreeEmotes_Enabled then return end
+if getgenv().FreeEmotes_Enabled then
+    if g.notify then
+        return g.notify("Warning", "You already have Flames Emotes GUI running! Wait for it to load if it hasn't already.", 6.5)
+    else
+        return warn("You already have Flames Emotes GUI running!")
+    end
+end
 getgenv().FreeEmotes_Enabled = true
 local view_port_size = setmetatable({}, {
     __index = function(_, key)
@@ -21,7 +27,6 @@ local view_port_size = setmetatable({}, {
 local Workspace = cloneref and cloneref(game:GetService("Workspace")) or game:GetService("Workspace")
 local UserInputService = cloneref and cloneref(game:GetService("UserInputService")) or game:GetService("UserInputService")
 local cam = Workspace.CurrentCamera
-local view_port_size = cam and cam.ViewportSize or Vector2.new(1920, 1080)
 local all_clipboards = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 function scale(axis, value)
     local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
